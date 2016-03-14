@@ -1,9 +1,9 @@
-package br.net.mirante.singular.pet.server.spring.security.config;
+package br.net.mirante.singular.pet.commons.spring.security.config;
 
 
 import br.net.mirante.singular.pet.commons.exception.SingularServerException;
+import br.net.mirante.singular.pet.commons.spring.security.AbstractSingularSpringSecurityAdapter;
 import br.net.mirante.singular.pet.commons.spring.security.SingularUserDetailsService;
-import br.net.mirante.singular.pet.server.spring.security.AbstractSingularSpringSecurityAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;

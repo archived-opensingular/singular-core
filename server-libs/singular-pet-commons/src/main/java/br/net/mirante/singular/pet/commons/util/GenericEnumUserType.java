@@ -1,4 +1,4 @@
-package br.net.mirante.singular.pet.module.persistence.util;
+package br.net.mirante.singular.pet.commons.util;
 
 /* ********************************************************************
  Licensed to Jasig under one or more contributor license

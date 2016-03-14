@@ -1,4 +1,4 @@
-package br.net.mirante.singular.pet.server.spring;
+package br.net.mirante.singular.pet.commons.spring;
 
 import br.net.mirante.singular.pet.commons.spring.security.ServerContext;
 

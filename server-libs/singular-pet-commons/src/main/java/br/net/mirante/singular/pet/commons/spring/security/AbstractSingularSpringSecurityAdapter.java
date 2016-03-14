@@ -1,4 +1,4 @@
-package br.net.mirante.singular.pet.server.spring.security;
+package br.net.mirante.singular.pet.commons.spring.security;
 
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 

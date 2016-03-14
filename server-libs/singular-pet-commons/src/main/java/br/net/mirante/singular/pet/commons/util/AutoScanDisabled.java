@@ -1,4 +1,4 @@
-package br.net.mirante.singular.pet.server.spring.util;
+package br.net.mirante.singular.pet.commons.util;
 
 /**
  * Anotação de marcação para indicar que um componente do spring não deve ser carregado durante o auto-scan.

@@ -1,4 +1,4 @@
-package br.net.mirante.singular.pet.server.spring;
+package br.net.mirante.singular.pet.commons.spring;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import br.net.mirante.singular.pet.server.spring.util.AutoScanDisabled;
+import br.net.mirante.singular.pet.commons.util.AutoScanDisabled;
 
 @EnableWebMvc
 @EnableWebSecurity
