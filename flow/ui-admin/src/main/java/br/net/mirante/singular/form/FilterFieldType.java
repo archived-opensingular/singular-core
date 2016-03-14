@@ -12,7 +12,7 @@ import br.net.mirante.singular.bamclient.portlet.filter.AggregationPeriod;
 import br.net.mirante.singular.bamclient.portlet.filter.FieldType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
+import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public enum FilterFieldType {
@@ -21,7 +21,7 @@ public enum FilterFieldType {
         @Override
         protected STypeSimple addFieldImpl(String groupConnectionURL, FilterConfig fc,
                                            STypeComposite root) {
-            return root.addCampoBoolean(fc.getIdentifier());
+            return root.addFieldBoolean(fc.getIdentifier());
         }
     },
 
@@ -29,7 +29,7 @@ public enum FilterFieldType {
         @Override
         protected STypeSimple addFieldImpl(String groupConnectionURL, FilterConfig fc,
                                            STypeComposite root) {
-            return root.addCampoInteger(fc.getIdentifier());
+            return root.addFieldInteger(fc.getIdentifier());
         }
     },
 
@@ -37,7 +37,7 @@ public enum FilterFieldType {
         @Override
         protected STypeSimple addFieldImpl(String groupConnectionURL, FilterConfig fc,
                                            STypeComposite root) {
-            return root.addCampoString(fc.getIdentifier());
+            return root.addFieldString(fc.getIdentifier());
         }
     },
 
@@ -45,7 +45,7 @@ public enum FilterFieldType {
         @Override
         protected STypeSimple addFieldImpl(String groupConnectionURL, FilterConfig fc,
                                            STypeComposite root) {
-            return root.addCampoString(fc.getIdentifier()).withTextAreaView();
+            return root.addFieldString(fc.getIdentifier()).withTextAreaView();
         }
     },
 
@@ -53,8 +53,8 @@ public enum FilterFieldType {
         @Override
         protected STypeSimple addFieldImpl(String groupConnectionURL, FilterConfig fc,
                                            STypeComposite root) {
-            final STypeSimple simpleType = root.addCampoString(fc.getIdentifier());
-            final MFixedOptionsSimpleProvider selectionProvider = simpleType.withSelection();
+            final STypeSimple simpleType = root.addFieldString(fc.getIdentifier());
+            final SFixedOptionsSimpleProvider selectionProvider = simpleType.withSelection();
             if (!isEmpty(fc.getRestEndpoint()) && !isEmpty(groupConnectionURL)) {
                 final String connectionURL = groupConnectionURL + fc.getRestEndpoint();
                 switch (fc.getRestReturnType()) {
@@ -71,7 +71,7 @@ public enum FilterFieldType {
             return simpleType;
         }
 
-        private void fillValueOptions(MFixedOptionsSimpleProvider provider, String endpoint) {
+        private void fillValueOptions(SFixedOptionsSimpleProvider provider, String endpoint) {
             final RestTemplate restTemplate = new RestTemplate();
             final List<String> list = restTemplate.getForObject(endpoint, List.class);
             if (list != null) {
@@ -79,7 +79,7 @@ public enum FilterFieldType {
             }
         }
 
-        private void fillKeyValueOptions(MFixedOptionsSimpleProvider provider, String endpoint) {
+        private void fillKeyValueOptions(SFixedOptionsSimpleProvider provider, String endpoint) {
             final RestTemplate restTemplate = new RestTemplate();
             final Map<String, String> map = restTemplate.getForObject(endpoint, Map.class);
             if (map != null) {
@@ -93,7 +93,7 @@ public enum FilterFieldType {
         @Override
         protected STypeSimple addFieldImpl(String groupConnectionURL, FilterConfig fc,
                                            STypeComposite root) {
-            return root.addCampoData(fc.getIdentifier());
+            return root.addFieldData(fc.getIdentifier());
         }
     },
 
@@ -101,8 +101,8 @@ public enum FilterFieldType {
         @Override
         protected STypeSimple addFieldImpl(String groupConnectionURL, FilterConfig fc,
                                            STypeComposite root) {
-            final STypeSimple typeSimple = root.addCampoString(fc.getIdentifier());
-            final MFixedOptionsSimpleProvider provider = typeSimple.withSelection();
+            final STypeSimple typeSimple = root.addFieldString(fc.getIdentifier());
+            final SFixedOptionsSimpleProvider provider = typeSimple.withSelection();
             Arrays.asList(AggregationPeriod.values()).forEach(ap -> provider.add(ap, ap.getDescription()));
             return typeSimple;
         }

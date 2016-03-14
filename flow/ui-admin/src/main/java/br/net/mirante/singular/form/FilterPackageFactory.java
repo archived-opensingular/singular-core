@@ -27,7 +27,7 @@ public class FilterPackageFactory {
 
     public SType<?> createFilterPackage() {
         final PackageBuilder builder = SDictionary.create().createNewPackage("FilterPackage");
-        final STypeComposite<? extends SIComposite> filtro = builder.createTipoComposto("filter");
+        final STypeComposite<? extends SIComposite> filtro = builder.createCompositeType("filter");
         appendFilters(filtro);
         return filtro;
     }
