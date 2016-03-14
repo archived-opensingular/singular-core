@@ -1,6 +1,5 @@
-package br.net.mirante.singular.service;
+package br.net.mirante.singular.rest.client;
 
-import br.net.mirante.singular.rest.client.FlowMetadataSpringREST;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,7 +15,7 @@ public class FlowMetadataSpringRESTTest {
         final String result2 = flowMetadataSpringREST.addOtherParameters();
         Assert.assertEquals(result2, "");
 
-        final String result3 = flowMetadataSpringREST.addOtherParameters((String[])null);
+        final String result3 = flowMetadataSpringREST.addOtherParameters((String[]) null);
         Assert.assertEquals(result3, null);
     }
 }
