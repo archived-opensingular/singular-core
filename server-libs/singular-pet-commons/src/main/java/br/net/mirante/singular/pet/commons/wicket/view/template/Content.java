@@ -13,7 +13,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
-import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.pet.commons.wicket.PetSession;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 

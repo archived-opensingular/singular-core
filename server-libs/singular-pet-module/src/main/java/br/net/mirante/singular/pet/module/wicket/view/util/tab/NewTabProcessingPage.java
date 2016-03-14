@@ -1,6 +1,6 @@
 package br.net.mirante.singular.pet.module.wicket.view.util.tab;
 
-import br.net.mirante.singular.lambda.IConsumer;
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
