@@ -11,14 +11,15 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import br.net.mirante.singular.bam.support.persistence.dao.DefinitionDAO;
+import br.net.mirante.singular.bam.support.persistence.dto.DefinitionDTO;
+import br.net.mirante.singular.bam.support.persistence.dto.MetaDataDTO;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import br.net.mirante.singular.bam.dao.DefinitionDAO;
+
 import br.net.mirante.singular.bam.dao.InstanceDAO;
-import br.net.mirante.singular.bam.dto.DefinitionDTO;
 import br.net.mirante.singular.bam.dto.InstanceDTO;
-import br.net.mirante.singular.bam.dto.MetaDataDTO;
 
 @Service("processDefinitionService")
 public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {

@@ -10,8 +10,9 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import br.net.mirante.singular.bam.dao.DefinitionDAO;
-import br.net.mirante.singular.bam.dto.DefinitionDTO;
+
+import br.net.mirante.singular.bam.support.persistence.dao.DefinitionDAO;
+import br.net.mirante.singular.bam.support.persistence.dto.DefinitionDTO;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.GroupDTO;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataProvider;

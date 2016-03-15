@@ -1,17 +1,12 @@
-/*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-
-package br.net.mirante.singular.bam.dto;
-
-import java.util.ArrayList;
-import java.util.List;
+package br.net.mirante.singular.bam.support.persistence.dto;
 
 import br.net.mirante.singular.flow.core.IEntityTaskType;
 import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IParameterDTO;
 import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MetaDataDTO implements IMetaDataDTO {
     private static final long serialVersionUID = -6631180471711181801L;

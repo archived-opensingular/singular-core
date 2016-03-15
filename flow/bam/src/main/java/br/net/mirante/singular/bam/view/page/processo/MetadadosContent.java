@@ -10,6 +10,8 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import java.util.List;
 
+import br.net.mirante.singular.bam.support.persistence.dto.DefinitionDTO;
+import br.net.mirante.singular.bam.support.persistence.dto.MetaDataDTO;
 import br.net.mirante.singular.bam.view.SingularWicketContainer;
 import br.net.mirante.singular.bam.view.template.Content;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -22,8 +24,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
-import br.net.mirante.singular.bam.dto.DefinitionDTO;
-import br.net.mirante.singular.bam.dto.MetaDataDTO;
+
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IParameterDTO;

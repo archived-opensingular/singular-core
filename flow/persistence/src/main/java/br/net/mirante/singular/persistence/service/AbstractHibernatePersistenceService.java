@@ -249,6 +249,9 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         sw.saveOrUpdate(processVersion.getVersionTasks().stream().map(tv -> tv.getTaskDefinition()));
         sw.saveOrUpdate(processVersion.getVersionTasks());
         sw.saveOrUpdate(processVersion.getVersionTasks().stream().flatMap(tv -> tv.getTransitions().stream()));
+        
+        sw.refresh(processVersion.getProcessDefinition());
+        
         return retrieveProcessVersionByCod(processVersion.getCod());
     }
 

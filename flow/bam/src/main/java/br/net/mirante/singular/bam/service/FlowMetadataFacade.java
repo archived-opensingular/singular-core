@@ -13,12 +13,13 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import br.net.mirante.singular.bam.support.persistence.dao.DefinitionDAO;
+import br.net.mirante.singular.bam.support.persistence.dto.DefinitionDTO;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import br.net.mirante.singular.bam.dao.DefinitionDAO;
+
 import br.net.mirante.singular.bam.dao.GroupDAO;
-import br.net.mirante.singular.bam.dto.DefinitionDTO;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.GroupDTO;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataProvider;

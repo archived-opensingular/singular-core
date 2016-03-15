@@ -22,6 +22,7 @@
 		<module>rest-client</module>
 		<module>alocpro-mock-client</module>
 		<module>bam-client</module>
+		<module>bam-support</module>
 	</modules>
 
 </project>

@@ -1,9 +1,18 @@
-/*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
+package br.net.mirante.singular.bam.support.persistence.dao;
 
-package br.net.mirante.singular.bam.dao;
+
+import br.net.mirante.singular.bam.support.persistence.dto.DefinitionDTO;
+import br.net.mirante.singular.bam.support.persistence.dto.MetaDataDTO;
+import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
+import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
+import br.net.mirante.singular.persistence.entity.ProcessVersionEntity;
+import br.net.mirante.singular.support.persistence.BaseDAO;
+import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,21 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.hibernate.Query;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
-import org.springframework.stereotype.Repository;
-
-import br.net.mirante.singular.bam.dto.DefinitionDTO;
-import br.net.mirante.singular.bam.dto.MetaDataDTO;
-import br.net.mirante.singular.flow.core.TaskType;
-import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
-import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
-import br.net.mirante.singular.persistence.entity.ProcessVersionEntity;
-
 @Repository
-public class DefinitionDAO extends BaseDAO{
+public class DefinitionDAO extends BaseDAO<ProcessDefinitionEntity, Integer> {
 
     public DefinitionDTO retrieveById(Integer id) {
         Query hql = getSession().createQuery("select pd.cod as cod, pd.name as nome, pd.key as sigla, pd.processGroup.cod as codGrupo from ProcessDefinitionEntity pd where pd.cod = :cod");
