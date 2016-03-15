@@ -91,7 +91,7 @@ public class TestFinders {
                 .orElse(false));
     }
 
-    protected static <T extends Component> Stream<T> findOnForm(Class<T> classOfQuery, Form form, Predicate<T> predicate) {
+    public static <T extends Component> Stream<T> findOnForm(Class<T> classOfQuery, Form form, Predicate<T> predicate) {
         final List<T> found = new ArrayList<>();
         form.visitChildren(classOfQuery, new IVisitor<T, Object>() {
             @Override
