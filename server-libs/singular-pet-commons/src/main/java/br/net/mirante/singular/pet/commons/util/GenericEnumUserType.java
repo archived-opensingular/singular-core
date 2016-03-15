@@ -51,7 +51,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
     private static final String DEFAULT_VALUE_OF_METHOD_NAME = "valueOf";
 
     /** Constante CLASS_NAME. */
-    public static final String CLASS_NAME = "br.net.mirante.singular.pet.module.persistence.util.GenericEnumUserType";
+    public static final String CLASS_NAME = "br.net.mirante.singular.pet.commons.util.GenericEnumUserType";
 
     /** Campo enum class. */
     @SuppressWarnings("rawtypes")
