@@ -8,7 +8,6 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -54,26 +53,26 @@ public class MasterDetailWithTableListWithStringTest extends AbstractSingularFor
 
         final AbstractLink masterDetailaddButton = findMasterDetailLink();
 
-        wicketTester.executeAjaxEvent(masterDetailaddButton, "click");
+        tester.executeAjaxEvent(masterDetailaddButton, "click");
 
         final Button tableAddButton = findTableAddButton();
 
         Assert.assertNotEquals(masterDetailaddButton, tableAddButton);
 
-        Stream<FormComponent> stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
 
-        wicketTester.executeAjaxEvent(tableAddButton, "click");
+        tester.executeAjaxEvent(tableAddButton, "click");
 
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
 
-        wicketTester.executeAjaxEvent(tableAddButton, "click");
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        tester.executeAjaxEvent(tableAddButton, "click");
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 2);
 
-        wicketTester.executeAjaxEvent(tableAddButton, "click");
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        tester.executeAjaxEvent(tableAddButton, "click");
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 3);
 
     }
@@ -83,27 +82,27 @@ public class MasterDetailWithTableListWithStringTest extends AbstractSingularFor
 
         final AbstractLink masterDetailaddButton = findMasterDetailLink();
 
-        wicketTester.executeAjaxEvent(masterDetailaddButton, "click");
+        tester.executeAjaxEvent(masterDetailaddButton, "click");
 
         final Button tableAddButton = findTableAddButton();
 
         Assert.assertNotEquals(masterDetailaddButton, tableAddButton);
 
-        Stream<FormComponent> stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
 
-        wicketTester.executeAjaxEvent(tableAddButton, "click");
+        tester.executeAjaxEvent(tableAddButton, "click");
 
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
 
         final String value = "123456";
 
-        formTester.setValue(getSimpleStringField(), value);
+        form.setValue(getSimpleStringField(), value);
 
-        wicketTester.executeAjaxEvent(tableAddButton, "click");
+        tester.executeAjaxEvent(tableAddButton, "click");
 
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 2);
 
         Assert.assertEquals(value, getSimpleStringField().getValue());
@@ -111,19 +110,19 @@ public class MasterDetailWithTableListWithStringTest extends AbstractSingularFor
     }
 
     private TextField getSimpleStringField() {
-        return (TextField) findFormComponentsByType(formTester.getForm(), simpleString)
+        return (TextField) findFormComponentsByType(form.getForm(), simpleString)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o select simples"));
     }
 
     private AbstractLink findMasterDetailLink() {
-        return findOnForm(AbstractLink.class, formTester.getForm(), (b) -> true)
+        return findOnForm(AbstractLink.class, form.getForm(), (b) -> true)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar do mestre detalhe"));
     }
 
     private Button findTableAddButton() {
-        return findOnForm(Button.class, formTester.getForm(), b -> b.getClass().getName().contains("AddButton"))
+        return findOnForm(Button.class, form.getForm(), b -> b.getClass().getName().contains("AddButton"))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar do table list"));
     }

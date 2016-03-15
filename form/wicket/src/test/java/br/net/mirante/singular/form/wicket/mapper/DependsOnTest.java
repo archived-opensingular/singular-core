@@ -46,7 +46,7 @@ public class DependsOnTest extends AbstractWicketFormTest {
         baseCompositeField = localPackage.createCompositeType("group");
     }
 
-    private void setupPage() {
+    protected void setupPage() {
         driver = new WicketTester(new TestApp());
 
         page = new TestPage();
