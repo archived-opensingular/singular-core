@@ -46,8 +46,8 @@ public class AtrBootstrap extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBootstrap onNewRow(Boolean valor) {
-        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW, valor);
+    public AtrBootstrap newRow() {
+        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW, true);
         return this;
     }
 

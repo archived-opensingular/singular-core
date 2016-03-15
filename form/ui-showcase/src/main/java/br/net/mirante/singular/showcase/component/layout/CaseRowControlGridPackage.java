@@ -22,7 +22,7 @@ public class CaseRowControlGridPackage extends SPackage {
                 .as(AtrBootstrap::new).colPreference(1);
         testForm.addFieldEmail("email")
                 .as(AtrBasic.class).label("E-mail")
-                .as(AtrBootstrap::new).onNewRow(true)
+                .as(AtrBootstrap::new).newRow()
                 .as(AtrBootstrap::new).colPreference(5);
     }
 
