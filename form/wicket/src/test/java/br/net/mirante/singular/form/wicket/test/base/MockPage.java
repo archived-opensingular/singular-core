@@ -1,7 +1,10 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
 import java.util.Optional;
+import java.util.function.Function;
 
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
@@ -28,6 +31,17 @@ import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 public abstract class MockPage extends WebPage {
 
     public SFormConfig<String> mockFormConfig = new MockFormConfig();
+    protected ViewMode viewMode = ViewMode.EDITION;
+    protected AnnotationMode annotationMode = AnnotationMode.NONE;
+    protected SInstance currentInstance;
+
+    public Function<SType, SInstance> instanceCreator =
+            (x) -> mockFormConfig.getDocumentFactory().createInstance(new RefType() {
+        @Override
+        protected SType<?> retrieve() {
+            return x;
+        }
+    });
 
     private Form<?> form = new Form("form");
 
@@ -40,13 +54,14 @@ public abstract class MockPage extends WebPage {
                     populateType((STypeComposite) mockType.get());
                 }
             }
-            return mockFormConfig.getDocumentFactory().createInstance(new RefType() {
-                @Override
-                protected SType<?> retrieve() {
-                    return mockType.get();
-                }
-            });
+            return currentInstance = instanceCreator.apply(mockType.get());
         }
+
+        @Override
+        public ViewMode getViewMode() { return viewMode;    }
+
+        @Override
+        public AnnotationMode annotation() {    return annotationMode;  }
     };
 
     private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn") {
@@ -78,6 +93,12 @@ public abstract class MockPage extends WebPage {
     public SingularValidationButton getSingularValidationButton() {
         return singularValidationButton;
     }
+
+    public void setAsVisualizationView() {  viewMode = ViewMode.VISUALIZATION;  }
+
+    public void enableAnnotation() { annotationMode = AnnotationMode.EDIT; }
+
+    public SInstance getCurrentInstance() { return currentInstance; }
 }
 
 class MockFormConfig implements SFormConfig<String> {
