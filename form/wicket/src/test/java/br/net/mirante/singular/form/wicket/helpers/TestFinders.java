@@ -1,12 +1,20 @@
 package br.net.mirante.singular.form.wicket.helpers;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
@@ -72,6 +80,28 @@ public class TestFinders {
                 }
             }
         });
+    }
+
+    public static Stream<FormComponent> findFormComponentsByType(Form form, SType type) {
+        return findOnForm(FormComponent.class, form, fc -> IMInstanciaAwareModel
+                .optionalCast(fc.getDefaultModel())
+                .map(IMInstanciaAwareModel::getMInstancia)
+                .map(SInstance::getType)
+                .map(type::equals)
+                .orElse(false));
+    }
+
+    public static <T extends Component> Stream<T> findOnForm(Class<T> classOfQuery, Form form, Predicate<T> predicate) {
+        final List<T> found = new ArrayList<>();
+        form.visitChildren(classOfQuery, new IVisitor<T, Object>() {
+            @Override
+            public void component(T t, IVisit<Object> visit) {
+                if (predicate.test(t)) {
+                    found.add(t);
+                }
+            }
+        });
+        return found.stream();
     }
 
 }
