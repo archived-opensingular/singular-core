@@ -18,40 +18,40 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        STypeLista<STypeString, SIString> nomes = pb.createTipoListaOf("nomes", STypeString.class);
+        STypeList<STypeString, SIString> nomes = pb.createListTypeOf("nomes", STypeString.class);
 
-        SList<SIString> lista = (SList<SIString>) nomes.novaInstancia();
-        lista.addValor("Paulo");
+        SIList<SIString> lista = (SIList<SIString>) nomes.newInstance();
+        lista.addValue("Paulo");
         assertLista(lista, new String[] { "Paulo" });
-        lista.addValor("Joao");
+        lista.addValue("Joao");
         assertLista(lista, new String[] { "Paulo", "Joao" });
-        lista.addValor("Maria");
+        lista.addValue("Maria");
         assertLista(lista, new String[] { "Paulo", "Joao", "Maria" });
 
         testCaminho(lista, null, null);
-        assertEquals(lista.getValor("[1]"), "Joao");
+        assertEquals(lista.getValue("[1]"), "Joao");
         assertEquals(lista.indexOf(lista.get(1)), 1);
         testCaminho(lista, "[1]", "[1]");
-        testCaminho(lista.getCampo("[1]"), null, "[1]");
+        testCaminho(lista.getField("[1]"), null, "[1]");
 
         lista.remove(1);
         assertLista(lista, new String[] { "Paulo", "Maria" });
         assertException(() -> lista.remove(10), IndexOutOfBoundsException.class);
 
-        SList<SIInteger> listaInt = (SList<SIInteger>) dicionario.getType(STypeInteger.class).novaLista();
-        listaInt.addValor(10);
+        SIList<SIInteger> listaInt = (SIList<SIInteger>) dicionario.getType(STypeInteger.class).newList();
+        listaInt.addValue(10);
         assertLista(listaInt, new Integer[] { 10 });
-        listaInt.addValor("20");
+        listaInt.addValue("20");
         assertLista(listaInt, new Integer[] { 10, 20 });
-        assertException(() -> listaInt.addValor("XX"), "não consegue converter");
+        assertException(() -> listaInt.addValue("XX"), "não consegue converter");
 
-        assertEquals(lista.getValor("[0]"), "Paulo");
-        assertEquals(listaInt.getValor("[1]"), 20);
-        assertException(() -> listaInt.getValor("[20]"), IndexOutOfBoundsException.class);
+        assertEquals(lista.getValue("[0]"), "Paulo");
+        assertEquals(listaInt.getValue("[1]"), 20);
+        assertException(() -> listaInt.getValue("[20]"), IndexOutOfBoundsException.class);
 
     }
 
-    private static void assertLista(SList<?> lista, Object[] valoresEsperados) {
+    private static void assertLista(SIList<?> lista, Object[] valoresEsperados) {
         assertEqualsList(lista.getValue(), valoresEsperados);
     }
 
@@ -59,78 +59,78 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        STypeLista<STypeComposite<SIComposite>, SIComposite> tipoPedidos = pb.createTipoListaOfNovoTipoComposto("pedidos", "pedido");
-        tipoPedidos.getTipoElementos().addCampoString("descricao");
-        tipoPedidos.getTipoElementos().addCampoInteger("qtd");
+        STypeList<STypeComposite<SIComposite>, SIComposite> tipoPedidos = pb.createListOfNewCompositeType("pedidos", "pedido");
+        tipoPedidos.getElementsType().addFieldString("descricao");
+        tipoPedidos.getElementsType().addFieldInteger("qtd");
 
-        SList<SIComposite> pedidos = (SList<SIComposite>) tipoPedidos.novaInstancia();
+        SIList<SIComposite> pedidos = (SIList<SIComposite>) tipoPedidos.newInstance();
         SIComposite pedido;
-        assertException(() -> pedidos.addValor("Paulo"), "SIComposite só suporta valores de mesmo tipo");
-        pedido = pedidos.addNovo();
+        assertException(() -> pedidos.addValue("Paulo"), "SIComposite só suporta valores de mesmo tipo");
+        pedido = pedidos.addNew();
         assertFilhos(pedidos, 1);
         assertNotNull(pedido);
         assertEquals(1, pedidos.size());
         assertTrue((pedidos.get(0)) instanceof SIComposite);
-        assertTrue((pedidos.getValorAt(0)) instanceof Collection);
+        assertTrue((pedidos.getValueAt(0)) instanceof Collection);
 
         assertException(() -> pedidos.get(10), IndexOutOfBoundsException.class);
-        assertException(() -> pedidos.getValorAt(10), IndexOutOfBoundsException.class);
+        assertException(() -> pedidos.getValueAt(10), IndexOutOfBoundsException.class);
 
-        pedido.setValor("descricao", "bola");
-        pedido.setValor("qtd", 20);
+        pedido.setValue("descricao", "bola");
+        pedido.setValue("qtd", 20);
         assertFilhos(pedidos, 3);
 
-        pedido = pedidos.addNovo();
-        pedido.setValor("descricao", "rede");
-        pedido.setValor("qtd", -10);
+        pedido = pedidos.addNew();
+        pedido.setValue("descricao", "rede");
+        pedido.setValue("qtd", -10);
 
-        assertException(() -> pedidos.getValorAt(10), IndexOutOfBoundsException.class);
+        assertException(() -> pedidos.getValueAt(10), IndexOutOfBoundsException.class);
 
-        assertEquals(pedidos.getValor("[0].descricao"), "bola");
-        assertEquals(pedidos.getValor("[0].qtd"), 20);
+        assertEquals(pedidos.getValue("[0].descricao"), "bola");
+        assertEquals(pedidos.getValue("[0].qtd"), 20);
 
         testAtribuicao(pedidos, "[1].descricao", "rede2", 6);
         testAtribuicao(pedidos, "[1].qtd", 20, 6);
-        assertException(() -> pedidos.setValor("[1].marca", 10), "Não é um campo definido");
+        assertException(() -> pedidos.setValue("[1].marca", 10), "Não é um campo definido");
 
         testCaminho(pedidos, null, null);
         testCaminho(pedidos, "[0]", "[0]");
         testCaminho(pedidos, "[0].descricao", "[0].descricao");
-        testCaminho(pedidos.getCampo("[0]"), null, "[0]");
-        testCaminho(pedidos.getCampo("[0]"), "qtd", "[0].qtd");
-        testCaminho(pedidos.getCampo("[0].qtd"), null, "[0].qtd");
+        testCaminho(pedidos.getField("[0]"), null, "[0]");
+        testCaminho(pedidos.getField("[0]"), "qtd", "[0].qtd");
+        testCaminho(pedidos.getField("[0].qtd"), null, "[0].qtd");
     }
 
     public void testTipoListaCriacaoOfTipoCompostoTipado() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        STypeLista<STypeFormula, SIFormula> tipoFormulas = pb.createTipoListaOf("formulas", STypeFormula.class);
+        STypeList<STypeFormula, SIFormula> tipoFormulas = pb.createListTypeOf("formulas", STypeFormula.class);
 
-        SList<SIFormula> formulas = (SList<SIFormula>) tipoFormulas.novaInstancia();
+        SIList<SIFormula> formulas = (SIList<SIFormula>) tipoFormulas.newInstance();
 
-        SIFormula formula = formulas.addNovo();
+        SIFormula formula = formulas.addNew();
         formula.setSciptJS("XXX");
         assertEquals(STypeFormula.TipoScript.JS, formula.getTipoScriptEnum());
 
-        assertEquals("XXX", formulas.getValorString("[0].script"));
-        assertEquals("JS", formulas.getValorString("[0].tipoScript"));
+        assertEquals("XXX", formulas.getValueString("[0].script"));
+        assertEquals("JS", formulas.getValueString("[0].tipoScript"));
     }
 
     public void testeOnCargaTipoDireto() {
         SDictionary dicionario = SDictionary.create();
         TestTipoListaComCargaInterna tipo = dicionario.getType(TestTipoListaComCargaInterna.class);
         assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
-        assertEquals((Boolean) true, tipo.isObrigatorio());
+        assertEquals((Boolean) true, tipo.isRequired());
     }
 
     public void testeOnCargaTipoChamadaSubTipo() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
-        TestTipoListaComCargaInterna tipo = pb.createTipo("arquivo", TestTipoListaComCargaInterna.class);
+        TestTipoListaComCargaInterna tipo = pb.createType("arquivo", TestTipoListaComCargaInterna.class);
 
         assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
-        assertEquals((Boolean) true, tipo.isObrigatorio());
+        assertEquals((Boolean) true, tipo.isRequired());
     }
 
     public static final class TestPacoteListaA extends SPackage {
@@ -141,14 +141,14 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         @Override
         protected void carregarDefinicoes(PackageBuilder pb) {
-            pb.createTipo(TestTipoListaComCargaInterna.class);
+            pb.createType(TestTipoListaComCargaInterna.class);
         }
 
-        @MInfoTipo(nome = "TestTipoListaComCargaInterna", pacote = TestPacoteListaA.class)
-        public static final class TestTipoListaComCargaInterna extends STypeLista<STypeString, SIString> {
+        @SInfoType(name = "TestTipoListaComCargaInterna", spackage = TestPacoteListaA.class)
+        public static final class TestTipoListaComCargaInterna extends STypeList<STypeString, SIString> {
             @Override
             protected void onLoadType(TypeBuilder tb) {
-                withObrigatorio(true);
+                withRequired(true);
                 as(AtrBasic.class).label("xxx");
             }
         }

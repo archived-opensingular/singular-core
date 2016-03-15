@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.behavior;
 
 import java.io.Serializable;
@@ -7,8 +12,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.behavior.Behavior;
 
-import br.net.mirante.singular.lambda.IBiConsumer;
-import br.net.mirante.singular.lambda.ITriConsumer;
+import br.net.mirante.singular.commons.lambda.IBiConsumer;
+import br.net.mirante.singular.commons.lambda.ITriConsumer;
 
 public interface IAjaxUpdateConfiguration<C extends Component> extends Serializable {
 

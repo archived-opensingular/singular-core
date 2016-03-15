@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
 import java.io.Serializable;
@@ -163,17 +168,17 @@ public class AnnotationComponent extends Panel {
 
                 thiz.setBody(new Label("alert",$m.ofValue("Deseja realmente apagar este comentário?")));
 
-                this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("Apagar"),
+                this.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Apagar"),
                     new ActionAjaxButton("deleteBtn"){
                         protected void onAction(AjaxRequestTarget target, Form<?> form){
                             ((SIAnnotation)model.getObject()).clear();
-                            target.add(AnnotationComponent.this);
+                            target.add(AnnotationComponent.this.mainGrid);
                             target.appendJavaScript(AnnotationComponent.this.generateUpdateJS());
                             thiz.hide(target);
                         }
                     }
                 );
-                this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"),
+                this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
                     new ActionAjaxLink("cancelDeleteBtn"){
                         protected void onAction(AjaxRequestTarget target) {
                             thiz.hide(target);
@@ -249,12 +254,12 @@ public class AnnotationComponent extends Panel {
 
     public static BSContainer appendAnnotationToggleButton(BSContainer grid, SIComposite instance) {
         BSContainer toggleContainer = new BSContainer<>("_toggle_btn_");
-        toggleContainer.setInnerStyle("position:absolute;top:15px;right: 15px;");
+        toggleContainer.setInnerStyle("position:absolute;top:23px;right: 17px;");
 
         AtrAnnotation annotatedInstance = instance.as(AtrAnnotation::new);
 
         toggleContainer.appendTag("a",true,
-                "href='javascript:;' class='btn btn-circle btn-icon-only "+
+                "href='javascript:;' style='padding-top: 7px; height: 27px; width: 27px;' class='btn btn-circle btn-icon-only "+
                         buttonColor(annotatedInstance) +"'", createIcon(annotatedInstance));
 
         grid.appendTag("div",true,"class='annotation-toggle-container'",toggleContainer);
@@ -280,6 +285,10 @@ public class AnnotationComponent extends Panel {
 
     public void setMainGrid(BSContainer mainGrid) {
         this.mainGrid = mainGrid;
+    }
+
+    void setKeepOpened(boolean keepOpened) {
+        this.keepOpened = keepOpened;
     }
 }
 
@@ -311,12 +320,14 @@ class AnnotationModalWindow extends BFModalWindow{
 
         this.setBody(createBody());
 
-        this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"),
+        this.addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"),
                 createOkButton(parentComponent)
         );
-        this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"),
+        this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
                 createCancelButton()
         );
+
+        this.setCloseIconCallback(target -> parentComponent.setKeepOpened(false));
     }
 
     private BSContainer createBody() {
@@ -374,7 +385,6 @@ class AnnotationModalWindow extends BFModalWindow{
     private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
         return new ActionAjaxButton("btn-ok") {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-//                target.add(parentComponent);
                 target.add(parentComponent.mainGrid);
                 AnnotationModalWindow.this.hide(target);
                 target.appendJavaScript(parentComponent.generateUpdateJS());
@@ -385,6 +395,7 @@ class AnnotationModalWindow extends BFModalWindow{
     private ActionAjaxLink<Void> createCancelButton() {
         return new ActionAjaxLink<Void>("btn-cancelar") {
             protected void onAction(AjaxRequestTarget target) {
+                parentComponent.setKeepOpened(false);
                 AnnotationModalWindow.this.hide(target);
             }
         };

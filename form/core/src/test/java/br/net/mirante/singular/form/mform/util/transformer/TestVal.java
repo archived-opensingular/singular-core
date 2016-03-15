@@ -1,15 +1,15 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,15 +33,15 @@ public class TestVal {
     private STypeComposite<? extends SIComposite> _raiz;
     private STypeString _descricao;
     private STypeComposite<SIComposite> _periodo;
-    private STypeData _dataInicial;
-    private STypeData _dataFinal;
-    private STypeLista<STypeComposite<SIComposite>, SIComposite> _alertas;
+    private STypeDate _dataInicial;
+    private STypeDate _dataFinal;
+    private STypeList<STypeComposite<SIComposite>, SIComposite> _alertas;
     private STypeComposite<SIComposite> _alerta;
-    private STypeData _alerta_data;
+    private STypeDate _alerta_data;
     private SIComposite evento;
-    private SList<SIComposite> alertas;
+    private SIList<SIComposite> alertas;
     private Map<String, Object> valorEsperado = new LinkedHashMap<>();
-    private SList listaAlertas;
+    private SIList listaAlertas;
     private SIComposite alerta3;
     private SIComposite alertaVazio;
     private SIComposite alerta2;
@@ -54,14 +54,14 @@ public class TestVal {
         _dicionario = SDictionary.create();
         PackageBuilder pb = _dicionario.createNewPackage("teste");
 
-        _raiz = pb.createTipoComposto("_raiz");
-        _descricao = _raiz.addCampo("descricao", STypeString.class);
-        _periodo = _raiz.addCampoComposto("periodo");
-        _dataInicial = _periodo.addCampo("dataInicial", STypeData.class);
-        _dataFinal = _periodo.addCampo("dataFinal", STypeData.class);
-        _alertas = _periodo.addCampoListaOfComposto("alertas", "alerta");
-        _alerta = _alertas.getTipoElementos();
-        _alerta_data = _alerta.addCampo("data", STypeData.class);
+        _raiz = pb.createCompositeType("_raiz");
+        _descricao = _raiz.addField("descricao", STypeString.class);
+        _periodo = _raiz.addFieldComposite("periodo");
+        _dataInicial = _periodo.addField("dataInicial", STypeDate.class);
+        _dataFinal = _periodo.addField("dataFinal", STypeDate.class);
+        _alertas = _periodo.addFieldListOfComposite("alertas", "alerta");
+        _alerta = _alertas.getElementsType();
+        _alerta_data = _alerta.addField("data", STypeDate.class);
 
         _raiz.asAtrBasic().label("Evento");
         _descricao.asAtrBasic().label("Descrição");
@@ -72,59 +72,59 @@ public class TestVal {
         _alerta.asAtrBasic().label("Alerta");
         _alerta_data.asAtrBasic().label("Data");
 
-        evento = _raiz.novaInstancia();
+        evento = _raiz.newInstance();
 
 
         // descricao
-        evento.setValor(_descricao, DESCRICAO);
-        valorEsperado.put(_descricao.getSimpleName(), DESCRICAO);
+        evento.setValue(_descricao, DESCRICAO);
+        valorEsperado.put(_descricao.getNameSimple(), DESCRICAO);
         // perido
-        SIComposite periodo = (SIComposite) evento.getCampo(_periodo.getSimpleName());
-        valorEsperado.put(_periodo.getSimpleName(), new LinkedHashMap<String, Object>());
+        SIComposite periodo = (SIComposite) evento.getField(_periodo.getNameSimple());
+        valorEsperado.put(_periodo.getNameSimple(), new LinkedHashMap<String, Object>());
         //dt inicial
-        periodo.setValor(_dataInicial, DT_INICIAL);
-        ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).put(_dataInicial.getSimpleName(), DT_INICIAL);
+        periodo.setValue(_dataInicial, DT_INICIAL);
+        ((Map<String, Object>) valorEsperado.get(_periodo.getNameSimple())).put(_dataInicial.getNameSimple(), DT_INICIAL);
         //dt final
-        periodo.setValor(_dataFinal, DT_FINAL);
-        ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).put(_dataFinal.getSimpleName(), DT_FINAL);
+        periodo.setValue(_dataFinal, DT_FINAL);
+        ((Map<String, Object>) valorEsperado.get(_periodo.getNameSimple())).put(_dataFinal.getNameSimple(), DT_FINAL);
         //alertas
-        listaAlertas = (SList) periodo.getCampo(_alertas.getSimpleName());
-        ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).put(_alertas.getSimpleName(), new ArrayList<Map<String, Date>>());
+        listaAlertas = (SIList) periodo.getField(_alertas.getNameSimple());
+        ((Map<String, Object>) valorEsperado.get(_periodo.getNameSimple())).put(_alertas.getNameSimple(), new ArrayList<Map<String, Date>>());
 
         //Alerta Data 1
-        alerta1 = _alerta.novaInstancia();
-        alerta1.getCampo(_alerta_data.getSimpleName()).setValue(DT_1);
+        alerta1 = _alerta.newInstance();
+        alerta1.getField(_alerta_data.getNameSimple()).setValue(DT_1);
         listaAlertas.addElement(alerta1);
         Map<String, Date> alertaMap1 = new LinkedHashMap<>();
-        alertaMap1.put(_alerta_data.getSimpleName(), DT_1);
-        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).get(_alertas.getSimpleName())).add(alertaMap1);
+        alertaMap1.put(_alerta_data.getNameSimple(), DT_1);
+        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getNameSimple())).get(_alertas.getNameSimple())).add(alertaMap1);
 
         //Alerta Data 2
-        alerta2 = _alerta.novaInstancia();
-        alerta2.getCampo(_alerta_data.getSimpleName()).setValue(DT_2);
+        alerta2 = _alerta.newInstance();
+        alerta2.getField(_alerta_data.getNameSimple()).setValue(DT_2);
         listaAlertas.addElement(alerta2);
         Map<String, Date> alertaMap2 = new LinkedHashMap<>();
-        alertaMap2.put(_alerta_data.getSimpleName(), DT_2);
-        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).get(_alertas.getSimpleName())).add(alertaMap2);
+        alertaMap2.put(_alerta_data.getNameSimple(), DT_2);
+        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getNameSimple())).get(_alertas.getNameSimple())).add(alertaMap2);
 
         //Alerta Data 3
-        alerta3 = _alerta.novaInstancia();
-        data3 = (SISimple) alerta3.getCampo(_alerta_data.getSimpleName());
+        alerta3 = _alerta.newInstance();
+        data3 = (SISimple) alerta3.getField(_alerta_data.getNameSimple());
         data3.setValue(DT_3);
         listaAlertas.addElement(alerta3);
         Map<String, Date> alertaMap3 = new LinkedHashMap<>();
-        alertaMap3.put(_alerta_data.getSimpleName(), DT_3);
-        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).get(_alertas.getSimpleName())).add(alertaMap3);
+        alertaMap3.put(_alerta_data.getNameSimple(), DT_3);
+        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getNameSimple())).get(_alertas.getNameSimple())).add(alertaMap3);
 
         //Alerta Vazio
-        alertaVazio = _alerta.novaInstancia();
-        dataVazia = (SISimple) alertaVazio.getCampo(_alerta_data.getSimpleName());
+        alertaVazio = _alerta.newInstance();
+        dataVazia = (SISimple) alertaVazio.getField(_alerta_data.getNameSimple());
         dataVazia.setValue(null);
 
         listaAlertas.addElement(alertaVazio);
         Map<String, Date> alertaVazioMap = new LinkedHashMap<>();
-        alertaVazioMap.put(_alerta_data.getSimpleName(), null);
-        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).get(_alertas.getSimpleName())).add(alertaVazioMap);
+        alertaVazioMap.put(_alerta_data.getNameSimple(), null);
+        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getNameSimple())).get(_alertas.getNameSimple())).add(alertaVazioMap);
 
     }
 
@@ -135,14 +135,14 @@ public class TestVal {
 
     @Test
     public void testHydrate() {
-        SIComposite novaInstancia = _raiz.novaInstancia();
+        SIComposite novaInstancia = _raiz.newInstance();
         Value.hydrate(novaInstancia, valorEsperado);
         Assert.assertEquals(evento, novaInstancia);
     }
 
     @Test
     public void testHydrateDehydrate() {
-        SIComposite novaInstancia = _raiz.novaInstancia();
+        SIComposite novaInstancia = _raiz.newInstance();
         Value.hydrate(novaInstancia, valorEsperado);
         Assert.assertEquals(valorEsperado, Value.dehydrate(novaInstancia));
     }
@@ -151,7 +151,7 @@ public class TestVal {
     @Test
     public void testDehydrateHydrate() {
         Object value = Value.dehydrate(evento);
-        SInstance novaInstancia = _raiz.novaInstancia();
+        SInstance novaInstancia = _raiz.newInstance();
         Value.hydrate(novaInstancia, valorEsperado);
         Assert.assertEquals(evento, novaInstancia);
     }
@@ -176,14 +176,15 @@ public class TestVal {
 
     @Test
     public void testNullSafe() {
-        Value.of((SISimple)null);
-        Value.of(null, null);
-        Value.notNull((SList) null);
+        Value.of((SISimple) null);
+        Value.of(null, (String) null);
+        Value.of(null, (STypeSimple) null);
+        Value.notNull((SIList) null);
         Value.notNull((SInstance) null, (STypeSimple) null);
         Value.notNull((SInstance) null, (STypeComposite) null);
-        Value.notNull((SInstance) null, (STypeLista) null);
-        Value.dehydrate((SIComposite)null);
-        Value.hydrate((SIComposite)null, null);
+        Value.notNull((SInstance) null, (STypeList) null);
+        Value.dehydrate((SIComposite) null);
+        Value.hydrate((SIComposite) null, null);
     }
 
 }

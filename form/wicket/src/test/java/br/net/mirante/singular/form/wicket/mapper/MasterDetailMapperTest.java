@@ -6,14 +6,14 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
+import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
-import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
+import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
@@ -28,14 +28,14 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
     protected FormTester form;
     private STypeComposite<?> listElementType;
     private STypeBoolean field1;
-    private STypeAnoMes date;
+    private STypeYearMonth date;
     private STypeDecimal number;
-    private STypeLista<STypeComposite<SIComposite>, SIComposite> listBaseType;
+    private STypeList<STypeComposite<SIComposite>, SIComposite> listBaseType;
     private STypeCPF cpf;
 
     protected void setup() {
         localPackage = dicionario.createNewPackage("test");
-        baseCompositeField = localPackage.createTipoComposto("group");
+        baseCompositeField = localPackage.createCompositeType("group");
 
         loadTestType(baseCompositeField);
 
@@ -57,19 +57,19 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
     }
 
     private void loadTestType(STypeComposite<?> baseCompositeField) {
-        listBaseType = baseCompositeField.addCampoListaOfComposto("listOf", "compositeStuff");
-        listElementType = listBaseType.getTipoElementos();
-        date = listElementType.addCampo("date", STypeAnoMes.class);
-        number = listElementType.addCampo("number", STypeDecimal.class);
-        cpf = listElementType.addCampo("cpf", STypeCPF.class);
+        listBaseType = baseCompositeField.addFieldListOfComposite("listOf", "compositeStuff");
+        listElementType = listBaseType.getElementsType();
+        date = listElementType.addField("date", STypeYearMonth.class);
+        number = listElementType.addField("number", STypeDecimal.class);
+        cpf = listElementType.addField("cpf", STypeCPF.class);
 
-        listBaseType.withView(new MListMasterDetailView().col(date).col(number));
+        listBaseType.withView(new SViewListByMasterDetail().col(date).col(number));
     }
 
     @Test public void rendersDataDisplayValuesOnTable(){
         setup();
-        SList<SIComposite> list = page.getCurrentInstance().getDescendant(listBaseType);
-        SIComposite e = list.addNovo();
+        SIList<SIComposite> list = page.getCurrentInstance().getDescendant(listBaseType);
+        SIComposite e = list.addNew();
         e.getDescendant(date).setValue(java.time.YearMonth.of(2016,01));
         e.getDescendant(number).setValue(2.5);
         e.getDescendant(cpf).setValue("000.111.222-33");

@@ -1,23 +1,22 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.core.annotation;
 
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import br.net.mirante.singular.form.mform.AtrRef;
-import br.net.mirante.singular.form.mform.MAtributoEnabled;
-import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
+import br.net.mirante.singular.form.mform.SAttributeEnabled;
+import br.net.mirante.singular.form.mform.STranslatorForAttribute;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -26,9 +25,9 @@ import static com.google.common.collect.Lists.newArrayList;
  *
  * @author Fabricio Buzeto
  */
-public class AtrAnnotation extends MTranslatorParaAtributo {
+public class AtrAnnotation extends STranslatorForAttribute {
     public AtrAnnotation() {}
-    public AtrAnnotation(MAtributoEnabled alvo) {
+    public AtrAnnotation(SAttributeEnabled alvo) {
         super(alvo);
     }
 
@@ -129,20 +128,20 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     private void atrValue(AtrRef ref, Object value) {
-        getAlvo().setValorAtributo(ref, value);
+        getTarget().setAttributeValue(ref, value);
     }
 
     private <T extends Object> T atrValue(AtrRef<?, ?, T > ref) {
-        return getAlvo().getValorAtributo(ref);
+        return getTarget().getAttributeValue(ref);
     }
 
     /**
      * @return All annotations on this instance and its children.
      */
     public List<SIAnnotation> allAnnotations() {
-        SList sList = persistentAnnotations();
+        SIList sList = persistentAnnotations();
         if(sList == null) return newArrayList();
-        return sList.getValores();
+        return sList.getValues();
     }
 
     /**
@@ -151,19 +150,19 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      * is referring to.
      * @param annotations to be loaded into the instance.
      */
-    public void loadAnnotations(SList annotations) {
+    public void loadAnnotations(SIList annotations) {
         target().getDocument().setAnnotations(annotations);
     }
 
     /**
      * @return A ready to persist object containing all annotations from this instance and its children.
      */
-    public SList persistentAnnotations() {
-        return ((SInstance)getAlvo()).getDocument().annotations();
+    public SIList persistentAnnotations() {
+        return ((SInstance)getTarget()).getDocument().annotations();
     }
 
-    private SList newAnnotationList() {
-        return (SList) annotationListType().novaInstancia();
+    private SIList newAnnotationList() {
+        return (SIList) annotationListType().newInstance();
     }
 
     private STypeAnnotationList annotationListType() {
@@ -175,7 +174,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     private SInstance target() {
-        return (SInstance) getAlvo();
+        return (SInstance) getTarget();
     }
 
     public void clear() {   annotation().clear();    }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.Collection;
@@ -6,8 +11,8 @@ import java.util.stream.Collectors;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.options.MOptionsConfig;
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.options.SOptionsConfig;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 @SuppressWarnings({"serial", "rawtypes"})
@@ -23,8 +28,8 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
     @SuppressWarnings("unchecked")
     public T getObject() {
         SInstance target = getTarget();
-        if (getTarget() instanceof SList) {
-            SList list = (SList) getTarget();
+        if (getTarget() instanceof SIList) {
+            SIList list = (SIList) getTarget();
             return (T) list.getAllChildren()
                     .stream()
                     .map(c -> getSimpleSelection(c, list.getOptionsConfig()))
@@ -49,9 +54,9 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
     }
 
     @SuppressWarnings("unchecked")
-    protected T getSimpleSelection(SInstance target, MOptionsConfig provider) {
+    protected T getSimpleSelection(SInstance target, SOptionsConfig provider) {
         if (target != null) {
-            String key = provider.getKeyFromOptions(target);
+            String key = provider.getKeyFromOption(target);
             String label = provider.getLabelFromKey(key);
             return (T) new SelectOption(label, key);
         }
@@ -62,7 +67,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
         return model.getObject();
     }
 
-    private void setValueAt(SInstance instance, SelectOption object, MOptionsConfig provider) {
+    private void setValueAt(SInstance instance, SelectOption object, SOptionsConfig provider) {
         if (object == null) {
             instance.clearInstance();
         } else if (instance != null) {
@@ -72,11 +77,11 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
 
     private void setListValueAt(SInstance instance,
                                 Collection<SelectOption> data) {
-        if (data != null && instance instanceof SList) {
-            SList<?> list = (SList<?>) instance;
+        if (data != null && instance instanceof SIList) {
+            SIList<?> list = (SIList<?>) instance;
             list.clear();
             for (SelectOption o : data) {
-                SInstance element = list.addNovo();
+                SInstance element = list.addNew();
                 setValueAt(element, o, list.getOptionsConfig());
             }
         }

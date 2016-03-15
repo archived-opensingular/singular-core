@@ -41,7 +41,7 @@ public class STypeIdentifiersTest {
 
         @Test
         public void valid() {
-            pkg.createTipoComposto(identifier);
+            pkg.createCompositeType(identifier);
         }
     }
 
@@ -71,7 +71,7 @@ public class STypeIdentifiersTest {
         @Test
         public void invalid() {
             ex.expect(RuntimeException.class);
-            pkg.createTipoComposto(identifier);
+            pkg.createCompositeType(identifier);
         }
     }
 }

@@ -1,22 +1,27 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.exemplos.canabidiol;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
-@MInfoTipo(nome = "MTipoDescricaoProduto", pacote = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
 
@@ -53,7 +58,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        nomeComercial = this.addCampoInteger("nomeComercial");
+        nomeComercial = this.addFieldInteger("nomeComercial");
 
         nomeComercial
                 .as(AtrCore::new)
@@ -63,7 +68,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         nomeComercial
                 .withSelection()
-                .add(1, "Cibdex Hemp CBD Complex 1oz (Gotas) – Fabricante: Cibdex Inc.")
+.add(1, "Cibdex Hemp CBD Complex 1oz (Gotas) – Fabricante: Cibdex Inc.")
                 .add(2, "Cibdex Hemp CBD Complex 2oz (Gotas) – Fabricante: Cibdex Inc.")
                 .add(3, "Cibdex Hemp CBD Complex (Cápsulas) – Fabricante: Cibdex Inc.")
                 .add(4, "Hemp CBD Oil 2000mg Canabidiol - 240mL - Fabricante: Bluebird Botanicals")
@@ -73,43 +78,43 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .add(8, "Outro");
 
         nomeComercial
-                .withView(new MSelecaoPorRadioView().layoutVertical());
+                .withView(new SViewSelectionByRadio().verticalLayout());
 
 
-        composicao = this.addCampoString("composicao");
+        composicao = this.addFieldString("composicao");
 
         composicao
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)
-                .label("Composição")
+.label("Composição")
                 .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8)
                 .dependsOn(nomeComercial)
                 .as(AtrBootstrap::new)
                 .colPreference(6);
 
         composicao
-                .withView(new MSelecaoPorRadioView().layoutVertical());
+                .withView(new SViewSelectionByRadio().verticalLayout());
 
         composicao.withSelectionFromProvider(
                 optionsInstance -> {
-                    SList<?> lista = composicao.novaLista();
+                    SIList<?> lista = composicao.newList();
                     String value = composicoes.get(Value.of(optionsInstance, nomeComercial));
                     if (value != null) {
-                        lista.addValor(value);
+                        lista.addValue(value);
                     }
                     return lista;
                 }
         );
 
 
-        enderecoFabricante = this.addCampoString("enderecoFabricante");
+        enderecoFabricante = this.addFieldString("enderecoFabricante");
 
         enderecoFabricante
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)
-                .label("Endereço do fabricante")
+.label("Endereço do fabricante")
 
                 .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8)
                 .dependsOn(nomeComercial)
@@ -117,21 +122,21 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .colPreference(6);
 
         enderecoFabricante
-                .withView(new MSelecaoPorRadioView().layoutVertical());
+                .withView(new SViewSelectionByRadio().verticalLayout());
 
         enderecoFabricante.withSelectionFromProvider(
                 optionsInstance -> {
-                    SList<?> lista = enderecoFabricante.novaLista();
+                    SIList<?> lista = enderecoFabricante.newList();
                     String value = enderecos.get(Value.of(optionsInstance, nomeComercial));
                     if (value != null) {
-                        lista.addValor(value);
+                        lista.addValue(value);
                     }
                     return lista;
                 }
         );
 
 
-        STypeComposite<?> outroMedicamento = this.addCampoComposto("outro");
+        STypeComposite<?> outroMedicamento = addFieldComposite("outro");
         outroMedicamento
                 .as(AtrCore::new)
                 .as(AtrBasic::new)
@@ -141,7 +146,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8);
 
         outroMedicamento
-                .addCampoString("outroNome")
+                .addFieldString("outroNome")
                 .as(AtrCore::new)
                 .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .as(AtrBasic::new)
@@ -149,27 +154,27 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .as(AtrBootstrap::new)
                 .colPreference(6);
 
-        outroComposicao = outroMedicamento.addCampoString("outroComposicao");
+        outroComposicao = outroMedicamento.addFieldString("outroComposicao");
 
         outroComposicao
                 .as(AtrCore::new)
                 .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .as(AtrBasic::new)
-                .label("Composição")
+.label("Composição")
                 .as(AtrBootstrap::new)
                 .colPreference(6);
 
         outroMedicamento
-                .addCampoString("outroEndereco")
+                .addFieldString("outroEndereco")
                 .as(AtrCore::new)
                 .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .as(AtrBasic::new)
-                .label("Endereço do Fabricante")
+.label("Endereço do Fabricante")
                 .as(AtrBootstrap::new)
                 .colPreference(12);
 
 
-        descricaoQuantidade = this.addCampoString("descricaoQuantidade");
+        descricaoQuantidade = this.addFieldString("descricaoQuantidade");
 
         descricaoQuantidade
                 .as(AtrCore::new)

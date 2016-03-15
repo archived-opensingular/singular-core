@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import org.apache.wicket.Component;
@@ -24,8 +24,8 @@ public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
 
     @Override @SuppressWarnings({ "unchecked", "rawtypes" })
     SType createSelectionType(STypeComposite group) {
-        selectType = group.addCampoString("favoriteFruit");
-        selectType.withView(MSelecaoPorModalBuscaView::new);
+        selectType = group.addFieldString("favoriteFruit");
+        selectType.withView(SViewSelectionBySearchModal::new);
         return selectType;
     }
 
@@ -57,7 +57,7 @@ public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
 
     @Test public void showPreviousValueWhenRendering(){
         setupPage();
-        page.getCurrentInstance().setValor(selectType.getSimpleName(),"apple");
+        page.getCurrentInstance().setValue(selectType.getNameSimple(),"apple");
         selectType.withSelectionOf("strawberry","apple","orange","banana");
         buildPage();
 
@@ -68,7 +68,7 @@ public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
 
     @Test public void showDanglingValueOnOptions(){
         setupPage();
-        page.getCurrentInstance().setValor(selectType.getSimpleName(),"avocado");
+        page.getCurrentInstance().setValue(selectType.getNameSimple(),"avocado");
         selectType.withSelectionOf("strawberry","apple","orange","banana");
         buildPage();
 
@@ -85,7 +85,7 @@ public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
     @Ignore("Must understand how to handle the ajax modal and its actions")
     @Test public void changeValueWhenSelected(){
         setupPage();
-        page.getCurrentInstance().setValor(selectType.getSimpleName(),"orange");
+        page.getCurrentInstance().setValue(selectType.getNameSimple(),"orange");
         selectType.withSelectionOf("strawberry","apple","orange","banana");
         buildPage();
         assertThat(page.size()).isEqualTo(3);

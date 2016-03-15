@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
+import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -24,16 +24,16 @@ public class MultipleSelectMapperTest extends MapperBaseTest {
 
     @Override
     public void appendPackageFields(STypeComposite<? extends SIComposite> form) {
-        STypeString gadgets = form.addCampoString("gadget").withSelectionOf("iPod", "iPhone", "iMac");
-        STypeLista<STypeString, SIString> gadgetsChoices = form.addCampoListaOf("gadgets", gadgets);
-        gadgetsChoices.withView(MSelecaoMultiplaPorSelectView::new);
+        STypeString gadgets = form.addFieldString("gadget").withSelectionOf("iPod", "iPhone", "iMac");
+        STypeList<STypeString, SIString> gadgetsChoices = form.addFieldListOf("gadgets", gadgets);
+        gadgetsChoices.withView(SMultiSelectionBySelectView::new);
     }
 
     @Override
     public void mockFormValues(SIComposite formInstance) {
-        SList gadgets = (SList) formInstance.getCampo("gadgets");
-        gadgets.addNovo().setValue("iPod");
-        gadgets.addNovo().setValue("iPhone");
+        SIList gadgets = (SIList) formInstance.getField("gadgets");
+        gadgets.addNew().setValue("iPod");
+        gadgets.addNew().setValue("iPhone");
     }
 
     @Test

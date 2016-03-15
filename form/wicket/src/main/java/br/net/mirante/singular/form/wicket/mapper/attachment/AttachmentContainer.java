@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -54,7 +59,7 @@ class AttachmentContainer extends BSContainer {
     private FormComponent fileField, nameField, hashField, sizeField, idField;
 
     public AttachmentContainer(IModel<? extends SIAttachment> model) {
-        super("_attachment_" + model.getObject().getNome());
+        super("_attachment_" + model.getObject().getName());
         setupFields(model);
         this.add(this.uploader = new UploadBehavior(model.getObject()));
         this.add(this.downloader = new DownloadBehaviour(model.getObject()));
@@ -63,7 +68,7 @@ class AttachmentContainer extends BSContainer {
 
     @SuppressWarnings("unchecked")
     protected FormComponent setupFields(IModel<? extends SInstance> model) {
-        String name = model.getObject().getNome();
+        String name = model.getObject().getName();
         fileField = new FileUploadField(name, new IMInstanciaAwareModel() {
             @Override
             public Object getObject() {return null;}

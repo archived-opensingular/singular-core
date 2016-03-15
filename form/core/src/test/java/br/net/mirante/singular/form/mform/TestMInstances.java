@@ -10,12 +10,12 @@ public class TestMInstances {
         SDictionary dicionario = SDictionary.create();
         SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
-        SIComposite contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.newInstance();
 
-        MInstances.getDescendant(contato, pacote.nome).getValue();
-        MInstances.listDescendants(contato, pacote.enderecoEstado).stream();
+        SInstances.getDescendant(contato, pacote.nome).getValue();
+        SInstances.listDescendants(contato, pacote.enderecoEstado).stream();
 
-        Assert.assertTrue(MInstances.findCommonAncestor(contato, pacote.contato)
+        Assert.assertTrue(SInstances.findCommonAncestor(contato, pacote.contato)
             .filter(it -> it.getType() == pacote.contato)
             .isPresent());
     }

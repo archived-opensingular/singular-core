@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.options;
 
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
 
@@ -14,15 +19,15 @@ import br.net.mirante.singular.form.mform.document.SDocument;
  *
  */
 @SuppressWarnings("serial")
-public class LookupOptionsProvider implements MOptionsProvider {
+public class LookupOptionsProvider implements SOptionsProvider {
     private String providerName;
-    private Class<? extends MOptionsProvider> providerClass;
+    private Class<? extends SOptionsProvider> providerClass;
 
     public LookupOptionsProvider(String providerName) {
         this.providerName = providerName;
     }
 
-    public LookupOptionsProvider(Class<? extends MOptionsProvider> providerClass) {
+    public LookupOptionsProvider(Class<? extends SOptionsProvider> providerClass) {
         this.providerClass = providerClass;
     }
 
@@ -32,28 +37,28 @@ public class LookupOptionsProvider implements MOptionsProvider {
     }
 
     @Override
-    public SList<? extends SInstance> listOptions(SInstance instance) {
+    public SIList<? extends SInstance> listOptions(SInstance instance) {
         SDocument document = instance.getDocument();
-        MOptionsProvider provider = whichProvider(document);
+        SOptionsProvider provider = whichProvider(document);
         return provider.listAvailableOptions(instance);
     }
 
-    private MOptionsProvider whichProvider(SDocument document) {
-        MOptionsProvider p;
+    private SOptionsProvider whichProvider(SDocument document) {
+        SOptionsProvider p;
         if(providerName != null){
-            p = document.lookupService(providerName, MOptionsProvider.class);
+            p = document.lookupService(providerName, SOptionsProvider.class);
             if (p == null) {
-                throw new SingularFormException("Não foi localizado o " + MOptionsProvider.class.getSimpleName() + " de nome '"
+                throw new SingularFormException("Não foi localizado o " + SOptionsProvider.class.getSimpleName() + " de nome '"
                         + providerName + "' nos serviços registrado para o documento");
             }
         }else if(providerClass != null){
             p = document.lookupService(providerClass);
             if (p == null) {
-                throw new SingularFormException("Não foi localizado o " + MOptionsProvider.class.getSimpleName() + " da classe '"
+                throw new SingularFormException("Não foi localizado o " + SOptionsProvider.class.getSimpleName() + " da classe '"
                         + providerClass + "' nos serviços registrado para o documento");
             }
         } else {
-            throw new SingularException("Não foi configurador a origem do " + MOptionsProvider.class.getSimpleName());
+            throw new SingularException("Não foi configurador a origem do " + SOptionsProvider.class.getSimpleName());
         }
         return p;
     }

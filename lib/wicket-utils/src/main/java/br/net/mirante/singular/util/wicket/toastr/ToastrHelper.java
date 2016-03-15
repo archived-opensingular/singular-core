@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.toastr;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
@@ -9,7 +14,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 
-import br.net.mirante.singular.lambda.ISupplier;
+import br.net.mirante.singular.commons.lambda.ISupplier;
 import de.alpharogroup.wicket.js.addon.toastr.Position;
 import de.alpharogroup.wicket.js.addon.toastr.ShowMethod;
 import de.alpharogroup.wicket.js.addon.toastr.ToastJsGenerator;
@@ -51,8 +56,8 @@ public class ToastrHelper {
     protected ToastrSettings getDefaultSettings() {
         ToastrSettings settings = ToastrSettings.builder().build();
         settings.getPositionClass().setValue(Position.TOP_CENTER);
-        settings.getTimeOut().setValue(5000);
-        settings.getExtendedTimeOut().setValue(3000);
+        settings.getTimeOut().setValue(0);
+        settings.getExtendedTimeOut().setValue(0);
         settings.getShowMethod().setValue(ShowMethod.SLIDE_DOWN);
         settings.getNotificationContent().setValue("");
         settings.getCloseButton().setValue(true);

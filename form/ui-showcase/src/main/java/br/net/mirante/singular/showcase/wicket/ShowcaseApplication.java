@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.wicket;
 
 import java.util.Locale;
@@ -82,7 +87,7 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {
-        if (System.getProperty("singular.deployment") != null) {
+        if ("false".equals(System.getProperty("singular.development"))) {
             return RuntimeConfigurationType.DEPLOYMENT;
         } else {
             return RuntimeConfigurationType.DEVELOPMENT;

@@ -1,13 +1,24 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.context.SFormConfig;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
+import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
+import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.showcase.view.template.Content;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -18,22 +29,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
-import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
-import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.template.Content;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Optional;
 
 public class FormContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
@@ -42,10 +41,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
      */
     private static final long serialVersionUID = 327099871613673185L;
 
-    private static final Logger logger = LoggerFactory.getLogger(FormContent.class);
-
-    private final String key;
-    private final String typeName;
+    private Long idExampleData;
+    private String typeName;
     private ViewMode viewMode = ViewMode.EDITION;
 
     private AnnotationMode annotation = AnnotationMode.NONE;
@@ -60,13 +57,18 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     @Named("formConfigWithDatabase")
     private SFormConfig<String> singularFormConfig;
 
-    public FormContent(String id, StringValue type, StringValue key, StringValue viewMode,
-                       StringValue annotation) {
+    public FormContent(String id, StringValue type, StringValue idExampleData, StringValue viewMode, StringValue annotation) {
         super(id, false, true);
-        if (!viewMode.isNull()) {   this.viewMode = ViewMode.valueOf(viewMode.toString());  }
-        if (!annotation.isNull()) {   this.annotation = AnnotationMode.valueOf(annotation.toString());  }
+        if (!viewMode.isNull()) {
+            this.viewMode = ViewMode.valueOf(viewMode.toString());
+        }
+        if (!annotation.isNull()) {
+            this.annotation = AnnotationMode.valueOf(annotation.toString());
+        }
         this.typeName = type.toString();
-        this.key = key.toString();
+        if(!idExampleData.isNull()) {
+            this.idExampleData = idExampleData.toLong();
+        }
     }
 
     @Override
@@ -113,7 +115,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
 
             private SInstance loadOrCreateInstance(SFormConfig<String> singularFormConfig, RefType refType) {
-                String xml = currentModel.getXml();
+                String    xml = currentModel.getXml();
                 SInstance instance;
                 if (StringUtils.isBlank(xml)) {
                     instance = singularFormConfig.getDocumentFactory().createInstance(refType);
@@ -136,24 +138,25 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
 
             @Override
-            public AnnotationMode annotation() {    return annotation;    }
+            public AnnotationMode annotation() {
+                return annotation;
+            }
         };
 
         return singularFormPanel;
     }
 
     private void loadOrbuildModel() {
-        if (key == null || key.isEmpty()) {
-            currentModel = new ExampleDataDTO(UUID.randomUUID().toString());
+        if (idExampleData == null) {
+            currentModel = new ExampleDataDTO();
             currentModel.setType(typeName);
         } else {
-            currentModel = dao.find(key, typeName);
+            currentModel = dao.find(idExampleData, typeName);
         }
     }
 
     private void backToCrudPage(Component componentContext) {
-        PageParameters params = new PageParameters()
-                .add(CrudPage.TYPE_NAME, currentModel.getType());
+        PageParameters params = new PageParameters().add(CrudPage.TYPE_NAME, currentModel.getType());
         componentContext.setResponsePage(CrudPage.class, params);
     }
 
@@ -180,6 +183,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private Component buildSaveAnnotationButton() {
+
         final Component button = new SingularValidationButton("save-annotation-btn") {
             @Override
             public IModel<? extends SInstance> getCurrentInstance() {
@@ -259,8 +263,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         final SingularValidationButton button = new SingularValidationButton("validate-btn") {
 
             @Override
-            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
-                                               IModel<? extends SInstance> instanceModel) {
+            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
             }
 
             @Override

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.util;
 
 import java.util.Iterator;
@@ -12,7 +17,7 @@ import java.util.stream.StreamSupport;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import static java.util.stream.Collectors.toList;
 
@@ -74,17 +79,17 @@ public abstract class SQuery<MI extends SInstance> {
     private static Stream<SInstance> _children(SInstance o) {
         if (o instanceof SIComposite) {
             return _fields((SIComposite) o);
-        } else if (o instanceof SList) {
-            return _elements((SList<SInstance>) o);
+        } else if (o instanceof SIList) {
+            return _elements((SIList<SInstance>) o);
         } else {
             return Stream.empty();
         }
     }
     private static Stream<SInstance> _fields(SIComposite composto) {
         return composto.getType().getFields().stream()
-            .map(f -> composto.getCampo(f.getSimpleName()));
+            .map(f -> composto.getField(f.getNameSimple()));
     }
-    private static Stream<SInstance> _elements(SList<SInstance> lista) {
+    private static Stream<SInstance> _elements(SIList<SInstance> lista) {
         return lista.stream();
     }
 
@@ -219,14 +224,14 @@ public abstract class SQuery<MI extends SInstance> {
         return addNew(it -> {});
     }
     public SQuery<MI> addNew(Consumer<SInstance> consumer) {
-        map(it -> (SList<?>) it).each(it -> {
-            SInstance novo = it.addNovo();
+        map(it -> (SIList<?>) it).each(it -> {
+            SInstance novo = it.addNew();
             consumer.accept(novo);
         });
         return this;
     }
     public SQuery<MI> addVal(Object value) {
-        map(it -> (SList<?>) it).each(it -> it.addValor(value));
+        map(it -> (SIList<?>) it).each(it -> it.addValue(value));
         return this;
     }
     public Object val() {

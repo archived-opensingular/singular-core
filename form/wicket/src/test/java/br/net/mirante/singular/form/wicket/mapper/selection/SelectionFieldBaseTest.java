@@ -27,7 +27,7 @@ public abstract class SelectionFieldBaseTest extends AbstractWicketFormTest {
         driver = new WicketTester(new TestApp());
         page = new TestPage();
         localPackage = dicionario.createNewPackage("test"+(index.getAndIncrement()));
-        STypeComposite<? extends SIComposite> group = localPackage.createTipoComposto("group");
+        STypeComposite<? extends SIComposite> group = localPackage.createCompositeType("group");
         createSelectionType(group);
 
         page.setIntance(createIntance(() -> group));

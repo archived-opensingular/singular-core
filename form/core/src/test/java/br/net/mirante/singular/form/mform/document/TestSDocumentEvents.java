@@ -5,9 +5,9 @@ import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.mform.event.ISInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceAttributeChangeEvent;
-import br.net.mirante.singular.form.mform.event.MInstanceEventType;
+import br.net.mirante.singular.form.mform.event.SInstanceEventType;
 import br.net.mirante.singular.form.mform.event.SInstanceValueChangeEvent;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,9 +18,9 @@ public class TestSDocumentEvents extends TestCaseForm {
     private SIString root;
     private SDocument   doc;
 
-    private IMInstanceListener.EventCollector globalCollector;
-    private IMInstanceListener.EventCollector attributeCollector;
-    private IMInstanceListener.EventCollector valueCollector;
+    private ISInstanceListener.EventCollector globalCollector;
+    private ISInstanceListener.EventCollector attributeCollector;
+    private ISInstanceListener.EventCollector valueCollector;
 
     @Before
     public void setUp() {
@@ -28,13 +28,13 @@ public class TestSDocumentEvents extends TestCaseForm {
         root = dicionario.newInstance(STypeString.class);
         doc = root.getDocument();
 
-        globalCollector = new IMInstanceListener.EventCollector();
-        attributeCollector = new IMInstanceListener.EventCollector(e -> e instanceof SInstanceAttributeChangeEvent);
-        valueCollector = new IMInstanceListener.EventCollector(e -> e instanceof SInstanceValueChangeEvent);
+        globalCollector = new ISInstanceListener.EventCollector();
+        attributeCollector = new ISInstanceListener.EventCollector(e -> e instanceof SInstanceAttributeChangeEvent);
+        valueCollector = new ISInstanceListener.EventCollector(e -> e instanceof SInstanceValueChangeEvent);
     }
 
     public void testValueChanges() {
-        doc.getInstanceListeners().add(MInstanceEventType.VALUE_CHANGED, globalCollector);
+        doc.getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, globalCollector);
 
         root.setValue("ABC");
         assertEventsCount(1, globalCollector);
@@ -47,22 +47,22 @@ public class TestSDocumentEvents extends TestCaseForm {
     }
 
     public void testAttributeChanges() {
-        doc.getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
+        doc.getInstanceListeners().add(SInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
 
-        root.setValorAtributo(SPackageCore.ATR_OBRIGATORIO, true);
+        root.setAttributeValue(SPackageCore.ATR_REQUIRED, true);
         assertEventsCount(1, attributeCollector);
 
-        root.setValorAtributo(SPackageCore.ATR_OBRIGATORIO, true);
+        root.setAttributeValue(SPackageCore.ATR_REQUIRED, true);
         assertEventsCount(1, attributeCollector);
 
-        root.setValorAtributo(SPackageCore.ATR_OBRIGATORIO, false);
+        root.setAttributeValue(SPackageCore.ATR_REQUIRED, false);
         assertEventsCount(2, attributeCollector);
     }
 
     public void testValueAndAttributeChanges() {
-        doc.getInstanceListeners().add(MInstanceEventType.values(), globalCollector);
-        doc.getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
-        doc.getInstanceListeners().add(MInstanceEventType.VALUE_CHANGED, valueCollector);
+        doc.getInstanceListeners().add(SInstanceEventType.values(), globalCollector);
+        doc.getInstanceListeners().add(SInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
+        doc.getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, valueCollector);
 
         root.setValue("ABC");
         assertEventsCount(1, globalCollector);
@@ -74,18 +74,18 @@ public class TestSDocumentEvents extends TestCaseForm {
         assertEventsCount(0, attributeCollector);
         assertEventsCount(2, valueCollector);
 
-        root.setValorAtributo(SPackageCore.ATR_OBRIGATORIO, true);
+        root.setAttributeValue(SPackageCore.ATR_REQUIRED, true);
         assertEventsCount(3, globalCollector);
         assertEventsCount(1, attributeCollector);
         assertEventsCount(2, valueCollector);
 
-        root.setValorAtributo(SPackageCore.ATR_OBRIGATORIO, false);
+        root.setAttributeValue(SPackageCore.ATR_REQUIRED, false);
         assertEventsCount(4, globalCollector);
         assertEventsCount(2, attributeCollector);
         assertEventsCount(2, valueCollector);
     }
 
-    private static void assertEventsCount(int expected, IMInstanceListener.EventCollector collector) {
+    private static void assertEventsCount(int expected, ISInstanceListener.EventCollector collector) {
         Assert.assertEquals(expected, collector.getEvents().size());
     }
 }

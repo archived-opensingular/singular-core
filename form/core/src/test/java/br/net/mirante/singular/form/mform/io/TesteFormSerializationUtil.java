@@ -27,7 +27,7 @@ import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -44,7 +44,7 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testVerySimplesCase() {
-        SInstance instancia = createSerializableTestInstance("teste.endereco", pacote -> pacote.createTipo("endereco", STypeString.class));
+        SInstance instancia = createSerializableTestInstance("teste.endereco", pacote -> pacote.createType("endereco", STypeString.class));
         testSerializacao(instancia);
 
     }
@@ -52,27 +52,27 @@ public class TesteFormSerializationUtil {
     @Test
     public void testTipoComposto() {
         SIComposite instancia = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
-            STypeComposite<? extends SIComposite> endereco = pacote.createTipoComposto("endereco");
-            endereco.addCampoString("rua");
-            endereco.addCampoString("bairro");
-            endereco.addCampoString("cidade");
+            STypeComposite<? extends SIComposite> endereco = pacote.createCompositeType("endereco");
+            endereco.addFieldString("rua");
+            endereco.addFieldString("bairro");
+            endereco.addFieldString("cidade");
         });
-        instancia.setValor("rua", "A1");
-        instancia.setValor("bairro", "A2");
+        instancia.setValue("rua", "A1");
+        instancia.setValue("bairro", "A2");
         testSerializacao(instancia);
 
         // Testa um subPath
-        testSerializacao(instancia.getCampo("bairro"));
+        testSerializacao(instancia.getField("bairro"));
     }
 
     @Test
     public void testSerialializeEmptyObject() {
         SIComposite instance = (SIComposite) createSerializableTestInstance("teste.pedido", pacote -> {
-            STypeComposite<?> tipoPedido = pacote.createTipoComposto("pedido");
-            tipoPedido.addCampoString("nome");
-            tipoPedido.addCampoString("descr");
-            tipoPedido.addCampoString("prioridade");
-            tipoPedido.addCampoListaOf("clientes", STypeString.class);
+            STypeComposite<?> tipoPedido = pacote.createCompositeType("pedido");
+            tipoPedido.addFieldString("nome");
+            tipoPedido.addFieldString("descr");
+            tipoPedido.addFieldString("prioridade");
+            tipoPedido.addFieldListOf("clientes", STypeString.class);
         });
 
         FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(instance));
@@ -81,84 +81,84 @@ public class TesteFormSerializationUtil {
     @Test
     public void testTipoCompostoComAnotacoes() {
         SIComposite instancia = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
-            STypeComposite<? extends SIComposite> endereco = pacote.createTipoComposto("endereco");
-            endereco.addCampoString("rua");
+            STypeComposite<? extends SIComposite> endereco = pacote.createCompositeType("endereco");
+            endereco.addFieldString("rua");
             endereco.as(AtrAnnotation::new).setAnnotated();
         });
-        instancia.setValor("rua", "rua dos bobos");
+        instancia.setValue("rua", "rua dos bobos");
         instancia.as(AtrAnnotation::new).text("numero zero ?");
 
         assertThat(instancia.as(AtrAnnotation::new).text()).isEqualTo("numero zero ?");
         SIComposite r = (SIComposite) testSerializacao(instancia);
-        assertThat(r.getCampo("rua").getValue()).isEqualTo("rua dos bobos");
+        assertThat(r.getField("rua").getValue()).isEqualTo("rua dos bobos");
         assertThat(r.as(AtrAnnotation::new).text()).isEqualTo("numero zero ?");
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testTipoListSimples() {
-        SList<SIString> instancia = (SList<SIString>) createSerializableTestInstance("teste.enderecos",
-                pacote -> pacote.createTipoListaOf("enderecos", STypeString.class));
-        instancia.addValor("A1");
-        instancia.addValor("A2");
-        instancia.addValor("A3");
-        instancia.addValor("A4");
+        SIList<SIString> instancia = (SIList<SIString>) createSerializableTestInstance("teste.enderecos",
+                pacote -> pacote.createListTypeOf("enderecos", STypeString.class));
+        instancia.addValue("A1");
+        instancia.addValue("A2");
+        instancia.addValue("A3");
+        instancia.addValue("A4");
         testSerializacao(instancia);
 
         // Testa um subPath
-        testSerializacao(instancia.getCampo("[1]"));
+        testSerializacao(instancia.getField("[1]"));
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testTipoListComposto() {
-        SList<SIComposite> instancia = (SList<SIComposite>) createSerializableTestInstance("teste.enderecos", pacote -> {
-            STypeComposite<SIComposite> endereco = pacote.createTipoListaOfNovoTipoComposto("enderecos", "endereco").getTipoElementos();
-            endereco.addCampoString("rua");
-            endereco.addCampoString("bairro");
-            endereco.addCampoString("cidade");
+        SIList<SIComposite> instancia = (SIList<SIComposite>) createSerializableTestInstance("teste.enderecos", pacote -> {
+            STypeComposite<SIComposite> endereco = pacote.createListOfNewCompositeType("enderecos", "endereco").getElementsType();
+            endereco.addFieldString("rua");
+            endereco.addFieldString("bairro");
+            endereco.addFieldString("cidade");
         });
-        instancia.addNovo(e -> e.setValor("rua", "A1"));
-        instancia.addNovo(e -> e.setValor("bairro", "A2"));
-        instancia.addNovo(e -> {
-            e.setValor("rua", "A31");
-            e.setValor("bairro", "A32");
+        instancia.addNew(e -> e.setValue("rua", "A1"));
+        instancia.addNew(e -> e.setValue("bairro", "A2"));
+        instancia.addNew(e -> {
+            e.setValue("rua", "A31");
+            e.setValue("bairro", "A32");
         });
         testSerializacao(instancia);
 
         // Testa um subPath
-        testSerializacao(instancia.getCampo("[0].rua"));
-        testSerializacao(instancia.getCampo("[2].bairro"));
+        testSerializacao(instancia.getField("[0].rua"));
+        testSerializacao(instancia.getField("[2].bairro"));
     }
 
     @Test
     public void testTipoCompostoListCompostoList() {
         SIComposite instancia = (SIComposite) createSerializableTestInstance("teste.curriculo", pacote -> {
-            STypeComposite<? extends SIComposite> tipoCurriculo = pacote.createTipoComposto("curriculo");
-            tipoCurriculo.addCampoString("nome");
-            STypeComposite<SIComposite> tipoContato = tipoCurriculo.addCampoListaOfComposto("contatos", "contato").getTipoElementos();
-            tipoContato.addCampoInteger("prioridade");
-            STypeComposite<SIComposite> endereco = tipoContato.addCampoListaOfComposto("enderecos", "endereco").getTipoElementos();
-            endereco.addCampoString("rua");
-            endereco.addCampoString("cidade");
+            STypeComposite<? extends SIComposite> tipoCurriculo = pacote.createCompositeType("curriculo");
+            tipoCurriculo.addFieldString("nome");
+            STypeComposite<SIComposite> tipoContato = tipoCurriculo.addFieldListOfComposite("contatos", "contato").getElementsType();
+            tipoContato.addFieldInteger("prioridade");
+            STypeComposite<SIComposite> endereco = tipoContato.addFieldListOfComposite("enderecos", "endereco").getElementsType();
+            endereco.addFieldString("rua");
+            endereco.addFieldString("cidade");
         });
 
-        instancia.setValor("nome", "Joao");
-        SIComposite contato = (SIComposite) instancia.getFieldList("contatos").addNovo();
-        contato.setValor("prioridade", -1);
-        contato.getFieldList("enderecos").addNovo();
-        contato.setValor("enderecos[0].rua", "A31");
-        contato.setValor("enderecos[0].cidade", "A32");
+        instancia.setValue("nome", "Joao");
+        SIComposite contato = (SIComposite) instancia.getFieldList("contatos").addNew();
+        contato.setValue("prioridade", -1);
+        contato.getFieldList("enderecos").addNew();
+        contato.setValue("enderecos[0].rua", "A31");
+        contato.setValue("enderecos[0].cidade", "A32");
         testSerializacao(instancia);
 
         // Testa um subPath
-        testSerializacao(instancia.getCampo("nome"));
-        testSerializacao(instancia.getCampo("contatos"));
+        testSerializacao(instancia.getField("nome"));
+        testSerializacao(instancia.getField("contatos"));
     }
 
     @Test
     public void testSerializacaoReferenciaServico() {
-        SInstance instancia = createSerializableTestInstance("teste.endereco", pacote -> pacote.createTipo("endereco", STypeString.class));
+        SInstance instancia = createSerializableTestInstance("teste.endereco", pacote -> pacote.createType("endereco", STypeString.class));
 
         instancia.getDocument().bindLocalService("A", String.class, RefService.of("AA"));
         SInstance instancia2 = testSerializacao(instancia);
@@ -174,28 +174,28 @@ public class TesteFormSerializationUtil {
     @Test
     public void testSerializacaoAtributos() {
         SIComposite instancia = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
-            pacote.getDicionario().loadPackage(SPackageBasic.class);
-            STypeComposite<?> tipoEndereco = pacote.createTipoComposto("endereco");
-            tipoEndereco.addCampoString("rua");
-            tipoEndereco.addCampoString("cidade");
+            pacote.getDictionary().loadPackage(SPackageBasic.class);
+            STypeComposite<?> tipoEndereco = pacote.createCompositeType("endereco");
+            tipoEndereco.addFieldString("rua");
+            tipoEndereco.addFieldString("cidade");
         });
-        instancia.setValor("rua", "A");
+        instancia.setValue("rua", "A");
         instancia.as(AtrBasic.class).label("Address");
-        instancia.getCampo("rua").as(AtrBasic.class).label("Street");
-        instancia.getCampo("cidade").as(AtrBasic.class).label("City");
+        instancia.getField("rua").as(AtrBasic.class).label("Street");
+        instancia.getField("cidade").as(AtrBasic.class).label("City");
 
         SIComposite instancia2 = (SIComposite) testSerializacao(instancia);
 
         assertEquals("Address", instancia2.as(AtrBasic.class).getLabel());
-        assertEquals("Street", instancia2.getCampo("rua").as(AtrBasic.class).getLabel());
-        assertEquals("City", instancia2.getCampo("cidade").as(AtrBasic.class).getLabel());
+        assertEquals("Street", instancia2.getField("rua").as(AtrBasic.class).getLabel());
+        assertEquals("City", instancia2.getField("cidade").as(AtrBasic.class).getLabel());
 
     }
 
     @Test
     public void testRefSerialization() {
         SIString endereco = (SIString) createSerializableTestInstance("teste.endereco",
-                pacote -> pacote.createTipo("endereco", STypeString.class));
+                pacote -> pacote.createType("endereco", STypeString.class));
 
         endereco.setValue("aqui");
 
@@ -205,7 +205,7 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testSerializationOfTwoIndependnteReferenceAtSameTime() {
-        SInstance instancia1 = createSerializableTestInstance("teste.endereco", pacote -> pacote.createTipo("endereco", STypeString.class));
+        SInstance instancia1 = createSerializableTestInstance("teste.endereco", pacote -> pacote.createType("endereco", STypeString.class));
 
         SInstance instancia2 = SDocumentFactory.empty().createInstance(instancia1.getDocument().getRootRefType().get());
 
@@ -333,7 +333,7 @@ public class TesteFormSerializationUtil {
         assertEquals(original.getClass(), novo.getClass());
         assertEquals(original.getType().getName(), novo.getType().getName());
         assertEquals(original.getType().getClass(), novo.getType().getClass());
-        assertEquals(original.getNome(), novo.getNome());
+        assertEquals(original.getName(), novo.getName());
         assertEquals(original.getId(), novo.getId());
         assertEquals(original.getPathFull(), novo.getPathFull());
         if (original.getParent() != null) {
@@ -353,9 +353,9 @@ public class TesteFormSerializationUtil {
             assertEquals(original.getValue(), novo.getValue());
         }
 
-        assertEquals(original.getAtributos().size(), novo.getAtributos().size());
-        for (Entry<String, SInstance> atrOriginal : original.getAtributos().entrySet()) {
-            SInstance atrNovo = novo.getAtributos().get(atrOriginal.getKey());
+        assertEquals(original.getAttributes().size(), novo.getAttributes().size());
+        for (Entry<String, SInstance> atrOriginal : original.getAttributes().entrySet()) {
+            SInstance atrNovo = novo.getAttributes().get(atrOriginal.getKey());
             assertNotNull(atrNovo);
             assertEquals(atrOriginal.getValue(), atrNovo);
         }

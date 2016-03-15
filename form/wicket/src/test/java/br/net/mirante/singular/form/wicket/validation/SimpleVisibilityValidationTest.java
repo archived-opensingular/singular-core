@@ -16,10 +16,10 @@ public class SimpleVisibilityValidationTest extends AbstractSingularFormTest {
     @Override
     protected void populateMockType(STypeComposite<?> mockType) {
 
-        fieldOne = mockType.addCampoString("fieldOne");
+        fieldOne = mockType.addFieldString("fieldOne");
         fieldOne.asAtrCore().obrigatorio(true);
 
-        fieldTwo = mockType.addCampoString("fieldTwo");
+        fieldTwo = mockType.addFieldString("fieldTwo");
         fieldTwo.asAtrBasic().visivel(i -> false);
         fieldTwo.asAtrCore().obrigatorio(true);
     }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.io;
 
 import java.io.Serializable;
@@ -159,7 +164,7 @@ public class FormSerializationUtil {
 
     private static SInstance defineRoot(FormSerialized fs, SInstance root) {
         if (StringUtils.isBlank(fs.getFocusFieldPath())) { return root; }
-        return ((ICompositeInstance) root).getCampo(fs.getFocusFieldPath());
+        return ((ICompositeInstance) root).getField(fs.getFocusFieldPath());
     }
 
     private static SingularFormException deserializingError(FormSerialized fs, Exception e) {

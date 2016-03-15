@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.exemplos.canabidiol;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -7,7 +12,7 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MTabView;
+import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.SIBoolean;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
@@ -30,35 +35,35 @@ public class SPackagePeticaoCanabidiol extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         //Para que anotar com MTIPOInfo se depois tem que fazer isso:
-        pb.createTipo(STypeContato.class);
-        pb.createTipo(STypeDocumentoSelect.class);
-        pb.createTipo(STypeEndereco.class);
-        pb.createTipo(STypeImportacao.class);
-        pb.createTipo(STypeMedico.class);
-        pb.createTipo(STypeCID.class);
-        pb.createTipo(STypePessoa.class);
-        pb.createTipo(STypePrescricao.class);
-        pb.createTipo(STypeDescricaoProduto.class);
-        pb.createTipo(STypeProdutos.class);
+        pb.createType(STypeContato.class);
+        pb.createType(STypeDocumentoSelect.class);
+        pb.createType(STypeEndereco.class);
+        pb.createType(STypeImportacao.class);
+        pb.createType(STypeMedico.class);
+        pb.createType(STypeCID.class);
+        pb.createType(STypePessoa.class);
+        pb.createType(STypePrescricao.class);
+        pb.createType(STypeDescricaoProduto.class);
+        pb.createType(STypeProdutos.class);
 
-        final STypeComposite<?> canabis = pb.createTipoComposto(TIPO);
+        final STypeComposite<?> canabis = pb.createCompositeType(TIPO);
         canabis.as(AtrBasic::new).label("Peticionamento de Canabidiol");
 
         {
-            final STypePessoa paciente = canabis.addCampo("paciente", STypePessoa.class);
+            final STypePessoa paciente = canabis.addField("paciente", STypePessoa.class);
             paciente
                     .as(AtrBasic::new)
                     .label("Dados do Paciente")
                     .as(AtrAnnotation::new).setAnnotated();
 
-            final STypeBoolean possuiResponsavelLegal = canabis.addCampoBoolean("possuiResponsavelLegal");
+            final STypeBoolean possuiResponsavelLegal = canabis.addFieldBoolean("possuiResponsavelLegal");
             possuiResponsavelLegal
                     .as(AtrCore::new)
                     .obrigatorio()
                     .as(AtrBasic::new)
                     .label("Possui Responsável Legal?");
 
-            final STypePessoa responsavelLegal = canabis.addCampo("responsavelLegal", STypePessoa.class);
+            final STypePessoa responsavelLegal = canabis.addField("responsavelLegal", STypePessoa.class);
             responsavelLegal
                     .as(AtrBasic::new)
                     .label("Responsável Legal")
@@ -66,7 +71,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .dependsOn(possuiResponsavelLegal);
 
             final STypeComposite<?> anexos = canabis
-                    .addCampoComposto("anexos");
+                    .addFieldComposite("anexos");
             anexos
                     .as(AtrBasic::new)
                     .label("Anexos")
@@ -74,7 +79,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .visivel(instancia -> Value.notNull(instancia, responsavelLegal.tipoDocumento) || Value.notNull(instancia, paciente.tipoDocumento));
 
             STypeAttachment anexoPaciente = anexos
-                    .addCampo("documentoPaciente", STypeAttachment.class);
+                    .addField("documentoPaciente", STypeAttachment.class);
             anexoPaciente
                     .as(AtrCore::new)
                     .obrigatorio()
@@ -85,7 +90,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .visivel(instancia -> Value.notNull(instancia, paciente.tipoDocumento));
 
             STypeAttachment anexoResponsavelLegal = anexos
-                    .addCampo("documentoResponsavel", STypeAttachment.class);
+                    .addField("documentoResponsavel", STypeAttachment.class);
             anexoResponsavelLegal
                     .as(AtrCore::new)
                     .obrigatorio(instancia -> BooleanUtils.isTrue(Value.of(instancia, possuiResponsavelLegal)))
@@ -96,7 +101,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .visivel(instancia -> Value.notNull(instancia, responsavelLegal.tipoDocumento));
 
             STypeImportacao modalidadeImportacao = canabis
-                    .addCampo("importacao", STypeImportacao.class);
+                    .addField("importacao", STypeImportacao.class);
             modalidadeImportacao
                     .as(AtrBasic::new)
                     .label("Importação")
@@ -104,7 +109,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
 
 
             STypeProdutos produtos = canabis
-                    .addCampo("produtos", STypeProdutos.class);
+                    .addField("produtos", STypeProdutos.class);
             produtos
                     .as(AtrBasic::new)
                     .label("Produtos")
@@ -112,19 +117,19 @@ public class SPackagePeticaoCanabidiol extends SPackage {
 
 
             STypePrescricao prescricao = canabis
-                    .addCampo("prescricao", STypePrescricao.class);
+                    .addField("prescricao", STypePrescricao.class);
             prescricao
                     .as(AtrBasic::new)
                     .label("Prescrição Médica");
 
 
             STypeComposite<?> termoResponsabilidade = canabis
-                    .addCampoComposto("termoResponsabilidade");
+                    .addFieldComposite("termoResponsabilidade");
 
             termoResponsabilidade
                     .as(AtrAnnotation::new).setAnnotated();
 
-            STypeBoolean aceitoTudo = termoResponsabilidade.addCampoBoolean("aceitoTudo");
+            STypeBoolean aceitoTudo = termoResponsabilidade.addFieldBoolean("aceitoTudo");
 
             aceitoTudo
                     .withCustomMapper(AceitoTudoMapper::new)
@@ -141,7 +146,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                             "3- Que a cópia do Ofício emitido pela Anvisa deve ser mantida junto ao PRODUTO, sempre que em trânsito, dentro ou fora do Brasil. ");
 
             STypeAttachment anexoTermoResponsabilidade = termoResponsabilidade
-                    .addCampo("anexoTermoResponsabilidade", STypeAttachment.class);
+                    .addField("anexoTermoResponsabilidade", STypeAttachment.class);
 
             anexoTermoResponsabilidade
                     .as(AtrCore::new)
@@ -152,7 +157,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .as(AtrAnnotation::new).setAnnotated();
 
             // config tabs
-            MTabView tabbed = canabis.setView(MTabView::new);
+            SViewTab tabbed = canabis.setView(SViewTab::new);
             tabbed.addTab("dados", "Solicitante")
                     .add(paciente)
                     .add(possuiResponsavelLegal)

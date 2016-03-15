@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper;
 
 import java.util.HashMap;
 import java.util.Optional;
 
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
@@ -13,19 +17,20 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
+import br.net.mirante.singular.form.mform.core.SPackageBootstrap;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
 import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-
-import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -57,11 +62,10 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
         public void buildView() {
             final BSGrid grid = createCompositeGrid(ctx);
-            BSRow row = grid.newRow();
-            buildFields(ctx, row);
+            buildFields(ctx, grid);
             if(renderAnnotations()){
                 ctx.getRootContext().updateAnnotations(
-                        appendAnnotationToggleButton(row, instance),
+                        appendAnnotationToggleButton(grid.newRow(), instance),
                         instance);
             }
         }
@@ -83,14 +87,19 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             return grid;
         }
 
-        protected void buildFields(WicketBuildContext ctx, BSRow row) {
+        protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
+            BSRow row = grid.newRow();
             for (SType<?> tCampo : type.getFields()) {
+                final Boolean newRow = tCampo.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
+                if (newRow != null && newRow) {
+                    row = grid.newRow();
+                }
                 buildField(ctx.getUiBuilderWicket(), row, fieldModel(tCampo));
             }
         }
 
         protected SInstanceCampoModel<SInstance> fieldModel(SType<?> tCampo) {
-            return new SInstanceCampoModel<>(model, tCampo.getSimpleName());
+            return new SInstanceCampoModel<>(model, tCampo.getNameSimple());
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {

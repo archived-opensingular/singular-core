@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.persistence.service;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,8 +20,11 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Throwables;
+
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.flow.core.entity.IEntityByCod;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
@@ -39,8 +48,6 @@ import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
 import br.net.mirante.singular.flow.core.variable.VarType;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
-
-import com.google.common.base.Throwables;
 
 public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, PROCESS_ROLE extends IEntityRoleDefinition, ROLE_USER extends IEntityRoleInstance>
         extends AbstractHibernateService implements
@@ -413,7 +420,19 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         c.setCacheable(true).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return c.list();
     }
-    
+
+    @Override
+    public void endLastAllocation(TASK_INSTANCE entityTaskInstance) {
+        List<? extends IEntityTaskInstanceHistory> histories = entityTaskInstance.getTaskHistoric();
+        for (ListIterator<? extends IEntityTaskInstanceHistory> it = histories.listIterator(histories.size()); it.hasPrevious(); ) {
+            IEntityTaskInstanceHistory history = it.previous();
+            if (history.getType().getDescription().toLowerCase().contains(TaskInstance.ALOCACAO.toLowerCase())) {
+                history.setEndDateAllocation(new Date());
+                getSession().saveOrUpdate(history);
+            }
+        }
+    }
+
     // -------------------------------------------------------
     // Util
     // -------------------------------------------------------

@@ -8,9 +8,9 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 import br.net.mirante.singular.form.mform.io.TesteFormSerializationUtil;
@@ -50,8 +50,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     private static SIAttachment createEmptyAttachment() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
-        STypeAttachment tipo = pb.createTipo("arquivo", STypeAttachment.class);
-        return tipo.novaInstancia().setTemporary();
+        STypeAttachment tipo = pb.createType("arquivo", STypeAttachment.class);
+        return tipo.newInstance().setTemporary();
     }
 
     public void testUpdateContent() {
@@ -108,12 +108,12 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     public void testRepeatedAttachment() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
-        STypeLista<STypeAttachment, SIAttachment> tipoLista = pb.createTipoListaOf("anexos", STypeAttachment.class);
-        SList<SIAttachment> lista = tipoLista.novaInstancia(SIAttachment.class);
+        STypeList<STypeAttachment, SIAttachment> tipoLista = pb.createListTypeOf("anexos", STypeAttachment.class);
+        SIList<SIAttachment> lista = tipoLista.newInstance(SIAttachment.class);
 
-        SIAttachment arquivo1 = lista.addNovo();
-        SIAttachment arquivo2 = lista.addNovo();
-        SIAttachment arquivo3 = lista.addNovo();
+        SIAttachment arquivo1 = lista.addNew();
+        SIAttachment arquivo2 = lista.addNew();
+        SIAttachment arquivo3 = lista.addNew();
 
         final byte[] conteudo1 = new byte[] { 1, 2, 3, 4, 5 };
         final byte[] conteudo2 = new byte[] { 6, 7, 8, 9, 10 };
@@ -138,27 +138,27 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        STypeComposite<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
-        tipoBloco.addCampoListaOf("anexos", STypeAttachment.class);
-        STypeComposite<? extends SIComposite> tipoSubBloco = tipoBloco.addCampoComposto("subBloco");
-        tipoSubBloco.addCampo("subArquivo1", STypeAttachment.class);
-        tipoSubBloco.addCampo("subArquivo2", STypeAttachment.class);
-        tipoSubBloco.addCampo("subArquivo3", STypeAttachment.class);
+        STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
+        tipoBloco.addFieldListOf("anexos", STypeAttachment.class);
+        STypeComposite<? extends SIComposite> tipoSubBloco = tipoBloco.addFieldComposite("subBloco");
+        tipoSubBloco.addField("subArquivo1", STypeAttachment.class);
+        tipoSubBloco.addField("subArquivo2", STypeAttachment.class);
+        tipoSubBloco.addField("subArquivo3", STypeAttachment.class);
 
         final byte[] conteudo1 = new byte[] { 1, 2, 3 };
         final byte[] conteudo2 = new byte[] { 4, 5, 6 };
         final byte[] conteudo3 = new byte[] { 7, 8, 9 };
 
         // Testa apenas com lista
-        SIComposite bloco = tipoBloco.novaInstancia();
-        SList<SIAttachment> anexos = bloco.getFieldList("anexos", SIAttachment.class);
+        SIComposite bloco = tipoBloco.newInstance();
+        SIList<SIAttachment> anexos = bloco.getFieldList("anexos", SIAttachment.class);
 
-        anexos.addNovo().setContent(conteudo1); // 0
-        anexos.addNovo().setContent(conteudo2); // 1
-        anexos.addNovo().setContent(conteudo2); // 2
-        anexos.addNovo().setContent(conteudo3); // 3
-        anexos.addNovo().setContent(conteudo3); // 4
-        anexos.addNovo(); // 5
+        anexos.addNew().setContent(conteudo1); // 0
+        anexos.addNew().setContent(conteudo2); // 1
+        anexos.addNew().setContent(conteudo2); // 2
+        anexos.addNew().setContent(conteudo3); // 3
+        anexos.addNew().setContent(conteudo3); // 4
+        anexos.addNew(); // 5
         assertBinariosAssociadosDocument(anexos, 3);
 
         anexos.remove(4);
@@ -166,29 +166,29 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         anexos.remove(3);
         assertBinariosAssociadosDocument(anexos, 2);
 
-        bloco.setValor("anexos", null);
+        bloco.setValue("anexos", null);
         assertBinariosAssociadosDocument(anexos, 0);
 
         // Testa apenas com subBloco
-        bloco = tipoBloco.novaInstancia();
+        bloco = tipoBloco.newInstance();
         SIComposite subBloco = bloco.getFieldRecord("subBloco");
         subBloco.getField("subArquivo1", SIAttachment.class).setContent(conteudo1);
         subBloco.getField("subArquivo2", SIAttachment.class).setContent(conteudo2);
 
         assertBinariosAssociadosDocument(bloco, 2);
 
-        bloco.setValor("subBloco.subArquivo2", null);
+        bloco.setValue("subBloco.subArquivo2", null);
         assertBinariosAssociadosDocument(bloco, 1);
 
-        bloco.setValor("subBloco", null);
+        bloco.setValue("subBloco", null);
         assertBinariosAssociadosDocument(bloco, 0);
 
         // Testa apenas com lista e subBloco interferido um no outro
-        bloco = tipoBloco.novaInstancia();
+        bloco = tipoBloco.newInstance();
         anexos = bloco.getFieldList("anexos", SIAttachment.class);
-        anexos.addNovo().setContent(conteudo3); // 0
-        anexos.addNovo().setContent(conteudo2); // 1
-        anexos.addNovo().setContent(conteudo1); // 2
+        anexos.addNew().setContent(conteudo3); // 0
+        anexos.addNew().setContent(conteudo2); // 1
+        anexos.addNew().setContent(conteudo1); // 2
         subBloco = bloco.getFieldRecord("subBloco");
         subBloco.getField("subArquivo1", SIAttachment.class).setContent(conteudo1);
         subBloco.getField("subArquivo2", SIAttachment.class).setContent(conteudo2);
@@ -196,23 +196,23 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
         assertBinariosAssociadosDocument(anexos, 3);
 
-        bloco.setValor("subBloco.subArquivo1", null); // conteudo1
+        bloco.setValue("subBloco.subArquivo1", null); // conteudo1
         assertBinariosAssociadosDocument(anexos, 3);
         anexos.remove(2); // conteudo1
         assertBinariosAssociadosDocument(anexos, 2);
         anexos.remove(1); // conteudo2
         assertBinariosAssociadosDocument(anexos, 2);
 
-        bloco.setValor("anexos", null); // conteudo2, conteudo3
+        bloco.setValue("anexos", null); // conteudo2, conteudo3
         assertBinariosAssociadosDocument(anexos, 2);
 
     }
 
     public void testSerializacaoDeserializacaoComAnexo() {
         SIComposite bloco = (SIComposite) TesteFormSerializationUtil.createSerializableTestInstance("teste.bloco", pacote -> {
-            STypeComposite<? extends SIComposite> tipoBloco = pacote.createTipoComposto("bloco");
-            tipoBloco.addCampo("arquivo1", STypeAttachment.class);
-            tipoBloco.addCampo("arquivo2", STypeAttachment.class);
+            STypeComposite<? extends SIComposite> tipoBloco = pacote.createCompositeType("bloco");
+            tipoBloco.addField("arquivo1", STypeAttachment.class);
+            tipoBloco.addField("arquivo2", STypeAttachment.class);
         });
         final byte[] conteudo1 = new byte[] { 1, 2, 3 };
         final byte[] conteudo2 = new byte[] { 4, 5, 6 };

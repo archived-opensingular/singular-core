@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.util;
 
 import java.util.Deque;
@@ -21,7 +26,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -184,8 +189,8 @@ public abstract class WicketFormUtils {
                         lastBaseTitle = baseTitle;
                     }
 
-                    if ((lastInstance != null) && (instance instanceof SList<?>)) {
-                        SList<SInstance> lista = (SList<SInstance>) instance;
+                    if ((lastInstance != null) && (instance instanceof SIList<?>)) {
+                        SIList<SInstance> lista = (SIList<SInstance>) instance;
                         Iterator<SInstance> iter = lista.iterator();
                         for (int i = 1; iter.hasNext(); i++) {
                             SInstance itemInstance = iter.next();

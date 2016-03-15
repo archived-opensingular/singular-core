@@ -1,11 +1,11 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
@@ -22,12 +22,12 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 public class STypeStringMultipleSelectionFieldTest extends SelectionFieldBaseTest {
 
     protected STypeString selectBaseType;
-    protected STypeLista fieldType;
+    protected STypeList fieldType;
 
     @Override
     SType createSelectionType(STypeComposite group) {
-        selectBaseType = localPackage.createTipo("favoriteFruitType", STypeString.class);
-        return fieldType = group.addCampoListaOf("favoriteFruit", selectBaseType);
+        selectBaseType = localPackage.createType("favoriteFruitType", STypeString.class);
+        return fieldType = group.addFieldListOf("favoriteFruit", selectBaseType);
     }
 
     @Test
@@ -55,8 +55,8 @@ public class STypeStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
     public void rendersAListWithDanglingOptions() {
         setupPage();
         SIComposite instance = page.getCurrentInstance();
-        SList campo = (SList) instance.getCampo(fieldType.getSimpleName());
-        SInstance element = campo.addNovo();
+        SIList campo = (SIList) instance.getField(fieldType.getNameSimple());
+        SInstance element = campo.addNew();
         element.setValue("avocado");
 
         selectBaseType.withSelectionOf("strawberry", "apple");
@@ -84,15 +84,15 @@ public class STypeStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
         buildPage();
         form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
         form.submit("save-btn");
-        List value = (List) page.getCurrentInstance().getValor(fieldType.getSimpleName());
+        List value = (List) page.getCurrentInstance().getValue(fieldType.getNameSimple());
         assertThat(value).containsOnly("orange");
     }
 
 
     private Object getSelectKeyFromValue(String value) {
-        SIString mvalue = selectBaseType.novaInstancia();
+        SIString mvalue = selectBaseType.newInstance();
         mvalue.setValue(value);
-        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
+        return page.getCurrentInstance().getField("favoriteFruit").getOptionsConfig().getKeyFromOption(mvalue);
     }
 
 }

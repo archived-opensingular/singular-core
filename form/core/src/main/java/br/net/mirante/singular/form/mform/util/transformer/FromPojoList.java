@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.util.transformer;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 
@@ -45,12 +50,12 @@ public class FromPojoList<T> extends FromPojo<T> {
     }
 
     @Override
-    public SList<?> build() {
-        SList<?> lista = target.novaLista();
+    public SIList<?> build() {
+        SIList<?> lista = target.newList();
         for (T pojo : pojoList) {
-            SIComposite instancia = target.novaInstancia();
+            SIComposite instancia = target.newInstance();
             for (Map.Entry<SType, FromPojoFiedlBuilder> e : mappings.entrySet()) {
-                instancia.setValor(e.getKey().getName(), e.getValue().value(pojo));
+                instancia.setValue(e.getKey().getName(), e.getValue().value(pojo));
             }
             lista.addElement(instancia);
         }

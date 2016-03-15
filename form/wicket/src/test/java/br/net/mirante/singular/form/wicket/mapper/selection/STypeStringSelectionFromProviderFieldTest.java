@@ -9,14 +9,14 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
@@ -31,19 +31,19 @@ public class STypeStringSelectionFromProviderFieldTest extends SelectionFieldBas
     @Override
     @SuppressWarnings("rawtypes")
     SType createSelectionType(STypeComposite group) {
-        return selectType = group.addCampoString("favoriteFruit");
+        return selectType = group.addFieldString("favoriteFruit");
     }
     
     @SuppressWarnings("serial")
-    private MOptionsProvider createProviderWithOptions(final List<String> options) {
-        return new MOptionsProvider() {
+    private SOptionsProvider createProviderWithOptions(final List<String> options) {
+        return new SOptionsProvider() {
             public String toDebug() {
                 return "debug this";
             }
 
-            public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
-                SList<?> r = optionsInstance.getType().novaLista();
-                options.forEach((o) -> {r.addValor(o);});
+            public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+                SIList<?> r = optionsInstance.getType().newList();
+                options.forEach((o) -> {r.addValue(o);});
                 return r;
             }
         };
@@ -54,9 +54,9 @@ public class STypeStringSelectionFromProviderFieldTest extends SelectionFieldBas
         setupPage();
         selectType.withSelectionFromProvider("fruitProvider");
         
-        MOptionsProvider provider = createProviderWithOptions(referenceOptions);
+        SOptionsProvider provider = createProviderWithOptions(referenceOptions);
         SDocument document = page.getCurrentInstance().getDocument();
-        document.bindLocalService("fruitProvider", MOptionsProvider.class, RefService.of(provider));
+        document.bindLocalService("fruitProvider", SOptionsProvider.class, RefService.of(provider));
         
         buildPage();
         
@@ -72,11 +72,11 @@ public class STypeStringSelectionFromProviderFieldTest extends SelectionFieldBas
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
     public void rendersAnDropDownWithSpecifiedOptionsByClass() {
         setupPage();
-        selectType.withSelectionFromProvider(MOptionsProvider.class);
+        selectType.withSelectionFromProvider(SOptionsProvider.class);
         
-        MOptionsProvider provider = createProviderWithOptions(referenceOptions);
+        SOptionsProvider provider = createProviderWithOptions(referenceOptions);
         SDocument document = page.getCurrentInstance().getDocument();
-        document.bindLocalService(MOptionsProvider.class, RefService.of(provider));
+        document.bindLocalService(SOptionsProvider.class, RefService.of(provider));
         buildPage();
         
         driver.assertEnabled(formField(form, "favoriteFruit"));
@@ -93,9 +93,9 @@ public class STypeStringSelectionFromProviderFieldTest extends SelectionFieldBas
     }
 
     private Object getSelectKeyFromValue(String value) {
-        SIString mvalue = selectType.novaInstancia();
+        SIString mvalue = selectType.newInstance();
         mvalue.setValue(value);
-        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
+        return page.getCurrentInstance().getField("favoriteFruit").getOptionsConfig().getKeyFromOption(mvalue);
     }
 
 }

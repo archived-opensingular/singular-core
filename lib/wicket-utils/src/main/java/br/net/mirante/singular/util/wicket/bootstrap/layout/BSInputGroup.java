@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
 import java.util.Map;
@@ -42,7 +47,7 @@ public class BSInputGroup extends BSControls {
 
     public BSInputGroup appendButtonAddon(Icone icone) {
         return appendTag("span", true, "class='input-group-btn'", bid -> new BSContainer<>(bid)
-                .appendTag("button", true, "class='btn default btn-sm icon' type='button'",
+                .appendTag("button", true, "class='btn default btn-sm icon' style='height:30px' type='button'",
                         iid -> new BSContainer<>(iid).appendTag("i", true, "class='" + icone.getCssClass() + "'",
                                 new WebMarkupContainer("i"))));
     }

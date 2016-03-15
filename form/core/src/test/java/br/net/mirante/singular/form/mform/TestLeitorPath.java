@@ -31,7 +31,7 @@ public class TestLeitorPath extends TestCaseForm {
         assertException(() -> {
             PathReader leitor = new PathReader(path);
             while (!leitor.isEmpty()) {
-                leitor = leitor.proximo();
+                leitor = leitor.next();
             }
         } , trechoMsgEsperada);
 
@@ -46,22 +46,22 @@ public class TestLeitorPath extends TestCaseForm {
                 fail("O leitor terminou antes do esperado. Faltou o resultado de indice [" + i + "]=" + esperado);
             }
             if (esperado instanceof Integer) {
-                assertTrue(leitor.isIndice());
-                assertEquals(esperado, leitor.getIndice());
+                assertTrue(leitor.isIndex());
+                assertEquals(esperado, leitor.getIndex());
             } else {
-                assertFalse(leitor.isIndice());
+                assertFalse(leitor.isIndex());
                 assertEquals(esperado, leitor.getTrecho());
             }
-            assertEquals((i + 1 == resultadoEsperado.length), leitor.isUltimo());
-            leitor = leitor.proximo();
+            assertEquals((i + 1 == resultadoEsperado.length), leitor.isLast());
+            leitor = leitor.next();
         }
         if (!leitor.isEmpty()) {
             fail("Ainda há item no leitor para ler: " + leitor.getTrecho());
         }
         final PathReader leitor2 = leitor;
-        assertException(() -> leitor2.isIndice(), "Leitura já está no fim");
+        assertException(() -> leitor2.isIndex(), "Leitura já está no fim");
         assertException(() -> leitor2.getTrecho(), "Leitura já está no fim");
-        assertException(() -> leitor2.proximo(), "Leitura já está no fim");
+        assertException(() -> leitor2.next(), "Leitura já está no fim");
 
     }
 }

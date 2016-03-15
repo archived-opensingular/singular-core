@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.resource;
 
 public enum Icone {
@@ -64,7 +69,9 @@ public enum Icone {
     NOTE /*             */("icon-note"),
     DOCS /*             */("icon-docs"),
     CLOCK /*            */("icon-clock"),
-    LAYERS/*            */("icon-layers");
+    LAYERS/*            */("icon-layers"),
+    CODE/*              */("fa fa-code"),
+    DASHBOARD/*         */("fa fa-dashboard");
 
     private final String cssClass;
 

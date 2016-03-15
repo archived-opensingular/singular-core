@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import org.apache.wicket.Component;
@@ -5,7 +10,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
@@ -16,7 +21,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 public class AttachmentMapper implements ControlsFieldComponentMapper {
 
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup,
+    public Component appendInput(SView view, BSContainer bodyContainer, BSControls formGroup,
                                  IModel<? extends SInstance> model, IModel<String> labelModel) {
         final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDITION);
         formGroup.appendDiv(container);
@@ -29,7 +34,7 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public Component appendReadOnlyInput(MView view, BSContainer bodyContainer,
+    public Component appendReadOnlyInput(SView view, BSContainer bodyContainer,
                                          BSControls formGroup, IModel<? extends SInstance> model,
                                          IModel<String> labelModel) {
         final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.VISUALIZATION);

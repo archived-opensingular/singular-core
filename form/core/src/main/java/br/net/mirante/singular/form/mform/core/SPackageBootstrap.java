@@ -1,11 +1,16 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.core;
 
 import java.util.Optional;
 
 import br.net.mirante.singular.form.mform.AtrRef;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 
 public class SPackageBootstrap extends SPackage {
@@ -20,6 +25,8 @@ public class SPackageBootstrap extends SPackage {
             = new AtrRef<>(SPackageBootstrap.class, "larguraColunaMD", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_COL_LG_PREFERENCE
             = new AtrRef<>(SPackageBootstrap.class, "larguraColunaLG", STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_COL_ON_NEW_ROW
+            = new AtrRef<>(SPackageBootstrap.class, "newRow", STypeBoolean.class, SIBoolean.class, Boolean.class);
 
     public SPackageBootstrap() {
         super("mform.plaf.bootstrap");
@@ -32,13 +39,16 @@ public class SPackageBootstrap extends SPackage {
         adicionarDefinicaoColuna(pb, ATR_COL_SM_PREFERENCE, "SM");
         adicionarDefinicaoColuna(pb, ATR_COL_MD_PREFERENCE, "MD");
         adicionarDefinicaoColuna(pb, ATR_COL_LG_PREFERENCE, "LG");
+
+        pb.createAttributeIntoType(SType.class, ATR_COL_ON_NEW_ROW);
+
     }
 
-    private void adicionarDefinicaoColuna(PackageBuilder pb, AtrRef<?,?,?> atrRef, String label){
+    private void adicionarDefinicaoColuna(PackageBuilder pb, AtrRef<?, ?, ?> atrRef, String label) {
         Optional<String> labelOp = Optional.ofNullable(label);
-        pb.createTipoAtributo(atrRef);
-        pb.addAtributo(SType.class, atrRef);
-        pb.getAtributo(atrRef).as(SPackageBasic.aspect()).label(("Largura preferencial " + labelOp.orElse("")).trim());
+        pb.createAttributeType(atrRef);
+        pb.addAttribute(SType.class, atrRef);
+        pb.getAttribute(atrRef).as(SPackageBasic.aspect()).label(("Largura preferencial " + labelOp.orElse("")).trim());
     }
 
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.model;
 
 import java.util.List;
@@ -6,7 +11,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 
@@ -37,9 +42,9 @@ public class MInstanciaValorModel<T>
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void setObject(T object) {
         SInstance target = getTarget();
-        if (target instanceof SList) {
-            ((SList) target).clear();
-            ((List) object).forEach(((SList) target)::addValor);
+        if (target instanceof SIList) {
+            ((SIList) target).clear();
+            ((List) object).forEach(((SIList) target)::addValue);
         } else {
             target.setValue(object);
         }
@@ -50,9 +55,9 @@ public class MInstanciaValorModel<T>
     public Class<T> getObjectClass() {
         SType<?> mtipo = getTarget().getType();
         if (mtipo instanceof STypeSimple<?, ?>) {
-            return (Class<T>) ((STypeSimple<?, ?>) mtipo).getClasseTipoNativo();
+            return (Class<T>) ((STypeSimple<?, ?>) mtipo).getValueClass();
         }
-        return (Class<T>) mtipo.getClasseInstancia();
+        return (Class<T>) mtipo.getInstanceClass();
     }
 
     @Override

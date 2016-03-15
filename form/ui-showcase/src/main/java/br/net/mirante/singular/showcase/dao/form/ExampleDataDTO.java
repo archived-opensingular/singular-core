@@ -1,11 +1,21 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.dao.form;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import java.util.Date;
 
 import org.apache.wicket.model.IModel;
 
@@ -13,15 +23,28 @@ import org.apache.wicket.model.IModel;
 @Table(name = "EXAMPLE_DATA")
 @SuppressWarnings({"rawtypes", "serial"})
 public class ExampleDataDTO implements IModel {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 
-    private String key, type;
-    @Lob private String xml, annotations;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public ExampleDataDTO() {}
+    @Column
+    private String type;
 
-    public ExampleDataDTO(String key) {
-        this.key = key;
+    @Lob
+    @Column
+    private String xml;
+
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date editionDate;
+
+    @Lob
+    @Column
+    private String annotations;
+
+    public ExampleDataDTO() {
+
     }
 
     public Long getId() {
@@ -30,14 +53,6 @@ public class ExampleDataDTO implements IModel {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public String getXml() {
@@ -64,8 +79,22 @@ public class ExampleDataDTO implements IModel {
         this.type = type;
     }
 
+    public String getAnnotations() {
+        return annotations;
+    }
+
+    public Date getEditionDate() {
+        return editionDate;
+    }
+
+    public void setEditionDate(Date editionDate) {
+        this.editionDate = editionDate;
+    }
+
     @Override
-    public void detach() {}
+    public void detach() {
+
+    }
 
     @Override
     public Object getObject() {
@@ -73,5 +102,8 @@ public class ExampleDataDTO implements IModel {
     }
 
     @Override
-    public void setObject(Object arg0) {}
+    public void setObject(Object arg0) {
+
+    }
+
 }

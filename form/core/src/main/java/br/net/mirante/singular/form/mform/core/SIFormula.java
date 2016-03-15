@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.core;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -5,7 +10,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 public class SIFormula extends SIComposite {
 
     public void setScipt(String valor) {
-        setValor(STypeFormula.CAMPO_SCRIPT, valor);
+        setValue(STypeFormula.CAMPO_SCRIPT, valor);
     }
 
     public void setSciptJS(String valor) {
@@ -14,14 +19,14 @@ public class SIFormula extends SIComposite {
     }
 
     private void setTipoScript(STypeFormula.TipoScript t) {
-        setValor(STypeFormula.CAMPO_TIPO_SCRIPT, t);
+        setValue(STypeFormula.CAMPO_TIPO_SCRIPT, t);
     }
 
     public String getTipoScript() {
-        return getValorString(STypeFormula.CAMPO_TIPO_SCRIPT);
+        return getValueString(STypeFormula.CAMPO_TIPO_SCRIPT);
     }
 
     public STypeFormula.TipoScript getTipoScriptEnum() {
-        return getValorEnum(STypeFormula.CAMPO_TIPO_SCRIPT, STypeFormula.TipoScript.class);
+        return getValueEnum(STypeFormula.CAMPO_TIPO_SCRIPT, STypeFormula.TipoScript.class);
     }
 }

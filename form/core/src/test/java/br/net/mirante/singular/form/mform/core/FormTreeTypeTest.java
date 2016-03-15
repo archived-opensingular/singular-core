@@ -25,17 +25,17 @@ public class FormTreeTypeTest extends SPackage {
 //        STypeComposite<? extends SIComposite> node = pkg.createTipoComposto("node");
 
         PackageBuilder pkg = dict.createNewPackage("pkg");
-        STypeComposite<? extends SIComposite> node = pkg.createTipoComposto("node");
+        STypeComposite<? extends SIComposite> node = pkg.createCompositeType("node");
 
-        node.addCampoString("nome");
-        node.addCampoString("type");
-        node.addCampoListaOf("child",node);
+        node.addFieldString("nome");
+        node.addFieldString("type");
+        node.addFieldListOf("child",node);
 
 
         //FIXME: It seems the isse reside on the setRoot
-        SIComposite siComposite = (SIComposite) node.novaInstancia();
-        siComposite.getCampo("nome").setValue("Me");
-        siComposite.getCampo("type").setValue("the type");
+        SIComposite siComposite = (SIComposite) node.newInstance();
+        siComposite.getField("nome").setValue("Me");
+        siComposite.getField("type").setValue("the type");
     }
 
 //    @MInfoTipo(nome = "NodeType", pacote = FormTreeTypeTest.class)

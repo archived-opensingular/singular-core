@@ -8,16 +8,16 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class STypeAnoMesTest {
 
-    STypeAnoMes type = new STypeAnoMes();
+    STypeYearMonth type = new STypeYearMonth();
     YearMonth dec2015 = YearMonth.of(2015, 12),
             jan2015 = YearMonth.of(2015, 1),
             jan01 = YearMonth.of(1, 1);
 
     @Test
     public void formatingString() {
-        assertThat(type.toStringPersistencia(dec2015)).isEqualTo("12/2015");
-        assertThat(type.toStringPersistencia(jan2015)).isEqualTo("01/2015");
-        assertThat(type.toStringPersistencia(jan01)).isEqualTo("01/0001");
+        assertThat(type.toStringPersistence(dec2015)).isEqualTo("12/2015");
+        assertThat(type.toStringPersistence(jan2015)).isEqualTo("01/2015");
+        assertThat(type.toStringPersistence(jan01)).isEqualTo("01/0001");
     }
 
     @Test
@@ -35,14 +35,14 @@ public class STypeAnoMesTest {
     }
 
     private YearMonth packUnpackString(YearMonth value) {
-        String generatedStr = type.toStringPersistencia(value);
-        return type.converterNaoNativoNaoString(generatedStr);
+        String generatedStr = type.toStringPersistence(value);
+        return type.convertNotNativeNotString(generatedStr);
     }
 
     private YearMonth packUnpackInteger(YearMonth value) {
-        String generatedStr = type.toStringPersistencia(value);
+        String generatedStr = type.toStringPersistence(value);
         Integer generatedInt = Integer.parseInt(generatedStr.replaceAll("[^0-9]+", ""));
-        return type.converterNaoNativoNaoString(generatedInt);
+        return type.convertNotNativeNotString(generatedInt);
     }
 
 }

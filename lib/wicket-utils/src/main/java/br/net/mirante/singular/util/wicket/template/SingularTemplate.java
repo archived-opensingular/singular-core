@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.template;
 
 import java.util.ArrayList;
@@ -64,6 +69,7 @@ public abstract class SingularTemplate extends WebPage {
         skinOptions.addDefaulSkin("Default", CssHeaderItem.forUrl("/singular-static/resources/metronic/layout4/css/themes/default.css"));
         skinOptions.addSkin("Vermelho", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/red.css"));
         skinOptions.addSkin("Verde", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/green.css"));
+        skinOptions.addSkin("Anvisa", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/anvisa.css"));
     }
 
     public List<CssHeaderItem> getDefaultCSSUrls() {
@@ -92,7 +98,7 @@ public abstract class SingularTemplate extends WebPage {
         add.accept("/singular-static/resources/singular/plugins/syntaxHighlighter/css/shCore.css");
         add.accept("/singular-static/resources/singular/plugins/syntaxHighlighter/css/shThemeDefault.css");
         add.accept("/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.css");
-        add.accept("resources/custom/css/global.css");
+        add.accept("resources/custom/css/custom.css");
 
         return cssHeaderItens;
     }

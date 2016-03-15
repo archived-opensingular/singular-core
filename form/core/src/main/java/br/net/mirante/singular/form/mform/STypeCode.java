@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform;
 
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 
-@MInfoTipo(nome = "MTipoCode", pacote = SPackageCore.class)
+@SInfoType(name = "STypeCode", spackage = SPackageCore.class)
 public class STypeCode<I extends SICode<V>, V> extends SType<I> {
 
     private Class<V> codeClass;
@@ -19,7 +24,7 @@ public class STypeCode<I extends SICode<V>, V> extends SType<I> {
     }
     @SuppressWarnings("unchecked")
     @Override
-    public <C> C converter(Object valor, Class<C> classeDestino) {
+    public <C> C convert(Object valor, Class<C> classeDestino) {
         return (C) valor;
     }
 }

@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform;
 
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 
-@MInfoTipo(nome = "MTipoSupplier", pacote = SPackageBasic.class)
+@SInfoType(name = "STypeSupplier", spackage = SPackageBasic.class)
 public class STypeSupplier<V> extends STypeCode<SISupplier<V>, Supplier<V>> {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

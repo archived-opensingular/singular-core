@@ -18,12 +18,12 @@ public class MonetarioMapperTest extends MapperBaseTest {
 
     @Override
     public void appendPackageFields(STypeComposite<? extends SIComposite> form) {
-        form.addCampoMonetario("money");
+        form.addFieldMonetary("money");
     }
 
     @Override
     public void mockFormValues(SIComposite formInstance) {
-        formInstance.setValor("money", "10,00");
+        formInstance.setValue("money", "10,00");
     }
 
     @Test

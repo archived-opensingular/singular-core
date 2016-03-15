@@ -13,8 +13,8 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
+import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
@@ -26,14 +26,14 @@ public class PanelListWithSimpleSelectionTest extends AbstractSingularFormTest {
     @Override
     protected void populateMockType(STypeComposite<?> mockType) {
 
-        final STypeLista<STypeComposite<SIComposite>, SIComposite> mockList;
-        mockList = mockType.addCampoListaOfComposto("mockList", "mockTypeComposite");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> mockList;
+        mockList = mockType.addFieldListOfComposite("mockList", "mockTypeComposite");
         mockList.asAtrBasic().label("Mock Type Composite");
-        mockList.withView(MPanelListaView::new);
+        mockList.withView(SViewListByForm::new);
 
-        final STypeComposite mockTypeCompostite = mockList.getTipoElementos();
+        final STypeComposite mockTypeCompostite = mockList.getElementsType();
 
-        simpleSelecion = mockTypeCompostite.addCampoString("simpleSelecion");
+        simpleSelecion = mockTypeCompostite.addFieldString("simpleSelecion");
         simpleSelecion.withSelectionOf("a", "b", "c");
     }
 

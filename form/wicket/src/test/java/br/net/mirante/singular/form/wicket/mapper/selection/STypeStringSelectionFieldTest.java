@@ -21,7 +21,7 @@ public class STypeStringSelectionFieldTest extends SelectionFieldBaseTest{
     @Override
     @SuppressWarnings("rawtypes")
     SType createSelectionType(STypeComposite group) {
-        return selectType = group.addCampoString("favoriteFruit");
+        return selectType = group.addFieldString("favoriteFruit");
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -70,7 +70,7 @@ public class STypeStringSelectionFieldTest extends SelectionFieldBaseTest{
     @Test public void rendersAnDropDownWithDanglingOptions(){
         setupPage();
         page.getCurrentInstance()
-                .setValor(selectType.getSimpleName(), "avocado");;
+                .setValue(selectType.getNameSimple(), "avocado");;
         selectType.withSelectionOf("strawberry","apple","orange","banana");
         buildPage();
         
@@ -97,14 +97,14 @@ public class STypeStringSelectionFieldTest extends SelectionFieldBaseTest{
         buildPage();
         form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
         form.submit("save-btn");
-        Object value = page.getCurrentInstance().getValor(selectType.getSimpleName());
+        Object value = page.getCurrentInstance().getValue(selectType.getNameSimple());
         assertThat(value).isEqualTo("orange");
     }
 
     private Object getSelectKeyFromValue(String value) {
-        SIString mvalue = selectType.novaInstancia();
+        SIString mvalue = selectType.newInstance();
         mvalue.setValue(value);
-        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
+        return page.getCurrentInstance().getField("favoriteFruit").getOptionsConfig().getKeyFromOption(mvalue);
     }
 
 }

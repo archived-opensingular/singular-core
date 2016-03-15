@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.exemplos.canabidiol;
 
 import javax.inject.Inject;
@@ -6,7 +11,7 @@ import br.net.mirante.singular.exemplos.canabidiol.dao.CIDDAO;
 import br.net.mirante.singular.exemplos.canabidiol.model.CapituloCID;
 import br.net.mirante.singular.exemplos.canabidiol.model.CategoriaCID;
 import br.net.mirante.singular.exemplos.canabidiol.model.GrupoCID;
-import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
@@ -18,7 +23,7 @@ import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.exemplos.canabidiol.model.SubCategoriaCID;
 
-@MInfoTipo(nome = "MTipoCID", pacote = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeCID extends STypeComposite<SIComposite> {
 
     @Inject // queria injetar :(
@@ -28,7 +33,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        STypeComposite<?> capitulo = this.addCampoComposto("capitulo");
+        STypeComposite<?> capitulo = this.addFieldComposite("capitulo");
         capitulo
                 .as(AtrCore::new)
                 .obrigatorio()
@@ -38,11 +43,11 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .colPreference(3);
 
         STypeString idCapitulo = capitulo
-                .addCampoString("id");
+                .addFieldString("id");
         STypeString descricaoCapitulo = capitulo
-                .addCampoString("descricao");
+                .addFieldString("descricao");
         STypeString descricaoAbreviadaCapitulo = capitulo
-                .addCampoString("descricaoAbreviada");
+                .addFieldString("descricaoAbreviada");
         capitulo.withSelectView()
                 .withSelectionFromProvider(descricaoCapitulo, (instancia, listBuilder) -> {
                     for (CapituloCID cap : ciddao.listCapitulos()) {
@@ -53,23 +58,23 @@ public class STypeCID extends STypeComposite<SIComposite> {
                     }
                 });
 
-        STypeComposite<?> grupo = this.addCampoComposto("grupo");
+        STypeComposite<?> grupo = this.addFieldComposite("grupo");
         grupo
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Grupo")
-                .visivel(inst -> Value.notNull(inst, (STypeSimple) capitulo.getCampo("id")))
+                .visivel(inst -> Value.notNull(inst, (STypeSimple) capitulo.getField("id")))
                 .dependsOn(capitulo)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
 
         STypeString idGrupo = grupo
-                .addCampoString("id");
+                .addFieldString("id");
         STypeString descricaoGrupo = grupo
-                .addCampoString("descricao");
+                .addFieldString("descricao");
         STypeString descricaoAbreviadaGrupo = grupo
-                .addCampoString("descricaoAbreviada");
+                .addFieldString("descricaoAbreviada");
         grupo
                 .withSelectView()
                 .withSelectionFromProvider(descricaoGrupo, (instancia, listaBuilder) -> {
@@ -82,7 +87,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 });
 
 
-        STypeComposite<?> categoria = this.addCampoComposto("categoria");
+        STypeComposite<?> categoria = this.addFieldComposite("categoria");
         categoria
                 .as(AtrCore::new)
                 .obrigatorio()
@@ -94,11 +99,11 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .colPreference(3);
 
         STypeString idCategoria = categoria
-                .addCampoString("id");
+                .addFieldString("id");
         STypeString descricaoCategoria = categoria
-                .addCampoString("descricao");
+                .addFieldString("descricao");
         STypeString descricaoAbreviadaCategoria = categoria
-                .addCampoString("descricaoAbreviada");
+                .addFieldString("descricaoAbreviada");
 
         categoria
                 .withSelectView()
@@ -111,7 +116,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
                     }
                 });
 
-        STypeComposite<?> subcategoria = this.addCampoComposto("subcategoria");
+        STypeComposite<?> subcategoria = this.addFieldComposite("subcategoria");
         subcategoria
                 .as(AtrCore::new)
                 .obrigatorio(inst -> ciddao.listSubCategoriasByIdCategoria(Value.of(inst, idCategoria)).size() > 0)
@@ -124,11 +129,11 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .colPreference(3);
 
         STypeString idSubCategoria = subcategoria
-                .addCampoString("id");
+                .addFieldString("id");
         STypeString descricaoSubCategoria = subcategoria
-                .addCampoString("descricao");
+                .addFieldString("descricao");
         STypeString descricaoSubAbreviadaCategoria = subcategoria
-                .addCampoString("descricaoAbreviada");
+                .addFieldString("descricaoAbreviada");
 
         subcategoria
                 .withSelectView()

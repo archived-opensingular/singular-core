@@ -24,13 +24,13 @@ public class TestSDocumentServices {
     }
 
     private void createTypes(PackageBuilder pb) {
-        groupingType = pb.createTipoComposto("Grouping");
-        groupingType.addCampo("anexo", STypeAttachment.class);
-        groupingType.addCampoInteger("justIgnoreThis");
+        groupingType = pb.createCompositeType("Grouping");
+        groupingType.addField("anexo", STypeAttachment.class);
+        groupingType.addFieldInteger("justIgnoreThis");
     }
     
     private void createInstances() {
-        SIComposite instance = (SIComposite) groupingType.novaInstancia();
+        SIComposite instance = (SIComposite) groupingType.newInstance();
         document = instance.getDocument();
         fileFieldInstance = (SIAttachment) instance.getAllChildren().iterator().next();
     }

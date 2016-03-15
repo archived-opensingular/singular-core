@@ -84,7 +84,7 @@ Singular.applyTelefoneNacionalMask = function (id) {
 
     function onKeyPress(event) {
         var keyCode = event.which || event.keyCode;
-        if (bypassKeys.singularContais(keyCode) || removeKeys.singularContais(keyCode) || event.ctrlKey) {
+        if (bypassKeys.singularContais(keyCode) && !event.shiftKey || removeKeys.singularContais(keyCode) || event.ctrlKey) {
             return true;
         }
         if (currentValueLength() > 10) {

@@ -16,29 +16,29 @@ public class TestMInstanciaDescendants {
         SDictionary dicionario = SDictionary.create();
         SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
-        SIComposite contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.newInstance();
 
         contato.getDescendant(pacote.nome).setValue("Fulano");
         contato.getDescendant(pacote.sobrenome).setValue("de Tal");
 
-        SIComposite endereco = contato.getDescendant(pacote.enderecos).addNovo();
+        SIComposite endereco = contato.getDescendant(pacote.enderecos).addNew();
         endereco.getDescendant(pacote.enderecoLogradouro).setValue("QI 25");
         endereco.getDescendant(pacote.enderecoComplemento).setValue("Bloco G");
         endereco.getDescendant(pacote.enderecoNumero).setValue(402);
         endereco.getDescendant(pacote.enderecoCidade).setValue("Guará II");
         endereco.getDescendant(pacote.enderecoEstado).setValue("DF");
 
-        SList<SIString> telefones = contato.getDescendant(pacote.telefones);
-        telefones.addValor("8888-8888");
-        telefones.addValor("9999-8888");
-        telefones.addValor("9999-9999");
+        SIList<SIString> telefones = contato.getDescendant(pacote.telefones);
+        telefones.addValue("8888-8888");
+        telefones.addValue("9999-8888");
+        telefones.addValue("9999-9999");
 
-        SList<SIString> emails = contato.getDescendant(pacote.emails);
-        emails.addValor("fulano@detal.com");
+        SIList<SIString> emails = contato.getDescendant(pacote.emails);
+        emails.addValue("fulano@detal.com");
 
         Assert.assertEquals(
             Arrays.asList("8888-8888", "9999-8888", "9999-9999"),
-            contato.listDescendantValues(pacote.telefones.getTipoElementos(), String.class));
+            contato.listDescendantValues(pacote.telefones.getElementsType(), String.class));
 
 //        contato.debug();
     }
@@ -48,10 +48,10 @@ public class TestMInstanciaDescendants {
         SDictionary dicionario = SDictionary.create();
         SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
-        SIComposite contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.newInstance();
 
         for (int i = 0; i < 4; i++) {
-            SIComposite endereco = (SIComposite) contato.getDescendant(pacote.enderecos).addNovo();
+            SIComposite endereco = (SIComposite) contato.getDescendant(pacote.enderecos).addNew();
             endereco.getDescendant(pacote.enderecoNumero).setValue(Integer.valueOf(i));
         }
 
@@ -71,7 +71,7 @@ public class TestMInstanciaDescendants {
     public void testIncorrectAncestor() {
         SDictionary dicionario = SDictionary.create();
         SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
-        SIComposite contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.newInstance();
 
         Assert.assertFalse(contato.getDescendant(pacote.telefones).findAncestor(pacote.enderecos).isPresent());
         Assert.assertFalse(contato.getDescendant(pacote.enderecos).findAncestor(pacote.endereco).isPresent());
@@ -81,12 +81,12 @@ public class TestMInstanciaDescendants {
     public void testIncorrectDescendant() {
         SDictionary dic = SDictionary.create();
         SPackageTesteContatos pac = dic.loadPackage(SPackageTesteContatos.class);
-        SIComposite contato = pac.contato.novaInstancia();
+        SIComposite contato = pac.contato.newInstance();
 
         Assert.assertFalse(contato.getDescendant(pac.telefones).findDescendant(pac.endereco).isPresent());
         Assert.assertFalse(contato.getDescendant(pac.enderecos).findDescendant(pac.telefones).isPresent());
 
-        contato.getDescendant(pac.enderecos).addNovo();
+        contato.getDescendant(pac.enderecos).addNew();
         Assert.assertFalse(contato.getDescendant(pac.endereco).findDescendant(pac.emails).isPresent());
     }
 
@@ -112,10 +112,10 @@ public class TestMInstanciaDescendants {
             pacote.emails,
             pacote.email));
 
-        SIComposite contato = pacote.contato.novaInstancia();
-        contato.getDescendant(pacote.enderecos).addNovo();
-        contato.getDescendant(pacote.telefones).addNovo();
-        contato.getDescendant(pacote.emails).addNovo();
+        SIComposite contato = pacote.contato.newInstance();
+        contato.getDescendant(pacote.enderecos).addNew();
+        contato.getDescendant(pacote.telefones).addNew();
+        contato.getDescendant(pacote.emails).addNew();
 
         contato.streamDescendants(true)
             .forEachOrdered(instancia -> Assert.assertTrue(

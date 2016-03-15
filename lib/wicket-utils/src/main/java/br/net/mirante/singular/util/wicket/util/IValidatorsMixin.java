@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.util;
 
 import java.io.Serializable;
@@ -6,7 +11,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidator;
 
-import br.net.mirante.singular.lambda.IPredicate;
+import br.net.mirante.singular.commons.lambda.IPredicate;
 import br.net.mirante.singular.util.wicket.validator.BaseValidator;
 import br.net.mirante.singular.util.wicket.validator.NotFutureDateValidator;
 

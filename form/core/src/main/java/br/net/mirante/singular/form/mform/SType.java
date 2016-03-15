@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform;
 
 import java.io.IOException;
@@ -16,22 +21,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
-@MInfoTipo(nome = "MTipo", pacote = SPackageCore.class)
-public class SType<I extends SInstance> extends MEscopoBase implements MAtributoEnabled {
+@SInfoType(name = "SType", spackage = SPackageCore.class)
+public class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
 
@@ -40,41 +46,41 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
      */
     protected long instanceCount;
 
-    private String nomeSimples;
+    private String nameSimple;
 
-    private String nomeCompleto;
+    private String nameFull;
 
-    private SDictionary dicionario;
+    private SDictionary dictionary;
 
-    private MEscopo escopo;
+    private SScope scope;
 
-    private MapaAtributos atributosDefinidos = new MapaAtributos();
+    private AttributeMap attributesDefined = new AttributeMap();
 
-    private MapaResolvedorDefinicaoAtributo atributosResolvidos;
+    private MapAttributeDefinitionResolver attributesResolved;
 
-    //    private Map<IValueValidator<?>, ValidationErrorLevel> valueValidators = new LinkedHashMap<>();
     private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators = new LinkedHashMap<>();
+
     private Set<SType<?>> dependentTypes;
 
     /**
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
      * outros pontos.
      */
-    private boolean apenasCampo;
+    private boolean onlyAField;
 
     /**
      * Representa um campo que não será persistido. Se aplica somente se
      * apenasCampo=true.
      */
-    private boolean seCampoTransiente;
+    private boolean transientField;
 
-    private Class<SType> classeSuperTipo;
+    private Class<SType> superTypeClass;
 
-    private final Class<? extends I> classeInstancia;
+    private final Class<? extends I> instanceClass;
 
-    private SType<I> superTipo;
+    private SType<I> superType;
 
-    private MView view;
+    private SView view;
 
     private UIComponentMapper customMapper;
 
@@ -82,104 +88,107 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         this(null, (Class<SType>) null, null);
     }
 
-    protected SType(Class<? extends I> classeInstancia) {
-        this(null, (Class<SType>) null, classeInstancia);
+    protected SType(Class<? extends I> instanceClass) {
+        this(null, (Class<SType>) null, instanceClass);
     }
 
-    protected SType(String nomeSimples, Class<SType> classeSuperTipo, Class<? extends I> classeInstancia) {
-        if (nomeSimples == null) {
-            nomeSimples = getAnotacaoMFormTipo().nome();
+    protected SType(String simpleName, Class<SType> superTypeClass, Class<? extends I> instanceClass) {
+        if (simpleName == null) {
+            simpleName = getInfoType().name();
+            if (StringUtils.isEmpty(simpleName)) {
+                simpleName = getClass().getSimpleName();
+            }
         }
-        MFormUtil.checkNomeSimplesValido(nomeSimples);
-        this.nomeSimples = nomeSimples;
-        this.classeSuperTipo = classeSuperTipo;
-        this.classeInstancia = classeInstancia;
-        atributosResolvidos = new MapaResolvedorDefinicaoAtributo(this);
+        SFormUtil.validateSimpleName(simpleName);
+        this.nameSimple = simpleName;
+        this.superTypeClass = superTypeClass;
+        this.instanceClass = instanceClass;
+        attributesResolved = new MapAttributeDefinitionResolver(this);
     }
 
-    protected SType(String nomeSimples, SType<I> superTipo, Class<I> classeInstancia) {
-        this(nomeSimples, (Class<SType>) (superTipo == null ? null : superTipo.getClass()), classeInstancia);
-        this.superTipo = superTipo;
+    protected SType(String simpleName, SType<I> superType, Class<I> instanceClass) {
+        this(simpleName, (Class<SType>) (superType == null ? null : superType.getClass()), instanceClass);
+        this.superType = superType;
     }
 
     protected void onLoadType(TypeBuilder tb) {
     }
 
-    final MInfoTipo getAnotacaoMFormTipo() {
-        return SDictionary.getAnotacaoMFormTipo(getClass());
+    final SInfoType getInfoType() {
+        return SDictionary.getInfoType(getClass());
     }
 
-    private final <TT extends SType<I>> TypeBuilder extender(String nomeSimples, Class<TT> classePai) {
-        MFormUtil.checkNomeSimplesValido(nomeSimples);
-        if (!classePai.equals(getClass())) {
+    private final <TT extends SType<I>> TypeBuilder extend(String simpleName, Class<TT> parentClass) {
+        SFormUtil.validateSimpleName(simpleName);
+        if (!parentClass.equals(getClass())) {
             throw new RuntimeException("Erro Interno");
         }
-        TypeBuilder tb = new TypeBuilder(classePai);
-        ((SType<I>) tb.getTipo()).nomeSimples = nomeSimples;
-        ((SType<I>) tb.getTipo()).superTipo = this;
+        TypeBuilder tb = new TypeBuilder(parentClass);
+        ((SType<I>) tb.getType()).nameSimple = simpleName;
+        ((SType<I>) tb.getType()).superType = this;
         return tb;
     }
 
-    final <TT extends SType<?>> TypeBuilder extender(String nomeSimples) {
-        return (TypeBuilder) extender(nomeSimples, getClass());
+    final <TT extends SType<?>> TypeBuilder extend(String simpleName) {
+        return (TypeBuilder) extend(simpleName, getClass());
     }
 
     @SuppressWarnings("unchecked")
-    final void resolverSuperTipo(SDictionary dicionario) {
-        if (superTipo != null || getClass() == SType.class) {
+    final void resolvSuperType(SDictionary dictionary) {
+        if (superType != null || getClass() == SType.class) {
             return;
         }
         Class<SType> c = (Class<SType>) getClass().getSuperclass();
         if (c != null) {
-            this.superTipo = dicionario.getType(c);
+            this.superType = dictionary.getType(c);
         }
     }
 
     @Override
     public String getName() {
-        return nomeCompleto;
+        return nameFull;
     }
 
-    public String getSimpleName() {
-        return nomeSimples;
+    public String getNameSimple() {
+        return nameSimple;
     }
 
     public SType<I> getSuperType() {
-        return superTipo;
+        return superType;
     }
 
-    public Class<I> getClasseInstancia() {
-        return (Class<I>) classeInstancia;
+    public Class<I> getInstanceClass() {
+        return (Class<I>) instanceClass;
     }
 
-    private Class<I> getClasseInstanciaResolvida() {
-        if (classeInstancia == null && superTipo != null) {
-            return superTipo.getClasseInstanciaResolvida();
+    private Class<I> getInstanceClassResolved() {
+        if (instanceClass == null && superType != null) {
+            return superType.getInstanceClassResolved();
         }
-        return (Class<I>) classeInstancia;
+        return (Class<I>) instanceClass;
     }
 
-    final void setEscopo(MEscopo pacote) {
-        this.escopo = pacote;
-        this.nomeCompleto = pacote.getName() + "." + nomeSimples;
+    final void setScope(SScope packageScope) {
+        this.scope = packageScope;
+        this.nameFull = packageScope.getName() + "." + nameSimple;
     }
 
     @Override
-    public MEscopo getEscopoPai() {
-        if (escopo == null) {
+    public SScope getParentScope() {
+        if (scope == null) {
             throw new SingularFormException(
                     "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
                             + "dê override no método onLoadType() e mova as chamada de configuração para ele.");
         }
-        return escopo;
+        return scope;
     }
 
     @Override
     public SDictionary getDictionary() {
-        if (dicionario == null) {
-            dicionario = getPacote().getDictionary();
+        if (dictionary == null) {
+            dictionary = getPackage().getDictionary();
         }
-        return dicionario;
+        return dictionary;
     }
 
     public boolean isSelfReference() {
@@ -207,43 +216,43 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
             if (atual == parentTypeCandidate) {
                 return true;
             }
-            atual = atual.superTipo;
+            atual = atual.superType;
         }
         return false;
     }
 
-    final void addAtributo(MAtributo atributo) {
-        if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
-            throw new SingularFormException("O Atributo '" + atributo.getName() + "' pertence excelusivamente ao tipo '"
-                    + atributo.getTipoDono().getName() + "'. Assim não pode ser reassociado a classe '" + getName());
+    final void addAttribute(SAttribute attribute) {
+        if (attribute.getOwnerType() != null && attribute.getOwnerType() != this) {
+            throw new SingularFormException("O Atributo '" + attribute.getName() + "' pertence excelusivamente ao tipo '"
+                    + attribute.getOwnerType().getName() + "'. Assim não pode ser reassociado a classe '" + getName());
         }
 
-        atributosDefinidos.add(atributo);
+        attributesDefined.add(attribute);
     }
 
-    final MAtributo getAtributoDefinidoLocal(String nomeCompleto) {
-        return atributosDefinidos.get(nomeCompleto);
+    final SAttribute getAttributeDefinedLocally(String fullName) {
+        return attributesDefined.get(fullName);
     }
 
-    final MAtributo getAtributoDefinidoHierarquia(String nomeCompleto) {
-        for (SType<?> atual = this; atual != null; atual = atual.superTipo) {
-            MAtributo att = atual.getAtributoDefinidoLocal(nomeCompleto);
+    final SAttribute getAttributeDefinedHierarchy(String fullName) {
+        for (SType<?> current = this; current != null; current = current.superType) {
+            SAttribute att = current.getAttributeDefinedLocally(fullName);
             if (att != null) {
                 return att;
             }
         }
-        throw new SingularFormException("Não existe atributo '" + nomeCompleto + "' em " + getName());
+        throw new SingularFormException("Não existe atributo '" + fullName + "' em " + getName());
     }
 
-    public <MI extends SInstance> MI getInstanciaAtributo(AtrRef<?, MI, ?> atr) {
-        Class<MI> classeInstancia = atr.isSelfReference() ? (Class<MI>) getClasseInstanciaResolvida() : atr.getClasseInstancia();
-        SInstance instancia = getInstanciaAtributoInterno(atr.getNomeCompleto());
-        return classeInstancia.cast(instancia);
+    public <MI extends SInstance> MI getAttributeInstance(AtrRef<?, MI, ?> atr) {
+        Class<MI> instanceClass = atr.isSelfReference() ? (Class<MI>) getInstanceClassResolved() : atr.getInstanceClass();
+        SInstance instancia = getAttributeInstanceInternal(atr.getNameFull());
+        return instanceClass.cast(instancia);
     }
 
-    final SInstance getInstanciaAtributoInterno(String nomeCompleto) {
-        for (SType<?> atual = this; atual != null; atual = atual.superTipo) {
-            SInstance instancia = atual.atributosResolvidos.get(nomeCompleto);
+    final SInstance getAttributeInstanceInternal(String fullName) {
+        for (SType<?> current = this; current != null; current = current.superType) {
+            SInstance instancia = current.attributesResolved.get(fullName);
             if (instancia != null) {
                 return instancia;
             }
@@ -252,43 +261,43 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     }
 
     @Override
-    public void setValorAtributo(String nomeAtributo, String subPath, Object valor) {
-        SInstance instancia = atributosResolvidos.getCriando(mapearNome(nomeAtributo));
+    public void setAttributeValue(String attributeName, String subPath, Object value) {
+        SInstance instancia = attributesResolved.getCreating(mapName(attributeName));
         if (subPath != null) {
-            instancia.setValor(new PathReader(subPath), valor);
+            instancia.setValue(new PathReader(subPath), value);
         } else {
-            instancia.setValue(valor);
+            instancia.setValue(value);
         }
     }
 
     @Override
-    public <V extends Object> V getValorAtributo(String nomeCompleto, Class<V> classeDestino) {
-        nomeCompleto = mapearNome(nomeCompleto);
-        SInstance instancia = getInstanciaAtributoInterno(nomeCompleto);
-        if (instancia != null) {
-            return (classeDestino == null) ? (V) instancia.getValue() : instancia.getValorWithDefault(classeDestino);
+    public <V extends Object> V getAttributeValue(String fullName, Class<V> resultClass) {
+        fullName = mapName(fullName);
+        SInstance instance = getAttributeInstanceInternal(fullName);
+        if (instance != null) {
+            return (resultClass == null) ? (V) instance.getValue() : instance.getValueWithDefault(resultClass);
         }
-        MAtributo atr = getAtributoDefinidoHierarquia(nomeCompleto);
-        if (classeDestino == null) {
-            return (V) atr.getValorAtributoOrDefaultValueIfNull();
+        SAttribute atr = getAttributeDefinedHierarchy(fullName);
+        if (resultClass == null) {
+            return (V) atr.getAttributeValueOrDefaultValueIfNull();
         }
-        return atr.getValorAtributoOrDefaultValueIfNull(classeDestino);
+        return atr.getAttributeValueOrDefaultValueIfNull(resultClass);
     }
 
-    private String mapearNome(String nomeOriginal) {
-        if (nomeOriginal.indexOf('.') == -1) {
-            return getName() + '.' + nomeOriginal;
+    private String mapName(String originalName) {
+        if (originalName.indexOf('.') == -1) {
+            return getName() + '.' + originalName;
         }
-        return nomeOriginal;
+        return originalName;
     }
 
-    public SType<I> with(AtrRef<?, ?, ? extends Object> atributo, Object valor) {
-        setValorAtributo((AtrRef<?, ?, Object>) atributo, valor);
+    public SType<I> with(AtrRef<?, ?, ? extends Object> attribute, Object value) {
+        setAttributeValue((AtrRef<?, ?, Object>) attribute, value);
         return this;
     }
 
-    public SType<I> with(String pathAtributo, Object valor) {
-        setValorAtributo(pathAtributo, valor);
+    public SType<I> with(String attributePath, Object value) {
+        setAttributeValue(attributePath, value);
         return this;
     }
 
@@ -296,47 +305,47 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         throw new NotImplementedException("Este tipo não implementa o método `with`");
     }
 
-    public SType<I> withCode(String pathCampo, IBehavior<I> comportamento) {
+    public SType<I> withCode(String fieldPath, IBehavior<I> behavior) {
         throw new NotImplementedException("Este tipo não implementa o método `withCode`");
     }
 
-    public SType<I> withValorInicial(Object valor) {
-        return with(SPackageCore.ATR_VALOR_INICIAL, valor);
+    public SType<I> withInitialValue(Object value) {
+        return with(SPackageCore.ATR_VALOR_INICIAL, value);
 
     }
 
-    public SType<I> withDefaultValueIfNull(Object valor) {
-        return with(SPackageCore.ATR_DEFAULT_IF_NULL, valor);
+    public SType<I> withDefaultValueIfNull(Object value) {
+        return with(SPackageCore.ATR_DEFAULT_IF_NULL, value);
     }
 
-    public Object getValorAtributoOrDefaultValueIfNull() {
-        if (Objects.equals(nomeSimples, SPackageCore.ATR_DEFAULT_IF_NULL.getNomeSimples())) {
+    public Object getAttributeValueOrDefaultValueIfNull() {
+        if (Objects.equals(nameSimple, SPackageCore.ATR_DEFAULT_IF_NULL.getNameSimple())) {
             return null;
         }
-        return getValorAtributo(SPackageCore.ATR_DEFAULT_IF_NULL);
+        return getAttributeValue(SPackageCore.ATR_DEFAULT_IF_NULL);
     }
 
-    public <V extends Object> V getValorAtributoOrDefaultValueIfNull(Class<V> classeDestino) {
-        if (Objects.equals(nomeSimples, SPackageCore.ATR_DEFAULT_IF_NULL.getNomeSimples())) {
+    public <V extends Object> V getAttributeValueOrDefaultValueIfNull(Class<V> resultClass) {
+        if (Objects.equals(nameSimple, SPackageCore.ATR_DEFAULT_IF_NULL.getNameSimple())) {
             return null;
         }
-        return getValorAtributo(SPackageCore.ATR_DEFAULT_IF_NULL, classeDestino);
+        return getAttributeValue(SPackageCore.ATR_DEFAULT_IF_NULL, resultClass);
     }
 
-    public Object getValorAtributoValorInicial() {
-        return getValorAtributo(SPackageCore.ATR_VALOR_INICIAL);
+    public Object getAttributeValueInitialValue() {
+        return getAttributeValue(SPackageCore.ATR_VALOR_INICIAL);
     }
 
-    public SType<I> withObrigatorio(Boolean valor) {
-        return with(SPackageCore.ATR_OBRIGATORIO, valor);
+    public SType<I> withRequired(Boolean value) {
+        return with(SPackageCore.ATR_REQUIRED, value);
     }
 
-    public final Boolean isObrigatorio() {
-        return getValorAtributo(SPackageCore.ATR_OBRIGATORIO);
+    public final Boolean isRequired() {
+        return getAttributeValue(SPackageCore.ATR_REQUIRED);
     }
 
-    public SType<I> withExists(Boolean valor) {
-        return with(SPackageCore.ATR_EXISTS, valor);
+    public SType<I> withExists(Boolean value) {
+        return with(SPackageCore.ATR_EXISTS, value);
     }
 
     public SType<I> withExists(Predicate<I> predicate) {
@@ -344,7 +353,7 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     }
 
     public final boolean exists() {
-        return !Boolean.FALSE.equals(getValorAtributo(SPackageCore.ATR_EXISTS));
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageCore.ATR_EXISTS));
     }
 
     //    public MTipo<I> withOnChange(IBehavior<I> behavior) {
@@ -362,11 +371,11 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     //    }
 
     @SuppressWarnings("unchecked")
-    public <T> T as(Class<T> classeAlvo) {
-        if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {
-            return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
+    public <T> T as(Class<T> targetClass) {
+        if (STranslatorForAttribute.class.isAssignableFrom(targetClass)) {
+            return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) targetClass);
         }
-        throw new SingularFormException("Classe '" + classeAlvo + "' não funciona como aspecto");
+        throw new SingularFormException("Classe '" + targetClass + "' não funciona como aspecto");
     }
 
     public AtrBasic asAtrBasic() {
@@ -386,13 +395,13 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         return aspectFactory.apply(this);
     }
 
-    public final <T extends MView> SType<I> withView(Supplier<T> factory) {
+    public final <T extends SView> SType<I> withView(Supplier<T> factory) {
         withView(factory.get());
         return this;
     }
 
     @SafeVarargs
-    public final <T extends MView> SType<I> withView(T mView, Consumer<T>... initializers) {
+    public final <T extends SView> SType<I> withView(T mView, Consumer<T>... initializers) {
         for (Consumer<T> initializer : initializers) {
             initializer.accept(mView);
         }
@@ -400,21 +409,22 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         return this;
     }
 
-    public final <T extends MView> T setView(Supplier<T> factory) {
+    public final <T extends SView> T setView(Supplier<T> factory) {
         T v = factory.get();
         setView(v);
         return v;
     }
 
-    private void setView(MView view) {
-        if (view.aplicavelEm(this)) {
+    private void setView(SView view) {
+        if (view.isApplicableFor(this)) {
             this.view = view;
         } else {
-            throw new SingularFormException("A view '" + view.getClass().getName() + "' não é aplicável ao tipo: '" + getClass().getName() + "'");
+            throw new SingularFormException(
+                    "A view '" + view.getClass().getName() + "' não é aplicável ao tipo: '" + getClass().getName() + "'");
         }
     }
 
-    public MView getView() {
+    public SView getView() {
         return this.view;
     }
 
@@ -429,14 +439,14 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     }
 
     public boolean dependsOnAnyType() {
-        return Optional.ofNullable(getValorAtributo(SPackageBasic.ATR_DEPENDS_ON_FUNCTION))
+        return Optional.ofNullable(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION))
                 .map(Supplier::get)
                 .map(it -> !it.isEmpty())
                 .orElse(false);
     }
 
     public boolean dependsOnAnyTypeInHierarchy() {
-        return MTypes.listAscendants(this, true).stream()
+        return STypes.listAscendants(this, true).stream()
                 .anyMatch(SType::dependsOnAnyType);
     }
 
@@ -458,14 +468,14 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     }
 
     @SuppressWarnings("unchecked")
-    public I castInstancia(SInstance instancia) {
+    public I castInstance(SInstance instance) {
         // TODO verificar se essa é a verificação correta
-        if (instancia.getType() != this)
-            throw new IllegalArgumentException("A instância " + instancia + " não é do tipo " + this);
-        return (I) instancia;
+        if (instance.getType() != this)
+            throw new IllegalArgumentException("A instância " + instance + " não é do tipo " + this);
+        return (I) instance;
     }
 
-    public final I novaInstancia() {
+    public final I newInstance() {
         SDocument owner = new SDocument();
         I instance = newInstance(this, owner);
         owner.setRoot(instance);
@@ -479,31 +489,31 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         return newInstance(this, owner);
     }
 
-    public SList<?> novaLista() {
-        return SList.of(this);
+    public SIList<?> newList() {
+        return SIList.of(this);
     }
 
     private I newInstance(SType<?> original, SDocument owner) {
-        Class<? extends I> c = classeInstancia;
-        if (c == null && superTipo != null) {
-            return superTipo.newInstance(original, owner);
+        Class<? extends I> c = instanceClass;
+        if (c == null && superType != null) {
+            return superType.newInstance(original, owner);
         }
-        if (classeInstancia == null) {
+        if (instanceClass == null) {
             throw new SingularFormException("O tipo '" + original.getName() + (original == this ? "" : "' que é do tipo '" + getName())
                     + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
-            I novo = classeInstancia.newInstance();
-            novo.setDocument(owner);
-            novo.setType(this);
-            if (novo instanceof SISimple) {
-                Object valorInicial = original.getValorAtributoValorInicial();
+            I newInstance = instanceClass.newInstance();
+            newInstance.setDocument(owner);
+            newInstance.setType(this);
+            if (newInstance instanceof SISimple) {
+                Object valorInicial = original.getAttributeValueInitialValue();
                 if (valorInicial != null) {
-                    novo.setValue(valorInicial);
+                    newInstance.setValue(valorInicial);
                 }
             }
             instanceCount++;
-            return novo;
+            return newInstance;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new SingularFormException("Erro instanciando o tipo '" + getName() + "' para o tipo '" + original.getName() + "'", e);
         }
@@ -515,77 +525,78 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     }
 
     @Override
-    public void debug(Appendable appendable, int nivel) {
+    public void debug(Appendable appendable, int level) {
         try {
-            MAtributo at = this instanceof MAtributo ? (MAtributo) this : null;
-            pad(appendable, nivel).append(at == null ? "def " : "defAtt ");
-            appendable.append(getSimpleName());
+            SAttribute at = this instanceof SAttribute ? (SAttribute) this : null;
+            pad(appendable, level).append(at == null ? "def " : "defAtt ");
+            appendable.append(getNameSimple());
             if (at != null) {
-                if (at.getTipoDono() != null && at.getTipoDono() != at.getEscopoPai()) {
-                    appendable.append(" for ").append(suprimirPacote(at.getTipoDono().getName()));
+                if (at.getOwnerType() != null && at.getOwnerType() != at.getParentScope()) {
+                    appendable.append(" for ").append(suppressPackage(at.getOwnerType().getName()));
                 }
             }
             if (at == null) {
-                if (superTipo == null || superTipo.getClass() != getClass()) {
+                if (superType == null || superType.getClass() != getClass()) {
                     appendable.append(" (").append(getClass().getSimpleName());
-                    if (classeInstancia != null && (superTipo == null || !classeInstancia.equals(superTipo.classeInstancia))) {
-                        appendable.append(":").append(classeInstancia.getSimpleName());
+                    if (instanceClass != null && (superType == null || !instanceClass.equals(superType.instanceClass))) {
+                        appendable.append(":").append(instanceClass.getSimpleName());
                     }
                     appendable.append(")");
                 }
             } else if (at.isSelfReference()) {
                 appendable.append(" (SELF)");
             }
-            if (superTipo != null && (at == null || !at.isSelfReference())) {
-                appendable.append(" extend ").append(suprimirPacote(superTipo.getName()));
-                if (this instanceof STypeLista) {
-                    STypeLista<?, ?> lista = (STypeLista<?, ?>) this;
-                    if (lista.getTipoElementos() != null) {
-                        appendable.append(" of ").append(suprimirPacote(lista.getTipoElementos().getName()));
+            if (superType != null && (at == null || !at.isSelfReference())) {
+                appendable.append(" extend ").append(suppressPackage(superType.getName()));
+                if (this instanceof STypeList) {
+                    STypeList<?, ?> lista = (STypeList<?, ?>) this;
+                    if (lista.getElementsType() != null) {
+                        appendable.append(" of ").append(suppressPackage(lista.getElementsType().getName()));
                     }
                 }
             }
-            debugAtributos(appendable, nivel);
+            debugAttributes(appendable, level);
             appendable.append("\n");
 
-            if (this instanceof STypeSimple && ((STypeSimple<?, ?>) this).getProviderOpcoes() != null) {
-                pad(appendable, nivel + 2).append("selection of ").append(((STypeSimple<?, ?>) this).getProviderOpcoes().toDebug()).append("\n");
+            if (this instanceof STypeSimple && ((STypeSimple<?, ?>) this).getOptionsProvider() != null) {
+                pad(appendable, level + 2).append("selection of ").append(((STypeSimple<?, ?>) this).getOptionsProvider().toDebug())
+                        .append("\n");
             }
 
-            atributosDefinidos
-                    .getAtributos()
+            attributesDefined
+                    .getAttributes()
                     .stream()
-                    .filter(att -> !getLocalTypeOptional(att.getSimpleName()).isPresent())
+                    .filter(att -> !getLocalTypeOptional(att.getNameSimple()).isPresent())
                     .forEach(att -> {
                         try {
-                            pad(appendable, nivel + 1)
+                            pad(appendable, level + 1)
                                     .append("att ")
                                     .append("\n")
-                                    .append(suprimirPacote(att.getName()))
+                                    .append(suppressPackage(att.getName()))
                                     .append(":")
-                                    .append(suprimirPacote(att.getSuperType().getName()))
+                                    .append(suppressPackage(att.getSuperType().getName()))
                                     .append(att.isSelfReference() ? " SELF" : "");
                         } catch (IOException ex) {
                             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
                         }
                     });
 
-            super.debug(appendable, nivel + 1);
+            super.debug(appendable, level + 1);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 
-    private void debugAtributos(Appendable appendable, int nivel) {
+    private void debugAttributes(Appendable appendable, int nivel) {
         try {
-            Map<String, SInstance> vals = atributosResolvidos.getAtributos();
+            Map<String, SInstance> vals = attributesResolved.getAttributes();
             if (vals.size() != 0) {
                 appendable.append(" {");
                 vals.entrySet().stream().forEach(e -> {
                     try {
-                        appendable.append(suprimirPacote(e.getKey(), true))
+                        appendable.append(suppressPackage(e.getKey(), true))
                                 .append("=")
-                                .append(e.getValue().getDisplayString())
+                                .append(e.getValue().toStringDisplay())
                                 .append("; ");
                     } catch (IOException ex) {
                         LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
@@ -598,44 +609,44 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         }
     }
 
-    private String suprimirPacote(String nome) {
-        return suprimirPacote(nome, false);
+    private String suppressPackage(String name) {
+        return suppressPackage(name, false);
     }
 
-    private String suprimirPacote(String nome, boolean agressivo) {
-        if (isInicioIgual(nome, getName())) {
-            return nome.substring(getName().length() + 1);
-        } else if (isInicioIgual(nome, escopo.getName())) {
-            return nome.substring(escopo.getName().length() + 1);
-        } else if (isInicioIgual(nome, SPackageCore.NOME)) {
-            String v = nome.substring(SPackageCore.NOME.length() + 1);
-            if (agressivo) {
-                if (isInicioIgual(v, "MTipo")) {
+    private String suppressPackage(String name, boolean aggressive) {
+        if (isEqualsStart(name, getName())) {
+            return name.substring(getName().length() + 1);
+        } else if (isEqualsStart(name, scope.getName())) {
+            return name.substring(scope.getName().length() + 1);
+        } else if (isEqualsStart(name, SPackageCore.NOME)) {
+            String v = name.substring(SPackageCore.NOME.length() + 1);
+            if (aggressive) {
+                if (isEqualsStart(v, "SType")) {
                     v = v.substring(6);
                 }
             }
             return v;
-        } else if (agressivo) {
-            if (isInicioIgual(nome, SPackageBasic.NOME)) {
-                return nome.substring(SPackageBasic.NOME.length() + 1);
+        } else if (aggressive) {
+            if (isEqualsStart(name, SPackageBasic.NOME)) {
+                return name.substring(SPackageBasic.NOME.length() + 1);
             }
         }
-        return nome;
+        return name;
     }
 
-    private static boolean isInicioIgual(String nome, String prefixo) {
-        return nome.startsWith(prefixo) && nome.length() > prefixo.length() && nome.charAt(prefixo.length()) == '.';
+    private static boolean isEqualsStart(String name, String prefixo) {
+        return name.startsWith(prefixo) && name.length() > prefixo.length() && name.charAt(prefixo.length()) == '.';
     }
 
-    public <T extends Object> T converter(Object valor, Class<T> classeDestino) {
+    public <T extends Object> T convert(Object value, Class<T> resultClass) {
         throw new RuntimeException("Método não suportado");
     }
 
     public boolean hasValidation() {
-        return isObrigatorio() || !instanceValidators.isEmpty();
+        return isRequired() || !instanceValidators.isEmpty();
     }
 
-    public MOptionsProvider getProviderOpcoes() {
+    public SOptionsProvider getOptionsProvider() {
         throw new UnsupportedOperationException();
     }
 
