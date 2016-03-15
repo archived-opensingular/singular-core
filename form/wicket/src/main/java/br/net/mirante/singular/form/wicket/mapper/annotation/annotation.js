@@ -70,15 +70,15 @@ if( window.Annotation == undefined){
         },
 
         adjust_height_position: function(){
-            this.this_component.css('position','absolute')
-            var target_offset = this.target_component.parent().offset()['top'],
+            this.this_component.css('position','absolute');
+            var ref = this.target_component;
+            var target_offset = ref.offset()['top'],
                 this_offset = this.this_component.parent().offset()['top'];
             var result_offset = target_offset-this_offset;
             this.this_component.css('top',(result_offset)+"px");
         },
 
         toggle_button_on_click: function(){
-            console.log('toggle', this)
             this.adjust_height_position();
             if(this.is_blank()){
                 this.open_modal[0].click();
@@ -116,7 +116,6 @@ if( window.Annotation == undefined){
                                                   comment, approved, readOnly){
         var this_component = $(this_id)
         var target_component = $(target_id)
-        console.log('before', target_component);
         if(this_component && this_component.data('ctl')){
             var ctl = this_component.data('ctl');
             ctl.init(target_id, this_id, open_modal_id, comment, approved, readOnly);
