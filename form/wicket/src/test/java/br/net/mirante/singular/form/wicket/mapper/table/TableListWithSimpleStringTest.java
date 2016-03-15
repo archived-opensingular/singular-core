@@ -7,7 +7,6 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -43,19 +42,19 @@ public class TableListWithSimpleStringTest extends AbstractSingularFormTest {
 
         final Button addButton = findAddButton();
 
-        Stream<FormComponent> stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
 
-        wicketTester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        tester.executeAjaxEvent(addButton, "click");
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
 
-        wicketTester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        tester.executeAjaxEvent(addButton, "click");
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 2);
 
-        wicketTester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        tester.executeAjaxEvent(addButton, "click");
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 3);
 
     }
@@ -65,19 +64,19 @@ public class TableListWithSimpleStringTest extends AbstractSingularFormTest {
 
         final Button addButton = findAddButton();
 
-        Stream<FormComponent> stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
 
-        wicketTester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        tester.executeAjaxEvent(addButton, "click");
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
 
-        final Button removeButton = findOnForm(Button.class, formTester.getForm(), b -> b.getClass().getName().contains("RemoverButton"))
+        final Button removeButton = findOnForm(Button.class, form.getForm(), b -> b.getClass().getName().contains("RemoverButton"))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de remover"));
 
-        wicketTester.executeAjaxEvent(removeButton, "click");
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        tester.executeAjaxEvent(removeButton, "click");
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
 
     }
@@ -87,17 +86,17 @@ public class TableListWithSimpleStringTest extends AbstractSingularFormTest {
 
         final Button addButton = findAddButton();
 
-        Stream<FormComponent> stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
 
-        wicketTester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        tester.executeAjaxEvent(addButton, "click");
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
 
         final String value = "123456";
 
-        formTester.setValue(findTextField(), value);
-        formTester.submit();
+        form.setValue(findTextField(), value);
+        form.submit();
 
         Assert.assertEquals(value, findTextField().getValue());
 
@@ -108,33 +107,33 @@ public class TableListWithSimpleStringTest extends AbstractSingularFormTest {
 
         final Button addButton = findAddButton();
 
-        Stream<FormComponent> stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
 
-        wicketTester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        tester.executeAjaxEvent(addButton, "click");
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
 
 
         final String value = "123456";
 
-        formTester.setValue(findTextField(), value);
-        wicketTester.executeAjaxEvent(addButton, "click");
+        form.setValue(findTextField(), value);
+        tester.executeAjaxEvent(addButton, "click");
 
-        stream = findFormComponentsByType(formTester.getForm(), simpleString);
+        stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 2);
 
         Assert.assertEquals(value, findTextField().getValue());
     }
 
     public Button findAddButton(){
-        return findOnForm(Button.class, formTester.getForm(), b -> b.getClass().getName().contains("AddButton"))
+        return findOnForm(Button.class, form.getForm(), b -> b.getClass().getName().contains("AddButton"))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar"));
     }
 
     public TextField findTextField(){
-        return (TextField) findFormComponentsByType(formTester.getForm(), simpleString)
+        return (TextField) findFormComponentsByType(form.getForm(), simpleString)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o select composto"));
     }

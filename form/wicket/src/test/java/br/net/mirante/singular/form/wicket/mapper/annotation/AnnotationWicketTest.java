@@ -6,8 +6,6 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.mform.io.FormSerialized;
 import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
@@ -16,7 +14,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -24,7 +21,6 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -34,15 +30,15 @@ public class AnnotationWicketTest {
     public static class DefaultAnnotations extends Base {
         @Test
         public void rendersSomethingAsATitle() {
-            wicketTester.assertContains("Comentários");
-            wicketTester.assertContainsNot("Comentários sobre");
+            tester.assertContains("Comentários");
+            tester.assertContainsNot("Comentários sobre");
         }
 
         @Test public void rendersAButtonForEachAnnotatedFiedl(){
             assertThat(getOpenModalButtons()).hasSize(3);
             openEditModalAt(0);
 
-            Component modalText = findFirstComponentWithId(wicketTester.getLastRenderedPage(), "modalText");
+            Component modalText = findFirstComponentWithId(tester.getLastRenderedPage(), "modalText");
             assertThat(modalText).isNotNull()
             ;
             Component checkbox = findFirstComponentWithId(lastRenderedPage(),"modalApproval");
@@ -76,7 +72,7 @@ public class AnnotationWicketTest {
         }
 
         @Test public void rendersTheTitleWithTheFieldLabel(){
-            wicketTester.assertContains("Comentários sobre The Group");
+            tester.assertContains("Comentários sobre The Group");
         }
     }
 
@@ -87,7 +83,7 @@ public class AnnotationWicketTest {
         }
 
         @Test public void rendersTheInformedViewLabel(){
-            wicketTester.assertContains("Análise do Pedido");
+            tester.assertContains("Análise do Pedido");
         }
     }
 
@@ -96,7 +92,7 @@ public class AnnotationWicketTest {
         @Override
         protected void populateMockType(STypeComposite<?> mockType) {
             super.populateMockType(mockType);
-            mockPage.instanceCreator = (x) -> {
+            page.instanceCreator = (x) -> {
                 SIComposite current = createInstance(x);
                 SIComposite iNotAnnotated = (SIComposite) current.getField(notAnnotated.getNameSimple());
 
@@ -108,9 +104,9 @@ public class AnnotationWicketTest {
         }
 
         @Test public void loadsInformationToPopoverBox(){
-            assertThat(wicketTester.getTagByWicketId("comment_field").getValue())
+            assertThat(tester.getTagByWicketId("comment_field").getValue())
                     .isEqualTo("It is funny how hard it is to come up with these texts");
-            assertThat(wicketTester.getTagByWicketId("approval_field").getValue())
+            assertThat(tester.getTagByWicketId("approval_field").getValue())
                     .isEqualTo("Rejeitado");
         }
 
@@ -129,7 +125,7 @@ public class AnnotationWicketTest {
         @Override
         protected void populateMockType(STypeComposite<?> mockType) {
             super.populateMockType(mockType);
-            mockPage.instanceCreator = (x) -> {
+            page.instanceCreator = (x) -> {
                 SIComposite current = createInstance(x);
                 SIAnnotation annotation1 = current.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
                 annotation1.setText("The past will haunt ya.");
@@ -154,7 +150,7 @@ public class AnnotationWicketTest {
         @Override
         protected void populateMockType(STypeComposite<?> mockType) {
             super.populateMockType(mockType);
-            mockPage.instanceCreator = (x) -> {
+            page.instanceCreator = (x) -> {
                 SIComposite current = createInstance(x);
                 SIComposite old = createInstance(x);
 
@@ -169,7 +165,7 @@ public class AnnotationWicketTest {
         }
 
         @Test public void itLoadsPersistedAnnotationsForEmptyFields(){
-            assertThat(wicketTester.getTagByWicketId("comment_field").getValue())
+            assertThat(tester.getTagByWicketId("comment_field").getValue())
                     .isEqualTo("The past will haunt ya.");
 
         }
@@ -183,8 +179,8 @@ class Base extends AbstractSingularFormTest {
 
     protected void populateMockType(STypeComposite<?> mockType) {
 
-        mockPage.setAsVisualizationView();
-        mockPage.enableAnnotation();
+        page.setAsVisualizationView();
+        page.enableAnnotation();
 
         mockType.addFieldString("notAnnotated");
 
@@ -206,19 +202,19 @@ class Base extends AbstractSingularFormTest {
     }
 
     protected void openEditModalAt(int index) {
-        wicketTester.executeAjaxEvent(getOpenModalButtons().get(index), "onclick");
+        tester.executeAjaxEvent(getOpenModalButtons().get(index), "onclick");
     }
 
     protected List<Component> getOpenModalButtons() {
-        return findTag(formTester.getForm(), "open_modal", ActionAjaxButton.class);
+        return findTag(form.getForm(), "open_modal", ActionAjaxButton.class);
     }
 
     protected void fillModalText(String text) {
-        formTester.setValue(modalText(), text);
+        form.setValue(modalText(), text);
     }
 
     protected void selectApproval(String strValue) {
-        formTester.setValue(approvalBox(), strValue);
+        form.setValue(approvalBox(), strValue);
     }
 
     protected TextArea modalText() {
@@ -230,32 +226,17 @@ class Base extends AbstractSingularFormTest {
     }
 
     protected Page lastRenderedPage() {
-        return wicketTester.getLastRenderedPage();
+        return tester.getLastRenderedPage();
     }
 
     protected void clickModalOkButton() {
         Component okButton = findFirstComponentWithId(lastRenderedPage(), "btn-ok");
-        wicketTester.executeAjaxEvent(okButton, "onclick");
+        tester.executeAjaxEvent(okButton, "onclick");
     }
 
     protected AtrAnnotation currentAnnotation(SType field) {
-        SIComposite current = (SIComposite) mockPage.getCurrentInstance();
+        SIComposite current = (SIComposite) page.getCurrentInstance();
         return current.getField(field.getNameSimple()).as(AtrAnnotation::new);
     }
 
-    //////
-
-    protected static String formField(FormTester form, String leafName) {
-        return "form:" + findId(form.getForm(), leafName).get();
-    }
-
-    protected SIComposite createInstance(final SType x) {
-        SDocumentFactory factory = mockPage.mockFormConfig.getDocumentFactory();
-        return (SIComposite) factory.createInstance(new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return x;
-            }
-        });
-    }
 }
