@@ -6,7 +6,7 @@
 package br.net.mirante.singular.bam.wicket;
 
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
-import br.net.mirante.singular.bam.view.page.dashboard.DashboardPage;
+import br.net.mirante.singular.bam.wicket.view.page.dashboard.DashboardPage;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
@@ -48,7 +48,7 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
 
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
-        new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.view.page.**").mount(this);
+        new AnnotatedMountScanner().scanPackage(this.getClass().getPackage().getName()).mount(this);
 
         appName = getName();
     }

@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import br.net.mirante.singular.bam.view.page.dashboard.PeriodType;
+import br.net.mirante.singular.bam.wicket.view.page.dashboard.PeriodType;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;

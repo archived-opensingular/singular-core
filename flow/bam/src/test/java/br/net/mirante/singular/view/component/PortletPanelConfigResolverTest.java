@@ -1,12 +1,12 @@
 package br.net.mirante.singular.view.component;
 
-import br.net.mirante.singular.bam.view.component.AmChartViewResultPanel;
-import br.net.mirante.singular.bam.view.component.ViewResultPanel;
+import br.net.mirante.singular.bam.wicket.view.component.AmChartViewResultPanel;
+import br.net.mirante.singular.bam.wicket.view.component.ViewResultPanel;
 import org.apache.wicket.util.tester.WicketTester;
 
 import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
-import static br.net.mirante.singular.bam.view.component.PortletViewConfigResolver.newViewResult;
+import static br.net.mirante.singular.bam.wicket.view.component.PortletViewConfigResolver.newViewResult;
 import junit.framework.TestCase;
 import static org.apache.wicket.model.Model.of;
 
