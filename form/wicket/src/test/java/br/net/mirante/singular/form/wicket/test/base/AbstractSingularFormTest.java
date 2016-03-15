@@ -41,6 +41,10 @@ public abstract class AbstractSingularFormTest {
         form = tester.newFormTester("form");
     }
 
+    protected SIComposite baseInstance() {
+        return (SIComposite)page.getCurrentInstance();
+    }
+
     protected String getFormRelativePath(FormComponent<?> c) {
         return c.getPath().replace(c.getForm().getRootForm().getPath() + ":", StringUtils.EMPTY);
     }

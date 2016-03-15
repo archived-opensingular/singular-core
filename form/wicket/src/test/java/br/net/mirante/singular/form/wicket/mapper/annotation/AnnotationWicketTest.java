@@ -94,7 +94,7 @@ public class AnnotationWicketTest {
             super.populateMockType(mockType);
             page.instanceCreator = (x) -> {
                 SIComposite current = createInstance(x);
-                SIComposite iNotAnnotated = (SIComposite) current.getField(notAnnotated.getNameSimple());
+                current.getField(notAnnotated.getNameSimple()); //force creation
 
                 SIAnnotation annotation1 = current.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
                 annotation1.setText("It is funny how hard it is to come up with these texts");
