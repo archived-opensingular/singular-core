@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.datatable.column;
 
 import java.io.Serializable;
@@ -12,8 +17,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.lambda.IBiFunction;
-import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IBiFunction;
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.resource.Icone;

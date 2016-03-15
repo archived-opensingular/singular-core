@@ -14,7 +14,7 @@
         <module>flow</module>
         <module>form</module>
         <module>lib</module>
-        <module>common</module>
+        <module>resources</module>
     </modules>
 
     <distributionManagement>

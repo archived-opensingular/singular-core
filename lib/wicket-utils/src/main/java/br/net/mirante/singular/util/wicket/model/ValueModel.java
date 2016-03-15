@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.model;
 
 import java.io.Serializable;
@@ -5,7 +10,7 @@ import java.util.Objects;
 
 import org.apache.wicket.model.Model;
 
-import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IFunction;
 
 public final class ValueModel<T extends Serializable> extends Model<T> {
     private final IFunction<T, Object> equalsHashArgsFunc;

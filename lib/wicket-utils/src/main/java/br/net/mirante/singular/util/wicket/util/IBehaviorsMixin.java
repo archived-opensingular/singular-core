@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.util;
 
 import java.io.Serializable;
@@ -23,10 +28,10 @@ import org.apache.wicket.model.Model;
 import br.net.mirante.singular.util.wicket.behavior.FormChoiceAjaxUpdateBehavior;
 import br.net.mirante.singular.util.wicket.behavior.FormComponentAjaxUpdateBehavior;
 import br.net.mirante.singular.util.wicket.behavior.IAjaxUpdateConfiguration;
-import br.net.mirante.singular.lambda.IBiConsumer;
-import br.net.mirante.singular.lambda.IConsumer;
-import br.net.mirante.singular.lambda.IFunction;
-import br.net.mirante.singular.lambda.ISupplier;
+import br.net.mirante.singular.commons.lambda.IBiConsumer;
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.ISupplier;
 
 @SuppressWarnings("serial")
 public interface IBehaviorsMixin extends Serializable {

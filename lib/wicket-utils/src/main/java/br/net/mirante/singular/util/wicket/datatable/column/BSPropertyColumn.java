@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.datatable.column;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -8,7 +13,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IFunction;
 
 public class BSPropertyColumn<T, S>
     extends BSAbstractColumn<T, S>

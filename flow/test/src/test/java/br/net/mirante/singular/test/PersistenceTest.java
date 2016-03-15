@@ -1,6 +1,6 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.definicao.Peticao;
+import br.net.mirante.singular.flow.test.definicao.Peticao;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;

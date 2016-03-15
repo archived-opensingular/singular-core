@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.lambda;
 
 import java.io.Serializable;
@@ -8,9 +13,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import br.net.mirante.singular.lambda.IFunction;
-import br.net.mirante.singular.lambda.IPredicate;
-import br.net.mirante.singular.lambda.ISupplier;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IPredicate;
+import br.net.mirante.singular.commons.lambda.ISupplier;
 import org.apache.commons.collections.ComparatorUtils;
 import org.apache.wicket.model.IModel;
 

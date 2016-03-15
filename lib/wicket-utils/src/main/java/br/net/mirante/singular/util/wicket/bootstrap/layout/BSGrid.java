@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
 import org.apache.wicket.AttributeModifier;
@@ -6,7 +11,7 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
-import br.net.mirante.singular.lambda.IBiFunction;
+import br.net.mirante.singular.commons.lambda.IBiFunction;
 
 /**
 <p>Componente para gerar grids do bootstrap de forma programática (sem ter que escrever HTML). Este componente é bem leve,

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.behavior;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
@@ -12,8 +17,8 @@ import org.apache.wicket.markup.repeater.AbstractRepeater;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
-import br.net.mirante.singular.lambda.IBiConsumer;
-import br.net.mirante.singular.lambda.ITriConsumer;
+import br.net.mirante.singular.commons.lambda.IBiConsumer;
+import br.net.mirante.singular.commons.lambda.ITriConsumer;
 import br.net.mirante.singular.util.wicket.util.IOnAfterPopulateItemConfigurable;
 
 
