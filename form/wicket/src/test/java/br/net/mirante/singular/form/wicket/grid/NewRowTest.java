@@ -26,17 +26,17 @@ public class NewRowTest extends AbstractSingularFormTest {
 
         nome = mockType.addFieldString("nome");
         nome.as(AtrBasic.class).label("Nome")
-                .as(AtrBootstrap::new).onNewRow(true)
+                .as(AtrBootstrap::new).newRow()
                 .as(AtrBootstrap::new).colPreference(6);
 
         idade = mockType.addFieldInteger("idade");
         idade.as(AtrBasic.class).label("Idade")
-                .as(AtrBootstrap::new).onNewRow(true)
+                .as(AtrBootstrap::new).newRow()
                 .as(AtrBootstrap::new).colPreference(2);
 
         email = mockType.addFieldEmail("email");
         email.as(AtrBasic.class).label("E-mail")
-                .as(AtrBootstrap::new).onNewRow(true)
+                .as(AtrBootstrap::new).newRow()
                 .as(AtrBootstrap::new).colPreference(8);
     }
 
