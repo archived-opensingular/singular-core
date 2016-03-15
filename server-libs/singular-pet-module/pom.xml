@@ -39,6 +39,14 @@
             <artifactId>singular-pet-commons</artifactId>
             <version>0.1.1-SNAPSHOT</version>
         </dependency>
+
+        <!-- JAVAX -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 

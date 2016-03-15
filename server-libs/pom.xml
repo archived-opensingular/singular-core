@@ -22,7 +22,6 @@
 
 
     <dependencies>
-
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-wicket</artifactId>
@@ -30,12 +29,7 @@
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>flow-core</artifactId>
-            <version>${singular.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>br.net.mirante</groupId>
-            <artifactId>flow-persistence</artifactId>
+            <artifactId>singular-support</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
@@ -44,41 +38,6 @@
             <version>${singular.version}</version>
         </dependency>
 
-        <!-- Spring Security -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>${spring.security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>${spring.security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>${spring.security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-ldap</artifactId>
-            <version>${spring.security.version}</version>
-        </dependency>
-
-        <!-- Spring -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.wicketstuff</groupId>
