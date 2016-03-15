@@ -1,12 +1,7 @@
-/*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
+package br.net.mirante.singular.bam.support.persistence.dto;
 
-package br.net.mirante.singular.bam.dto;
-
-import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.commons.util.FormatUtil;
+import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 
 public class DefinitionDTO implements IDefinitionDTO {
 
@@ -24,7 +19,7 @@ public class DefinitionDTO implements IDefinitionDTO {
     }
     
     public DefinitionDTO(Integer cod, String nome, String sigla, String categoria,
-        String codGrupo, Long quantidade, Long tempoMedio, Long throughput) {
+                         String codGrupo, Long quantidade, Long tempoMedio, Long throughput) {
         this.cod = cod;
         this.nome = nome;
         this.sigla = sigla;

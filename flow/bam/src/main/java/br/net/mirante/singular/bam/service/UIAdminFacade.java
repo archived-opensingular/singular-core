@@ -12,15 +12,17 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.bam.support.persistence.dto.DefinitionDTO;
+import br.net.mirante.singular.bam.support.persistence.dto.MetaDataDTO;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import br.net.mirante.singular.bam.dto.DefinitionDTO;
+
 import br.net.mirante.singular.bam.dto.FeedDTO;
 import br.net.mirante.singular.bam.dto.InstanceDTO;
 import br.net.mirante.singular.bam.dto.MenuItemDTO;
-import br.net.mirante.singular.bam.dto.MetaDataDTO;
+
 import br.net.mirante.singular.bam.dto.StatusDTO;
 import br.net.mirante.singular.flow.core.service.IUIAdminService;
 import br.net.mirante.singular.persistence.entity.Dashboard;

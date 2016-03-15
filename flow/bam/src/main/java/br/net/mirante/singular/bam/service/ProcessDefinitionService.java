@@ -8,9 +8,9 @@ package br.net.mirante.singular.bam.service;
 import java.util.List;
 import java.util.Set;
 
-import br.net.mirante.singular.bam.dto.DefinitionDTO;
 import br.net.mirante.singular.bam.dto.InstanceDTO;
-import br.net.mirante.singular.bam.dto.MetaDataDTO;
+import br.net.mirante.singular.bam.support.persistence.dto.DefinitionDTO;
+import br.net.mirante.singular.bam.support.persistence.dto.MetaDataDTO;
 
 public interface ProcessDefinitionService {
 
