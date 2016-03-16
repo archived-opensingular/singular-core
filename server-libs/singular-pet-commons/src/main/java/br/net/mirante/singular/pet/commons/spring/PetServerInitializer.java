@@ -118,7 +118,7 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
      * @return
      */
     protected int getSessionTimeoutMinutes() {
-        return 120;//TODO: vinicius  - Alterado para a apresentação, voltar para 30 segundos
+        return 30;
     }
 
     /**
