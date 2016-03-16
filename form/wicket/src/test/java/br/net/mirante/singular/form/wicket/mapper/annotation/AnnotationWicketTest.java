@@ -66,8 +66,8 @@ public class AnnotationWicketTest {
     }
 
     public static class AnnotationForFieldWithLabel extends Base {
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
+        protected void buildBaseType(STypeComposite<?> mockType) {
+            super.buildBaseType(mockType);
             annotated1.asAtrBasic().label("The Group");
         }
 
@@ -77,8 +77,8 @@ public class AnnotationWicketTest {
     }
 
     public static class AnnotationWithLabel extends Base {
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
+        protected void buildBaseType(STypeComposite<?> mockType) {
+            super.buildBaseType(mockType);
             annotated1.as(AtrAnnotation::new).label("Análise do Pedido");
         }
 
@@ -165,7 +165,7 @@ class Base extends AbstractSingularFormTest {
     protected STypeComposite<? extends SIComposite> baseType,
             annotated1, annotated2, notAnnotated, annotated4;
 
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
         baseType = mockType;
         page.setAsVisualizationView();
         page.enableAnnotation();

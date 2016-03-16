@@ -29,27 +29,19 @@ import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 
 public class MockPage extends WebPage {
 
-    public SFormConfig<String> mockFormConfig = new MockFormConfig();
+    final public SFormConfig<String> mockFormConfig = new MockFormConfig();
     protected ViewMode viewMode = ViewMode.EDITION;
     protected AnnotationMode annotationMode = AnnotationMode.NONE;
     protected SIComposite currentInstance;
-
     protected Consumer<STypeComposite> typeBuilder;
-    private Function<SType, SIComposite> instanceCreator;
+    protected Function<SType, SIComposite> instanceCreator;
 
     private Form<?> form = new Form("form");
 
     private SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
         @Override
         protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-            final Optional<SType<?>> mockType = mockFormConfig.getTypeLoader().loadType("mockType");
-            if (mockType.isPresent()) {
-                if (mockType.get() instanceof STypeComposite) {
-                    typeBuilder.accept((STypeComposite) mockType.get());
-                }
-            }
-            if(instanceCreator == null) return null;
-            return currentInstance = instanceCreator.apply(mockType.get());
+            return createCurrentInstance(buildBaseType());
         }
 
         @Override
@@ -59,11 +51,26 @@ public class MockPage extends WebPage {
         public AnnotationMode annotation() {    return annotationMode;  }
     };
 
+    private Optional<SType<?>> buildBaseType() {
+        Optional<SType<?>> baseType = mockFormConfig.getTypeLoader().loadType("mockType");
+        baseType.ifPresent((x) -> {
+            if (baseType.get() instanceof STypeComposite) {
+                typeBuilder.accept((STypeComposite) baseType.get());
+            }
+        });
+        return baseType;
+    }
+
+    private SInstance createCurrentInstance(Optional<SType<?>> baseType) {
+        Optional.of(instanceCreator).ifPresent((x) -> {
+                currentInstance = instanceCreator.apply(baseType.get());
+            });
+        return currentInstance ;
+    }
+
     private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn") {
         @Override
-        protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-
-        }
+        protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {}
 
         @Override
         public IModel<? extends SInstance> getCurrentInstance() {
@@ -95,6 +102,10 @@ public class MockPage extends WebPage {
 
     public void setInstanceCreator(Function<SType, SIComposite> instanceCreator) {
         this.instanceCreator = instanceCreator;
+    }
+
+    public void setTypeBuilder(Consumer<STypeComposite> typeBuilder) {
+        this.typeBuilder = typeBuilder;
     }
 }
 

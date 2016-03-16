@@ -7,8 +7,6 @@ import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.STypeComposite;
-
 public class TestPageMock {
 
     @Test
@@ -16,7 +14,7 @@ public class TestPageMock {
         WicketTester tester = new WicketTester();
 
         MockPage mockPage = new MockPage() ;
-        mockPage.typeBuilder = (x) -> {x.addFieldString("mockString");};
+        mockPage.setTypeBuilder((x) -> {x.addFieldString("mockString");});
 
         mockPage.setInstanceCreator( (x) -> {
             SDocumentFactory factory = mockPage.mockFormConfig.getDocumentFactory();

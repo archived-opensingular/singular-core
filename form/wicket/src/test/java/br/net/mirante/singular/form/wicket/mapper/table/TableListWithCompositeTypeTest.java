@@ -23,7 +23,7 @@ public class TableListWithCompositeTypeTest extends AbstractSingularFormTest {
     STypeString simpleString;
 
     @Override
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> mockList
                 = mockType.addFieldListOfComposite("mockList", "mockTypeComposite");

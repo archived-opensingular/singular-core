@@ -9,7 +9,6 @@ import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.RadioChoice;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -54,8 +53,8 @@ public class BooleanMapperTest {
     public static class TrueInstance extends Base {
 
         @Override
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
+        protected void buildBaseType(STypeComposite<?> mockType) {
+            super.buildBaseType(mockType);
         }
 
         @Override
@@ -105,8 +104,8 @@ public class BooleanMapperTest {
 
     public static class WithRadioViewPresetTrue extends WithRadioView {
 
-        @Override protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
+        @Override protected void buildBaseType(STypeComposite<?> mockType) {
+            super.buildBaseType(mockType);
 
         }
 
@@ -124,8 +123,8 @@ public class BooleanMapperTest {
     public static class WithPersonalizedChoicesForRadioView extends Base {
 
         @Override
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
+        protected void buildBaseType(STypeComposite<?> mockType) {
+            super.buildBaseType(mockType);
             field1.withRadioView("For Sure", "No Way");
         }
 
@@ -151,7 +150,7 @@ class Base extends AbstractSingularFormTest {
     protected STypeAttachment attachmentFileField;
     protected STypeBoolean field1;
 
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
         field1 = mockType.addFieldBoolean("aceitaTermos");
         field1.asAtrBasic().label("Aceito os termos e condições");
     }
@@ -168,8 +167,8 @@ class Base extends AbstractSingularFormTest {
 
 class WithRadioView extends Base {
     @Override
-    protected void populateMockType(STypeComposite<?> mockType) {
-        super.populateMockType(mockType);
+    protected void buildBaseType(STypeComposite<?> mockType) {
+        super.buildBaseType(mockType);
         field1.withRadioView();
     }
 

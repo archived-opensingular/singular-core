@@ -24,7 +24,7 @@ public class MasterDetailWithTableListWithStringTest extends AbstractSingularFor
     STypeString simpleString;
 
     @Override
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> mockMasterDetail
                 = mockType.addFieldListOfComposite("mockList", "mockTypeMasterDetailComposite");
