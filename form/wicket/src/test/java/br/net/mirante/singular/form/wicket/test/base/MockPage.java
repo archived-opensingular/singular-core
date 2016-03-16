@@ -167,9 +167,7 @@ class MockSDocumentFactory extends SDocumentFactory {
     }
 
     @Override
-    protected void setupDocument(SDocument document) {
-
-    }
+    protected void setupDocument(SDocument document) {}
 }
 
 class MockTypeLoader extends TypeLoader<String> {

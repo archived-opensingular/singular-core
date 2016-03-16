@@ -27,7 +27,7 @@ public abstract class AbstractSingularFormTest {
     protected WicketTester tester;
     protected FormTester form;
 
-    protected abstract void buildBaseType(STypeComposite<?> mockType);
+    protected abstract void buildBaseType(STypeComposite<?> baseType);
     protected void populateInstance(SIComposite instance){}
 
     @Before
