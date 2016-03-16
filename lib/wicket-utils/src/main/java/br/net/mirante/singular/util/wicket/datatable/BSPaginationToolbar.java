@@ -9,13 +9,16 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 
 public class BSPaginationToolbar extends AbstractToolbar {
 
+    private WebMarkupContainer paginator;
+
     public BSPaginationToolbar(DataTable<?, ?> table) {
         super(table);
-
-        add(new BSPaginationPanel("pagination", table));
+        add(paginator = new WebMarkupContainer("paginator"));
+        paginator.add(new BSPaginationPanel("pagination", table));
         add($b.addAjaxUpdate(
             new BSItemsPerPageDropDown("itemsPerPage", getTable()),
             (a, c) -> a.add(getTable()))
@@ -25,6 +28,7 @@ public class BSPaginationToolbar extends AbstractToolbar {
     @Override
     protected void onConfigure() {
         super.onConfigure();
-        setVisible(getTable().getPageCount() > 1);
+        setVisible(getTable().getPageCount() > 0);
+        paginator.setVisible(getTable().getPageCount() > 1);
     }
 }
