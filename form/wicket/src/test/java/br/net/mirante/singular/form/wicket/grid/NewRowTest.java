@@ -22,7 +22,7 @@ public class NewRowTest extends AbstractSingularFormTest {
     STypeInteger idade;
 
     @Override
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
 
         nome = mockType.addFieldString("nome");
         nome.as(AtrBasic.class).label("Nome")

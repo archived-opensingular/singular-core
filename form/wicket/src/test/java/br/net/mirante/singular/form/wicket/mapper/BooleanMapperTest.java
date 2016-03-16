@@ -9,7 +9,6 @@ import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.RadioChoice;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -54,33 +53,19 @@ public class BooleanMapperTest {
     public static class TrueInstance extends Base {
 
         @Override
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
-            page.instanceCreator = (x) -> {
-                SIComposite current = createInstance(x);
-                current.getDescendant(field1).setValue(true);
-                return current;
-            };
+        protected void buildBaseType(STypeComposite<?> mockType) {
+            super.buildBaseType(mockType);
+        }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.getDescendant(field1).setValue(true);
         }
 
         @Test public void rendersACheckBoxCheckedWhenValueIsTrue() {
             assertThat(getCheckboxAt(0).getValue()).isEqualTo("true");
         }
 
-    }
-
-    @Ignore
-    public static class WithRadioView extends Base {
-        @Override
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
-            field1.withRadioView();
-        }
-
-        protected RadioChoice radioChoiceAt(int index) {
-            List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
-            return inputs.get(index);
-        }
     }
 
     public static class WithRadioViewNoPreset extends WithRadioView {
@@ -119,15 +104,17 @@ public class BooleanMapperTest {
 
     public static class WithRadioViewPresetTrue extends WithRadioView {
 
-        @Override protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
+        @Override protected void buildBaseType(STypeComposite<?> mockType) {
+            super.buildBaseType(mockType);
 
-            page.instanceCreator = (x) -> {
-                SIComposite current = createInstance(x);
-                current.getDescendant(field1).setValue(true);
-                return current;
-            };
         }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.getDescendant(field1).setValue(true);
+            System.out.println("me me me");
+        }
+
         @Test public void rendersFalseChoiceIfFalseIsSelected() {
             assertThat(radioChoiceAt(0).getValue()).isEqualTo("1");
         }
@@ -136,14 +123,14 @@ public class BooleanMapperTest {
     public static class WithPersonalizedChoicesForRadioView extends Base {
 
         @Override
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
+        protected void buildBaseType(STypeComposite<?> mockType) {
+            super.buildBaseType(mockType);
             field1.withRadioView("For Sure", "No Way");
-            page.instanceCreator = (x) -> {
-                SIComposite current = createInstance(x);
-                current.getDescendant(field1).setValue(true);
-                return current;
-            };
+        }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.getDescendant(field1).setValue(true);
         }
 
         @Test public void rendersARadioChoiceWithPersonalizedLabel() {
@@ -163,7 +150,7 @@ class Base extends AbstractSingularFormTest {
     protected STypeAttachment attachmentFileField;
     protected STypeBoolean field1;
 
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
         field1 = mockType.addFieldBoolean("aceitaTermos");
         field1.asAtrBasic().label("Aceito os termos e condições");
     }
@@ -176,4 +163,17 @@ class Base extends AbstractSingularFormTest {
         return baseInstance().getDescendant(field1);
     }
 
+}
+
+class WithRadioView extends Base {
+    @Override
+    protected void buildBaseType(STypeComposite<?> mockType) {
+        super.buildBaseType(mockType);
+        field1.withRadioView();
+    }
+
+    protected RadioChoice radioChoiceAt(int index) {
+        List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
+        return inputs.get(index);
+    }
 }

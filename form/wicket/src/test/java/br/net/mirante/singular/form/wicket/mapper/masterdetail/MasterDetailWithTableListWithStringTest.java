@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.masterdetail;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,12 +20,14 @@ import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
 public class MasterDetailWithTableListWithStringTest extends AbstractSingularFormTest {
 
     STypeString simpleString;
 
     @Override
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> mockMasterDetail
                 = mockType.addFieldListOfComposite("mockList", "mockTypeMasterDetailComposite");
@@ -44,69 +47,55 @@ public class MasterDetailWithTableListWithStringTest extends AbstractSingularFor
         mockList.as(AtrBasic::new)
                 .label("Mock Type Composite");
 
-        simpleString = mockTypeComposite.addFieldString("mockTypeComposite", true);
+        simpleString = mockTypeComposite.addFieldString("mockTypeComposite");
 
     }
 
-    @Test
-    public void testAddItem() {
+    @Test public void clickingTheButtonAddsNewItems() {
+        clickMasterDetailLink();
 
-        final AbstractLink masterDetailaddButton = findMasterDetailLink();
-
-        tester.executeAjaxEvent(masterDetailaddButton, "click");
-
-        final Button tableAddButton = findTableAddButton();
-
-        Assert.assertNotEquals(masterDetailaddButton, tableAddButton);
+        Assert.assertNotEquals(findMasterDetailLink(), findTableAddButton());
 
         Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), simpleString);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
 
-        tester.executeAjaxEvent(tableAddButton, "click");
+        clickAddButton();
+        assertThat(componentsOfType(simpleString)).hasSize(1);
 
-        stream = findFormComponentsByType(form.getForm(), simpleString);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
-
-        tester.executeAjaxEvent(tableAddButton, "click");
-        stream = findFormComponentsByType(form.getForm(), simpleString);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 2);
-
-        tester.executeAjaxEvent(tableAddButton, "click");
-        stream = findFormComponentsByType(form.getForm(), simpleString);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 3);
-
+        clickAddButton();
+        clickAddButton();
+        assertThat(componentsOfType(simpleString)).hasSize(3);
     }
 
     @Test
-    public void testAddItemFillValueAndThenAddOtherItem() {
+    public void keepsFilledDataForAlreadyAddedItems() {
 
-        final AbstractLink masterDetailaddButton = findMasterDetailLink();
+        clickMasterDetailLink();
 
-        tester.executeAjaxEvent(masterDetailaddButton, "click");
+        assertThat(componentsOfType(simpleString)).isEmpty();
 
-        final Button tableAddButton = findTableAddButton();
+        clickAddButton();
 
-        Assert.assertNotEquals(masterDetailaddButton, tableAddButton);
+        assertThat(componentsOfType(simpleString)).hasSize(1);
 
-        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), simpleString);
-        Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
+        form.setValue(getSimpleStringField(), "123456");
 
-        tester.executeAjaxEvent(tableAddButton, "click");
+        clickAddButton();
 
-        stream = findFormComponentsByType(form.getForm(), simpleString);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
+        assertThat(componentsOfType(simpleString)).hasSize(2);
+        assertThat(getSimpleStringField().getValue()).isEqualTo("123456");
+    }
 
-        final String value = "123456";
+    private void clickMasterDetailLink() {
+        tester.executeAjaxEvent(findMasterDetailLink(), "click");
+    }
 
-        form.setValue(getSimpleStringField(), value);
+    private List<FormComponent> componentsOfType(STypeString type) {
+        return findFormComponentsByType(form.getForm(), type).collect(Collectors.toList());
+    }
 
-        tester.executeAjaxEvent(tableAddButton, "click");
-
-        stream = findFormComponentsByType(form.getForm(), simpleString);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 2);
-
-        Assert.assertEquals(value, getSimpleStringField().getValue());
-
+    private void clickAddButton() {
+        tester.executeAjaxEvent(findTableAddButton(), "click");
     }
 
     private TextField getSimpleStringField() {

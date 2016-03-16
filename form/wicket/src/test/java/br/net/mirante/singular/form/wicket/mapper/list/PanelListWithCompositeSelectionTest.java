@@ -25,7 +25,7 @@ public class PanelListWithCompositeSelectionTest extends AbstractSingularFormTes
     STypeComposite<?> compositeSelection;
 
     @Override
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> mockList = mockType.addFieldListOfComposite("mockList", "mockTypeComposite");
         mockList.asAtrBasic().label("Mock Type Composite");
