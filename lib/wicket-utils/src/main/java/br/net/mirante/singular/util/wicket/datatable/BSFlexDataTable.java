@@ -161,22 +161,18 @@ public class BSFlexDataTable<T, S> extends BSDataTable<T, S> {
 
         @Override
         protected IItemFactory<T> newItemFactory() {
-            return new IItemFactory<T>() {
-                @Override
-                @SuppressWarnings("unchecked")
-                public Item<T> newItem(int index, IModel<T> model) {
-                    String id = DefaultDataGridView.this.newChildId();
-                    Item<T> item = DefaultDataGridView.this.newItem(id, index, model);
-                    DefaultDataGridView.this.populateItem(item);
+            return (index, model) -> {
+                String id = DefaultDataGridView.this.newChildId();
+                Item<T> item = DefaultDataGridView.this.newItem(id, index, model);
+                DefaultDataGridView.this.populateItem(item);
 
-                    RepeatingView cells = (RepeatingView) item.get("cells");
-                    Iterator<Component> cellItems = cells.iterator();
-                    for (int columnIndex = 0; cellItems.hasNext(); columnIndex++) {
-                        Item<ICellPopulator<T>> cellItem = (Item<ICellPopulator<T>>) cellItems.next();
-                        postPopulateCellItem(cellItem, columnIndex, model);
-                    }
-                    return item;
+                RepeatingView cells = (RepeatingView) item.get("cells");
+                Iterator<Component> cellItems = cells.iterator();
+                for (int columnIndex = 0; cellItems.hasNext(); columnIndex++) {
+                    Item<ICellPopulator<T>> cellItem = (Item<ICellPopulator<T>>) cellItems.next();
+                    postPopulateCellItem(cellItem, columnIndex, model);
                 }
+                return item;
             };
         }
     }
