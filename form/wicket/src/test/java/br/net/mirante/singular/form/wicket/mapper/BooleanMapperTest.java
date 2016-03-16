@@ -56,31 +56,17 @@ public class BooleanMapperTest {
         @Override
         protected void populateMockType(STypeComposite<?> mockType) {
             super.populateMockType(mockType);
-            page.instanceCreator = (x) -> {
-                SIComposite current = createInstance(x);
-                current.getDescendant(field1).setValue(true);
-                return current;
-            };
+        }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.getDescendant(field1).setValue(true);
         }
 
         @Test public void rendersACheckBoxCheckedWhenValueIsTrue() {
             assertThat(getCheckboxAt(0).getValue()).isEqualTo("true");
         }
 
-    }
-
-    @Ignore
-    public static class WithRadioView extends Base {
-        @Override
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
-            field1.withRadioView();
-        }
-
-        protected RadioChoice radioChoiceAt(int index) {
-            List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
-            return inputs.get(index);
-        }
     }
 
     public static class WithRadioViewNoPreset extends WithRadioView {
@@ -122,12 +108,14 @@ public class BooleanMapperTest {
         @Override protected void populateMockType(STypeComposite<?> mockType) {
             super.populateMockType(mockType);
 
-            page.instanceCreator = (x) -> {
-                SIComposite current = createInstance(x);
-                current.getDescendant(field1).setValue(true);
-                return current;
-            };
         }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.getDescendant(field1).setValue(true);
+            System.out.println("me me me");
+        }
+
         @Test public void rendersFalseChoiceIfFalseIsSelected() {
             assertThat(radioChoiceAt(0).getValue()).isEqualTo("1");
         }
@@ -139,11 +127,11 @@ public class BooleanMapperTest {
         protected void populateMockType(STypeComposite<?> mockType) {
             super.populateMockType(mockType);
             field1.withRadioView("For Sure", "No Way");
-            page.instanceCreator = (x) -> {
-                SIComposite current = createInstance(x);
-                current.getDescendant(field1).setValue(true);
-                return current;
-            };
+        }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.getDescendant(field1).setValue(true);
         }
 
         @Test public void rendersARadioChoiceWithPersonalizedLabel() {
@@ -176,4 +164,17 @@ class Base extends AbstractSingularFormTest {
         return baseInstance().getDescendant(field1);
     }
 
+}
+
+class WithRadioView extends Base {
+    @Override
+    protected void populateMockType(STypeComposite<?> mockType) {
+        super.populateMockType(mockType);
+        field1.withRadioView();
+    }
+
+    protected RadioChoice radioChoiceAt(int index) {
+        List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
+        return inputs.get(index);
+    }
 }

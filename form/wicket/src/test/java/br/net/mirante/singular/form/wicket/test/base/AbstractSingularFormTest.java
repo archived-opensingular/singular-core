@@ -28,21 +28,20 @@ public abstract class AbstractSingularFormTest {
     protected FormTester form;
 
     protected abstract void populateMockType(STypeComposite<?> mockType);
+    protected void populateInstance(SIComposite instance){}
 
     @Before
     public void setUp() {
         tester = new WicketTester();
-        tester.startPage(page = new MockPage() {
-            @Override
-            protected void populateType(STypeComposite<?> mockType) {
-                populateMockType(mockType);
-            }
-        });
+        page = new MockPage();
+        page.typeBuilder = this::populateMockType;
+        page.setInstanceCreator(this::createAndPopulateInstance);
+        tester.startPage(page);
         form = tester.newFormTester("form");
     }
 
     protected SIComposite baseInstance() {
-        return (SIComposite)page.getCurrentInstance();
+        return page.getCurrentInstance();
     }
 
     protected String getFormRelativePath(FormComponent<?> c) {
@@ -67,11 +66,14 @@ public abstract class AbstractSingularFormTest {
 
     protected SIComposite createInstance(final SType x) {
         SDocumentFactory factory = page.mockFormConfig.getDocumentFactory();
-        return (SIComposite) factory.createInstance(new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return x;
-            }
-        });
+        RefType refType = new RefType() { protected SType<?> retrieve() { return x; } };
+        SIComposite instance = (SIComposite) factory.createInstance(refType);
+        return instance;
+    }
+
+    protected SIComposite createAndPopulateInstance(final SType x) {
+        SIComposite instance = createInstance(x);
+        populateInstance(instance);
+        return instance;
     }
 }

@@ -1,20 +1,19 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import com.google.common.base.Predicate;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.RefService;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.DefaultServiceRegistry;
 import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
@@ -28,20 +27,15 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 
-public abstract class MockPage extends WebPage {
+public class MockPage extends WebPage {
 
     public SFormConfig<String> mockFormConfig = new MockFormConfig();
     protected ViewMode viewMode = ViewMode.EDITION;
     protected AnnotationMode annotationMode = AnnotationMode.NONE;
-    protected SInstance currentInstance;
+    protected SIComposite currentInstance;
 
-    public Function<SType, SInstance> instanceCreator =
-            (x) -> mockFormConfig.getDocumentFactory().createInstance(new RefType() {
-        @Override
-        protected SType<?> retrieve() {
-            return x;
-        }
-    });
+    protected Consumer<STypeComposite> typeBuilder;
+    private Function<SType, SIComposite> instanceCreator;
 
     private Form<?> form = new Form("form");
 
@@ -51,9 +45,10 @@ public abstract class MockPage extends WebPage {
             final Optional<SType<?>> mockType = mockFormConfig.getTypeLoader().loadType("mockType");
             if (mockType.isPresent()) {
                 if (mockType.get() instanceof STypeComposite) {
-                    populateType((STypeComposite) mockType.get());
+                    typeBuilder.accept((STypeComposite) mockType.get());
                 }
             }
+            if(instanceCreator == null) return null;
             return currentInstance = instanceCreator.apply(mockType.get());
         }
 
@@ -80,8 +75,6 @@ public abstract class MockPage extends WebPage {
         add(form.add(singularFormPanel, singularValidationButton));
     }
 
-    protected abstract void populateType(STypeComposite<?> mockType);
-
     public Form<?> getForm() {
         return form;
     }
@@ -98,7 +91,11 @@ public abstract class MockPage extends WebPage {
 
     public void enableAnnotation() { annotationMode = AnnotationMode.EDIT; }
 
-    public SInstance getCurrentInstance() { return currentInstance; }
+    public SIComposite getCurrentInstance() { return currentInstance; }
+
+    public void setInstanceCreator(Function<SType, SIComposite> instanceCreator) {
+        this.instanceCreator = instanceCreator;
+    }
 }
 
 class MockFormConfig implements SFormConfig<String> {

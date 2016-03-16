@@ -90,17 +90,12 @@ public class AnnotationWicketTest {
     public static class LoadedData extends Base {
 
         @Override
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
-            page.instanceCreator = (x) -> {
-                SIComposite current = createInstance(x);
-                current.getField(notAnnotated.getNameSimple()); //force creation
+        protected void populateInstance(SIComposite instance) {
+            instance.getField(notAnnotated.getNameSimple()); //force creation
 
-                SIAnnotation annotation1 = current.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
-                annotation1.setText("It is funny how hard it is to come up with these texts");
-                annotation1.setApproved(false);
-                return current;
-            };
+            SIAnnotation annotation1 = instance.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
+            annotation1.setText("It is funny how hard it is to come up with these texts");
+            annotation1.setApproved(false);
         }
 
         @Test public void loadsInformationToPopoverBox(){
@@ -123,21 +118,19 @@ public class AnnotationWicketTest {
     public static class PersistedData extends Base {
 
         @Override
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
-            page.instanceCreator = (x) -> {
-                SIComposite current = createInstance(x);
-                SIAnnotation annotation1 = current.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
-                annotation1.setText("The past will haunt ya.");
+        protected void populateInstance(SIComposite instance) {
+            SIAnnotation annotation1 = instance.getDescendant(annotated1)
+                    .as(AtrAnnotation::new).annotation();
+            annotation1.setText("The past will haunt ya.");
 
-                FormSerialized persisted = FormSerializationUtil.toSerializedObject(current.as(AtrAnnotation::new).persistentAnnotations());
-                SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
+            FormSerialized persisted = FormSerializationUtil
+                    .toSerializedObject(instance.as(AtrAnnotation::new)
+                            .persistentAnnotations());
+            SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
 
-                annotation1.setText("What's up doc?");
+            annotation1.setText("What's up doc?");
 
-                current.as(AtrAnnotation::new).loadAnnotations(backup);
-                return current;
-            };
+            instance.as(AtrAnnotation::new).loadAnnotations(backup);
         }
 
         @Test public void itLoadsPersistedDataFromAnnotationsOntoScreen(){
@@ -148,20 +141,15 @@ public class AnnotationWicketTest {
     public static class EmptyInstance extends Base {
 
         @Override
-        protected void populateMockType(STypeComposite<?> mockType) {
-            super.populateMockType(mockType);
-            page.instanceCreator = (x) -> {
-                SIComposite current = createInstance(x);
-                SIComposite old = createInstance(x);
+        protected void populateInstance(SIComposite instance) {
+            SIComposite old = createInstance(baseType);
 
-                SIAnnotation annotation1 = old.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
-                annotation1.setText("The past will haunt ya.");
-                FormSerialized persisted = FormSerializationUtil.toSerializedObject(old.as(AtrAnnotation::new).persistentAnnotations());
-                SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
+            SIAnnotation annotation1 = old.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
+            annotation1.setText("The past will haunt ya.");
+            FormSerialized persisted = FormSerializationUtil.toSerializedObject(old.as(AtrAnnotation::new).persistentAnnotations());
+            SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
 
-                current.as(AtrAnnotation::new).loadAnnotations(backup);
-                return current;
-            };
+            instance.as(AtrAnnotation::new).loadAnnotations(backup);
         }
 
         @Test public void itLoadsPersistedAnnotationsForEmptyFields(){
@@ -174,11 +162,11 @@ public class AnnotationWicketTest {
 }
 
 class Base extends AbstractSingularFormTest {
-    protected STypeComposite<? extends SIComposite>
+    protected STypeComposite<? extends SIComposite> baseType,
             annotated1, annotated2, notAnnotated, annotated4;
 
     protected void populateMockType(STypeComposite<?> mockType) {
-
+        baseType = mockType;
         page.setAsVisualizationView();
         page.enableAnnotation();
 
