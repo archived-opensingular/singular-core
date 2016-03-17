@@ -50,10 +50,22 @@ public class TestFinders {
         return tags.stream().filter((c) -> c.getId().equals(id)).collect(Collectors.toList());
     }
 
-    public static List<Component> findTag(MarkupContainer container, Class<? extends Component> tag) {
+    public static List<Component> findTag(MarkupContainer container,
+                                          Class<? extends Component> tag) {
         List<Component> result = Lists.newArrayList();
         findTag(tag, result, container);
         return result;
+        /*final List<Component> found = new ArrayList<>();
+        container.visitChildren(Component.class, new IVisitor<Component, Object>() {
+            @Override
+            public void componenst(Component t, IVisit<Object> visit) {
+                System.out.println(tag+" i "+t+" = "+tag.isInstance(t));
+                if (tag.isInstance(t)) {
+                    found.add(t);
+                }
+            }
+        });
+        return found;*/
     }
     
     private static void findTag(Class<? extends Component> tag, List<Component> result, MarkupContainer c) {
@@ -64,6 +76,7 @@ public class TestFinders {
     }
     
     private static void findInComponent(Class<? extends Component> tag, List<Component> result, Component c) {
+        System.out.println(tag+" i "+c+" = "+tag.isInstance(c));
         if (tag.isInstance(c)) {
             result.add(c);
         } else if (c instanceof MarkupContainer) {

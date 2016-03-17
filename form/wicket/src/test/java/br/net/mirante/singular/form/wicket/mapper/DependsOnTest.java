@@ -3,203 +3,172 @@ package br.net.mirante.singular.form.wicket.mapper;
 import java.util.List;
 import java.util.Map;
 
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
+import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
-import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
+import org.mockito.Mockito;
+
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-public class DependsOnTest extends AbstractWicketFormTest {
+@RunWith(Enclosed.class)
+public class DependsOnTest {
 
-    protected WicketTester driver;
-    protected TestPage page;
-    protected FormTester form;
-    private STypeComposite<?> baseCompositeField;
+    public static class Default extends Base {
 
-    private STypeString category, element;
+        @Test public void rendersBothDropDowns() {
+            assertThat(options()).hasSize(2);
+        }
 
-    protected void setup() {
-        createBaseType();
-        loadTestType(baseCompositeField);
-        setupPage();
+        @Test public void renderOnlyThePrimaryChoice() {
+            DropDownChoice categoryChoice = options().get(0), elementChoice = options().get(1);
+
+            assertThat(extractProperty("selectLabel").from(categoryChoice.getChoices()))
+                    .containsOnly(OPTIONS.keySet().toArray());
+            assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
+                    .isEmpty();
+        }
+
+        @Test public void changingSelectionChangesValue() {
+            selectOptionAt("category", 0);
+
+            DropDownChoice categoryChoice = options().get(0),
+                            elementChoice = options().get(1);
+
+            assertThat(extractProperty("selectLabel").from(categoryChoice.getChoices()))
+                    .containsOnly(OPTIONS.keySet().toArray());
+            assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
+                    .containsOnly(OPTIONS.get("fruits").toArray());
+        }
     }
 
-    private void createBaseType() {
-        PackageBuilder localPackage = dicionario.createNewPackage("test");
-        baseCompositeField = localPackage.createCompositeType("group");
+    public static class WithSelectedValues extends Base {
+
+        protected void populateInstance(SIComposite instance) {
+            instance.getDescendant(category).setValue("vegetables");
+            instance.getDescendant(element).setValue("radish");
+        }
+
+        @Test public void preloadSelectedValues() {
+            DropDownChoice categoryChoice = options().get(0),
+                            elementChoice = options().get(1);
+
+            assertThat(extractProperty("selectLabel").from(categoryChoice.getChoices()))
+                    .containsOnly(OPTIONS.keySet().toArray());
+            assertThat(categoryChoice.getValue()).isEqualTo("2");
+            assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
+                    .containsOnly(OPTIONS.get("vegetables").toArray());
+            assertThat(elementChoice.getValue()).isEqualTo("2");
+        }
+
     }
 
-    protected void setupPage() {
-        driver = new WicketTester(new TestApp());
+    public static class WithUnexistantSelectedValues extends Base {
 
-        page = new TestPage();
-        page.setIntance(createIntance(() -> baseCompositeField));
+        protected void populateInstance(SIComposite instance) {
+            instance.getDescendant(category).setValue("special");
+            instance.getDescendant(element).setValue("gluten");
+        }
+
+        @Test public void addPreloadedOptionsToLisIfNotPresent() {
+            DropDownChoice categoryChoice = options().get(0),
+                            elementChoice = options().get(1);
+
+            assertThat(extractProperty("selectLabel").from(categoryChoice.getChoices()))
+                    .contains("special");
+            assertThat(categoryChoice.getValue()).isEqualTo("1");
+            assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
+                    .containsOnly("gluten");
+            assertThat(elementChoice.getValue()).isEqualTo("1");
+        }
     }
 
-    protected void build() {
-        page.build();
-        driver.startPage(page);
+    public static class WithUnexistantDependendSelectedValues extends Base {
+        protected void populateInstance(SIComposite instance) {
+            instance.getDescendant(category).setValue("vegetables");
+            instance.getDescendant(element).setValue("gluten");
+        }
 
-        form = driver.newFormTester("test-form", false);
+        @Test public void addPreloadedOptionsToDependentLisIfNotPresent() {
+            DropDownChoice categoryChoice = options().get(0),
+                            elementChoice = options().get(1);
+
+            assertThat(extractProperty("selectLabel").from(categoryChoice.getChoices()))
+                    .contains("vegetables");
+            assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
+                    .contains("gluten").containsAll(OPTIONS.get("vegetables"));
+        }
+
+        @Test public void whenChangingValueRemovesDanglingOptions() {
+
+            page.getCurrentInstance().getDescendant(category).setValue("condiments");
+
+            DropDownChoice categoryChoice = options().get(0),
+                                            elementChoice = options().get(1);
+            List<AjaxUpdateInputBehavior> behaviors = categoryChoice.getBehaviors(AjaxUpdateInputBehavior.class);
+            behaviors.forEach((b) -> b.onUpdate(Mockito.mock(AjaxRequestTarget.class)));
+
+            categoryChoice = options().get(0);
+            elementChoice = options().get(1);
+
+            assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
+                    .containsOnly(OPTIONS.get("condiments").toArray());
+        }
     }
 
-    private static final Map<String, List<String>> OPTIONS =
-            new ImmutableMap.Builder()
-                    .put("fruits", Lists.newArrayList("avocado", "apple", "pineaple"))
-                    .put("vegetables", Lists.newArrayList("cucumber", "radish"))
-                    .put("condiments", Lists.newArrayList("mustard", "rosemary", "coriander"))
-                    .build();
+    private static class Base extends AbstractSingularFormTest {
+        protected STypeComposite<?> baseCompositeField;
+        protected STypeString category, element;
 
-    private void loadTestType(STypeComposite<?> baseCompositeField) {
-        category = baseCompositeField.addFieldString("category");
-        element = baseCompositeField.addFieldString("element");
+        protected static final Map<String, List<String>> OPTIONS =
+                new ImmutableMap.Builder()
+                        .put("fruits", Lists.newArrayList("avocado", "apple", "pineaple"))
+                        .put("vegetables", Lists.newArrayList("cucumber", "radish"))
+                        .put("condiments", Lists.newArrayList("mustard", "rosemary", "coriander"))
+                        .build();
 
-        category.as(SPackageBasic.aspect())
-                .label("category");
-        category.withSelectionOf(OPTIONS.keySet());
+        protected void buildBaseType(STypeComposite<?> baseCompositeField) {
+            this.baseCompositeField = baseCompositeField;
+            category = baseCompositeField.addFieldString("category");
+            element = baseCompositeField.addFieldString("element");
 
-        element.as(SPackageBasic.aspect())
-                .label("Word")
-                .dependsOn(category);
-        element.withSelectionFromProvider(ins -> {
-            String prefix = ins.findNearest(category).get().getValue();
-            return (prefix == null)
-                    ? ins.getType().newList()
-                    : ins.getType().newList()
-                    .addValues(OPTIONS.getOrDefault(prefix, Lists.newArrayList()));
-        });
-    }
+            category.as(SPackageBasic.aspect()).label("category");
+            category.withSelectionOf(OPTIONS.keySet());
 
-    @Test
-    public void renderOnlyThePrimaryChoice() {
-        setup();
-        build();
+            element.as(SPackageBasic.aspect())
+                    .label("Word")
+                    .dependsOn(category);
+            element.withSelectionFromProvider(ins -> {
+                String prefix = ins.findNearest(category).get().getValue();
+                return (prefix == null)
+                        ? ins.getType().newList()
+                        : ins.getType().newList()
+                        .addValues(OPTIONS.getOrDefault(prefix, Lists.newArrayList()));
+            });
+        }
 
-        List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
-        assertThat(options).hasSize(2);
+        protected List<DropDownChoice> options() {
+            return (List) findTag(form.getForm(), DropDownChoice.class);
+        }
 
-        DropDownChoice categoryChoice = options.get(0), elementChoice = options.get(1);
-
-        assertThat(extractProperty("selectLabel").from(categoryChoice.getChoices()))
-                .containsOnly(OPTIONS.keySet().toArray());
-        assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
-                .isEmpty();
-    }
-
-    @Test
-    public void changingSelectionChangesValue() {
-        setup();
-        build();
-
-        form.select(findId(form.getForm(), "category").get(), 0);
-        form.submit("save-btn");
-
-        List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
-
-        DropDownChoice categoryChoice = options.get(0), elementChoice = options.get(1);
-
-        assertThat(extractProperty("selectLabel").from(categoryChoice.getChoices()))
-                .containsOnly(OPTIONS.keySet().toArray());
-        assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
-                .containsOnly(OPTIONS.get("fruits").toArray());
-    }
-
-    @Test
-    public void preloadSelectedValues() {
-        setup();
-        page.getCurrentInstance().getDescendant(category).setValue("vegetables");
-        page.getCurrentInstance().getDescendant(element).setValue("radish");
-        build();
-
-        List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
-
-        DropDownChoice categoryChoice = options.get(0), elementChoice = options.get(1);
-
-        assertThat(extractProperty("selectLabel").from(categoryChoice.getChoices()))
-                .containsOnly(OPTIONS.keySet().toArray());
-        assertThat(categoryChoice.getValue()).isEqualTo("2");
-        assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
-                .containsOnly(OPTIONS.get("vegetables").toArray());
-        assertThat(elementChoice.getValue()).isEqualTo("2");
-    }
-
-    @Test
-    public void addPreloadedOptionsToLisIfNotPresent() {
-        setup();
-        page.getCurrentInstance().getDescendant(category).setValue("special");
-        page.getCurrentInstance().getDescendant(element).setValue("gluten");
-        build();
-
-        List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
-
-        DropDownChoice categoryChoice = options.get(0), elementChoice = options.get(1);
-
-        assertThat(extractProperty("selectLabel").from(categoryChoice.getChoices()))
-                .contains("special");
-        assertThat(categoryChoice.getValue()).isEqualTo("1");
-        assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
-                .containsOnly("gluten");
-        assertThat(elementChoice.getValue()).isEqualTo("1");
-    }
-
-    @Test
-    public void addPreloadedOptionsToDependentLisIfNotPresent() {
-        setup();
-        page.getCurrentInstance().getDescendant(category).setValue("vegetables");
-        page.getCurrentInstance().getDescendant(element).setValue("gluten");
-        build();
-
-        List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
-
-        DropDownChoice categoryChoice = options.get(0), elementChoice = options.get(1);
-
-        assertThat(extractProperty("selectLabel").from(categoryChoice.getChoices()))
-                .contains("vegetables");
-        assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
-                .contains("gluten").containsAll(OPTIONS.get("vegetables"));
-    }
-
-    @Test
-    public void whenChangingValueRemovesDanglingOptions() {
-        setup();
-        page.getCurrentInstance().getDescendant(category).setValue("vegetables");
-        page.getCurrentInstance().getDescendant(element).setValue("gluten");
-        build();
-
-//        form.select(findId(form.getForm(), "category").get(), 2);
-
-        page.getCurrentInstance().getDescendant(category).setValue("condiments");
-
-        List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
-        DropDownChoice categoryChoice = options.get(0), elementChoice = options.get(1);
-        List<AjaxUpdateInputBehavior> behaviors = categoryChoice.getBehaviors(AjaxUpdateInputBehavior.class);
-        behaviors.forEach((b) -> b.onUpdate(Mockito.mock(AjaxRequestTarget.class)));
-
-//        form.submit("save-btn");
-
-        options = (List) findTag(form.getForm(), DropDownChoice.class);
-
-        categoryChoice = options.get(0);
-        elementChoice = options.get(1);
-
-        assertThat(extractProperty("selectLabel").from(elementChoice.getChoices()))
-                .containsOnly(OPTIONS.get("condiments").toArray());
+        protected void selectOptionAt(String field, int index) {
+            form.select(findId(form.getForm(), field).get(), index);
+            form.submit();
+        }
     }
 }
+

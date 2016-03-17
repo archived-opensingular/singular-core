@@ -7,104 +7,114 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 
-public class STypeStringSelectionFieldTest extends SelectionFieldBaseTest{
-    protected STypeString selectType;
-    
-    @Override
-    @SuppressWarnings("rawtypes")
-    SType createSelectionType(STypeComposite group) {
-        return selectType = group.addFieldString("favoriteFruit");
-    }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Test public void rendersAnDropDownWithSpecifiedOptions(){
-        setupPage();
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
-        buildPage();
-        
-        driver.assertEnabled(formField(form, "favoriteFruit"));
-        form.submit("save-btn");
-        List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
-        assertThat(options).hasSize(1);
-        DropDownChoice choices = options.get(0);
-        assertThat(extractProperty("value").from(choices.getChoices()))
-            .containsExactly(
-                    getSelectKeyFromValue("strawberry"),
-                    getSelectKeyFromValue("apple"),
-                    getSelectKeyFromValue("orange"),
-                    getSelectKeyFromValue("banana"));
-        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
-            .containsExactly("strawberry","apple","orange","banana");
+@RunWith(Enclosed.class)
+public class STypeStringSelectionFieldTest {
+    private static class Base extends AbstractSingularFormTest {
+        protected STypeString selectType;
+
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            selectType = baseType.addFieldString("favoriteFruit");
+        }
+
+        protected Object getSelectKeyFromValue(String value) {
+            SIString mvalue = selectType.newInstance();
+            mvalue.setValue(value);
+            return page.getCurrentInstance().getField("favoriteFruit").getOptionsConfig().getKeyFromOption(mvalue);
+        }
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Test public void hasADefaultProvider(){
-        setupPage();
-        selectType.withSelection().add("strawberry").add("apple").add("orange").add("banana");
-        buildPage();
+    public static class A extends Base {
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            super.buildBaseType(baseType);
+            selectType.withSelectionOf("strawberry","apple","orange","banana");
+        }
 
-        driver.assertEnabled(formField(form, "favoriteFruit"));
-        form.submit("save-btn");
-        List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
-        assertThat(options).hasSize(1);
-        DropDownChoice choices = options.get(0);
-        assertThat(extractProperty("value").from(choices.getChoices()))
-                .containsExactly(
-                        getSelectKeyFromValue("strawberry"),
-                        getSelectKeyFromValue("apple"),
-                        getSelectKeyFromValue("orange"),
-                        getSelectKeyFromValue("banana"));
-        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
-                .containsExactly("strawberry","apple","orange","banana");
-    }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Test public void rendersAnDropDownWithDanglingOptions(){
-        setupPage();
-        page.getCurrentInstance()
-                .setValue(selectType.getNameSimple(), "avocado");;
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
-        buildPage();
-        
-        driver.assertEnabled(formField(form, "favoriteFruit"));
-        form.submit("save-btn");
-        List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
-        assertThat(options).hasSize(1);
-        DropDownChoice choices = options.get(0);
-        assertThat(extractProperty("value").from(choices.getChoices()))
-            .containsExactly(
-                    getSelectKeyFromValue("avocado"),
-                    getSelectKeyFromValue("strawberry"),
-                    getSelectKeyFromValue("apple"),
-                    getSelectKeyFromValue("orange"),
-                    getSelectKeyFromValue("banana")
-            );
-        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
-            .containsExactly("avocado","strawberry","apple","orange","banana");
-    }
-    
-    @Test public void submitsSelectedValue(){
-        setupPage();
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
-        buildPage();
-        form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
-        form.submit("save-btn");
-        Object value = page.getCurrentInstance().getValue(selectType.getNameSimple());
-        assertThat(value).isEqualTo("orange");
+        @Test public void rendersAnDropDownWithSpecifiedOptions(){
+            tester.assertEnabled(formField(form, "favoriteFruit"));
+            form.submit();
+            List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
+            assertThat(options).hasSize(1);
+            DropDownChoice choices = options.get(0);
+            assertThat(extractProperty("value").from(choices.getChoices()))
+                    .containsExactly(
+                            getSelectKeyFromValue("strawberry"),
+                            getSelectKeyFromValue("apple"),
+                            getSelectKeyFromValue("orange"),
+                            getSelectKeyFromValue("banana"));
+            assertThat(extractProperty("selectLabel").from(choices.getChoices()))
+                    .containsExactly("strawberry","apple","orange","banana");
+        }
+        @Test public void submitsSelectedValue(){
+            form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
+            form.submit();
+            Object value = page.getCurrentInstance().getValue(selectType.getNameSimple());
+            assertThat(value).isEqualTo("orange");
+        }
     }
 
-    private Object getSelectKeyFromValue(String value) {
-        SIString mvalue = selectType.newInstance();
-        mvalue.setValue(value);
-        return page.getCurrentInstance().getField("favoriteFruit").getOptionsConfig().getKeyFromOption(mvalue);
+    public static class WithDefaultProvider extends Base {
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            super.buildBaseType(baseType);
+            selectType.withSelection().add("strawberry").add("apple").add("orange").add("banana");
+        }
+
+        @Test public void hasADefaultProvider(){
+            List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
+            assertThat(options).hasSize(1);
+            DropDownChoice choices = options.get(0);
+            assertThat(extractProperty("value").from(choices.getChoices()))
+                    .containsExactly(
+                            getSelectKeyFromValue("strawberry"),
+                            getSelectKeyFromValue("apple"),
+                            getSelectKeyFromValue("orange"),
+                            getSelectKeyFromValue("banana"));
+            assertThat(extractProperty("selectLabel").from(choices.getChoices()))
+                    .containsExactly("strawberry","apple","orange","banana");
+        }
+    }
+
+    public static class WithPreloadedValues extends Base {
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            super.buildBaseType(baseType);
+            selectType.withSelectionOf("strawberry","apple","orange","banana");
+        }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.setValue(selectType.getNameSimple(), "avocado");;
+        }
+
+        @Test public void rendersAnDropDownWithDanglingOptions(){
+            List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
+            assertThat(options).hasSize(1);
+            DropDownChoice choices = options.get(0);
+            assertThat(extractProperty("value").from(choices.getChoices()))
+                    .containsExactly(
+                            getSelectKeyFromValue("avocado"),
+                            getSelectKeyFromValue("strawberry"),
+                            getSelectKeyFromValue("apple"),
+                            getSelectKeyFromValue("orange"),
+                            getSelectKeyFromValue("banana")
+                    );
+            assertThat(extractProperty("selectLabel").from(choices.getChoices()))
+                    .containsExactly("avocado","strawberry","apple","orange","banana");
+        }
     }
 
 }

@@ -3,38 +3,58 @@ package br.net.mirante.singular.form.wicket.mapper;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.tester.FormTester;
+import org.fest.assertions.api.Assertions;
 import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 
+import java.util.List;
 import java.util.Optional;
 
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFormComponentsByType;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.junit.Assert.*;
 
-public class MonetarioMapperTest extends MapperBaseTest {
+@RunWith(Enclosed.class)
+public class MonetarioMapperTest {
 
-    @Override
-    public void appendPackageFields(STypeComposite<? extends SIComposite> form) {
-        form.addFieldMonetary("money");
+    private static class Base extends AbstractSingularFormTest{
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            baseType.addFieldMonetary("money");
+        }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.setValue("money", "10,00");
+        }
     }
 
-    @Override
-    public void mockFormValues(SIComposite formInstance) {
-        formInstance.setValue("money", "10,00");
+    public static class WithEditionMode extends Base {
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            super.populateInstance(instance);
+            page.setAsEditView();
+        }
+
+        @Test
+        public void testEditRendering() {
+            Optional<String> money = findId(form.getForm(), "money");
+            assertTrue(money.isPresent());
+            List<TextField> tags = (List) findTag(form.getForm(), TextField.class);
+            Assertions.assertThat(tags.get(0).getValue()).isEqualTo("10,00");
+        }
     }
 
-    @Test
-    public void testEditRendering() {
-        FormTester formTester = startPage(ViewMode.EDITION);
-        Optional<String> money = findId(formTester.getForm(), "money");
-        assertTrue(money.isPresent());
-        assertTrue(formTester.getForm().get(money.get()) instanceof TextField);
-    }
 
-    @Test
+
+    /*@Test
     public void testVisualizationRendering() {
         FormTester formTester = startPage(ViewMode.VISUALIZATION);
 
@@ -52,6 +72,7 @@ public class MonetarioMapperTest extends MapperBaseTest {
         assertNotNull(panel);
 
         assertEquals("R$ 10,00", output.getDefaultModelObject());
-    }
+    }*/
+
 
 }

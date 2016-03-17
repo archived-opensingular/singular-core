@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -18,42 +19,62 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
 
-public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
+public class STypeStringModalSearchTest  {
+    //TODO:Fabs
 
-    protected STypeString selectType;
+    private static class Base extends AbstractSingularFormTest {
+        protected STypeString selectType;
 
-    @Override @SuppressWarnings({ "unchecked", "rawtypes" })
-    SType createSelectionType(STypeComposite group) {
-        selectType = group.addFieldString("favoriteFruit");
-        selectType.withView(SViewSelectionBySearchModal::new);
-        return selectType;
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            selectType = baseType.addFieldString("favoriteFruit");
+            selectType.withView(SViewSelectionBySearchModal::new);
+        }
+
+        protected void assertHasATable() {
+            String responseTxt = tester.getLastResponse().getDocument();
+            TagTester table = TagTester.createTagByAttribute(responseTxt,"table");
+
+            assertThat(table).isNotNull();
+        }
+
+        protected void clickOpenLink() {
+            assertThat(findTag(form.getForm(), BSDataTable.class)).isEmpty();
+            List<AjaxLink> links = (List)findTag(form.getForm(), AjaxLink.class);
+            assertThat(links).hasSize(1);
+
+            tester.executeAjaxEvent(formField(form, links.get(0).getId()), "onclick");
+        }
     }
 
-    @Test public void showModalWhenClicked(){
-        setupPage();
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
-        buildPage();
+    /*public static class Default extends Base {
 
-        driver.assertContainsNot("Buscar");
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            super.buildBaseType(baseType);
+            selectType.withSelectionOf("strawberry","apple","orange","banana");
+        }
 
-        clickOpenLink();
+        @Test public void showModalWhenClicked(){
+            tester.assertContainsNot("Buscar");
 
-        driver.assertContains("Buscar");
+            clickOpenLink();
 
-        assertHasATable();
+            tester.assertContains("Buscar");
 
-        driver.assertContains("strawberry");
-        driver.assertContains("apple");
-        driver.assertContains("orange");
-        driver.assertContains("banana");
-    }
+            assertHasATable();
 
-    private void assertHasATable() {
-        String responseTxt = driver.getLastResponse().getDocument();
-        TagTester table = TagTester.createTagByAttribute(responseTxt,"table");
+            tester.assertContains("strawberry");
+            tester.assertContains("apple");
+            tester.assertContains("orange");
+            tester.assertContains("banana");
+        }
+    }*/
 
-        assertThat(table).isNotNull();
-    }
+    /*
+
+
+
 
     @Test public void showPreviousValueWhenRendering(){
         setupPage();
@@ -101,11 +122,5 @@ public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
 
     }
 
-    private void clickOpenLink() {
-        assertThat(findTag(form.getForm(), BSDataTable.class)).isEmpty();
-        List<AjaxLink> links = (List)findTag(form.getForm(), AjaxLink.class);
-        assertThat(links).hasSize(1);
 
-        driver.executeAjaxEvent(formField(form, links.get(0).getId()), "onclick");
-    }
-}
+*/}

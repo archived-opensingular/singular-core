@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -20,82 +21,77 @@ import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
+@RunWith(Enclosed.class)
+public class STypeStringKeyValueRadioTest {
 
-    protected PackageBuilder localPackage;
-    protected WicketTester driver;
-    protected TestPage page;
-    protected FormTester form;
-    private STypeComposite<? extends SIComposite> baseCompositeField;
-    private STypeString tipoDeMedia;
+    private static class Base extends AbstractSingularFormTest {
+        protected STypeComposite<? extends SIComposite> baseCompositeField;
+        protected STypeString tipoDeMedia;
 
-    protected void setupPage() {
-        driver = new WicketTester(new TestApp());
-        page = new TestPage();
-        page.enableAnnotation();
-        localPackage = dicionario.createNewPackage("test");
-        baseCompositeField = localPackage.createCompositeType("group");
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseCompositeField) {
+            page.enableAnnotation();
 
-        tipoDeMedia = baseCompositeField.addFieldString("tipoDeMedia");
-        tipoDeMedia.withRadioView();
-        tipoDeMedia.withSelectionFromProvider(new SOptionsProvider() {
-            @Override
-            public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
-                STypeString type = dicionario.getType(STypeString.class);
-                SIList<?> r = type.newList();
-                r.addElement(newElement(type, "IMG", "Imagem"));
-                r.addElement(newElement(type, "TXT", "Texto"));
-                r.addElement(newElement(type, "BIN", "Binário"));
-                return r;
-            }
+            this.baseCompositeField = baseCompositeField;
+            tipoDeMedia = baseCompositeField.addFieldString("tipoDeMedia");
+            tipoDeMedia.withRadioView();
+            tipoDeMedia.withSelectionFromProvider(new SOptionsProvider() {
+                @Override
+                public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+                    STypeString type = tipoDeMedia.getDictionary().getType(STypeString.class);
+                    SIList<?> r = type.newList();
+                    r.addElement(newElement(type, "IMG", "Imagem"));
+                    r.addElement(newElement(type, "TXT", "Texto"));
+                    r.addElement(newElement(type, "BIN", "Binário"));
+                    return r;
+                }
 
-            private SIString newElement(STypeString type, String id, String label) {
-                SIString e = type.newInstance();
-                e.setValue(id);
-                e.setSelectLabel(label);
-                return e;
-            }
-        });
-        tipoDeMedia.as(AtrBasic::new).label("Tipo do Arquivo");
-
-        page.setIntance(createIntance(() -> baseCompositeField));
+                private SIString newElement(STypeString type, String id, String label) {
+                    SIString e = type.newInstance();
+                    e.setValue(id);
+                    e.setSelectLabel(label);
+                    return e;
+                }
+            });
+            tipoDeMedia.as(AtrBasic::new).label("Tipo do Arquivo");
+        }
     }
 
-    protected void buildPage() {
-        page.build();
-        driver.startPage(page);
-
-        form = driver.newFormTester("test-form", false);
+    public static class Default extends Base {
+        @Test
+        public void rendersARadioChoiceWithInformedLabels() {
+            List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
+            assertThat(inputs).hasSize(1);
+            assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
+                    .containsOnly("1", "2", "3");
+            assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
+                    .containsOnly("Imagem", "Texto", "Binário");
+        }
     }
 
-    @Test
-    public void rendersARadioChoiceWithInformedLabels() {
-        setupPage();
-        buildPage();
+    public static class WithSelectedValue extends Base {
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.getDescendant(tipoDeMedia).setValue("TXT");
+        }
 
-        List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
-        assertThat(inputs).hasSize(1);
-        assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-                .containsOnly("1", "2", "3");
-        assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
-                .containsOnly("Imagem", "Texto", "Binário");
+        @Test
+        public void rendersARadioChoiceWithInformedOptionsRegardlessOfSelection() {
+            List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
+            assertThat(inputs).hasSize(1);
+            assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
+                    .containsOnly("1", "2", "3");
+            assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
+                    .containsOnly("Imagem", "Texto", "Binário");
+            assertThat(inputs.get(0).getValue()).isEqualTo("2");
+        }
     }
 
-    @Test
-    public void rendersARadioChoiceWithInformedOptionsRegardlessOfSelection() {
-        setupPage();
-        page.getCurrentInstance().getDescendant(tipoDeMedia).setValue("TXT");
-        buildPage();
-
-        List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
-        assertThat(inputs).hasSize(1);
-        assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-                .containsOnly("1", "2", "3");
-        assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
-                .containsOnly("Imagem", "Texto", "Binário");
-        assertThat(inputs.get(0).getValue()).isEqualTo("2");
-    }
 }
+
