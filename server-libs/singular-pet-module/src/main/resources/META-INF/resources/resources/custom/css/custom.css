@@ -19,10 +19,15 @@ DECLARE ESSE CSS NA SUA APLICAÇÃO NO MESMO CAMINHO RELATIVO
     }
 }
 
+#toast-container {
+    pointer-events: none;
+}
+
 #toast-container.toast-top-center > div {
     width: 50%;
     margin-left: auto;
     margin-right: auto;
+    pointer-events: auto;
 }
 
 .toast-top-center {
