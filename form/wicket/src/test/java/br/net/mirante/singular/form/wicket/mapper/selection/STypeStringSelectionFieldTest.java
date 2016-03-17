@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
@@ -104,7 +104,7 @@ public class STypeStringSelectionFieldTest extends SelectionFieldBaseTest{
     private Object getSelectKeyFromValue(String value) {
         SIString mvalue = selectType.novaInstancia();
         mvalue.setValue(value);
-        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
+        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOption(mvalue);
     }
 
 }

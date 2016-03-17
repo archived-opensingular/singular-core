@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular</artifactId>
-        <version>0.5.10</version>
+        <version>0.6.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-form</artifactId>
@@ -17,6 +17,7 @@
         <module>core</module>
         <module>wicket</module>
         <module>ui-showcase</module>
+        <module>exemplos-form</module>
     </modules>
 
 </project>

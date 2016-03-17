@@ -90,9 +90,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
-        if(ctx.isRootContext() && ctx.isAnnotationEnabled()){ //TODO: Fabs: Check is is annotation enabled
+        if(ctx.isRootContext() && ctx.annotation().enabled()){
             ctx.init(this, viewMode);
-
             new AnnotationBuilder(this).build(ctx, viewMode, mapper);
         }else{
             mapper.buildView(ctx.init(this, viewMode));
@@ -158,6 +157,8 @@ class AnnotationBuilder {
     private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class.getName());
 
     private UIBuilderWicket parent;
+    private WicketBuildContext mainCtx;
+    private BSRow mainGrid;
 
     AnnotationBuilder(UIBuilderWicket parent){
         this.parent = parent;
@@ -165,13 +166,14 @@ class AnnotationBuilder {
 
     public void build(WicketBuildContext ctx, ViewMode viewMode, IWicketComponentMapper mapper) {
         final BSContainer<?> parentCol = ctx.getContainer();
-        BSRow superRow = parentCol.newGrid().newRow();
+        mainGrid = parentCol.newGrid().newRow();
+        mainGrid.setOutputMarkupId(true);
 
-        superRow.setCssClass("sannotation-form-row");
-        WicketBuildContext mainCtx = createMainColumn(ctx, superRow);
+        mainGrid.setCssClass("sannotation-form-row");
+        mainCtx = createMainColumn(ctx, mainGrid);
         executeMainMapper(viewMode, mapper, mainCtx);
 
-        BSGrid annotationColumn = createAnnotationColumn(superRow);
+        BSGrid annotationColumn = createAnnotationColumn(mainGrid);
         mainCtx.setAnnotationContainer(annotationColumn);
         addAnnotationsFor(ctx, annotationColumn, (SInstance) ctx.getCurrentInstance());
     }
@@ -201,7 +203,6 @@ class AnnotationBuilder {
     }
 
     private void addAnnotationComponent(BSGrid ngrid, SInstance instance,  WicketBuildContext ctx) {
-//        Optional<Component> target = new ComponentFinder().find(ctx.getRootContainer().getItems(), instance);
         Optional<Component> target = ctx.getAnnotationTargetFor(instance);
         ngrid.newRow().appendTag("div", true, "",
             (id) -> {
@@ -209,6 +210,7 @@ class AnnotationBuilder {
                 if(target.isPresent()){
                     component.setReferencedComponent(target.get());
                 }
+                component.setMainGrid(mainGrid);
                 ctx.add(component);
                 return component;
             });
@@ -228,38 +230,3 @@ class AnnotationBuilder {
     }
 
 }
-
-/**
- * Finds a component in the Component tree which targets the criteria SInstance
- */
-/*
-class ComponentFinder {
-
-    Set<BSContainer> searchCache = newHashSet();
-    Optional<Component> result = Optional.empty();
-
-    public Optional<Component> find(RepeatingView children, final SInstance target) {
-        children.visitChildren((x, y) -> {
-            IModel<?> m = x.getDefaultModel();
-            if(m != null && m.getObject() != null && m.getObject() instanceof SInstance){
-                SInstance i = (SInstance) m.getObject();
-                if(i.getId().equals(target.getId())){
-                    System.out.println(i.getId()+" . "+target.getId());
-                    System.out.println("match");
-                    result = Optional.of(x);
-                }
-            }
-            visitChildrenIfAny(target, x);
-        });
-        return result;
-    }
-
-    private void visitChildrenIfAny(SInstance target, Component x) {
-        if(!result.isPresent() && x instanceof BSContainer && !searchCache.contains(x)){
-            RepeatingView items = ((BSContainer) x).getItems();
-            searchCache.add((BSContainer) x);
-            result = find(items, target);
-        }
-    }
-
-}*/

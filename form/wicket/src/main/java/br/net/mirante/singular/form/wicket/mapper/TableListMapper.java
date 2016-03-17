@@ -13,7 +13,7 @@ import com.google.common.base.Strings;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.SingularFormException;
@@ -45,24 +45,28 @@ public class TableListMapper extends AbstractListaMapper {
             throw new SingularFormException("TableListMapper deve ser utilizado com MTableListaView", (SInstance) ctx.getCurrentInstance());
         }
 
-        if (ctx.getCurrentInstance() instanceof SList) {
+        if (ctx.getCurrentInstance() instanceof SIList) {
 
-            final IModel<SList<SInstance>> list = $m.get(() -> (ctx.getCurrentInstance()));
+            final IModel<SIList<SInstance>> list = $m.get(() -> (ctx.getCurrentInstance()));
             final MTableListaView view = (MTableListaView) ctx.getView();
             final boolean isEdition = ctx.getViewMode() == null || ctx.getViewMode().isEdition();
+            final SIList<SInstance> iLista = list.getObject();
+            final SType<?> currentType = ctx.getCurrentInstance().getType();
+
+            addMinimumSize(currentType, iLista);
 
             ctx.setHint(ControlsFieldComponentMapper.NO_DECORATION, true);
             ctx.getContainer().appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(
-                id,
-                (header, form) -> buildHeader(header, form, list, ctx, view, isEdition),
-                (content, form) -> builContent(content, form, list, ctx, view, isEdition),
-                (footer, form) -> {
-                    footer.setVisible(false);
-                }));
+                    id,
+                    (header, form) -> buildHeader(header, form, list, ctx, view, isEdition),
+                    (content, form) -> builContent(content, form, list, ctx, view, isEdition),
+                    (footer, form) -> {
+                        footer.setVisible(false);
+                    }));
         }
     }
 
-    private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SList<SInstance>> list,
+    private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
                              WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtrBasic().getLabel());
@@ -78,17 +82,17 @@ public class TableListMapper extends AbstractListaMapper {
 
     }
 
-    private void builContent(BSContainer<?> content, Form<?> form, IModel<SList<SInstance>> list,
+    private void builContent(BSContainer<?> content, Form<?> form, IModel<SIList<SInstance>> list,
                              WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
 
         final String markup = ""
-            + " <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
-            + "      <thead wicket:id='_h'></thead>                                                              "
-            + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
-            + "      <tfoot wicket:id='_ft'>                                                                     "
-            + "          <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
-            + "      </tfoot>                                                                                    "
-            + " </table>                                                                                         ";
+                + " <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
+                + "      <thead wicket:id='_h'></thead>                                                              "
+                + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
+                + "      <tfoot wicket:id='_ft'>                                                                     "
+                + "          <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
+                + "      </tfoot>                                                                                    "
+                + " </table>                                                                                         ";
 
         final TemplatePanel template = content.newTemplateTag(tp -> markup);
         template.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
@@ -154,7 +158,7 @@ public class TableListMapper extends AbstractListaMapper {
         private final ViewMode           viewMode;
         private final UIBuilderWicket    wicketBuilder;
 
-        private TableElementsView(String id, IModel<SList<SInstance>> model, WicketBuildContext ctx, Form<?> form) {
+        private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form) {
             super(id, model);
             this.wicketBuilder = ctx.getUiBuilderWicket();
             this.ctx = ctx;
@@ -188,7 +192,7 @@ public class TableListMapper extends AbstractListaMapper {
             }
 
             if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha()
-                && viewMode.isEdition()) {
+                    && viewMode.isEdition()) {
                 appendRemoverButton(this, form, item, row.newCol());
             }
 

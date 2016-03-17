@@ -22,10 +22,9 @@ public class NullOrEmptyModel implements IBooleanModel {
     }
 
     public static boolean nullOrEmpty(Object obj) {
-        return false ||
-            (obj instanceof String && ((String) obj).trim().isEmpty()) ||
-            (obj instanceof IModel<?> && nullOrEmpty(((IModel<?>) obj).getObject())) ||
-            (obj instanceof Component && nullOrEmpty(((Component) obj).getDefaultModel())) ||
-            (obj == null);
+        return (obj instanceof String && ((String) obj).trim().isEmpty()) ||
+                (obj instanceof IModel<?> && nullOrEmpty(((IModel<?>) obj).getObject())) ||
+                (obj instanceof Component && nullOrEmpty(((Component) obj).getDefaultModel())) ||
+                (obj == null);
     }
 }

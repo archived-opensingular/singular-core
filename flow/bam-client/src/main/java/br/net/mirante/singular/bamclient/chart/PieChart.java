@@ -25,7 +25,8 @@ public class PieChart implements SingularChart {
                 .angle(12)
                 .balloonText("[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>")
                 .depth3D(15)
-                .labelRadius(50)
+                .labelRadius(30)
+                .minRadius(50)
                 .titleField(categoryProperty)
                 .valueField(valueProperty);
 

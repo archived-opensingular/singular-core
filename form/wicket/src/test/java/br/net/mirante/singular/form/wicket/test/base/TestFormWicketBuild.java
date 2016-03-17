@@ -6,7 +6,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -17,7 +16,6 @@ import org.junit.Test;
 import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -51,16 +49,14 @@ public class TestFormWicketBuild extends AbstractWicketFormTest {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        IModel<STypeString> tCidade = new LoadableDetachableModel<STypeString>() {
-            @Override
-            protected STypeString load() {
-                PackageBuilder pb = dicionario.createNewPackage("teste");
-                STypeString tipoCidade = pb.createTipo("cidade", STypeString.class);
-                tipoCidade.as(AtrBasic.class).label("Cidade").tamanhoEdicao(21);
-                return tipoCidade;
-            }
-        };
-        IModel<SIString> mCidade = new MInstanceRootModel<SIString>(tCidade.getObject().novaInstancia());
+        SIString instancia = (SIString) createIntance(() -> {
+            PackageBuilder pb = dicionario.createNewPackage("teste");
+            STypeString tipoCidade = pb.createTipo("cidade", STypeString.class);
+            tipoCidade.as(AtrBasic.class).label("Cidade").tamanhoEdicao(21);
+            return tipoCidade;
+        });
+
+        IModel<SIString> mCidade = new MInstanceRootModel<SIString>(instancia);
         mCidade.getObject().setValue("Brasilia");
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
         singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
@@ -80,15 +76,12 @@ public class TestFormWicketBuild extends AbstractWicketFormTest {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        IModel<STypeComposite<SIComposite>> tCurriculo = new LoadableDetachableModel<STypeComposite<SIComposite>>() {
-            @Override
-            @SuppressWarnings("unchecked")
-            protected STypeComposite<SIComposite> load() {
-                dicionario.loadPackage(SPackageCurriculo.class);
-                return (STypeComposite<SIComposite>) dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
-            }
-        };
-        IModel<SIComposite> mCurriculo = new MInstanceRootModel<SIComposite>(tCurriculo.getObject().novaInstancia());
+        SIComposite instancia = (SIComposite) createIntance(() -> {
+            dicionario.loadPackage(SPackageCurriculo.class);
+            return dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
+        });
+
+        IModel<SIComposite> mCurriculo = new MInstanceRootModel<SIComposite>(instancia);
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
 //        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 

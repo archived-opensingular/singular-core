@@ -10,7 +10,7 @@ import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -69,8 +69,8 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
         final StringBuilder output = new StringBuilder();
         final SInstance mi = model.getObject();
 
-        if (mi instanceof SList) {
-            final Collection children = ((SList) mi).getChildren();
+        if (mi instanceof SIList) {
+            final Collection children = ((SIList) mi).getChildren();
             final Iterator iterator = children.iterator();
             boolean first = true;
             while (iterator.hasNext()) {

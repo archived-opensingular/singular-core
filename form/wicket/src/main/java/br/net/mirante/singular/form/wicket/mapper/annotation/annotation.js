@@ -1,14 +1,15 @@
 if( window.Annotation == undefined){
-    window.Annotation = function (target_id, this_id, open_modal_id, comment, approved){
-        this.init = function (target_id, this_id, open_modal_id, comment, approved){
+    window.Annotation = function (target_id, this_id, open_modal_id, comment, approved, readOnly){
+        this.init = function (target_id, this_id, open_modal_id, comment, approved, readOnly){
             this.target_id = target_id;
             this.this_id = this_id;
             this.open_modal_id = open_modal_id;
             this.comment = comment;
             this.approved = approved;
+            this.readOnly = readOnly;
             this.retry = false;
         },
-        this.init(target_id, this_id, open_modal_id, comment, approved);
+        this.init(target_id, this_id, open_modal_id, comment, approved, readOnly);
     }
 
     window.Annotation.prototype = {
@@ -30,7 +31,9 @@ if( window.Annotation == undefined){
             this.toggle_container = this.create_toggle_container();
             this.target_component/*.find('h3:first')*/.append(this.toggle_container);
             if(this.is_blank()) {   this.this_component.hide(); }
+            if(this.is_blank() && this.readOnly) {   this.toggle_container.hide(); }
             if(this.this_component.is(':visible') ){
+                this.close_overlaping_boxes(this.this_component);
                 this.adjust_height_position();
             }
         },
@@ -43,11 +46,16 @@ if( window.Annotation == undefined){
 
         is_blank : function () {    return this.approved == null;   },
 
-        create_show_button : function(){
-            return $('<a>')
-                .addClass('btn btn-circle btn-icon-only '+this.define_button_color())
-                .attr('href','javascript:;')
-                .append($('<i>').addClass(this.define_button_icon()))
+        create_toggle_container: function(){
+            var thiz = this;
+            var toggle_container = this.target_component;//.find('.annotation-toggle-container');
+            toggle_container.find('a').removeClass('btn-default btn-info btn-danger');
+            toggle_container.find('a').addClass(this.define_button_color());
+            toggle_container.find('i').removeClass();
+            toggle_container.find('i').addClass(this.define_button_icon());
+            toggle_container.off("click");
+            toggle_container.click(function(){thiz.toggle_button_on_click()})
+            return toggle_container;
         },
 
         define_button_color: function() {
@@ -61,13 +69,6 @@ if( window.Annotation == undefined){
             return 'fa fa-comment-o';
         },
 
-        create_toggle_container: function(){
-            var thiz = this;
-            return $('<div>').attr('style','position:absolute;top:15px;right: 15px;')
-                        .append(this.create_show_button())
-                        .click(function(){thiz.toggle_button_on_click()})
-        },
-
         adjust_height_position: function(){
             this.this_component.css('position','absolute')
             var target_offset = this.target_component.parent().offset()['top'],
@@ -77,6 +78,7 @@ if( window.Annotation == undefined){
         },
 
         toggle_button_on_click: function(){
+            console.log('toggle', this)
             this.adjust_height_position();
             if(this.is_blank()){
                 this.open_modal[0].click();
@@ -91,12 +93,12 @@ if( window.Annotation == undefined){
             }
         },
 
-        close_overlaping_boxes: function(){
+        close_overlaping_boxes: function( notChange){
             var thiz = this;
             var base = thiz.box_bounds(thiz.this_component);
             $(".sannotation-snipet-box:visible").each(function(i,e){
                 var bound = thiz.box_bounds($(e));
-                if(bound.start < base.end && bound.end > base.start){
+                if(! $(e).is(notChange) && bound.start < base.end && bound.end > base.start){
                     $(e).fadeOut();
                 }
             });
@@ -110,15 +112,17 @@ if( window.Annotation == undefined){
         }
     };
 
-    window.Annotation.create_or_update = function(target_id, this_id, open_modal_id, comment, approved){
+    window.Annotation.create_or_update = function(target_id, this_id, open_modal_id,
+                                                  comment, approved, readOnly){
         var this_component = $(this_id)
         var target_component = $(target_id)
+        console.log('before', target_component);
         if(this_component && this_component.data('ctl')){
             var ctl = this_component.data('ctl');
-            ctl.init(target_id, this_id, open_modal_id, comment, approved);
+            ctl.init(target_id, this_id, open_modal_id, comment, approved, readOnly);
             ctl.build();
         }else{
-            new Annotation(target_id, this_id, open_modal_id, comment, approved).build();
+            new Annotation(target_id, this_id, open_modal_id, comment, approved, readOnly).build();
         }
     };
 

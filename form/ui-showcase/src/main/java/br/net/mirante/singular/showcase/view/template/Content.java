@@ -5,6 +5,9 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import javax.inject.Inject;
 
 import br.net.mirante.singular.showcase.wicket.UIAdminWicketFilterContext;
+import br.net.mirante.singular.util.wicket.toastr.ToastrHelper;
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
+
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -37,8 +40,8 @@ public abstract class Content extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new Label("contentTitle", getContentTitlelModel()));
-        add(new Label("contentSubtitle", getContentSubtitlelModel()));
+        add(new Label("contentTitle", getContentTitleModel()));
+        add(new Label("contentSubtitle", getContentSubtitleModel()));
         WebMarkupContainer breadcrumb = new WebMarkupContainer("breadcrumb");
         add(breadcrumb);
         breadcrumb.add(new WebMarkupContainer("breadcrumbDashboard").add(
@@ -54,6 +57,26 @@ public abstract class Content extends Panel {
         }
     }
 
+    public void addToastrSuccessMessage(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessage(ToastrType.SUCCESS, messageKey, args);
+    }
+
+    public void addToastrErrorMessage(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessage(ToastrType.ERROR, messageKey, args);
+    }
+
+    public void addToastrWarningMessage(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessage(ToastrType.WARNING, messageKey, args);
+    }
+
+    public void addToastrInfoMessage(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessage(ToastrType.INFO, messageKey, args);
+    }
+
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
         return new WebMarkupContainer(id);
     }
@@ -62,7 +85,7 @@ public abstract class Content extends Panel {
         return new WebMarkupContainer(id);
     }
 
-    protected abstract IModel<?> getContentTitlelModel();
+    protected abstract IModel<?> getContentTitleModel();
 
-    protected abstract IModel<?> getContentSubtitlelModel();
+    protected abstract IModel<?> getContentSubtitleModel();
 }

@@ -1,0 +1,74 @@
+package br.net.mirante.singular.exemplos.canabidiol;
+
+import br.net.mirante.singular.exemplos.SelectBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.TypeBuilder;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
+import br.net.mirante.singular.form.mform.core.AtrCore;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+
+
+@MInfoTipo(nome = "MTipoMedico", pacote = SPackagePeticaoCanabidiol.class)
+public class STypeMedico extends STypeComposite<SIComposite> {
+
+    @Override
+    protected void onLoadType(TypeBuilder tb) {
+        super.onLoadType(tb);
+
+        this
+                .addCampoString("nome")
+                .as(AtrCore::new)
+                .obrigatorio()
+                .as(AtrBasic::new)
+                .label("Nome do Médico")
+                .as(AtrBootstrap::new)
+                .colPreference(6);
+
+        this
+                .addCampoString("CRM")
+                .as(AtrCore::new)
+                .obrigatorio()
+                .as(AtrBasic::new)
+                .label("Número do CRM")
+                .as(AtrBootstrap::new)
+                .colPreference(3);
+
+        STypeComposite<?> estado = this.addCampoComposto("UFCRM");
+        estado
+                .as(AtrCore::new)
+                .obrigatorio()
+                .as(AtrBasic::new)
+                .label("UF do CRM")
+                .as(AtrBootstrap::new)
+                .colPreference(3);
+        estado.addCampoString("sigla");
+        STypeString nomeUF = estado.addCampoString("nome");
+        estado
+                .withSelectionFromProvider(nomeUF, (MOptionsProvider) inst -> SelectBuilder.buildEstados(estado));
+
+        this.addCampoCPF("cpf")
+                .as(AtrBasic::new)
+                .label("CPF")
+                .as(AtrBootstrap::new)
+                .colPreference(3);
+
+
+        this.addCampo("endereco", STypeEndereco.class)
+                .as(AtrBasic::new)
+                .label("Endereço")
+                .as(AtrAnnotation::new).setAnnotated();
+
+        STypeContato tipoTelefone = this.addCampo("contato", STypeContato.class);
+        tipoTelefone
+                .telefoneFixo
+                .as(AtrCore::new)
+                .obrigatorio()
+                .as(AtrAnnotation::new).setAnnotated();
+
+    }
+}

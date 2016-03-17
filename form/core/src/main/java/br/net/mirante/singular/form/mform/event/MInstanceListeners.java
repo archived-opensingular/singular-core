@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 
 public class MInstanceListeners {
@@ -20,11 +20,11 @@ public class MInstanceListeners {
         if (hasListenersFor(MInstanceEventType.ATTRIBUTE_CHANGED))
             fireInstanceEvent(MInstanceEventType.ATTRIBUTE_CHANGED, new SInstanceAttributeChangeEvent(instance, attributeInstance, oldValue, valor));
     }
-    public void fireInstanceListElementAdded(SList<?> listInstance, SInstance addedInstance, int index) {
+    public void fireInstanceListElementAdded(SIList<?> listInstance, SInstance addedInstance, int index) {
         if (hasListenersFor(MInstanceEventType.LIST_ELEMENT_ADDED))
             fireInstanceEvent(MInstanceEventType.LIST_ELEMENT_ADDED, new SInstanceListElementAddedEvent(listInstance, addedInstance, index));
     }
-    public void fireInstanceListElementRemoved(SList<?> listInstance, SInstance removedInstance, int index) {
+    public void fireInstanceListElementRemoved(SIList<?> listInstance, SInstance removedInstance, int index) {
         if (hasListenersFor(MInstanceEventType.LIST_ELEMENT_REMOVED))
             fireInstanceEvent(MInstanceEventType.LIST_ELEMENT_REMOVED, new SInstanceListElementRemovedEvent(listInstance, removedInstance, index));
     }

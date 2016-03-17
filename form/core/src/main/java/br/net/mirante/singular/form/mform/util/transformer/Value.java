@@ -1,19 +1,19 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Essa classe utilitaria realiza uma serie de operacoes sobre os valores guardados pelos MTIpos
@@ -31,14 +31,12 @@ public class Value {
     }
 
     /**
-     * @param current
-     *            instancia a partir da qual será buscada a instancia mais
-     *            proxima do tipo simples tipo
-     * @param tipo
-     *            um tipo simples
+     * @param current instancia a partir da qual será buscada a instancia mais
+     *                proxima do tipo simples tipo
+     * @param tipo    um tipo simples
      * @param <T>
      * @return false se o valor do tipo simples for nulo ou se o tipo não for
-     *         encontrado a partir da instancia current informada
+     * encontrado a partir da instancia current informada
      */
     public static <T> boolean notNull(SInstance current, STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.of(current, tipo) != null;
@@ -55,13 +53,13 @@ public class Value {
 
     public static <T> boolean notNull(SInstance current, STypeLista tipo) {
         if (current != null && tipo != null) {
-            SList instanciaLista = (SList) getInstance(current, tipo);
+            SIList instanciaLista = (SIList) getInstance(current, tipo);
             return Value.notNull(instanciaLista);
         }
         return false;
     }
 
-    public static <T> boolean notNull(SList instanciaLista) {
+    public static <T> boolean notNull(SIList instanciaLista) {
         return instanciaLista != null && !instanciaLista.isEmpty();
     }
 
@@ -75,6 +73,7 @@ public class Value {
 
     /**
      * Retorna o valor de uma instancia simples
+     *
      * @param instanciaSimples
      * @param <T>
      * @return
@@ -91,11 +90,29 @@ public class Value {
             return Value.notNull((SIComposite) instancia);
         } else if (instancia instanceof SISimple) {
             return Value.notNull((SISimple) instancia);
-        } else if (instancia instanceof SList) {
-            return Value.notNull((SList) instancia);
+        } else if (instancia instanceof SIList) {
+            return Value.notNull((SIList) instancia);
         } else {
             throw new SingularFormException("Tipo de instancia não suportado", instancia);
         }
+    }
+
+    /**
+     * Retorna o valor de uma instancia filha simples a partir da instancia
+     * composta informada
+     *
+     * @param instanciaComposta
+     * @param path
+     * @return
+     */
+    public static <T> T of(SInstance instanciaComposta, String path) {
+        if (instanciaComposta instanceof SIComposite) {
+            SInstance campo = ((SIComposite) instanciaComposta).getCampo(path);
+            if (campo instanceof SISimple) {
+                return Value.of((SISimple<T>) campo);
+            }
+        }
+        return null;
     }
 
     /**
@@ -131,8 +148,8 @@ public class Value {
                 fromMap((Map<String, Object>) value, (SIComposite) instancia);
             } else if (instancia instanceof SISimple) {
                 ((SISimple) instancia).setValue(value);
-            } else if (instancia instanceof SList) {
-                fromList((List<Object>) value, (SList) instancia);
+            } else if (instancia instanceof SIList) {
+                fromList((List<Object>) value, (SIList) instancia);
             } else {
                 throw new SingularFormException("Tipo de instancia não suportado: " + instancia.getClass().getName());
             }
@@ -145,7 +162,7 @@ public class Value {
         }
     }
 
-    private static void fromList(List<Object> list, SList sList) {
+    private static void fromList(List<Object> list, SIList sList) {
         for (Object o : list) {
             SInstance novo = sList.addNovo();
             hydrate(novo, o);
@@ -156,8 +173,7 @@ public class Value {
      * Extrai para objetos serializáveis todos os dados de uma MIinstancia
      * recursivamente
      *
-     * @param value
-     *            MIinstancia a partir da qual se deseja extrair os dados
+     * @param value MIinstancia a partir da qual se deseja extrair os dados
      * @return Objetos serializáveis representando os dados da MInstancia
      */
     public static Object dehydrate(SInstance value) {
@@ -168,7 +184,7 @@ public class Value {
                 return map;
             } else if (value instanceof SISimple) {
                 return ((SISimple) value).getValue();
-            } else if (value instanceof SList) {
+            } else if (value instanceof SIList) {
                 List<Object> list = new ArrayList<>();
                 toList(list, (SInstance) value);
                 return list;
@@ -177,33 +193,6 @@ public class Value {
             }
         }
         return null;
-    }
-
-    /**
-     * Remove um espiríto maligno (valores serializaveis) de um corpo puro e
-     * inocente (MIinstancia) e de toda sua descendência.
-     *
-     * @param innocentVessel
-     * @return
-     */
-    public static Soul exorcize(SInstance innocentVessel){
-        Soul s = new Soul();
-        s.value = dehydrate(innocentVessel);
-        return s;
-    }
-
-    /**
-     * Realiza um ritual para encarnar um espirito maligno em um pobre corpo
-     * inocente.
-     *
-     * @param pureVessel
-     *            A pobre vitma do ritual
-     * @param evilSpirit
-     *            A alma do espírito realmente extraída a partir do método
-     *            exorcize
-     */
-    public static void possess(SInstance pureVessel, Soul evilSpirit) {
-        hydrate(pureVessel, evilSpirit.value);
     }
 
     private static void toMap(Map<String, Object> value, SInstance instancia) {
@@ -216,8 +205,8 @@ public class Value {
     }
 
     private static void toList(List<Object> value, SInstance instancia) {
-        if (instancia instanceof SList<?>) {
-            for (SInstance i : ((SList<?>) instancia).getValores()) {
+        if (instancia instanceof SIList<?>) {
+            for (SInstance i : ((SIList<?>) instancia).getValores()) {
                 value.add(dehydrate(i));
             }
         }
@@ -229,10 +218,6 @@ public class Value {
 
     public <T> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.notNull(instancia, tipo);
-    }
-
-    public static class Soul {
-        private Object value;
     }
 
 }

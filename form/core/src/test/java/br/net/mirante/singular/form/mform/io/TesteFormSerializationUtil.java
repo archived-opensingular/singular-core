@@ -1,5 +1,13 @@
 package br.net.mirante.singular.form.mform.io;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,43 +23,40 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SDictionaryRef;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 public class TesteFormSerializationUtil {
 
     @Test
     public void testVerySimplesCase() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> pacote.createTipo("endereco", STypeString.class));
-        SInstance instancia = dicionary.getType("teste.endereco").novaInstancia();
+        SInstance instancia = createSerializableTestInstance("teste.endereco", pacote -> pacote.createTipo("endereco", STypeString.class));
         testSerializacao(instancia);
 
     }
 
     @Test
     public void testTipoComposto() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> {
+        SIComposite instancia = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
             STypeComposite<? extends SIComposite> endereco = pacote.createTipoComposto("endereco");
             endereco.addCampoString("rua");
             endereco.addCampoString("bairro");
             endereco.addCampoString("cidade");
         });
-        SIComposite instancia = (SIComposite) dicionary.getType("teste.endereco").novaInstancia();
         instancia.setValor("rua", "A1");
         instancia.setValor("bairro", "A2");
         testSerializacao(instancia);
@@ -62,7 +67,7 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testSerialializeEmptyObject() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> {
+        SIComposite instance = (SIComposite) createSerializableTestInstance("teste.pedido", pacote -> {
             STypeComposite<?> tipoPedido = pacote.createTipoComposto("pedido");
             tipoPedido.addCampoString("nome");
             tipoPedido.addCampoString("descr");
@@ -70,18 +75,16 @@ public class TesteFormSerializationUtil {
             tipoPedido.addCampoListaOf("clientes", STypeString.class);
         });
 
-        SIComposite instance = (SIComposite) dicionary.getType("teste.pedido").novaInstancia();
         FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(instance));
     }
 
     @Test
     public void testTipoCompostoComAnotacoes() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> {
+        SIComposite instancia = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
             STypeComposite<? extends SIComposite> endereco = pacote.createTipoComposto("endereco");
             endereco.addCampoString("rua");
             endereco.as(AtrAnnotation::new).setAnnotated();
         });
-        SIComposite instancia = (SIComposite) dicionary.getType("teste.endereco").novaInstancia();
         instancia.setValor("rua", "rua dos bobos");
         instancia.as(AtrAnnotation::new).text("numero zero ?");
 
@@ -91,11 +94,11 @@ public class TesteFormSerializationUtil {
         assertThat(r.as(AtrAnnotation::new).text()).isEqualTo("numero zero ?");
     }
 
-
-    @Test @SuppressWarnings("unchecked")
+    @Test
+    @SuppressWarnings("unchecked")
     public void testTipoListSimples() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> pacote.createTipoListaOf("enderecos", STypeString.class));
-        SList<SIString> instancia = (SList<SIString>) dicionary.getType("teste.enderecos").novaInstancia();
+        SIList<SIString> instancia = (SIList<SIString>) createSerializableTestInstance("teste.enderecos",
+                pacote -> pacote.createTipoListaOf("enderecos", STypeString.class));
         instancia.addValor("A1");
         instancia.addValor("A2");
         instancia.addValor("A3");
@@ -106,16 +109,15 @@ public class TesteFormSerializationUtil {
         testSerializacao(instancia.getCampo("[1]"));
     }
 
-
-    @Test @SuppressWarnings("unchecked")
+    @Test
+    @SuppressWarnings("unchecked")
     public void testTipoListComposto() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> {
+        SIList<SIComposite> instancia = (SIList<SIComposite>) createSerializableTestInstance("teste.enderecos", pacote -> {
             STypeComposite<SIComposite> endereco = pacote.createTipoListaOfNovoTipoComposto("enderecos", "endereco").getTipoElementos();
             endereco.addCampoString("rua");
             endereco.addCampoString("bairro");
             endereco.addCampoString("cidade");
         });
-        SList<SIComposite> instancia = (SList<SIComposite>) dicionary.getType("teste.enderecos").novaInstancia();
         instancia.addNovo(e -> e.setValor("rua", "A1"));
         instancia.addNovo(e -> e.setValor("bairro", "A2"));
         instancia.addNovo(e -> {
@@ -131,7 +133,7 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testTipoCompostoListCompostoList() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> {
+        SIComposite instancia = (SIComposite) createSerializableTestInstance("teste.curriculo", pacote -> {
             STypeComposite<? extends SIComposite> tipoCurriculo = pacote.createTipoComposto("curriculo");
             tipoCurriculo.addCampoString("nome");
             STypeComposite<SIComposite> tipoContato = tipoCurriculo.addCampoListaOfComposto("contatos", "contato").getTipoElementos();
@@ -141,7 +143,6 @@ public class TesteFormSerializationUtil {
             endereco.addCampoString("cidade");
         });
 
-        SIComposite instancia = (SIComposite) dicionary.getType("teste.curriculo").novaInstancia();
         instancia.setValor("nome", "Joao");
         SIComposite contato = (SIComposite) instancia.getFieldList("contatos").addNovo();
         contato.setValor("prioridade", -1);
@@ -157,17 +158,14 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testSerializacaoReferenciaServico() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> pacote.createTipo("endereco", STypeString.class));
-        SInstance instancia = dicionary.getType("teste.endereco").novaInstancia();
+        SInstance instancia = createSerializableTestInstance("teste.endereco", pacote -> pacote.createTipo("endereco", STypeString.class));
 
-        instancia.getDocument().bindLocalService("A", String.class,
-            ServiceRef.of("AA"));
+        instancia.getDocument().bindLocalService("A", String.class, RefService.of("AA"));
         SInstance instancia2 = testSerializacao(instancia);
         assertEquals("AA", instancia2.getDocument().lookupService("A", String.class));
 
         // Testa itens não mantido entre serializações
-        instancia.getDocument().bindLocalService("B", String.class,
-            ServiceRef.ofToBeDescartedIfSerialized("BB"));
+        instancia.getDocument().bindLocalService("B", String.class, RefService.ofToBeDescartedIfSerialized("BB"));
         instancia2 = serializarEDeserializar(instancia);
         assertNull(instancia2.getDocument().lookupService("B", String.class));
 
@@ -175,18 +173,16 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testSerializacaoAtributos() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> {
+        SIComposite instancia = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
             pacote.getDicionario().loadPackage(SPackageBasic.class);
             STypeComposite<?> tipoEndereco = pacote.createTipoComposto("endereco");
             tipoEndereco.addCampoString("rua");
             tipoEndereco.addCampoString("cidade");
         });
-        SIComposite instancia = (SIComposite) dicionary.getType("teste.endereco").novaInstancia();
         instancia.setValor("rua", "A");
         instancia.as(AtrBasic.class).label("Address");
         instancia.getCampo("rua").as(AtrBasic.class).label("Street");
         instancia.getCampo("cidade").as(AtrBasic.class).label("City");
-
 
         SIComposite instancia2 = (SIComposite) testSerializacao(instancia);
 
@@ -198,8 +194,9 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testRefSerialization() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> pacote.createTipo("endereco", STypeString.class));
-        SIString endereco = (SIString) dicionary.getType("teste.endereco").novaInstancia();
+        SIString endereco = (SIString) createSerializableTestInstance("teste.endereco",
+                pacote -> pacote.createTipo("endereco", STypeString.class));
+
         endereco.setValue("aqui");
 
         InstanceSerializableRef<?> ref = new InstanceSerializableRef<>(endereco);
@@ -208,14 +205,16 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testSerializationOfTwoIndependnteReferenceAtSameTime() {
-        SDictionary dicionary = createSerializableTestDictionary(pacote -> pacote.createTipo("endereco", STypeString.class));
-        SType<?> type = dicionary.getType("teste.endereco");
+        SInstance instancia1 = createSerializableTestInstance("teste.endereco", pacote -> pacote.createTipo("endereco", STypeString.class));
+
+        SInstance instancia2 = SDocumentFactory.empty().createInstance(instancia1.getDocument().getRootRefType().get());
 
         TwoReferences tr1 = new TwoReferences();
-        tr1.ref1 = new InstanceSerializableRef<>(type.novaInstancia());
+        tr1.ref1 = new InstanceSerializableRef<>(instancia1);
         tr1.ref1.get().setValue("Rua 1");
-        tr1.ref2 = new InstanceSerializableRef<>(type.novaInstancia());
+        tr1.ref2 = new InstanceSerializableRef<>(instancia2);
         tr1.ref2.get().setValue("Rua 2");
+
         assertSame(tr1.ref1.get().getDictionary(), tr1.ref2.get().getDictionary());
 
         TwoReferences tr2 = toAndFromByteArray(tr1);
@@ -245,7 +244,7 @@ public class TesteFormSerializationUtil {
     }
 
     private static SInstance testSerializacao(SInstance original, Function<SInstance, FormSerialized> toSerial,
-                                              Function<FormSerialized, SInstance> fromSerial) {
+            Function<FormSerialized, SInstance> fromSerial) {
         // Testa sem transformar em array de bytes
         FormSerialized fs = toSerial.apply(original);
         SInstance instancia2 = fromSerial.apply(fs);
@@ -275,12 +274,11 @@ public class TesteFormSerializationUtil {
     }
 
     public static SInstance serializarEDeserializar(SInstance original) {
-        return serializarEDeserializar(original, FormSerializationUtil::toSerializedObject,
- fs -> FormSerializationUtil.toInstance(fs));
+        return serializarEDeserializar(original, FormSerializationUtil::toSerializedObject, fs -> FormSerializationUtil.toInstance(fs));
     }
 
     private static SInstance serializarEDeserializar(SInstance original, Function<SInstance, FormSerialized> toSerial,
-                                                     Function<FormSerialized, SInstance> fromSerial) {
+            Function<FormSerialized, SInstance> fromSerial) {
         try {
             ByteArrayOutputStream out1 = new ByteArrayOutputStream();
             ObjectOutputStream out2 = new ObjectOutputStream(out1);
@@ -294,22 +292,17 @@ public class TesteFormSerializationUtil {
         }
     }
 
-    public static SType<?> createSerializableTestType(String nomeTipo, ConfiguradorDicionarioTeste setupCode) {
-        return createSerializableTestDictionary(setupCode).getType(nomeTipo);
+    public static SInstance createSerializableTestInstance(String typeName, ConfiguradorDicionarioTeste setupCode) {
+        RefType refType = new RefType() {
 
-    }
-
-    public static SDictionary createSerializableTestDictionary(ConfiguradorDicionarioTeste setupCode) {
-        SDictionaryRef ref = new SDictionaryRef() {
             @Override
-            public SDictionary retrieveDictionary() {
+            protected SType<?> retrieve() {
                 SDictionary novo = SDictionary.create();
                 setupCode.setup(novo.createNewPackage("teste"));
-                novo.setSerializableDictionarySelfReference(this);
-                return novo;
+                return novo.getType(typeName);
             }
         };
-        return ref.getDictionary();
+        return SDocumentFactory.empty().createInstance(refType);
     }
 
     public interface ConfiguradorDicionarioTeste extends Serializable {

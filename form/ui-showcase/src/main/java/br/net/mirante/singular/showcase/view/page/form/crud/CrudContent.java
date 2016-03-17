@@ -12,7 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -45,8 +48,8 @@ import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.FileDao;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository.TemplateEntry;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader.TemplateEntry;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.FormVO;
 import br.net.mirante.singular.showcase.view.template.Content;
@@ -79,6 +82,10 @@ public class CrudContent extends Content
     @Inject
     FileDao filePersistence;
 
+    @Inject
+    @Named("showcaseTypeLoader")
+    ShowcaseTypeLoader dictionaryLoader;
+
     private ExampleDataDTO currentModel;
 
     public CrudContent(String id, StringValue pType) {
@@ -89,7 +96,7 @@ public class CrudContent extends Content
     private void setActiveTemplate(StringValue pType) {
         if (!pType.isEmpty()) {
             String strType = pType.toString();
-            TemplateEntry t = TemplateRepository.create().findEntryByType(strType);
+            TemplateEntry t = dictionaryLoader.findEntryByType(strType);
             selectedTemplate = new FormVO(t);
         } else {
             selectedTemplate = new FormVO(null, null);
@@ -135,7 +142,7 @@ public class CrudContent extends Content
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private DropDownChoice setUpTemplatesOptions() {
-        List<SelectOption> options = TemplateRepository.create().getEntries().stream()
+        List<SelectOption> options = dictionaryLoader.getEntries().stream()
             .map(t -> new SelectOption(t.getDisplayName(), new FormVO(t)))
             .collect(Collectors.toList());
 
@@ -206,12 +213,13 @@ public class CrudContent extends Content
                                 .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION));
                     }));
         addAnnotationColumnIfNeeded(builder);
+        addAnnotationEditColumnIfNeeded(builder);
         builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                 .appendAction(getMessage("label.table.column.delete"),
                     Icone.MINUS, this::deleteSelected))
             .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                 .appendAction(getMessage("label.table.column.visualizar.xml"),
-                    Icone.EYE, this::viewXml))
+                    Icone.CODE, this::viewXml))
             .setRowsPerPage(Long.MAX_VALUE); //TODO: proper pagination
         return builder.build("data-list");
     }
@@ -231,7 +239,25 @@ public class CrudContent extends Content
                             .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
                             .add(FormPage.MODEL_KEY, model.getObject().getKey())
                             .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
-                            .add(FormPage.ANNOTATION_ENABLED, true));
+                            .add(FormPage.ANNOTATION, AnnotationMode.EDIT));
+                })
+        );
+    }
+
+    private void addAnnotationEditColumnIfNeeded(BSDataTableBuilder<ExampleDataDTO, String, IColumn<ExampleDataDTO, String>> builder) {
+        builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue("")){
+                    @Override
+                    public String getCssClass() {   return hasAnnotations() ? "" : "hidden";}
+                }
+            .appendAction(getMessage("label.table.column.exigencia"),
+                Icone.PENCIL,
+                (target, model) -> {
+                    setResponsePage(FormPage.class,
+                        new PageParameters()
+                            .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                            .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                            .add(FormPage.VIEW_MODE, ViewMode.EDITION)
+                            .add(FormPage.ANNOTATION, AnnotationMode.READ_ONLY));
                 })
         );
     }
@@ -305,7 +331,7 @@ public class CrudContent extends Content
     }
 
     private String getDefinicao(String typeName) {
-        final SPackage pacote = TemplateRepository.create().loadType(typeName, typeName).getPacote();
+        final SPackage pacote = dictionaryLoader.loadTypeOrException(typeName).getPacote();
         StringBuilder definicaoOutput = new StringBuilder();
         pacote.debug(definicaoOutput);
         return definicaoOutput.toString();
@@ -322,12 +348,12 @@ public class CrudContent extends Content
     }
 
     @Override
-    protected IModel<?> getContentTitlelModel() {
+    protected IModel<?> getContentTitleModel() {
         return new ResourceModel("label.content.title");
     }
 
     @Override
-    protected IModel<?> getContentSubtitlelModel() {
+    protected IModel<?> getContentSubtitleModel() {
         return new ResourceModel("label.content.subtitle");
     }
 }

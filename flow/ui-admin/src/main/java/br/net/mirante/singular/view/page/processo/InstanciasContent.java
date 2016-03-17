@@ -74,7 +74,7 @@ public class InstanciasContent extends Content implements SingularWicketContaine
         
         breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(), 
             urlFor(DashboardPage.class, pageParameters).toString(),
-            getString("breadcrumb.dashboard")));
+            getString("breadcrumb.statistics")));
         breadCrumb.add(createActiveBreadCrumbLink(breadCrumb.newChildId(), 
             urlFor(ProcessosPage.class, pageParameters).toString(),
             getString("breadcrumb.instances")));
@@ -85,12 +85,12 @@ public class InstanciasContent extends Content implements SingularWicketContaine
     }
     
     @Override
-    protected IModel<?> getContentTitlelModel() {
+    protected IModel<?> getContentTitleModel() {
         return $m.ofValue(processDefinition.getNome());
     }
 
     @Override
-    protected IModel<?> getContentSubtitlelModel() {
+    protected IModel<?> getContentSubtitleModel() {
         return $m.ofValue();
     }
 }

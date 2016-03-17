@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
@@ -49,7 +49,7 @@ public class STypeListTest {
 
         assertThat(xml(original)).contains("My second name").contains("My second content");
 
-        SList<SIComposite> fromBackup = MformPersistenciaXML.fromXML(listType, MParser.parse(backup));
+        SIList<SIComposite> fromBackup = MformPersistenciaXML.fromXML(listType, MParser.parse(backup));
         original.getDescendant(listType).setValue(fromBackup);
 
         assertThat(xml(original)).contains("My second name").contains("My first content");

@@ -4,7 +4,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -19,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.context.SFormConfig;
+import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
@@ -29,7 +32,6 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.template.Content;
 
@@ -46,22 +48,23 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private final String typeName;
     private ViewMode viewMode = ViewMode.EDITION;
 
+    private AnnotationMode annotation = AnnotationMode.NONE;
     private ExampleDataDTO currentModel;
-    private SingularFormPanel singularFormPanel;
+
+    private SingularFormPanel<String> singularFormPanel;
 
     @Inject
     private ExampleDataDAO dao;
 
     @Inject
-    private SDocumentFactory documentFactory;
-
-    private boolean enableAnnotation;
+    @Named("formConfigWithDatabase")
+    private SFormConfig<String> singularFormConfig;
 
     public FormContent(String id, StringValue type, StringValue key, StringValue viewMode,
-                       StringValue enableAnnotation) {
+                       StringValue annotation) {
         super(id, false, true);
         if (!viewMode.isNull()) {   this.viewMode = ViewMode.valueOf(viewMode.toString());  }
-        if (!enableAnnotation.isNull()) {   this.enableAnnotation = Boolean.valueOf(enableAnnotation.toString());  }
+        if (!annotation.isNull()) {   this.annotation = AnnotationMode.valueOf(annotation.toString());  }
         this.typeName = type.toString();
         this.key = key.toString();
     }
@@ -73,12 +76,12 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     @Override
-    protected IModel<?> getContentTitlelModel() {
+    protected IModel<?> getContentTitleModel() {
         return new ResourceModel("label.content.title");
     }
 
     @Override
-    protected IModel<?> getContentSubtitlelModel() {
+    protected IModel<?> getContentSubtitleModel() {
         return new ResourceModel("label.content.title");
     }
 
@@ -94,25 +97,36 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         return form;
     }
 
-    private SingularFormPanel buildSingularBasePanel() {
-        singularFormPanel = new SingularFormPanel("singular-panel", documentFactory.getDocumentFactoryRef()) {
+    private SingularFormPanel<String> buildSingularBasePanel() {
+        singularFormPanel = new SingularFormPanel<String>("singular-panel", singularFormConfig) {
 
             @Override
-            protected SType<?> getTipo() {
-                return TemplateRepository.create().loadType(typeName, typeName);
-            }
-
-            @Override
-            protected SInstance createInstance(SType<?> tipo, SDocumentFactory documentFactory) {
+            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 loadOrbuildModel();
 
+                RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
+
+                SInstance instance = loadOrCreateInstance(singularFormConfig, refType);
+                loadAnnotationsIfNeeded(instance);
+
+                return instance;
+            }
+
+            private SInstance loadOrCreateInstance(SFormConfig<String> singularFormConfig, RefType refType) {
                 String xml = currentModel.getXml();
+                SInstance instance;
                 if (StringUtils.isBlank(xml)) {
-                    return super.createInstance(tipo, documentFactory);
+                    instance = singularFormConfig.getDocumentFactory().createInstance(refType);
                 } else {
-                    SInstance instance = MformPersistenciaXML.fromXML(tipo, xml, documentFactory);
+                    instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+                }
+                return instance;
+            }
+
+            private void loadAnnotationsIfNeeded(SInstance instance) {
+                String annotationsXml = currentModel.getAnnnotations();
+                if (StringUtils.isNotBlank(annotationsXml)) {
                     MformPersistenciaXML.annotationLoadFromXml(instance, currentModel.getAnnnotations());
-                    return instance;
                 }
             }
 
@@ -122,7 +136,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
 
             @Override
-            public boolean annotationEnabled() {    return enableAnnotation;    }
+            public AnnotationMode annotation() {    return annotation;    }
         };
 
         return singularFormPanel;
@@ -275,7 +289,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             public void onConfigure(Component component) {
                 super.onConfigure(component);
 
-                component.setVisible(enableAnnotation);
+                component.setVisible(annotation.editable());
             }
         };
     }

@@ -2,19 +2,16 @@ package br.net.mirante.singular.form.mform.io;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SDictionaryLoader;
-import br.net.mirante.singular.form.mform.SDictionaryRef;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.util.xml.MElement;
 
@@ -25,13 +22,9 @@ import br.net.mirante.singular.form.util.xml.MElement;
  * {@link SInstance}.
  * </p>
  * <p>
- * Tendo em vista que as definições de tipos não serializadas (vão apenas os
- * dados das instâncias), ao deserealizar é necessário ter o dicionário com as
- * definições dos tipos. Há três formas de resolver a questão:
- * <ul>
- * <li>Setar o MDicionarioResolver default (singleton) em
- * {@link SDictionaryLoader#setDefault(SDictionaryLoader)}</li>
- * </ul >
+ * Tendo em vista que as definições de tipos não são serializadas (vão apenas os
+ * dados das instâncias), ao deserealizar é necessário recuperar a definição do
+ * tipo no correto dicionário.
  * </p>
  *
  * @author Daniel C. Bordin
@@ -77,25 +70,47 @@ public class FormSerializationUtil {
         SInstance root = document.getRoot();
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root);
         MElement annotations = null;
-        if(root.as(AtrAnnotation::new).hasAnnotation()){
+        if(!root.as(AtrAnnotation::new).allAnnotations().isEmpty()){
             annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root.as(AtrAnnotation::new).persistentAnnotations());
         }
 
-        SDictionaryRef dicionaryRef = verificarDicionaryRef(root);
-        FormSerialized fs = new FormSerialized(root.getType().getName(), xml, annotations, dicionaryRef,
-                root.getDocument().getDocumentFactoryRef());
+        checkIfSerializable(root);
+        FormSerialized fs = new FormSerialized(document.getRootRefType().get(), root.getType().getName(), xml, annotations,
+                document.getDocumentFactoryRef());
         serializeServices(document, fs);
         return fs;
     }
 
-    final static SDictionaryRef verificarDicionaryRef(SInstance instance) {
-        Optional<SDictionaryRef> dicionaryRef = instance.getDictionary().getSerializableDictionarySelfReference();
-        if (! dicionaryRef.isPresent()) {
-            throw new SingularFormException("Não foi configurado o dicionaryRef no dicionário da instância, o que impedirá a "
-                    + "serialização/deserialização do mesmo.(ver " + SDictionaryRef.class.getName()
-                    + " e SDicionary.setSerializableDictionarySelfReference()).", instance);
+    /**
+     * Verifica se a instância atende os critérios necessários para ser
+     * serializável. Para tanto é necessário que tenha sido criado a partir de
+     * um {@link SDocumentFactory} e com o uso {@link RefType}.
+     *
+     * @throws SingularFormException
+     *             Se não atender os critérios
+     */
+    public final static void checkIfSerializable(SInstance instance) {
+        SDocument document = instance.getDocument();
+        if (!document.getRootRefType().isPresent()) {
+            throw new SingularFormException("Não foi configurado o rootRefType no Document da instância, o que impedirá a "
+                    + "serialização/deserialização do mesmo. " + "A instância deve ser criada usando " + SDocumentFactory.class.getName(),
+                    instance);
         }
-        return dicionaryRef.get();
+        if(document.getDocumentFactoryRef() == null) {
+            throw new SingularFormException("Não foi configurado o DocumentFactory no Document da instância, o que impedirá a "
+                    + "serialização/deserialização do mesmo. " + "A instância deve ser criada usando " + SDocumentFactory.class.getName(),
+                    instance);
+        }
+        if (document.annotations() != null) {
+            if (!document.annotations().getDocument().getRootRefType().isPresent()) {
+                throw new SingularFormException("Não foi configurado o rootRefType nas anotações da instância, o que impedirá a "
+                        + "serialização/deserialização do mesmo. ", instance);
+            }
+            if (document.annotations().getDocument().getDocumentFactoryRef() == null) {
+                throw new SingularFormException("Não foi configurado o DocumentFactory nas anotações da instância, o que impedirá a "
+                        + "serialização/deserialização do mesmo. ", instance);
+            }
+        }
     }
 
     private static void serializeServices(SDocument document, FormSerialized fs) {
@@ -122,30 +137,13 @@ public class FormSerializationUtil {
      */
     public static SInstance toInstance(FormSerialized fs) {
         try {
-            SType<?> rootType = loadType(fs, fs.getRootType());
-            SInstance root = MformPersistenciaXML.fromXML(rootType, fs.getXml());
-            if (fs.getsDocumentFactoryRef() != null) {
-                root.getDocument().setDocumentFactory(fs.getsDocumentFactoryRef().get());
-            }
-
+            SInstance root = MformPersistenciaXML.fromXML(fs.getRefRootType(), fs.getXml(), fs.getSDocumentFactoryRef().get());
             deserializeServices(fs.getServices(), root.getDocument());
             MformPersistenciaXML.annotationLoadFromXml(root, fs.getAnnotations());
             return defineRoot(fs, root);
         } catch (Exception e) {
             throw deserializingError(fs, e);
         }
-    }
-
-    private static SType<?> loadType(FormSerialized fs, String rootType) {
-        if (fs.getDictionaryRef() == null) {
-            throw new SingularFormException("O DicionaryRef não foi serializado");
-        }
-        SDictionary d = fs.getDictionaryRef().getDictionary();
-        if (d == null) {
-            throw new SingularFormException(
-                    "O DicionaryRef '" + fs.getDictionaryRef().getClass().getName() + "' retornou null para o dicionário");
-        }
-        return d.getType(rootType);
     }
 
     private static void deserializeServices(Map<String, Pair> services, SDocument document) {
@@ -165,9 +163,9 @@ public class FormSerializationUtil {
     }
 
     private static SingularFormException deserializingError(FormSerialized fs, Exception e) {
-        String msg = "Error when deserializing " + fs.getRootType();
+        String msg = "Error when deserializing " + fs.getRootTypeName();
         if (!StringUtils.isBlank(fs.getFocusFieldPath())) {
-            msg += " with subPath '" + fs.getRootType() + '\'';
+            msg += " with subPath '" + fs.getFocusFieldPath() + '\'';
         }
         return new SingularFormException(msg, e);
     }

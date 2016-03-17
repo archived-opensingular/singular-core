@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.event;
 
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 
 public class SInstanceListElementAddedEvent extends SInstanceStructureChangeEvent {
@@ -8,7 +8,7 @@ public class SInstanceListElementAddedEvent extends SInstanceStructureChangeEven
     private final SInstance addedInstance;
     private final int        index;
 
-    public SInstanceListElementAddedEvent(SList<? extends SInstance> source, SInstance addedInstance, int index) {
+    public SInstanceListElementAddedEvent(SIList<? extends SInstance> source, SInstance addedInstance, int index) {
         super(source);
         this.addedInstance = addedInstance;
         this.index = index;

@@ -133,7 +133,7 @@ public class MetadadosContent extends Content implements SingularWicketContainer
         
         breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(), 
             urlFor(DashboardPage.class, pageParameters).toString(),
-            getString("breadcrumb.dashboard")));
+            getString("breadcrumb.statistics")));
         breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(), 
             urlFor(ProcessosPage.class, pageParameters).toString(),
             getString("breadcrumb.instances")));
@@ -144,12 +144,12 @@ public class MetadadosContent extends Content implements SingularWicketContainer
     }
     
     @Override
-    protected IModel<?> getContentTitlelModel() {
+    protected IModel<?> getContentTitleModel() {
         return $m.ofValue(processDefinition.getNome());
     }
 
     @Override
-    protected IModel<?> getContentSubtitlelModel() {
+    protected IModel<?> getContentSubtitleModel() {
         return $m.ofValue();
     }
 }

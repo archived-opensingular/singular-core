@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
+import java.util.function.Supplier;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebPage;
@@ -10,9 +12,12 @@ import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -38,7 +43,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 @SuppressWarnings("serial")
 public class TestPage extends WebPage {
 
-    private SDictionary dicionario;
     private Form<?> submittedForm;
     private SIComposite currentInstance;
     private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().createContext();
@@ -82,20 +86,10 @@ public class TestPage extends WebPage {
         BSGrid container = new BSGrid("generated-content");
         BSGrid bodyContainer = new BSGrid("body-container");
         add(bodyContainer);
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), bodyContainer, createTipoModel(dicionario));
-        if(annotationEnabled) ctx.enableAnnotation();
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), bodyContainer, new MInstanceRootModel(currentInstance));
+        if(annotationEnabled) ctx.annotation(AnnotationMode.EDIT);
         singularFormContext.getUIBuilder().build(ctx, viewMode);
         return container;
-    }
-
-    @SuppressWarnings("rawtypes")
-    private MInstanceRootModel createTipoModel(SDictionary dicionario) {
-        return newModelFromInstance(currentInstance);
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private MInstanceRootModel newModelFromInstance(SInstance instance) {
-        return new MInstanceRootModel(instance);
     }
 
     private AjaxButton createSaveButton() {
@@ -108,16 +102,18 @@ public class TestPage extends WebPage {
         };
     }
 
-    public void setDicionario(SDictionary dicionario) {
-        this.dicionario = dicionario;
+    public void setIntance(SInstance currentInstance) {
+        this.currentInstance = (SIComposite) currentInstance;
     }
 
-    public void setNewInstanceOfType(String formType) {
-        currentInstance = (SIComposite) type(formType).novaInstancia();
-    }
-
-    private SType<?> type(String type) {
-        return dicionario.getType(type);
+    public void setIntance(Supplier<SType<?>> typeSupplier) {
+        RefType ref = new RefType() {
+            @Override
+            protected SType<?> retrieve() {
+                return typeSupplier.get();
+            }
+        };
+        currentInstance = (SIComposite) SDocumentFactory.empty().createInstance(ref);
     }
 
     public Form<?> getSubmittedForm() {

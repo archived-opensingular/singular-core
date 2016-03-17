@@ -5,8 +5,11 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.form.mform.SInstance;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -17,6 +20,8 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import org.apache.wicket.model.IModel;
+
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -31,8 +36,10 @@ public abstract class BSPanelGrid extends Panel {
         super(id);
     }
 
-    public void addTab(String id, String headerText, List<String> subtree) {
-        tabMap.put(id, new BSTab(headerText, subtree));
+    public BSTab addTab(String id, String headerText, List<String> subtree, IModel<SInstance> model) {
+        BSTab tab = new BSTab(headerText, subtree, model);
+        tabMap.put(id, tab);
+        return tab;
     }
 
     @Override
@@ -66,7 +73,7 @@ public abstract class BSPanelGrid extends Panel {
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         activeTab = tab;
                         buildTabContent();
-                        updateTab(tab.getSubtree());
+                        updateTab(tab, newArrayList(tabMap.values()));
 
                         target.appendJavaScript("$('.nav-tabs li').removeClass('active');");
                         target.appendJavaScript("$('.nav-tabs li[data-tab-name=\"" + id + "\"]').addClass('active');");
@@ -79,13 +86,16 @@ public abstract class BSPanelGrid extends Panel {
                 };
 
                 link.add(new Label("header-text", tab.getHeaderText()));
+                Label label = new Label("header-icon", "");
+                label.add(new AttributeModifier("class",tab.iconClass()));
+                link.add(label);
 
                 item.add(link);
             }
         };
     }
 
-    public abstract void updateTab(List<String> subtree);
+    public abstract void updateTab(BSTab tab, List<BSTab> tabs);
 
     public Collection<Component> toUpdadeOnTab(){   return newArrayList(); }
 
@@ -100,13 +110,17 @@ public abstract class BSPanelGrid extends Panel {
         return container;
     }
 
-    private static final class BSTab implements Serializable {
+    public static final class BSTab implements Serializable {
         private String headerText;
         private List<String> subtree;
+        private String iconClass;
+        protected IModel<SInstance> model;
+        private Function<IModel<SInstance>, String> iconProcessor;
 
-        public BSTab(String headerText, List<String> subtree) {
+        public BSTab(String headerText, List<String> subtree, IModel<SInstance> model) {
             this.headerText = headerText;
             this.subtree = subtree;
+            this.model = model;
         }
 
         public String getHeaderText() {
@@ -115,6 +129,17 @@ public abstract class BSPanelGrid extends Panel {
 
         public List<String> getSubtree() {
             return subtree;
+        }
+
+        public String iconClass() {
+            if(iconClass == null && iconProcessor != null){
+                return iconProcessor.apply(model);
+            }
+            return iconClass;
+        }
+        public void iconClass(String css) { iconClass = css; }
+        public void iconClass(Function<IModel<SInstance>, String> iconProcessor) {
+            this.iconProcessor = (Function<IModel<SInstance>, String> & Serializable) iconProcessor;
         }
     }
 }

@@ -36,8 +36,12 @@ final class MapaResolvedorDefinicaoAtributo {
                 return novo;
             }
         }
-        throw new RuntimeException("Não existe o atributo '" + pathAtributo + "' definido em '" + dono.getName()
-                + "' ou nos tipos extendidos");
+        if(dono != null) {
+            throw new RuntimeException("Não existe o atributo '" + pathAtributo + "' definido em '" + dono.getName()
+                    + "' ou nos tipos extendidos");
+        } else {
+            throw new RuntimeException("Não existe o atributo '" + pathAtributo +"'");
+        }
     }
 
     final Map<String, SInstance> getAtributos() {

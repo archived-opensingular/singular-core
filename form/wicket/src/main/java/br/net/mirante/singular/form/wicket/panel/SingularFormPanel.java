@@ -1,5 +1,9 @@
 package br.net.mirante.singular.form.wicket.panel;
 
+import java.io.Serializable;
+import java.util.Objects;
+
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
@@ -7,11 +11,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.context.SFormConfig;
+import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.document.SDocumentFactoryRef;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
+import br.net.mirante.singular.form.mform.document.TypeLoader;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -22,7 +26,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos
  */
-public abstract class SingularFormPanel extends Panel {
+public abstract class SingularFormPanel<KEY extends Serializable> extends Panel {
 
     /**
      * Container onde os componentes serão adicionados
@@ -42,29 +46,26 @@ public abstract class SingularFormPanel extends Panel {
     /**
      * Permite apresentar anotações em conjunto.
      */
-    private boolean annotationEnabled = false;
+    private AnnotationMode annotation = AnnotationMode.NONE;
 
-    private SDocumentFactoryRef documentFactoryRef;
+    private RefSDocumentFactory documentFactoryRef;
+
+    private transient SFormConfig<KEY> singularFormConfig;
 
     /**
-     * Construtor principal do painel
+     * Construtor do painel
      *
      * @param id
      *            o markup id wicket
-     * @param serviceRegistry
-     *            utilizado para lookup de serviços
+     * @param singularFormConfig
+     *            configuração para manipulação do documento a ser criado ou
+     *            recuperado.
      */
-    public SingularFormPanel(String id, SDocumentFactoryRef documentFactoryRef) {
+    public SingularFormPanel(String id, SFormConfig<KEY> singularFormConfig) {
         super(id);
-        this.documentFactoryRef = documentFactoryRef;
+        this.singularFormConfig = Objects.requireNonNull(singularFormConfig);
+        this.documentFactoryRef = singularFormConfig.getDocumentFactory().getDocumentFactoryRef();
     }
-
-    /**
-     * Método abstrato utilizado para recuperar o tipo root
-     *
-     * @return o tipo root para criação do form
-     */
-    protected abstract SType<?> getTipo();
 
     /**
      * Cria ou substitui o container
@@ -76,26 +77,22 @@ public abstract class SingularFormPanel extends Panel {
     }
 
     /**
-     * Implementação padrão para popular a instancia, caso seja necessário
-     * popular a partir de banco de dados é necessário sobrescrever este método
+     * <p>
+     * Cria ou recupera a instancia a ser trabalhada no painel.
+     * </p>
+     * <p>
+     * A instância deve ser criada utilizando {@link TypeLoader} e
+     * {@link SDocumentFactory} de modo a viabilizar recuperar a instância
+     * corretamente no caso de deserialização. Para tando, deve ser utilizada as
+     * objetos passados no parâmetro singularFormConfig.
+     * </p>
      *
-     * @param tipo
-     *            o tipo 'root'
-     * @param sDocumentFactory
-     * @return instancia criada e populada
+     * @param singularFormConfig
+     *            Configuração do formulário em termos de recuperação de
+     *            referências e configurador inicial da instancia e SDocument
+     * @return Não pode ser Null
      */
-    protected SInstance createInstance(SType<?> tipo, SDocumentFactory documentFactory) {
-        SDocument novo = documentFactory.create(tipo);
-        return novo.getRoot();
-    }
-
-    /**
-     * Cria a instancia a partir do tipo.
-     */
-    private void createInstance() {
-        SType<?> tipo = getTipo();
-        rootInstance = new MInstanceRootModel<>(createInstance(tipo, documentFactoryRef.get()));
-    }
+    protected abstract SInstance createInstance(SFormConfig<KEY> singularFormConfig);
 
     /**
      * Método wicket, local onde os componentes são adicionados
@@ -103,7 +100,8 @@ public abstract class SingularFormPanel extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        createInstance();
+        SInstance instance = createInstance(singularFormConfig);
+        rootInstance = new MInstanceRootModel<>(instance);
         updateContainer();
         add(buildFeedbackPanel());
     }
@@ -113,14 +111,14 @@ public abstract class SingularFormPanel extends Panel {
      */
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer(), getRootInstance());
-        if(annotationEnabled()){    ctx.enableAnnotation();}
+        ctx.annotation(annotation());
         getSingularFormContext().getUIBuilder().build(ctx, getViewMode());
     }
 
-    public boolean annotationEnabled(){return annotationEnabled;};
+    public AnnotationMode annotation(){return annotation;};
 
-    public void enableAnnotation() {this.annotationEnabled = true;}
-    public void disableAnnotation() {this.annotationEnabled = false;}
+//    public void enableAnnotation() {this.annotationEnabled = true;}
+//    public void disableAnnotation() {this.annotationEnabled = false;}
 
     /**
      * Constrói o body container

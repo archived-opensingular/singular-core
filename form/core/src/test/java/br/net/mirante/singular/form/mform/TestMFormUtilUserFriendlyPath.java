@@ -22,7 +22,7 @@ public class TestMFormUtilUserFriendlyPath {
 
     private SIComposite evento;
 
-    private SList<SIComposite> alertas;
+    private SIList<SIComposite> alertas;
 
     @Before
     public void setUp() {
@@ -50,6 +50,12 @@ public class TestMFormUtilUserFriendlyPath {
         evento = _evento.novaInstancia();
         alertas = evento.findNearest(_alertas).get();
         alertas.addNovo();
+    }
+
+    @Test
+    public void testFindNearestFromSimpleTypeInstanceToSameInstance(){
+        SInstance descricao = evento.findNearest(_descricao).get();
+        Assert.assertEquals(descricao.findNearest(_descricao).get(), descricao);
     }
 
     @Test

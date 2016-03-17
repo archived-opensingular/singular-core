@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import javax.lang.model.SourceVersion;
 
@@ -15,7 +16,8 @@ import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 public final class MFormUtil {
 
     public static boolean isNomeSimplesValido(String nome) {
-        return SourceVersion.isIdentifier(nome);
+        Pattern idPattern = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
+        return idPattern.matcher(nome).matches();
     }
 
     public static void checkNomeSimplesValido(String nome) {
@@ -77,8 +79,8 @@ public final class MFormUtil {
             StringBuilder sb = new StringBuilder();
             for (int i = sequencia.size() - 1; i != -1; i--) {
                 atual = sequencia.get(i);
-                if (atual.getParent() instanceof SList) {
-                    int pos = ((SList<?>) atual.getParent()).indexOf(atual);
+                if (atual.getParent() instanceof SIList) {
+                    int pos = ((SIList<?>) atual.getParent()).indexOf(atual);
                     if (pos == -1) {
                         throw new SingularFormException("Filho não encontrado");
                     }
@@ -105,8 +107,8 @@ public final class MFormUtil {
 
             final String labelNode = node.as(SPackageBasic.aspect()).getLabel();
 
-            if (node instanceof SList<?>) {
-                SList<?> lista = (SList<?>) node;
+            if (node instanceof SIList<?>) {
+                SIList<?> lista = (SIList<?>) node;
                 String labelLista = lista.as(SPackageBasic.aspect()).getLabel();
                 int index = lista.indexOf(child) + 1;
                 labels.add(labelLista + ((index > 0) ? " [" + (index) + "]" : ""));

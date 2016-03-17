@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
@@ -34,22 +34,19 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
     private STypeCPF cpf;
 
     protected void setup() {
-        createBaseType();
-        loadTestType(baseCompositeField);
-        setupPage();
-    }
-
-    private void createBaseType() {
         localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
+
+        loadTestType(baseCompositeField);
+
+        setupPage();
     }
 
     private void setupPage() {
         driver = new WicketTester(new TestApp());
 
         page = new TestPage();
-        page.setDicionario(dicionario);
-        page.setNewInstanceOfType(baseCompositeField.getName());
+        page.setIntance(createIntance(() -> baseCompositeField));
     }
 
     protected void build() {
@@ -71,7 +68,7 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
 
     @Test public void rendersDataDisplayValuesOnTable(){
         setup();
-        SList<SIComposite> list = page.getCurrentInstance().getDescendant(listBaseType);
+        SIList<SIComposite> list = page.getCurrentInstance().getDescendant(listBaseType);
         SIComposite e = list.addNovo();
         e.getDescendant(date).setValue(java.time.YearMonth.of(2016,01));
         e.getDescendant(number).setValue(2.5);

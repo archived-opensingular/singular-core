@@ -8,7 +8,8 @@ import org.apache.wicket.model.IModel;
 import com.google.common.base.Strings;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -28,57 +29,61 @@ public class PanelListaMapper extends AbstractListaMapper {
 
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<SList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
-        final SList<?> iLista = listaModel.getObject();
+        final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
+        final SIList<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
         final MView view = ctx.getView();
         final BSContainer<?> parentCol = ctx.getContainer();
         final ViewMode viewMode = ctx.getViewMode();
+        final SType<?> currentType = ctx.getCurrentInstance().getType();
+
+        addMinimumSize(currentType, iLista);
 
         ctx.configureContainer(label);
 
         parentCol.appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(id,
-            (heading, form) -> {
+                (heading, form) -> {
 
-                heading.appendTag("span", new Label("_title", label));
-                heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
+                    heading.appendTag("span", new Label("_title", label));
+                    heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
-                if ((view instanceof MPanelListaView)
-                    && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
-                    && viewMode.isEdition()) {
-                    appendAddButton(listaModel, form, heading, false);
-                }
-            } ,
-            (content, form) -> {
+                    if ((view instanceof MPanelListaView)
+                            && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
+                            && viewMode.isEdition()) {
+                        appendAddButton(listaModel, form, heading, false);
+                    }
+                },
+                (content, form) -> {
 
-                TemplatePanel list = content.newTemplateTag(t -> ""
-                    + "    <ul class='list-group'>"
-                    + "      <li wicket:id='_e' class='list-group-item'>"
-                    + "        <div wicket:id='_r'></div>"
-                    + "      </li>"
-                    + "    </ul>");
-                list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form));
-                content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
+                    TemplatePanel list = content.newTemplateTag(t -> ""
+                            + "    <ul class='list-group'>"
+                            + "      <li wicket:id='_e' class='list-group-item'>"
+                            + "        <div wicket:id='_r'></div>"
+                            + "      </li>"
+                            + "    </ul>");
+                    list.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
+                    list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form));
+                    content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
 
-            } ,
-            (footer, form) -> {
-                footer.setVisible(false);
-            }));
+                },
+                (footer, form) -> {
+                    footer.setVisible(false);
+                }));
     }
 
     private static final class PanelElementsView extends ElementsView {
 
-        private final MView              view;
-        private final Form<?>            form;
+        private final MView view;
+        private final Form<?> form;
         private final WicketBuildContext ctx;
-        private final UIBuilderWicket    wicketBuilder;
+        private final UIBuilderWicket wicketBuilder;
 
         private PanelElementsView(String id,
-            IModel<SList<SInstance>> model,
-            UIBuilderWicket wicketBuilder,
-            WicketBuildContext ctx,
-            MView view,
-            Form<?> form) {
+                                  IModel<SIList<SInstance>> model,
+                                  UIBuilderWicket wicketBuilder,
+                                  WicketBuildContext ctx,
+                                  MView view,
+                                  Form<?> form) {
             super(id, model);
             this.wicketBuilder = wicketBuilder;
             this.ctx = ctx;
@@ -97,15 +102,15 @@ public class PanelListaMapper extends AbstractListaMapper {
             final BSGrid btnGrid = row.newCol(1).newGrid();
 
             if ((view instanceof MPanelListaView) && (((MPanelListaView) view).isPermiteInsercaoDeLinha())
-                && viewMode.isEdition()) {
+                    && viewMode.isEdition()) {
                 appendInserirButton(this, form, item, btnGrid.newColInRow())
-                    .add($b.classAppender("pull-right"));
+                        .add($b.classAppender("pull-right"));
             }
 
             if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteExclusaoDeLinha()
-                && viewMode.isEdition()) {
+                    && viewMode.isEdition()) {
                 appendRemoverButton(this, form, item, btnGrid.newColInRow())
-                    .add($b.classAppender("pull-right"));
+                        .add($b.classAppender("pull-right"));
             }
 
             item.add(grid);

@@ -1,8 +1,5 @@
 package br.net.mirante.singular.util.wicket.datatable.column;
 
-import static br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +12,9 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.lambda.IBiFunction;
 import br.net.mirante.singular.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
+import static br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
 
@@ -59,7 +58,7 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
     }
 
     public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, IBSAction<T> action) {
-        actions.add(new ActionItem<>(new ActionConfig().labelModel(labelModel).iconeModel(iconeModel), action));
+        actions.add(new ActionItem<>(new ActionConfig().labelModel(labelModel).iconeModel(iconeModel, null,  $m.ofValue("fa-lg")), action));
         return this;
     }
 
@@ -74,6 +73,11 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
     }
 
     public BSActionColumn<T, S> appendStaticAction(IModel<?> labelModel, Icone icone, IBiFunction<T, S, MarkupContainer> linkFactory) {
+        actions.add(new ActionItem<>(new ActionConfig().labelModel(labelModel).iconeModel($m.ofValue(icone), null, $m.ofValue("fa-lg")).linkFactory(linkFactory), null));
+        return this;
+    }
+
+    public BSActionColumn<T, S> appendStaticActionWithDefaultIcon(IModel<?> labelModel, Icone icone, IBiFunction<T, S, MarkupContainer> linkFactory) {
         actions.add(new ActionItem<>(new ActionConfig().labelModel(labelModel).iconeModel($m.ofValue(icone)).linkFactory(linkFactory), null));
         return this;
     }

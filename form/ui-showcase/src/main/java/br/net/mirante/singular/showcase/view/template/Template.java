@@ -17,30 +17,28 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
-public abstract class Template extends WebPage {
+public abstract class Template extends SingularTemplate {
 
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
+
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
         add(new WebMarkupContainer("pageBody")
+                .add(new Header("_Header", withMenu(), withTopAction(), withSideBar(), getSkinOptions()))
+                .add(withMenu() ? new Menu("_Menu") : new WebMarkupContainer("_Menu"))
+                .add(configureContent("_Content"))
+                .add(new Footer("_Footer"))
                 .add($b.attrAppender("class", "page-full-width", " ", $m.ofValue(!withMenu()))));
-        queue(new Header("_Header", withMenu(), withTopAction(), withSideBar()));
-//        queue(new WebMarkupContainer("_Menu"));
-        queue(withMenu() ? new Menu("_Menu") : new WebMarkupContainer("_Menu"));
-        queue(configureContent("_Content"));
-        queue(new Footer("_Footer"));
+
     }
 
     @Override
@@ -55,6 +53,7 @@ public abstract class Template extends WebPage {
         }
     }
 
+
     protected boolean withTopAction() {
         return false;
     }
@@ -67,9 +66,6 @@ public abstract class Template extends WebPage {
         return true;
     }
 
-    protected String getPageTitleLocalKey() {
-        return "label.page.title.local";
-    }
 
     protected abstract Content getContent(String id);
 
@@ -115,4 +111,5 @@ public abstract class Template extends WebPage {
             });
         }
     }
+
 }

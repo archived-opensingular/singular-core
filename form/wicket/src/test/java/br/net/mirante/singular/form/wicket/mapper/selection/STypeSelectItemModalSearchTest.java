@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class STypeSelectItemModalSearchTest extends SelectionFieldBaseTest {
@@ -80,8 +80,8 @@ public class STypeSelectItemModalSearchTest extends SelectionFieldBaseTest {
         driver.assertContains("62");
     }
 
-    private SList<?> novoProvider(MSelectionableInstance... selects) {
-        SList lista = selectType.novaLista();
+    private SIList<?> novoProvider(MSelectionableInstance... selects) {
+        SIList lista = selectType.novaLista();
         for (MSelectionableInstance s : selects) {
             lista.addElement(s);
         }

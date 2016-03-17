@@ -148,7 +148,7 @@ public abstract class MInstances {
     public static <CA extends SInstance & ICompositeInstance> Optional<CA> findCommonAncestor(SInstance node, SType<?> targetType) {
         for (MEscopo type = targetType; type != null; type = type.getEscopoPai()) {
             for (SInstance ancestor = node; ancestor != null; ancestor = ancestor.getParent()) {
-                if (ancestor.getType() == type) {
+                if (ancestor.getType() == type && ancestor instanceof ICompositeInstance) {
                     return Optional.of((CA) ancestor);
                 }
             }
@@ -177,13 +177,28 @@ public abstract class MInstances {
         return listAscendants(instance, null);
     }
 
+    public static List<SInstance> listAscendants(SInstance instance, boolean selfIncluded) {
+        return listAscendants(instance, null, selfIncluded);
+    }
     /**
      * Lista os ancestrais de <code>node</code>.
      * @param node instância inicial da busca
      * @return Lista das instâncias de ancestrais do tipo especificado
      */
     public static List<SInstance> listAscendants(SInstance instance, SType<?> limitInclusive) {
+        return listAscendants(instance, limitInclusive, false);
+    }
+
+    /**
+     * Lista os ancestrais de <code>node</code>.
+     * @param node instância inicial da busca
+     * @return Lista das instâncias de ancestrais do tipo especificado
+     */
+    public static List<SInstance> listAscendants(SInstance instance, SType<?> limitInclusive, boolean selfIncluded) {
         List<SInstance> list = new ArrayList<>();
+        if (selfIncluded) {
+            list.add(instance);
+        }
         SInstance node = instance.getParent();
         while (node != null && node.getType() != limitInclusive) {
             list.add(node);
@@ -191,7 +206,7 @@ public abstract class MInstances {
         }
         return list;
     }
-
+    
     /**
      * Busca pelo primeiro descendente de <code>node</code> do tipo especificado.
      * @param node instância inicial da busca

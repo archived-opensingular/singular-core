@@ -13,16 +13,16 @@ public class FormPage extends Template {
     protected static final String TYPE_NAME = "type",
                                   MODEL_KEY = "key",
                                   VIEW_MODE = "viewMode",
-                                  ANNOTATION_ENABLED = "annotation";
+                                  ANNOTATION = "annotation";
 
     @Override
     protected Content getContent(String id) {
         StringValue type = getPageParameters().get(TYPE_NAME),
                     key = getPageParameters().get(MODEL_KEY),
                     viewMode = getPageParameters().get(VIEW_MODE),
-                    annotationnEnabled = getPageParameters().get(ANNOTATION_ENABLED);
+                    annotation = getPageParameters().get(ANNOTATION);
         ;
-        return new FormContent(id,type, key, viewMode, annotationnEnabled);
+        return new FormContent(id,type, key, viewMode, annotation);
     }
 
     @Override

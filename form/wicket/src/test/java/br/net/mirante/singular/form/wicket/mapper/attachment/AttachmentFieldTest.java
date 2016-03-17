@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findFirstComponentWithId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.io.FileOutputStream;
@@ -19,11 +19,12 @@ import org.fest.assertions.core.Condition;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
-import br.net.mirante.singular.form.wicket.hepers.TestPackage;
+import br.net.mirante.singular.form.wicket.helpers.TestPackage;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
@@ -41,8 +42,9 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
         pacote = dicionario.loadPackage(TestPackage.class);
         driver = new WicketTester(new TestApp());
         page = new TestPage();
-        page.setDicionario(dicionario);
-        page.setNewInstanceOfType(TestPackage.TIPO_ATTACHMENT);
+        page.setCurrentInstance((SIComposite) createIntance(() -> {
+            return dicionario.getType(TestPackage.TIPO_ATTACHMENT);
+        }));
         page.build();
         driver.startPage(page);
     }

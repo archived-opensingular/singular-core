@@ -1,8 +1,10 @@
 package br.net.mirante.singular.util.wicket.resource;
 
 public enum Icone {
+    ARROW_DOWN /*              */("fa fa-arrow-down"),
     BAN /*              */("icon-ban"),
     BRIEFCASE /*        */("icon-briefcase"),
+    BUG /*              */("fa fa-bug"),
     CALENDAR /*         */("icon-calendar"),
     CAMERA /*           */("icon-camera"),
     CARET_SQUARE /*     */("fa fa-caret-square-o-up"),
@@ -23,6 +25,7 @@ public enum Icone {
     GLOBE /*            */("fa fa-globe"),
     GRID /*             */("icon-grid"),
     HEART/*             */("fa fa-heart"),
+    HISTORY/*           */("fa fa-history"),
     HOME/*              */("icon-home"),
     HOTEL/*             */("fa fa-h-square"),
     HOURGLASS/*         */("icon-hourglass"),
@@ -61,7 +64,9 @@ public enum Icone {
     NOTE /*             */("icon-note"),
     DOCS /*             */("icon-docs"),
     CLOCK /*            */("icon-clock"),
-    LAYERS/*            */("icon-layers");
+    LAYERS/*            */("icon-layers"),
+    CODE/*              */("fa fa-code"),
+    DASHBOARD/*         */("fa fa-dashboard");
 
     private final String cssClass;
 

@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -13,8 +13,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
@@ -55,7 +55,7 @@ public class STypeStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
     public void rendersAListWithDanglingOptions() {
         setupPage();
         SIComposite instance = page.getCurrentInstance();
-        SList campo = (SList) instance.getCampo(fieldType.getSimpleName());
+        SIList campo = (SIList) instance.getCampo(fieldType.getSimpleName());
         SInstance element = campo.addNovo();
         element.setValue("avocado");
 
@@ -92,7 +92,7 @@ public class STypeStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
     private Object getSelectKeyFromValue(String value) {
         SIString mvalue = selectBaseType.novaInstancia();
         mvalue.setValue(value);
-        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
+        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOption(mvalue);
     }
 
 }

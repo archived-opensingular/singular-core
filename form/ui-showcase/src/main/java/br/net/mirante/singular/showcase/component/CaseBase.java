@@ -4,6 +4,8 @@ import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
 
 import java.io.Serializable;
@@ -68,6 +70,10 @@ public class CaseBase implements Serializable {
         }
     }
 
+    public String getTypeName() {
+        return getPackage().getName() + ".testForm"; 
+    }
+    
     public SType<?> getCaseType() {
         if(caseType == null){
             SDictionary dicionario = SDictionary.create();
@@ -99,5 +105,5 @@ public class CaseBase implements Serializable {
         return getCaseType().hasAnyValidation();
     }
 
-    public boolean annotationEnabled() { return false;}
+    public AnnotationMode annotation() { return AnnotationMode.NONE;}
 }

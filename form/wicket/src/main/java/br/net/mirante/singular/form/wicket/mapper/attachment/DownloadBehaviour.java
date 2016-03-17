@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
@@ -21,6 +21,7 @@ import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.mform.document.SDocument;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class DownloadBehaviour extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper();
     private Component component;

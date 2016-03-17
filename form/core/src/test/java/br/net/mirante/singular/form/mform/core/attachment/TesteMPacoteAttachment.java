@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.TestCaseForm;
@@ -109,7 +109,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
         STypeLista<STypeAttachment, SIAttachment> tipoLista = pb.createTipoListaOf("anexos", STypeAttachment.class);
-        SList<SIAttachment> lista = tipoLista.novaInstancia(SIAttachment.class);
+        SIList<SIAttachment> lista = tipoLista.novaInstancia(SIAttachment.class);
 
         SIAttachment arquivo1 = lista.addNovo();
         SIAttachment arquivo2 = lista.addNovo();
@@ -151,7 +151,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
         // Testa apenas com lista
         SIComposite bloco = tipoBloco.novaInstancia();
-        SList<SIAttachment> anexos = bloco.getFieldList("anexos", SIAttachment.class);
+        SIList<SIAttachment> anexos = bloco.getFieldList("anexos", SIAttachment.class);
 
         anexos.addNovo().setContent(conteudo1); // 0
         anexos.addNovo().setContent(conteudo2); // 1
@@ -209,7 +209,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     public void testSerializacaoDeserializacaoComAnexo() {
-        SDictionary dicionary = TesteFormSerializationUtil.createSerializableTestDictionary(pacote -> {
+        SIComposite bloco = (SIComposite) TesteFormSerializationUtil.createSerializableTestInstance("teste.bloco", pacote -> {
             STypeComposite<? extends SIComposite> tipoBloco = pacote.createTipoComposto("bloco");
             tipoBloco.addCampo("arquivo1", STypeAttachment.class);
             tipoBloco.addCampo("arquivo2", STypeAttachment.class);
@@ -217,7 +217,6 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         final byte[] conteudo1 = new byte[] { 1, 2, 3 };
         final byte[] conteudo2 = new byte[] { 4, 5, 6 };
 
-        SIComposite bloco = (SIComposite) dicionary.getType("teste.bloco").novaInstancia();
 
         final SIAttachment arquivo1 = bloco.getField("arquivo1", SIAttachment.class);
         final SIAttachment arquivo2 = bloco.getField("arquivo2", SIAttachment.class);

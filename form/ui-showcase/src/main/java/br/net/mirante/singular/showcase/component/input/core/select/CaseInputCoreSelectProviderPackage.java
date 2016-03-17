@@ -25,9 +25,9 @@ public class CaseInputCoreSelectProviderPackage extends SPackage {
         tipoDeMedia.withRadioView();
         tipoDeMedia.withSelectionFromProvider(new MOptionsProvider() {
             @Override
-            public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
+            public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
                 STypeString type = getDictionary().getType(STypeString.class);
-                SList<?> r = type.novaLista();
+                SIList<?> r = type.novaLista();
                 r.addElement(newElement(type, "IMG", "Imagem"));
                 r.addElement(newElement(type, "TXT", "Texto"));
                 r.addElement(newElement(type, "BIN", "Binário"));

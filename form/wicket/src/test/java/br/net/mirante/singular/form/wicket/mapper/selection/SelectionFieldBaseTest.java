@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,12 +26,11 @@ public abstract class SelectionFieldBaseTest extends AbstractWicketFormTest {
     protected void setupPage() {
         driver = new WicketTester(new TestApp());
         page = new TestPage();
-        page.setDicionario(dicionario);
         localPackage = dicionario.createNewPackage("test"+(index.getAndIncrement()));
         STypeComposite<? extends SIComposite> group = localPackage.createTipoComposto("group");
         createSelectionType(group);
 
-        page.setNewInstanceOfType(group.getName());
+        page.setIntance(createIntance(() -> group));
     }
 
     @SuppressWarnings("rawtypes")

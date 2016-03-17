@@ -1,25 +1,26 @@
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
+import br.net.mirante.singular.form.mform.io.FormSerialized;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotation;
@@ -40,7 +41,6 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         driver = new WicketTester(new TestApp());
         page = new TestPage();
         page.setAsVisualizationView();
-        page.setDicionario(dicionario);
         page.enableAnnotation();
         localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
@@ -61,7 +61,7 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         annotated4.addCampoString("field341");
         annotated4.as(AtrAnnotation::new).setAnnotated();
 
-        page.setNewInstanceOfType(baseCompositeField.getName());
+        page.setIntance(createIntance(() -> baseCompositeField));
     }
 
     protected void buildPage() {
@@ -95,126 +95,137 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         driver.assertContains("Análise do Pedido");
     }
 
-	@Ignore("Must understand how to handle the ajax modal and its actions")
     @Test public void submitsAnnotationValueAsPartOfTheForm(){
         setupPage();
         buildPage();
 
-        driver.assertEnabled(formField(form, "comment_field"));
+        List<Component> tags = getOpenModalButtons();
+        assertThat(tags).hasSize(3);
 
-        form.submit("save-btn");
-        List<TextArea> options = (List)findTag(form.getForm(), TextArea.class);
-        assertThat(options).hasSize(3);
-        TextArea text1 = options.get(0), text2 = options.get(1);
+        driver.executeAjaxEvent(tags.get(0), "onclick");
 
-        assertThat(currentAnnotation(annotated1).text()).isNullOrEmpty();
-        assertThat(currentAnnotation(annotated2).text()).isNullOrEmpty();
+        form = driver.newFormTester("test-form", false);
 
-        form.setValue(text1, "Something to comment or not. Who knows.");
-        form.setValue(text2, "Something very very very important, but I forgot what.");
+        Component modalText = findFirstComponentWithId(driver.getLastRenderedPage(), "modalText");
+        assertThat(modalText).isNotNull();
+        form.setValue(modalText, "Something to comment or not. Who knows.");
 
-        assertThat(currentAnnotation(annotated1).text()).isNullOrEmpty();
-        assertThat(currentAnnotation(annotated2).text()).isNullOrEmpty();
+        Component okButton = findFirstComponentWithId(driver.getLastRenderedPage(), "btn-ok");
 
-        form.submit("save-btn");
+        driver.executeAjaxEvent(okButton, "onclick");
 
         assertThat(currentAnnotation(annotated1).text())
                 .isEqualTo("Something to comment or not. Who knows.");
-        assertThat(currentAnnotation(annotated2).text())
-                .isEqualTo("Something very very very important, but I forgot what.");
+        assertThat(currentAnnotation(annotated2).text()).isNullOrEmpty();
+
     }
 
-    @Ignore("Must understand how to handle the ajax modal and its actions")
+    private List<Component> getOpenModalButtons() {
+        return findTag(form.getForm(), "open_modal", ActionAjaxButton.class);
+    }
+
     @Test public void annotationsHaveAnApprovalField(){
         setupPage();
         buildPage();
 
-        driver.assertEnabled(formField(form, "approval_field"));
+        List<Component> tags = getOpenModalButtons();
+        assertThat(tags).hasSize(3);
 
-        form.submit("save-btn");
-        List<CheckBox> options = (List)findTag(form.getForm(), CheckBox.class);
-        assertThat(options).hasSize(3);
-        CheckBox opt1 = options.get(0), opt2 = options.get(1);
+        driver.executeAjaxEvent(tags.get(0), "onclick");
 
-        assertThat(currentAnnotation(annotated1).approved()).isFalse();
-        assertThat(currentAnnotation(annotated2).approved()).isFalse();
+        form = driver.newFormTester("test-form", false);
 
-        form.setValue(opt1, "false");
-        form.setValue(opt2, "true");
+        List<CheckBox> checkboxes = (List)findTag(form.getForm(), CheckBox.class);
+        Component checkbox = findFirstComponentWithId(driver.getLastRenderedPage(),
+                "modalApproval");
+        assertThat(checkbox).isNotNull();
 
-        assertThat(currentAnnotation(annotated1).approved()).isFalse();
-        assertThat(currentAnnotation(annotated2).approved()).isFalse();
+        form.setValue(checkbox, "true");
 
-        form.submit("save-btn");
+        Component okButton = findFirstComponentWithId(driver.getLastRenderedPage(),
+                "btn-ok");
 
-        assertThat(currentAnnotation(annotated1).approved()).isFalse();
-        assertThat(currentAnnotation(annotated2).approved()).isTrue();
+        driver.executeAjaxEvent(okButton, "onclick");
+
+        assertThat(currentAnnotation(annotated1).approved()).isTrue();
+        assertThat(currentAnnotation(annotated2).approved()).isNull();
     }
 
-    @Ignore("Must understand how to handle the ajax modal and its actions")
-    @Test public void returnsAllAnnotationsForPersistence(){
-        setupPage();
-        buildPage();
-
-        List<TextArea> options = (List)findTag(form.getForm(), TextArea.class);
-        TextArea text1 = options.get(0), text2 = options.get(1), text4 = options.get(2);
-
-        form.setValue(text1, "Something to comment or not. Who knows.");
-        form.setValue(text2, "Something very very very important, but I forgot what.");
-        form.setValue(text4, "I'm tired, just go on your way.");
-
-        form.submit("save-btn");
-
-        SIComposite current = page.getCurrentInstance();
-        List<SIAnnotation> all = current.as(AtrAnnotation::new).allAnnotations();
-
-        assertThat(all).hasSize(3);
-
-        assertThat(extractProperty("text").from(all))
-                .containsOnly( "Something to comment or not. Who knows.",
-                        "Something very very very important, but I forgot what.",
-                        "I'm tired, just go on your way.");
-        SIComposite iNotAnnotated = (SIComposite) current.getCampo(notAnnotated.getSimpleName());
-        assertThat(extractProperty("targetId").from(all)).containsOnly(
-                current.getCampo(annotated1.getSimpleName()).getId(),
-                current.getCampo(annotated2.getSimpleName()).getId(),
-                iNotAnnotated.getCampo(annotated4.getSimpleName()).getId());
-
-    }
-
-    @Ignore("Must understand how to handle the ajax modal and its actions")
-    @Test public void itLoadsDataFromPersistedAnnotationsOntoScreen(){
+    @Test public void itLoadsDataFromAnnotationsOntoScreen(){
         setupPage();
 
         SIComposite current = page.getCurrentInstance();
         SIComposite iNotAnnotated = (SIComposite) current.getCampo(notAnnotated.getSimpleName());
 
-        System.out.println(iNotAnnotated.getCampo(annotated4.getSimpleName()).getId());
-        SIAnnotation annotation2 = newAnnotation(
-                            current.getCampo(annotated1.getSimpleName()).getId(),
-                            "It is funny how hard it is to come up with these texts",
-                            false),
-                    annotation4 = newAnnotation(
-                            iNotAnnotated.getCampo(annotated4.getSimpleName()).getId(),
-                            "But I never give up. I keep on trying.",
-                            true);
-
-        current.as(AtrAnnotation::new).loadAnnotations(Lists.newArrayList(annotation2, annotation4));
+        SIAnnotation annotation1 = current.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
+        annotation1.setText("It is funny how hard it is to come up with these texts");
+        annotation1.setApproved(false);
 
         buildPage();
 
-        List<TextArea> texts = (List)findTag(form.getForm(), TextArea.class);
-        TextArea text1 = texts.get(0), text2 = texts.get(1), text4 = texts.get(2);
-        List<CheckBox> checks = (List)findTag(form.getForm(), CheckBox.class);
-        CheckBox check1 = checks.get(0), check2 = checks.get(1), check4 = checks.get(2);
-
-        assertThat(check1.getValue()).isEqualTo("false");
-        assertThat(text1.getValue())
+        assertThat(driver.getTagByWicketId("comment_field").getValue())
                 .isEqualTo("It is funny how hard it is to come up with these texts");
-        assertThat(check4.getValue()).isEqualTo("true");
-        assertThat(text4.getValue())
-                .isEqualTo("But I never give up. I keep on trying.");
+        assertThat(driver.getTagByWicketId("approval_field").getValue())
+                .isEqualTo("Rejeitado");
 
+        List<Component> tags = getOpenModalButtons();
+        driver.executeAjaxEvent(tags.get(0), "onclick");
+
+        TextArea modalText = (TextArea) findFirstComponentWithId(driver.getLastRenderedPage(),
+                                                                        "modalText");
+        CheckBox checkBox = (CheckBox) findFirstComponentWithId(driver.getLastRenderedPage(),
+                                                                        "modalApproval");
+        assertThat(modalText.getValue())
+                .isEqualTo("It is funny how hard it is to come up with these texts");
+        assertThat(checkBox.getValue())
+                .isEqualTo("false");
+    }
+
+    @Test public void itLoadsPersistedDataFromAnnotationsOntoScreen(){
+        setupPage();
+
+        SIComposite current = page.getCurrentInstance();
+
+        SIAnnotation annotation1 = current.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
+        annotation1.setText("The past will haunt ya.");
+
+        FormSerialized persisted = FormSerializationUtil.toSerializedObject(current.as(AtrAnnotation::new).persistentAnnotations());
+        SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
+
+        annotation1.setText("What's up doc?");
+
+        current.as(AtrAnnotation::new).loadAnnotations(backup);
+
+        buildPage();
+
+        assertThat(driver.getTagByWicketId("comment_field").getValue())
+                .isEqualTo("The past will haunt ya.");
+
+    }
+
+    @Test public void itLoadsPersistedAnnotationsForEmptyFields(){
+        setupPage();
+
+        SIComposite old = (SIComposite) SDocumentFactory.empty()
+                .createInstance(new RefType() {
+            @Override
+            protected SType<?> retrieve() {
+                return baseCompositeField;
+            }
+        });
+
+        SIAnnotation annotation1 = old.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
+        annotation1.setText("The past will haunt ya.");
+        FormSerialized persisted = FormSerializationUtil.toSerializedObject(old.as(AtrAnnotation::new).persistentAnnotations());
+        SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
+
+        SIComposite current = page.getCurrentInstance();
+        current.as(AtrAnnotation::new).loadAnnotations(backup);
+
+        buildPage();
+
+        assertThat(driver.getTagByWicketId("comment_field").getValue())
+                .isEqualTo("The past will haunt ya.");
 
     }
 

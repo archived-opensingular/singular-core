@@ -11,7 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -25,8 +28,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.context.SFormConfig;
+import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
@@ -35,7 +38,6 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ResourceRef;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
@@ -51,11 +53,12 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     private final BFModalBorder viewXmlModal = new BFModalBorder("viewXmlModal");
     private final IModel<CaseBase> caseBase;
 
-    private SingularFormPanel singularFormPanel = null;
+    private SingularFormPanel<String> singularFormPanel = null;
     private ViewMode viewMode = ViewMode.EDITION;
 
     @Inject
-    private SDocumentFactory documentFactory;
+    @Named("formConfigWithoutDatabase")
+    private SFormConfig<String> singularFormConfig;
 
     public ItemCasePanel(String id, IModel<CaseBase> caseBase) {
         super(id);
@@ -108,12 +111,13 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
 
-    private SingularFormPanel buildSingularBasePanel() {
-        singularFormPanel = new SingularFormPanel("singularFormPanel", documentFactory.getDocumentFactoryRef()) {
+    private SingularFormPanel<String> buildSingularBasePanel() {
+        singularFormPanel = new SingularFormPanel<String>("singularFormPanel", singularFormConfig) {
             @Override
-            protected SType<?> getTipo() {
+            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 String typeName = caseBase.getObject().getCaseType().getName();
-                return TemplateRepository.create().loadType(typeName, typeName);
+                RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
+                return singularFormConfig.getDocumentFactory().createInstance(refType);
             }
 
             @Override
@@ -122,7 +126,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
             }
 
             @Override
-            public boolean annotationEnabled(){ return caseBase.getObject().annotationEnabled(); }
+            public AnnotationMode annotation(){ return caseBase.getObject().annotation(); }
         };
 
         return singularFormPanel;
@@ -147,7 +151,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         viewXmlModal.show(target);
     }
 
-    private String getXmlOutput(MElement xml, boolean tabulado) {
+    private static String getXmlOutput(MElement xml, boolean tabulado) {
         if (xml == null) {
             return StringUtils.EMPTY;
         }

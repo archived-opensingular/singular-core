@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-form</artifactId>
-        <version>0.5.10</version>
+        <version>0.6.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>form-core</artifactId>
@@ -17,8 +17,13 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>0.5.10</version>
+            <version>0.6.1-SNAPSHOT</version>
         </dependency>
+		<dependency>
+		  <groupId>org.freemarker</groupId>
+		  <artifactId>freemarker</artifactId>
+		  <version>2.3.23</version>
+		</dependency>
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>

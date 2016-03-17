@@ -21,7 +21,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -55,6 +55,7 @@ public abstract class WicketFormUtils {
         return Boolean.TRUE.equals(container.getMetaData(KEY_IS_CELL_CONTAINER));
     }
     public static void setCellContainer(Component component, MarkupContainer container) {
+        container.setOutputMarkupId(true);
         component.setMetaData(KEY_CELL_CONTAINER, container);
     }
     public static Optional<MarkupContainer> findCellContainer(Component component) {
@@ -183,8 +184,8 @@ public abstract class WicketFormUtils {
                         lastBaseTitle = baseTitle;
                     }
 
-                    if ((lastInstance != null) && (instance instanceof SList<?>)) {
-                        SList<SInstance> lista = (SList<SInstance>) instance;
+                    if ((lastInstance != null) && (instance instanceof SIList<?>)) {
+                        SIList<SInstance> lista = (SIList<SInstance>) instance;
                         Iterator<SInstance> iter = lista.iterator();
                         for (int i = 1; iter.hasNext(); i++) {
                             SInstance itemInstance = iter.next();

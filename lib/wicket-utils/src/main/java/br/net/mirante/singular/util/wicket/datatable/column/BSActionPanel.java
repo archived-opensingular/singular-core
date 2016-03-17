@@ -49,7 +49,7 @@ public class BSActionPanel<T> extends Panel {
         }
 
         if (actionConfig.link.get(ICONE_ID) == null) {
-            actionConfig.link.add(new IconeView(ICONE_ID, actionConfig.iconeModel));
+            actionConfig.link.add(new IconeView(ICONE_ID, actionConfig.iconeModel, actionConfig.iconeStyle, actionConfig.iconeClass));
         }
 
         if (actionConfig.labelModel != null) {
@@ -60,6 +60,11 @@ public class BSActionPanel<T> extends Panel {
                 actionConfig.link.add(new WebMarkupContainer(LABEL_ID));
             }
         }
+
+        actionConfig.link.add($b.attr("data-toggle", "tooltip"));
+        actionConfig.link.add($b.attr("data-placement", "bottom"));
+        actionConfig.link.add($b.attr("title", actionConfig.labelModel));
+
         return this;
     }
 
@@ -114,11 +119,13 @@ public class BSActionPanel<T> extends Panel {
 
         protected IModel<?> labelModel = $m.ofValue("");
         protected IModel<Icone> iconeModel;
+        protected IModel<String> iconeStyle;
+        protected IModel<String> iconeClass;
         protected IModel<String> stripeModel;
         protected MarkupContainer link;
         protected IModel<String> buttonModel = $m.ofValue("black");
         protected IModel<String> style;
-        protected boolean withText = true;
+        protected boolean withText = false;
         protected IBiFunction<T, String, MarkupContainer> linkFactory;
 
         public ActionConfig<T> labelModel(IModel<?> labelModel) {
@@ -127,7 +134,17 @@ public class BSActionPanel<T> extends Panel {
         }
 
         public ActionConfig<T> iconeModel(IModel<Icone> iconeModel) {
+            return iconeModel(iconeModel, null, null);
+        }
+
+        public ActionConfig<T> iconeModel(IModel<Icone> iconeModel, IModel<String> iconeStyle) {
+            return iconeModel(iconeModel, iconeStyle, null);
+        }
+
+        public ActionConfig<T> iconeModel(IModel<Icone> iconeModel, IModel<String> iconeStyle, IModel<String> iconeClass) {
             this.iconeModel = iconeModel;
+            this.iconeStyle = iconeStyle;
+            this.iconeClass = iconeClass;
             return this;
         }
 
@@ -161,4 +178,6 @@ public class BSActionPanel<T> extends Panel {
             return this;
         }
     }
+
+
 }

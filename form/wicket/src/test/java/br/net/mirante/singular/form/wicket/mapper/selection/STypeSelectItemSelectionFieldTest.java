@@ -7,15 +7,15 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
@@ -45,8 +45,8 @@ public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     private MOptionsProvider newProviderFrom(SIComposite... compostos) {
         return new MOptionsProvider() {
             @Override
-            public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
-                SList lista = selectType.novaLista();
+            public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+                SIList lista = selectType.novaLista();
                 for (SIComposite composto : compostos) {
                     SInstance instancia = lista.addNovo();
                     Object value = Value.dehydrate(composto);
@@ -165,7 +165,7 @@ public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     }
 
     private Object getSelectKeyFromMInstancia(SInstance instancia) {
-        return getInstanciaSelect().getOptionsConfig().getKeyFromOptions(instancia);
+        return getInstanciaSelect().getOptionsConfig().getKeyFromOption(instancia);
     }
 
     private SInstance getInstanciaSelect() {

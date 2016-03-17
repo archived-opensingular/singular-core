@@ -1,11 +1,16 @@
 package br.net.mirante.singular.showcase;
 
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
-import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
-
 import org.junit.Test;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
+import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 
 //@RunWith(value = Parameterized.class)
 public class SerializationTest {
@@ -32,15 +37,24 @@ public class SerializationTest {
 //    }
 
     @Test public void serializeAndDeserialize(){
-        TemplateRepository repo = TemplateRepository.create();
+        GenericApplicationContext ctx = new GenericApplicationContext();
+        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(ctx);
+        xmlReader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml"));
+        ctx.refresh();
+        ctx.getBean(ShowcaseTypeLoader.class);
+
+        ShowcaseTypeLoader repo = ctx.getBean(ShowcaseTypeLoader.class);
 //        TemplateRepository.setDefault(TemplateRepository.get());
         ExamplePackage pacote = null;
-        for(TemplateRepository.TemplateEntry entry: repo.getEntries()){
+        for(ShowcaseTypeLoader.TemplateEntry entry: repo.getEntries()){
             if(entry.getType().getName().equals(ExamplePackage.Types.ORDER.name)){
                 pacote = (ExamplePackage) entry.getType().getPacote();
             }
         }
-        SIComposite order = pacote.order.novaInstancia();
+
+        RefType refType = repo.loadRefTypeOrException(pacote.order.getName());
+        SIComposite order = (SIComposite) SDocumentFactory.empty().createInstance(refType);
+
         order.setValor(pacote.orderNumber.getSimpleName(),1);
         FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(order));
     }

@@ -37,7 +37,7 @@ public class UIAdminSession extends AuthenticatedWebSession {
     }
 
     public String getUserId(){
-        return getUser().getCod().toString();
+        return String.valueOf(getUser().getCod());
     }
     
     public MUser getUser(){

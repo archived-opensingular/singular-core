@@ -8,16 +8,20 @@
                            http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
     <!-- DATA SOURCE CONFIGURATION -->
-    <bean name="dataSourceSingular" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:file:./singulardb;mode=MSSQLServer;"/>
+        <property name="url" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=MSSQLServer;CACHE_SIZE=2048;MULTI_THREADED=1"/>
         <property name="username" value="sa"/>
         <property name="password" value="sa"/>
+        <property name="removeAbandoned" value="true"/>
+        <property name="initialSize" value="5" />
+        <property name="maxActive" value="10" />
+        <property name="minIdle" value="1" />
     </bean>
 
     <!-- HIBERNATE CONFIGURATION -->
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSourceSingular"/>
+        <property name="dataSource" ref="dataSource"/>
         <!-- Incluir o pacote quando tiver um -->
         <property name="packagesToScan" value="br.net.mirante.singular.showcase.dao.form" />
 
@@ -35,7 +39,7 @@
     <tx:annotation-driven proxy-target-class="true"/>
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="dataSource" ref="dataSourceSingular"/>
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
 </beans>

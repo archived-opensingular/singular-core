@@ -62,8 +62,6 @@ public class DefaultHibernateProcessDefinitionService
         TaskVersionEntity taskEntity = new TaskVersionEntity();
         taskEntity.setProcessVersion(process);
         taskEntity.setTaskDefinition(entityTaskDefinition);
-        // TODO Daniel: essa solução do createType deveria ser unificada entre
-        // as implementações
         taskEntity.setType((TaskType) task.getEffectiveTaskType());
         taskEntity.setTransitions(new ArrayList<>());
         return taskEntity;

@@ -1,12 +1,12 @@
 package br.net.mirante.singular.view.page.dashboard;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class DashboardRow extends Panel {
 
@@ -44,7 +44,7 @@ public class DashboardRow extends Panel {
 
     private String getSmallColumnClass() {
         int count = getColumnsSize();
-        return count > 1 ? "col-lg-"+(12 / count)+" col-md-" + (12 / count) +" col-sm-"+(12 / count * 2) + " col-xs-12" : " col-xs-12";
+        return count > 1 ? "col-lg-"+(12 / count)+" col-md-" + (12  / ( count/2 )) +" col-sm-12 col-xs-12" : " col-xs-12";
     }
 
     private String getMediumColumnClass() {

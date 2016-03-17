@@ -293,13 +293,11 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     }
 
     public SType<I> with(String valuesExpression) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
+        throw new NotImplementedException("Este tipo não implementa o método `with`");
     }
 
     public SType<I> withCode(String pathCampo, IBehavior<I> comportamento) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
+        throw new NotImplementedException("Este tipo não implementa o método `withCode`");
     }
 
     public SType<I> withValorInicial(Object valor) {
@@ -364,7 +362,7 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     //    }
 
     @SuppressWarnings("unchecked")
-    public <T extends Object> T as(Class<T> classeAlvo) {
+    public <T> T as(Class<T> classeAlvo) {
         if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {
             return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
@@ -372,15 +370,15 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     }
 
     public AtrBasic asAtrBasic() {
-        return as(i -> new AtrBasic(i));
+        return as(AtrBasic::new);
     }
 
     public AtrBootstrap asAtrBootstrap() {
-        return as(i -> new AtrBootstrap(i));
+        return as(AtrBootstrap::new);
     }
 
     public AtrCore asAtrCore() {
-        return as(i -> new AtrCore(i));
+        return as(AtrCore::new);
     }
 
 
@@ -432,14 +430,14 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
 
     public boolean dependsOnAnyType() {
         return Optional.ofNullable(getValorAtributo(SPackageBasic.ATR_DEPENDS_ON_FUNCTION))
-                .map(it -> it.get())
+                .map(Supplier::get)
                 .map(it -> !it.isEmpty())
                 .orElse(false);
     }
 
     public boolean dependsOnAnyTypeInHierarchy() {
         return MTypes.listAscendants(this, true).stream()
-                .anyMatch(it -> it.dependsOnAnyType());
+                .anyMatch(SType::dependsOnAnyType);
     }
 
     public SType<I> addInstanceValidator(IInstanceValidator<I> validador) {
@@ -481,8 +479,8 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         return newInstance(this, owner);
     }
 
-    public SList<?> novaLista() {
-        return SList.of(this);
+    public SIList<?> novaLista() {
+        return SIList.of(this);
     }
 
     private I newInstance(SType<?> original, SDocument owner) {

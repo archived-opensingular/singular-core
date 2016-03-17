@@ -15,6 +15,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.springframework.web.util.JavaScriptUtils;
 
+import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.util.wicket.model.FallbackReadOnlyModel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 

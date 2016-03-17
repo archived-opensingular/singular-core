@@ -1,13 +1,8 @@
 package br.net.mirante.singular.form.mform.core.annotation;
 
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
@@ -15,9 +10,10 @@ import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Decorates an Instance as annotated enabling access to its anotations.
@@ -29,9 +25,6 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     public AtrAnnotation(MAtributoEnabled alvo) {
         super(alvo);
     }
-
-    //TODO: FABS: Deve informar se o campo é anotado/anotável/anotabilizado ou não.
-    // Ou seja, não tem mais a view
 
     /**
      * Marks this type as annotated
@@ -119,19 +112,14 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
 
     private void createAttributeIfNeeded() {
         if(target().getDocument().annotation(target().getId()) == null){
-            setAnnotation(newAnnotation());
+            newAnnotation();
         }
     }
 
-    private SIAnnotation newAnnotation() {  return type().novaInstancia();}
-
-    private STypeAnnotation type() {
-        return getAlvo().getDictionary().getType(STypeAnnotation.class);
-    }
-
-    private void setAnnotation(SIAnnotation annotation) {
-        annotation.setTargetId(target().getId());
-        target().getDocument().annotation(target().getId(),annotation);
+    private SIAnnotation newAnnotation() {
+        SIAnnotation a = target().getDocument().newAnnotation();
+        a.setTargetId(target().getId());
+        return a;
     }
 
     private void atrValue(AtrRef ref, Object value) {
@@ -146,28 +134,9 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      * @return All annotations on this instance and its children.
      */
     public List<SIAnnotation> allAnnotations() {
-        HashSet<SIAnnotation> result = new HashSet<>();
-        if(hasAnnotation()){
-            result.add(annotation());
-        }
-        gatherAnnottionsFromChildren(result);
-        return Lists.newArrayList(result);
-    }
-
-    private void gatherAnnottionsFromChildren(HashSet<SIAnnotation> result) {
-        if(getAlvo() instanceof SIComposite){
-            SIComposite target = (SIComposite) getAlvo();
-            for(SInstance i : target.getAllFields()){
-                gatterAnnotationsFromChild(result, i);
-            }
-        }
-    }
-
-    private void gatterAnnotationsFromChild(HashSet<SIAnnotation> result, SInstance child) {
-        AtrAnnotation childAs = child.as(AtrAnnotation::new);
-        if(child instanceof SIComposite){
-            result.addAll(childAs.allAnnotations());
-        }
+        SIList sList = persistentAnnotations();
+        if(sList == null) return newArrayList();
+        return sList.getValores();
     }
 
     /**
@@ -176,45 +145,19 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      * is referring to.
      * @param annotations to be loaded into the instance.
      */
-    public void loadAnnotations(Iterable<SIAnnotation> annotations) {
-        ImmutableMap<Integer, SIAnnotation> annotationmap = Maps.uniqueIndex(annotations, (x) -> x.getTargetId());
-        loadAnnotations(annotationmap, target());
-    }
-
-    private void loadAnnotations(ImmutableMap<Integer, SIAnnotation> annotationmap, SInstance target) {
-        Integer thisId = target.getId();
-        if(annotationmap.containsKey(thisId)){
-            target.as(AtrAnnotation::new).setAnnotation(annotationmap.get(thisId));
-        }
-        loadAnnotationsForChidren(annotationmap, target);
-    }
-
-    private void loadAnnotationsForChidren(ImmutableMap<Integer, SIAnnotation> annotationmap, SInstance target) {
-        if(target instanceof SIComposite){
-            SIComposite ctarget = (SIComposite) target;
-            for(SInstance child : ctarget.getAllFields()){
-                loadAnnotations(annotationmap, child);
-            }
-        }
+    public void loadAnnotations(SIList annotations) {
+        target().getDocument().setAnnotations(annotations);
     }
 
     /**
      * @return A ready to persist object containing all annotations from this instance and its children.
      */
-    public SList persistentAnnotations() {
-        List<SIAnnotation> all = allAnnotations();
-        SList sList = newAnnotationList();
-        for(SIAnnotation a: all){
-            SIAnnotation detached = newAnnotation();
-            Value.hydrate(detached, Value.dehydrate(a));
-            sList.addElement(detached);
-        }
-
-        return sList;
+    public SIList persistentAnnotations() {
+        return ((SInstance)getAlvo()).getDocument().annotations();
     }
 
-    private SList newAnnotationList() {
-        return (SList) annotationListType().novaInstancia();
+    private SIList newAnnotationList() {
+        return (SIList) annotationListType().novaInstancia();
     }
 
     private STypeAnnotationList annotationListType() {
@@ -230,4 +173,49 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     public void clear() {   annotation().clear();    }
+
+    public boolean hasAnnotationOnTree() {
+        if(hasAnnotation()) return true;
+        if(target() instanceof SIComposite){
+            return hasAnnotationsOnChildren((SIComposite) target());
+        }
+        return false;
+    }
+
+    private boolean hasAnnotationsOnChildren(SIComposite parent) {
+        for(SInstance si: parent.getAllFields()){
+            if(si.as(AtrAnnotation::new).hasAnnotationOnTree()) return true;
+        }
+        return false;
+    }
+
+    public boolean hasAnyRefusal() {
+        if(hasAnnotation() && !annotation().getApproved()){    return true;}
+        if(target() instanceof SIComposite){
+            return hasAnyRefusalOnChildren((SIComposite) target());
+        }
+        return false;
+    }
+
+    private boolean hasAnyRefusalOnChildren(SIComposite parent) {
+        for(SInstance si: parent.getAllFields()){
+            if(si.as(AtrAnnotation::new).hasAnyRefusal()) return true;
+        }
+        return false;
+    }
+
+    public boolean isOrHasAnnotatedChild() {
+        if(isAnnotated()) return true;
+        if(target() instanceof SIComposite){
+            return hasAnnotatedChildren((SIComposite) target());
+        }
+        return false;
+    }
+
+    private boolean hasAnnotatedChildren(SIComposite parent) {
+        for(SInstance si: parent.getAllFields()){
+            if(si.as(AtrAnnotation::new).isOrHasAnnotatedChild()) return true;
+        }
+        return false;
+    }
 }

@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static org.junit.Assert.*;
 
 
@@ -31,7 +31,7 @@ public class MultipleSelectMapperTest extends MapperBaseTest {
 
     @Override
     public void mockFormValues(SIComposite formInstance) {
-        SList gadgets = (SList) formInstance.getCampo("gadgets");
+        SIList gadgets = (SIList) formInstance.getCampo("gadgets");
         gadgets.addNovo().setValue("iPod");
         gadgets.addNovo().setValue("iPhone");
     }

@@ -15,7 +15,8 @@ public class MetronicStatusColumn<T, S> extends BSPropertyColumn<T, S> {
         WARNING,
         DANGER,
         SUCCESS,
-        INFO
+        INFO,
+        NONE
     }
 
     private BadgeTypeMapper<T> badgeTypeMapper;
@@ -68,10 +69,16 @@ public class MetronicStatusColumn<T, S> extends BSPropertyColumn<T, S> {
 
     private String getBadgeCssClassAttribute(IModel<Object> cellModel, IModel<T> rowModel) {
         String css = "class=\"label label-sm ";
+        BagdeType type = BagdeType.NONE;
         if (badgeTypeMapper != null) {
-            return css + " label-" + badgeTypeMapper.getType(cellModel, rowModel).name().toLowerCase() + "\"";
+            type = badgeTypeMapper.getType(cellModel, rowModel);
         }
-        return css + " \" style=\"background-color: #889988;\" ";
+        if (type == BagdeType.NONE) {
+            return css + " \" style=\"background-color: #889988;\" ";
+        } else {
+
+            return css + " label-" + type.name().toLowerCase() + "\"";
+        }
     }
 
     @FunctionalInterface

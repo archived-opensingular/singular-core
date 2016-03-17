@@ -9,8 +9,24 @@ import org.apache.wicket.model.IModel;
 
 public abstract class SingularSaveButton extends SingularValidationButton {
 
+    private boolean validate;
+
     public SingularSaveButton(String id) {
+        this(id, true);
+    }
+
+    public SingularSaveButton(String id, boolean validate) {
         super(id);
+        this.validate = validate;
+    }
+
+    @Override
+    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+        if (validate) {
+            super.onSubmit(target, form);
+        } else {
+            onValidationSuccess(target, form, getCurrentInstance());
+        }
     }
 
     @Override
@@ -20,5 +36,9 @@ public abstract class SingularSaveButton extends SingularValidationButton {
     }
     
     protected abstract void handleSaveXML(AjaxRequestTarget target, MElement xml);
+
+    protected boolean isValidate() {
+        return validate;
+    }
 }
 

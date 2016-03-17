@@ -111,6 +111,12 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         return addInterno(nomeCampo, novo);
     }
 
+    //TODO: FABS : THIS IS UNTESTED
+    public <I extends SInstance, T extends SType<I>> T addCampo(String nomeCampo, T tipoPai) {
+        T novo = extenderType(nomeCampo, tipoPai);
+        return addInterno(nomeCampo, novo);
+    }
+
     public <I extends SInstance, T extends SType<I>> STypeLista<T, I> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
         T tipo = resolverTipo(classeTipoLista);
         STypeLista<T, I> novo = createTipoListaOf(nomeSimplesNovoTipo, tipo);

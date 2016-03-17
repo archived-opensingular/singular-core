@@ -27,7 +27,7 @@ import org.junit.rules.ExpectedException;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.wicket.hepers.TestPackage;
+import br.net.mirante.singular.form.wicket.helpers.TestPackage;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
