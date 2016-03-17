@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.flow.core;
 
 import java.io.Serializable;
@@ -541,6 +546,7 @@ public class ProcessInstance implements Serializable {
     protected final TaskInstance updateState(TaskInstance tarefaOrigem, MTransition transicaoOrigem, MTask<?> task, Date agora) {
         synchronized (this) {
             if (tarefaOrigem != null) {
+                tarefaOrigem.endLastAllocation();
                 String transitionName = null;
                 if (transicaoOrigem != null) {
                     transitionName = transicaoOrigem.getName();

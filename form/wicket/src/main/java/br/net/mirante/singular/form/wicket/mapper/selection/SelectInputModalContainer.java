@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.Iterator;
@@ -34,7 +39,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal
 import br.net.mirante.singular.form.mform.options.SOptionsConfig;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.lambda.IConsumer;
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;

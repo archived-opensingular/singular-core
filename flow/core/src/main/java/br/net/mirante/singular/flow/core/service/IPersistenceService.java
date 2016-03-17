@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.flow.core.service;
 
 import java.util.Collection;
@@ -93,4 +98,6 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable MUser creatingUser,
             @Nullable Boolean active);
+
+    void endLastAllocation(TASK_INSTANCE entityTaskInstance);
 }

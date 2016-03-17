@@ -6,7 +6,7 @@
     <groupId>br.net.mirante</groupId>
     <artifactId>singular</artifactId>
 
-    <version>0.6.1-SNAPSHOT</version>
+    <version>0.6.2-SNAPSHOT</version>
     <name>[projeto-raiz :: singular]</name>
     <packaging>pom</packaging>
 
@@ -14,7 +14,7 @@
         <module>flow</module>
         <module>form</module>
         <module>lib</module>
-        <module>common</module>
+        <module>resources</module>
     </modules>
 
     <distributionManagement>
@@ -217,10 +217,10 @@
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
 
+        <spring.version>4.2.4.RELEASE</spring.version>
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <wicket.version>7.1.0</wicket.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
-        <spring.version>4.2.4.RELEASE</spring.version>
     </properties>
 
 </project>

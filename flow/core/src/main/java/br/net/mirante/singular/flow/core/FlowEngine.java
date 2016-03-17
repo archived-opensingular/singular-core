@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.flow.core;
 
 import java.util.Date;
@@ -140,6 +145,7 @@ class FlowEngine {
 
     static TaskInstance executeTransition(TaskInstance tarefaAtual, String transitionName, VarInstanceMap<?> param) {
         MTransition transicao = searchTransition(tarefaAtual, transitionName);
+        tarefaAtual.endLastAllocation();
         return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, transicao, transicao.getDestination(), param);
     }
 

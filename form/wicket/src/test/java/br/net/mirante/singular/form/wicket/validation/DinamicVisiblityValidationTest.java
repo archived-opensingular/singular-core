@@ -2,7 +2,6 @@ package br.net.mirante.singular.form.wicket.validation;
 
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -16,7 +15,7 @@ public class DinamicVisiblityValidationTest extends AbstractSingularFormTest {
     STypeString fieldTwo;
 
     @Override
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
         fieldOne = mockType.addFieldString("fieldOne");
         fieldOne.asAtrCore().obrigatorio(true);
         fieldTwo = mockType.addFieldString("fieldTwo");
@@ -29,25 +28,25 @@ public class DinamicVisiblityValidationTest extends AbstractSingularFormTest {
 
     @Test
     public void testIfContaisErrorOnlyForFieldOne() {
-        formTester.submit(mockPage.getSingularValidationButton());
+        form.submit(page.getSingularValidationButton());
         Assert.assertFalse(findFormComponentsByType(fieldOne).findFirst().get().getFeedbackMessages().isEmpty());
         Assert.assertTrue(findFormComponentsByType(fieldTwo).findFirst().get().getFeedbackMessages().isEmpty());
     }
 
     @Test
     public void testIfNotContaisErrorForFieldTwoAfterChangeFieldOneValueWhithWrongValue() {
-        formTester.setValue(findFieldOneFormComponent(), "abas" + testValue + "2132");
-        wicketTester.executeAjaxEvent(findFieldOneFormComponent(), "change");
-        formTester.submit(mockPage.getSingularValidationButton());
+        form.setValue(findFieldOneFormComponent(), "abas" + testValue + "2132");
+        tester.executeAjaxEvent(findFieldOneFormComponent(), "change");
+        form.submit(page.getSingularValidationButton());
         Assert.assertTrue(findFormComponentsByType(fieldOne).findFirst().get().getFeedbackMessages().isEmpty());
         Assert.assertTrue(findFormComponentsByType(fieldTwo).findFirst().get().getFeedbackMessages().isEmpty());
     }
 
     @Test
     public void testIfContaisErrorForFieldTwoAfterChangeFieldOneValue() {
-        formTester.setValue(findFieldOneFormComponent(), testValue);
-        wicketTester.executeAjaxEvent(findFieldOneFormComponent(), "change");
-        formTester.submit(mockPage.getSingularValidationButton());
+        form.setValue(findFieldOneFormComponent(), testValue);
+        tester.executeAjaxEvent(findFieldOneFormComponent(), "change");
+        form.submit(page.getSingularValidationButton());
         Assert.assertTrue(findFormComponentsByType(fieldOne).findFirst().get().getFeedbackMessages().isEmpty());
         Assert.assertFalse(findFormComponentsByType(fieldTwo).findFirst().get().getFeedbackMessages().isEmpty());
     }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.basic.ui;
 
 import java.util.function.Function;
@@ -46,8 +51,8 @@ public class AtrBootstrap extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBootstrap onNewRow(Boolean valor) {
-        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW, valor);
+    public AtrBootstrap newRow() {
+        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW, true);
         return this;
     }
 

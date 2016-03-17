@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper;
 
 import java.util.ArrayList;
@@ -39,8 +44,8 @@ import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
-import br.net.mirante.singular.lambda.IConsumer;
-import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;

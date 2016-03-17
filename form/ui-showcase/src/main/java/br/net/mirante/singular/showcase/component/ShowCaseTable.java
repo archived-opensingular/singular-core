@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component;
 
 import java.io.Serializable;
@@ -9,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import br.net.mirante.singular.showcase.component.layout.*;
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.showcase.component.custom.CaseCustomStringMapper;
@@ -42,19 +48,6 @@ import br.net.mirante.singular.showcase.component.interaction.CaseInteractionEna
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionExists;
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionRequired;
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionVisible;
-import br.net.mirante.singular.showcase.component.layout.CaseFineTunningGrid;
-import br.net.mirante.singular.showcase.component.layout.CaseListByFormDefault;
-import br.net.mirante.singular.showcase.component.layout.CaseListByFormMinimumAndMaximum;
-import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailButtons;
-import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailColumns;
-import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailDefault;
-import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailMiniumAndMaximum;
-import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailNested;
-import br.net.mirante.singular.showcase.component.layout.CaseListByTableDefault;
-import br.net.mirante.singular.showcase.component.layout.CaseListByTableMinimiumAndMaximum;
-import br.net.mirante.singular.showcase.component.layout.CaseRowControlGrid;
-import br.net.mirante.singular.showcase.component.layout.CaseSimpleGrid;
-import br.net.mirante.singular.showcase.component.layout.CaseTabs;
 import br.net.mirante.singular.showcase.component.map.CaseGoogleMaps;
 import br.net.mirante.singular.showcase.component.validation.CaseValidationBetweenFields;
 import br.net.mirante.singular.showcase.component.validation.CaseValidationCustom;
@@ -108,6 +101,7 @@ public class ShowCaseTable {
             .addCase(CaseListByFormMinimumAndMaximum.class)
             .addCase(CaseListByTableMinimiumAndMaximum.class)
             .addCase(CaseListByMasterDetailMiniumAndMaximum.class)
+            .addCase(CaseListByTableSimpleType.class)
             .addCase(CaseRowControlGrid.class)
             .addCase(CaseTabs.class)
         ;

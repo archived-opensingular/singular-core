@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.bootstrap.layout.table;
 
 import org.apache.wicket.behavior.Behavior;
@@ -6,7 +11,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
-import br.net.mirante.singular.lambda.IBiFunction;
+import br.net.mirante.singular.commons.lambda.IBiFunction;
 
 public class BSTableGrid extends BSContainer<BSTableGrid> {
 

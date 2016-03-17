@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket;
 
 import java.io.Serializable;
 import java.util.*;
 
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import com.google.common.collect.Lists;
@@ -39,6 +45,8 @@ import static com.google.common.collect.Maps.newHashMap;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class WicketBuildContext implements Serializable {
+
+    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
 
     public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {};
 

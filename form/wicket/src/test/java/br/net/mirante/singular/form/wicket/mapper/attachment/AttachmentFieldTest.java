@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.io.FileOutputStream;
@@ -9,8 +10,12 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
+import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.file.File;
 import org.apache.wicket.util.tester.FormTester;
@@ -19,9 +24,6 @@ import org.fest.assertions.core.Condition;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SISimple;
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.helpers.TestPackage;
@@ -30,28 +32,14 @@ import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
 @SuppressWarnings("rawtypes")
-public class AttachmentFieldTest extends AbstractWicketFormTest {
+public class AttachmentFieldTest extends AbstractSingularFormTest {
 
-    private static TestPackage pacote;
-    private WicketTester driver;
-    private TestPage page;
-    private FormTester form;
+    protected SDictionary dictionary;
+    public STypeAttachment attachmentFileField;
 
-    @Before
-    public void setupPage() {
-        pacote = dicionario.loadPackage(TestPackage.class);
-        driver = new WicketTester(new TestApp());
-        page = new TestPage();
-        page.setCurrentInstance((SIComposite) createIntance(() -> {
-            return dicionario.getType(TestPackage.TIPO_ATTACHMENT);
-        }));
-        page.build();
-        driver.startPage(page);
-    }
-
-    @Before
-    public void setupFormAssessor() {
-        form = driver.newFormTester("test-form", false);
+    protected void buildBaseType(STypeComposite<?> mockType) {
+        dictionary = mockType.getDictionary();
+        attachmentFileField = mockType.addField("fileField", STypeAttachment.class);
     }
 
     @Test
@@ -73,8 +61,8 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
         IMInstanciaAwareModel model = (IMInstanciaAwareModel) uploadField.getModel();
 
         // Verifica se a visibilidade está ok
-        driver.assertVisible(choose.getPageRelativePath());
-        driver.assertInvisible(removeFileButton.getPageRelativePath());
+        tester.assertVisible(choose.getPageRelativePath());
+        tester.assertInvisible(removeFileButton.getPageRelativePath());
 
         // Verifica se não existe arqiovps
         assertThat(model.getMInstancia().isEmptyOfData()).isTrue();
@@ -88,8 +76,8 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
         assertThat(model.getMInstancia().isEmptyOfData()).isFalse();
 
         //Verifica se a visibilidade mudou
-        driver.assertInvisible(choose.getPageRelativePath());
-        driver.assertVisible(removeFileButton.getPageRelativePath());
+        tester.assertInvisible(choose.getPageRelativePath());
+        tester.assertVisible(removeFileButton.getPageRelativePath());
 
         file.deleteOnExit();
     }
@@ -127,7 +115,7 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
                 .stream()
                 .filter(f -> AjaxFormSubmitBehavior.class.isAssignableFrom(f.getClass()))
                 .findFirst().get();
-        driver.executeBehavior(behavior);
+        tester.executeBehavior(behavior);
     }
 
     private File createTempFileAndSetOnField(FileUploadField uploadField) throws IOException {
@@ -139,55 +127,9 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
         outputStream.close();
         final File file = new File(temp);
         String path = uploadField.getPath();
-        form.setFile(path.substring(path.lastIndexOf("test-form:") + "test-form:".length(), path.length()), file, "text/plain");
+        form.setFile(path.substring(path.lastIndexOf("form:") + "form:".length(), path.length()), file, "text/plain");
 
         return file;
-    }
-
-    @Deprecated
-    public void generatesFieldsResposibleForCompositeParts() {
-        driver.assertEnabled(formField(form, "file_name_fileField"));
-        driver.assertEnabled(formField(form, "file_hash_fileField"));
-        driver.assertEnabled(formField(form, "file_size_fileField"));
-        driver.assertEnabled(formField(form, "file_id_fileField"));
-    }
-
-    @Deprecated
-    private String formField(FormTester form, String leafName) {
-        return "test-form:" + findId(form.getForm(), leafName).get();
-    }
-
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public void onSubmissionItPopulatesTheFieldsOfTheAttachmentComposite() {
-        form.setValue(findId(form.getForm(), "file_name_fileField").get(), "abacate.png");
-        form.setValue(findId(form.getForm(), "file_hash_fileField").get(), "1234567890asdfghj");
-        form.setValue(findId(form.getForm(), "file_size_fileField").get(), "1234");
-        form.setValue(findId(form.getForm(), "file_id_fileField").get(), "1020304050");
-        form.submit("save-btn");
-
-        String attachmentName = pacote.attachmentFileField.getNameSimple();
-        List<SISimple> values = (List) page.getCurrentInstance().getValue(attachmentName);
-        assertThat(findValueInList(values, "name")).isEqualTo("abacate.png");
-        assertThat(findValueInList(values, "hashSHA1")).isEqualTo("1234567890asdfghj");
-        assertThat(findValueInList(values, "size")).isEqualTo(1234);
-        assertThat(findValueInList(values, "fileId")).isEqualTo("1020304050");
-    }
-
-    @Deprecated
-    public void componentMustHaveAUploadBehaviourWhichReflectsTheUploadUrl() {
-        Component attachmentComponent = page.get(formField(form, "_attachment_fileField"));
-        List<UploadBehavior> behaviours = attachmentComponent.getBehaviors(UploadBehavior.class);
-        assertThat(behaviours).hasSize(1);
-    }
-
-    @Deprecated
-    private Object findValueInList(List<SISimple> list, String propName) {
-        for (SISimple m : list) {
-            if (m.getName().equals(propName))
-                return m.getValue();
-        }
-        return null;
     }
 
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.util.wicket.modal;
 
 import org.apache.wicket.Component;
@@ -9,7 +14,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.lambda.IConsumer;
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;

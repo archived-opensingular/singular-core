@@ -1,7 +1,7 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.definicao.DefinicaoProcessVersoes;
-import br.net.mirante.singular.definicao.ProcessVersoes;
+import br.net.mirante.singular.flow.test.definicao.DefinicaoProcessVersoes;
+import br.net.mirante.singular.flow.test.definicao.ProcessVersoes;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;

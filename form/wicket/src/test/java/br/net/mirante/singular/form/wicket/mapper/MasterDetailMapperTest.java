@@ -42,7 +42,7 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
         setupPage();
     }
 
-    private void setupPage() {
+    protected void setupPage() {
         driver = new WicketTester(new TestApp());
 
         page = new TestPage();

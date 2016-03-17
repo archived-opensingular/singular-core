@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-form</artifactId>
-        <version>0.6.1-SNAPSHOT</version>
+        <version>0.6.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>form-wicket</artifactId>
@@ -46,12 +46,12 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-core</artifactId>
-            <version>0.6.1-SNAPSHOT</version>
+            <version>0.6.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>wicket-utils</artifactId>
-            <version>0.6.1-SNAPSHOT</version>
+            <version>0.6.2-SNAPSHOT</version>
         </dependency>
 
         <!--  WICKET DEPENDENCIES -->
@@ -74,6 +74,10 @@
                     <groupId>org.ow2.asm</groupId>
                     <artifactId>asm-util</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -93,6 +97,12 @@
             <groupId>org.wicketstuff</groupId>
             <artifactId>wicketstuff-annotation</artifactId>
             <version>${wicket.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

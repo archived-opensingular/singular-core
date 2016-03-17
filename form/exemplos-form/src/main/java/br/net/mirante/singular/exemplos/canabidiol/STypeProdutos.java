@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.exemplos.canabidiol;
 
 import java.util.Optional;
@@ -13,7 +18,7 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IFunction;
 
 @SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeProdutos extends STypeComposite<SIComposite> {

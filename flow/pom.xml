@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>br.net.mirante</groupId>
 		<artifactId>singular</artifactId>
-		<version>0.6.1-SNAPSHOT</version>
+		<version>0.6.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>singular-flow</artifactId>
@@ -16,12 +16,13 @@
 	<modules>
 		<module>core</module>
 		<module>schedule</module>
-		<module>ui-admin</module>
+		<module>bam</module>
 		<module>persistence</module>
 		<module>test</module>
 		<module>rest-client</module>
 		<module>alocpro-mock-client</module>
 		<module>bam-client</module>
+		<module>bam-support</module>
 	</modules>
 
 </project>
