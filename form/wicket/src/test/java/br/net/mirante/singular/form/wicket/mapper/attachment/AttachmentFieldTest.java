@@ -37,7 +37,7 @@ public class AttachmentFieldTest extends AbstractSingularFormTest {
     protected SDictionary dictionary;
     public STypeAttachment attachmentFileField;
 
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
         dictionary = mockType.getDictionary();
         attachmentFileField = mockType.addField("fileField", STypeAttachment.class);
     }

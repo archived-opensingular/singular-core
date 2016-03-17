@@ -22,7 +22,7 @@ public class TableListWithSimpleTypeTest extends AbstractSingularFormTest {
     STypeString                      elementsType;
 
     @Override
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
 
         nomes = mockType.addFieldListOf("nomes", STypeString.class);
         elementsType = nomes.getElementsType();
