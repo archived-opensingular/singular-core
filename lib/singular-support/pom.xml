@@ -7,7 +7,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-lib</artifactId>
-        <version>0.6.1-SNAPSHOT</version>
+        <version>0.6.1</version>
     </parent>
 
     <artifactId>singular-support</artifactId>
@@ -39,13 +39,13 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>wicket-utils</artifactId>
-            <version>0.6.1-SNAPSHOT</version>
+            <version>0.6.1</version>
         </dependency>
 
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-persistence</artifactId>
-            <version>0.6.1-SNAPSHOT</version>
+            <version>0.6.1</version>
         </dependency>
 
         <!-- HIBERNATE -->
