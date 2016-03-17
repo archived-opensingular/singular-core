@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket;
 
 import java.io.Serializable;
 import java.util.*;
 
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import com.google.common.collect.Lists;
@@ -20,7 +26,7 @@ import org.apache.wicket.util.string.Strings;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
@@ -39,6 +45,8 @@ import static com.google.common.collect.Maps.newHashMap;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class WicketBuildContext implements Serializable {
+
+    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
 
     public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {};
 
@@ -61,7 +69,7 @@ public class WicketBuildContext implements Serializable {
     private HashMap<Integer,Component> annotationsTargetBuffer = newHashMap();
     private BSContainer annotationContainer;
 
-    private MView view;
+    private SView view;
 
     public AnnotationMode annotation(){ return annotation; }
     public void annotation(AnnotationMode mode){
@@ -346,7 +354,7 @@ public class WicketBuildContext implements Serializable {
         return viewMode;
     }
 
-    public MView getView() {
+    public SView getView() {
         return view;
     }
 

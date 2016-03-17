@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.util;
 
 import java.util.Iterator;
@@ -82,7 +87,7 @@ public abstract class SQuery<MI extends SInstance> {
     }
     private static Stream<SInstance> _fields(SIComposite composto) {
         return composto.getType().getFields().stream()
-            .map(f -> composto.getCampo(f.getSimpleName()));
+            .map(f -> composto.getField(f.getNameSimple()));
     }
     private static Stream<SInstance> _elements(SIList<SInstance> lista) {
         return lista.stream();
@@ -220,13 +225,13 @@ public abstract class SQuery<MI extends SInstance> {
     }
     public SQuery<MI> addNew(Consumer<SInstance> consumer) {
         map(it -> (SIList<?>) it).each(it -> {
-            SInstance novo = it.addNovo();
+            SInstance novo = it.addNew();
             consumer.accept(novo);
         });
         return this;
     }
     public SQuery<MI> addVal(Object value) {
-        map(it -> (SIList<?>) it).each(it -> it.addValor(value));
+        map(it -> (SIList<?>) it).each(it -> it.addValue(value));
         return this;
     }
     public Object val() {

@@ -18,12 +18,12 @@ public class DateMapperTest extends MapperBaseTest {
 
     @Override
     public void appendPackageFields(STypeComposite<? extends SIComposite> form) {
-        form.addCampoData("data");
+        form.addFieldData("data");
     }
 
     @Override
     public void mockFormValues(SIComposite formInstance) {
-       formInstance.setValor("data", "01/07/1991");
+       formInstance.setValue("data", "01/07/1991");
     }
 
     @Test

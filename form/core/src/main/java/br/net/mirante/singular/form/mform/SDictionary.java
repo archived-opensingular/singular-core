@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
@@ -8,9 +13,9 @@ import br.net.mirante.singular.form.mform.document.SDocument;
 
 public class SDictionary implements ITypeContext {
 
-    private MapaNomeClasseValor<SPackage> pacotes = new MapaNomeClasseValor<>(p -> p.getName());
+    private MapByName<SPackage> packages = new MapByName<>(p -> p.getName());
 
-    private MapaNomeClasseValor<SType<?>> tipos = new MapaNomeClasseValor<>(t -> t.getName());
+    private MapByName<SType<?>> types = new MapByName<>(t -> t.getName());
 
     private final SDocument internalDocument = new SDocument();
 
@@ -28,7 +33,7 @@ public class SDictionary implements ITypeContext {
     }
 
     public Collection<SPackage> getPackages() {
-        return pacotes.getValores();
+        return packages.getValues();
     }
 
     /**
@@ -53,104 +58,104 @@ public class SDictionary implements ITypeContext {
         if (packageClass == null){
             throw new SingularFormException("Classe pacote não pode ser nula");
         }
-        T novo = pacotes.get(packageClass);
+        T novo = packages.get(packageClass);
         if (novo == null) {
-            pacotes.vericaNaoDeveEstarPresente(packageClass);
-            novo = MapaNomeClasseValor.instanciar(packageClass);
-            pacotes.vericaNaoDeveEstarPresente(novo);
+            packages.verifyMustNotBePresent(packageClass);
+            novo = MapByName.newInstance(packageClass);
+            packages.verifyMustNotBePresent(novo);
             carregarInterno(novo);
         }
         return novo;
     }
 
     public PackageBuilder createNewPackage(String nome) {
-        pacotes.vericaNaoDeveEstarPresente(nome);
+        packages.verifyMustNotBePresent(nome);
         SPackage novo = new SPackage(nome);
         novo.setDictionary(this);
-        pacotes.add(novo);
+        packages.add(novo);
         return new PackageBuilder(novo);
     }
 
-    final static MInfoTipo getAnotacaoMFormTipo(Class<?> classeAlvo) {
-        MInfoTipo mFormTipo = classeAlvo.getAnnotation(MInfoTipo.class);
+    final static SInfoType getInfoType(Class<?> classeAlvo) {
+        SInfoType mFormTipo = classeAlvo.getAnnotation(SInfoType.class);
         if (mFormTipo == null) {
-            throw new SingularFormException("O tipo '" + classeAlvo.getName() + " não possui a anotação @" + MInfoTipo.class.getSimpleName()
+            throw new SingularFormException("O tipo '" + classeAlvo.getName() + " não possui a anotação @" + SInfoType.class.getSimpleName()
                     + " em sua definição.");
         }
         return mFormTipo;
     }
 
-    private static Class<? extends SPackage> getAnotacaoPacote(Class<?> classeAlvo) {
-        Class<? extends SPackage> pacote = getAnotacaoMFormTipo(classeAlvo).pacote();
-        if (pacote == null) {
+    private static Class<? extends SPackage> getTypePackage(Class<?> classeAlvo) {
+        Class<? extends SPackage> sPackage = getInfoType(classeAlvo).spackage();
+        if (sPackage == null) {
             throw new SingularFormException(
                     "O tipo '" + classeAlvo.getName() + "' não define o atributo 'pacote' na anotação @"
-                    + MInfoTipo.class.getSimpleName());
+                    + SInfoType.class.getSimpleName());
         }
-        return pacote;
+        return sPackage;
     }
 
     @Override
-    public <T extends SType<?>> T getTypeOptional(Class<T> classeTipo) {
-        T tipoRef = tipos.get(classeTipo);
+    public <T extends SType<?>> T getTypeOptional(Class<T> typeClass) {
+        T tipoRef = types.get(typeClass);
         if (tipoRef == null) {
-            Class<? extends SPackage> classPacote = getAnotacaoPacote(classeTipo);
+            Class<? extends SPackage> classPacote = getTypePackage(typeClass);
             loadPackage(classPacote);
 
-            tipoRef = tipos.get(classeTipo);
+            tipoRef = types.get(typeClass);
         }
         return tipoRef;
     }
 
     public <I extends SInstance, T extends SType<I>> I newInstance(Class<T> classeTipo) {
-        return getType(classeTipo).novaInstancia();
+        return getType(classeTipo).newInstance();
     }
 
-    final MapaNomeClasseValor<SType<?>> getTiposInterno() {
-        return tipos;
+    final MapByName<SType<?>> getTypesInternal() {
+        return types;
     }
 
     @SuppressWarnings("unchecked")
-    final <T extends SType<?>> T registrarTipo(MEscopo escopo, T novo, Class<T> classeDeRegistro) {
-        if (classeDeRegistro != null) {
-            Class<? extends SPackage> classePacoteAnotado = getAnotacaoPacote(classeDeRegistro);
-            SPackage pacoteAnotado = pacotes.getOrInstanciar(classePacoteAnotado);
-            SPackage pacoteDestino = findPacote(escopo);
+    final <T extends SType<?>> T registeType(SScope scope, T newType, Class<T> classForRegister) {
+        if (classForRegister != null) {
+            Class<? extends SPackage> classePacoteAnotado = getTypePackage(classForRegister);
+            SPackage pacoteAnotado = packages.getOrNewInstance(classePacoteAnotado);
+            SPackage pacoteDestino = findPackage(scope);
             if (!pacoteDestino.getName().equals(pacoteAnotado.getName())) {
-                throw new SingularFormException("Tentativa de carregar o tipo '" + novo.getSimpleName() + "' anotado para o pacote '"
+                throw new SingularFormException("Tentativa de carregar o tipo '" + newType.getNameSimple() + "' anotado para o pacote '"
                     + pacoteAnotado.getName() + "' como sendo do pacote '" + pacoteDestino.getName() + "'");
             }
         }
-        novo.setEscopo(escopo);
-        novo.resolverSuperTipo(this);
-        tipos.vericaNaoDeveEstarPresente(novo);
-        ((MEscopoBase) escopo).registrar(novo);
-        tipos.add(novo, (Class<SType<?>>) classeDeRegistro);
-        return novo;
+        newType.setScope(scope);
+        newType.resolvSuperType(this);
+        types.verifyMustNotBePresent(newType);
+        ((SScopeBase) scope).register(newType);
+        types.add(newType, (Class<SType<?>>) classForRegister);
+        return newType;
     }
 
-    private static SPackage findPacote(MEscopo escopo) {
-        while (escopo != null && !(escopo instanceof SPackage)) {
-            escopo = escopo.getEscopoPai();
+    private static SPackage findPackage(SScope scope) {
+        while (scope != null && !(scope instanceof SPackage)) {
+            scope = scope.getParentScope();
         }
-        return (SPackage) escopo;
+        return (SPackage) scope;
     }
 
     @Override
-    public SType<?> getTypeOptional(String pathNomeCompleto) {
-        return tipos.get(pathNomeCompleto);
+    public SType<?> getTypeOptional(String pathFullName) {
+        return types.get(pathFullName);
     }
 
-    private void carregarInterno(SPackage novo) {
-        PackageBuilder pb = new PackageBuilder(novo);
-        novo.setDictionary(this);
-        pacotes.add(novo);
-        novo.carregarDefinicoes(pb);
+    private void carregarInterno(SPackage newPackage) {
+        PackageBuilder pb = new PackageBuilder(newPackage);
+        newPackage.setDictionary(this);
+        packages.add(newPackage);
+        newPackage.carregarDefinicoes(pb);
     }
 
     public void debug() {
         System.out.println("=======================================================");
-        pacotes.forEach(p -> p.debug());
+        packages.forEach(p -> p.debug());
         System.out.println("=======================================================");
     }
 }

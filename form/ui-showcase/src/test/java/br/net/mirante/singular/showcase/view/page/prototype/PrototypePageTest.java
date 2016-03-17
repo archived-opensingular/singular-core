@@ -54,12 +54,12 @@ public class PrototypePageTest {
 
     @Test public void rendersPrototypeOnScreen(){
 
-        SIList campo = (SIList) currentInstance.getCampo(SPackagePrototype.CHILDREN);
+        SIList campo = (SIList) currentInstance.getField(SPackagePrototype.CHILDREN);
         assertThat(campo).isNotNull();
 
-        SIComposite field = (SIComposite) campo.addNovo();
+        SIComposite field = (SIComposite) campo.addNew();
 
-        field.getCampo(SPackagePrototype.NAME).setValue("Abacate");
+        field.getField(SPackagePrototype.NAME).setValue("Abacate");
 
         startPage();
 

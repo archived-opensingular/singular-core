@@ -58,3 +58,4 @@ common/ui-static-resources/.externalToolBuilders/org.eclipse.wst.jsdt.core.javas
 # outros #
 buildall.sh
 _confHomol/
+form/ui-showcase/singulardb.lock.db

@@ -17,15 +17,15 @@ public class TestMFormUtil extends TestCaseForm {
         testarNomeInvalido("@ss");
         testarNomeInvalido("ss.xx");
         testarNomeInvalido("sã1");
-        MFormUtil.checkNomeSimplesValido("long");
-        MFormUtil.checkNomeSimplesValido("int");
-        MFormUtil.checkNomeSimplesValido("ss");
-        MFormUtil.checkNomeSimplesValido("s1");
+        SFormUtil.validateSimpleName("long");
+        SFormUtil.validateSimpleName("int");
+        SFormUtil.validateSimpleName("ss");
+        SFormUtil.validateSimpleName("s1");
     }
 
     private static void testarNomeInvalido(String nome) {
         try {
-            MFormUtil.checkNomeSimplesValido(nome);
+            SFormUtil.validateSimpleName(nome);
             Assert.fail("O nome deveria ser invalido");
         } catch (RuntimeException e) {
             if (!e.getMessage().contains("válido") || !(e.getMessage().charAt(0) == '\'')) {
@@ -39,17 +39,17 @@ public class TestMFormUtil extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        STypeComposite<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
-        STypeInteger integer1 = tipoBloco.addCampoInteger("integer1");
-        STypeString string1 = tipoBloco.addCampoString("string1");
-        STypeComposite<?> tipoSubBloco = tipoBloco.addCampoComposto("subBloco");
-        STypeInteger integer2 = tipoSubBloco.addCampoInteger("integer2");
-        STypeString tipoString2 = pb.createTipo("string2", STypeString.class);
-        STypeLista<STypeString, SIString> tipoListaString2 = tipoBloco.addCampoListaOf("enderecos", tipoString2);
-        STypeString tipoString3 = pb.createTipo("string3", STypeString.class);
-        STypeLista<STypeString, SIString> tipoListaString3 = tipoBloco.addCampoListaOf("nomes", tipoString3);
-        STypeLista<STypeComposite<SIComposite>, SIComposite> listaSubBloco2 = tipoBloco.addCampoListaOfComposto("listaSubBloco2", "coisa");
-        STypeInteger tipoQtd = listaSubBloco2.getTipoElementos().addCampoInteger("qtd");
+        STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
+        STypeInteger integer1 = tipoBloco.addFieldInteger("integer1");
+        STypeString string1 = tipoBloco.addFieldString("string1");
+        STypeComposite<?> tipoSubBloco = tipoBloco.addFieldComposite("subBloco");
+        STypeInteger integer2 = tipoSubBloco.addFieldInteger("integer2");
+        STypeString tipoString2 = pb.createType("string2", STypeString.class);
+        STypeList<STypeString, SIString> tipoListaString2 = tipoBloco.addFieldListOf("enderecos", tipoString2);
+        STypeString tipoString3 = pb.createType("string3", STypeString.class);
+        STypeList<STypeString, SIString> tipoListaString3 = tipoBloco.addFieldListOf("nomes", tipoString3);
+        STypeList<STypeComposite<SIComposite>, SIComposite> listaSubBloco2 = tipoBloco.addFieldListOfComposite("listaSubBloco2", "coisa");
+        STypeInteger tipoQtd = listaSubBloco2.getElementsType().addFieldInteger("qtd");
 
 //        tipoBloco.debug();
 
@@ -76,18 +76,18 @@ public class TestMFormUtil extends TestCaseForm {
         assertTipoResultanteException(tipoBloco, "[0]", "Índice de lista não se aplica a um tipo composto");
 
         assertTipoResultante(tipoBloco, "enderecos", tipoListaString2);
-        assertTipoResultante(tipoBloco, "enderecos", dicionario.getType(STypeLista.class));
+        assertTipoResultante(tipoBloco, "enderecos", dicionario.getType(STypeList.class));
         assertTipoResultante(tipoBloco, "enderecos[1]", tipoString2);
         assertTipoResultante(tipoBloco, "enderecos[4]", dicionario.getType(STypeString.class));
         assertTipoResultante(tipoBloco, "nomes", tipoListaString3);
-        assertTipoResultante(tipoBloco, "nomes", dicionario.getType(STypeLista.class));
+        assertTipoResultante(tipoBloco, "nomes", dicionario.getType(STypeList.class));
         assertTipoResultante(tipoBloco, "nomes[20]", dicionario.getType(STypeString.class));
         assertTipoResultante(tipoBloco, "nomes[20]", dicionario.getType(STypeInteger.class), false);
-        assertTipoResultante(tipoBloco, "nomes[60]", tipoListaString3.getTipoElementos());
+        assertTipoResultante(tipoBloco, "nomes[60]", tipoListaString3.getElementsType());
 
         assertTipoResultante(tipoBloco, "listaSubBloco2", listaSubBloco2);
-        assertTipoResultante(tipoBloco, "listaSubBloco2", dicionario.getType(STypeLista.class));
-        assertTipoResultante(tipoBloco, "listaSubBloco2[1]", listaSubBloco2.getTipoElementos());
+        assertTipoResultante(tipoBloco, "listaSubBloco2", dicionario.getType(STypeList.class));
+        assertTipoResultante(tipoBloco, "listaSubBloco2[1]", listaSubBloco2.getElementsType());
         assertTipoResultante(tipoBloco, "listaSubBloco2[1].qtd", tipoQtd);
         assertTipoResultante(tipoBloco, "listaSubBloco2[1].qtd", dicionario.getType(STypeInteger.class));
 
@@ -102,7 +102,7 @@ public class TestMFormUtil extends TestCaseForm {
     }
 
     private static void assertTipoResultanteException(SType<?> pontoOrigem, String path, String msgExceptionEsperada) {
-        assertException(() -> MFormUtil.resolverTipoCampo(pontoOrigem, new PathReader(path)), msgExceptionEsperada);
+        assertException(() -> SFormUtil.resolveFieldType(pontoOrigem, new PathReader(path)), msgExceptionEsperada);
 
     }
 
@@ -110,7 +110,7 @@ public class TestMFormUtil extends TestCaseForm {
         assertTipoResultante(pontoOrigem, path, tipoEsperado, true);
     }
     private static void assertTipoResultante(SType<?> pontoOrigem, String path, SType<?> tipoEsperado, boolean temQueSerCompativel) {
-        SType<?> tipoResultado = MFormUtil.resolverTipoCampo(pontoOrigem, new PathReader(path));
+        SType<?> tipoResultado = SFormUtil.resolveFieldType(pontoOrigem, new PathReader(path));
         if (tipoResultado.isTypeOf(tipoEsperado)) {
             if (!temQueSerCompativel) {
                 fail("No path '" + path + "' foi encontrado o resultado '" + tipoResultado.getName() + "', o que não deveria ser o caso");

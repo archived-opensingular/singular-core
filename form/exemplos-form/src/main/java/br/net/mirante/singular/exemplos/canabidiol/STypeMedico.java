@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.exemplos.canabidiol;
 
 import br.net.mirante.singular.exemplos.SelectBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -10,10 +15,10 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 
 
-@MInfoTipo(nome = "MTipoMedico", pacote = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeMedico extends STypeComposite<SIComposite> {
 
     @Override
@@ -21,7 +26,7 @@ public class STypeMedico extends STypeComposite<SIComposite> {
         super.onLoadType(tb);
 
         this
-                .addCampoString("nome")
+                .addFieldString("nome")
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)
@@ -30,7 +35,7 @@ public class STypeMedico extends STypeComposite<SIComposite> {
                 .colPreference(6);
 
         this
-                .addCampoString("CRM")
+                .addFieldString("CRM")
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)
@@ -38,7 +43,7 @@ public class STypeMedico extends STypeComposite<SIComposite> {
                 .as(AtrBootstrap::new)
                 .colPreference(3);
 
-        STypeComposite<?> estado = this.addCampoComposto("UFCRM");
+        STypeComposite<?> estado = this.addFieldComposite("UFCRM");
         estado
                 .as(AtrCore::new)
                 .obrigatorio()
@@ -46,24 +51,24 @@ public class STypeMedico extends STypeComposite<SIComposite> {
                 .label("UF do CRM")
                 .as(AtrBootstrap::new)
                 .colPreference(3);
-        estado.addCampoString("sigla");
-        STypeString nomeUF = estado.addCampoString("nome");
+        estado.addFieldString("sigla");
+        STypeString nomeUF = estado.addFieldString("nome");
         estado
-                .withSelectionFromProvider(nomeUF, (MOptionsProvider) inst -> SelectBuilder.buildEstados(estado));
+                .withSelectionFromProvider(nomeUF, (SOptionsProvider) inst -> SelectBuilder.buildEstados(estado));
 
-        this.addCampoCPF("cpf")
+        this.addFieldCPF("cpf")
                 .as(AtrBasic::new)
                 .label("CPF")
                 .as(AtrBootstrap::new)
                 .colPreference(3);
 
 
-        this.addCampo("endereco", STypeEndereco.class)
+        this.addField("endereco", STypeEndereco.class)
                 .as(AtrBasic::new)
                 .label("Endereço")
                 .as(AtrAnnotation::new).setAnnotated();
 
-        STypeContato tipoTelefone = this.addCampo("contato", STypeContato.class);
+        STypeContato tipoTelefone = this.addField("contato", STypeContato.class);
         tipoTelefone
                 .telefoneFixo
                 .as(AtrCore::new)

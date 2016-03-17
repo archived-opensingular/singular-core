@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +46,7 @@ public class BooleanMapper implements IWicketComponentMapper {
 
     private void buildForEdition(WicketBuildContext ctx, IModel<? extends SInstance> model, BSControls formGroup,
                                  AtributoModel<String> labelModel) {
-        final CheckBox input = new CheckBox(model.getObject().getNome(), new MInstanciaValorModel<>(model));
+        final CheckBox input = new CheckBox(model.getObject().getName(), new MInstanciaValorModel<>(model));
         formGroup.appendCheckbox(input, buildLabel("_", labelModel));
         input.add(DisabledClassBehavior.getInstance());
         formGroup.appendFeedback(formGroup, new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING));
@@ -60,7 +65,7 @@ public class BooleanMapper implements IWicketComponentMapper {
         }
 
         String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
-        String idSuffix = (mi != null) ? mi.getNome() : StringUtils.EMPTY;
+        String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
         TemplatePanel tp = formGroup.newTemplateTag(t -> ""
             + "<div wicket:id='" + "_well" + idSuffix + "'>"
             + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "

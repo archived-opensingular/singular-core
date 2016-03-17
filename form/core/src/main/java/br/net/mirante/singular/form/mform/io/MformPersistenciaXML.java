@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.io;
 
 import java.util.HashSet;
@@ -43,7 +48,7 @@ public class MformPersistenciaXML {
      * conteúdo persistido no XML informado.
      */
     public static <T extends SInstance> T fromXML(SType<T> tipo, String xmlString) {
-        return fromXMLInterno(tipo.novaInstancia(), parseXml(xmlString));
+        return fromXMLInterno(tipo.newInstance(), parseXml(xmlString));
     }
 
     /**
@@ -51,7 +56,7 @@ public class MformPersistenciaXML {
      * conteúdo persistido no XML informado.
      */
     public static <T extends SInstance> T fromXML(SType<T> tipo, MElement xml) {
-        return fromXMLInterno(tipo.novaInstancia(), xml);
+        return fromXMLInterno(tipo.newInstance(), xml);
     }
 
     /**
@@ -113,20 +118,20 @@ public class MformPersistenciaXML {
         if (instancia instanceof SISimple) {
             SISimple<?> instanciaS = (SISimple<?>) instancia;
             STypeSimple<?, ?> tipos = instanciaS.getType();
-            instancia.setValue(tipos.fromStringPersistencia(xml.getTextContent()));
+            instancia.setValue(tipos.fromStringPersistence(xml.getTextContent()));
         } else if (instancia instanceof SIComposite) {
             SIComposite instc = (SIComposite) instancia;
             for (SType<?> campo : instc.getType().getFields()) {
-                MElement xmlFilho = xml.getElement(campo.getSimpleName());
+                MElement xmlFilho = xml.getElement(campo.getNameSimple());
                 if (xmlFilho != null) {
-                    fromXML(instc.getCampo(campo.getSimpleName()), xmlFilho);
+                    fromXML(instc.getField(campo.getNameSimple()), xmlFilho);
                 }
             }
         } else if (instancia instanceof SIList) {
             SIList<?> lista = (SIList<?>) instancia;
-            String nomeFilhos = lista.getType().getTipoElementos().getSimpleName();
+            String nomeFilhos = lista.getType().getElementsType().getNameSimple();
             for (MElement xmlFilho : xml.getElements(nomeFilhos)) {
-                SInstance filho = lista.addNovo();
+                SInstance filho = lista.addNew();
                 fromXML(filho, xmlFilho);
             }
         } else {
@@ -142,7 +147,7 @@ public class MformPersistenciaXML {
                 if (at.getName().equals(ATRIBUTO_ID)) {
                     instancia.setId(Integer.parseInt(at.getValue()));
                 } else if (!at.getName().equals(ATRIBUTO_LAST_ID)) {
-                    instancia.setValorAtributo(at.getName(), at.getValue());
+                    instancia.setAttributeValue(at.getName(), at.getValue());
                 }
             }
         }
@@ -256,7 +261,7 @@ public class MformPersistenciaXML {
     private static MElement toXML(ConfXMLGeneration conf, SInstance instancia) {
         if (instancia instanceof SISimple<?>) {
             SISimple<?> iSimples = (SISimple<?>) instancia;
-            String sPersistencia = iSimples.toStringPersistencia();
+            String sPersistencia = iSimples.toStringPersistence();
             if (sPersistencia != null) {
                 return conf.createMElementComValor(instancia, sPersistencia);
             } else if (conf.isPersistirNull()) {
@@ -265,7 +270,7 @@ public class MformPersistenciaXML {
             return null;
         } else if (instancia instanceof SIComposite) {
             MElement registro = null;
-            for (SInstance filho : ((SIComposite) instancia).getCampos()) {
+            for (SInstance filho : ((SIComposite) instancia).getFields()) {
                 MElement xmlFilho = toXML(conf, filho);
                 if (xmlFilho != null) {
                     if (registro == null) {
@@ -311,11 +316,11 @@ public class MformPersistenciaXML {
         }
 
         public MElement createMElement(SInstance instancia) {
-            return complement(instancia, xmlDocument.createMElement(instancia.getType().getSimpleName()));
+            return complement(instancia, xmlDocument.createMElement(instancia.getType().getNameSimple()));
         }
 
         public MElement createMElementComValor(SInstance instancia, String valorPersistencia) {
-            return complement(instancia, xmlDocument.createMElementComValor(instancia.getType().getSimpleName(), valorPersistencia));
+            return complement(instancia, xmlDocument.createMElementComValor(instancia.getType().getNameSimple(), valorPersistencia));
         }
 
         private MElement complement(SInstance instancia, MElement element) {
@@ -323,9 +328,9 @@ public class MformPersistenciaXML {
                 element.setAttribute(ATRIBUTO_ID, instancia.getId().toString());
             }
             if (builder.isPersistAttributes()) {
-                for (Entry<String, SInstance> atr : instancia.getAtributos().entrySet()) {
+                for (Entry<String, SInstance> atr : instancia.getAttributes().entrySet()) {
                     if (atr.getValue() instanceof SISimple) {
-                        String sPersistencia = ((SISimple<?>) atr.getValue()).toStringPersistencia();
+                        String sPersistencia = ((SISimple<?>) atr.getValue()).toStringPersistence();
                         element.setAttribute(atr.getKey(), sPersistencia);
                     } else {
                         throw new SingularFormException("Não implementada a persitência de atributos compostos: " + atr.getKey(),

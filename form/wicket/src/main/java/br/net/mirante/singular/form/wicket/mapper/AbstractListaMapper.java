@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper;
 
 import java.util.ArrayList;
@@ -15,7 +20,7 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.form.wicket.repeater.PathInstanceItemReuseStrategy;
@@ -124,7 +129,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             final int index = item.getIndex();
             SIList<SInstance> lista = modelLista.getObject();
-            lista.addNovoAt(index);
+            lista.addNewAt(index);
             List<SInstanceItemListaModel<?>> itemModels = new ArrayList<>();
             for (Component child : elementsView) {
                 IModel<?> childModel = child.getDefaultModel();
@@ -185,7 +190,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
             if (lista.getType().getMaximumSize() != null && lista.getType().getMaximumSize() == lista.size()) {
                 target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
             } else {
-                lista.addNovo();
+                lista.addNew();
                 target.add(form);
                 target.focusComponent(this);
             }
@@ -194,11 +199,11 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     }
 
     protected void addMinimumSize(SType<?> currentType, SIList<?> list) {
-        if (currentType instanceof STypeLista && list.isEmpty()) {
-            final STypeLista tl = (STypeLista) currentType;
+        if (currentType instanceof STypeList && list.isEmpty()) {
+            final STypeList tl = (STypeList) currentType;
             if (tl.getMinimumSize() != null) {
                 for (int i = 0; i < tl.getMinimumSize(); i++) {
-                    list.addNovo();
+                    list.addNew();
                 }
             }
         }

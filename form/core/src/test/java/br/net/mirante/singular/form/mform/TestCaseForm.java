@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 public abstract class TestCaseForm extends TestCase {
 
     protected static void testCaminho(SInstance registro, String path, String caminhoCompletoEsperado) {
-        SInstance esperada = (path == null) ? registro : ((ICompositeInstance) registro).getCampo(path);
+        SInstance esperada = (path == null) ? registro : ((ICompositeInstance) registro).getField(path);
         assertNotNull(esperada);
         String caminho = esperada.getPathFromRoot();
         assertEquals(caminhoCompletoEsperado, caminho);
@@ -16,16 +16,16 @@ public abstract class TestCaseForm extends TestCase {
         String esperadoFull;
         SInstance raiz = registro.getDocument().getRoot();
         if (caminho == null) {
-            esperadoFull = raiz.getNome();
+            esperadoFull = raiz.getName();
         } else if (raiz instanceof SIList) {
-            esperadoFull = raiz.getNome() + caminho;
+            esperadoFull = raiz.getName() + caminho;
         } else {
-            esperadoFull = raiz.getNome() + "." + caminho;
+            esperadoFull = raiz.getName() + "." + caminho;
         }
         assertEquals(esperadoFull, esperada.getPathFull());
 
         if (caminho != null) {
-            assertEquals(esperada, ((ICompositeInstance) registro.getDocument().getRoot()).getCampo(caminho));
+            assertEquals(esperada, ((ICompositeInstance) registro.getDocument().getRoot()).getField(caminho));
         }
     }
 
@@ -36,8 +36,8 @@ public abstract class TestCaseForm extends TestCase {
     }
 
     protected static <R extends SInstance & ICompositeInstance> void testAtribuicao(R registro, String path, Object valor) {
-        registro.setValor(path, valor);
-        assertEquals(valor, registro.getValor(path));
+        registro.setValue(path, valor);
+        assertEquals(valor, registro.getValue(path));
     }
 
     protected static void assertEqualsList(Object valor, Object... valoresEsperados) {

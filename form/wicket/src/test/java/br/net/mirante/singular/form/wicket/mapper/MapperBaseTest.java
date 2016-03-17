@@ -26,7 +26,7 @@ public abstract class MapperBaseTest extends AbstractWicketFormTest {
     public void setUp() {
         wicketTester = new WicketTester(new TestApp());
         PackageBuilder pacoteBuilder = dicionario.createNewPackage("MonetarioMapperPackage");
-        form = pacoteBuilder.createTipoComposto("form");
+        form = pacoteBuilder.createCompositeType("form");
         appendPackageFields(form);
     }
 

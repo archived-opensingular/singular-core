@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.basic.view;
 
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
-import br.net.mirante.singular.form.mform.options.MSelectionableType;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SSelectionableType;
 
 /**
  * Decide qual a view mas adequada para uma seleção múltipla de tipos simples
@@ -15,14 +20,14 @@ import br.net.mirante.singular.form.mform.options.MSelectionableType;
 class ViewRuleTypeListOfTypeSimpleSelectionOf extends ViewRule {
 
     @Override @SuppressWarnings("rawtypes")
-    public MView apply(SInstance listInstance) {
+    public SView apply(SInstance listInstance) {
         if (listInstance instanceof SIList) {
             SIList<?> listType = (SIList<?>) listInstance;
-            SType<?> elementType = listType.getTipoElementos();
-            if (elementType instanceof MSelectionableType) {
-                MSelectionableType type = (MSelectionableType) elementType;
-                if (type.getProviderOpcoes() != null) {
-                    MOptionsProvider provider = type.getProviderOpcoes();
+            SType<?> elementType = listType.getElementsType();
+            if (elementType instanceof SSelectionableType) {
+                SSelectionableType type = (SSelectionableType) elementType;
+                if (type.getOptionsProvider() != null) {
+                    SOptionsProvider provider = type.getOptionsProvider();
                     return decideView(listInstance, provider);
                 }
             }
@@ -30,14 +35,14 @@ class ViewRuleTypeListOfTypeSimpleSelectionOf extends ViewRule {
         return null;
     }
     
-    private MView decideView(SInstance instance, MOptionsProvider provider) {
+    private SView decideView(SInstance instance, SOptionsProvider provider) {
         int size = provider.listAvailableOptions(instance).size();
         if (size <= 3) {
-            return newInstance(MSelecaoMultiplaPorCheckView.class);
+            return newInstance(SMultiSelectionByCheckboxView.class);
         } else if (size < 20) {
-            return newInstance(MSelecaoMultiplaPorSelectView.class);
+            return newInstance(SMultiSelectionBySelectView.class);
         }
-        return newInstance(MSelecaoMultiplaPorPicklistView.class);
+        return newInstance(SMultiSelectionByPicklistView.class);
     }
 
 }

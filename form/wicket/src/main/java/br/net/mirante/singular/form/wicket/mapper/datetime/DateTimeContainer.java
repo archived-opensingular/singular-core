@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper.datetime;
 
 import java.util.Date;
@@ -11,7 +16,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.TextField;
 
-import br.net.mirante.singular.form.mform.basic.view.MDateTimerView;
+import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
@@ -23,9 +28,9 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 public class DateTimeContainer extends BSContainer<DateTimeContainer> {
 
     private final IMInstanciaAwareModel<Date> model;
-    private final MDateTimerView dateTimerView;
+    private final SViewDateTime dateTimerView;
 
-    public DateTimeContainer(String id, IMInstanciaAwareModel<Date> model, MDateTimerView dateTimerView) {
+    public DateTimeContainer(String id, IMInstanciaAwareModel<Date> model, SViewDateTime dateTimerView) {
         super(id);
         this.model = model;
         this.dateTimerView = dateTimerView;

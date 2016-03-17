@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
-import br.net.mirante.singular.form.mform.options.MOptionsConfig;
+import br.net.mirante.singular.form.mform.options.SOptionsConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
@@ -12,7 +17,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
@@ -22,7 +27,7 @@ import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 public class SelectMapper implements ControlsFieldComponentMapper {
 
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer,
+    public Component appendInput(SView view, BSContainer bodyContainer,
                                  BSControls formGroup, IModel<? extends SInstance> model,
                                  IModel<String> labelModel) {
         return formGroupAppender(formGroup, model, getOpcoesValue(model), view);
@@ -36,7 +41,7 @@ public class SelectMapper implements ControlsFieldComponentMapper {
     }
 
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model,
-                                          final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
+                                          final IModel<? extends List<SelectOption>> opcoesValue, SView view) {
         final AbstractSingleSelectChoice<SelectOption> choices = retrieveChoices(model, opcoesValue, view);
         formGroup.appendSelect(choices.setNullValid(true), isMultiple(), isBSSelect(model));
         return choices;
@@ -62,8 +67,8 @@ public class SelectMapper implements ControlsFieldComponentMapper {
     @SuppressWarnings({"unchecked"})
     protected AbstractSingleSelectChoice<SelectOption> retrieveChoices(
             IModel<? extends SInstance> model,
-            final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
-        String id = model.getObject().getNome();
+            final IModel<? extends List<SelectOption>> opcoesValue, SView view) {
+        String id = model.getObject().getName();
         return new DropDownChoice<>(id, new MSelectionInstanceModel<>(model), opcoesValue, rendererer());
     }
 

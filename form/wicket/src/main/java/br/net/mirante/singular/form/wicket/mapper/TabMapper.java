@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -15,7 +20,7 @@ import com.google.common.base.Optional;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.MTabView;
+import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
@@ -29,7 +34,7 @@ public class TabMapper extends DefaultCompostoMapper {
 
         final SIComposite instance = (SIComposite) ctx.getModel().getObject();
         final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) instance.getType();
-        MTabView tabView = (MTabView) tComposto.getView();
+        SViewTab tabView = (SViewTab) tComposto.getView();
 
         BSPanelGrid panel = new BSPanelGrid("panel") {
             @Override
@@ -45,18 +50,18 @@ public class TabMapper extends DefaultCompostoMapper {
             }
         };
 
-        for (MTabView.MTab tab : tabView.getTabs()) {
-            defineTabIconCss(ctx, instance, tab.getNomesTipo());
-            BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitulo(), tab.getNomesTipo(), (IModel<SInstance>) ctx.getModel());
+        for (SViewTab.STab tab : tabView.getTabs()) {
+            defineTabIconCss(ctx, instance, tab.getTypesName());
+            BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesName(), (IModel<SInstance>) ctx.getModel());
             t.iconClass((Function<IModel<SInstance>, String> & Serializable)
                     (m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t.getSubtree()) );
         }
 
         ctx.getContainer().newTag("div", panel);
 
-        MTabView.MTab tabDefault = tabView.getTabDefault();
+        SViewTab.STab tabDefault = tabView.getDefaultTab();
 
-        renderTab(tabDefault.getNomesTipo(), panel, ctx);
+        renderTab(tabDefault.getTypesName(), panel, ctx);
 
     }
 
@@ -89,7 +94,7 @@ public class TabMapper extends DefaultCompostoMapper {
         }
 
         private void checkSubtree(String name) {
-            SInstance field = instance.getCampo(name);
+            SInstance field = instance.getField(name);
             if (field != null) {
                 AtrAnnotation annotatedField = field.as(AtrAnnotation::new);
                 if (annotatedField.hasAnnotationOnTree()) {

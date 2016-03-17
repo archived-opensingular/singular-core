@@ -1,12 +1,17 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.exemplos.canabidiol;
 
 import org.apache.wicket.util.string.Strings;
 
-import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
-@MInfoTipo(nome = "MTipoDocumentoSelect", pacote = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeDocumentoSelect extends STypeString {
 
     @Override

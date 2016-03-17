@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.input.core;
 
 import br.net.mirante.singular.form.mform.PackageBuilder;
@@ -10,8 +15,8 @@ public class CaseInputCoreDatePackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
-        tipoMyForm.addCampoData("inicio")
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
+        tipoMyForm.addFieldData("inicio")
                   .as(AtrBasic.class).label("Data Início")
                   .as(AtrBootstrap::new).colPreference(2);
     }

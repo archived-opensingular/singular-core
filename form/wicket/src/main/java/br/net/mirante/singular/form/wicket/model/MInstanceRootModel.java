@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.model;
 
 import java.util.Collections;
@@ -5,9 +10,9 @@ import java.util.List;
 import java.util.Objects;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.event.IMInstanceListener;
-import br.net.mirante.singular.form.mform.event.MInstanceEventType;
-import br.net.mirante.singular.form.mform.event.MInstanceListeners;
+import br.net.mirante.singular.form.mform.event.ISInstanceListener;
+import br.net.mirante.singular.form.mform.event.SInstanceEventType;
+import br.net.mirante.singular.form.mform.event.SInstanceListeners;
 import br.net.mirante.singular.form.mform.event.SInstanceEvent;
 import br.net.mirante.singular.form.mform.io.InstanceSerializableRef;
 
@@ -25,7 +30,7 @@ public class MInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
 
     private final InstanceSerializableRef<I> instanceRef;
 
-    private transient IMInstanceListener.EventCollector instanceListener;
+    private transient ISInstanceListener.EventCollector instanceListener;
 
     public MInstanceRootModel() {
         instanceRef = new InstanceSerializableRef<I>();
@@ -38,11 +43,11 @@ public class MInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
     @Override
     public I getObject() {
         if (instanceRef.get() != null && this.instanceListener == null) {
-            this.instanceListener = new IMInstanceListener.EventCollector();
-            MInstanceListeners listeners = instanceRef.get().getDocument().getInstanceListeners();
-            listeners.add(MInstanceEventType.VALUE_CHANGED, this.instanceListener);
-            listeners.add(MInstanceEventType.LIST_ELEMENT_ADDED, this.instanceListener);
-            listeners.add(MInstanceEventType.LIST_ELEMENT_REMOVED, this.instanceListener);
+            this.instanceListener = new ISInstanceListener.EventCollector();
+            SInstanceListeners listeners = instanceRef.get().getDocument().getInstanceListeners();
+            listeners.add(SInstanceEventType.VALUE_CHANGED, this.instanceListener);
+            listeners.add(SInstanceEventType.LIST_ELEMENT_ADDED, this.instanceListener);
+            listeners.add(SInstanceEventType.LIST_ELEMENT_REMOVED, this.instanceListener);
         }
         return instanceRef.get();
     }
@@ -61,7 +66,7 @@ public class MInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
 
     protected void detachListener() {
         if (instanceRef.get() != null && this.instanceListener != null) {
-            instanceRef.get().getDocument().getInstanceListeners().remove(MInstanceEventType.values(), this.instanceListener);
+            instanceRef.get().getDocument().getInstanceListeners().remove(SInstanceEventType.values(), this.instanceListener);
         }
         this.instanceListener = null;
     }

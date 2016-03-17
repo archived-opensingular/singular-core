@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform;
 
 import java.util.Arrays;
@@ -21,12 +26,12 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
     @Override
     public Object getValue() {
-        return getCampos();
+        return getFields();
     }
 
     @Override
     public void clearInstance() {
-        getCampos().forEach(SInstance::clearInstance);
+        getFields().forEach(SInstance::clearInstance);
     }
 
     @Override
@@ -40,7 +45,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      *
      * @return instancias dos campos
      */
-    public Collection<SInstance> getCampos() {
+    public Collection<SInstance> getFields() {
         return (fields == null) ? Collections.emptyList() : fields.getFields();
     }
 
@@ -51,13 +56,13 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      */
     public Collection<SInstance> getAllFields() {
         for (SType<?> field : getType().getFields())
-            getCampo(field.getSimpleName());
-        return getCampos();
+            getField(field.getNameSimple());
+        return getFields();
     }
 
     @Override
     public Collection<SInstance> getChildren() {
-        return getCampos();
+        return getFields();
     }
 
     @Override
@@ -71,13 +76,13 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    public SInstance getCampo(String path) {
-        return getCampo(new PathReader(path));
+    public SInstance getField(String path) {
+        return getField(new PathReader(path));
     }
 
     @Override
-    final SInstance getCampoLocal(PathReader leitor) {
-        int fieldIndex = findIndexTrecho(leitor);
+    final SInstance getFieldLocal(PathReader reader) {
+        int fieldIndex = findFieldIndex(reader);
         SInstance instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
         if (instancia == null) {
             instancia = createField(fieldIndex);
@@ -86,12 +91,12 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    final SInstance getCampoLocalSemCriar(PathReader leitor) {
-        int fieldIndex = findIndexTrecho(leitor);
+    final SInstance getFieldLocalWithoutCreating(PathReader reader) {
+        int fieldIndex = findFieldIndex(reader);
         return (fields == null) ? null : fields.getByIndex(fieldIndex);
     }
 
-    public <T extends SInstance> T getFilho(SType<T> tipoPai) {
+    public <T extends SInstance> T getChildren(SType<T> tipoPai) {
         throw new RuntimeException("Método não implementado");
     }
 
@@ -107,8 +112,8 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    public final void setValor(String pathCampo, Object valor) {
-        setValor(new PathReader(pathCampo), valor);
+    public final void setValue(String pathCampo, Object valor) {
+        setValue(new PathReader(pathCampo), valor);
     }
 
     /**
@@ -121,19 +126,19 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      * @param campo Referencia ao mtipo filho do composto
      * @param valor Valor para o mtipo referenciado.
      */
-    public final void setValor(SType<?> campo, Object valor) {
-        setValor(new PathReader(campo.getSimpleName()), valor);
+    public final void setValue(SType<?> campo, Object valor) {
+        setValue(new PathReader(campo.getNameSimple()), valor);
     }
 
     /**
      * Obtém o valor de um campo a partir do seu tipo
      * O campo deve ser filho imediato desse MTipo
      *
-     * @param campo Tipo do campo filho
+     * @param field Tipo do campo filho
      * @return
      */
-    public Object getValor(SType<?> campo) {
-        return getValor(campo.getSimpleName());
+    public Object getValue(SType<?> field) {
+        return getValue(field.getNameSimple());
     }
 
     private FieldMapOfRecordType getFieldsDef() {
@@ -141,27 +146,27 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    void setValor(PathReader leitorPath, Object valor) {
-        int fieldIndex = findIndexTrecho(leitorPath);
+    void setValue(PathReader pathReader, Object value) {
+        int fieldIndex = findFieldIndex(pathReader);
         SInstance instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
         if (instancia == null) {
-            if (valor == null) {
+            if (value == null) {
                 return;
             }
             instancia = createField(fieldIndex);
         }
-        if (leitorPath.isUltimo()) {
-            if (valor == null) {
+        if (pathReader.isLast()) {
+            if (value == null) {
                 SInstance child = fields.getByIndex(fieldIndex);
                 if (child != null) {
                     child.internalOnRemove();
                     fields.remove(fieldIndex);
                 }
             } else {
-                instancia.setValue(valor);
+                instancia.setValue(value);
             }
         } else {
-            instancia.setValor(leitorPath.proximo(), valor);
+            instancia.setValue(pathReader.next(), value);
         }
     }
 
@@ -177,32 +182,32 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         return instancia;
     }
 
-    private int findIndexTrecho(PathReader leitor) {
-        if (leitor.isIndice()) {
-            throw new SingularFormException(leitor.getTextoErro(this, "Não é uma lista"));
+    private int findFieldIndex(PathReader pathReader) {
+        if (pathReader.isIndex()) {
+            throw new SingularFormException(pathReader.getErroMsg(this, "Não é uma lista"));
         }
-        int fieldIndex = getFieldsDef().findIndex(leitor.getTrecho());
+        int fieldIndex = getFieldsDef().findIndex(pathReader.getTrecho());
         if (fieldIndex == -1) {
-            throw new SingularFormException(leitor.getTextoErro(this, "Não é um campo definido"));
+            throw new SingularFormException(pathReader.getErroMsg(this, "Não é um campo definido"));
         }
         return fieldIndex;
     }
 
     @Override
-    public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
-        return getValor(new PathReader(pathCampo), classeDestino);
+    public final <T extends Object> T getValue(String fieldPath, Class<T> resultClass) {
+        return getValue(new PathReader(fieldPath), resultClass);
     }
 
     @Override
-    final <T extends Object> T getValorWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
+    final <T extends Object> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
         if (fields != null) {
-            SInstance instancia = fields.getByIndex(findIndexTrecho(leitor));
+            SInstance instancia = fields.getByIndex(findFieldIndex(pathReader));
             if (instancia != null) {
-                return instancia.getValorWithDefaultIfNull(leitor.proximo(), classeDestino);
+                return instancia.getValueWithDefaultIfNull(pathReader.next(), resultClass);
             }
         }
-        SType<?> tipo = MFormUtil.resolverTipoCampo(getType(), leitor);
-        return tipo.getValorAtributoOrDefaultValueIfNull(classeDestino);
+        SType<?> tipo = SFormUtil.resolveFieldType(getType(), pathReader);
+        return tipo.getAttributeValueOrDefaultValueIfNull(resultClass);
     }
 
     @Override

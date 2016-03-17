@@ -47,7 +47,7 @@ public class TestPage extends WebPage {
     private SIComposite currentInstance;
     private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().createContext();
     private ViewMode viewMode;
-    private boolean annotationEnabled =false;
+    private boolean annotationEnabled = false;
 
     public TestPage() {
         setAsEditView();

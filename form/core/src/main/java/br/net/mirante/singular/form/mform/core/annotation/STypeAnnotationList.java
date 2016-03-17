@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.core.annotation;
 
-import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.SInfoType;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 
@@ -11,14 +16,14 @@ import br.net.mirante.singular.form.mform.core.SPackageCore;
  *
  * @author Fabricio Buzeto
  */
-@MInfoTipo(nome = STypeAnnotationList.NAME, pacote = SPackageCore.class)
-public class STypeAnnotationList extends STypeLista {
+@SInfoType(name = STypeAnnotationList.NAME, spackage = SPackageCore.class)
+public class STypeAnnotationList extends STypeList {
 
     public static final String NAME = "AnnotationList";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
-        setTipoElementos(tb.getTipo().getDictionary().getType(STypeAnnotation.class));
+        setElementsType(tb.getType().getDictionary().getType(STypeAnnotation.class));
     }
 }

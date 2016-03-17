@@ -11,42 +11,42 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 
 public class FormFreemarkerUtilTest {
 
     private STypeComposite<? extends SIComposite> curriculoType;
     private STypeComposite<SIComposite> dadosType;
-    private STypeLista<STypeComposite<SIComposite>, SIComposite> certificadosType;
+    private STypeList<STypeComposite<SIComposite>, SIComposite> certificadosType;
 
     @Before public void setup() {
         SDictionary dict = SDictionary.create();
         PackageBuilder pkt = dict.createNewPackage("pkt");
-        curriculoType = pkt.createTipoComposto("curriculo");
+        curriculoType = pkt.createCompositeType("curriculo");
 
-        dadosType = curriculoType.addCampoComposto("dados");
-        dadosType.addCampoString("nome");
-        dadosType.addCampoInteger("idade");
-        dadosType.addCampoString("time");
+        dadosType = curriculoType.addFieldComposite("dados");
+        dadosType.addFieldString("nome");
+        dadosType.addFieldInteger("idade");
+        dadosType.addFieldString("time");
 
-        certificadosType = curriculoType.addCampoListaOfComposto("certificados", "certificado");
-        STypeComposite<SIComposite> certificadoType = certificadosType.getTipoElementos();
-        certificadoType.addCampoString("nome");
-        certificadoType.addCampoData("data");
+        certificadosType = curriculoType.addFieldListOfComposite("certificados", "certificado");
+        STypeComposite<SIComposite> certificadoType = certificadosType.getElementsType();
+        certificadoType.addFieldString("nome");
+        certificadoType.addFieldData("data");
     }
 
     @Test
     public void compositeSimpleTest() {
-        SIComposite curriculo = curriculoType.novaInstancia();
-        curriculo.setValor("dados.nome", "Paulo Silva");
-        curriculo.setValor("dados.idade", 20);
+        SIComposite curriculo = curriculoType.newInstance();
+        curriculo.setValue("dados.nome", "Paulo Silva");
+        curriculo.setValue("dados.idade", 20);
 
-        SIComposite certificado = (SIComposite) curriculo.getFieldList("certificados").addNovo();
-        certificado.setValor("nome", "Java");
-        certificado.setValor("data", new Date(2016 - 1900, 3 - 1, 10));
+        SIComposite certificado = (SIComposite) curriculo.getFieldList("certificados").addNew();
+        certificado.setValue("nome", "Java");
+        certificado.setValue("data", new Date(2016 - 1900, 3 - 1, 10));
 
-        certificado = (SIComposite) curriculo.getFieldList("certificados").addNovo();
-        certificado.setValor("nome", "Oracle");
+        certificado = (SIComposite) curriculo.getFieldList("certificados").addNew();
+        certificado.setValue("nome", "Oracle");
 
         SIComposite dados = curriculo.getFieldRecord("dados");
 

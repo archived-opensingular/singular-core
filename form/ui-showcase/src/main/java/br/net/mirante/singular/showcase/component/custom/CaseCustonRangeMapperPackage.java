@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.custom;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -13,11 +18,11 @@ public class CaseCustonRangeMapperPackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
-        final STypeComposite<?> testForm = pb.createTipoComposto("testForm");
+        final STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        final STypeComposite<? extends SIComposite> faixaIdade = testForm.addCampoComposto("faixaIdade");
-        final STypeInteger valorInicial = faixaIdade.addCampoInteger("de");
-        final STypeInteger valorFinal = faixaIdade.addCampoInteger("a");
+        final STypeComposite<? extends SIComposite> faixaIdade = testForm.addFieldComposite("faixaIdade");
+        final STypeInteger valorInicial = faixaIdade.addFieldInteger("de");
+        final STypeInteger valorFinal = faixaIdade.addFieldInteger("a");
 
         faixaIdade.as(AtrBasic::new).label("Faixa de Idade");
         //@destacar

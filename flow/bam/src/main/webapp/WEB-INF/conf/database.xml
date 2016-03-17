@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    <!-- DATA SOURCE CONFIGURATION -->
+    <bean name="dataSourceSingular" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${database.driverClassName}"/>
+        <property name="url" value="${database.url}"/>
+        <property name="username" value="${database.username}"/>
+        <property name="password" value="${database.password}"/>
+    </bean>
+
+    <!-- HIBERNATE CONFIGURATION -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSourceSingular"/>
+        <!-- Incluir o pacote quando tiver um -->
+        <!--<property name="packagesToScan" value="br.com.montrealonline.persistence.entidade" />-->
+		<property name="annotatedClasses">
+			<list>
+				<value>br.net.mirante.singular.persistence.entity.Actor</value>
+				<value>br.net.mirante.singular.persistence.entity.CategoryEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.Dashboard</value>
+				<value>br.net.mirante.singular.persistence.entity.ExecutionVariableEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.Portlet</value>
+				<value>br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.ProcessGroupEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.ProcessInstanceEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.ProcessVersionEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.RoleDefinitionEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.RoleInstanceEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.TaskDefinitionEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.TaskHistoricTypeEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.TaskInstanceEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.TaskTransitionVersionEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.TaskVersionEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.VariableInstanceEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.VariableTypeInstance</value>
+			</list>
+		</property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">br.net.mirante.singular.bam.persistence.hibernate.SingularSQL2005Dialect</prop>
+                <prop key="hibernate.connection.isolation">2</prop>
+                <prop key="hibernate.jdbc.batch_size">30</prop>
+                <prop key="hibernate.show_sql">${database.show_sql}</prop>
+                <prop key="hibernate.format_sql">${database.show_sql}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- HIBERNATE TRANSACTION CONFIGURATION -->
+    <tx:annotation-driven proxy-target-class="true"/>
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="dataSource" ref="dataSourceSingular"/>
+    </bean>
+
+</beans>

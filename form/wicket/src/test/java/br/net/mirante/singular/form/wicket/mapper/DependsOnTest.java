@@ -43,10 +43,10 @@ public class DependsOnTest extends AbstractWicketFormTest {
 
     private void createBaseType() {
         PackageBuilder localPackage = dicionario.createNewPackage("test");
-        baseCompositeField = localPackage.createTipoComposto("group");
+        baseCompositeField = localPackage.createCompositeType("group");
     }
 
-    private void setupPage() {
+    protected void setupPage() {
         driver = new WicketTester(new TestApp());
 
         page = new TestPage();
@@ -68,8 +68,8 @@ public class DependsOnTest extends AbstractWicketFormTest {
                     .build();
 
     private void loadTestType(STypeComposite<?> baseCompositeField) {
-        category = baseCompositeField.addCampoString("category");
-        element = baseCompositeField.addCampoString("element");
+        category = baseCompositeField.addFieldString("category");
+        element = baseCompositeField.addFieldString("element");
 
         category.as(SPackageBasic.aspect())
                 .label("category");
@@ -81,9 +81,9 @@ public class DependsOnTest extends AbstractWicketFormTest {
         element.withSelectionFromProvider(ins -> {
             String prefix = ins.findNearest(category).get().getValue();
             return (prefix == null)
-                    ? ins.getType().novaLista()
-                    : ins.getType().novaLista()
-                    .addValores(OPTIONS.getOrDefault(prefix, Lists.newArrayList()));
+                    ? ins.getType().newList()
+                    : ins.getType().newList()
+                    .addValues(OPTIONS.getOrDefault(prefix, Lists.newArrayList()));
         });
     }
 

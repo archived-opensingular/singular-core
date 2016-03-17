@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.flow.core.entity;
 
 import java.util.Date;
@@ -13,6 +18,8 @@ public interface IEntityTaskInstanceHistory extends IEntityByCod<Integer> {
     void setBeginDateAllocation(Date begin);
 
     Date getEndDateAllocation();
+
+    void setEndDateAllocation(Date endDateAllocation);
 
     MUser getAllocatedUser();
 

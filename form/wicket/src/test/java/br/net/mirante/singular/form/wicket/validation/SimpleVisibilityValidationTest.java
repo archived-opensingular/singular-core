@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form.wicket.validation;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -14,19 +13,19 @@ public class SimpleVisibilityValidationTest extends AbstractSingularFormTest {
     STypeString fieldTwo;
 
     @Override
-    protected void populateMockType(STypeComposite<?> mockType) {
+    protected void buildBaseType(STypeComposite<?> mockType) {
 
-        fieldOne = mockType.addCampoString("fieldOne");
+        fieldOne = mockType.addFieldString("fieldOne");
         fieldOne.asAtrCore().obrigatorio(true);
 
-        fieldTwo = mockType.addCampoString("fieldTwo");
+        fieldTwo = mockType.addFieldString("fieldTwo");
         fieldTwo.asAtrBasic().visivel(i -> false);
         fieldTwo.asAtrCore().obrigatorio(true);
     }
 
     @Test
     public void testIfContaisErrorOnlyForFieldOne() {
-        formTester.submit(mockPage.getSingularValidationButton());
+        form.submit(page.getSingularValidationButton());
         Assert.assertFalse(findFormComponentsByType(fieldOne).findFirst().get().getFeedbackMessages().isEmpty());
         Assert.assertTrue(findFormComponentsByType(fieldTwo).findFirst().get().getFeedbackMessages().isEmpty());
     }

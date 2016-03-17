@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.core.annotation;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -9,18 +14,18 @@ import br.net.mirante.singular.form.mform.SIComposite;
  */
 public class SIAnnotation extends SIComposite {
     public void setText(String text) {
-        setValor(STypeAnnotation.FIELD_TEXT, text);
+        setValue(STypeAnnotation.FIELD_TEXT, text);
     }
-    public String getText() {   return getValorString(STypeAnnotation.FIELD_TEXT);}
+    public String getText() {   return getValueString(STypeAnnotation.FIELD_TEXT);}
     public void setTargetId(Integer id) {
-        setValor(STypeAnnotation.FIELD_TARGET_ID, id);
+        setValue(STypeAnnotation.FIELD_TARGET_ID, id);
     }
-    public Integer getTargetId() {  return getValorInteger(STypeAnnotation.FIELD_TARGET_ID);    }
+    public Integer getTargetId() {  return getValueInteger(STypeAnnotation.FIELD_TARGET_ID);    }
     public void setApproved(Boolean isApproved) {
-        setValor(STypeAnnotation.FIELD_APPROVED, isApproved);
+        setValue(STypeAnnotation.FIELD_APPROVED, isApproved);
     }
     public Boolean getApproved() {
-        return getValorBoolean(STypeAnnotation.FIELD_APPROVED);
+        return getValueBoolean(STypeAnnotation.FIELD_APPROVED);
     }
 
     @Override

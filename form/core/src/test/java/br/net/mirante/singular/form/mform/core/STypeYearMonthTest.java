@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.mform.core;
 
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.util.comuns.SIAnoMes;
-import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
+import br.net.mirante.singular.form.mform.util.comuns.SIYearMonth;
+import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,15 +17,15 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @RunWith(value = Parameterized.class)
 public class STypeYearMonthTest {
 
-    private static STypeAnoMes type;
+    private static STypeYearMonth type;
 
     private final YearMonth result;
     private final String persistent;
-    private final SIAnoMes value;
+    private final SIYearMonth value;
 
     public STypeYearMonthTest(String input, YearMonth result, String persistent){
 
-        this.value = type.novaInstancia();
+        this.value = type.newInstance();
         this.value.setValue(input);
         this.result = result;
         this.persistent = persistent;
@@ -34,7 +34,7 @@ public class STypeYearMonthTest {
     @BeforeClass
     public static void setupType(){
         SDictionary dict = SDictionary.create();
-        type = dict.getType(STypeAnoMes.class);
+        type = dict.getType(STypeYearMonth.class);
     }
 
     @Parameterized.Parameters(name = "{index}: ({0})")
@@ -53,7 +53,7 @@ public class STypeYearMonthTest {
     }
 
     @Test public void convertInputToPersistent(){
-        assertThat(value.toStringPersistencia()).isEqualTo(persistent);
+        assertThat(value.toStringPersistence()).isEqualTo(persistent);
     }
 
 }

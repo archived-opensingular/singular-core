@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.view.page.prototype;
 
 import java.util.Optional;
@@ -73,7 +78,7 @@ public class PrototypeContent extends Content {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 SIComposite instance = (SIComposite) singularFormPanel.getRootInstance().getObject();
-                prototype.setName(instance.getValorString(SPackagePrototype.NAME));
+                prototype.setName(instance.getValueString(SPackagePrototype.NAME));
                 prototype.setXml(getXmlFromInstance(instance));
                 prototypeDAO.save(prototype);
                 addToastrSuccessMessage("message.save.success");

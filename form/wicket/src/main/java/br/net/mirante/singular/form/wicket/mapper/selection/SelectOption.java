@@ -1,16 +1,22 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.options.MOptionsConfig;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
+import br.net.mirante.singular.form.mform.options.SOptionsConfig;
+import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.wicket.model.IModel;
 
 /**
  * This class represents a SelectOption used on DropDowns, Checklists, Radios and etc.
+ *
+ * //TODO está faltando o tipo parametrico, analisar o motivo. -- vinicius nunes: olá! Passei por esse todo e acredito que o tipo paramétrico não é necessário
  */
-@SuppressWarnings({"serial", "rawtypes"})
 public class SelectOption implements IModel {
 
     private String selectLabel;
@@ -71,12 +77,12 @@ public class SelectOption implements IModel {
         return hash;
     }
 
-    public void copyValueToInstance(MSelectionableInstance target) {
+    public void copyValueToInstance(SSelectionableInstance target) {
         SInstance source = target.getOptionsConfig().getValueFromKey(String.valueOf(value));
         Value.hydrate((SInstance) target, Value.dehydrate(source));
     }
 
-    public void copyValueToInstance(MSelectionableInstance target, MOptionsConfig provider) {
+    public void copyValueToInstance(SSelectionableInstance target, SOptionsConfig provider) {
         SInstance source = provider.getValueFromKey(String.valueOf(value));
         Value.hydrate((SInstance) target, Value.dehydrate(source));
     }

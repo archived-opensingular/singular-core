@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform;
 
 import com.google.common.base.Preconditions;
@@ -5,57 +10,57 @@ import com.google.common.base.Preconditions;
 @SuppressWarnings("rawtypes")
 public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
 
-    private final Class<? extends SPackage> classePacote;
+    private final Class<? extends SPackage> packageClass;
 
-    private final String                   nomeSimples;
+    private final String                   nameSimple;
 
-    private final Class<T>                 classeTipo;
+    private final Class<T>                 typeClass;
 
-    private final Class<I>                 classeInstancia;
+    private final Class<I>                 instanceClass;
 
-    private final Class<V>                 classeValor;
+    private final Class<V>                 valueClass;
 
-    private Class<? extends SType<?>>      classeDono;
+    private Class<? extends SType<?>>      ownerClass;
 
-    private String                         nomeEscopo;
+    private String                         nameScope;
 
-    private String                         nomeCompleto;
+    private String                         nameFull;
 
     private final boolean                  selfReference;
 
-    public static AtrRef<?, ?, Object> ofSelfReference(Class<? extends SPackage> classePacote, String nomeSimples) {
-        return new AtrRef(classePacote, nomeSimples, null, null, null);
+    public static AtrRef<?, ?, Object> ofSelfReference(Class<? extends SPackage> packageClass, String nameSimple) {
+        return new AtrRef(packageClass, nameSimple, null, null, null);
     }
 
-    public AtrRef(Class<? extends SPackage> classePacote, String nomeSimples, Class<T> classeTipo, Class<I> classeInstancia,
-                  Class<V> classeValor) {
-        MFormUtil.checkNomeSimplesValido(nomeSimples);
-        this.classePacote = classePacote;
-        this.nomeSimples = nomeSimples;
-        this.classeTipo = classeTipo;
-        this.classeInstancia = classeInstancia;
-        this.classeValor = classeValor;
-        selfReference = (classeTipo == null) && (classeInstancia == null) && (classeValor == null);
+    public AtrRef(Class<? extends SPackage> packageClass, String nameSimple, Class<T> typeClass, Class<I> instanceClass,
+                  Class<V> valueClass) {
+        SFormUtil.validateSimpleName(nameSimple);
+        this.packageClass = packageClass;
+        this.nameSimple = nameSimple;
+        this.typeClass = typeClass;
+        this.instanceClass = instanceClass;
+        this.valueClass = valueClass;
+        selfReference = (typeClass == null) && (instanceClass == null) && (valueClass == null);
     }
 
-    public String getNomeSimples() {
-        return nomeSimples;
+    public String getNameSimple() {
+        return nameSimple;
     }
 
-    public Class<T> getClasseTipo() {
-        return classeTipo;
+    public Class<T> getTypeClass() {
+        return typeClass;
     }
 
-    public Class<? extends SPackage> getClassePacote() {
-        return classePacote;
+    public Class<? extends SPackage> getPackageClass() {
+        return packageClass;
     }
 
-    public String getNomeCompleto() {
+    public String getNameFull() {
         if (!isBinded()) {
-            throw new RuntimeException("Atributo '" + getNomeSimples() + "' ainda não associado a um pacote");
+            throw new RuntimeException("Atributo '" + getNameSimple() + "' ainda não associado a um pacote");
         }
 
-        return nomeCompleto;
+        return nameFull;
     }
 
     public boolean isSelfReference() {
@@ -63,27 +68,27 @@ public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
     }
 
     public final boolean isBinded() {
-        return nomeEscopo != null;
+        return nameScope != null;
     }
 
-    final void bind(String nomeEscopo) {
+    final void bind(String scopeName) {
         if (!isBinded()) {
-            Preconditions.checkNotNull(nomeEscopo);
-            this.nomeEscopo = nomeEscopo;
-            nomeCompleto = nomeEscopo + "." + nomeSimples;
+            Preconditions.checkNotNull(scopeName);
+            this.nameScope = scopeName;
+            nameFull = scopeName + "." + nameSimple;
         } else {
-            if (!this.nomeEscopo.equals(nomeEscopo)) {
-                throw new RuntimeException("O Atributo '" + nomeSimples + "' já está associado ao pacote '" + this.nomeEscopo
-                    + "' não podendo ser reassoaciado ao pacote " + nomeEscopo);
+            if (!this.nameScope.equals(scopeName)) {
+                throw new RuntimeException("O Atributo '" + nameSimple + "' já está associado ao pacote '" + this.nameScope
+                    + "' não podendo ser reassoaciado ao pacote " + scopeName);
             }
         }
     }
 
-    public Class<I> getClasseInstancia() {
-        return classeInstancia;
+    public Class<I> getInstanceClass() {
+        return instanceClass;
     }
 
-    public Class<V> getClasseValor() {
-        return classeValor;
+    public Class<V> getValueClass() {
+        return valueClass;
     }
 }
