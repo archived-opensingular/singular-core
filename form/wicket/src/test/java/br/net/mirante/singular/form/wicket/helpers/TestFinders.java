@@ -76,7 +76,6 @@ public class TestFinders {
     }
     
     private static void findInComponent(Class<? extends Component> tag, List<Component> result, Component c) {
-        System.out.println(tag+" i "+c+" = "+tag.isInstance(c));
         if (tag.isInstance(c)) {
             result.add(c);
         } else if (c instanceof MarkupContainer) {

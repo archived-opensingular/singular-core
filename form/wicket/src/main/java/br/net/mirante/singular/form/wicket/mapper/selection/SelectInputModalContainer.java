@@ -92,6 +92,7 @@ public class SelectInputModalContainer extends BSContainer {
 
     private void createValueInput() {
         valueLabel = new Label(model.getObject().getName() + "selection", valueLabelModel);
+        valueLabel.setOutputMarkupId(true);
         valueLabel.add($b.attr("readonly", "readonly"));
     }
 
@@ -102,7 +103,7 @@ public class SelectInputModalContainer extends BSContainer {
 
         final BFModalWindow searchModal = buildModal(id + "__modal", filterModel);
 
-        panel.appendTag("a", true, "class=\"btn default\"", new AjaxLink("link") {
+        panel.appendTag("a", true, "class=\"btn default\"", new AjaxLink("search_link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 searchModal.show(target);

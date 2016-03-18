@@ -1,16 +1,17 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.util.tester.TagTester;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
@@ -18,10 +19,8 @@ import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-
+@RunWith(Enclosed.class)
 public class STypeStringModalSearchTest  {
-    //TODO:Fabs
-
     private static class Base extends AbstractSingularFormTest {
         protected STypeString selectType;
 
@@ -39,15 +38,13 @@ public class STypeStringModalSearchTest  {
         }
 
         protected void clickOpenLink() {
-            assertThat(findTag(form.getForm(), BSDataTable.class)).isEmpty();
-            List<AjaxLink> links = (List)findTag(form.getForm(), AjaxLink.class);
-            assertThat(links).hasSize(1);
-
-            tester.executeAjaxEvent(formField(form, links.get(0).getId()), "onclick");
+            List<Component> search_link1 = findTag(form.getForm(), "search_link", AjaxLink.class);
+            ajaxClick(search_link1.get(0));
         }
+
     }
 
-    /*public static class Default extends Base {
+    public static class Default extends Base {
 
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
@@ -69,39 +66,68 @@ public class STypeStringModalSearchTest  {
             tester.assertContains("orange");
             tester.assertContains("banana");
         }
-    }*/
+    }
+
+    public static class WithSelectedValue extends Base {
+
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            super.buildBaseType(baseType);
+            selectType.withSelectionOf("strawberry", "apple", "orange", "banana");
+        }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.setValue(selectType.getNameSimple(),"apple");
+        }
+
+        @Test public void showPreviousValueWhenRendering(){
+            tester.assertContains("apple");
+            tester.assertContainsNot("strawberry");
+        }
+
+        @Test public void changeValueWhenSelected(){
+            clickOpenLink();
+            List<Component> link = findTag(tester.getLastRenderedPage(), "link", AjaxLink.class);
+            assertThat(link).hasSize(4);
+
+            ajaxClick(link.get(3));
+            SIString selected = page.getCurrentInstance().getDescendant(selectType);
+            assertThat(selected.getValue()).isEqualTo("banana");
+        }
+    }
+
+    public static class WithSelecteDanglingdValue extends Base {
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            super.buildBaseType(baseType);
+            selectType.withSelectionOf("strawberry", "apple", "orange", "banana");
+        }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            instance.setValue(selectType.getNameSimple(),"avocado");
+        }
+
+        @Test public void showDanglingValueOnOptions(){
+            clickOpenLink();
+
+            tester.assertContains("avocado");
+            tester.assertContains("strawberry");
+            tester.assertContains("apple");
+            tester.assertContains("orange");
+            tester.assertContains("banana");
+        }
+    }
 
     /*
 
 
 
 
-    @Test public void showPreviousValueWhenRendering(){
-        setupPage();
-        page.getCurrentInstance().setValue(selectType.getNameSimple(),"apple");
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
-        buildPage();
 
-        driver.assertContains("apple");
-        driver.assertContainsNot("strawberry");
 
-    }
 
-    @Test public void showDanglingValueOnOptions(){
-        setupPage();
-        page.getCurrentInstance().setValue(selectType.getNameSimple(),"avocado");
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
-        buildPage();
-
-        clickOpenLink();
-
-        driver.assertContains("avocado");
-        driver.assertContains("strawberry");
-        driver.assertContains("apple");
-        driver.assertContains("orange");
-        driver.assertContains("banana");
-
-    }
 
     @Ignore("Must understand how to handle the ajax modal and its actions")
     @Test public void changeValueWhenSelected(){

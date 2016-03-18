@@ -17,10 +17,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 

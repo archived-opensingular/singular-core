@@ -25,11 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
-import br.net.mirante.singular.form.wicket.helpers.TestPackage;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
 @SuppressWarnings("rawtypes")
 public class AttachmentFieldTest extends AbstractSingularFormTest {

@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
-public class TestPageMock {
+public class MockPageTest {
 
     @Test
     public void testPageRendering() {

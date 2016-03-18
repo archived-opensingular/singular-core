@@ -11,20 +11,22 @@ import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
 import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import java.util.List;
+import java.util.Optional;
 
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class STypeSelectItemModalSearchTest {
 
-    //TODO:Fabs
     private static class Base extends AbstractSingularFormTest {
         protected STypeComposite selectType;
         protected SViewSelectionBySearchModal view;
@@ -76,15 +78,12 @@ public class STypeSelectItemModalSearchTest {
         }
 
         protected void clickOpenLink() {
-            assertThat(findTag(form.getForm(), BSDataTable.class)).isEmpty();
-            List<AjaxLink> links = (List) findTag(form.getForm(), AjaxLink.class);
-            assertThat(links).hasSize(1);
-
-            tester.executeAjaxEvent(formField(form, links.get(0).getId()), "onclick");
+            List<Component> search_link1 = findTag(form.getForm(), "search_link", AjaxLink.class);
+            tester.executeAjaxEvent(search_link1.get(0), "onclick");
         }
     }
 
-    /*public static class A extends Base  {
+    public static class Default extends Base  {
 
         @Override
         protected void buildBaseType(STypeComposite group) {
@@ -95,7 +94,6 @@ public class STypeSelectItemModalSearchTest {
 
         @Test public void showModalWhenClicked() {
             tester.assertContainsNot("Buscar");
-
             clickOpenLink();
 
             tester.assertContains("Buscar");
@@ -103,33 +101,37 @@ public class STypeSelectItemModalSearchTest {
             tester.assertContains("Distrito Federal");
             tester.assertContains("Goiás");
         }
-    }*/
+    }
 
 
+    public static class WithAditionalFields extends Base {
 
-   /* @Test
-    public void showModalWithExtrafields() {
-        setupPage();
-        selectType.withSelectionFromProvider(nomeUF, (SOptionsProvider) inst -> novoProvider(federaldistrict(), goias()));
-        view.setAdditionalFields("population", "phonecode");
-        buildPage();
+        @Override
+        protected void buildBaseType(STypeComposite group) {
+            super.buildBaseType(group);
+            selectType.withSelectionFromProvider(nomeUF,
+                    (SOptionsProvider) inst -> novoProvider(federaldistrict(), goias()));
+            view.setAdditionalFields("population", "phonecode");
+        }
 
-        driver.assertContainsNot("Buscar");
+        @Test
+        public void showModalWithExtrafields() {
+            tester.assertContainsNot("Buscar");
 
-        clickOpenLink();
+            clickOpenLink();
 
-        driver.assertContains("Buscar");
+            tester.assertContains("Buscar");
 
-        driver.assertContains("População");
-        driver.assertContains("DDD");
+            tester.assertContains("População");
+            tester.assertContains("DDD");
 
-        driver.assertContains("Distrito Federal");
-        driver.assertContains("2852372");
-        driver.assertContains("61");
-        driver.assertContains("Goiás");
-        driver.assertContains("6155998");
-        driver.assertContains("62");
-    }*/
-
+            tester.assertContains("Distrito Federal");
+            tester.assertContains("2852372");
+            tester.assertContains("61");
+            tester.assertContains("Goiás");
+            tester.assertContains("6155998");
+            tester.assertContains("62");
+        }
+    }
 
 }

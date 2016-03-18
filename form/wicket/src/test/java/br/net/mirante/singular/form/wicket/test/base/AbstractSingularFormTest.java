@@ -75,4 +75,8 @@ public abstract class AbstractSingularFormTest {
         populateInstance(instance);
         return instance;
     }
+
+    protected void ajaxClick(Component target) {
+        tester.executeAjaxEvent(target, "onclick");
+    }
 }

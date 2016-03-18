@@ -95,7 +95,7 @@ public class MockPage extends WebPage {
     }
 
     public void setAsVisualizationView() {  viewMode = ViewMode.VISUALIZATION;  }
-    public void setAsEditView() {  viewMode = ViewMode.VISUALIZATION;  }
+    public void setAsEditView() {  viewMode = ViewMode.EDITION;  }
 
     public void enableAnnotation() { annotationMode = AnnotationMode.EDIT; }
 

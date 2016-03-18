@@ -15,9 +15,6 @@ import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
-import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
 public class MasterDetailMapperTest extends AbstractSingularFormTest {
 

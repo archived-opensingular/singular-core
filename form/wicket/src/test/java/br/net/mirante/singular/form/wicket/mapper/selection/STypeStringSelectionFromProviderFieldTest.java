@@ -23,8 +23,6 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 
 @RunWith(Enclosed.class)
 public class STypeStringSelectionFromProviderFieldTest  {
-    //TODO:Fabs
-
     private static class Base extends AbstractSingularFormTest {
         protected List<String> referenceOptions =
                 Lists.newArrayList("strawberry", "apple", "orange",
