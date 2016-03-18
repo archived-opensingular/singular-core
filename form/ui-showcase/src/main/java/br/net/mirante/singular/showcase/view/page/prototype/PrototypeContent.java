@@ -71,7 +71,7 @@ public class PrototypeContent extends Content {
         super.onInitialize();
 
         Form newItemForm = new Form("prototype_form");
-
+        newItemForm.setOutputMarkupId(true);
         queue(buildSingularFormPanel());
 
         newItemForm.add(new ActionAjaxButton("save-btn") {
