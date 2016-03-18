@@ -14,6 +14,7 @@
     <modules>
         <module>server-libs</module>
         <module>sso</module>
+        <module>worklist</module>
     </modules>
 
     <distributionManagement>
@@ -59,6 +60,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                     <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
                     <archive>
                         <manifest>
@@ -146,6 +148,7 @@
         <skipTests>false</skipTests>
         <wicket.version>7.1.0</wicket.version>
         <singular.version>0.6.2-SNAPSHOT</singular.version>
+        <singular.server.version>0.1.2-SNAPSHOT</singular.server.version>
         <cas.version>4.0.4</cas.version>
     </properties>
 
