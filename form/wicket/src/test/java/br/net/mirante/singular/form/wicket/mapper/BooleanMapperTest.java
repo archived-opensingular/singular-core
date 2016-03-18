@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.core.SIBoolean;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.junit.Test;
@@ -144,7 +144,7 @@ public class BooleanMapperTest {
 
 }
 
-class Base extends AbstractSingularFormTest {
+class Base extends SingularFormBaseTest {
 
     protected SDictionary dictionary;
     protected STypeAttachment attachmentFileField;

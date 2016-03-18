@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.test.base;
+package br.net.mirante.singular.form.wicket.helpers;
 
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.wicket.helpers.TestFinders;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Form;
@@ -21,9 +20,9 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.*;
 
 
-public abstract class AbstractSingularFormTest {
+public abstract class SingularFormBaseTest {
 
-    protected MockPage page;
+    protected DummyPage page;
     protected WicketTester tester;
     protected FormTester form;
 
@@ -33,7 +32,7 @@ public abstract class AbstractSingularFormTest {
     @Before
     public void setUp() {
         tester = new WicketTester();
-        page = new MockPage();
+        page = new DummyPage();
         page.setTypeBuilder(this::buildBaseType);
         page.setInstanceCreator(this::createAndPopulateInstance);
         tester.startPage(page);

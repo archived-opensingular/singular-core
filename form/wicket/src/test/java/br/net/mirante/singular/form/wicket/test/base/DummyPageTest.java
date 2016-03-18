@@ -4,24 +4,25 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.wicket.helpers.DummyPage;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
-public class MockPageTest {
+public class DummyPageTest {
 
     @Test
     public void testPageRendering() {
         WicketTester tester = new WicketTester();
 
-        MockPage mockPage = new MockPage() ;
-        mockPage.setTypeBuilder((x) -> {x.addFieldString("mockString");});
+        DummyPage dummyPage = new DummyPage() ;
+        dummyPage.setTypeBuilder((x) -> {x.addFieldString("mockString");});
 
-        mockPage.setInstanceCreator( (x) -> {
-            SDocumentFactory factory = mockPage.mockFormConfig.getDocumentFactory();
+        dummyPage.setInstanceCreator( (x) -> {
+            SDocumentFactory factory = dummyPage.mockFormConfig.getDocumentFactory();
             RefType refType = new RefType() { protected SType<?> retrieve() { return x; } };
             return (SIComposite) factory.createInstance(refType);
         });
-        tester.startPage(mockPage);
-        tester.assertRenderedPage(MockPage.class);
+        tester.startPage(dummyPage);
+        tester.assertRenderedPage(DummyPage.class);
     }
 }

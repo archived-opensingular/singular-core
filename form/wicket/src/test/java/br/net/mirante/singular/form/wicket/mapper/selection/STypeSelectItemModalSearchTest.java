@@ -2,15 +2,13 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.junit.Test;
@@ -18,16 +16,14 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import java.util.List;
-import java.util.Optional;
 
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class STypeSelectItemModalSearchTest {
 
-    private static class Base extends AbstractSingularFormTest {
+    private static class Base extends SingularFormBaseTest {
         protected STypeComposite selectType;
         protected SViewSelectionBySearchModal view;
         protected STypeSimple nomeUF;

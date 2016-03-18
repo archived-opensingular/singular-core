@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 
 @RunWith(Enclosed.class)
 public class STypeStringSelectionFromProviderFieldTest  {
-    private static class Base extends AbstractSingularFormTest {
+    private static class Base extends SingularFormBaseTest {
         protected List<String> referenceOptions =
                 Lists.newArrayList("strawberry", "apple", "orange",
                         "banana", "avocado", "grapes");

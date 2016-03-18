@@ -2,13 +2,10 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.RadioChoice;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
@@ -27,7 +24,7 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 @RunWith(Enclosed.class)
 public class STypeStringKeyValueRadioTest {
 
-    private static class Base extends AbstractSingularFormTest {
+    private static class Base extends SingularFormBaseTest {
         protected STypeComposite<? extends SIComposite> baseCompositeField;
         protected STypeString tipoDeMedia;
 

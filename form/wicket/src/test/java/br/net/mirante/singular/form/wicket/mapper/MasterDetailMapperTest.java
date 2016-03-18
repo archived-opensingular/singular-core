@@ -1,11 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -16,7 +14,7 @@ import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 
-public class MasterDetailMapperTest extends AbstractSingularFormTest {
+public class MasterDetailMapperTest extends SingularFormBaseTest {
 
     private STypeComposite<?> baseCompositeField;
 

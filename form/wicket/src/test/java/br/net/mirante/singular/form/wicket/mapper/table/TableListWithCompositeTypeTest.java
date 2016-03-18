@@ -15,9 +15,9 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 
-public class TableListWithCompositeTypeTest extends AbstractSingularFormTest {
+public class TableListWithCompositeTypeTest extends SingularFormBaseTest {
 
 
     STypeString simpleString;

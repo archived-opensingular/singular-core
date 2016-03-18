@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.util.tester.TagTester;
@@ -21,7 +21,7 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 
 @RunWith(Enclosed.class)
 public class STypeStringModalSearchTest  {
-    private static class Base extends AbstractSingularFormTest {
+    private static class Base extends SingularFormBaseTest {
         protected STypeString selectType;
 
         @Override

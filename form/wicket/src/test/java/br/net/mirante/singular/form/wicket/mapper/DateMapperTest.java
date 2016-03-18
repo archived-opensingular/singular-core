@@ -3,12 +3,10 @@ package br.net.mirante.singular.form.wicket.mapper;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.util.tester.FormTester;
 import org.fest.assertions.api.Assertions;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -24,7 +22,7 @@ import static org.junit.Assert.*;
 @RunWith(Enclosed.class)
 public class DateMapperTest  {
 
-    private static class Base extends AbstractSingularFormTest {
+    private static class Base extends SingularFormBaseTest {
 
         protected STypeDate dateType;
 

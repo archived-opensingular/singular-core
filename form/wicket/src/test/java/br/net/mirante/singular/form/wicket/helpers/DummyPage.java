@@ -1,14 +1,12 @@
-package br.net.mirante.singular.form.wicket.test.base;
+package br.net.mirante.singular.form.wicket.helpers;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import com.google.common.base.Predicate;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
@@ -27,7 +25,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 
-public class MockPage extends WebPage {
+public class DummyPage extends WebPage {
 
     final public SFormConfig<String> mockFormConfig = new MockFormConfig();
     protected ViewMode viewMode = ViewMode.EDITION;
@@ -78,7 +76,7 @@ public class MockPage extends WebPage {
         }
     };
 
-    public MockPage() {
+    public DummyPage() {
         add(form.add(singularFormPanel, singularValidationButton));
     }
 

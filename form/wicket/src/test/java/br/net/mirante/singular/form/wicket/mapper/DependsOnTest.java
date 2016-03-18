@@ -5,7 +5,7 @@ import java.util.Map;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.junit.Test;
@@ -130,7 +130,7 @@ public class DependsOnTest {
         }
     }
 
-    private static class Base extends AbstractSingularFormTest {
+    private static class Base extends SingularFormBaseTest {
         protected STypeComposite<?> baseCompositeField;
         protected STypeString category, element;
 

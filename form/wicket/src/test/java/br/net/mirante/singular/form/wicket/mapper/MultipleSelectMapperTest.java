@@ -7,12 +7,10 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
-import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -24,7 +22,7 @@ import static org.junit.Assert.*;
 
 @RunWith(Enclosed.class)
 public class MultipleSelectMapperTest {
-    private static class Base extends AbstractSingularFormTest {
+    private static class Base extends SingularFormBaseTest {
 
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {

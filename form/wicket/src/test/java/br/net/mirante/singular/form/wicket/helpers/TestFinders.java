@@ -55,17 +55,6 @@ public class TestFinders {
         List<Component> result = Lists.newArrayList();
         findTag(tag, result, container);
         return result;
-        /*final List<Component> found = new ArrayList<>();
-        container.visitChildren(Component.class, new IVisitor<Component, Object>() {
-            @Override
-            public void componenst(Component t, IVisit<Object> visit) {
-                System.out.println(tag+" i "+t+" = "+tag.isInstance(t));
-                if (tag.isInstance(t)) {
-                    found.add(t);
-                }
-            }
-        });
-        return found;*/
     }
     
     private static void findTag(Class<? extends Component> tag, List<Component> result, MarkupContainer c) {

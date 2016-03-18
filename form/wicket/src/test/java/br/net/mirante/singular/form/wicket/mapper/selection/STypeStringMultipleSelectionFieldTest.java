@@ -3,12 +3,11 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -24,7 +23,7 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 @RunWith(Enclosed.class)
 public class STypeStringMultipleSelectionFieldTest  {
 
-    private static class Base extends AbstractSingularFormTest {
+    private static class Base extends SingularFormBaseTest {
         protected STypeString selectBaseType;
         protected STypeList fieldType;
         @Override

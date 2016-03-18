@@ -10,18 +10,17 @@ import java.util.List;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 @RunWith(Enclosed.class)
 public class STypeStringSelectionFieldTest {
-    private static class Base extends AbstractSingularFormTest {
+    private static class Base extends SingularFormBaseTest {
         protected STypeString selectType;
 
         @Override

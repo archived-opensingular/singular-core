@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 @RunWith(Enclosed.class)
 public class STypeSelectItemSelectionFieldTest {
 
-    private static class Base extends AbstractSingularFormTest {
+    private static class Base extends SingularFormBaseTest {
         STypeComposite selectType;
         STypeSimple nomeUF;
         STypeString idUF;
