@@ -81,7 +81,7 @@ public class SPackagePrototype extends SPackage {
         STypeString nome = fieldType.addFieldString(NAME);
         nome.asAtrBasic().label("Nome")
                 .as(AtrCore::new).obrigatorio()
-.getTipo().asAtrBootstrap().colPreference(3);
+                .getTipo().asAtrBootstrap().colPreference(3);
 
         STypeString type = fieldType.addFieldString(TYPE);
         type.asAtrBasic().label("Tipo")
