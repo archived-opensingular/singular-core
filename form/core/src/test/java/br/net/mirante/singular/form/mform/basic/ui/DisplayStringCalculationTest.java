@@ -95,19 +95,22 @@ public class DisplayStringCalculationTest {
         pedido.getType().asAtrBasic().displayString("${cod}-${detalhes}");
         assertThat(pedido.toStringDisplay()).isEqualTo("10-(Sim)");
 
+        pedido.getType().asAtrBasic().displayString("${cod}-${detalhes.toStringDisplayDefault()!\"x\"}");
+        assertThat(pedido.toStringDisplay()).isEqualTo("10-x");
 
         pedido.getType().getField("cod").asAtrBasic().displayString("xxxx");
         pedido.getType().getField("qtd").asAtrBasic().displayString("x${toStringDisplayDefault()}");
-        pedido.getType().getField("peso").asAtrBasic().displayString("${peso}");
+        // pedido.getType().getField("peso").asAtrBasic().displayString("${peso}");
 
         assertThat(pedido.getField("cod").toStringDisplay()).isEqualTo("xxxx");
         assertThat(pedido.getField("qtd").toStringDisplay()).isEqualTo("x4");
         assertThat(pedido.getField("peso").toStringDisplay()).isNull();
 
+        pedido.getType().asAtrBasic().displayString("${cod}-${nome} (${qtd})");
         assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB (4)");
 
         pedido.getType().asAtrBasic().displayString("${cod}-${nome}-${entrega}");
-        assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB-01/06/2000");
+        assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB-01/07/2000");
     }
 
     @Test

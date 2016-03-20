@@ -162,13 +162,9 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
          * minstancia da sua hierarquia atual
          */
         if (this.parent != null && pai != null){
-            throw new SingularFormException(
-                    String.format(
-" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
+            throw new SingularFormException(String.format(" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
                     + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
-                    + " O pai atual é do tipo %s. ",
-                            this.getClass().getName(),
-                            this.parent.getClass().getName()));
+                    + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()));
         }
         this.parent = pai;
         if (pai != null && pai.isAttribute()) {
@@ -277,6 +273,24 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
     }
 
     SInstance getFieldLocal(PathReader pathReader) {
+        throw new RuntimeException(erroMsgMethodUnsupported());
+    }
+
+    final Optional<SInstance> getFieldOpt(PathReader pathReader) {
+        SInstance instance = this;
+        while (true) {
+            Optional<SInstance> result = instance.getFieldLocalOpt(pathReader);
+            if (!result.isPresent() || pathReader.isLast()) {
+                return result;
+            } else if (!(instance instanceof ICompositeInstance)) {
+                throw new SingularFormException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"), instance);
+            }
+            instance = result.get();
+            pathReader = pathReader.next();
+        }
+    }
+
+    Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
         throw new RuntimeException(erroMsgMethodUnsupported());
     }
 

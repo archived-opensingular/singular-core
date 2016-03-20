@@ -7,7 +7,15 @@ package br.net.mirante.singular.form.mform.freemarker;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,12 +37,15 @@ import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateBooleanModel;
+import freemarker.template.TemplateCollectionModel;
 import freemarker.template.TemplateDateModel;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateHashModel;
+import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateModelIterator;
 import freemarker.template.TemplateNumberModel;
 import freemarker.template.TemplateScalarModel;
 import freemarker.template.TemplateSequenceModel;
@@ -87,7 +98,7 @@ public final class FormFreemarkerUtil {
 
     private static Template parseTemplate(String template) {
         try {
-            return new Template("interno", template, getConfiguration());
+            return new Template("templateStringParameter", template, getConfiguration());
         } catch (IOException e) {
             throw new SingularFormException("Erro fazendo parse do template: " + template, e);
         }
@@ -104,7 +115,7 @@ public final class FormFreemarkerUtil {
         return cfg;
     }
 
-    private static TemplateModel toTemplateModel(Object obj) throws TemplateModelException {
+    private static TemplateModel toTemplateModel(Object obj) {
         if (obj == null) {
             return null;
         } else if (obj instanceof SISimple) {
@@ -142,8 +153,46 @@ public final class FormFreemarkerUtil {
         }
     }
 
+    private static abstract class SInstanceMethodTemplate<INSTANCE extends SInstance> implements TemplateMethodModelEx {
+        private final INSTANCE instance;
+        private final String methodName;
+
+        public SInstanceMethodTemplate(INSTANCE instance, String methodName) {
+            this.instance = instance;
+            this.methodName = methodName;
+        }
+
+        protected INSTANCE getInstance() {
+            return instance;
+        }
+
+        protected void checkNumberOfArguments(List<?> arguments, int expected) {
+            if (expected != arguments.size()) {
+                throw new SingularFormException("A chamada do método '" + methodName + "'() em " + getInstance().getPathFull()
+                        + "deveria ter " + expected + " argumentos, mas foi feito com " + arguments + " argumentos.");
+            }
+        }
+    }
+
+    private static class SInstanceZeroArgumentMethodTemplate<INSTANCE extends SInstance> extends SInstanceMethodTemplate<INSTANCE> {
+
+        private final Function<INSTANCE, Object> function;
+
+        public SInstanceZeroArgumentMethodTemplate(INSTANCE instance, String methodName, Function<INSTANCE, Object> function) {
+            super(instance, methodName);
+            this.function = function;
+        }
+
+        @Override
+        public Object exec(List arguments) throws TemplateModelException {
+            checkNumberOfArguments(arguments, 0);
+            return function.apply(getInstance());
+        }
+    }
+
     private static abstract class SInstanceTemplateModel<INSTANCE extends SInstance> implements TemplateScalarModel, TemplateHashModel {
         private final INSTANCE instance;
+        private boolean invertedPriority;
 
         public SInstanceTemplateModel(INSTANCE instance) {
             this.instance = instance;
@@ -153,8 +202,35 @@ public final class FormFreemarkerUtil {
             return instance;
         }
 
+        protected boolean isInvertedPriority() {
+            return invertedPriority;
+        }
+
+        protected Object getValue() {
+            return instance.getValue();
+        }
+
         @Override
         public TemplateModel get(String key) throws TemplateModelException {
+            if ("toStringDisplayDefault".equals(key)) {
+                return new SInstanceZeroArgumentMethodTemplate<INSTANCE>(getInstance(), key, i -> i.toStringDisplayDefault());
+            } else if ("value".equals(key) || "getValue".equals(key)) {
+                return new SInstanceZeroArgumentMethodTemplate<INSTANCE>(getInstance(), key, i -> getValue());
+            } else if ("_inst".equals(key)) {
+                Optional<Constructor<?>> constructor = Arrays.stream(getClass().getConstructors())
+                        .filter(c -> c.getParameterCount() == 1 && c.getParameterTypes()[0].isAssignableFrom(getInstance().getClass()))
+                        .findFirst();
+                SInstanceTemplateModel<INSTANCE> newSelf;
+                try {
+                    newSelf = (SInstanceTemplateModel<INSTANCE>) constructor.get().newInstance(getInstance());
+                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    throw new SingularFormException("Erro instanciado _inst", e);
+                }
+                newSelf.invertedPriority = true;
+                return newSelf;
+            } else if ("toStringDisplay".equals(key)) {
+                return new SInstanceZeroArgumentMethodTemplate<INSTANCE>(getInstance(), key, i -> i.toStringDisplay());
+            }
             return null;
         }
 
@@ -279,30 +355,71 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SICompositeTemplateModel implements TemplateHashModel, TemplateScalarModel {
-        private final SIComposite composite;
+    private static class SICompositeTemplateModel extends SInstanceTemplateModel<SIComposite> {
 
         public SICompositeTemplateModel(SIComposite composite) {
-            this.composite = composite;
+            super(composite);
         }
 
         @Override
         public TemplateModel get(String key) throws TemplateModelException {
-            SInstance campo = composite.getField(key);
-            if (campo == null) {
-                return null;
+            TemplateModel model;
+            if (isInvertedPriority()) {
+                model = super.get(key);
+                if (model == null) {
+                    model = getTemplateFromField(key);
+                }
+            } else {
+                model = getTemplateFromField(key);
+                if (model == null) {
+                    model = super.get(key);
+                }
             }
-            return toTemplateModel(composite.getField(key));
+            return model;
+        }
+
+        private TemplateModel getTemplateFromField(String key) throws TemplateModelException {
+            return getInstance().getFieldOpt(key).map(instance -> toTemplateModel(instance)).orElse(null);
         }
 
         @Override
         public boolean isEmpty() throws TemplateModelException {
-            return composite.isEmptyOfData();
+            return getInstance().isEmptyOfData();
         }
 
         @Override
         public String getAsString() throws TemplateModelException {
-            return StringUtils.defaultString(composite.toStringDisplay());
+            return StringUtils.defaultString(getInstance().toStringDisplay());
+        }
+
+        @Override
+        protected Object getValue() {
+            return new SInstanceCollectionTemplateModel((Collection<SInstance>) getInstance().getValue());
+        }
+    }
+
+    private static class SInstanceCollectionTemplateModel implements TemplateCollectionModel {
+        private final Collection<SInstance> collection;
+
+        public SInstanceCollectionTemplateModel(Collection<SInstance> collection) {
+            this.collection = collection;
+        }
+
+        @Override
+        public TemplateModelIterator iterator() throws TemplateModelException {
+            Iterator<SInstance> it = collection.iterator();
+            return new TemplateModelIterator() {
+
+                @Override
+                public TemplateModel next() throws TemplateModelException {
+                    return toTemplateModel(it.next());
+                }
+
+                @Override
+                public boolean hasNext() throws TemplateModelException {
+                    return it.hasNext();
+                }
+            };
         }
     }
 }
