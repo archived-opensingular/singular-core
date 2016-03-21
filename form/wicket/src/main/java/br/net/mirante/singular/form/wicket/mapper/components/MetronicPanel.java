@@ -53,6 +53,11 @@ public abstract class MetronicPanel extends TemplatePanel {
 
     protected abstract void buildContent(BSContainer<?> content, Form<?> form);
 
+    public void replaceContent(IBiConsumer<BSContainer<?>, Form<?>> buildContent) {
+        BSContainer<?> content = new BSContainer<>("_co");
+        buildContent.accept(content, form);
+        form.replace(content);
+    }
 
     private IFunction<TemplatePanel, String> getTemplate(boolean withForm) {
         String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";

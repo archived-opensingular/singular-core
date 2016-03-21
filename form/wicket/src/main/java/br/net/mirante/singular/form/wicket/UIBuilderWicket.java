@@ -7,12 +7,9 @@ package br.net.mirante.singular.form.wicket;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -20,20 +17,21 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
-import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByCheckboxView;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByPicklistView;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
+import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
-import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.ViewMapperRegistry;
 import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
@@ -58,6 +56,7 @@ import br.net.mirante.singular.form.wicket.mapper.DecimalMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
 import br.net.mirante.singular.form.wicket.mapper.LatitudeLongitudeMapper;
+import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.ListMasterDetailMapper;
 import br.net.mirante.singular.form.wicket.mapper.MonetarioMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
@@ -81,8 +80,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-
-import static com.google.common.collect.Sets.newHashSet;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -151,6 +148,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeList.class,      SViewListByTable.class,                 TableListMapper::new)
                 .register(STypeList.class,      SViewListByForm.class,                 PanelListaMapper::new)
                 .register(STypeList.class,      SViewListByMasterDetail.class,           ListMasterDetailMapper::new)
+                .register(STypeList.class,      SViewBreadcrumb.class,                  ListBreadcrumbMapper::new)
                 .register(STypeDateHour.class,                                          DateTimeMapper::new)
                 .register(STypeDateHour.class,   SViewDateTime.class,                  DateTimeMapper::new)
                 .register(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
