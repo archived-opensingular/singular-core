@@ -7,9 +7,10 @@ package br.net.mirante.singular.form.mform.util.comuns;
 
 import java.time.YearMonth;
 
+import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.core.SIComparable;
 
-public class SIYearMonth extends SIComparable<YearMonth> {
+public class SIYearMonth extends SISimple<YearMonth> implements SIComparable<YearMonth> {
 
     public SIYearMonth() {
     }

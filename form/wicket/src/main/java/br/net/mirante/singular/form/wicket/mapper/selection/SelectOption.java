@@ -14,8 +14,6 @@ import org.apache.wicket.model.IModel;
 
 /**
  * This class represents a SelectOption used on DropDowns, Checklists, Radios and etc.
- *
- * //TODO está faltando o tipo parametrico, analisar o motivo. -- vinicius nunes: olá! Passei por esse todo e acredito que o tipo paramétrico não é necessário
  */
 public class SelectOption implements IModel {
 

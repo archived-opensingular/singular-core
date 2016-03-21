@@ -1,10 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -14,15 +13,9 @@ import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
-import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
-public class MasterDetailMapperTest extends AbstractWicketFormTest {
+public class MasterDetailMapperTest extends SingularFormBaseTest {
 
-    protected PackageBuilder localPackage;
-    protected WicketTester driver;
-    protected TestPage page;
     private STypeComposite<?> baseCompositeField;
 
     protected FormTester form;
@@ -33,30 +26,8 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
     private STypeList<STypeComposite<SIComposite>, SIComposite> listBaseType;
     private STypeCPF cpf;
 
-    protected void setup() {
-        localPackage = dicionario.createNewPackage("test");
-        baseCompositeField = localPackage.createCompositeType("group");
-
-        loadTestType(baseCompositeField);
-
-        setupPage();
-    }
-
-    protected void setupPage() {
-        driver = new WicketTester(new TestApp());
-
-        page = new TestPage();
-        page.setIntance(createIntance(() -> baseCompositeField));
-    }
-
-    protected void build() {
-        page.build();
-        driver.startPage(page);
-
-        form = driver.newFormTester("test-form", false);
-    }
-
-    private void loadTestType(STypeComposite<?> baseCompositeField) {
+    protected void buildBaseType(STypeComposite<?> baseCompositeField) {
+        this.baseCompositeField = baseCompositeField;
         listBaseType = baseCompositeField.addFieldListOfComposite("listOf", "compositeStuff");
         listElementType = listBaseType.getElementsType();
         date = listElementType.addField("date", STypeYearMonth.class);
@@ -66,15 +37,16 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
         listBaseType.withView(new SViewListByMasterDetail().col(date).col(number));
     }
 
-    @Test public void rendersDataDisplayValuesOnTable(){
-        setup();
-        SIList<SIComposite> list = page.getCurrentInstance().getDescendant(listBaseType);
+    @Override
+    protected void populateInstance(SIComposite instance) {
+        SIList<SIComposite> list = instance.getDescendant(listBaseType);
         SIComposite e = list.addNew();
         e.getDescendant(date).setValue(java.time.YearMonth.of(2016,01));
         e.getDescendant(number).setValue(2.5);
         e.getDescendant(cpf).setValue("000.111.222-33");
-        build();
+    }
 
-        driver.assertContains("01/2016");
+    @Test public void rendersDataDisplayValuesOnTable(){
+        tester.assertContains("01/2016");
     }
 }

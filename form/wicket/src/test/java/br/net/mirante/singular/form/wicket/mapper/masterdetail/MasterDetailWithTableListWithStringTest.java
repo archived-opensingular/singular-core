@@ -18,11 +18,11 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class MasterDetailWithTableListWithStringTest extends AbstractSingularFormTest {
+public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTest {
 
     STypeString simpleString;
 

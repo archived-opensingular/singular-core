@@ -7,15 +7,39 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.Objects;
 
+import br.net.mirante.singular.form.mform.calculation.CalculationContext;
+import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+
 public class SISimple<TIPO_NATIVO> extends SInstance {
 
     private TIPO_NATIVO value;
+
+    private SimpleValueCalculation<? extends TIPO_NATIVO> valueCalculation;
 
     protected SISimple() {}
 
     @Override
     public TIPO_NATIVO getValue() {
+        if (valueCalculation != null) {
+            return valueCalculation.calculate(new CalculationContext(this));
+        }
         return value;
+    }
+
+    @Override
+    <V extends Object> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
+        if (valueCalculation != null) {
+            return convert(valueCalculation.calculate(new CalculationContext(contextInstance)), resultClass);
+        }
+        return convert(value, resultClass);
+    }
+
+    public SimpleValueCalculation<? extends TIPO_NATIVO> getValueCalculation() {
+        return valueCalculation;
+    }
+
+    public void setValueCalculation(SimpleValueCalculation<? extends TIPO_NATIVO> valueCalculation) {
+        this.valueCalculation = valueCalculation;
     }
 
     @Override
@@ -81,13 +105,12 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
     }
 
     @Override
-    public String toStringDisplay() {
+    public final String toStringDisplayDefault() {
         if (getType().getOptionsProvider() != null) {
             String key = getOptionsConfig().getKeyFromOption(this);
             return getOptionsConfig().getLabelFromKey(key);
-        } else {
-            return getType().toStringDisplay(getValue());
         }
+        return getType().toStringDisplayDefault(getValue());
     }
 
     public String toStringPersistence() {
@@ -119,12 +142,9 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
                 && !getType().getName().equals(other.getType().getName())) {
             return false;
         }
-        if (getValue() == null) {
-            if (other.getValue() != null)
-                return false;
-        } else if (!getValue().equals(other.getValue()))
-            return false;
-        return true;
+        TIPO_NATIVO v1 = getValue();
+        Object v2 = other.getValue();
+        return Objects.equals(v1, v2);
     }
 
 }

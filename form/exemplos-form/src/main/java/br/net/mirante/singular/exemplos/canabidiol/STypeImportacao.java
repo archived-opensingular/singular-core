@@ -13,7 +13,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.core.AtrCore;
-import br.net.mirante.singular.form.mform.core.STypeDateHour;
+import br.net.mirante.singular.form.mform.core.STypeDateTime;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
@@ -178,7 +178,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .colPreference(4);
 
 
-        this.addField("dataChegada", STypeDateHour.class)
+        this.addFieldDateTime("dataChegada")
                 .as(AtrBasic::new)
                 .label("Data e Hora da chegada ao Brasil")
                 // Isso é um bug não sei como descrever

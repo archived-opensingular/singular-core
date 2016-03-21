@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -81,18 +82,27 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    final SInstance getFieldLocal(PathReader reader) {
-        int fieldIndex = findFieldIndex(reader);
-        SInstance instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
-        if (instancia == null) {
-            instancia = createField(fieldIndex);
-        }
-        return instancia;
+    public Optional<SInstance> getFieldOpt(String path) {
+        return getFieldOpt(new PathReader(path));
     }
 
     @Override
-    final SInstance getFieldLocalWithoutCreating(PathReader reader) {
-        int fieldIndex = findFieldIndex(reader);
+    final SInstance getFieldLocal(PathReader pathReader) {
+        return getFieldByIndexOrCreate(findFieldIndex(pathReader));
+    }
+
+    @Override
+    Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
+        int fieldIndex = findFieldIndexOpt(pathReader);
+        if (fieldIndex != -1) {
+            return Optional.of(getFieldByIndexOrCreate(fieldIndex));
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    final SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
+        int fieldIndex = findFieldIndex(pathReader);
         return (fields == null) ? null : fields.getByIndex(fieldIndex);
     }
 
@@ -117,24 +127,27 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     /**
-     * Configura o valor de um tipo filho imediato do tipo composto
-     * ao qual essa instancia se refere.
+     * Configura o valor de um tipo filho imediato do tipo composto ao qual essa
+     * instancia se refere.
      * <p>
      * O Mtipo informado já precisa estar previamente configurado nesse
      * MtipoComposto
      *
-     * @param campo Referencia ao mtipo filho do composto
-     * @param valor Valor para o mtipo referenciado.
+     * @param campo
+     *            Referencia ao mtipo filho do composto
+     * @param valor
+     *            Valor para o mtipo referenciado.
      */
     public final void setValue(SType<?> campo, Object valor) {
         setValue(new PathReader(campo.getNameSimple()), valor);
     }
 
     /**
-     * Obtém o valor de um campo a partir do seu tipo
-     * O campo deve ser filho imediato desse MTipo
+     * Obtém o valor de um campo a partir do seu tipo O campo deve ser filho
+     * imediato desse MTipo
      *
-     * @param field Tipo do campo filho
+     * @param field
+     *            Tipo do campo filho
      * @return
      */
     public Object getValue(SType<?> field) {
@@ -170,6 +183,14 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         }
     }
 
+    private SInstance getFieldByIndexOrCreate(int fieldIndex) {
+        SInstance instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
+        if (instancia == null) {
+            instancia = createField(fieldIndex);
+        }
+        return instancia;
+    }
+
     private SInstance createField(int fieldIndex) {
         SInstance instancia;
         SType<?> tipoCampo = getFieldsDef().getByIndex(fieldIndex);
@@ -182,11 +203,23 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         return instancia;
     }
 
-    private int findFieldIndex(PathReader pathReader) {
+    /**
+     * Procura o índice do elemento solicitado dentro da lista de campo ou
+     * retorna -1 se o campo não existir no tipo composto.
+     */
+    private int findFieldIndexOpt(PathReader pathReader) {
         if (pathReader.isIndex()) {
             throw new SingularFormException(pathReader.getErroMsg(this, "Não é uma lista"));
         }
-        int fieldIndex = getFieldsDef().findIndex(pathReader.getTrecho());
+        return getFieldsDef().findIndex(pathReader.getTrecho());
+    }
+
+    /**
+     * Procura o índice do elemento solicitado dentro da lista de campo ou
+     * dispara exception se o campo não existir no tipo composto.
+     */
+    private int findFieldIndex(PathReader pathReader) {
+        int fieldIndex = findFieldIndexOpt(pathReader);
         if (fieldIndex == -1) {
             throw new SingularFormException(pathReader.getErroMsg(this, "Não é um campo definido"));
         }

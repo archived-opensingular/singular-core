@@ -41,6 +41,16 @@ public interface ICompositeInstance {
         return getValue(fieldPath) == null;
     }
 
+    /**
+     * Retorna a instancia indicada pelo path fornecido. Não dispara exception
+     * se o path não existir no tipo.
+     */
+    public Optional<SInstance> getFieldOpt(String path);
+
+    /**
+     * Retorna a instancia indicada pelo path fornecido. Dispara exception se o
+     * path não existir no tipo.
+     */
     public SInstance getField(String path);
 
     public default <T extends SInstance> T getField(String path, Class<T> typeOfInstance) {
@@ -50,7 +60,7 @@ public interface ICompositeInstance {
         } else if (typeOfInstance.isInstance(instancia)) {
             return typeOfInstance.cast(instancia);
         }
-        throw new RuntimeException("'" + path + "' + retornou uma instancia do tipo " + instancia.getClass().getName()
+        throw new SingularFormException("'" + path + "' + retornou uma instancia do tipo " + instancia.getClass().getName()
                 + ", que não é compatível com o tipo solicitado " + typeOfInstance.getName());
     }
 

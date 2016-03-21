@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 
-public class DinamicVisiblityValidationTest extends AbstractSingularFormTest {
+public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
 
     String testValue = "fvrw1e4r5t4e.r6";
     STypeString fieldOne;

@@ -22,12 +22,6 @@ public class SICode<T> extends SInstance {
     }
 
     @Override
-    public Object getValueWithDefault() {
-        // TODO ??? não sei como implementar isso...
-        return getValue();
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public STypeCode<SICode<T>, T> getType() {
         return (STypeCode<SICode<T>, T>) super.getType();
@@ -45,7 +39,7 @@ public class SICode<T> extends SInstance {
     }
 
     @Override
-    public String toStringDisplay() {
+    public String toStringDisplayDefault() {
         return getType().getNameSimple();
     }
 }

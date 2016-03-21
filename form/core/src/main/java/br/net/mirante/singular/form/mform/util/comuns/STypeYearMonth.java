@@ -73,7 +73,7 @@ public class STypeYearMonth extends STypeSimple<SIYearMonth, YearMonth> {
     }
 
     @Override
-    public String toStringDisplay(YearMonth value) {
+    public String toStringDisplayDefault(YearMonth value) {
         return toStringPersistence(value);
     }
 }

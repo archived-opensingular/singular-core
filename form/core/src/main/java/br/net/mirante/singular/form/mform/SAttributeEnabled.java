@@ -5,15 +5,20 @@
 
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+
 public interface SAttributeEnabled {
 
-    default <V> void setAttributeValue(AtrRef<?, ?, V> atr, V value) {
-        setAttributeValue(atr, null, value);
+    default <V> void setAttributeCalculation(AtrRef<?, ?, V> atr, SimpleValueCalculation<V> value) {
+        getDictionary().loadPackage(atr.getPackageClass());
+        setAttributeCalculation(atr.getNameFull(), null, value);
     }
 
-    default <V> void setAttributeValue(AtrRef<?, ?, V> atr, String subPath, V value) {
+    <V> void setAttributeCalculation(String attributeFullName, String subPath, SimpleValueCalculation<V> value);
+
+    default <V> void setAttributeValue(AtrRef<?, ?, V> atr, V value) {
         getDictionary().loadPackage(atr.getPackageClass());
-        setAttributeValue(atr.getNameFull(), subPath, value);
+        setAttributeValue(atr.getNameFull(), null, value);
     }
 
     default <V> void setAttributeValue(SAttribute defAttribute, Object value) {
@@ -24,9 +29,9 @@ public interface SAttributeEnabled {
         setAttributeValue(attributeName, null, value);
     }
 
-    void setAttributeValue(String fullNameAttribute, String subPath, Object value);
+    void setAttributeValue(String attributeFullName, String subPath, Object value);
 
-    <V> V getAttributeValue(String fullNameAttribute, Class<V> resultClass);
+    <V> V getAttributeValue(String attributeFullName, Class<V> resultClass);
 
     default <T> T getAttributeValue(AtrRef<?, ?, ?> atr, Class<T> resultClass) {
         getDictionary().loadPackage(atr.getPackageClass());
@@ -38,8 +43,8 @@ public interface SAttributeEnabled {
         return getAttributeValue(atr.getNameFull(), atr.getValueClass());
     }
 
-    default Object getAttributeValue(String fullName) {
-        return getAttributeValue(fullName, null);
+    default Object getAttributeValue(String attributeFullName) {
+        return getAttributeValue(attributeFullName, null);
     }
 
     SDictionary getDictionary();

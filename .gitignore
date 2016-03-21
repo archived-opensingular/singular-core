@@ -59,3 +59,4 @@ common/ui-static-resources/.externalToolBuilders/org.eclipse.wst.jsdt.core.javas
 buildall.sh
 _confHomol/
 **/singulardb.lock.db
+resources/ui-static-resources/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator (1).launch

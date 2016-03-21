@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import br.net.mirante.singular.form.mform.AtrRef;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SAttributeEnabled;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIPredicate;
@@ -20,7 +21,6 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypePredicate;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
@@ -41,11 +41,9 @@ public class SPackageCore extends SPackage {
 
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_EXISTS          = new AtrRef<>(SPackageCore.class, "exists", STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_EXISTS_FUNCTION      = new AtrRef(SPackageCore.class, "existsFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
-    
+
     public static final AtrRef<STypeFormula, SIComposite, Object> ATR_FORMULA         = new AtrRef<>(SPackageCore.class, "formula", STypeFormula.class, SIComposite.class, Object.class);
-    
-    
-    
+
     //@formatter:on
 
     public SPackageCore() {
@@ -67,7 +65,8 @@ public class SPackageCore extends SPackage {
         pb.createType(STypeDate.class);
         pb.createType(STypeDecimal.class);
         pb.createType(STypeMonetary.class);
-        pb.createType(STypeDateHour.class);
+        pb.createType(STypeDateTime.class);
+        pb.createType(STypeTime.class);
 
         pb.createType(STypeComposite.class);
 
@@ -95,7 +94,7 @@ public class SPackageCore extends SPackage {
         pb.createType(STypeAttachment.class);
         pb.createAttributeIntoType(STypeAttachment.class, STypeAttachment.ATR_ORIGINAL_ID);
         pb.createAttributeIntoType(STypeAttachment.class, STypeAttachment.ATR_IS_TEMPORARY);
-        
+
         pb.createType(STypeLatitudeLongitude.class);
     }
 

@@ -95,7 +95,7 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
     }
 
     @Override
-    public String toStringDisplay(Boolean valor) {
+    public String toStringDisplayDefault(Boolean valor) {
         if (valor == null) {
             return null;
         } else if (valor) {

@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
@@ -160,13 +162,9 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
          * minstancia da sua hierarquia atual
          */
         if (this.parent != null && pai != null){
-            throw new SingularFormException(
-                    String.format(
-" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
+            throw new SingularFormException(String.format(" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
                     + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
-                    + " O pai atual é do tipo %s. ",
-                            this.getClass().getName(),
-                            this.parent.getClass().getName()));
+                    + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()));
         }
         this.parent = pai;
         if (pai != null && pai.isAttribute()) {
@@ -183,6 +181,10 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
     }
 
     public abstract Object getValue();
+
+    <V extends Object> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
+        return convert(getValue(), resultClass);
+    }
 
     public abstract void clearInstance();
 
@@ -209,23 +211,24 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
     public abstract boolean isEmptyOfData();
 
     public Object getValueWithDefault() {
-        return getValueWithDefault(null);
+        return getValue(null);
     }
 
-    @SuppressWarnings("unchecked")
     public final <T extends Object> T getValueWithDefault(Class<T> resultClass) {
-        if (resultClass == null) {
-            return (T) getValue();
-        }
-        return getType().convert(getValueWithDefault(), resultClass);
+        return convert(getValueWithDefault(), resultClass);
     }
 
-    @SuppressWarnings("unchecked")
     public final <T extends Object> T getValue(Class<T> resultClass) {
-        if (resultClass == null) {
-            return (T) getValue();
+        return convert(getValue(), resultClass);
+    }
+
+    <T> T convert(Object value, Class<T> resultClass) {
+        if (resultClass == null || value == null) {
+            return (T) value;
+        } else if (resultClass.isInstance(value)) {
+            return resultClass.cast(value);
         }
-        return getType().convert(getValue(), resultClass);
+        return getType().convert(value, resultClass);
     }
 
     final <T extends Object> T getValue(PathReader pathReader, Class<T> resultClass) {
@@ -263,7 +266,7 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
             if (pathReader.isLast()) {
                 return instance;
             } else if (!(instance instanceof ICompositeInstance)) {
-                throw new RuntimeException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"));
+                throw new SingularFormException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
             pathReader = pathReader.next();
         }
@@ -273,24 +276,35 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
         throw new RuntimeException(erroMsgMethodUnsupported());
     }
 
-    public String toStringDisplay() {
+    final Optional<SInstance> getFieldOpt(PathReader pathReader) {
+        SInstance instance = this;
+        while (true) {
+            Optional<SInstance> result = instance.getFieldLocalOpt(pathReader);
+            if (!result.isPresent() || pathReader.isLast()) {
+                return result;
+            } else if (!(instance instanceof ICompositeInstance)) {
+                throw new SingularFormException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"), instance);
+            }
+            instance = result.get();
+            pathReader = pathReader.next();
+        }
+    }
+
+    Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
         throw new RuntimeException(erroMsgMethodUnsupported());
     }
 
+    public String toStringDisplayDefault() {
+        return null;
+    }
+
+    public final String toStringDisplay() {
+        return as(AtrBasic.class).getDisplayString();
+    }
+
     @Override
-    public void setAttributeValue(String fullNameAttribute, String subPath, Object value) {
-        SInstance instanceAtr = null;
-        if (attributes == null) {
-            attributes = new HashMap<>();
-        } else {
-            instanceAtr = attributes.get(fullNameAttribute);
-        }
-        if (instanceAtr == null) {
-            SAttribute attributeType = getType().getAttributeDefinedHierarchy(fullNameAttribute);
-            instanceAtr = attributeType.newInstance(getDocument());
-            instanceAtr.setAsAttribute(this);
-            attributes.put(fullNameAttribute, instanceAtr);
-        }
+    public void setAttributeValue(String attributeFullName, String subPath, Object value) {
+        SInstance instanceAtr = getOrCreateAttribute(attributeFullName);
         if (subPath != null) {
             instanceAtr.setValue(new PathReader(subPath), value);
         } else {
@@ -299,14 +313,47 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
     }
 
     @Override
-    public <V extends Object> V getAttributeValue(String fullName, Class<V> resultClass) {
+    public <V> void setAttributeCalculation(String attributeFullName, String subPath, SimpleValueCalculation<V> valueCalculation) {
+        SInstance instanceAtr = getOrCreateAttribute(attributeFullName);
+        setValueCalculation(instanceAtr, subPath, valueCalculation);
+    }
+
+    static <V> void setValueCalculation(SInstance instance, String subPath, SimpleValueCalculation<V> valueCalculation) {
+        if (subPath != null) {
+            instance = instance.getField(new PathReader(subPath));
+        }
+        if (!(instance instanceof SISimple)) {
+            throw new SingularFormException("O atributo " + instance.getPathFull() + " não é do tipo " + SISimple.class.getName(),
+                    instance);
+        }
+        ((SISimple) instance).setValueCalculation(valueCalculation);
+    }
+
+    private SInstance getOrCreateAttribute(String attributeFullName) {
+        SInstance instanceAtr = null;
+        if (attributes == null) {
+            attributes = new HashMap<>();
+        } else {
+            instanceAtr = attributes.get(attributeFullName);
+        }
+        if (instanceAtr == null) {
+            SAttribute attributeType = getType().getAttributeDefinedHierarchy(attributeFullName);
+            instanceAtr = attributeType.newInstance(getDocument());
+            instanceAtr.setAsAttribute(this);
+            attributes.put(attributeFullName, instanceAtr);
+        }
+        return instanceAtr;
+    }
+
+    @Override
+    public final <V extends Object> V getAttributeValue(String fullName, Class<V> resultClass) {
         if (attributes != null) {
-            SInstance inst = attributes.get(fullName);
-            if (inst != null) {
-                return inst.getValue(resultClass);
+            SInstance attribute = attributes.get(fullName);
+            if (attribute != null) {
+                return attribute.getValueInTheContextOf(this, resultClass);
             }
         }
-        return getType().getAttributeValue(fullName, resultClass);
+        return getType().getValueInTheContextOf(this, fullName, resultClass);
     }
 
     public Map<String, SInstance> getAttributes() {
