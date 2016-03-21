@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.TextField;
 import org.junit.Test;
@@ -33,6 +34,14 @@ public class STypeStringSelectItemAutoComplete {
             base.withView(SViewAutoComplete::new);
         }
 
+        protected SIString fieldInstance() {
+            return page.getCurrentInstance().getDescendant(base);
+        }
+
+        protected TextField fieldComponent() {
+            return (TextField) ((List) findTag(form.getForm(), TextField.class)).get(0);
+        }
+
     }
 
     public static class Default extends Base {
@@ -53,17 +62,40 @@ public class STypeStringSelectItemAutoComplete {
             assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[1]);
         }
 
-        protected SIString fieldInstance() {
-            return page.getCurrentInstance().getDescendant(base);
-        }
-
-        protected TextField fieldComponent() {
-            return (TextField) ((List) findTag(form.getForm(), TextField.class)).get(0);
-        }
     }
 
-    /*public static class KeyValueSelection extends Base {
+    public static class KeyValueSelection extends Base {
 
-    } */
+        final String[] KEYS = {"Batman", "Superman", "Flash", "Green Arrow"};
+
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            super.buildBaseType(baseType);
+
+            SFixedOptionsSimpleProvider provider = base.withSelection();
+            for(int i = 0 ; i < OPTIONS.length && i < KEYS.length; i++){
+                provider.add(KEYS[i],OPTIONS[i]);
+            }
+        }
+
+        @Test public void renderLabelsNotKeys(){
+            for(String o : OPTIONS){
+                tester.assertContains(o);
+            }
+        }
+
+        @Test public void submitsSelectedKeyInstead() {
+            form.setValue(fieldComponent(),OPTIONS[1]);
+            form.submit();
+            assertThat(fieldInstance().getValue()).isEqualTo(KEYS[1]);
+        }
+
+        @Test public void justIgnoresIfTheSelectedLabelHasNoMatch() {
+            form.setValue(fieldComponent(),"Tony Stark");
+            form.submit();
+            assertThat(fieldInstance().getValue()).isNullOrEmpty();
+        }
+
+    }
 
 }
