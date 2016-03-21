@@ -112,7 +112,6 @@ public class BooleanMapperTest {
         @Override
         protected void populateInstance(SIComposite instance) {
             instance.getDescendant(field1).setValue(true);
-            System.out.println("me me me");
         }
 
         @Test public void rendersFalseChoiceIfFalseIsSelected() {

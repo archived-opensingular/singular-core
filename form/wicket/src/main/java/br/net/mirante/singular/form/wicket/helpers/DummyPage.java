@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.wicket.helpers;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -108,7 +109,7 @@ public class DummyPage extends WebPage {
     }
 }
 
-class MockFormConfig implements SFormConfig<String> {
+class MockFormConfig implements SFormConfig<String>, Serializable {
 
     private final MockSDocumentFactory documentFactory = new MockSDocumentFactory();
     private final MockTypeLoader mockTypeLoader = new MockTypeLoader();
@@ -124,7 +125,7 @@ class MockFormConfig implements SFormConfig<String> {
     }
 }
 
-class MockSDocumentFactory extends SDocumentFactory {
+class MockSDocumentFactory extends SDocumentFactory implements Serializable {
 
     private final DefaultServiceRegistry defaultServiceRegistry = new DefaultServiceRegistry();
 
@@ -169,7 +170,7 @@ class MockSDocumentFactory extends SDocumentFactory {
     protected void setupDocument(SDocument document) {}
 }
 
-class MockTypeLoader extends TypeLoader<String> {
+class MockTypeLoader extends TypeLoader<String> implements Serializable {
 
     private final SDictionary dictionary;
 
