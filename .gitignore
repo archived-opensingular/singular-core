@@ -3,6 +3,7 @@
 **/*.h2.db
 **/*.trace.db
 **/*.tmp
+**/singulardb.lock.db
 
 # Arquivos MAVEN     #
 ######################
@@ -46,17 +47,13 @@ local.properties
 .classpath
 .settings/
 .loadpath
+**/.externalToolBuilders/
 
 # Arquivos JRebel    #
 ######################
 **/rebel.xml
 out/**
-flow/ui-admin/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator (1).launch
-form/ui-showcase/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator.launch
-common/ui-static-resources/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator (3).launch
 
 # outros #
 buildall.sh
 _confHomol/
-**/singulardb.lock.db
-resources/ui-static-resources/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator (1).launch
