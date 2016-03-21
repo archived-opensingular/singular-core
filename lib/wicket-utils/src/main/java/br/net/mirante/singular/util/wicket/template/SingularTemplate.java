@@ -98,6 +98,7 @@ public abstract class SingularTemplate extends WebPage {
         add.accept("/singular-static/resources/singular/plugins/syntaxHighlighter/css/shCore.css");
         add.accept("/singular-static/resources/singular/plugins/syntaxHighlighter/css/shThemeDefault.css");
         add.accept("/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.css");
+        add.accept("/singular-static/resources/metronic/global/plugins/typeahead/typeahead.css");
         add.accept("resources/custom/css/custom.css");
 
         return cssHeaderItens;
@@ -149,6 +150,7 @@ public abstract class SingularTemplate extends WebPage {
         add.accept("/singular-static/resources/metronic/global/scripts/app.js");
         add.accept("/singular-static/resources/metronic/layout4/scripts/layout.js");
         add.accept("/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.js");
+        add.accept("/singular-static/resources/metronic/global/plugins/typeahead/typeahead.bundle.min.js");
 
         return scriptHeaderItens;
     }
