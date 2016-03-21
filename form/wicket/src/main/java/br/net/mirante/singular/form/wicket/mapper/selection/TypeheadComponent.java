@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -10,6 +11,7 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.border.Body;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -33,7 +35,14 @@ public class TypeheadComponent extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(container = new WebMarkupContainer("typeahead_container"));
+        add(container = buildContainer());
+    }
+
+    private WebMarkupContainer buildContainer() {
+        WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
+        MInstanciaValorModel<Object> model = new MInstanciaValorModel<>((IModel<? extends SInstance>) getDefaultModel());
+        c.queue(new TextField("label_field", model));
+        return c;
     }
 
     @Override
