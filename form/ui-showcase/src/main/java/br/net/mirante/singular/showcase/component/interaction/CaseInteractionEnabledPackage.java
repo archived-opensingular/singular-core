@@ -34,7 +34,7 @@ public class CaseInteractionEnabledPackage extends SPackage {
 
         record = testForm.addFieldComposite("record");
         recordText = record.addFieldString("text");
-        recordDate = record.addFieldData("date");
+        recordDate = record.addFieldDate("date");
 
         enabled
                 .as(SPackageBasic.aspect()).label("Enable");

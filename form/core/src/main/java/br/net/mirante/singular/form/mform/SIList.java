@@ -5,17 +5,18 @@
 
 package br.net.mirante.singular.form.mform;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class SIList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
@@ -154,6 +155,11 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
+    public Optional<SInstance> getFieldOpt(String path) {
+        return getFieldOpt(new PathReader(path));
+    }
+
+    @Override
     final SInstance getFieldLocal(PathReader pathReader) {
         if (!pathReader.isIndex()) {
             throw new RuntimeException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo [1])"));
@@ -163,6 +169,18 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             SFormUtil.resolveFieldType(getType(), pathReader);
         }
         return instance;
+    }
+
+    @Override
+    Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
+        if (!pathReader.isIndex()) {
+            throw new RuntimeException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo [1])"));
+        }
+        int index = pathReader.getIndex();
+        if (values != null && index < values.size()) {
+            return Optional.ofNullable(values.get(index));
+        }
+        return Optional.empty();
     }
 
     @Override

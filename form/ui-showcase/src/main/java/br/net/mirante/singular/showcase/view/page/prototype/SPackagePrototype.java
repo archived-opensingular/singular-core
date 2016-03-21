@@ -21,7 +21,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.mform.core.STypeDateHour;
+import br.net.mirante.singular.form.mform.core.STypeDateTime;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeFormula;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
@@ -81,7 +81,7 @@ public class SPackagePrototype extends SPackage {
         STypeString nome = fieldType.addFieldString(NAME);
         nome.asAtrBasic().label("Nome")
                 .as(AtrCore::new).obrigatorio()
-.getTipo().asAtrBootstrap().colPreference(3);
+                .getTipo().asAtrBootstrap().colPreference(3);
 
         STypeString type = fieldType.addFieldString(TYPE);
         type.asAtrBasic().label("Tipo")
@@ -116,7 +116,7 @@ public class SPackagePrototype extends SPackage {
         provider.add(typeName(pb, STypeCPF.class), "CPF");
         provider.add(typeName(pb, STypeCNPJ.class), "CNPJ");
         provider.add(typeName(pb, STypeDate.class), "Data");
-        provider.add(typeName(pb, STypeDateHour.class), "Data/Hora");
+        provider.add(typeName(pb, STypeDateTime.class), "Data/Hora");
         provider.add(typeName(pb, STypeEMail.class), "Email");
         provider.add(typeName(pb, STypeLatitudeLongitude.class), "Latitude/Longitude");
         provider.add(typeName(pb, STypeMonetary.class), "Monetário");

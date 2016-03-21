@@ -2,6 +2,9 @@ package br.net.mirante.singular.form.wicket.test.base;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
 
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.Form;
@@ -14,12 +17,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -29,10 +29,18 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.panel.FormPanel;
 
-public class TestFormWicketBuild extends AbstractWicketFormTest {
+import java.util.function.Supplier;
+
+public class TestFormWicketBuild  {
 
     WicketTester tester;
+    protected SDictionary dicionario;
     private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().createContext();
+
+    @Before
+    public void setUpDicionario() {
+        dicionario = SDictionary.create();
+    }
 
     @Before
     public void setUp() {
@@ -42,6 +50,16 @@ public class TestFormWicketBuild extends AbstractWicketFormTest {
                 return null;
             }
         });
+    }
+
+    protected static SInstance createIntance(Supplier<SType<?>> typeSupplier) {
+        RefType ref = new RefType() {
+            @Override
+            protected SType<?> retrieve() {
+                return typeSupplier.get();
+            }
+        };
+        return SDocumentFactory.empty().createInstance(ref);
     }
 
     @Test

@@ -33,7 +33,7 @@ public class CaseInteractionVisiblePackage extends SPackage {
 
         record = testForm.addFieldComposite("record");
         recordText = record.addFieldString("text");
-        recordDate = record.addFieldData("date");
+        recordDate = record.addFieldDate("date");
 
         visible.as(SPackageBasic.aspect()).label("Visible");
 

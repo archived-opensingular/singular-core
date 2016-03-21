@@ -40,7 +40,7 @@ import br.net.mirante.singular.form.mform.context.UIBuilder;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.mform.core.STypeDateHour;
+import br.net.mirante.singular.form.mform.core.STypeDateTime;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
@@ -151,8 +151,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeList.class,      SViewListByTable.class,                 TableListMapper::new)
                 .register(STypeList.class,      SViewListByForm.class,                 PanelListaMapper::new)
                 .register(STypeList.class,      SViewListByMasterDetail.class,           ListMasterDetailMapper::new)
-                .register(STypeDateHour.class,                                          DateTimeMapper::new)
-                .register(STypeDateHour.class,   SViewDateTime.class,                  DateTimeMapper::new)
+                .register(STypeDateTime.class,                                          DateTimeMapper::new)
+                .register(STypeDateTime.class,   SViewDateTime.class,                  DateTimeMapper::new)
                 .register(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
         //@formatter:on
     }

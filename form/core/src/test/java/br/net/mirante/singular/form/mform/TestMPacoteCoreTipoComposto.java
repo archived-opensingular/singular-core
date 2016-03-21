@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import br.net.mirante.singular.form.mform.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInterna;
@@ -307,4 +308,60 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     }
 
+    public void testGetFieldOpt() {
+        SDictionary dicionario = SDictionary.create();
+        PackageBuilder pb = dicionario.createNewPackage("teste");
+
+        STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
+        tipoBloco.addFieldString("ba");
+        tipoBloco.addFieldString("bc");
+        STypeComposite<SIComposite> tipoSubBloco = tipoBloco.addFieldComposite("subbloco");
+        tipoSubBloco.addFieldString("sa");
+        tipoSubBloco.addFieldString("sb");
+        STypeList<STypeComposite<SIComposite>, SIComposite> tipoLista = tipoBloco.addFieldListOfComposite("itens", "item");
+        tipoLista.getElementsType().addFieldString("la");
+
+        SIComposite instance = tipoBloco.newInstance();
+        instance.setValue("ba", "1");
+        instance.setValue("subbloco.sa", "2");
+        instance.getFieldList("itens").addNew();
+        instance.setValue("itens[0].la", "3");
+
+        assertThatFound(instance, "ba", "1");
+        assertThatFound(instance, "bc", null);
+        assertThatFound(instance, "subbloco.sa", "2");
+        assertThatFound(instance, "subbloco.sb", null);
+
+        assertThatNotFound(instance, "bx", false);
+        assertThatNotFound(instance, "subbloco.sx", false);
+        assertThatNotFound(instance, "bx.bx.bx", false);
+
+        assertThatFound(instance, "itens[0].la", "3");
+        assertThatNotFound(instance, "itens[0].lb", false);
+        assertThatNotFound(instance, "itens[1].la", true);
+        assertThatNotFound(instance, "itens[1].lb", true);
+
+    }
+
+    private static void assertThatNotFound(SIComposite instance, String path, boolean indexException) {
+        Optional<SInstance> field = instance.getFieldOpt(path);
+        assertNotNull(field);
+        assertFalse(field.isPresent());
+        if (indexException) {
+            assertException(() -> instance.getField(path), IndexOutOfBoundsException.class);
+        } else {
+            assertException(() -> instance.getField(path), "Não é um campo definido");
+        }
+    }
+
+    private static void assertThatFound(SIComposite instance, String path, String value) {
+        Optional<SInstance> field = instance.getFieldOpt(path);
+        assertNotNull(field);
+        assertNotNull(field.get());
+        assertEquals(field.get().getValue(), value);
+
+        SInstance field2 = instance.getField(path);
+        assertNotNull(field2);
+        assertEquals(field2.getValue(), value);
+    }
 }
