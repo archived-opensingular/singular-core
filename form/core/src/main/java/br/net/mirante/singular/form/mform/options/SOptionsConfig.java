@@ -6,7 +6,9 @@
 package br.net.mirante.singular.form.mform.options;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +33,7 @@ public class SOptionsConfig {
     private BigInteger keySeed = BigInteger.ZERO;
     private static final Logger LOGGER = LoggerFactory.getLogger(SOptionsConfig.class);
     private BiMap<String, SInstance> optionsKeyInstanceMap;
-    private LinkedHashMap<String, String> optionsKeylabelMap;
+    private BiMap<String, String> optionsKeylabelMap;
     private SIList<? extends SInstance> options;
     private SSelectionableInstance instance;
 
@@ -76,7 +78,7 @@ public class SOptionsConfig {
             if (newOptions != null && !newOptions.equals(options)) {
                 options = newOptions;
                 optionsKeyInstanceMap = HashBiMap.create(options.size());
-                optionsKeylabelMap = new LinkedHashMap<>(options.size());
+                optionsKeylabelMap = HashBiMap.create(options.size());
                 for (br.net.mirante.singular.form.mform.SInstance instance : options) {
                     /* ignora silenciosamente valores duplicados */
                     if (!optionsKeyInstanceMap.inverse().containsKey(instance)) {
@@ -88,7 +90,7 @@ public class SOptionsConfig {
             }
         } else {
             optionsKeyInstanceMap = HashBiMap.create();
-            optionsKeylabelMap = new LinkedHashMap<>();
+            optionsKeylabelMap = HashBiMap.create();
         }
     }
 
@@ -103,6 +105,13 @@ public class SOptionsConfig {
             return null;
         }
         return optionsKeylabelMap.get(key);
+    }
+
+    public String getKeyFromLabel(String label) {
+        if (label == null || optionsKeylabelMap == null) {
+            return null;
+        }
+        return optionsKeylabelMap.inverse().get(label);
     }
 
     public String getKeyFromOption(SInstance option) {
@@ -136,7 +145,7 @@ public class SOptionsConfig {
      * @return Um mapa de chave e label representando as Minstancias disponibilizadas pelo provider do tipo
      * da MInstancia.
      */
-    public LinkedHashMap<String, String> listSelectOptions() {
+    public Map<String, String> listSelectOptions() {
         reloadOptionsFromProvider();
         return optionsKeylabelMap;
     }
