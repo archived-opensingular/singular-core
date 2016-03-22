@@ -73,7 +73,7 @@ public class TestViewResolver {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
         STypeSimple<?, ?> tipoInteger = pb.createType("Integer", STypeInteger.class).withSelectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
-        STypeSimple<?, ?> tipoDate = pb.createType("Date", STypeDate.class).withSelectionOf(repeate(i -> new Date(new Date().getTime() + 10 * i), 2).toArray(new Date[]{}));
+        STypeSimple<?, ?> tipoDate = pb.createType("Date", STypeDate.class).withSelectionOf(repeate(i -> new Date(new Date().getTime() + 10000 * i), 2).toArray(new Date[]{}));
         STypeSimple<?, ?> tipoString = pb.createType("String", STypeString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 2).toArray(new String[]{}));
         STypeSimple<?, ?> tipoStringLarge = pb.createType("StringLarge", STypeString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 5).toArray(new String[]{}));
 
