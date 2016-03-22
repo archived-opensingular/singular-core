@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>0.6.2</version>
+        <version>0.6.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>flow-core</artifactId>
@@ -17,12 +17,12 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-schedule</artifactId>
-            <version>0.6.2</version>
+            <version>0.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>0.6.2</version>
+            <version>0.6.3-SNAPSHOT</version>
         </dependency>
 
         <dependency>
