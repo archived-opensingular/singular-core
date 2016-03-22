@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -108,6 +109,7 @@ public final class FormFreemarkerUtil {
         if (cfg == null) {
             Configuration novo = new Configuration(Configuration.VERSION_2_3_22);
             novo.setDefaultEncoding("UTF-8");
+            novo.setLocale(new Locale("pt", "BR"));
             novo.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 
             cfg = novo;
