@@ -44,6 +44,7 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
 import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
+import br.net.mirante.singular.form.wicket.model.MICompostoModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -229,22 +230,13 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                             .buttonModel(Model.of("blue-madison"))
                             .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                     (target, rowModel) -> {
-                        showCrud(ctx, target);
+                        showCrud(ctx, target, model);
                     });
         });
     }
 
-    private void showCrud(WicketBuildContext ctx, AjaxRequestTarget target) {
+    private void showCrud(WicketBuildContext ctx, AjaxRequestTarget target, IModel<? extends SInstance> itemModel) {
         final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
-        SIList<SInstance> lista = listaModel.getObject();
-        SInstance sInstance = lista.get(lista.size() - 1);
-        final IModel<SInstance> lastItemModel = new AbstractSInstanceModel<SInstance>() {
-            @Override
-            public SInstance getObject() {
-                return sInstance;
-            }
-        };
-
         final SView view = ctx.getView();
 
         MetronicPanel panel = ctx.getContainer().visitChildren(new IVisitor<Component, MetronicPanel>() {
@@ -265,7 +257,6 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     + "      </li>"
                     + "    </ul>");
             list.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
-//            list.add(new PanelElementsView("_e", t, ctx.getUiBuilderWicket(), ctx, view, form));
 
             WebMarkupContainer crudPanel = new WebMarkupContainer("_e");
             list.add(crudPanel);
@@ -273,24 +264,10 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
             final BSRow row = grid.newRow();
             final ViewMode viewMode = ctx.getViewMode();
 
-            ctx.getUiBuilderWicket().build(ctx.createChild(row.newCol(11), true, lastItemModel), viewMode);
+            ctx.getUiBuilderWicket().build(ctx.createChild(row.newCol(11), true, itemModel), viewMode);
 
             crudPanel.add(grid);
             content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
-
-//            final BSGrid btnGrid = row.newCol(1).newGrid();
-//
-//            if ((view instanceof SViewListByForm) && (((SViewListByForm) view).isInsertEnabled())
-//                    && viewMode.isEdition()) {
-//                appendInserirButton(this, form, item, btnGrid.newColInRow())
-//                        .add($b.classAppender("pull-right"));
-//            }
-//
-//            if ((view instanceof SViewListByForm) && ((SViewListByForm) view).isDeleteEnabled()
-//                    && viewMode.isEdition()) {
-//                appendRemoverButton(this, form, item, btnGrid.newColInRow())
-//                        .add($b.classAppender("pull-right"));
-//            }
 
         });
 
@@ -329,8 +306,9 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                             if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
                                 target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
                             } else {
-                                sil.addNew();
-                                showCrud(ctx, target);
+                                SInstance sInstance = sil.addNew();
+                                IModel<? extends SInstance> itemModel = new MICompostoModel<>(sInstance);
+                                showCrud(ctx, target, itemModel);
                             }
                         }
                     }
@@ -373,34 +351,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         }
     }
 
-//    public BSGrid showItem(SView view,
-//                           Form<?> form,
-//                           WicketBuildContext ctx,
-//                           UIBuilderWicket wicketBuilder, IModel<SInstance> model) {
-//        final BSGrid grid = new BSGrid("_r");
-//        final BSRow row = grid.newRow();
-//        final ViewMode viewMode = ctx.getViewMode();
-//
-//        wicketBuilder.build(ctx.createChild(row.newCol(11), true, model), viewMode);
-//
-//        final BSGrid btnGrid = row.newCol(1).newGrid();
-//
-//        if ((view instanceof SViewListByForm) && (((SViewListByForm) view).isInsertEnabled())
-//                && viewMode.isEdition()) {
-//            appendInserirButton(this, form, item, btnGrid.newColInRow())
-//                    .add($b.classAppender("pull-right"));
-//        }
-//
-//        if ((view instanceof SViewListByForm) && ((SViewListByForm) view).isDeleteEnabled()
-//                && viewMode.isEdition()) {
-//            appendRemoverButton(this, form, item, btnGrid.newColInRow())
-//                    .add($b.classAppender("pull-right"));
-//        }
-//
-//        return grid;
-//    }
-
-    protected static InserirButton appendInserirButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
+    protected static InserirButton appendOkButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
         InserirButton btn = new InserirButton("_inserir_", elementsView, form, elementsView.getModel(), item);
         cell
                 .newTemplateTag(tp -> ""
@@ -408,19 +359,6 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                         + " wicket:id='_inserir_'"
                         + " class='btn btn-success btn-sm'"
                         + " style='"+ MapperCommons.BUTTON_STYLE +";margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+"' class='" + Icone.PLUS + "'></i>"
-                        + "</button>")
-                .add(btn);
-        return btn;
-    }
-
-    protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
-        RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
-        cell
-                .newTemplateTag(tp -> ""
-                        + "<button"
-                        + " wicket:id='_remover_'"
-                        + " class='btn btn-danger btn-sm'"
-                        + " style='padding:5px 3px 1px;margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+"'class='" + Icone.MINUS + "'></i>"
                         + "</button>")
                 .add(btn);
         return btn;
