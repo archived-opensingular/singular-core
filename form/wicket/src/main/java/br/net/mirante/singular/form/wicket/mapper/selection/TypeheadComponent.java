@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.options.SOptionsConfig;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -45,8 +46,9 @@ public class TypeheadComponent extends Panel {
 
     private WebMarkupContainer buildContainer() {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
-        c.queue(new TextField("label_field", new MOptionsModel(getDefaultModel())));
-        add(dynamicFetcher = new BloodhoundDataBehavior());
+        MOptionsModel options = new MOptionsModel(getDefaultModel());
+        c.queue(new TextField("label_field", options));
+        add(dynamicFetcher = new BloodhoundDataBehavior(optionsConfig()));
         return c;
     }
 
@@ -86,9 +88,16 @@ public class TypeheadComponent extends Panel {
     }
 
     private String jsOptionArray() {
-        SInstance instance = (SInstance) getDefaultModelObject();
-        Map<String, String> options = instance.getOptionsConfig().listSelectOptions();
+        Map<String, String> options = optionsConfigMap();
         return "['" + StringUtils.join(options.values(), "','") + "']";
+    }
+
+    private Map<String, String> optionsConfigMap() {
+        return optionsConfig().listSelectOptions();
+    }
+
+    private SOptionsConfig optionsConfig() {
+        return ((SInstance) getDefaultModelObject()).getOptionsConfig();
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
@@ -120,22 +129,27 @@ class MOptionsModel extends MInstanciaValorModel {
 }
 
 class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
+    private SOptionsConfig options;
+
+    public BloodhoundDataBehavior(SOptionsConfig options) {
+        this.options = options;
+    }
+
     @Override
     public void respond(AjaxRequestTarget target) {
 
         JSONArray r = new JSONArray();
         r.put(newValue("Abacate"));
-        r.put(newValue("Avodado"));
-        r.put(newValue("Abaaaacate"));
-        r.put(newValue("zzzz"));
 
-
-        RequestCycle requestCycle = getComponent().getRequestCycle();
-        requestCycle.scheduleRequestHandlerAfterCurrent(null);
-        getComponent().getRequest().getRequestParameters().getParameterValue("filter");
-        WebResponse response = (WebResponse) requestCycle.getResponse();
+        requestCycle().scheduleRequestHandlerAfterCurrent(null);
+        requestCycle().getRequest().getRequestParameters().getParameterValue("filter");
+        WebResponse response = (WebResponse) requestCycle().getResponse();
         response.setHeader("Content-Type", "text/html; charset=utf8");
         response.write(r.toString());
+    }
+
+    protected RequestCycle requestCycle() {
+        return getComponent().getRequestCycle();
     }
 
     private JSONObject newValue(String label) {
