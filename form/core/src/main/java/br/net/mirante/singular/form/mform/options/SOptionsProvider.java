@@ -5,15 +5,18 @@
 
 package br.net.mirante.singular.form.mform.options;
 
-import java.io.Serializable;
-import java.util.Collection;
-
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+
+import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * This interface represents the providers which will load options that
@@ -34,10 +37,31 @@ public interface SOptionsProvider extends Serializable {
      * @param selectedValueInstance : Current isntance used to select the options.
      * @return list of options from the expected {@link SInstance} type.
      */
-    default public SIList<? extends SInstance> listAvailableOptions(SSelectionableInstance selectedValueInstance) {
+    public default SIList<? extends SInstance> listAvailableOptions(SSelectionableInstance selectedValueInstance) {
         SIList<? extends SInstance> defaultOptions = listOptions((SInstance) selectedValueInstance);
         checkForDanglingValues((SInstance) selectedValueInstance, defaultOptions);
-        return defaultOptions;
+        return verifyOptionsType((SInstance) selectedValueInstance, defaultOptions);
+    }
+
+    public default SIList<? extends SInstance> verifyOptionsType(SInstance targetInstance, SIList<? extends SInstance> options) {
+        SType<?> targetType;
+        if (targetInstance.getType() instanceof STypeList) {
+            targetType = ((STypeList) targetInstance.getType()).getElementsType();
+        } else {
+            targetType = targetInstance.getType();
+        }
+        if (options != null && targetType != null) {
+            options.stream().forEach(sInstance -> {
+                if (sInstance != null && !sInstance.getType().equals(targetType)) {
+                    throw new SingularFormException(
+                            String
+                                    .format(" As opções fornecidas tem que ser do mesmo tipo da instancia alvo. Tipo fornecido: %s, Tipo esperado: %s",
+                                            sInstance.getType().getName(),
+                                            targetType.getName()));
+                }
+            });
+        }
+        return options;
     }
 
     public default void checkForDanglingValues(SInstance selectedValueInstance, SIList<? extends SInstance> defaultOptions) {

@@ -31,7 +31,7 @@ public class CaseInputCoreSelectProviderPackage extends SPackage {
         tipoDeMedia.withSelectionFromProvider(new SOptionsProvider() {
             @Override
             public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
-                STypeString type = getDictionary().getType(STypeString.class);
+                STypeString type = (STypeString) optionsInstance.getType();
                 SIList<?> r = type.newList();
                 r.addElement(newElement(type, "IMG", "Imagem"));
                 r.addElement(newElement(type, "TXT", "Texto"));
