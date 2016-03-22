@@ -12,10 +12,10 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 
-public class NewRowTest extends AbstractSingularFormTest {
+public class NewRowTest extends SingularFormBaseTest {
 
     STypeEMail email;
     STypeString nome;

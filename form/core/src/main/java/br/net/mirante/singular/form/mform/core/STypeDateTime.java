@@ -17,21 +17,22 @@ import com.google.common.base.Throwables;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 
-@SInfoType(name = "DateHour", spackage = SPackageCore.class)
-public class STypeDateHour extends STypeSimple<SIDate, Date> {
+@SInfoType(name = "DateTime", spackage = SPackageCore.class)
+public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
 
-    private static final Logger LOGGER = Logger.getLogger(STypeDateHour.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(STypeDateTime.class.getName());
 
     public static final String FORMAT = "dd/MM/yyyy HH:mm";
 
-    public STypeDateHour() {
-        super(SIDate.class, Date.class);
+    public STypeDateTime() {
+        super(SIDateTime.class, Date.class);
     }
 
-    protected STypeDateHour(Class<? extends SIDate> classeInstancia) {
+    protected STypeDateTime(Class<? extends SIDateTime> classeInstancia) {
         super(classeInstancia, Date.class);
     }
 
+    @Override
     public Date fromString(String value) {
         try {
             if (Strings.isNullOrEmpty(value)) return null;

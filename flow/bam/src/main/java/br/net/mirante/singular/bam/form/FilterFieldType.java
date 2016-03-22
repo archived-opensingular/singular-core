@@ -98,7 +98,7 @@ public enum FilterFieldType {
         @Override
         protected STypeSimple addFieldImpl(String groupConnectionURL, FilterConfig fc,
                                            STypeComposite root) {
-            return root.addFieldData(fc.getIdentifier());
+            return root.addFieldDate(fc.getIdentifier());
         }
     },
 

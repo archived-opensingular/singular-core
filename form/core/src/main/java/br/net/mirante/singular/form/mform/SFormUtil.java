@@ -20,8 +20,12 @@ import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 
 public final class SFormUtil {
 
+    private static Pattern idPattern;
+
     public static boolean isValidSimpleName(String name) {
-        Pattern idPattern = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
+        if (idPattern == null) {
+            idPattern = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
+        }
         return idPattern.matcher(name).matches();
     }
 

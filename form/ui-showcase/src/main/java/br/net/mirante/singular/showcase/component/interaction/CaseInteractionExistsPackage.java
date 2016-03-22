@@ -33,7 +33,7 @@ public class CaseInteractionExistsPackage extends SPackage {
 
         record = testForm.addFieldComposite("record");
         recordText = record.addFieldString("text");
-        recordDate = record.addFieldData("date");
+        recordDate = record.addFieldDate("date");
 
         exists.as(SPackageBasic.aspect()).label("Exists");
 

@@ -50,7 +50,8 @@ public class TestFinders {
         return tags.stream().filter((c) -> c.getId().equals(id)).collect(Collectors.toList());
     }
 
-    public static List<Component> findTag(MarkupContainer container, Class<? extends Component> tag) {
+    public static List<Component> findTag(MarkupContainer container,
+                                          Class<? extends Component> tag) {
         List<Component> result = Lists.newArrayList();
         findTag(tag, result, container);
         return result;

@@ -9,7 +9,9 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Date;
 
-public class SIDate extends SIComparable<Date> {
+import br.net.mirante.singular.form.mform.SISimple;
+
+public class SIDate extends SISimple<Date> implements SIComparable<Date> {
     public SIDate() {
     }
 

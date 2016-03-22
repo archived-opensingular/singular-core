@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.mform.io.FormSerialized;
-import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
@@ -161,7 +161,7 @@ public class AnnotationWicketTest {
 
 }
 
-class Base extends AbstractSingularFormTest {
+class Base extends SingularFormBaseTest {
     protected STypeComposite<? extends SIComposite> baseType,
             annotated1, annotated2, notAnnotated, annotated4;
 

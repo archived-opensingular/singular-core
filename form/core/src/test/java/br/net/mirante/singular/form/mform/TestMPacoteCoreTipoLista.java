@@ -2,12 +2,12 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
 
+import br.net.mirante.singular.form.mform.TestMPacoteCoreTipoLista.TestPacoteListaA.Pedido;
 import br.net.mirante.singular.form.mform.TestMPacoteCoreTipoLista.TestPacoteListaA.TestTipoListaComCargaInterna;
+import br.net.mirante.singular.form.mform.TestMPacoteCoreTipoLista.TestPacoteListaA.TipoPedido;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.SIFormula;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeFormula;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
@@ -105,16 +105,17 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        STypeList<STypeFormula, SIFormula> tipoFormulas = pb.createListTypeOf("formulas", STypeFormula.class);
+        STypeList<TipoPedido, Pedido> tipoPedido = pb.createListTypeOf("formulas", TipoPedido.class);
 
-        SIList<SIFormula> formulas = (SIList<SIFormula>) tipoFormulas.newInstance();
+        SIList<Pedido> pedidos = (SIList<Pedido>) tipoPedido.newInstance();
 
-        SIFormula formula = formulas.addNew();
-        formula.setSciptJS("XXX");
-        assertEquals(STypeFormula.TipoScript.JS, formula.getTipoScriptEnum());
+        Pedido pedido = pedidos.addNew();
+        pedido.setValue("id", "1");
+        pedido.setValue("nome", "arroz");
 
-        assertEquals("XXX", formulas.getValueString("[0].script"));
-        assertEquals("JS", formulas.getValueString("[0].tipoScript"));
+        assertEquals("1", pedido.getValue("id"));
+        assertEquals("1", pedidos.getValueString("[0].id"));
+        assertEquals("arroz", pedidos.getValueString("[0].nome"));
     }
 
     public void testeOnCargaTipoDireto() {
@@ -142,15 +143,31 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         @Override
         protected void carregarDefinicoes(PackageBuilder pb) {
             pb.createType(TestTipoListaComCargaInterna.class);
+            pb.createType(TipoPedido.class);
         }
 
-        @SInfoType(name = "TestTipoListaComCargaInterna", spackage = TestPacoteListaA.class)
+        @SInfoType(spackage = TestPacoteListaA.class)
         public static final class TestTipoListaComCargaInterna extends STypeList<STypeString, SIString> {
             @Override
             protected void onLoadType(TypeBuilder tb) {
                 withRequired(true);
                 as(AtrBasic.class).label("xxx");
             }
+        }
+
+        @SInfoType(spackage = TestPacoteListaA.class)
+        public static final class TipoPedido extends STypeComposite<Pedido> {
+            public TipoPedido() {
+                super(Pedido.class);
+            }
+            @Override
+            protected void onLoadType(TypeBuilder tb) {
+                addFieldString("id");
+                addFieldString("nome");
+            }
+        }
+
+        public static final class Pedido extends SIComposite {
         }
 
     }

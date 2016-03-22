@@ -743,7 +743,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             }
 
             private STypeDate createDateField(String fieldName, String label, int colPreference) {
-                STypeDate f = type.addFieldData(fieldName);
+                STypeDate f = type.addFieldDate(fieldName);
                 f.as(AtrBasic::new).label(label).as(AtrBootstrap::new).colPreference(colPreference);
                 return f;
             }
