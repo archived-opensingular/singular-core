@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.wicket.helpers;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -108,7 +109,7 @@ public class DummyPage extends WebPage {
     }
 }
 
-class MockFormConfig implements SFormConfig<String> {
+class MockFormConfig implements SFormConfig<String>, Serializable {
 
     private final MockSDocumentFactory documentFactory = new MockSDocumentFactory();
     private final MockTypeLoader mockTypeLoader = new MockTypeLoader();
@@ -124,21 +125,11 @@ class MockFormConfig implements SFormConfig<String> {
     }
 }
 
-class MockSDocumentFactory extends SDocumentFactory {
+class MockSDocumentFactory extends SDocumentFactory implements Serializable {
 
     private final DefaultServiceRegistry defaultServiceRegistry = new DefaultServiceRegistry();
 
-    private final SingularFormContextWicket singularFormContextWicket = new SingularFormContextWicket() {
-        @Override
-        public UIBuilderWicket getUIBuilder() {
-            return new UIBuilderWicket();
-        }
-
-        @Override
-        public ServiceRegistry getServiceRegistry() {
-            return defaultServiceRegistry;
-        }
-    };
+    private final SingularFormContextWicket singularFormContextWicket = new Context();
 
     {
         defaultServiceRegistry.bindLocalService(SingularFormContextWicket.class, new RefService<SingularFormContextWicket>() {
@@ -167,11 +158,23 @@ class MockSDocumentFactory extends SDocumentFactory {
 
     @Override
     protected void setupDocument(SDocument document) {}
+
+    private class Context implements SingularFormContextWicket, Serializable {
+        @Override
+        public UIBuilderWicket getUIBuilder() {
+            return new UIBuilderWicket();
+        }
+
+        @Override
+        public ServiceRegistry getServiceRegistry() {
+            return defaultServiceRegistry;
+        }
+    }
 }
 
-class MockTypeLoader extends TypeLoader<String> {
+class MockTypeLoader extends TypeLoader<String> implements Serializable {
 
-    private final SDictionary dictionary;
+    transient private final SDictionary dictionary;
 
     {
         dictionary = SDictionary.create();

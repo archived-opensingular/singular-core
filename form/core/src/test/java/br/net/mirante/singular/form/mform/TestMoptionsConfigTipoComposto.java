@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.Assert;
@@ -14,13 +15,13 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 public class TestMoptionsConfigTipoComposto {
 
 
-    private static final Date DT_INICIAL = new Date();
-    private static final Date DT_FINAL = new Date();
-    private static final Date DT_1 = new Date();
-    private static final Date DT_2 = new Date();
+    private static final Date DT_INICIAL = new Date(Calendar.getInstance().getTime().getTime() + 10000l);
+    private static final Date DT_FINAL = new Date(Calendar.getInstance().getTime().getTime() + 20000l);
+    private static final Date DT_1 = new Date(Calendar.getInstance().getTime().getTime() + 30000l);
+    private static final Date DT_2 = new Date(Calendar.getInstance().getTime().getTime() + 40000l);
     private static final String label1 = DT_1 + " - " + DT_2;
-    private static final Date DT_3 = new Date();
-    private static final Date DT_4 = new Date();
+    private static final Date DT_3 = new Date(Calendar.getInstance().getTime().getTime() + 50000l);
+    private static final Date DT_4 = new Date(Calendar.getInstance().getTime().getTime() + 60000l);
     private static final String label2 = DT_3 + " - " + DT_4;
 
     private SDictionary _dicionario;
@@ -109,7 +110,7 @@ public class TestMoptionsConfigTipoComposto {
         SIList lista = _periodo.getOptionsProvider().listAvailableOptions(periodo);
         SInstance instancia1 = lista.get(0);
         Assert.assertEquals(label1, instancia1.getSelectLabel());
-        SInstance instancia2 = lista.get(0);
+        SInstance instancia2 = lista.get(1);
         Assert.assertEquals(label2, instancia2.getSelectLabel());
 
         Assert.assertNotNull(_periodo.getSelectLabel());

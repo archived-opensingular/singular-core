@@ -16,10 +16,17 @@ import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.service.DefaultHibernatePersistenceService;
 import br.net.mirante.singular.persistence.service.DefaultHibernateProcessDefinitionService;
 
+import javax.inject.Inject;
+
 public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigurationBean {
     private String   definitionsBasePackage;
+
+    @Inject
     private IUserService userService;
+
+    @Inject
     private SessionFactory sessionFactory;
+
     private SessionLocator sessionLocator = ()-> sessionFactory.getCurrentSession();
 
     public HibernateSingularFlowConfigurationBean() {

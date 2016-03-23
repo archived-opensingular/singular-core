@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import br.net.mirante.singular.showcase.component.input.core.select.*;
 import br.net.mirante.singular.showcase.component.layout.*;
 import com.google.common.base.Throwables;
 
@@ -37,12 +38,6 @@ import br.net.mirante.singular.showcase.component.input.core.multiselect.CaseInp
 import br.net.mirante.singular.showcase.component.input.core.multiselect.CaseInputCoreMultiSelectDefault;
 import br.net.mirante.singular.showcase.component.input.core.multiselect.CaseInputCoreMultiSelectPickList;
 import br.net.mirante.singular.showcase.component.input.core.multiselect.CaseInputCoreMultiSelectProvider;
-import br.net.mirante.singular.showcase.component.input.core.select.CaseInputCoreSelectComboRadio;
-import br.net.mirante.singular.showcase.component.input.core.select.CaseInputCoreSelectComposite;
-import br.net.mirante.singular.showcase.component.input.core.select.CaseInputCoreSelectDefault;
-import br.net.mirante.singular.showcase.component.input.core.select.CaseInputCoreSelectOtherTypes;
-import br.net.mirante.singular.showcase.component.input.core.select.CaseInputCoreSelectProvider;
-import br.net.mirante.singular.showcase.component.input.core.select.CaseInputCoreSelectSearch;
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionDependsOnOptions;
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionEnabled;
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionExists;
@@ -71,6 +66,7 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreSelectOtherTypes.class)
             .addCase(CaseInputCoreSelectComposite.class)
             .addCase(CaseInputCoreSelectProvider.class)
+            .addCase(CaseInputCoreSelectComboAutoComplete.class)
             .addCase(CaseInputCoreMultiSelectDefault.class)
             .addCase(CaseInputCoreMultiSelectCombo.class)
             .addCase(CaseInputCoreMultiSelectCheckbox.class)

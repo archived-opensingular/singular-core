@@ -5,19 +5,18 @@
 
 package br.net.mirante.singular.form.mform.options;
 
-import java.math.BigInteger;
-import java.util.LinkedHashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SingularFormException;
+import java.math.BigInteger;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Mapeia cada MInstancia fornecida pelo OptionsProvider para uma par de
@@ -28,10 +27,11 @@ import br.net.mirante.singular.form.mform.SingularFormException;
  */
 public class SOptionsConfig {
 
-    private BigInteger keySeed = BigInteger.ZERO;
     private static final Logger LOGGER = LoggerFactory.getLogger(SOptionsConfig.class);
+    private Logger logger = LoggerFactory.getLogger(SOptionsConfig.class);
+    private BigInteger keySeed = BigInteger.ZERO;
     private BiMap<String, SInstance> optionsKeyInstanceMap;
-    private LinkedHashMap<String, String> optionsKeylabelMap;
+    private BiMap<String, String> optionsKeylabelMap;
     private SIList<? extends SInstance> options;
     private SSelectionableInstance instance;
 
@@ -76,19 +76,30 @@ public class SOptionsConfig {
             if (newOptions != null && !newOptions.equals(options)) {
                 options = newOptions;
                 optionsKeyInstanceMap = HashBiMap.create(options.size());
-                optionsKeylabelMap = new LinkedHashMap<>(options.size());
+                optionsKeylabelMap = HashBiMap.create(options.size());
                 for (br.net.mirante.singular.form.mform.SInstance instance : options) {
                     /* ignora silenciosamente valores duplicados */
-                    if (!optionsKeyInstanceMap.inverse().containsKey(instance)) {
+                    if (!optionsKeyInstanceMap.inverse().containsKey(instance) &&
+                            !optionsKeylabelMap.inverse().containsKey(instance.getSelectLabel())) {
                         String key = newUniqueKey();
                         optionsKeyInstanceMap.put(key, instance);
                         optionsKeylabelMap.put(key, instance.getSelectLabel());
+                    } else {
+                        logger.warn(String.format(" Valor ou descriação de opção de seleção ignorado durante a montagem da seleção simples. Value: %s, Label: %s",
+                                Optional
+                                        .ofNullable(instance)
+                                        .map(SInstance::getValue)
+                                        .orElse("null "),
+                                Optional
+                                        .ofNullable(instance)
+                                        .map(SInstance::getSelectLabel)
+                                        .orElse("null ")));
                     }
                 }
             }
         } else {
             optionsKeyInstanceMap = HashBiMap.create();
-            optionsKeylabelMap = new LinkedHashMap<>();
+            optionsKeylabelMap = HashBiMap.create();
         }
     }
 
@@ -103,6 +114,13 @@ public class SOptionsConfig {
             return null;
         }
         return optionsKeylabelMap.get(key);
+    }
+
+    public String getKeyFromLabel(String label) {
+        if (label == null || optionsKeylabelMap == null) {
+            return null;
+        }
+        return optionsKeylabelMap.inverse().get(label);
     }
 
     public String getKeyFromOption(SInstance option) {
@@ -136,7 +154,7 @@ public class SOptionsConfig {
      * @return Um mapa de chave e label representando as Minstancias disponibilizadas pelo provider do tipo
      * da MInstancia.
      */
-    public LinkedHashMap<String, String> listSelectOptions() {
+    public Map<String, String> listSelectOptions() {
         reloadOptionsFromProvider();
         return optionsKeylabelMap;
     }
