@@ -20,7 +20,7 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.visit.IVisit;
@@ -43,10 +43,11 @@ import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
 import br.net.mirante.singular.form.wicket.model.MICompostoModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
@@ -56,6 +57,7 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class ListBreadcrumbMapper extends AbstractListaMapper {
 
@@ -269,6 +271,9 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
             crudPanel.add(grid);
             content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
 
+            final BSRow buttonsRow = grid.newRow();
+            appendButtons(buttonsRow.newCol(11));
+
         });
 
         target.add(panel.getForm());
@@ -351,17 +356,33 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         }
     }
 
-    protected static InserirButton appendOkButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
-        InserirButton btn = new InserirButton("_inserir_", elementsView, form, elementsView.getModel(), item);
+    private static void appendButtons(BSContainer<?> cell) {
+
+        cell.add(WicketUtils.$b.attrAppender("class", "text-center", " "));
+
         cell
-                .newTemplateTag(tp -> ""
-                        + "<button"
-                        + " wicket:id='_inserir_'"
-                        + " class='btn btn-success btn-sm'"
-                        + " style='"+ MapperCommons.BUTTON_STYLE +";margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+"' class='" + Icone.PLUS + "'></i>"
-                        + "</button>")
-                .add(btn);
-        return btn;
+                .newTemplateTag(t -> "" +
+                        "<button wicket:id='okButton' class='btn btn-primary'>" +
+                        "<wicket:container wicket:id='label'></wicket:container>" +
+                        "</button>")
+                .add(new ActionAjaxButton("okButton") {
+                    @Override
+                    protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                    }
+                }.add(new Label("label", "OK")));
+
+
+        cell
+                .newTemplateTag(t -> "" +
+                        "<button wicket:id='cancelButton' class='btn'>" +
+                        "<wicket:container wicket:id='label'></wicket:container>" +
+                        "</button>")
+                .add(new ActionAjaxButton("cancelButton") {
+                    @Override
+                    protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                    }
+                }.add(new Label("label", "Cancelar")));
+
     }
 
 }
