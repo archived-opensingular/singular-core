@@ -53,19 +53,20 @@ public class SOptionsConfig {
 
     private void init() {
         if (optionsKeyInstanceMap == null) {
-            reloadOptionsFromProvider();
+            reloadOptionsFromProvider(null);
         }
     }
 
     /**
      * Reexecuta o listAvailableOptions do provider do tipo.
+     * @param filter
      */
-    private void reloadOptionsFromProvider() {
+    private void reloadOptionsFromProvider(String filter) {
         SOptionsProvider provider = getOptionsProvider();
         if (provider != null) {
             SIList<? extends SInstance> newOptions;
             try {
-                newOptions = provider.listAvailableOptions(instance);
+                newOptions = provider.listAvailableOptions(instance, filter);
             } catch (Exception e) {
                 if (instance instanceof SInstance) {
                     throw new SingularFormException("Erro ao listar opções para instancia ", e, (SInstance) instance);
@@ -155,7 +156,11 @@ public class SOptionsConfig {
      * da MInstancia.
      */
     public Map<String, String> listSelectOptions() {
-        reloadOptionsFromProvider();
+        return listSelectOptions(null);
+    }
+
+    public Map<String,String> listSelectOptions(String filter) {
+        reloadOptionsFromProvider(filter);
         return optionsKeylabelMap;
     }
 }

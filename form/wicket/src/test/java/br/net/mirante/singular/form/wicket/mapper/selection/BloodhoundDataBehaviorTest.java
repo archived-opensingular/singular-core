@@ -7,19 +7,20 @@ import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.options.SOptionsConfig;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import org.apache.wicket.ajax.json.JSONArray;
-import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.util.string.StringValue;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -43,45 +44,76 @@ public class BloodhoundDataBehaviorTest {
         BloodhoundDataBehavior b = createBehavior(null, null);
         b.respond(null);
 
-        verify(response).setHeader("Content-Type", "text/html; charset=utf8");
+        verify(response).setHeader("Content-Type", "application/json; charset=utf8");
     }
 
     @Test public void returnOptions(){
-
-        final String[] DOMAINS = {"@gmail.com", "@hotmail.com", "@yahoo.com"};
-        STypeComposite<? extends SIComposite> baseType = SDictionary.create().createNewPackage("pkg").createCompositeType("basetype");
-        STypeString base = baseType.addFieldString("myHero");
-        base.withSelectionFromProvider(new SOptionsProvider() {
-            @Override
-            public SIList<? extends SInstance> listOptions(SInstance instance) {
-                SIList<?> r = instance.getDictionary().getType(STypeString.class).newList();
-                for(String d : DOMAINS){
-                    r.addNew().setValue(d);
-                }
-                return r;
-            }
-        });
-        base.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
-
-        SInstance instance = SDocumentFactory.empty().createInstance(new RefType() {
-            protected SType<?> retrieve() {
-                return base;
-            }
-        });
+        SInstance instance = createInstance(createBaseType());
 
         BloodhoundDataBehavior b = createBehavior(null, instance.getOptionsConfig());
         b.respond(null);
 
-//        verify(response).write("[{\"value\":\"Abacate\"}]");
         verify(response).write(captor.capture());
         JSONArray expected = new JSONArray();
-        JSONObject value = new JSONObject();
-        value.put("value","Abacate");
-        expected.put(value);
-        assertThat(new JSONArray(captor.getValue())).isEqualTo(expected);
+        expected.put(createValue("@gmail.com"));
+        expected.put(createValue("@hotmail.com"));
+        expected.put(createValue("@yahoo.com"));
+
+        JSONAssert.assertEquals(expected,new JSONArray(captor.getValue()),false);
     }
 
-    private BloodhoundDataBehavior createBehavior(final StringValue filter,
+    @Test public void applyFilterToOptions(){
+        SInstance instance = createInstance(createBaseType());
+
+        BloodhoundDataBehavior b = createBehavior("bruce", instance.getOptionsConfig());
+        b.respond(null);
+
+        verify(response).write(captor.capture());
+        JSONArray expected = new JSONArray();
+        expected.put(createValue("bruce@gmail.com"));
+        expected.put(createValue("bruce@hotmail.com"));
+        expected.put(createValue("bruce@yahoo.com"));
+
+        JSONAssert.assertEquals(expected,new JSONArray(captor.getValue()),false);
+    }
+
+    private STypeString createBaseType() {
+        STypeComposite<? extends SIComposite> baseType = SDictionary.create().createNewPackage("pkg").createCompositeType("basetype");
+        STypeString base = baseType.addFieldString("myHero");
+        base.withSelectionFromProvider(createProvider());
+        base.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
+        return base;
+    }
+
+    private SOptionsProvider createProvider() {
+        return new SOptionsProvider() {
+            @Override
+            public SIList<? extends SInstance> listOptions(SInstance instance, String filter) {
+                if(filter == null) filter = "";
+                SIList<?> r = instance.getType().newList();
+                r.addNew().setValue(filter+"@gmail.com");
+                r.addNew().setValue(filter+"@hotmail.com");
+                r.addNew().setValue(filter+"@yahoo.com");
+                return r;
+            }
+        };
+    }
+
+    private SInstance createInstance(final STypeString base) {
+        return SDocumentFactory.empty().createInstance(new RefType() {
+            protected SType<?> retrieve() {
+                return base;
+            }
+        });
+    }
+
+    private JSONObject createValue(String v) {
+        JSONObject value = new JSONObject();
+        value.put("value", v);
+        return value;
+    }
+
+    private BloodhoundDataBehavior createBehavior(final String filter,
                                                   SOptionsConfig optionsProvider) {
         return new BloodhoundDataBehavior(optionsProvider){
                 @Override
@@ -94,7 +126,7 @@ public class BloodhoundDataBehaviorTest {
                     IRequestParameters params = Mockito.mock(IRequestParameters.class);
                     Mockito.when(request.getRequestParameters()).thenReturn(params);
 
-                    Mockito.when(params.getParameterValue("filter")).thenReturn(filter);
+                    Mockito.when(params.getParameterValue("filter")).thenReturn(StringValue.valueOf(filter));
 
                     response = Mockito.mock(WebResponse.class);
                     Mockito.when(cycle.getResponse()).thenReturn(response);

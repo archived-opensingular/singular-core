@@ -85,7 +85,7 @@ public class STypeSelectItemModalSearchTest {
         protected void buildBaseType(STypeComposite group) {
             super.buildBaseType(group);
             selectType.withSelectionFromProvider(nomeUF,
-                    (SOptionsProvider) inst -> novoProvider(federaldistrict(), goias()));
+                    (SOptionsProvider) (inst,f) -> novoProvider(federaldistrict(), goias()));
         }
 
         @Test public void showModalWhenClicked() {
@@ -106,7 +106,7 @@ public class STypeSelectItemModalSearchTest {
         protected void buildBaseType(STypeComposite group) {
             super.buildBaseType(group);
             selectType.withSelectionFromProvider(nomeUF,
-                    (SOptionsProvider) inst -> novoProvider(federaldistrict(), goias()));
+                    (SOptionsProvider) (inst, f) -> novoProvider(federaldistrict(), goias()));
             view.setAdditionalFields("population", "phonecode");
         }
 

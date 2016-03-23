@@ -37,7 +37,7 @@ public class STypeStringSelectItemDynamicAutoComplete {
             base = baseType.addFieldString("myHero");
             base.withSelectionFromProvider(new SOptionsProvider() {
                 @Override
-                public SIList<? extends SInstance> listOptions(SInstance instance) {
+                public SIList<? extends SInstance> listOptions(SInstance instance, String filter) {
                     SIList<?> r = instance.getDictionary().getType(STypeString.class).newList();
                     for(String d : DOMAINS){
                         r.addNew().setValue(d);

@@ -18,11 +18,17 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.string.StringValue;
 
+import java.util.Collection;
 import java.util.Map;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Created by nuk on 21/03/16.
@@ -138,14 +144,39 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     @Override
     public void respond(AjaxRequestTarget target) {
 
-        JSONArray r = new JSONArray();
-        r.put(newValue("Abacate"));
+        JSONArray r = createResponse();
 
-        requestCycle().scheduleRequestHandlerAfterCurrent(null);
-        requestCycle().getRequest().getRequestParameters().getParameterValue("filter");
+        requestCycle().scheduleRequestHandlerAfterCurrent(null); //TODO: Fabs: Test this
+
         WebResponse response = (WebResponse) requestCycle().getResponse();
-        response.setHeader("Content-Type", "text/html; charset=utf8");
+        response.setHeader("Content-Type", "application/json; charset=utf8");
         response.write(r.toString());
+    }
+
+    private JSONArray createResponse() {
+        JSONArray r = new JSONArray();
+        values(filterValue()).forEach((x) -> r.put(newValue(x)));
+        return r;
+    }
+
+    private String filterValue() {
+        return requestParameter().toString(null);
+    }
+
+    private StringValue requestParameter() {
+        IRequestParameters parameters = request().getRequestParameters();
+        return parameters.getParameterValue("filter");
+    }
+
+    private Request request() {
+        return requestCycle().getRequest();
+    }
+
+    private Collection<String> values(String filter) {
+        if(options == null) return newArrayList();
+        Map<String, String> map = options.listSelectOptions(filter);
+        if(map == null) return newArrayList();
+        return map.values();
     }
 
     protected RequestCycle requestCycle() {
