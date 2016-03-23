@@ -140,7 +140,7 @@ public class TableListMapper extends AbstractListaMapper {
                 cell.add(new ClassAttributeModifier() {
                     @Override
                     protected Set<String> update(Set<String> oldClasses) {
-                        if (isCampoObrigatorio) {
+                        if (isCampoObrigatorio && isEdition) {
                             oldClasses.add("singular-form-required");
                         } else {
                             oldClasses.remove("singular-form-required");
