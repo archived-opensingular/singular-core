@@ -21,6 +21,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.visit.IVisit;
@@ -28,6 +29,7 @@ import org.apache.wicket.util.visit.IVisitor;
 
 import com.google.common.base.Strings;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
@@ -40,6 +42,8 @@ import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
@@ -76,7 +80,11 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
         final IModel<String> listaLabel = newLabelModel(ctx, model);
 
-        ctx.getContainer().appendTag("div", true, null, new MetronicPanel("panel") {
+        ctx.getContainer().appendTag("div", true, null, buildPanel(ctx, model, viewMode, view, listaLabel));
+    }
+
+    private MetronicPanel buildPanel(final WicketBuildContext ctx, final IModel<? extends SInstance> model, final ViewMode viewMode, final SViewBreadcrumb view, final IModel<String> listaLabel) {
+        return new MetronicPanel("panel") {
 
             @Override
             protected void buildHeading(BSContainer<?> heading, Form<?> form) {
@@ -109,7 +117,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 });
 
             }
-        });
+        };
     }
 
     /*
@@ -272,8 +280,37 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
             content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
 
             final BSRow buttonsRow = grid.newRow();
-            appendButtons(buttonsRow.newCol(11));
+            appendButtons(ctx, buttonsRow.newCol(11));
 
+        });
+
+        target.add(panel.getForm());
+    }
+
+    private void hideCrud(WicketBuildContext ctx, AjaxRequestTarget target) {
+        MetronicPanel panel = ctx.getContainer().visitChildren(new IVisitor<Component, MetronicPanel>() {
+            @Override
+            public void component(Component object, IVisit<MetronicPanel> visit) {
+                if (object.getId().equalsIgnoreCase("panel")) {
+                    visit.stop((MetronicPanel) object);
+                }
+            }
+        });
+
+        panel.replaceContent((content, form) -> {
+            content.appendTag("table", true, null, (id) -> {
+                BSDataTable<SInstance, ?> bsDataTable = buildTable(id, ctx.getModel(), (SViewBreadcrumb) ctx.getView(), ctx, ctx.getViewMode());
+                bsDataTable.add(new Behavior() {
+                    @Override
+                    public void onConfigure(Component component) {
+                        super.onConfigure(component);
+                        if (ctx.getCurrentInstance() instanceof SIList) {
+                            component.setVisible(!((SIList<?>) ctx.getCurrentInstance()).isEmpty());
+                        }
+                    }
+                });
+                return bsDataTable;
+            });
         });
 
         target.add(panel.getForm());
@@ -356,7 +393,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         }
     }
 
-    private static void appendButtons(BSContainer<?> cell) {
+    private void appendButtons(WicketBuildContext ctx, BSContainer<?> cell) {
 
         cell.add(WicketUtils.$b.attrAppender("class", "text-center", " "));
 
@@ -368,6 +405,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 .add(new ActionAjaxButton("okButton") {
                     @Override
                     protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                        hideCrud(ctx, target);
                     }
                 }.add(new Label("label", "OK")));
 
@@ -380,6 +418,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 .add(new ActionAjaxButton("cancelButton") {
                     @Override
                     protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                        hideCrud(ctx, target);
                     }
                 }.add(new Label("label", "Cancelar")));
 
