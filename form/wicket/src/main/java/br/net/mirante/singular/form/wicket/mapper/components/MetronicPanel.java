@@ -15,6 +15,7 @@ import org.apache.wicket.markup.html.form.Form;
 public abstract class MetronicPanel extends TemplatePanel {
 
     private Form<?> form = null;
+    private boolean withForm;
 
     public MetronicPanel(String id) {
         this(id, true);
@@ -22,6 +23,12 @@ public abstract class MetronicPanel extends TemplatePanel {
 
     public MetronicPanel(String id, boolean withForm) {
         super(id);
+        this.withForm = withForm;
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
         setTemplateFunction(getTemplate(withForm));
         setRenderBodyOnly(true);
         setOutputMarkupId(false);
