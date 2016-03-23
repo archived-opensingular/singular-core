@@ -7,6 +7,9 @@ import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.options.SOptionsConfig;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
@@ -41,7 +44,8 @@ public class BloodhoundDataBehaviorTest {
     }
 
     @Test public void setsEncoding(){
-        BloodhoundDataBehavior b = createBehavior(null, null);
+        SInstance instance = createInstance(createBaseType());
+        BloodhoundDataBehavior b = createBehavior(null, new MInstanceRootModel<>(instance));
         b.respond(null);
 
         verify(response).setHeader("Content-Type", "application/json; charset=utf8");
@@ -50,7 +54,7 @@ public class BloodhoundDataBehaviorTest {
     @Test public void returnOptions(){
         SInstance instance = createInstance(createBaseType());
 
-        BloodhoundDataBehavior b = createBehavior(null, instance.getOptionsConfig());
+        BloodhoundDataBehavior b = createBehavior(null, new MInstanceRootModel<>(instance));
         b.respond(null);
 
         verify(response).write(captor.capture());
@@ -65,7 +69,7 @@ public class BloodhoundDataBehaviorTest {
     @Test public void applyFilterToOptions(){
         SInstance instance = createInstance(createBaseType());
 
-        BloodhoundDataBehavior b = createBehavior("bruce", instance.getOptionsConfig());
+        BloodhoundDataBehavior b = createBehavior("bruce", new MInstanceRootModel<>(instance));
         b.respond(null);
 
         verify(response).write(captor.capture());
@@ -114,8 +118,8 @@ public class BloodhoundDataBehaviorTest {
     }
 
     private BloodhoundDataBehavior createBehavior(final String filter,
-                                                  SOptionsConfig optionsProvider) {
-        return new BloodhoundDataBehavior(optionsProvider){
+                                                  IModel model) {
+        return new BloodhoundDataBehavior(new MOptionsModel(model)){
                 @Override
                 protected RequestCycle requestCycle() {
                     RequestCycle cycle = Mockito.mock(RequestCycle.class);

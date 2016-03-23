@@ -26,10 +26,10 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
         STypeString name = tipoMyForm.addFieldString("email");
         name.withSelectionFromProvider(new SOptionsProvider() {
             @Override
-            public SIList<? extends SInstance> listOptions(SInstance instance) {
-                SIList<?> r = instance.getDictionary().getType(STypeString.class).newList();
+            public SIList<? extends SInstance> listOptions(SInstance instance, String filter) {
+                SIList<?> r = instance.getType().newList();
                 for(String d : DOMAINS){
-                    r.addNew().setValue(d);
+                    r.addNew().setValue(filter+d);
                 }
                 return r;
             }

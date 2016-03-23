@@ -72,7 +72,7 @@ public class STypeEndereco extends STypeComposite<SIComposite> {
         STypeString nomeUF = estado.addFieldString("nome");
         estado
                 .withSelectionFromProvider(nomeUF,
-                        (SOptionsProvider) optionsInstance -> SelectBuilder.buildEstados(estado)
+                        (SOptionsProvider) (optionsInstance, f) -> SelectBuilder.buildEstados(estado)
                 );
 
         STypeComposite<?> cidade = this.addFieldComposite("cidade");
@@ -89,7 +89,7 @@ public class STypeEndereco extends STypeComposite<SIComposite> {
         STypeString nomeCidade = cidade.addFieldString("nome");
         cidade.addFieldString("UF");
         cidade.
-                withSelectionFromProvider(nomeCidade, (SOptionsProvider) inst ->
+                withSelectionFromProvider(nomeCidade, (SOptionsProvider) (inst, f) ->
                         SelectBuilder
                                 .buildMunicipiosFiltrado(
                                         cidade,

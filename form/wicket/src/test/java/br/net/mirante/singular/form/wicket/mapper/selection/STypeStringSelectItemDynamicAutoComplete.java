@@ -60,13 +60,6 @@ public class STypeStringSelectItemDynamicAutoComplete {
 
     public static class Default extends Base {
 
-        @Test
-        public void renderOptions(){
-            for(String o : DOMAINS){
-                tester.assertContains(o);
-            }
-        }
-
         @Test public void renderField(){
             assertThat(findTag(form.getForm(), TypeheadComponent.class)).hasSize(1);
             assertThat(findTag(form.getForm(), TextField.class)).hasSize(1);

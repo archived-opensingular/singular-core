@@ -54,7 +54,7 @@ public class TypeheadComponent extends Panel {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
         MOptionsModel options = new MOptionsModel(getDefaultModel());
         c.queue(new TextField("label_field", options));
-        add(dynamicFetcher = new BloodhoundDataBehavior(optionsConfig()));
+        add(dynamicFetcher = new BloodhoundDataBehavior(options));
         return c;
     }
 
@@ -78,7 +78,7 @@ public class TypeheadComponent extends Panel {
                     "})";
 
             fetchJS = "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
-                    "{hint: true, highlight: true, minLength: 0 }, " +
+                    "null," +
                     "{name: 'select', " +
                     "display: 'value', " +
                     "source: "+fetcher+" });";
@@ -114,8 +114,8 @@ public class TypeheadComponent extends Panel {
 
 class MOptionsModel extends MInstanciaValorModel {
 
-    public MOptionsModel(IModel instanciaModel) {
-        super(instanciaModel);
+    public MOptionsModel(IModel model) {
+        super(model);
     }
 
     SOptionsConfig options(){
@@ -135,10 +135,14 @@ class MOptionsModel extends MInstanciaValorModel {
 }
 
 class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
-    private SOptionsConfig options;
+    private MOptionsModel model;
 
-    public BloodhoundDataBehavior(SOptionsConfig options) {
-        this.options = options;
+    public BloodhoundDataBehavior(MOptionsModel model) {
+        this.model = model;
+    }
+
+    SOptionsConfig options(){
+        return model.options();
     }
 
     @Override
@@ -173,8 +177,8 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     private Collection<String> values(String filter) {
-        if(options == null) return newArrayList();
-        Map<String, String> map = options.listSelectOptions(filter);
+        if(options() == null) return newArrayList();
+        Map<String, String> map = options().listSelectOptions(filter);
         if(map == null) return newArrayList();
         return map.values();
     }
