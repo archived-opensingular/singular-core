@@ -81,7 +81,7 @@ public class SFixedOptionsSimpleProvider implements SOptionsProvider {
     }
 
     @Override
-    public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+    public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
         return options;
     }
 

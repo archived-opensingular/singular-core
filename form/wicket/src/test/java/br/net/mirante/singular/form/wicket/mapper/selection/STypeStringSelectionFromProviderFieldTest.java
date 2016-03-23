@@ -40,7 +40,8 @@ public class STypeStringSelectionFromProviderFieldTest  {
                     return "debug this";
                 }
 
-                public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+                public SIList<? extends SInstance> listOptions(
+                        SInstance optionsInstance, String filter) {
                     SIList<?> r = optionsInstance.getType().newList();
                     options.forEach((o) -> {r.addValue(o);});
                     return r;

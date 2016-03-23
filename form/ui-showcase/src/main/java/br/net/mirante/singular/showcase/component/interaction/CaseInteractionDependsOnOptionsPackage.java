@@ -64,7 +64,7 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
         word.as(SPackageBasic.aspect())
             .label("Word")
             .dependsOn(letter);
-        word.withSelectionFromProvider(ins -> {
+        word.withSelectionFromProvider((ins,f) -> {
             String prefix = ins.findNearest(letter).get().getValue();
             return (prefix == null)
                 ? ins.getType().newList()

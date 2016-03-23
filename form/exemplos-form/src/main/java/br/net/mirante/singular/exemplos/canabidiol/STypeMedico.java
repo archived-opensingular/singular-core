@@ -54,7 +54,7 @@ public class STypeMedico extends STypeComposite<SIComposite> {
         estado.addFieldString("sigla");
         STypeString nomeUF = estado.addFieldString("nome");
         estado
-                .withSelectionFromProvider(nomeUF, (SOptionsProvider) inst -> SelectBuilder.buildEstados(estado));
+                .withSelectionFromProvider(nomeUF, (SOptionsProvider) (inst, f) -> SelectBuilder.buildEstados(estado));
 
         this.addFieldCPF("cpf")
                 .as(AtrBasic::new)

@@ -47,7 +47,8 @@ public class STypeSelectItemSelectionFieldTest {
         protected SOptionsProvider newProviderFrom(SIComposite... compostos) {
             return new SOptionsProvider() {
                 @Override
-                public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+                public SIList<? extends SInstance> listOptions(
+                        SInstance optionsInstance, String filter) {
                     SIList lista = selectType.newList();
                     for (SIComposite composto : compostos) {
                         SInstance instancia = lista.addNew();

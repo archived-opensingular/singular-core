@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -23,7 +24,8 @@ public class AutocompleteMapper implements ControlsFieldComponentMapper {
                                  IModel<String> labelModel) {
         Component comp;
 
-        formGroup.appendDiv(comp = new TypeheadComponent(model.getObject().getName(), model));
+        formGroup.appendDiv(comp = new TypeheadComponent(model.getObject().getName(),
+                model, ((SViewAutoComplete)view).fetch()));
         return comp;
     }
 

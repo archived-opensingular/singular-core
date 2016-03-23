@@ -97,7 +97,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .withView(new SViewSelectionByRadio().verticalLayout());
 
         composicao.withSelectionFromProvider(
-                optionsInstance -> {
+                (optionsInstance, filter ) -> {
                     SIList<?> lista = composicao.newList();
                     String value = composicoes.get(Value.of(optionsInstance, nomeComercial));
                     if (value != null) {
@@ -125,7 +125,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .withView(new SViewSelectionByRadio().verticalLayout());
 
         enderecoFabricante.withSelectionFromProvider(
-                optionsInstance -> {
+                (optionsInstance, filter) -> {
                     SIList<?> lista = enderecoFabricante.newList();
                     String value = enderecos.get(Value.of(optionsInstance, nomeComercial));
                     if (value != null) {
