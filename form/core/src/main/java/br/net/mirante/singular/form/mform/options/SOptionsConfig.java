@@ -5,21 +5,18 @@
 
 package br.net.mirante.singular.form.mform.options;
 
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SingularFormException;
+import java.math.BigInteger;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Mapeia cada MInstancia fornecida pelo OptionsProvider para uma par de
@@ -30,8 +27,9 @@ import br.net.mirante.singular.form.mform.SingularFormException;
  */
 public class SOptionsConfig {
 
-    private BigInteger keySeed = BigInteger.ZERO;
     private static final Logger LOGGER = LoggerFactory.getLogger(SOptionsConfig.class);
+    private Logger logger = LoggerFactory.getLogger(SOptionsConfig.class);
+    private BigInteger keySeed = BigInteger.ZERO;
     private BiMap<String, SInstance> optionsKeyInstanceMap;
     private BiMap<String, String> optionsKeylabelMap;
     private SIList<? extends SInstance> options;
@@ -81,10 +79,21 @@ public class SOptionsConfig {
                 optionsKeylabelMap = HashBiMap.create(options.size());
                 for (br.net.mirante.singular.form.mform.SInstance instance : options) {
                     /* ignora silenciosamente valores duplicados */
-                    if (!optionsKeyInstanceMap.inverse().containsKey(instance)) {
+                    if (!optionsKeyInstanceMap.inverse().containsKey(instance) &&
+                            !optionsKeylabelMap.inverse().containsKey(instance.getSelectLabel())) {
                         String key = newUniqueKey();
                         optionsKeyInstanceMap.put(key, instance);
                         optionsKeylabelMap.put(key, instance.getSelectLabel());
+                    } else {
+                        logger.warn(String.format(" Valor ou descriação de opção de seleção ignorado durante a montagem da seleção simples. Value: %s, Label: %s",
+                                Optional
+                                        .ofNullable(instance)
+                                        .map(SInstance::getValue)
+                                        .orElse("null "),
+                                Optional
+                                        .ofNullable(instance)
+                                        .map(SInstance::getSelectLabel)
+                                        .orElse("null ")));
                     }
                 }
             }
