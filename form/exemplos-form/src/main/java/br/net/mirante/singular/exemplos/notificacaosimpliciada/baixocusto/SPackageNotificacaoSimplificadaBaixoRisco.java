@@ -182,7 +182,10 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         STypeString descricaoEmbalagemPrimaria = embalagemPrimaria.addFieldString("descricao");
         {
             embalagemPrimaria
-                    .asAtrBasic().label("Embalagem primária")
+                    .as(AtrBootstrap::new)
+                    .colPreference(6)
+                    .as(AtrBasic::new)
+                    .label("Embalagem primária")
                     .getTipo().setView(SViewSelectionBySearchModal::new);
             embalagemPrimaria.withSelectionFromProvider(descricaoEmbalagemPrimaria, (optionsInstance, lb) -> {
                 for (Pair p : NotificacaoSimplificadaProviderUtils.embalagensPrimarias()) {
@@ -199,7 +202,10 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         STypeString descricaoEmbalagemSecundaria = embalagemSecundaria.addFieldString("descricao");
         {
             embalagemSecundaria
-                    .asAtrBasic().label("Embalagem secundária")
+                    .as(AtrBootstrap::new)
+                    .colPreference(6)
+                    .as(AtrBasic::new)
+                    .label("Embalagem secundária")
                     .getTipo().setView(SViewSelectionBySearchModal::new);
             embalagemSecundaria.withSelectionFromProvider(descricaoEmbalagemSecundaria, (optionsInstance, lb) -> {
                 for (Pair p : NotificacaoSimplificadaProviderUtils.embalagensSecundarias()) {
@@ -212,13 +218,20 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         }
         STypeInteger quantidade = acondicionamento.addFieldInteger("quantidade", true);
-        quantidade.asAtrBasic().label("Quantidade");
+        quantidade
+                .as(AtrBootstrap::new)
+                .colPreference(3)
+                .as(AtrBasic::new)
+                .label("Quantidade");
 
         STypeComposite<SIComposite> unidadeMedida = acondicionamento.addFieldComposite("unidadeMedida");
         STypeString idUnidadeMedida = unidadeMedida.addFieldString("id");
         STypeString descricaoUnidadeMedida = unidadeMedida.addFieldString("descricao");
         unidadeMedida
-                .asAtrBasic().label("Unidade de medida")
+                .as(AtrBootstrap::new)
+                .colPreference(3)
+                .as(AtrBasic::new)
+                .label("Unidade de medida")
                 .getTipo().setView(SViewSelectionBySearchModal::new);
         unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (optionsInstance, lb) -> {
             for (Pair p : NotificacaoSimplificadaProviderUtils.unidadesMedida()) {
@@ -240,8 +253,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
             nomeArquivo.as(AtrBasic::new).label("Nome do Arquivo");
-            estudosEstabilidade.withView(new SViewListByMasterDetail()
-                    .col((STypeSimple) nomeArquivo));
+            estudosEstabilidade.withView(SViewListByTable::new);
         }
 
         {
@@ -255,8 +267,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
             nomeArquivo.as(AtrBasic::new).label("Nome do Arquivo");
-            layoutsRotulagem.withView(new SViewListByMasterDetail()
-                    .col((STypeSimple) nomeArquivo));
+            layoutsRotulagem.withView(SViewListByTable::new);
         }
 
         STypeInteger prazoValidade = acondicionamento.addFieldInteger("prazoValidade", true);
