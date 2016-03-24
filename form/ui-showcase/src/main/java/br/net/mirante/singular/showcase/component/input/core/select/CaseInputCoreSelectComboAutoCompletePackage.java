@@ -28,12 +28,19 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
             @Override
             public SIList<? extends SInstance> listOptions(SInstance instance, String filter) {
                 SIList<?> r = instance.getType().newList();
+                appendEmailSuggestions(filter, r);
+                return r;
+            }
+
+            private void appendEmailSuggestions(String filter, SIList<?> r) {
+                String prefix = emailPrefix(filter);
+                for(String d : DOMAINS){    r.addNew().setValue(prefix+d);  }
+            }
+
+            private String emailPrefix(String filter) {
                 String prefix = "";
                 if(filter != null){ prefix = filter.split("\\@")[0];}
-                for(String d : DOMAINS){
-                    r.addNew().setValue(prefix+d);
-                }
-                return r;
+                return prefix;
             }
         });
         name.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC))
