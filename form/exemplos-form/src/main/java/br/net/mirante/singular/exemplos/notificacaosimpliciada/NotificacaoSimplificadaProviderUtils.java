@@ -176,4 +176,38 @@ public class NotificacaoSimplificadaProviderUtils {
         list.add(Pair.of(5, "um5"));
         return list;
     }
+
+    public static List<Triple> empresaInternacional() {
+        List<Triple> list = new ArrayList<>();
+
+        list.add(Triple.of(1, "Emnpresa 1", "Endereco 1"));
+
+        return list;
+    }
+
+    public static List<Triple> empresaTerceirizada() {
+        List<Triple> list = new ArrayList<>();
+
+        list.add(Triple.of(1, "Emnpresa 2", "Endereco 2"));
+
+        return list;
+    }
+
+    public static List<Triple> outroLocalFabricacao() {
+        List<Triple> list = new ArrayList<>();
+
+        list.add(Triple.of(1, "Emnpresa 3", "Endereco 3"));
+
+        return list;
+    }
+
+    public static List<Pair> etapaFabricacao() {
+        List<Pair> list = new ArrayList<>();
+        list.add(Pair.of(1, "Teste1"));
+        list.add(Pair.of(2, "Teste2"));
+        list.add(Pair.of(3, "Teste3"));
+        list.add(Pair.of(4, "Teste4"));
+        list.add(Pair.of(5, "Teste5"));
+        return list;
+    }
 }
