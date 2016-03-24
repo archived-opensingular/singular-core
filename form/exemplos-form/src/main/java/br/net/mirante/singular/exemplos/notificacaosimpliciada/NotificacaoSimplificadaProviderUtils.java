@@ -80,6 +80,23 @@ public class NotificacaoSimplificadaProviderUtils {
         return list.stream().filter(t -> t.getMiddle().equals(idConfiguracaoLinhaProducao)).collect(Collectors.toList());
     }
 
+    public static List<Pair> formasFarmaceuticas(){
+        List<Pair> list = new ArrayList<>();
+        list.add(Pair.of(1, "Adesivo"));
+        list.add(Pair.of(2, "Anel"));
+        list.add(Pair.of(3, "Barra"));
+        list.add(Pair.of(4, "Bastão"));
+        list.add(Pair.of(5, "Comprimido"));
+        list.add(Pair.of(6, "Comprimido de Liberação Prolongada"));
+        list.add(Pair.of(7, "Comprimido para Solução"));
+        list.add(Pair.of(8, "Granulado"));
+        list.add(Pair.of(9, "Implante"));
+        list.add(Pair.of(10, "Pó Aerossol"));
+        list.add(Pair.of(11, "Tablete"));
+        list.add(Pair.of(12, "Espuma"));
+
+        return list;
+    }
 
     public static List<Triple> concentracoes(Integer idSubstancia) {
         List<Triple> list = new ArrayList<>();
@@ -128,5 +145,35 @@ public class NotificacaoSimplificadaProviderUtils {
         list.add(Triple.of(27, 9, "75 mg"));
 
         return list.stream().filter(t -> t.getMiddle().equals(idSubstanciaFake)).collect(Collectors.toList());
+    }
+
+    public static List<Pair> embalagensPrimarias() {
+        List<Pair> list = new ArrayList<>();
+        list.add(Pair.of(1, "emb1"));
+        list.add(Pair.of(2, "emb2"));
+        list.add(Pair.of(3, "emb3"));
+        list.add(Pair.of(4, "emb4"));
+        list.add(Pair.of(5, "emb5"));
+        return list;
+    }
+
+    public static List<Pair> embalagensSecundarias() {
+        List<Pair> list = new ArrayList<>();
+        list.add(Pair.of(1, "emb1"));
+        list.add(Pair.of(2, "emb2"));
+        list.add(Pair.of(3, "emb3"));
+        list.add(Pair.of(4, "emb4"));
+        list.add(Pair.of(5, "emb5"));
+        return list;
+    }
+
+    public static List<Pair> unidadesMedida() {
+        List<Pair> list = new ArrayList<>();
+        list.add(Pair.of(1, "um1"));
+        list.add(Pair.of(2, "um2"));
+        list.add(Pair.of(3, "um3"));
+        list.add(Pair.of(4, "um4"));
+        list.add(Pair.of(5, "um5"));
+        return list;
     }
 }
