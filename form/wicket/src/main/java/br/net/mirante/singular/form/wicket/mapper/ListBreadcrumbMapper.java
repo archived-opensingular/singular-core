@@ -387,7 +387,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                                 .buttonModel(Model.of("blue-madison"))
                                 .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                         (target, rowModel) -> {
-                            showCrud(ctx, target, model);
+                            showCrud(ctx, target, rowModel);
                         });
             });
         }
