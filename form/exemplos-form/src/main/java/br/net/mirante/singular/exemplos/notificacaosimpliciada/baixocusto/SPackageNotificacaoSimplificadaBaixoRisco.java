@@ -336,10 +336,61 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
             }
         });
 
-        empresaTerceirizada.addFieldComposite("empresaTerceirizada");
+        etapasFabricacao
+                .asAtrBasic().label("Etapa de fabricação")
+                .getTipo().withView(SViewListByForm::new);;
 
-        empresasTerceirizadas.withView(SViewListByMasterDetail::new);
+        STypeComposite<SIComposite> empresa = empresaTerceirizada.addFieldComposite("empresa");
+        STypeString idEmpresa = empresa.addFieldString("id");
+        STypeString razaoSocial = empresa.addFieldString("razaoSocial");
+        razaoSocial.asAtrBasic().label("Razão Social");
+        STypeString endereco = empresa.addFieldString("endereco");
+        empresa
+                .asAtrBasic().label("Empresa")
+                .getTipo().withView(SViewSelectionBySearchModal::new);
 
+        empresa.withSelectionFromProvider(razaoSocial, (optionsInstance, lb) -> {
+            for (Triple t : NotificacaoSimplificadaProviderUtils.empresaTerceirizada()) {
+                lb
+                        .add()
+                        .set(idEmpresa, t.getLeft())
+                        .set(razaoSocial, t.getMiddle())
+                        .set(endereco, t.getRight());
+            }
+        });
+
+        empresasTerceirizadas
+                .asAtrBasic().label("Empresa terceirizada")
+                .dependsOn(producaoPropria)
+                .visivel(i -> BooleanUtils.isFalse(Value.of(i, producaoPropria)))
+                .getTipo().withView(new SViewListByMasterDetail()
+                    .col(razaoSocial, "Razão Social")
+                    .col(endereco, "Endereço"));
+
+        STypeList<STypeComposite<SIComposite>, SIComposite> outrosLocaisFabricacao = localFabricacao.addFieldListOfComposite("outrosLocaisFabricacao", "outroLocalFabricacao");
+        STypeComposite<SIComposite> outroLocalFabricacao = outrosLocaisFabricacao.getElementsType();
+
+        STypeString idOutroLocalFabricacao = outroLocalFabricacao.addFieldString("id");
+        STypeString razaoSocialOutroLocalFabricacao = outroLocalFabricacao.addFieldString("razaoSocial");
+        razaoSocialOutroLocalFabricacao.asAtrBasic().label("Razão Social");
+        STypeString enderecoOutroLocalFabricacao = outroLocalFabricacao.addFieldString("endereco");
+        outrosLocaisFabricacao.asAtrBasic().label("Outro local de fabricação")
+                .dependsOn(producaoPropria)
+                .visivel(i -> BooleanUtils.isFalse(Value.of(i, producaoPropria)))
+                .getTipo().withView(SViewListByForm::new);
+
+        outroLocalFabricacao
+                .withSelectionFromProvider(razaoSocialOutroLocalFabricacao, (optionsInstance, lb) -> {
+                    for (Triple p : NotificacaoSimplificadaProviderUtils.outroLocalFabricacao()) {
+                        lb
+                                .add()
+                                .set(idOutroLocalFabricacao, p.getLeft())
+                                .set(razaoSocialOutroLocalFabricacao, p.getMiddle())
+                                .set(enderecoOutroLocalFabricacao, p.getRight());
+                    }
+                })
+                .asAtrBasic().label("Outro local de fabricação")
+                .getTipo().setView(SViewSelectionBySearchModal::new);
 
         locaisFabricacao
                 .withView(new SViewListByMasterDetail())
