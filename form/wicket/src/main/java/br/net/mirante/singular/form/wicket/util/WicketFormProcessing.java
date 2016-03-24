@@ -9,10 +9,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import br.net.mirante.singular.form.mform.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -26,10 +28,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
 
-import br.net.mirante.singular.form.mform.SFormUtil;
-import br.net.mirante.singular.form.mform.SInstances;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.event.ISInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceEvent;
@@ -40,6 +38,7 @@ import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackMessage;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+
 import static java.util.stream.Collectors.toSet;
 
 /*
@@ -83,7 +82,7 @@ public class WicketFormProcessing {
 
         // atualizar documento e recuperar instancias com atributos alterados
         SInstance baseInstance = baseInstanceModel.getObject();
-        SDocument document = baseInstance.getDocument();
+        SDocument document     = baseInstance.getDocument();
         document.updateAttributes(baseInstance, null);
 
         // re-renderizar form
@@ -99,11 +98,11 @@ public class WicketFormProcessing {
      */
     protected static String getIndexsKey(String path) {
 
-        final Pattern indexFinder = Pattern.compile("(\\[\\d\\])");
+        final Pattern indexFinder    = Pattern.compile("(\\[\\d\\])");
         final Pattern bracketsFinder = Pattern.compile("[\\[\\]]");
 
-        final Matcher matcher = indexFinder.matcher(path);
-        final StringBuilder key = new StringBuilder();
+        final Matcher       matcher = indexFinder.matcher(path);
+        final StringBuilder key     = new StringBuilder();
 
         while (matcher.find()) {
             key.append(bracketsFinder.matcher(matcher.group()).replaceAll(StringUtils.EMPTY));
@@ -133,7 +132,7 @@ public class WicketFormProcessing {
 
     }
 
-    private static void refreshComponents(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance){
+    private static void refreshComponents(Component component, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance) {
 
         // atualizar documento e recuperar os IDs das instancias com atributos alterados
         final ISInstanceListener.EventCollector eventCollector = new ISInstanceListener.EventCollector();
@@ -141,7 +140,7 @@ public class WicketFormProcessing {
 
         final String indexsKey = getIndexsKey(((IMInstanciaAwareModel) fieldInstance).getMInstancia().getPathFull());
 
-        refresh(target, formComponent);
+        refresh(target, component);
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
@@ -149,24 +148,34 @@ public class WicketFormProcessing {
                     .map(SInstance::getId)
                     .collect(toSet());
 
-            final BiPredicate<Component, SInstance> predicate = (Component c, SInstance ins) -> {
-                SType<?> insTipo = ins.getType();
-                boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
-                boolean hasOptions = (insTipo instanceof SSelectionableType<?>) && ((SSelectionableType<?>) insTipo).hasOptionsProvider();
-                boolean dependsOnType = fieldInstance.getObject().getType().getDependentTypes().contains(insTipo);
+            final Function<SType, Boolean> depends = (type) -> fieldInstance.getObject().getType().getDependentTypes().contains(type);
+
+            final Predicate<SInstance> predicate = ins ->
+            {
+                if (ins == null) {
+                    return false;
+                }
+
+                final SType<?> type = ins.getType();
+
+                boolean wasUpdated             = updatedInstanceIds.contains(ins.getId());
+                boolean dependsOnType          = depends.apply(type);
                 boolean isInTheSameIndexOfList = indexsKey.equals(getIndexsKey(ins.getPathFull()));
-                return wasUpdated || (hasOptions && dependsOnType && isInTheSameIndexOfList);
+                boolean childrenDepends        = false;
+
+                if (type instanceof STypeList) {
+                    childrenDepends = depends.apply(((STypeList) type).getElementsType());
+                }
+
+                return wasUpdated || (childrenDepends || dependsOnType) && isInTheSameIndexOfList;
             };
 
-            //re-renderizar componentes
-            formComponent.getPage().visitChildren(Component.class, (c, visit) -> {
-                IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
-                    if (predicate.test(c, model.getMInstancia())) {
+            component.getPage().visitChildren(Component.class, (c, visit) -> {
+                IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model ->
+                {
+                    if (predicate.test(model.getMInstancia())) {
                         model.getMInstancia().clearInstance();
-                        if (c instanceof FormComponent) {
-                            refreshComponents((FormComponent) c, target, IMInstanciaAwareModel.getInstanceModel(model));
-                        }
-                        refresh(Optional.of(t), c);
+                        refreshComponents(c, target, IMInstanciaAwareModel.getInstanceModel(model));
                     }
                 });
             });
