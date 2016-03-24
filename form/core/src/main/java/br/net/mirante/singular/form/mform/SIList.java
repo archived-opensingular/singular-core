@@ -59,6 +59,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     public void clearInstance() {
         if (values != null) {
             values.forEach(SInstance::clearInstance);
+            values.clear();
         }
     }
 
