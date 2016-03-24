@@ -30,7 +30,7 @@ public class MFileIdsOptionsProvider implements SOptionsProvider {
      */
     @Override
     // @destacar:bloco
-    public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+    public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
         SIList<?> list;
         if (optionsInstance instanceof SIList) {
             list = ((SIList) optionsInstance).getElementsType().newList();

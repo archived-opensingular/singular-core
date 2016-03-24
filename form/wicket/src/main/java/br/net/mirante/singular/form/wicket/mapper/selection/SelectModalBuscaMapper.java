@@ -17,7 +17,6 @@ import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
-@SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
 
 
@@ -30,8 +29,8 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         throw new RuntimeException("SelectModalBuscaMapper only works with a MSelecaoPorModalBuscaView.");
     }
 
-    protected Component formGroupAppender(BSControls formGroup, BSContainer modalContainer,
-                                          IModel<? extends SInstance> model, SViewSelectionBySearchModal view)
+    private Component formGroupAppender(BSControls formGroup, BSContainer modalContainer,
+                                        IModel<? extends SInstance> model, SViewSelectionBySearchModal view)
     {
         final SelectInputModalContainer panel = new SelectInputModalContainer(model.getObject().getName() + "inputGroup",
                 formGroup, modalContainer, model, view, new OutputValueModel() {
@@ -58,7 +57,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         return StringUtils.EMPTY;
     }
 
-    abstract class OutputValueModel implements IMInstanciaAwareModel<String> {
+    private abstract class OutputValueModel implements IMInstanciaAwareModel<String> {
 
         @Override
         public void setObject(String object) {}

@@ -37,7 +37,7 @@ public class STypeStringKeyValueRadioTest {
             tipoDeMedia.withRadioView();
             tipoDeMedia.withSelectionFromProvider(new SOptionsProvider() {
                 @Override
-                public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+                public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
                     STypeString type = (STypeString) optionsInstance.getType();
                     SIList<?> r = type.newList();
                     r.addElement(newElement(type, "IMG", "Imagem"));

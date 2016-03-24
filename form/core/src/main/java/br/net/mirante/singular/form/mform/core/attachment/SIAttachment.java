@@ -5,10 +5,14 @@
 
 package br.net.mirante.singular.form.mform.core.attachment;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
 
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SingularFormException;
+import org.apache.tika.Tika;
 
 public class SIAttachment extends SIComposite {
 
@@ -138,5 +142,26 @@ public class SIAttachment extends SIComposite {
         return getAttributeValue(STypeAttachment.ATR_IS_TEMPORARY) != null;
     }
 
+    public String getContentType(){
+        try {
+            return new Tika().detect(getContent());
+        } catch (IOException e) {
+            throw new SingularFormException("Não foi possivel detectar o content type.");
+        }
+    }
+
+    public boolean isContentTypeBrowserFriendly(String contentType) {
+        final List<String> inlineContentTypes = STypeAttachment.INLINE_CONTENT_TYPES;
+        for (String inlineContentType : inlineContentTypes) {
+            if (contentType.matches(inlineContentType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isContentTypeBrowserFriendly() {
+        return isContentTypeBrowserFriendly(getContentType());
+    }
 
 }
