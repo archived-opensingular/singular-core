@@ -175,6 +175,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
                 } else {
                     currentModel.setXml(StringUtils.EMPTY);
                 }
+                currentModel.setDescription(getCurrentInstance().getObject().toStringDisplay());
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
@@ -193,6 +194,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             protected void save() {
                 getCurrentInstance().getObject().getDocument().persistFiles();
                 addAnnotationsToModel(getCurrentInstance().getObject());
+                currentModel.setDescription(getCurrentInstance().getObject().toStringDisplay());
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
@@ -225,6 +227,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
                 } else {
                     currentModel.setXml(StringUtils.EMPTY);
                 }
+                currentModel.setDescription(getCurrentInstance().getObject().toStringDisplay());
                 addAnnotationsToModel(getCurrentInstance().getObject());
                 dao.save(currentModel);
                 backToCrudPage(this);

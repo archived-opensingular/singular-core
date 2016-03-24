@@ -170,7 +170,9 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
         final Supplier<BSActionColumn<ExampleDataDTO, String>> $action = () -> new BSActionColumn<>($m.ofValue(""));
 
-        builder.appendPropertyColumn(getMessage("label.table.column.id"), "id", ExampleDataDTO::getId)
+        builder
+                .appendPropertyColumn(getMessage("label.table.column.id"), "id", ExampleDataDTO::getId)
+                .appendPropertyColumn(getMessage("label.table.column.descricao"), "description", ExampleDataDTO::getDescription)
                 .appendPropertyColumn(getMessage("label.table.column.dt.edicao"), "editionDate", ExampleDataDTO::getEditionDate)
                 .appendColumn($action.get().appendAction(getMessage("label.table.column.edit"), Icone.PENCIL_SQUARE,
                         (target, model) -> {
