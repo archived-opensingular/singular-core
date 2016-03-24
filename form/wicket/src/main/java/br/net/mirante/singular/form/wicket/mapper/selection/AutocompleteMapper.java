@@ -33,7 +33,7 @@ public class AutocompleteMapper implements ControlsFieldComponentMapper {
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
         if ((mi != null) && (mi.getValue() != null)) {
-            return String.valueOf(mi.getValue());
+            return String.valueOf(mi.getSelectLabel());
         }
         return StringUtils.EMPTY;
     }

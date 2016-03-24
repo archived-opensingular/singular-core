@@ -28,6 +28,7 @@ import org.apache.wicket.util.string.StringValue;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import static br.net.mirante.singular.form.wicket.mapper.selection.TypeheadComponent.generateResultOptions;
 import static br.net.mirante.singular.form.wicket.mapper.selection.TypeheadComponent.newValue;
@@ -58,7 +59,9 @@ public class TypeheadComponent extends Panel {
     private WebMarkupContainer buildContainer() {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
         MOptionsModel options = new MOptionsModel(getDefaultModel());
-        c.queue(new TextField("label_field", Model.of(instance().getSelectLabel())));
+        String label = "";
+        if(instance().getValue() != null ){ label = instance().getSelectLabel();    }
+        c.queue(new TextField("label_field", Model.of(label)));
         c.queue(valueField = new HiddenField("value_field", options));
         add(dynamicFetcher = new BloodhoundDataBehavior(options));
         return c;
@@ -68,31 +71,12 @@ public class TypeheadComponent extends Panel {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("TypeheadComponent.js")));
-        String fetchJS = "";
-        if(fetch == SViewAutoComplete.Mode.STATIC){
-            fetchJS = staticJSFetch();
-        }else {
-            String fetcher = "new Bloodhound({\n" +
-                    "  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),\n" +
-                    "  queryTokenizer: Bloodhound.tokenizers.whitespace,\n" +
-                    "  prefetch: '"+dynamicFetcher.getCallbackUrl()+"',\n" +
-                    "  remote: {\n" +
-                    "    url: '"+dynamicFetcher.getCallbackUrl()+"&filter=%QUERY',\n" +
-                    "    wildcard: '%QUERY'\n" +
-                    "  }\n" +
-                    "})";
+        response.render(OnDomReadyHeaderItem.forScript(createJSFetcher()));
+    }
 
-            fetchJS = "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
-                    "{limit: Number.MAX_SAFE_INTEGER, minLength: 0, hint:false }," +
-                    "{name: 's-select-typeahead', " +
-                    "display: 'value', " +
-                    "source: "+fetcher+" })\n" +
-                    ".bind('typeahead:select', function(ev, suggestion) {\n" +
-                    "   console.log(ev, suggestion);\n" +
-                    "   $('#"+valueField.getMarkupId()+"').val(suggestion['key']);\n" +
-                    "});";
-        }
-        response.render(OnDomReadyHeaderItem.forScript(fetchJS));
+    private String createJSFetcher() {
+        if(fetch == SViewAutoComplete.Mode.STATIC){ return staticJSFetch();
+        }else { return dynamicJSFetch();    }
     }
 
     private String staticJSFetch() {
@@ -101,10 +85,36 @@ public class TypeheadComponent extends Panel {
                 "{name: 's-select-typeahead', " +
                 "display: 'value', "+
                 "source: window.substringMatcher(" + jsOptionArray() + ") })\n" +
-                ".bind('typeahead:select', function(ev, suggestion) {\n"+
-                "   console.log(ev, suggestion);\n" +
-                "   $('#"+valueField.getMarkupId()+"').val(suggestion['key']);\n" +
-                "});";
+                createBindExpression()+
+                ";";
+    }
+
+    private String createBindExpression() {
+        return ".bind('typeahead:select', function(ev, suggestion) {\n" +
+                "  console.log(ev, suggestion); \n"+
+                "   $('#" + valueField.getMarkupId() + "').val(suggestion['key']);\n" +
+                "})";
+    }
+    private String dynamicJSFetch() {
+        return "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
+                "{limit: Number.MAX_SAFE_INTEGER, minLength: 0, hint:false }," +
+                "{name: 's-select-typeahead', " +
+                "display: 'value', " +
+                "source: " + createJSBloodhoundOpbject() + " })\n" +
+                createBindExpression() +
+                ";";
+    }
+
+    private String createJSBloodhoundOpbject() {
+        return "new Bloodhound({\n" +
+                    "  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),\n" +
+                    "  queryTokenizer: Bloodhound.tokenizers.whitespace,\n" +
+                    "  prefetch: '"+dynamicFetcher.getCallbackUrl()+"',\n" +
+                    "  remote: {\n" +
+                    "    url: '"+dynamicFetcher.getCallbackUrl()+"&filter=%QUERY',\n" +
+                    "    wildcard: '%QUERY'\n" +
+                    "  }\n" +
+                    "})";
     }
 
     private String jsOptionArray() {
@@ -125,7 +135,7 @@ public class TypeheadComponent extends Panel {
 
     protected static String generateResultOptions(Map<String, String> options) {
         JSONArray arr = new JSONArray();
-        options.values().forEach((x) -> arr.put(newValue(x,x)));
+        options.entrySet().forEach((e) -> arr.put(newValue(e.getKey(),e.getValue())));
         return arr.toString();
     }
 
@@ -154,14 +164,15 @@ class MOptionsModel extends MInstanciaValorModel {
 
     @Override
     public void setObject(Object object) {
-        String key = options().getKeyFromLabel((String) object);
-        if(key != null){
-            SInstance value = options().getValueFromKey(key);
-            if(value != null){
-                super.setObject(value.getValue());
-            }
+        /*String key = options().getKeyFromLabel((String) object);*/
+        if(object != null){
+            SInstance value = options().getValueFromKey((String) object);
+            super.setObject(value);
+//            if(value != null){
+//                super.setObject(value.getValue());
+//            }
         }
-//        super.setObject(object);
+        super.setObject(object);
     }
 }
 

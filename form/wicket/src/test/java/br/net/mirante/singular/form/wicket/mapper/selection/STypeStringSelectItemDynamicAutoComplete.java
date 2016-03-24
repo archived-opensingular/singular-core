@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.fest.assertions.core.Condition;
 import org.junit.Test;
@@ -62,7 +63,8 @@ public class STypeStringSelectItemDynamicAutoComplete {
 
         @Test public void renderField(){
             assertThat(findTag(form.getForm(), TypeheadComponent.class)).hasSize(1);
-            assertThat(findTag(form.getForm(), TextField.class)).hasSize(1);
+            assertThat(findTag(form.getForm(), TextField.class)).hasSize(2);
+            assertThat(findTag(form.getForm(), HiddenField.class)).hasSize(1);
         }
 
         @Test public void haveABloodhoundBehabiour(){
