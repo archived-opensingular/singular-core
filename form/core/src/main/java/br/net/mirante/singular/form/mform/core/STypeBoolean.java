@@ -66,7 +66,7 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
     private SOptionsProvider newBooleanProvider(final String yesLabel, final String noLabel) {
         return new SOptionsProvider() {
             @Override
-            public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+            public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
                 STypeBoolean type = (STypeBoolean) optionsInstance.getType();
                 SIList<?> r = type.newList();
                 r.addElement(SIBoolean(type, true, yesLabel));

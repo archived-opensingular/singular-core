@@ -36,7 +36,7 @@ class ViewRuleTypeListOfTypeSimpleSelectionOf extends ViewRule {
     }
     
     private SView decideView(SInstance instance, SOptionsProvider provider) {
-        int size = provider.listAvailableOptions(instance).size();
+        int size = provider.listAvailableOptions(instance, null).size();
         if (size <= 3) {
             return newInstance(SMultiSelectionByCheckboxView.class);
         } else if (size < 20) {

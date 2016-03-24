@@ -37,10 +37,10 @@ public class LookupOptionsProvider implements SOptionsProvider {
     }
 
     @Override
-    public SIList<? extends SInstance> listOptions(SInstance instance) {
+    public SIList<? extends SInstance> listOptions(SInstance instance, String filter) {
         SDocument document = instance.getDocument();
         SOptionsProvider provider = whichProvider(document);
-        return provider.listAvailableOptions(instance);
+        return provider.listAvailableOptions(instance, filter);
     }
 
     private SOptionsProvider whichProvider(SDocument document) {

@@ -75,7 +75,7 @@ public class TestMoptionsConfigTipoLista {
             }
         });
 
-        SIList listaOpcoes = _alerta.getOptionsProvider().listAvailableOptions(listaAlertas);
+        SIList listaOpcoes = _alerta.getOptionsProvider().listAvailableOptions(listaAlertas, null);
         opcaoAlerta1 = listaOpcoes.get(0);
         opcaoAlerta2 = listaOpcoes.get(1);
         opcaoAlerta3 = listaOpcoes.get(2);
@@ -122,14 +122,14 @@ public class TestMoptionsConfigTipoLista {
 
     @Test
     public void testMTipoOpcoes(){
-        for(SInstance instancia : _alerta.getOptionsProvider().listAvailableOptions(listaAlertas)){
+        for(SInstance instancia : _alerta.getOptionsProvider().listAvailableOptions(listaAlertas, null)){
             Assert.assertEquals(_alerta, instancia.getType());
         }
     }
 
     @Test
     public void testKeyValueMapping(){
-        for(SInstance instancia : _alerta.getOptionsProvider().listAvailableOptions(listaAlertas)){
+        for(SInstance instancia : _alerta.getOptionsProvider().listAvailableOptions(listaAlertas, null)){
             String key = listaAlertas.getOptionsConfig().getKeyFromOption(instancia);
             Assert.assertEquals(instancia, listaAlertas.getOptionsConfig().getValueFromKey(key));
             Assert.assertEquals(listaAlertas.getOptionsConfig().getLabelFromKey(key), instancia.getSelectLabel());
@@ -138,7 +138,7 @@ public class TestMoptionsConfigTipoLista {
 
     @Test
     public void testSelectLabel() {
-        for(SInstance instancia : _alerta.getOptionsProvider().listAvailableOptions(listaAlertas)){
+        for(SInstance instancia : _alerta.getOptionsProvider().listAvailableOptions(listaAlertas, null)){
             Assert.assertEquals(String.valueOf(Value.of(instancia, _alerta_data)), instancia.getSelectLabel());
         }
         Assert.assertEquals(_alerta_data.getNameSimple(), _alerta.getSelectLabel());

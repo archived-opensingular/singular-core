@@ -35,10 +35,11 @@ public interface SOptionsProvider extends Serializable {
      * also the old state of it.
      *
      * @param selectedValueInstance : Current isntance used to select the options.
+     * @param filter
      * @return list of options from the expected {@link SInstance} type.
      */
-    public default SIList<? extends SInstance> listAvailableOptions(SSelectionableInstance selectedValueInstance) {
-        SIList<? extends SInstance> defaultOptions = listOptions((SInstance) selectedValueInstance);
+    public default SIList<? extends SInstance> listAvailableOptions(SSelectionableInstance selectedValueInstance, String filter) {
+        SIList<? extends SInstance> defaultOptions = listOptions((SInstance) selectedValueInstance, filter);
         checkForDanglingValues((SInstance) selectedValueInstance, defaultOptions);
         return verifyOptionsType((SInstance) selectedValueInstance, defaultOptions);
     }
@@ -123,8 +124,9 @@ public interface SOptionsProvider extends Serializable {
     /**
      * Returns the list of options for this selection.
      *
-     * @param optionsInstance : Current isntance used to select the options.
+     * @param optionsInstance : Current instance used to select the options.
+     * @param filter : optional filter for narrowing options available
      * @return list of options from the expected {@link SInstance} type.
      */
-    public SIList<? extends SInstance> listOptions(SInstance optionsInstance);
+    public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter);
 }

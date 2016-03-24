@@ -69,7 +69,7 @@ public class TestMoptionsConfigTipoComposto {
 
         // perido
         periodo = (SIComposite) evento.getField(_periodo.getNameSimple());
-        opcaoPeriodo = _periodo.getOptionsProvider().listAvailableOptions(periodo).get(0);
+        opcaoPeriodo = _periodo.getOptionsProvider().listAvailableOptions(periodo, null).get(0);
         Value.hydrate(periodo, Value.dehydrate(opcaoPeriodo));
     }
 
@@ -91,14 +91,14 @@ public class TestMoptionsConfigTipoComposto {
 
     @Test
     public void testMTipoOpcoes(){
-        for(SInstance instancia : _periodo.getOptionsProvider().listAvailableOptions(periodo)){
+        for(SInstance instancia : _periodo.getOptionsProvider().listAvailableOptions(periodo, null)){
             Assert.assertEquals(_periodo, instancia.getType());
         }
     }
 
     @Test
     public void testKeyValueMapping(){
-        for(SInstance instancia : _periodo.getOptionsProvider().listAvailableOptions(periodo)){
+        for(SInstance instancia : _periodo.getOptionsProvider().listAvailableOptions(periodo, null)){
             String key = periodo.getOptionsConfig().getKeyFromOption(instancia);
             Assert.assertEquals(instancia, periodo.getOptionsConfig().getValueFromKey(key));
             Assert.assertEquals(periodo.getOptionsConfig().getLabelFromKey(key), instancia.getSelectLabel());
@@ -107,7 +107,7 @@ public class TestMoptionsConfigTipoComposto {
 
     @Test
     public void testSelectLabel() {
-        SIList lista = _periodo.getOptionsProvider().listAvailableOptions(periodo);
+        SIList lista = _periodo.getOptionsProvider().listAvailableOptions(periodo, null);
         SInstance instancia1 = lista.get(0);
         Assert.assertEquals(label1, instancia1.getSelectLabel());
         SInstance instancia2 = lista.get(1);

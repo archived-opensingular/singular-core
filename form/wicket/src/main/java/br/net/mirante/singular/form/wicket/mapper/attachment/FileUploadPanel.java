@@ -35,6 +35,8 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
+import org.apache.wicket.util.time.Duration;
+
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 /**
@@ -96,9 +98,18 @@ public class FileUploadPanel extends Panel {
                     outputStream.write(model.getObject().getContentAsByteArray());
                 }
             };
+
             final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
+
             requestHandler.setFileName(model.getObject().getFileName());
-            requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+            requestHandler.setCacheDuration(Duration.NONE);
+
+            if (model.getObject().isContentTypeBrowserFriendly()) {
+                requestHandler.setContentDisposition(ContentDisposition.INLINE);
+            } else {
+                requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+            }
+
             getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
         }
     };
@@ -124,7 +135,7 @@ public class FileUploadPanel extends Panel {
         @Override
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             super.onSubmit(target, form);
-            model.getObject().clearInstance();
+            model.getObject().deleteReference();
             target.add(fileDummyField, fileName, removeFileButton, chooseFieldButton);
         }
     };

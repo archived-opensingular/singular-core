@@ -26,7 +26,7 @@ public interface SOptionsCompositeProvider extends SOptionsProvider {
      * @return list of options from the expected {@link SInstance} type.
      */
     @Override
-    public default SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+    public default SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
         SType<?> tipo;
         if (optionsInstance instanceof SIList){
             tipo = ((SIList) optionsInstance).getElementsType();

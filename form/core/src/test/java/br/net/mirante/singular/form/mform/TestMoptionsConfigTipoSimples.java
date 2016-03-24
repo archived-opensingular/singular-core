@@ -39,7 +39,7 @@ public class TestMoptionsConfigTipoSimples {
 
         // descricao
         descricao = (SISimple) evento.getField(_descricao.getNameSimple());
-        opcaoDescricao = _descricao.getOptionsProvider().listAvailableOptions(descricao).get(0);
+        opcaoDescricao = _descricao.getOptionsProvider().listAvailableOptions(descricao, null).get(0);
         descricao.setValue(opcaoDescricao.getValue());
 
 
@@ -63,14 +63,14 @@ public class TestMoptionsConfigTipoSimples {
 
     @Test
     public void testMTipoOpcoes() {
-        for (SInstance instancia : _descricao.getOptionsProvider().listAvailableOptions(descricao)) {
+        for (SInstance instancia : _descricao.getOptionsProvider().listAvailableOptions(descricao, null)) {
             Assert.assertEquals(_descricao, instancia.getType());
         }
     }
 
     @Test
     public void testKeyValueMapping() {
-        for (SInstance instancia : _descricao.getOptionsProvider().listAvailableOptions(descricao)) {
+        for (SInstance instancia : _descricao.getOptionsProvider().listAvailableOptions(descricao, null)) {
             String key = descricao.getOptionsConfig().getKeyFromOption(instancia);
             Assert.assertEquals(instancia, descricao.getOptionsConfig().getValueFromKey(key));
             Assert.assertEquals(descricao.getOptionsConfig().getLabelFromKey(key), instancia.getSelectLabel());
@@ -79,7 +79,7 @@ public class TestMoptionsConfigTipoSimples {
 
     @Test
     public void testSelectLabel() {
-        for (SInstance instancia : _descricao.getOptionsProvider().listAvailableOptions(descricao)) {
+        for (SInstance instancia : _descricao.getOptionsProvider().listAvailableOptions(descricao, null)) {
             Assert.assertEquals(StringUtils.capitalize((String) instancia.getValue()), instancia.getSelectLabel());
         }
         Assert.assertNull(_descricao.getSelectLabel());
