@@ -243,7 +243,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         });
 
         STypeList<STypeComposite<SIComposite>, SIComposite> estudosEstabilidade = acondicionamento.addFieldListOfComposite("estudosEstabilidade", "estudoEstabilidade");
-        estudosEstabilidade.as(AtrBasic::new).label("Estudo de estabilidade");
+        estudosEstabilidade.as(AtrBasic::new)
+                .label("Estudo de estabilidade")
+                .displayString("<#list _inst as c>${c.arquivo.name}<#sep>, </#sep></#list>");
         STypeComposite<SIComposite> estudoEstabilidade = estudosEstabilidade.getElementsType();
         {
 
@@ -277,9 +279,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .withView(new SViewListByMasterDetail()
                         .col(descricaoEmbalagemPrimaria, "Embalagem primária")
                         .col(descricaoEmbalagemSecundaria, "Embalagem secundária")
-                                //TODO Encontrar uma forma de permitir adicionar nomes de uma lista
-                                // no master detail
-//                    .col(estudoEstabilidade, "Estudo de estabilidade")
+                        .col(estudosEstabilidade, "Estudo de estabilidade")
                         .col(quantidade)
                         .col(prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
