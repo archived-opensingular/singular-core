@@ -97,7 +97,7 @@ public class TestFinders {
         form.visitChildren(classOfQuery, new IVisitor<T, Object>() {
             @Override
             public void component(T t, IVisit<Object> visit) {
-                if (predicate.test(t)) {
+                if (predicate == null || predicate.test(t)) {
                     found.add(t);
                 }
             }

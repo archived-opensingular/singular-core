@@ -76,7 +76,7 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
                 Object valor = this.getValue();
                 if (valor instanceof Iterable) {
                     for (SInstance mi : (Iterable<SInstance>)valor) {
-                        if (label.equals(mi.getName())) {
+                        if (label != null && label.equals(mi.getName())) {
                             Object valorCampo = mi.getValue();
                             return valorCampo == null ? "" : valorCampo.toString();
                         }

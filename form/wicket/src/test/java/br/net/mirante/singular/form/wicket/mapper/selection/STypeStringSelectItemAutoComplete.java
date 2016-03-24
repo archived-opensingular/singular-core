@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.TextField;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -64,6 +65,7 @@ public class STypeStringSelectItemAutoComplete {
 
     }
 
+    @Ignore("Waiting for further development")
     public static class KeyValueSelection extends Base {
 
         final String[] KEYS = {"Batman", "Superman", "Flash", "Green Arrow"};
