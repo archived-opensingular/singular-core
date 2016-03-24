@@ -193,6 +193,9 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             protected void save() {
                 getCurrentInstance().getObject().getDocument().persistFiles();
                 addAnnotationsToModel(getCurrentInstance().getObject());
+                final Optional<String> optionalDescription = Optional
+                        .ofNullable(getCurrentInstance().getObject().toStringDisplay());
+                currentModel.setDescription(optionalDescription.orElse(null));
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
