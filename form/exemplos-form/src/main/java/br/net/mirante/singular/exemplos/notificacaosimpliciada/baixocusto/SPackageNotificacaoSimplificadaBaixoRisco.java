@@ -24,6 +24,8 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -241,20 +243,79 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .col(prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
 
-//        STypeList<STypeComposite<SIComposite>, SIComposite> locaisFabricacao = acondicionamento.addFieldListOfComposite("locaisFabricacao", "localFabricacao");
-//        STypeComposite<SIComposite> localFabricacao = locaisFabricacao.getElementsType();
-//
-//        STypeBoolean producaoPropria = localFabricacao.addFieldBoolean("producaoPropria", true);
-//        producaoPropria.asAtrBasic().label("Produção própria");
-//
-//        STypeComposite<SIComposite> empresaPropria = localFabricacao.addFieldComposite("empresaPropria");
-//
-//
-//        locaisFabricacao
-////                .withView(new SViewListByMasterDetail()
-////                    .col()
-////                    .col())
-//                .asAtrBasic().label("Local de fabricação");
+        STypeList<STypeComposite<SIComposite>, SIComposite> locaisFabricacao = acondicionamento.addFieldListOfComposite("locaisFabricacao", "localFabricacao");
+        STypeComposite<SIComposite> localFabricacao = locaisFabricacao.getElementsType();
+
+        STypeBoolean producaoPropria = localFabricacao.addFieldBoolean("producaoPropria", true);
+        producaoPropria.withRadioView();
+        producaoPropria.asAtrBasic().label("Produção própria");
+
+        STypeComposite<SIComposite> empresaPropria = localFabricacao.addFieldComposite("empresaPropria");
+        empresaPropria.addFieldString("razaoSocial")
+                .asAtrBasic().label("Razão Social");
+        empresaPropria.addFieldCNPJ("cnpj")
+                .asAtrBasic().label("CNPJ");
+        empresaPropria.addFieldString("endereco")
+                .asAtrBasic().label("Endereço");
+        empresaPropria.asAtrBasic()
+                .dependsOn(producaoPropria)
+                .visivel(i -> BooleanUtils.isTrue(Value.of(i, producaoPropria)));
+
+        STypeList<STypeComposite<SIComposite>, SIComposite> empresasInternacionais = localFabricacao.addFieldListOfComposite("empresasInternacionais", "empresaInternacional");
+        STypeComposite<SIComposite> empresaInternacional = empresasInternacionais.getElementsType();
+
+        STypeString idEmpresaInternacional = empresaInternacional.addFieldString("id");
+        STypeString razaoSocialInternacional = empresaInternacional.addFieldString("razaoSocial");
+        razaoSocialInternacional.asAtrBasic().label("Razão Social");
+        STypeString enderecoInternacional = empresaInternacional.addFieldString("endereco");
+        empresasInternacionais.asAtrBasic().label("Empresa internacional")
+                .dependsOn(producaoPropria)
+                .visivel(i -> BooleanUtils.isFalse(Value.of(i, producaoPropria)))
+                .getTipo().withView(SViewListByForm::new);
+
+        empresaInternacional
+                .withSelectionFromProvider(razaoSocialInternacional, (optionsInstance, lb) -> {
+                    for (Triple p : NotificacaoSimplificadaProviderUtils.empresaInternacional()) {
+                        lb
+                                .add()
+                                .set(idEmpresaInternacional, p.getLeft())
+                                .set(razaoSocialInternacional, p.getMiddle())
+                                .set(enderecoInternacional, p.getRight());
+                    }
+                })
+                .asAtrBasic().label("Empresa internacional")
+                .getTipo().setView(SViewSelectionBySearchModal::new);
+
+        STypeList<STypeComposite<SIComposite>, SIComposite> empresasTerceirizadas = localFabricacao.addFieldListOfComposite("empresasTerceirizadas", "empresaTerceirizada");
+        STypeComposite<SIComposite> empresaTerceirizada = empresasTerceirizadas.getElementsType();
+
+        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao = empresaTerceirizada.addFieldListOfComposite("etapasFabricacao", "etapaFabricacao");
+        STypeComposite<SIComposite> etapaFabricacao = etapasFabricacao.getElementsType();
+        STypeString idEtapaFabricacao = etapaFabricacao.addFieldString("id");
+        STypeString descricaoEtapaFabricacao = etapaFabricacao.addFieldString("descricao");
+
+        etapaFabricacao
+                .asAtrBasic().label("Etapa de fabricação")
+                .getTipo().setView(SViewSelectionBySearchModal::new);
+        etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (optionsInstance, lb) -> {
+            for (Pair p : NotificacaoSimplificadaProviderUtils.etapaFabricacao()) {
+                lb
+                        .add()
+                        .set(idEtapaFabricacao, p.getKey())
+                        .set(descricaoEtapaFabricacao, p.getValue());
+            }
+        });
+
+        empresaTerceirizada.addFieldComposite("empresaTerceirizada");
+
+        empresasTerceirizadas.withView(SViewListByMasterDetail::new);
+
+
+        locaisFabricacao
+                .withView(new SViewListByMasterDetail())
+//                    .col()
+//                    .col())
+                .asAtrBasic().label("Local de fabricação");
 
     }
 
