@@ -49,6 +49,7 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
 import br.net.mirante.singular.form.wicket.model.MICompostoModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -206,7 +207,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                                     target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
                                 } else {
                                     SInstance sInstance = sil.addNew();
-                                    IModel<? extends SInstance> itemModel = new MICompostoModel<>(sInstance);
+                                    IModel<? extends SInstance> itemModel = new SInstanceCampoModel<>(ctx.getRootContext().getModel(), sInstance.getPathFromRoot());
                                     showCrud(ctx, target, itemModel);
                                 }
                             }
