@@ -248,6 +248,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite>
         return optionsProvider;
     }
 
+    //TODO vinicius.nunes: não devia ser visível, usar apenas para uso interno. StypeComposite devia ser uma interface.
     @Override
     public void setOptionsProvider(SOptionsProvider p) {
         optionsProvider = p;
