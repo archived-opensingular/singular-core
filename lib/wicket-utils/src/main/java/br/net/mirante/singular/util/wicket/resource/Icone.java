@@ -71,6 +71,7 @@ public enum Icone {
     CLOCK /*            */("icon-clock"),
     LAYERS/*            */("icon-layers"),
     CODE/*              */("fa fa-code"),
+    HAND_UP/*           */("fa fa-hand-o-up"),
     DASHBOARD/*         */("fa fa-dashboard");
 
     private final String cssClass;
