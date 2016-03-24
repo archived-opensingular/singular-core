@@ -22,6 +22,7 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -98,7 +99,7 @@ class SelectInputModalContainer extends BSContainer {
         final BSContainer   panel       = new BSContainer(id);
         final BFModalWindow searchModal = buildModal(id + "__modal", filterModel);
 
-        panel.appendTag("a", true, "class=\"btn default\"", new AjaxLink("search_link") {
+        panel.appendTag("a", true, "class='btn default'", new AjaxLink("search_link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 searchModal.show(target);
@@ -159,7 +160,7 @@ class SelectInputModalContainer extends BSContainer {
         appendAdditionalSearchFields(builder);
         builder
                 .appendColumn(new BSActionColumn<SelectOption, Void>(Model.of(""))
-                        .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
+                        .appendAction(Model.of("Selecionar"), Icone.HAND_UP, (target, selectedModel) -> {
                             selectedModel
                                     .getObject()
                                     .copyValueToInstance(model.getObject());
@@ -220,7 +221,7 @@ class SelectInputModalContainer extends BSContainer {
 
         BSContainer inputGroupButton = new BSContainer(id + "inputGroupButton");
         inputGroup.appendTag("span", true, "class=\"input-group-btn\"", inputGroupButton);
-        inputGroupButton.appendTag("a", true, "class=\"btn btn-default\"", new AjaxSubmitLink("link", form) {
+        inputGroupButton.appendTag("a", true, "class=\"btn default\"", new AjaxSubmitLink("link", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
