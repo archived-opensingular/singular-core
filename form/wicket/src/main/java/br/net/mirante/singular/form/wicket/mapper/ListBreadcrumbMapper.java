@@ -342,7 +342,11 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
                 }
             } else {
-                mapColumns.forEach((col) -> columnTypes.add(new ColumnType(model.getObject().getDictionary().getType(col.getTypeName()), col.getCustomLabel(), col.getDisplayValueFunction())));
+                mapColumns.forEach((col) -> {
+                    SType<?> type = model.getObject().getDictionary().getType(col.getTypeName());
+                    ColumnType columnType = new ColumnType(type, col.getCustomLabel(), col.getDisplayValueFunction());
+                    columnTypes.add(columnType);
+                });
             }
 
             for (ColumnType columnType : columnTypes) {

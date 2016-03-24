@@ -7,9 +7,9 @@ package br.net.mirante.singular.showcase.component.layout;
 
 import br.net.mirante.singular.showcase.component.CaseBase;
 
-public class CaseListByBreadcrumb extends CaseBase {
+public class CaseComplexListByBreadcrumb extends CaseBase {
 
-    public CaseListByBreadcrumb() {
-        super("Breadcrumb", "Simples");
+    public CaseComplexListByBreadcrumb() {
+        super("Breadcrumb", "Complexo");
     }
 }

@@ -95,6 +95,7 @@ public class ShowCaseTable {
             .addCase(CaseListByMasterDetailButtons.class)
             .addCase(CaseListByMasterDetailNested.class)
             .addCase(CaseListByBreadcrumb.class)
+            .addCase(CaseComplexListByBreadcrumb.class)
             .addCase(CaseListByFormMinimumAndMaximum.class)
             .addCase(CaseListByTableMinimiumAndMaximum.class)
             .addCase(CaseListByMasterDetailMiniumAndMaximum.class)
