@@ -149,31 +149,30 @@ public class NotificacaoSimplificadaProviderUtils {
 
     public static List<Pair> embalagensPrimarias() {
         List<Pair> list = new ArrayList<>();
-        list.add(Pair.of(1, "emb1"));
-        list.add(Pair.of(2, "emb2"));
-        list.add(Pair.of(3, "emb3"));
-        list.add(Pair.of(4, "emb4"));
-        list.add(Pair.of(5, "emb5"));
+        list.add(Pair.of(1, "Ampola"));
+        list.add(Pair.of(2, "Bisnaga de plástico opaco"));
+        list.add(Pair.of(3, "Blíster de alumínio e plástico opaco"));
+        list.add(Pair.of(4, "Carpule"));
+        list.add(Pair.of(5, "Envelope"));
         return list;
     }
 
     public static List<Pair> embalagensSecundarias() {
         List<Pair> list = new ArrayList<>();
-        list.add(Pair.of(1, "emb1"));
-        list.add(Pair.of(2, "emb2"));
-        list.add(Pair.of(3, "emb3"));
-        list.add(Pair.of(4, "emb4"));
-        list.add(Pair.of(5, "emb5"));
+        list.add(Pair.of(1, "Caixa"));
+        list.add(Pair.of(2, "Cartucho"));
+        list.add(Pair.of(3, "Envelope"));
+        list.add(Pair.of(4, "Caixa térmica"));
         return list;
     }
 
     public static List<Pair> unidadesMedida() {
         List<Pair> list = new ArrayList<>();
-        list.add(Pair.of(1, "um1"));
-        list.add(Pair.of(2, "um2"));
-        list.add(Pair.of(3, "um3"));
-        list.add(Pair.of(4, "um4"));
-        list.add(Pair.of(5, "um5"));
+        list.add(Pair.of(2, "mg"));
+        list.add(Pair.of(1, "g"));
+        list.add(Pair.of(4, "kg"));
+        list.add(Pair.of(3, "ml"));
+        list.add(Pair.of(5, "l"));
         return list;
     }
 
