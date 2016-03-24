@@ -59,9 +59,9 @@ public class BloodhoundDataBehaviorTest {
 
         verify(response).write(captor.capture());
         JSONArray expected = new JSONArray();
-        expected.put(createValue("@gmail.com"));
-        expected.put(createValue("@hotmail.com"));
-        expected.put(createValue("@yahoo.com"));
+        expected.put("@gmail.com");
+        expected.put("@hotmail.com");
+        expected.put("@yahoo.com");
 
         JSONAssert.assertEquals(expected,new JSONArray(captor.getValue()),false);
     }
@@ -74,9 +74,9 @@ public class BloodhoundDataBehaviorTest {
 
         verify(response).write(captor.capture());
         JSONArray expected = new JSONArray();
-        expected.put(createValue("bruce@gmail.com"));
-        expected.put(createValue("bruce@hotmail.com"));
-        expected.put(createValue("bruce@yahoo.com"));
+        expected.put("bruce@gmail.com");
+        expected.put("bruce@hotmail.com");
+        expected.put("bruce@yahoo.com");
 
         JSONAssert.assertEquals(expected,new JSONArray(captor.getValue()),false);
     }

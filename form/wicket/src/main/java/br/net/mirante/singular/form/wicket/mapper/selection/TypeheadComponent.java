@@ -67,9 +67,11 @@ public class TypeheadComponent extends Panel {
             fetchJS = staticJSFetch();
         }else {
             String fetcher = "new Bloodhound({\n" +
-                    "  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),\n" +
+//                    "  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),\n" +
+                    "  datumTokenizer: Bloodhound.tokenizers.whitespace,\n" +
                     "  queryTokenizer: Bloodhound.tokenizers.whitespace,\n" +
-//                    "  prefetch: 'http://twitter.github.io/typeahead.js/data/films/post_1960.json',\n" +
+//                    "  datumTokenizer: function(a){console.log('datum',a); return [''];},\n" +
+//                    "  queryTokenizer: function(a){console.log('query',a); return [''];},\n" +
                     "  prefetch: '"+dynamicFetcher.getCallbackUrl()+"',\n" +
                     "  remote: {\n" +
                     "    url: '"+dynamicFetcher.getCallbackUrl()+"&filter=%QUERY',\n" +
@@ -78,9 +80,9 @@ public class TypeheadComponent extends Panel {
                     "})";
 
             fetchJS = "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
-                    "null," +
-                    "{name: 'select', " +
-                    "display: 'value', " +
+                    "{limit: Number.MAX_SAFE_INTEGER, minLength: 0, hint:false }," +
+                    "{name: 's-select-typeahead', " +
+//                    "display: 'value', " +
                     "source: "+fetcher+" });";
         }
         response.render(OnDomReadyHeaderItem.forScript(fetchJS));
@@ -89,7 +91,7 @@ public class TypeheadComponent extends Panel {
     private String staticJSFetch() {
         return "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
                 "{hint: true, highlight: true, minLength: 0 }, " +
-                "{name: 'select', " +
+                "{name: 's-select-typeahead', " +
                 "source: window.substringMatcher(" + jsOptionArray() + ") });";
     }
 
@@ -124,13 +126,14 @@ class MOptionsModel extends MInstanciaValorModel {
 
     @Override
     public void setObject(Object object) {
-        String key = options().getKeyFromLabel((String) object);
-        if(key != null){
-            SInstance value = options().getValueFromKey(key);
-            if(value != null){
-                super.setObject(value.getValue());
-            }
-        }
+//        String key = options().getKeyFromLabel((String) object);
+//        if(key != null){
+//            SInstance value = options().getValueFromKey(key);
+//            if(value != null){
+//                super.setObject(value.getValue());
+//            }
+//        }
+        super.setObject(object);
     }
 }
 
@@ -159,7 +162,8 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
 
     private JSONArray createResponse() {
         JSONArray r = new JSONArray();
-        values(filterValue()).forEach((x) -> r.put(newValue(x)));
+//        values(filterValue()).forEach((x) -> r.put(newValue(x)));
+        values(filterValue()).forEach((x) -> r.put(x));
         return r;
     }
 
@@ -183,13 +187,15 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
         return map.values();
     }
 
-    protected RequestCycle requestCycle() {
-        return getComponent().getRequestCycle();
-    }
-
     private JSONObject newValue(String label) {
         JSONObject value = new JSONObject();
         value.put("value", label);
         return value;
     }
+
+    protected RequestCycle requestCycle() {
+        return getComponent().getRequestCycle();
+    }
+
+
 }
