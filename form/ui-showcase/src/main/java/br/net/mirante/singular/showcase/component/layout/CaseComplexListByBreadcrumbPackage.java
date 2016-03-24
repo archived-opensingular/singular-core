@@ -22,23 +22,26 @@ public class CaseComplexListByBreadcrumbPackage extends SPackage {
 
         STypeList<STypeComposite<SIComposite>, SIComposite> componentes = testForm.addFieldListOfComposite("componentes", "componente");
         STypeComposite<SIComposite> componente = componentes.getElementsType();
+        componente.asAtrBasic().label("Componente");
 
         componente.addFieldString("nome")
-                .as(AtrBasic::new).label("Nome");
+                .asAtrBasic().label("Nome");
 
         STypeList<STypeComposite<SIComposite>, SIComposite> testes = componente.addFieldListOfComposite("testes", "teste");
         testes
                 .withView(SViewBreadcrumb::new)
-                .as(AtrBasic::new).label("Teste de componente");
+                .asAtrBasic().label("Testes de componente");
 
         STypeComposite<SIComposite> teste = testes.getElementsType();
+        teste.asAtrBasic().label("Teste de Componentes");
+
         teste.addFieldString("nome")
-                .as(AtrBasic::new).label("Nome");
+                .asAtrBasic().label("Nome");
 
 
         componentes
                 .withView(SViewBreadcrumb::new)
-                .as(AtrBasic::new).label("Componentes");
+                .asAtrBasic().label("Componentes");
 
     }
 }

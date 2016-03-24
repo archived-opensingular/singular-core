@@ -10,16 +10,16 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -30,7 +30,6 @@ import org.apache.wicket.util.visit.IVisitor;
 
 import com.google.common.base.Strings;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
@@ -47,7 +46,6 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.form.wicket.model.MICompostoModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
@@ -55,7 +53,6 @@ import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
@@ -82,7 +79,11 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
         final IModel<String> listaLabel = newLabelModel(ctx, model);
 
-        final BreadCrumbPanel breadcrumbPanel = new BreadCrumbPanel("panel", model, listaLabel, ctx, viewMode, view, ctx.getUiBuilderWicket());
+        BreadCrumbPanel breadcrumbPanel = ctx.getBreadCrumbPanelInTree();
+        if (breadcrumbPanel == null) {
+            breadcrumbPanel = new BreadCrumbPanel("panel", model, listaLabel, ctx, viewMode, view, ctx.getUiBuilderWicket());
+            ctx.setBreadCrumbPanel(breadcrumbPanel);
+        }
 
         ctx.getContainer().appendTag("div", true, null, breadcrumbPanel);
     }
@@ -140,19 +141,13 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         }
     }
 
-    private static class BreadCrumbPanel extends MetronicPanel {
+    public static class BreadCrumbPanel extends MetronicPanel {
 
-        private final IModel<SIList<SInstance>> listModel;
-        private final IModel<String> listaLabel;
-        private final WicketBuildContext ctx;
-        private final UIBuilderWicket wicketBuilder;
-        private final Component table;
-        private final ViewMode viewMode;
-        private IModel<SInstance> currentInstance;
-        private IConsumer<AjaxRequestTarget> closeCallback;
-        private final SViewBreadcrumb view;
-        private String instanceBackupXml;
+        private Deque<BreadCrumbStatus> breadcrumbs;
+        private BreadCrumbStatus selectedBreadcrumb;
+
         private MetronicBreadcrumbBar breadCrumbBar;
+        private String instanceBackupXml;
 
         @SuppressWarnings("unchecked")
         public BreadCrumbPanel(String id,
@@ -164,13 +159,15 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                                UIBuilderWicket wicketBuilder) {
             super(id);
 
-            this.wicketBuilder = wicketBuilder;
-            this.listaLabel = listaLabel;
-            this.ctx = ctx;
-            this.table = ctx.getContainer();
-            this.viewMode = viewMode;
-            this.view = view;
-            this.listModel = $m.get(() -> (SIList<SInstance>) model.getObject());
+            this.breadcrumbs = new LinkedList<>();
+            selectedBreadcrumb = new BreadCrumbStatus(
+                    $m.get(() -> (SIList<SInstance>) model.getObject()),
+                    listaLabel,
+                    ctx,
+                    viewMode,
+                    view
+            );
+            breadcrumbs.push(selectedBreadcrumb);
 
         }
 
@@ -182,10 +179,10 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
         @Override
         protected void buildHeading(BSContainer<?> heading, Form<?> form) {
-            heading.appendTag("span", new Label("_title", listaLabel));
-            heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(listaLabel.getObject()))));
-            if (viewMode.isEdition() && view.isNewEnabled()) {
-                appendAddButton(heading, ctx.getModel(), ctx);
+            heading.appendTag("span", new Label("_title", selectedBreadcrumb.listaLabel));
+            heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(selectedBreadcrumb.listaLabel.getObject()))));
+            if (selectedBreadcrumb.viewMode.isEdition() && selectedBreadcrumb.view.isNewEnabled()) {
+                appendAddButton(heading, selectedBreadcrumb.ctx.getModel(), selectedBreadcrumb.ctx);
             }
         }
 
@@ -231,8 +228,8 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
             List<String> breadcrumbs = breadCrumbBar.getBreadcrumbs();
 
             panel.replaceContent( (content, form) -> {
-                breadcrumbs.add("Teste");
-                content.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> addBreadCrumb(id, breadcrumbs));
+                breadcrumbs.add((String) itemModel.getObject().getType().getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
+                content.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> buildBreadCrumbBar(id, breadcrumbs));
 
                 TemplatePanel list = content.newTemplateTag(t -> ""
                         + "    <ul class='list-group'>"
@@ -248,7 +245,8 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 final BSRow row = grid.newRow();
                 final ViewMode viewMode = ctx.getViewMode();
 
-                ctx.getUiBuilderWicket().build(ctx.createChild(row.newCol(11), true, itemModel), viewMode);
+                WicketBuildContext childCtx = ctx.createChild(row.newCol(11), true, itemModel);
+                ctx.getUiBuilderWicket().build(childCtx, viewMode);
 
                 crudPanel.add(grid);
                 content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
@@ -268,16 +266,16 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
         @Override
         protected void buildContent(BSContainer<?> content, Form<?> form) {
-            breadCrumbBar = content.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> addBreadCrumb(id, Collections.singletonList(listaLabel.getObject())));
+            breadCrumbBar = content.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> buildBreadCrumbBar(id, Collections.singletonList(selectedBreadcrumb.listaLabel.getObject())));
 
             content.appendTag("table", true, null, (id) -> {
-                BSDataTable<SInstance, ?> bsDataTable = buildTable(id, listModel, view, ctx, viewMode);
+                BSDataTable<SInstance, ?> bsDataTable = buildTable(id, selectedBreadcrumb.listModel, selectedBreadcrumb.view, selectedBreadcrumb.ctx, selectedBreadcrumb.viewMode);
                 bsDataTable.add(new Behavior() {
                     @Override
                     public void onConfigure(Component component) {
                         super.onConfigure(component);
-                        if (ctx.getCurrentInstance() instanceof SIList) {
-                            component.setVisible(!((SIList<?>) ctx.getCurrentInstance()).isEmpty());
+                        if (selectedBreadcrumb.ctx.getCurrentInstance() instanceof SIList) {
+                            component.setVisible(!((SIList<?>) selectedBreadcrumb.ctx.getCurrentInstance()).isEmpty());
                         }
                     }
                 });
@@ -411,7 +409,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
             panel.replaceContent((content, form) -> {
                 breadcrumbs.remove(breadcrumbs.size() - 1);
-                content.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> addBreadCrumb(id, breadcrumbs));
+                content.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> buildBreadCrumbBar(id, breadcrumbs));
 
                 content.appendTag("table", true, null, (id) -> {
                     BSDataTable<SInstance, ?> bsDataTable = buildTable(id, ctx.getModel(), (SViewBreadcrumb) ctx.getView(), ctx, ctx.getViewMode());
@@ -431,7 +429,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
             target.add(panel.getForm());
         }
 
-        private MetronicBreadcrumbBar addBreadCrumb(String id, List<String> oldBreadCrumbBar) {
+        private MetronicBreadcrumbBar buildBreadCrumbBar(String id, List<String> oldBreadCrumbBar) {
             MetronicBreadcrumbBar newBreadCrumbBar = new MetronicBreadcrumbBar(id);
             oldBreadCrumbBar.forEach(newBreadCrumbBar::addBreadCrumb);
 
@@ -478,13 +476,28 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     .add(new ActionAjaxButton("cancelButton") {
                         @Override
                         protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                            listModel.getObject().remove(listModel.getObject().size() - 1);
+                            selectedBreadcrumb.listModel.getObject().remove(selectedBreadcrumb.listModel.getObject().size() - 1);
                             hideCrud(ctx, target);
                         }
                     }.add(new Label("label", "Cancelar")));
 
         }
 
+        private static class BreadCrumbStatus {
+            final IModel<SIList<SInstance>> listModel;
+            final IModel<String> listaLabel;
+            final WicketBuildContext ctx;
+            final ViewMode viewMode;
+            final SViewBreadcrumb view;
+
+            public BreadCrumbStatus(IModel<SIList<SInstance>> listModel, IModel<String> listaLabel, WicketBuildContext ctx, ViewMode viewMode, SViewBreadcrumb view) {
+                this.listModel = listModel;
+                this.listaLabel = listaLabel;
+                this.ctx = ctx;
+                this.viewMode = viewMode;
+                this.view = view;
+            }
+        }
 
     }
 
