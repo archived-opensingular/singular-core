@@ -333,27 +333,26 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SListTemplateModel implements TemplateSequenceModel, TemplateScalarModel {
-        private final SIList<?> list;
+    private static class SListTemplateModel extends SInstanceTemplateModel<SIList<?>> implements TemplateSequenceModel {
 
         public SListTemplateModel(SIList<?> list) {
-            this.list = list;
+            super(list);
 
         }
 
         @Override
         public TemplateModel get(int index) throws TemplateModelException {
-            return toTemplateModel(list.get(index));
+            return toTemplateModel(getInstance().get(index));
         }
 
         @Override
         public int size() throws TemplateModelException {
-            return list.size();
+            return getInstance().size();
         }
 
         @Override
         public String getAsString() throws TemplateModelException {
-            return StringUtils.defaultString(list.toStringDisplay());
+            return StringUtils.defaultString(getInstance().toStringDisplay());
         }
     }
 
