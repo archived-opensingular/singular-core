@@ -315,6 +315,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public String toString() {
-        return String.format("MILista(%s)", getAllChildren());
+        return String.format("%s(%s)", getClass().getSimpleName(), getAllChildren());
     }
 }
