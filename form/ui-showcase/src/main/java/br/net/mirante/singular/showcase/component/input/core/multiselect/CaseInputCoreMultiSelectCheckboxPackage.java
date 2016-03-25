@@ -29,6 +29,6 @@ public class CaseInputCoreMultiSelectCheckboxPackage extends SPackage {
 
         infoPub
             .withView(SMultiSelectionByCheckboxView::new)
-            .as(AtrBasic::new).label("Informações Públicas");
+            .asAtrBasic().label("Informações Públicas");
     }
 }

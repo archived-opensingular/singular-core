@@ -5,9 +5,11 @@
 
 package br.net.mirante.singular.form.mform;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 
-public abstract class STranslatorForAttribute {
+import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+
+public abstract class STranslatorForAttribute implements SAttributeEnabled {
 
     private SAttributeEnabled target;
 
@@ -52,7 +54,68 @@ public abstract class STranslatorForAttribute {
         return ((SInstance) target).getType();
     }
 
+    //-----------------------------------------------------------
+    // Implementando métodos de SAttributeEnabled
+    //-----------------------------------------------------------
+
+    @Override
     public <TR> TR as(Function<SAttributeEnabled, TR> wrapper) {
         return wrapper.apply(getTarget());
     }
+
+    @Override
+    public <V> void setAttributeCalculation(AtrRef<?, ?, V> atr, SimpleValueCalculation<V> value) {
+        getTarget().setAttributeCalculation(atr, value);
+    }
+
+    @Override
+    public <V> void setAttributeCalculation(String attributeFullName, String subPath, SimpleValueCalculation<V> value) {
+        getTarget().setAttributeCalculation(attributeFullName, subPath, value);
+    }
+
+    @Override
+    public <V> void setAttributeValue(AtrRef<?, ?, V> atr, V value) {
+        getTarget().setAttributeValue(atr, value);
+    }
+
+    @Override
+    public <V> void setAttributeValue(SAttribute defAttribute, Object value) {
+        getTarget().setAttributeValue(defAttribute, value);
+    }
+
+    @Override
+    public void setAttributeValue(String attributeName, Object value) {
+        getTarget().setAttributeValue(attributeName, value);
+    }
+
+    @Override
+    public void setAttributeValue(String attributeFullName, String subPath, Object value) {
+        getTarget().setAttributeValue(attributeFullName, subPath, value);
+    }
+
+    @Override
+    public <V> V getAttributeValue(String attributeFullName, Class<V> resultClass) {
+        return getTarget().getAttributeValue(attributeFullName, resultClass);
+    }
+
+    @Override
+    public <T> T getAttributeValue(AtrRef<?, ?, ?> atr, Class<T> resultClass) {
+        return getTarget().getAttributeValue(atr, resultClass);
+    }
+
+    @Override
+    public <V> V getAttributeValue(AtrRef<?, ?, V> atr) {
+        return getTarget().getAttributeValue(atr);
+    }
+
+    @Override
+    public Object getAttributeValue(String attributeFullName) {
+        return getTarget().getAttributeValue(attributeFullName);
+    }
+
+    @Override
+    public SDictionary getDictionary() {
+        return getTarget().getDictionary();
+    }
+
 }

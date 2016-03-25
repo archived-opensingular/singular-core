@@ -20,64 +20,65 @@ import br.net.mirante.singular.form.mform.freemarker.FormFreemarkerUtil;
 public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic() {}
+
     public AtrBasic(SAttributeEnabled alvo) {
         super(alvo);
     }
 
     public AtrBasic label(String valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_LABEL, valor);
+        setAttributeValue(SPackageBasic.ATR_LABEL, valor);
         return this;
     }
 
     public AtrBasic subtitle(String valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_SUBTITLE, valor);
+        setAttributeValue(SPackageBasic.ATR_SUBTITLE, valor);
         return this;
     }
 
     public AtrBasic basicMask(String mask) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_BASIC_MASK, mask);
+        setAttributeValue(SPackageBasic.ATR_BASIC_MASK, mask);
         return this;
     }
 
     public AtrBasic tamanhoEdicao(Integer valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_TAMANHO_EDICAO, valor);
+        setAttributeValue(SPackageBasic.ATR_TAMANHO_EDICAO, valor);
         return this;
     }
 
     public AtrBasic tamanhoMaximo(Integer valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_TAMANHO_MAXIMO, valor);
+        setAttributeValue(SPackageBasic.ATR_TAMANHO_MAXIMO, valor);
         return this;
     }
 
     public AtrBasic tamanhoInteiroMaximo(Integer valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_TAMANHO_INTEIRO_MAXIMO, valor);
+        setAttributeValue(SPackageBasic.ATR_TAMANHO_INTEIRO_MAXIMO, valor);
         return this;
     }
 
     public AtrBasic tamanhoDecimalMaximo(Integer valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_TAMANHO_DECIMAL_MAXIMO, valor);
+        setAttributeValue(SPackageBasic.ATR_TAMANHO_DECIMAL_MAXIMO, valor);
         return this;
     }
 
     public AtrBasic visivel(Boolean valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_VISIVEL, valor);
+        setAttributeValue(SPackageBasic.ATR_VISIVEL, valor);
         return this;
     }
     public AtrBasic visivel(Predicate<SInstance> valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION, valor);
+        setAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION, valor);
         return this;
     }
 
     public AtrBasic enabled(Boolean valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_ENABLED, valor);
+        setAttributeValue(SPackageBasic.ATR_ENABLED, valor);
         return this;
     }
     public AtrBasic enabled(Predicate<SInstance> valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_ENABLED_FUNCTION, valor);
+        setAttributeValue(SPackageBasic.ATR_ENABLED_FUNCTION, valor);
         return this;
     }
     public AtrBasic dependsOn(Supplier<Collection<SType<?>>> valor) {
-        getTarget().setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, valor);
+        setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, valor);
         return this;
     }
     public AtrBasic dependsOn(SType<?>... tipos) {
@@ -103,27 +104,27 @@ public class AtrBasic extends STranslatorForAttribute {
     //    }
 
     public String getLabel() {
-        return getTarget().getAttributeValue(SPackageBasic.ATR_LABEL);
+        return getAttributeValue(SPackageBasic.ATR_LABEL);
     }
 
     public String getSubtitle() {
-        return getTarget().getAttributeValue(SPackageBasic.ATR_SUBTITLE);
+        return getAttributeValue(SPackageBasic.ATR_SUBTITLE);
     }
 
     public Integer getTamanhoEdicao() {
-        return getTarget().getAttributeValue(SPackageBasic.ATR_TAMANHO_EDICAO);
+        return getAttributeValue(SPackageBasic.ATR_TAMANHO_EDICAO);
     }
 
     public Integer getTamanhoMaximo() {
-        return getTarget().getAttributeValue(SPackageBasic.ATR_TAMANHO_MAXIMO);
+        return getAttributeValue(SPackageBasic.ATR_TAMANHO_MAXIMO);
     }
 
     public boolean isVisible() {
-        return !Boolean.FALSE.equals(getTarget().getAttributeValue(SPackageBasic.ATR_VISIVEL));
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_VISIVEL));
     }
 
     public boolean isEnabled() {
-        return !Boolean.FALSE.equals(getTarget().getAttributeValue(SPackageBasic.ATR_ENABLED));
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_ENABLED));
     }
 
     public AtrBasic displayString(String displayStringTemplate) {
@@ -131,11 +132,11 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic displayString(SimpleValueCalculation<String> valueCalculation) {
-        getTarget().setAttributeCalculation(SPackageBasic.ATR_DISPLAY_STRING, valueCalculation);
+        setAttributeCalculation(SPackageBasic.ATR_DISPLAY_STRING, valueCalculation);
         return this;
     }
 
     public String getDisplayString() {
-        return getTarget().getAttributeValue(SPackageBasic.ATR_DISPLAY_STRING);
+        return getAttributeValue(SPackageBasic.ATR_DISPLAY_STRING);
     }
 }

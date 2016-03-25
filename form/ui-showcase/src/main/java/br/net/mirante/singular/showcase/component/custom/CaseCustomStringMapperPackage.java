@@ -20,7 +20,7 @@ public class CaseCustomStringMapperPackage extends SPackage {
         tipoMyForm.addFieldString("nomeCompleto")
                 //@destacar
                 .withCustomMapper(MaterialDesignInputMapper::new)
-                .as(AtrBasic::new).label("Nome Completo");
+                .asAtrBasic().label("Nome Completo");
 
     }
 }

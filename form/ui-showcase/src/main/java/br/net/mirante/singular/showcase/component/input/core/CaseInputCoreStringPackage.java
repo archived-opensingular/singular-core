@@ -18,12 +18,10 @@ public class CaseInputCoreStringPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         tipoMyForm.addFieldString("nomeCompleto")
-                .as(AtrBasic::new).label("Nome Completo")
-                .as(AtrBasic::new).tamanhoMaximo(100);
+                .asAtrBasic().label("Nome Completo").tamanhoMaximo(100);
 
         tipoMyForm.addFieldString("endereco")
-                .as(AtrBasic::new).label("Endereço")
-                .as(AtrBasic::new).tamanhoMaximo(250);
+                .asAtrBasic().label("Endereço").tamanhoMaximo(250);
 
     }
 }

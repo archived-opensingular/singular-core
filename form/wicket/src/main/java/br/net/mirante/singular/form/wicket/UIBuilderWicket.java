@@ -7,14 +7,9 @@ package br.net.mirante.singular.form.wicket;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import java.util.logging.Logger;
 
-import br.net.mirante.singular.form.mform.basic.view.*;
-import br.net.mirante.singular.form.wicket.mapper.selection.*;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -22,6 +17,23 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByCheckboxView;
+import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByPicklistView;
+import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
+import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
+import br.net.mirante.singular.form.mform.basic.view.SViewTab;
+import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
+import br.net.mirante.singular.form.mform.basic.view.ViewMapperRegistry;
+import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
@@ -32,7 +44,6 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.mform.core.STypeMonetary;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
@@ -55,13 +66,19 @@ import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.AutocompleteMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.BooleanRadioMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.MultipleCheckMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectModalBuscaMapper;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-
-import static com.google.common.collect.Sets.newHashSet;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -179,7 +196,7 @@ class AnnotationBuilder {
     }
 
     private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, SInstance instance) {
-        if(instance.as(AtrAnnotation::new).isAnnotated()){
+        if(instance.asAtrAnnotation().isAnnotated()){
             addAnnotationComponent(ngrid, instance, ctx);
         }
         if(instance instanceof SIComposite){

@@ -23,13 +23,10 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
-import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
@@ -395,20 +392,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         throw new SingularFormException("Classe '" + targetClass + "' não funciona como aspecto");
     }
 
-    public AtrBasic asAtrBasic() {
-        return as(AtrBasic::new);
-    }
-
-    public AtrBootstrap asAtrBootstrap() {
-        return as(AtrBootstrap::new);
-    }
-
-    public AtrCore asAtrCore() {
-        return as(AtrCore::new);
-    }
-
-
-    public <T> T as(Function<? super SType<I>, T> aspectFactory) {
+    public <T> T as(Function<SAttributeEnabled, T> aspectFactory) {
         return aspectFactory.apply(this);
     }
 

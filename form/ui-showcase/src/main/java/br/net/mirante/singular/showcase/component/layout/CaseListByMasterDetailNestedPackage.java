@@ -10,8 +10,6 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -49,49 +47,49 @@ public class CaseListByMasterDetailNestedPackage extends SPackage {
             //@destacar:bloco
             experiencias
                     .withView(SViewListByMasterDetail::new)
-                    .as(AtrBasic::new).label("Experiências profissionais");
+                    .asAtrBasic().label("Experiências profissionais");
             //@destacar:fim
             dtInicioExperiencia
-                    .as(AtrBasic::new).label("Data inicial")
-                    .as(AtrBootstrap::new).colPreference(2);
+                    .asAtrBasic().label("Data inicial")
+                    .asAtrBootstrap().colPreference(2);
             dtFimExperiencia
-                    .as(AtrBasic::new).label("Data final")
-                    .as(AtrBootstrap::new).colPreference(2);
+                    .asAtrBasic().label("Data final")
+                    .asAtrBootstrap().colPreference(2);
             empresa
-                    .as(AtrBasic::new).label("Empresa")
-                    .as(AtrBootstrap::new).colPreference(8);
+                    .asAtrBasic().label("Empresa")
+                    .asAtrBootstrap().colPreference(8);
             //@destacar:bloco
             cargos
                     .withView(SViewListByMasterDetail::new)
-                    .as(AtrBasic::new).label("Cargos na empresa");
+                    .asAtrBasic().label("Cargos na empresa");
             dtInicioCargo
-                    .as(AtrBasic::new).label("Data inicial")
-                    .as(AtrBootstrap::new).colPreference(4);
+                    .asAtrBasic().label("Data inicial")
+                    .asAtrBootstrap().colPreference(4);
             dtFimCargo
-                    .as(AtrBasic::new).label("Data final")
-                    .as(AtrBootstrap::new).colPreference(4);
+                    .asAtrBasic().label("Data final")
+                    .asAtrBootstrap().colPreference(4);
             nome
-                    .as(AtrBasic::new).label("Nome")
-                    .as(AtrBootstrap::new).colPreference(4);
+                    .asAtrBasic().label("Nome")
+                    .asAtrBootstrap().colPreference(4);
             pets
                     .withView(new SViewListByMasterDetail()
                             .col(nomeDoPet)
                             .col(tipoDoPet))
-                    .as(AtrBasic::new).label("Animais de estimação no trabalho");
+                    .asAtrBasic().label("Animais de estimação no trabalho");
             nomeDoPet
-                    .as(AtrBasic::new).label("Nome")
-                    .as(AtrBootstrap::new).colPreference(4);
+                    .asAtrBasic().label("Nome")
+                    .asAtrBootstrap().colPreference(4);
             tipoDoPet
                     .withSelectView()
-                    .as(AtrBasic::new).label("Tipo")
-                    .as(AtrBootstrap::new).colPreference(4);
+                    .asAtrBasic().label("Tipo")
+                    .asAtrBootstrap().colPreference(4);
             idadePet
-                    .as(AtrBasic::new).label("Idade")
-                    .as(AtrBootstrap::new).colPreference(4);
+                    .asAtrBasic().label("Idade")
+                    .asAtrBootstrap().colPreference(4);
             //@destacar:fim
             atividades
                     .withTextAreaView()
-                    .as(AtrBasic::new).label("Atividades Desenvolvidas");
+                    .asAtrBasic().label("Atividades Desenvolvidas");
         }
 
     }

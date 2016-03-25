@@ -13,10 +13,7 @@ import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
@@ -61,9 +58,9 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
         nomeComercial = this.addFieldInteger("nomeComercial");
 
         nomeComercial
-                .as(AtrCore::new)
+                .asAtrCore()
                 .obrigatorio()
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Nome Comercial");
 
         nomeComercial
@@ -84,13 +81,13 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
         composicao = this.addFieldString("composicao");
 
         composicao
-                .as(AtrCore::new)
+                .asAtrCore()
                 .obrigatorio()
-                .as(AtrBasic::new)
-.label("Composição")
+                .asAtrBasic()
+                .label("Composição")
                 .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8)
                 .dependsOn(nomeComercial)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(6);
 
         composicao
@@ -111,14 +108,14 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
         enderecoFabricante = this.addFieldString("enderecoFabricante");
 
         enderecoFabricante
-                .as(AtrCore::new)
+                .asAtrCore()
                 .obrigatorio()
-                .as(AtrBasic::new)
-.label("Endereço do fabricante")
+                .asAtrBasic()
+                .label("Endereço do fabricante")
 
                 .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8)
                 .dependsOn(nomeComercial)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(6);
 
         enderecoFabricante
@@ -138,8 +135,8 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         STypeComposite<?> outroMedicamento = addFieldComposite("outro");
         outroMedicamento
-                .as(AtrCore::new)
-                .as(AtrBasic::new)
+                .asAtrCore()
+                .asAtrBasic()
                 .label("Outro Medicamento")
                 .dependsOn(nomeComercial)
 
@@ -147,39 +144,39 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         outroMedicamento
                 .addFieldString("outroNome")
-                .as(AtrCore::new)
+                .asAtrCore()
                 .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Nome Comercial")
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(6);
 
         outroComposicao = outroMedicamento.addFieldString("outroComposicao");
 
         outroComposicao
-                .as(AtrCore::new)
+                .asAtrCore()
                 .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
-                .as(AtrBasic::new)
-.label("Composição")
-                .as(AtrBootstrap::new)
+                .asAtrBasic()
+                .label("Composição")
+                .asAtrBootstrap()
                 .colPreference(6);
 
         outroMedicamento
                 .addFieldString("outroEndereco")
-                .as(AtrCore::new)
+                .asAtrCore()
                 .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
-                .as(AtrBasic::new)
-.label("Endereço do Fabricante")
-                .as(AtrBootstrap::new)
+                .asAtrBasic()
+                .label("Endereço do Fabricante")
+                .asAtrBootstrap()
                 .colPreference(12);
 
 
         descricaoQuantidade = this.addFieldString("descricaoQuantidade");
 
         descricaoQuantidade
-                .as(AtrCore::new)
+                .asAtrCore()
                 .obrigatorio()
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Quantidade solicitada a ser importada no período de 1 (um) ano")
                 .subtitle("Informar as unidades do produto (ex: quantidade de frascos, tubos, caixas)");
 

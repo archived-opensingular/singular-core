@@ -24,7 +24,7 @@ public class CaseCustonRangeMapperPackage extends SPackage {
         final STypeInteger valorInicial = faixaIdade.addFieldInteger("de");
         final STypeInteger valorFinal = faixaIdade.addFieldInteger("a");
 
-        faixaIdade.as(AtrBasic::new).label("Faixa de Idade");
+        faixaIdade.asAtrBasic().label("Faixa de Idade");
         //@destacar
         faixaIdade.withCustomMapper(new RangeSliderMapper(valorInicial, valorFinal));
 

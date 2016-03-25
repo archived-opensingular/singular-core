@@ -1,25 +1,24 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
+
 import java.util.List;
 
-import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.junit.Test;
-
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.extractProperty;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 
 @RunWith(Enclosed.class)
 public class STypeStringKeyValueRadioTest {
@@ -53,7 +52,7 @@ public class STypeStringKeyValueRadioTest {
                     return e;
                 }
             });
-            tipoDeMedia.as(AtrBasic::new).label("Tipo do Arquivo");
+            tipoDeMedia.asAtrBasic().label("Tipo do Arquivo");
         }
     }
 

@@ -33,7 +33,7 @@ public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
         );
         STypeList<STypeComposite<SIComposite>, SIComposite> ingredienteQuimico =
                 tipoMyForm.addFieldListOf("ingredientes", tipoIngrediente);
-        ingredienteQuimico.as(AtrBasic::new).label("Componentes Químicos");
+        ingredienteQuimico.asAtrBasic().label("Componentes Químicos");
 
         /**
          * Neste caso os campos de chave e valor utilizados serão os definidos por
@@ -50,6 +50,6 @@ public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
                         .add().set("sku", "SKU456789").set("nome", "Pirâmide"));
         STypeList<STypeComposite<SIComposite>, SIComposite> produtos =
                 tipoMyForm.addFieldListOf("products", productType);
-        produtos.as(AtrBasic::new).label("Produtos");
+        produtos.asAtrBasic().label("Produtos");
     }
 }

@@ -5,11 +5,10 @@
 
 package br.net.mirante.singular.showcase.component.layout;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 
 public class CaseSimpleGridPackage extends SPackage {
 
@@ -19,13 +18,13 @@ public class CaseSimpleGridPackage extends SPackage {
 
         testForm.addFieldString("nome")
                 .as(AtrBasic.class).label("Nome")
-                .as(AtrBootstrap::new).colPreference(6);
+                .asAtrBootstrap().colPreference(6);
         testForm.addFieldInteger("idade")
                 .as(AtrBasic.class).label("Idade")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBootstrap().colPreference(2);
         testForm.addFieldEmail("email")
                 .as(AtrBasic.class).label("E-mail")
-                .as(AtrBootstrap::new).colPreference(8);
+                .asAtrBootstrap().colPreference(8);
 
     }
 }

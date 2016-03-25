@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+
 import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +30,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -40,8 +42,6 @@ import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 /**
@@ -91,15 +91,16 @@ public class AnnotationComponent extends Panel {
     protected void onInitialize() {
         super.onInitialize();
 
-        this.queue(new Label("target_label",$m.ofValue(title(referenced))));
-        this.queue(comment_field = createCommentSnippet());
-        this.queue(approval_field = createApprovalLabel(approvedModel));
-        this.queue(openModalButton = createOpenModalButton(createEditModal()));
-        this.queue(createDeleteModalButton());
+        queue(new Label("target_label",$m.ofValue(title(referenced))));
+        queue(comment_field = createCommentSnippet());
+        queue(approval_field = createApprovalLabel(approvedModel));
+        queue(openModalButton = createOpenModalButton(createEditModal()));
+        queue(createDeleteModalButton());
     }
 
     private Label createCommentSnippet() {
         return new Label("comment_field", new Model(){
+            @Override
             public Serializable getObject() {
                 if(textModel.getObject() == null){  return "";  }
                 String text = (String) textModel.getObject();
@@ -111,6 +112,7 @@ public class AnnotationComponent extends Panel {
 
     protected static Label createApprovalLabel(final MInstanciaValorModel model) {
         return new Label("approval_field", new Model(){
+            @Override
             public Serializable getObject() {
                 if(Boolean.TRUE.equals(model.getObject())){
                     return "Aprovado";
@@ -120,6 +122,7 @@ public class AnnotationComponent extends Panel {
                 return "";
             }
         }){
+            @Override
             protected void onConfigure() {
                 super.onConfigure();
                 if(Boolean.TRUE.equals(model.getObject())){
@@ -152,6 +155,7 @@ public class AnnotationComponent extends Panel {
                 add(open_icon);
             }
 
+            @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 keepOpened = true;
                 annotationModal.show(target);
@@ -170,6 +174,7 @@ public class AnnotationComponent extends Panel {
 
                 this.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Apagar"),
                     new ActionAjaxButton("deleteBtn"){
+                        @Override
                         protected void onAction(AjaxRequestTarget target, Form<?> form){
                             ((SIAnnotation)model.getObject()).clear();
                             target.add(AnnotationComponent.this.mainGrid);
@@ -180,6 +185,7 @@ public class AnnotationComponent extends Panel {
                 );
                 this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
                     new ActionAjaxLink("cancelDeleteBtn"){
+                        @Override
                         protected void onAction(AjaxRequestTarget target) {
                             thiz.hide(target);
                         }
@@ -189,6 +195,7 @@ public class AnnotationComponent extends Panel {
         };
         context.getExternalContainer().appendTag("div", true, null, deleteModal);
         return new ActionAjaxButton("trash_modal") {
+            @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 deleteModal.show(target);
             }
@@ -208,11 +215,11 @@ public class AnnotationComponent extends Panel {
     }
 
     private static AtrAnnotation annotated(AbstractSInstanceModel referenced) {
-        return referenced.getMInstancia().as(AtrAnnotation::new);
+        return referenced.getMInstancia().asAtrAnnotation();
     }
 
     private static String labelOf(AbstractSInstanceModel target) {
-        return target.getMInstancia().as(AtrBasic::new).getLabel();
+        return target.getMInstancia().asAtrBasic().getLabel();
     }
 
     @Override
@@ -241,6 +248,7 @@ public class AnnotationComponent extends Panel {
     }
 
 
+    @Override
     protected void onConfigure() {
         super.onConfigure();
         if(keepOpened){
@@ -256,7 +264,7 @@ public class AnnotationComponent extends Panel {
         BSContainer toggleContainer = new BSContainer<>("_toggle_btn_");
         toggleContainer.setInnerStyle("position:absolute;top:23px;right: 17px;");
 
-        AtrAnnotation annotatedInstance = instance.as(AtrAnnotation::new);
+        AtrAnnotation annotatedInstance = instance.asAtrAnnotation();
 
         toggleContainer.appendTag("a",true,
                 "href='javascript:;' style='padding-top: 7px; height: 27px; width: 27px;' class='btn btn-circle btn-icon-only "+
@@ -309,7 +317,7 @@ class AnnotationModalWindow extends BFModalWindow{
         this.referenced = referenced;
         this.context = context;
         this.parentComponent = parentComponent;
-        this.setSize(BSModalBorder.Size.NORMAL);
+        setSize(BSModalBorder.Size.NORMAL);
     }
 
     @Override
@@ -318,7 +326,7 @@ class AnnotationModalWindow extends BFModalWindow{
         textModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(getDefaultModel(),"text"));
         approvedModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(getDefaultModel(),"isApproved"));
 
-        this.setBody(createBody());
+        setBody(createBody());
 
         this.addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"),
                 createOkButton(parentComponent)
@@ -350,6 +358,7 @@ class AnnotationModalWindow extends BFModalWindow{
     private void createCommentField(BSContainer modalBody) {
         TextArea modalText = new TextArea<>("modalText", textModel);
         modalText.add(new Behavior(){
+            @Override
             public void bind( Component component ){
                 super.bind( component );
                 component.add(
@@ -376,14 +385,16 @@ class AnnotationModalWindow extends BFModalWindow{
 
     }
 
+    @Override
     public void show(AjaxRequestTarget target) {
-        this.setTitleText($m.ofValue(AnnotationComponent.title(referenced)));
+        setTitleText($m.ofValue(AnnotationComponent.title(referenced)));
 
         super.show(target);
     }
 
     private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
         return new ActionAjaxButton("btn-ok") {
+            @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 target.add(parentComponent.mainGrid);
                 AnnotationModalWindow.this.hide(target);
@@ -394,6 +405,7 @@ class AnnotationModalWindow extends BFModalWindow{
 
     private ActionAjaxLink<Void> createCancelButton() {
         return new ActionAjaxLink<Void>("btn-cancelar") {
+            @Override
             protected void onAction(AjaxRequestTarget target) {
                 parentComponent.setKeepOpened(false);
                 AnnotationModalWindow.this.hide(target);

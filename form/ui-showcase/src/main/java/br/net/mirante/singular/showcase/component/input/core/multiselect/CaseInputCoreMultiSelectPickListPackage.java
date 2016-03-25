@@ -29,7 +29,7 @@ public class CaseInputCoreMultiSelectPickListPackage extends SPackage {
 
         contatos
             .withView(SMultiSelectionByPicklistView::new)
-            .as(AtrBasic::new).label("Informações Públicas");
+            .asAtrBasic().label("Informações Públicas");
     }
 
 }

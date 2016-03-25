@@ -27,18 +27,18 @@ public class CaseInputCoreMultiSelectComboPackage extends SPackage {
 
         STypeString tipoArquivo = pb.createType("tipoArquivo", STypeString.class);
             tipoArquivo.withSelectionFromProvider("filesChoiceProvider");
-        
+
         STypeList<STypeString, SIString> infoPub1 = tipoMyForm
                 .addFieldListOf("infoPub1", tipoContato);
 
         infoPub1
             .withView(SMultiSelectionBySelectView::new)
-            .as(AtrBasic::new).label("Informações Públicas");
-        
+            .asAtrBasic().label("Informações Públicas");
+
         STypeList<STypeString, SIString> infoArq = tipoMyForm
                 .addFieldListOf("infoArq", tipoArquivo);
         infoArq
             .withView(SMultiSelectionBySelectView::new)
-            .as(AtrBasic::new).label("Arquivos Persistidos");
+            .asAtrBasic().label("Arquivos Persistidos");
     }
 }

@@ -20,16 +20,18 @@ public class CaseInputCoreTextAreaPackage extends SPackage {
 
         tipoMyForm.addFieldString("observacao1")
                 .withTextAreaView()
-                .as(AtrBasic::new).label("Observação (default)");
+                .asAtrBasic().label("Observação (default)");
 
         tipoMyForm.addFieldString("observacao2")
             .withTextAreaView(view->view.setLines(2))
-            .as(AtrBasic::new).label("Observação (2 linhas e 500 de limite)")
-            .as(AtrBasic::new).tamanhoMaximo(500);
+            .asAtrBasic()
+            .label("Observação (2 linhas e 500 de limite)")
+            .tamanhoMaximo(500);
 
         tipoMyForm.addFieldString("observacao3")
                 .withTextAreaView(view->view.setLines(10))
-                .as(AtrBasic::new).label("Observação (10 linhas e 5000 de limite)")
-                .as(AtrBasic::new).tamanhoMaximo(5000);
+                .asAtrBasic()
+                .label("Observação (10 linhas e 5000 de limite)")
+                .tamanhoMaximo(5000);
     }
 }
