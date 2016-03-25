@@ -36,21 +36,21 @@ public class CaseListByBreadcrumbPackage extends SPackage {
             experiencias
                     .withView(SViewBreadcrumb::new)
             //@destacar:fim
-                    .as(AtrBasic::new).label("Experiências profissionais");
+                    .asAtrBasic().label("Experiências profissionais");
             dtInicioExperiencia
-                    .as(AtrBasic::new).label("Data inicial")
-                    .as(AtrBootstrap::new).colPreference(2);
+                    .asAtrBasic().label("Data inicial")
+                    .asAtrBootstrap().colPreference(2);
             dtFimExperiencia
-                    .as(AtrBasic::new).label("Data final")
-                    .as(AtrBootstrap::new).colPreference(2);
+                    .asAtrBasic().label("Data final")
+                    .asAtrBootstrap().colPreference(2);
             empresa
-                    .as(AtrBasic::new).label("Empresa")
-                    .as(AtrBootstrap::new).colPreference(8);
+                    .asAtrBasic().label("Empresa")
+                    .asAtrBootstrap().colPreference(8);
             cargo
-                    .as(AtrBasic::new).label("Cargo");
+                    .asAtrBasic().label("Cargo");
             atividades
                     .withTextAreaView()
-                    .as(AtrBasic::new).label("Atividades Desenvolvidas");
+                    .asAtrBasic().label("Atividades Desenvolvidas");
         }
 
     }
