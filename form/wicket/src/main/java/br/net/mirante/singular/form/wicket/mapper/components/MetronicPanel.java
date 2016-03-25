@@ -15,6 +15,7 @@ import org.apache.wicket.markup.html.form.Form;
 public abstract class MetronicPanel extends TemplatePanel {
 
     private Form<?> form = null;
+    private boolean withForm;
 
     public MetronicPanel(String id) {
         this(id, true);
@@ -22,6 +23,12 @@ public abstract class MetronicPanel extends TemplatePanel {
 
     public MetronicPanel(String id, boolean withForm) {
         super(id);
+        this.withForm = withForm;
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
         setTemplateFunction(getTemplate(withForm));
         setRenderBodyOnly(true);
         setOutputMarkupId(false);
@@ -53,6 +60,11 @@ public abstract class MetronicPanel extends TemplatePanel {
 
     protected abstract void buildContent(BSContainer<?> content, Form<?> form);
 
+    public void replaceContent(IBiConsumer<BSContainer<?>, Form<?>> buildContent) {
+        BSContainer<?> content = new BSContainer<>("_co");
+        buildContent.accept(content, form);
+        form.replace(content);
+    }
 
     private IFunction<TemplatePanel, String> getTemplate(boolean withForm) {
         String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";

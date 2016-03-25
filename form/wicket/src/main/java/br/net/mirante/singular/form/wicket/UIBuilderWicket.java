@@ -23,6 +23,7 @@ import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView
 import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
 import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
@@ -55,6 +56,7 @@ import br.net.mirante.singular.form.wicket.mapper.DecimalMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
 import br.net.mirante.singular.form.wicket.mapper.LatitudeLongitudeMapper;
+import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.ListMasterDetailMapper;
 import br.net.mirante.singular.form.wicket.mapper.MonetarioMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
@@ -148,6 +150,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeList.class,        SViewListByTable.class,               TableListMapper::new)
                 .register(STypeList.class,        SViewListByForm.class,                PanelListaMapper::new)
                 .register(STypeList.class,        SViewListByMasterDetail.class,        ListMasterDetailMapper::new)
+                .register(STypeList.class,      SViewBreadcrumb.class,                  ListBreadcrumbMapper::new)
                 .register(STypeDateTime.class,                                          DateTimeMapper::new)
                 .register(STypeDateTime.class,    SViewDateTime.class,                  DateTimeMapper::new)
                 .register(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
@@ -196,7 +199,7 @@ class AnnotationBuilder {
     }
 
     private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, SInstance instance) {
-        if(instance.asAtrAnnotation().isAnnotated()){
+        if (instance.asAtrAnnotation().isAnnotated()) {
             addAnnotationComponent(ngrid, instance, ctx);
         }
         if(instance instanceof SIComposite){
