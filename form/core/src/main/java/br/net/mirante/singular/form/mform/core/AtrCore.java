@@ -24,30 +24,30 @@ public class AtrCore extends STranslatorForAttribute {
 
 
     public AtrCore obrigatorio(Boolean value) {
-        getTarget().setAttributeValue(SPackageCore.ATR_REQUIRED, value);
+        setAttributeValue(SPackageCore.ATR_REQUIRED, value);
         return this;
     }
 
     public AtrCore obrigatorio(Predicate<SInstance> valor) {
-        getTarget().setAttributeValue(SPackageCore.ATR_OBRIGATORIO_FUNCTION, valor);
+        setAttributeValue(SPackageCore.ATR_OBRIGATORIO_FUNCTION, valor);
         return this;
     }
-    
+
     public Boolean isObrigatorio() {
-        return !Boolean.FALSE.equals(getTarget().getAttributeValue(SPackageCore.ATR_REQUIRED));
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageCore.ATR_REQUIRED));
     }
 
     public AtrCore exists(Boolean valor) {
-        getTarget().setAttributeValue(SPackageCore.ATR_REQUIRED, valor);
+        setAttributeValue(SPackageCore.ATR_REQUIRED, valor);
         return this;
     }
-    
+
     public AtrCore exists(Predicate<SInstance> valor) {
-        getTarget().setAttributeValue(SPackageCore.ATR_OBRIGATORIO_FUNCTION, valor);
+        setAttributeValue(SPackageCore.ATR_OBRIGATORIO_FUNCTION, valor);
         return this;
     }
-    
+
     public boolean exists() {
-        return !Boolean.FALSE.equals(getTarget().getAttributeValue(SPackageCore.ATR_REQUIRED));
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageCore.ATR_REQUIRED));
     }
 }
