@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.commons.lambda.IFunction;
 
@@ -18,17 +19,17 @@ public class SViewListByMasterDetail extends AbstractSViewListWithControls<SView
     private boolean editEnabled = true;
     private List<Column> columns = new ArrayList<>();
 
-    public SViewListByMasterDetail col(STypeSimple<?, ?> type) {
+    public SViewListByMasterDetail col(SType<?> type) {
         columns.add(new Column(type.getName(), null, null));
         return this;
     }
 
-    public SViewListByMasterDetail col(STypeSimple<?, ?> type, String customLabel) {
+    public SViewListByMasterDetail col(SType<?> type, String customLabel) {
         columns.add(new Column(type.getName(), customLabel, null));
         return this;
     }
 
-    public SViewListByMasterDetail col(STypeSimple<?, ?> type, IFunction<SInstance, String> displayFunction) {
+    public SViewListByMasterDetail col(SType<?> type, IFunction<SInstance, String> displayFunction) {
         columns.add(new Column(type.getName(), null, displayFunction));
         return this;
     }

@@ -31,6 +31,9 @@ public class ExampleDataDTO implements IModel {
     @Column
     private String type;
 
+    @Column
+    private String description;
+
     @Lob
     @Column
     private String xml;
@@ -106,4 +109,11 @@ public class ExampleDataDTO implements IModel {
 
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

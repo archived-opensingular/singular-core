@@ -243,7 +243,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         });
 
         STypeList<STypeComposite<SIComposite>, SIComposite> estudosEstabilidade = acondicionamento.addFieldListOfComposite("estudosEstabilidade", "estudoEstabilidade");
-        estudosEstabilidade.as(AtrBasic::new).label("Estudo de estabilidade");
+        estudosEstabilidade.as(AtrBasic::new)
+                .label("Estudo de estabilidade")
+                .displayString("<#list _inst as c>${c.arquivo.name}<#sep>, </#sep></#list>");
         STypeComposite<SIComposite> estudoEstabilidade = estudosEstabilidade.getElementsType();
         {
 
@@ -270,19 +272,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
             layoutsRotulagem.withView(SViewListByTable::new);
         }
 
-        STypeInteger prazoValidade = acondicionamento.addFieldInteger("prazoValidade", true);
-        prazoValidade.asAtrBasic().label("Prazo de validade (meses)");
 
-        acondicionamentos
-                .withView(new SViewListByMasterDetail()
-                        .col(descricaoEmbalagemPrimaria, "Embalagem primária")
-                        .col(descricaoEmbalagemSecundaria, "Embalagem secundária")
-                                //TODO Encontrar uma forma de permitir adicionar nomes de uma lista
-                                // no master detail
-//                    .col(estudoEstabilidade, "Estudo de estabilidade")
-                        .col(quantidade)
-                        .col(prazoValidade))
-                .asAtrBasic().label("Acondicionamento");
 
         STypeList<STypeComposite<SIComposite>, SIComposite> locaisFabricacao = acondicionamento.addFieldListOfComposite("locaisFabricacao", "localFabricacao");
         STypeComposite<SIComposite> localFabricacao = locaisFabricacao.getElementsType();
@@ -409,6 +399,17 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 //                    .col())
                 .asAtrBasic().label("Local de fabricação");
 
+        STypeInteger prazoValidade = acondicionamento.addFieldInteger("prazoValidade", true);
+        prazoValidade.asAtrBasic().label("Prazo de validade (meses)");
+
+        acondicionamentos
+                .withView(new SViewListByMasterDetail()
+                        .col(descricaoEmbalagemPrimaria, "Embalagem primária")
+                        .col(descricaoEmbalagemSecundaria, "Embalagem secundária")
+                        .col(estudosEstabilidade, "Estudo de estabilidade")
+                        .col(quantidade)
+                        .col(prazoValidade))
+                .asAtrBasic().label("Acondicionamento");
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> layoutsRotulagem = notificacaoSimplificada.addFieldListOfComposite("layoutsRotulagem", "layout");
         layoutsRotulagem

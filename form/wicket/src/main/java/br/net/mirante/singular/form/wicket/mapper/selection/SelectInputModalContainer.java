@@ -102,7 +102,9 @@ class SelectInputModalContainer extends BSContainer {
         panel.appendTag("a", true, "class='btn default'", new AjaxLink("search_link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                searchModal.show(target);
+                target.add(modalContainer);
+                searchModal.getModalBorder().setVisible(true);
+//                searchModal.show(target);
                 target.appendJavaScript(getConfigureBackdropScript());
             }
 
@@ -110,11 +112,9 @@ class SelectInputModalContainer extends BSContainer {
                 String js = "";
                 js += " (function (zindex){ ";
                 js += "     $('.modal-backdrop').each(function(index) { ";
-                js += "         var zIndex = $(this).css('z-index'); ";
                 js += "         $(this).css('z-index', zindex-1+index); ";
                 js += "     }); ";
                 js += "     $('.modal').each(function(index) { ";
-                js += "         var zIndex = $(this).css('z-index'); ";
                 js += "         $(this).css('z-index', zindex+index); ";
                 js += "     }); ";
                 js += " })(10050); ";
