@@ -7,7 +7,9 @@ package br.net.mirante.singular.form.mform.options;
 
 import java.util.Collection;
 
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public interface SSelectionableSimpleType<BASE extends SType<?>, TIPO_NATIVO> extends SSelectionableType<BASE> {
@@ -15,10 +17,11 @@ public interface SSelectionableSimpleType<BASE extends SType<?>, TIPO_NATIVO> ex
 
     /**
      * Registers the name of the provider used to load options for this type.
-     * This provider will be loaded from the SDocument attached to the Minstance
-     * enclosing this type.
+     * This provider will be loaded from the {@link SDocument} attached to the
+     * {@link SInstance} enclosing this type.
      *
-     * @param providerName : Name of the {@link SOptionsProvider} to be used.
+     * @param providerName
+     *            : Name of the {@link SOptionsProvider} to be used.
      * @return <code>this</code>
      */
     default public BASE withSelectionFromProvider(final String providerName) {
@@ -28,9 +31,11 @@ public interface SSelectionableSimpleType<BASE extends SType<?>, TIPO_NATIVO> ex
 
     /**
      * Registers the class of the provider used to load options for this type.
-     * This provider will be loaded from the SDocument attached to the Minstance
-     * enclosing this type.
-     * @param providerClass : Class of the {@link SOptionsProvider} to be used.
+     * This provider will be loaded from the {@link SDocument} attached to the
+     * {@link SInstance} enclosing this type.
+     * 
+     * @param providerClass
+     *            : Class of the {@link SOptionsProvider} to be used.
      * @return <code>this</code>
      */
     default public BASE withSelectionFromProvider(Class<? extends SOptionsProvider> providerClass) {
