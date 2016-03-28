@@ -179,7 +179,7 @@ public class NotificacaoSimplificadaProviderUtils {
     public static List<Triple> empresaInternacional() {
         List<Triple> list = new ArrayList<>();
 
-        list.add(Triple.of(1, "Emnpresa 1", "Endereco 1"));
+        list.add(Triple.of(1, "Empresa 1", "Endereco 1"));
 
         return list;
     }
@@ -187,7 +187,7 @@ public class NotificacaoSimplificadaProviderUtils {
     public static List<Triple> empresaTerceirizada() {
         List<Triple> list = new ArrayList<>();
 
-        list.add(Triple.of(1, "Emnpresa 2", "Endereco 2"));
+        list.add(Triple.of(1, "Empresa 2", "Endereco 2"));
 
         return list;
     }
@@ -195,7 +195,7 @@ public class NotificacaoSimplificadaProviderUtils {
     public static List<Triple> outroLocalFabricacao() {
         List<Triple> list = new ArrayList<>();
 
-        list.add(Triple.of(1, "Emnpresa 3", "Endereco 3"));
+        list.add(Triple.of(1, "Empresa 3", "Endereco 3"));
 
         return list;
     }
