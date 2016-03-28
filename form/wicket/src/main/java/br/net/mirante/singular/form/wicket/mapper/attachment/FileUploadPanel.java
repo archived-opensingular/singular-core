@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
@@ -38,6 +39,7 @@ import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
 import org.apache.wicket.util.time.Duration;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 /**
  * FileUploadPanel
@@ -90,6 +92,10 @@ public class FileUploadPanel extends Panel {
      * DownloadLink, escreve o arquivo do SIAttachment.
      */
     private final Link<Void> downloadLink = new Link<Void>("downloadLink") {
+
+        private static final String SELF = "_self", BLANK = "_blank";
+        private IModel<String> target = $m.ofValue(SELF);
+
         @Override
         public void onClick() {
             final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
@@ -111,6 +117,22 @@ public class FileUploadPanel extends Panel {
             }
 
             getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
+        }
+
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new AttributeModifier("target", target));
+        }
+
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            if (model.getObject().isContentTypeBrowserFriendly()) {
+                target.setObject(BLANK);
+            } else {
+                target.setObject(SELF);
+            }
         }
     };
 
