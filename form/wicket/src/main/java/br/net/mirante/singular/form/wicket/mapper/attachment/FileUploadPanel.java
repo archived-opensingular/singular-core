@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.SIList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -158,7 +159,13 @@ public class FileUploadPanel extends Panel {
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             super.onSubmit(target, form);
             model.getObject().deleteReference();
-            target.add(fileDummyField, fileName, removeFileButton, chooseFieldButton);
+            if (model.getObject().getParent() instanceof SIList) {
+                final SIList parent = (SIList) model.getObject().getParent();
+                parent.remove(parent.indexOf(model.getObject()));
+                target.add(form);
+            } else {
+                target.add(fileDummyField, fileName, removeFileButton, chooseFieldButton);
+            }
         }
     };
 

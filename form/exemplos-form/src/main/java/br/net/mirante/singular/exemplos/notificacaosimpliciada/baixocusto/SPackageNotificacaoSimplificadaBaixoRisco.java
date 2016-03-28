@@ -5,18 +5,12 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimpliciada.baixocusto;
 
+import br.net.mirante.singular.form.mform.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import br.net.mirante.singular.exemplos.notificacaosimpliciada.NotificacaoSimplificadaProviderUtils;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
@@ -410,17 +404,12 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                         .col(prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> layoutsRotulagem = notificacaoSimplificada.addFieldListOfComposite("layoutsRotulagem", "layout");
+
+        final STypeAttachmentList layoutsRotulagem = notificacaoSimplificada
+                .addFieldListOfAttachment("layoutsRotulagem", "layout");
         layoutsRotulagem
-                .withView(SViewListByTable::new)
                 .asAtrBasic()
                 .label("Layouts Rotulagem");
-        STypeComposite layout = layoutsRotulagem.getElementsType();
-        layout
-                .addField("anexo", STypeAttachment.class);
-
-
-
 
         // config tabs
         SViewTab tabbed = notificacaoSimplificada.setView(SViewTab::new);
