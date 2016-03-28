@@ -35,7 +35,7 @@ import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
-public abstract class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled {
+public class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
 
