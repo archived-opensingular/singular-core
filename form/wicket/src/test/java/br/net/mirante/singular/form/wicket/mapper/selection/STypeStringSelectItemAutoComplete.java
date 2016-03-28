@@ -3,11 +3,20 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 /**
  * Created by nuk on 21/03/16.
  */
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeDecimal;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
+import br.net.mirante.singular.form.mform.options.SOptionsCompositeProvider;
+import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -106,27 +115,5 @@ public class STypeStringSelectItemAutoComplete {
         }
 
     }
-
-    /*public static class CompositeSelection extends Base {
-
-        final String[] KEYS = {"Batman", "Superman", "Flash", "Green Arrow"};
-
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            super.buildBaseType(baseType);
-
-            SFixedOptionsSimpleProvider provider = base.withSelection();
-            for (int i = 0; i < OPTIONS.length && i < KEYS.length; i++) {
-                provider.add(KEYS[i], OPTIONS[i]);
-            }
-        }
-
-        @Test
-        public void renderLabelsNotKeys() {
-            for (String o : OPTIONS) {
-                tester.assertContains(o);
-            }
-        }
-    }*/
 
 }

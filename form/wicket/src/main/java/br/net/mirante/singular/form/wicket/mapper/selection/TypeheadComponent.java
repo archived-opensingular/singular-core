@@ -167,6 +167,12 @@ class MOptionsModel extends MInstanciaValorModel {
         super.setObject(defineValue((String)object));
     }
 
+    @Override
+    public Object getObject() {
+        return options().getKeyFromOption(getMInstancia());
+//        return super.getObject();
+    }
+
     private Object defineValue(String object) {
         if(object != null){
             SInstance value = options().getValueFromKey(object);
@@ -176,6 +182,7 @@ class MOptionsModel extends MInstanciaValorModel {
         }
         return null;
     }
+
 }
 
 class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {

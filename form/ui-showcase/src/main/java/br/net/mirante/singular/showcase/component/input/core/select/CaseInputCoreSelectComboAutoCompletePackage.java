@@ -3,9 +3,15 @@ package br.net.mirante.singular.showcase.component.input.core.select;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.form.mform.core.STypeDecimal;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
+import br.net.mirante.singular.form.mform.options.SOptionsCompositeProvider;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
 
 public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
 
@@ -35,11 +41,37 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
                 .asAtrBasic().label("Componente Químico");
 
 
+        STypeComposite<SIComposite> myPlanet = tipoMyForm.addFieldComposite("myPlanet");
+
+        STypeString name = myPlanet.addFieldString("name");
+        name.asAtrBasic().label("Nome");
+        STypeInteger position = myPlanet.addFieldInteger("position");
+        position.asAtrBasic().label("Posição");
+        STypeDecimal diameter = myPlanet.addFieldDecimal("diameterInKm");
+        diameter.asAtrBasic().label("Diâmetro");
+
+        myPlanet.withSelectionFromProvider(name, new SOptionsCompositeProvider() {
+            @Override
+            public void listOptions(SInstance instance, SListBuilder lb) {
+                SIComposite value = (SIComposite) SDocumentFactory.empty().createInstance(new RefType() {
+                    protected SType<?> retrieve() {
+                        return myPlanet;
+                    }
+                });
+                lb.add().set(name,"Mercury").set(position,1).set(diameter,4879);
+                lb.add().set(name,"Venus").set(position,2).set(diameter,12104);
+                lb.add().set(name,"Earth").set(position,3).set(diameter,12756);
+            }
+        });
+
+        myPlanet.withView(SViewAutoComplete::new)
+                .asAtrBasic().label("Planeta de Origem");
+
         //@destacar:bloco
         // Auto Complete com opções dinâmicas baseadas nos valores informados.
         //@destacar:fim
-        STypeString name = tipoMyForm.addFieldString("email");
-        name.withSelectionFromProvider(new SOptionsProvider() {
+        STypeString email = tipoMyForm.addFieldString("email");
+        email.withSelectionFromProvider(new SOptionsProvider() {
             @Override
             public SIList<? extends SInstance> listOptions(SInstance instance, String filter) {
                 SIList<?> r = instance.getType().newList();
@@ -58,7 +90,7 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
                 return prefix;
             }
         });
-        name.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC))
+        email.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC))
                 .asAtrBasic().label("Email");
     }
 }
