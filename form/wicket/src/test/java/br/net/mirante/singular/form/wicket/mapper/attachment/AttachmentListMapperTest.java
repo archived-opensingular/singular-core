@@ -18,16 +18,16 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class AttachmentListMapperTest extends SingularFormBaseTest {
 
-    private STypeAttachmentList layoutsRotulagem;
+    private STypeAttachmentList typeAttachmentList;
 
     @Override
     protected void buildBaseType(STypeComposite<?> baseType) {
 
-        layoutsRotulagem = baseType
-                .addFieldListOfAttachment("layoutsRotulagem", "layout");
-        layoutsRotulagem
+        typeAttachmentList = baseType
+                .addFieldListOfAttachment("attachments", "attachment");
+        typeAttachmentList
                 .asAtrBasic()
-                .label("Layouts Rotulagem");
+                .label("Attachments");
     }
 
     @Test
@@ -40,7 +40,7 @@ public class AttachmentListMapperTest extends SingularFormBaseTest {
         assertThat(multipleFileField).isNotNull();
 
         final SIList<SIAttachment> attachments = page.getCurrentInstance()
-                .findNearest(layoutsRotulagem)
+                .findNearest(typeAttachmentList)
                 .orElseThrow(() -> new SingularFormException("Não foi possivel encontrar a instancia"));
 
         assertThat(attachments.size()).isEqualTo(0);
@@ -53,7 +53,7 @@ public class AttachmentListMapperTest extends SingularFormBaseTest {
 
         assertThat(attachments.size()).isEqualTo(1);
 
-        final AjaxButton removeFileButton = findOnForm(AjaxButton.class, page.getForm(), aj -> aj.getId().equals("removeFileButton"))
+        final AjaxButton removeFileButton = findOnForm(AjaxButton.class, page.getForm(), ab -> ab.getId().equals("removeFileButton"))
                 .findFirst()
                 .orElseThrow(() -> new SingularFormException("Não foi possivel encontrar o botão de remover."));
 

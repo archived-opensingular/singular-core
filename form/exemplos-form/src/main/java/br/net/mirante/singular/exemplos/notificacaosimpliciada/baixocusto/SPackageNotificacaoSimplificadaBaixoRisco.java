@@ -235,34 +235,25 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
             }
         });
 
-        STypeList<STypeComposite<SIComposite>, SIComposite> estudosEstabilidade = acondicionamento.addFieldListOfComposite("estudosEstabilidade", "estudoEstabilidade");
+        final STypeAttachmentList estudosEstabilidade = acondicionamento.addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
+
         estudosEstabilidade.asAtrBasic()
                 .label("Estudo de estabilidade")
-                .displayString("<#list _inst as c>${c.arquivo.name}<#sep>, </#sep></#list>");
-        STypeComposite<SIComposite> estudoEstabilidade = estudosEstabilidade.getElementsType();
+                .displayString("<#list _inst as c>${c.name}<#sep>, </#sep></#list>");
         {
 
-            STypeAttachment f = estudoEstabilidade.addField("arquivo", STypeAttachment.class);
-            f.as(AtrBasic.class).label("Informe o caminho do arquivo para o anexo")
-                    .asAtrBootstrap().colPreference(9);
-
+            STypeAttachment f = estudosEstabilidade.getElementsType();
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
             nomeArquivo.asAtrBasic().label("Nome do Arquivo");
-            estudosEstabilidade.withView(SViewListByTable::new);
         }
 
         {
-            STypeList<STypeComposite<SIComposite>, SIComposite> layoutsRotulagem = acondicionamento.addFieldListOfComposite("layoutsRotulagem", "layoutRotulagem");
+            final STypeAttachmentList layoutsRotulagem = acondicionamento.addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
             layoutsRotulagem.asAtrBasic().label("Layout da rotulagem");
-            STypeComposite<SIComposite> layoutRotulagem = layoutsRotulagem.getElementsType();
 
-            STypeAttachment f = layoutRotulagem.addField("arquivo", STypeAttachment.class);
-            f.as(AtrBasic.class).label("Informe o caminho do arquivo para o anexo")
-                    .asAtrBootstrap().colPreference(9);
-
+            STypeAttachment f = layoutsRotulagem.getElementsType();
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
             nomeArquivo.asAtrBasic().label("Nome do Arquivo");
-            layoutsRotulagem.withView(SViewListByTable::new);
         }
 
 
