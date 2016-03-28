@@ -39,7 +39,7 @@ public class TestMoptionsConfigTipoLista {
         PackageBuilder pb = _dicionario.createNewPackage("teste");
 
         _raiz = pb.createCompositeType("_raiz");
-        
+
 
         _alertas = _raiz.addFieldListOfComposite("alertas", "alerta");
         _alerta = _alertas.getElementsType();
@@ -53,29 +53,22 @@ public class TestMoptionsConfigTipoLista {
         evento = _raiz.newInstance();
 
         //alertas
-        listaAlertas = (SIList) evento.getField(_alertas.getNameSimple());
+        listaAlertas = evento.getFieldList(_alertas.getNameSimple());
 
         _alerta.withSelectionFromProvider(_alerta_data, new SOptionsCompositeProvider() {
             @Override
-            public void listOptions(SInstance instancia, SListBuilder<STypeComposite> lb) {
+            public void listOptions(SInstance instancia, SListBuilder lb) {
                 lb
-                        .add()
-                        .set(_alerta_data, DT_1)
-                        .add()
-                        .set(_alerta_data, DT_2)
-                        .add()
-                        .set(_alerta_data, DT_3)
-                        .add()
-                        .set(_alerta_data, DT_4)
-                        .add()
-                        .set(_alerta_data, DT_5)
-                        .add()
-                        .set(_alerta_data, DT_6);
-
+                        .add().set(_alerta_data, DT_1)
+                        .add().set(_alerta_data, DT_2)
+                        .add().set(_alerta_data, DT_3)
+                        .add().set(_alerta_data, DT_4)
+                        .add().set(_alerta_data, DT_5)
+                        .add().set(_alerta_data, DT_6);
             }
         });
 
-        SIList listaOpcoes = _alerta.getOptionsProvider().listAvailableOptions(listaAlertas, null);
+        SIList<?> listaOpcoes = _alerta.getOptionsProvider().listAvailableOptions(listaAlertas, null);
         opcaoAlerta1 = listaOpcoes.get(0);
         opcaoAlerta2 = listaOpcoes.get(1);
         opcaoAlerta3 = listaOpcoes.get(2);

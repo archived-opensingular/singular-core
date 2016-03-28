@@ -403,7 +403,8 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
         throw new RuntimeException(
                 "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
     }
-    public <T> T as(Function<? super SInstance, T> aspectFactory) {
+    @Override
+    public <T> T as(Function<SAttributeEnabled, T> aspectFactory) {
         return aspectFactory.apply(this);
     }
 

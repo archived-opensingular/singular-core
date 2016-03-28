@@ -12,7 +12,6 @@ import org.junit.Test;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
@@ -30,7 +29,7 @@ public class TableListWithCompositeTypeTest extends SingularFormBaseTest {
         final STypeComposite<?> mockTypeComposite = mockList.getElementsType();
 
         mockList.withView(SViewListByTable::new);
-        mockList.as(AtrBasic::new)
+        mockList.asAtrBasic()
                 .label("Mock Type Composite");
 
         simpleString = mockTypeComposite.addFieldString("mockTypeComposite", true);

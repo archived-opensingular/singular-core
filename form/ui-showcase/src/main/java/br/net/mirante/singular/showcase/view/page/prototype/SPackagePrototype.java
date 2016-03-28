@@ -18,25 +18,23 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeDateTime;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.core.STypeFormula;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.mform.core.STypeMonetary;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 import br.net.mirante.singular.form.mform.util.comuns.STypePersonName;
+import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 
 /**
  * Created by nuk on 07/03/16.
@@ -69,7 +67,7 @@ public class SPackagePrototype extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         final STypeComposite<?> meta = pb.createCompositeType(META_FORM);
         meta.addFieldString(NAME_FIELD).asAtrBasic().label("Nome")
-                .as(AtrCore::new).obrigatorio();
+                .asAtrCore().required();
 
         STypeList<STypeComposite<SIComposite>, SIComposite> childFields =
                 meta.addFieldListOfComposite(CHILDREN, "field");
@@ -80,13 +78,13 @@ public class SPackagePrototype extends SPackage {
 
         STypeString nome = fieldType.addFieldString(NAME);
         nome.asAtrBasic().label("Nome")
-                .as(AtrCore::new).obrigatorio()
-                .getTipo().asAtrBootstrap().colPreference(3);
+                .asAtrCore().required()
+                .asAtrBootstrap().colPreference(3);
 
         STypeString type = fieldType.addFieldString(TYPE);
         type.asAtrBasic().label("Tipo")
-                .getTipo().asAtrCore().obrigatorio()
-                .getTipo().asAtrBootstrap().colPreference(2);
+                .asAtrCore().required()
+                .asAtrBootstrap().colPreference(2);
         populateOptions(pb, type.withSelection());
 
         fieldType.addFieldBoolean(IS_LIST)

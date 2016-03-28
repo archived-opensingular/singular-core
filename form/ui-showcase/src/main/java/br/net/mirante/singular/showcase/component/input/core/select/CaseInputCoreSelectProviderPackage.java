@@ -23,7 +23,7 @@ public class CaseInputCoreSelectProviderPackage extends SPackage {
          */
         STypeString tipoArquivo = tipoMyForm.addFieldString("opcoesDeArquivo");
         tipoArquivo.withSelectionFromProvider("filesChoiceProvider");
-        tipoArquivo.as(AtrBasic::new).label("Seleção de Arquivos Persistidos");
+        tipoArquivo.asAtrBasic().label("Seleção de Arquivos Persistidos");
 
 
         STypeString tipoDeMedia = tipoMyForm.addFieldString("tipoDeMedia");
@@ -46,7 +46,7 @@ public class CaseInputCoreSelectProviderPackage extends SPackage {
                 return e;
             }
         });
-        tipoDeMedia.as(AtrBasic::new).label("Tipo do Arquivo");
+        tipoDeMedia.asAtrBasic().label("Tipo do Arquivo");
 
     }
 

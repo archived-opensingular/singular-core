@@ -13,17 +13,17 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 /**
  * Classe utilitária para montar um MILista de MIComposto
  */
-public class SListBuilder<T extends STypeComposite> {
+public class SListBuilder {
 
     private SIList<?> sList;
-    private T mTipo;
+    private STypeComposite<?> mTipo;
 
     /**
      * Instancia do tipo dos elementos da lista
      *
      * @param mtipo
      */
-    public SListBuilder(T mtipo) {
+    public SListBuilder(STypeComposite<?> mtipo) {
         this.mTipo = mtipo;
         this.sList = mtipo.newList();
     }
@@ -47,7 +47,7 @@ public class SListBuilder<T extends STypeComposite> {
         private SListBuilder _lb;
         private SIComposite instancia;
 
-        public SCompositeValueSetter(SIComposite instancia, SListBuilder lb) {
+        SCompositeValueSetter(SIComposite instancia, SListBuilder lb) {
             this._lb = lb;
             this.instancia = instancia;
         }

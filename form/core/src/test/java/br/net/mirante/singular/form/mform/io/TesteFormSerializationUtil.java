@@ -26,15 +26,14 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
@@ -83,15 +82,15 @@ public class TesteFormSerializationUtil {
         SIComposite instancia = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
             STypeComposite<? extends SIComposite> endereco = pacote.createCompositeType("endereco");
             endereco.addFieldString("rua");
-            endereco.as(AtrAnnotation::new).setAnnotated();
+            endereco.asAtrAnnotation().setAnnotated();
         });
         instancia.setValue("rua", "rua dos bobos");
-        instancia.as(AtrAnnotation::new).text("numero zero ?");
+        instancia.asAtrAnnotation().text("numero zero ?");
 
-        assertThat(instancia.as(AtrAnnotation::new).text()).isEqualTo("numero zero ?");
+        assertThat(instancia.asAtrAnnotation().text()).isEqualTo("numero zero ?");
         SIComposite r = (SIComposite) testSerializacao(instancia);
         assertThat(r.getField("rua").getValue()).isEqualTo("rua dos bobos");
-        assertThat(r.as(AtrAnnotation::new).text()).isEqualTo("numero zero ?");
+        assertThat(r.asAtrAnnotation().text()).isEqualTo("numero zero ?");
     }
 
     @Test

@@ -35,7 +35,7 @@ public class PackageBuilder {
     }
 
     @SuppressWarnings("unchecked")
-    public STypeComposite<? extends SIComposite> createCompositeType(String simpleNameNewType) {
+    public STypeComposite<SIComposite> createCompositeType(String simpleNameNewType) {
         return createType(simpleNameNewType, STypeComposite.class);
     }
 

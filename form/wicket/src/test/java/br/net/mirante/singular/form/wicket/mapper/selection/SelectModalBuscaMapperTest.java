@@ -1,16 +1,17 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Test;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 
 
 public class SelectModalBuscaMapperTest extends SingularFormBaseTest {
@@ -21,8 +22,8 @@ public class SelectModalBuscaMapperTest extends SingularFormBaseTest {
     @Override
     protected void buildBaseType(STypeComposite<?> baseType) {
 
-        mandatoryField = baseType.addFieldString("mandatoryField", true).withSelectionOf("1", "2");
-        mandatoryField.withView(SViewSelectionBySearchModal::new);
+        mandatoryField = baseType.addFieldString("mandatoryField", true).withSelectionOf("1", "2")
+                .withView(SViewSelectionBySearchModal::new).cast();
 
         dependentField = baseType.addFieldString("dependentField");
         dependentField.asAtrBasic().dependsOn(mandatoryField);
@@ -44,7 +45,8 @@ public class SelectModalBuscaMapperTest extends SingularFormBaseTest {
         tester.assertInvisible(dependentFieldComp.getPageRelativePath());
 
         AjaxLink link = findOnForm(AjaxLink.class, form.getForm(), al -> al.getId().equals("search_link"))
-                .findFirst().orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o link para abertura da modal"));
+.findFirst()
+                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o link para abertura da modal"));
 
         tester.executeAjaxEvent(link, "click");
 

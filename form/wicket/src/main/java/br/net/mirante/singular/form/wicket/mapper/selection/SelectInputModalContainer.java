@@ -5,24 +5,14 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
-import br.net.mirante.singular.form.mform.options.SOptionsConfig;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
-import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
-import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -39,13 +29,29 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SISimple;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.options.SOptionsConfig;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
+import br.net.mirante.singular.form.wicket.component.BFModalWindow;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 /**
  * This component is used to represent a selection placed in a modal search.
@@ -102,7 +108,9 @@ class SelectInputModalContainer extends BSContainer {
         panel.appendTag("a", true, "class='btn default'", new AjaxLink("search_link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                searchModal.show(target);
+                target.add(modalContainer);
+                searchModal.getModalBorder().setVisible(true);
+//                searchModal.show(target);
                 target.appendJavaScript(getConfigureBackdropScript());
             }
 
@@ -110,11 +118,9 @@ class SelectInputModalContainer extends BSContainer {
                 String js = "";
                 js += " (function (zindex){ ";
                 js += "     $('.modal-backdrop').each(function(index) { ";
-                js += "         var zIndex = $(this).css('z-index'); ";
                 js += "         $(this).css('z-index', zindex-1+index); ";
                 js += "     }); ";
                 js += "     $('.modal').each(function(index) { ";
-                js += "         var zIndex = $(this).css('z-index'); ";
                 js += "         $(this).css('z-index', zindex+index); ";
                 js += "     }); ";
                 js += " })(10050); ";
@@ -223,7 +229,7 @@ class SelectInputModalContainer extends BSContainer {
         if (!(fieldType instanceof STypeSimple)) {
             throw new SingularFormException(String.format("Search Fields must be a field of MTipoSimples! found: %s ", fieldType == null ? null : fieldType.getClass().getName()));
         }
-        return fieldType.as(AtrBasic::new).getLabel();
+        return fieldType.asAtrBasic().getLabel();
     }
 
     private void buildSearchField(String id, IModel<String> filterModel, BSGrid grid, Component table, Form<?> form) {
