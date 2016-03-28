@@ -24,6 +24,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @RunWith(Enclosed.class)
 public class STypeStringSelectItemAutoComplete {
 
+    //TODO: Testar modo read only
+
     private static class Base extends SingularFormBaseTest {
 
         final String[] OPTIONS = {"Bruce Wayne", "Clark Kent", "Wally West", "Oliver Queen"};
@@ -64,14 +66,13 @@ public class STypeStringSelectItemAutoComplete {
         }
 
         @Test public void submitsSelected() {
-            form.setValue(valueComponent(),"1");
+            form.setValue(valueComponent(),"3");
             form.submit();
-            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[1-1]);
+            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[3-1]);
         }
 
     }
 
-    @Ignore("Waiting for further development")
     public static class KeyValueSelection extends Base {
 
         final String[] KEYS = {"Batman", "Superman", "Flash", "Green Arrow"};
@@ -93,9 +94,9 @@ public class STypeStringSelectItemAutoComplete {
         }
 
         @Test public void submitsSelectedKeyInstead() {
-            form.setValue(fieldComponent(),OPTIONS[1]);
+            form.setValue(valueComponent(),"2");
             form.submit();
-            assertThat(fieldInstance().getValue()).isEqualTo(KEYS[1]);
+            assertThat(fieldInstance().getValue()).isEqualTo(KEYS[2-1]);
         }
 
         @Test public void justIgnoresIfTheSelectedLabelHasNoMatch() {
@@ -105,5 +106,27 @@ public class STypeStringSelectItemAutoComplete {
         }
 
     }
+
+    /*public static class CompositeSelection extends Base {
+
+        final String[] KEYS = {"Batman", "Superman", "Flash", "Green Arrow"};
+
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            super.buildBaseType(baseType);
+
+            SFixedOptionsSimpleProvider provider = base.withSelection();
+            for (int i = 0; i < OPTIONS.length && i < KEYS.length; i++) {
+                provider.add(KEYS[i], OPTIONS[i]);
+            }
+        }
+
+        @Test
+        public void renderLabelsNotKeys() {
+            for (String o : OPTIONS) {
+                tester.assertContains(o);
+            }
+        }
+    }*/
 
 }
