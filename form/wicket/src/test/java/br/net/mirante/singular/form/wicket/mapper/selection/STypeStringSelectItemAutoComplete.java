@@ -66,7 +66,7 @@ public class STypeStringSelectItemAutoComplete {
         @Test public void submitsSelected() {
             form.setValue(valueComponent(),"1");
             form.submit();
-            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[1]);
+            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[1-1]);
         }
 
     }

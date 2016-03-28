@@ -167,12 +167,16 @@ class MOptionsModel extends MInstanciaValorModel {
         /*String key = options().getKeyFromLabel((String) object);*/
         if(object != null){
             SInstance value = options().getValueFromKey((String) object);
-            super.setObject(value);
-//            if(value != null){
-//                super.setObject(value.getValue());
-//            }
+//            super.setObject(value);
+            if(value != null){
+                super.setObject(value.getValue());
+            }else {
+                super.setObject(null);
+            }
+
+        }else{
+            super.setObject(object);
         }
-        super.setObject(object);
     }
 }
 
