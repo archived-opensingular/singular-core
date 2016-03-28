@@ -13,7 +13,7 @@ if( window.substringMatcher == undefined) {
             // iterate through the pool of strings and for any string that
             // contains the substring `q`, add it to the `matches` array
             $.each(strs, function (i, str) {
-                if (substrRegex.test(str)) {
+                if (substrRegex.test(str['value'])) {
                     matches.push(str);
                 }
             });

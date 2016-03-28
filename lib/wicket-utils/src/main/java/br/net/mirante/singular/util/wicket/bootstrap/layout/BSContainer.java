@@ -108,7 +108,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         return newTag(tag, true, "", component);
     }
 
-    public <C extends Component> C newTag(String tag, boolean closeTag, String attrs, IBSComponentFactory<C> factory) {
+    public <C extends Component> C newTagWithFactory(String tag, boolean closeTag, String attrs, IBSComponentFactory<C> factory) {
         return newTag(tag, closeTag, attrs, factory.newComponent(items.newChildId()));
     }
 

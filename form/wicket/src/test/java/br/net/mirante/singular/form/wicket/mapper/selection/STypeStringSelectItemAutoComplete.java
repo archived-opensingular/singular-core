@@ -9,6 +9,7 @@ import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,6 +44,10 @@ public class STypeStringSelectItemAutoComplete {
             return (TextField) ((List) findTag(form.getForm(), TextField.class)).get(0);
         }
 
+        protected HiddenField valueComponent() {
+            return (HiddenField) ((List) findTag(form.getForm(), HiddenField.class)).get(0);
+        }
+
     }
 
     public static class Default extends Base {
@@ -54,13 +59,14 @@ public class STypeStringSelectItemAutoComplete {
         }
 
         @Test public void renderField(){
-            assertThat(findTag(form.getForm(), TextField.class)).hasSize(1);
+            assertThat(findTag(form.getForm(), TextField.class)).hasSize(2);
+            assertThat(findTag(form.getForm(), HiddenField.class)).hasSize(1);
         }
 
         @Test public void submitsSelected() {
-            form.setValue(fieldComponent(),OPTIONS[1]);
+            form.setValue(valueComponent(),"1");
             form.submit();
-            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[1]);
+            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[1-1]);
         }
 
     }

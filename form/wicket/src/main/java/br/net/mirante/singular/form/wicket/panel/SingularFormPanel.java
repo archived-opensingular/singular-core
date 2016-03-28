@@ -132,6 +132,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
      */
     private BSContainer<?> buildBodyContainer() {
         BSContainer<?> bodyContainer = new BSContainer<>("body-container");
+        bodyContainer.setOutputMarkupId(true);
         addOrReplace(bodyContainer);
         return bodyContainer;
     }

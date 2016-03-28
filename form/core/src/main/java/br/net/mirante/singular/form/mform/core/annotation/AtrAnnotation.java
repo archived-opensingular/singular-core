@@ -5,20 +5,19 @@
 
 package br.net.mirante.singular.form.mform.core.annotation;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.SAttributeEnabled;
-import br.net.mirante.singular.form.mform.STranslatorForAttribute;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.STranslatorForAttribute;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Decorates an Instance as annotated enabling access to its anotations.
@@ -36,7 +35,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @return this
      */
     public AtrAnnotation setAnnotated() {
-        atrValue(SPackageBasic.ATR_ANNOTATED,true);
+        setAttributeValue(SPackageBasic.ATR_ANNOTATED, true);
         return this;
     }
 
@@ -45,7 +44,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @return this
      */
     public AtrAnnotation label(String label) {
-        atrValue(SPackageBasic.ATR_ANNOTATION_LABEL,label);
+        setAttributeValue(SPackageBasic.ATR_ANNOTATION_LABEL, label);
         return this;
     }
 
@@ -53,14 +52,14 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @return true if type is annotated
      */
     public boolean isAnnotated() {
-        Boolean v = atrValue(SPackageBasic.ATR_ANNOTATED);
+        Boolean v = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
         return v != null && v ;
     }
     /**
      * @return the label set, if any
      */
     public String label() {
-        return atrValue(SPackageBasic.ATR_ANNOTATION_LABEL);
+        return getAttributeValue(SPackageBasic.ATR_ANNOTATION_LABEL);
     }
 
     /**
@@ -127,14 +126,6 @@ public class AtrAnnotation extends STranslatorForAttribute {
         return a;
     }
 
-    private void atrValue(AtrRef ref, Object value) {
-        getTarget().setAttributeValue(ref, value);
-    }
-
-    private <T extends Object> T atrValue(AtrRef<?, ?, T > ref) {
-        return getTarget().getAttributeValue(ref);
-    }
-
     /**
      * @return All annotations on this instance and its children.
      */
@@ -189,7 +180,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
 
     private boolean hasAnnotationsOnChildren(SIComposite parent) {
         for(SInstance si: parent.getAllFields()){
-            if(si.as(AtrAnnotation::new).hasAnnotationOnTree()) return true;
+            if(si.asAtrAnnotation().hasAnnotationOnTree()) return true;
         }
         return false;
     }
@@ -204,7 +195,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
 
     private boolean hasAnyRefusalOnChildren(SIComposite parent) {
         for(SInstance si: parent.getAllFields()){
-            if(si.as(AtrAnnotation::new).hasAnyRefusal()) return true;
+            if(si.asAtrAnnotation().hasAnyRefusal()) return true;
         }
         return false;
     }
@@ -219,7 +210,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
 
     private boolean hasAnnotatedChildren(SIComposite parent) {
         for(SInstance si: parent.getAllFields()){
-            if(si.as(AtrAnnotation::new).isOrHasAnnotatedChild()) return true;
+            if(si.asAtrAnnotation().isOrHasAnnotatedChild()) return true;
         }
         return false;
     }

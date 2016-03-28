@@ -53,7 +53,7 @@ public class STypeProdutos extends STypeComposite<SIComposite> {
                 // .col(desc.getNomeComercial())
                 // .col(desc.getComposicao(), customDisplayFunction)
                 // .col(desc.getDescricaoQuantidade(), "Quantidade Solicitada"))
-                .as(AtrBasic::new)
+                .asAtrBasic()
 .label("Descrição do Produto");
     }
 }

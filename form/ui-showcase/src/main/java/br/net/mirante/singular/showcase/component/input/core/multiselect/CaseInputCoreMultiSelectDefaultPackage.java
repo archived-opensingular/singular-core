@@ -22,7 +22,7 @@ public class CaseInputCoreMultiSelectDefaultPackage extends SPackage {
         addMultiSelection(pb, tipoMyForm, 3);
         addMultiSelection(pb, tipoMyForm, 15);
         addMultiSelection(pb, tipoMyForm, 25);
-        
+
     }
 
     private static void addMultiSelection(PackageBuilder pb, STypeComposite<?> tipoMyForm, int size) {
@@ -30,7 +30,7 @@ public class CaseInputCoreMultiSelectDefaultPackage extends SPackage {
         tipoSelection.withSelectionOf(createOptions(size));
 
         STypeList<STypeString, SIString> multiSelection = tipoMyForm.addFieldListOf("multiSelection" + size, tipoSelection);
-        multiSelection.as(AtrBasic::new).label("Seleção de " + size);
+        multiSelection.asAtrBasic().label("Seleção de " + size);
     }
 
     private static String[] createOptions(int sizeOptions) {

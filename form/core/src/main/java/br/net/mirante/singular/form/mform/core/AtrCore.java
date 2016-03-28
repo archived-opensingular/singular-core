@@ -11,43 +11,47 @@ import br.net.mirante.singular.form.mform.SAttributeEnabled;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STranslatorForAttribute;
 
+/**
+ * Dá acesso aos atributos principais (mais elementares) do formulário.
+ */
 public class AtrCore extends STranslatorForAttribute {
 
     public AtrCore() {}
+
     public AtrCore(SAttributeEnabled alvo) {
         super(alvo);
     }
 
-    public AtrCore obrigatorio() {
-        return obrigatorio(true);
+    public AtrCore required() {
+        return required(true);
     }
 
 
-    public AtrCore obrigatorio(Boolean value) {
-        getTarget().setAttributeValue(SPackageCore.ATR_REQUIRED, value);
+    public AtrCore required(Boolean value) {
+        setAttributeValue(SPackageCore.ATR_REQUIRED, value);
         return this;
     }
 
-    public AtrCore obrigatorio(Predicate<SInstance> valor) {
-        getTarget().setAttributeValue(SPackageCore.ATR_OBRIGATORIO_FUNCTION, valor);
+    public AtrCore required(Predicate<SInstance> valor) {
+        setAttributeValue(SPackageCore.ATR_OBRIGATORIO_FUNCTION, valor);
         return this;
     }
-    
-    public Boolean isObrigatorio() {
-        return !Boolean.FALSE.equals(getTarget().getAttributeValue(SPackageCore.ATR_REQUIRED));
+
+    public Boolean isRequired() {
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageCore.ATR_REQUIRED));
     }
 
     public AtrCore exists(Boolean valor) {
-        getTarget().setAttributeValue(SPackageCore.ATR_REQUIRED, valor);
+        setAttributeValue(SPackageCore.ATR_REQUIRED, valor);
         return this;
     }
-    
+
     public AtrCore exists(Predicate<SInstance> valor) {
-        getTarget().setAttributeValue(SPackageCore.ATR_OBRIGATORIO_FUNCTION, valor);
+        setAttributeValue(SPackageCore.ATR_OBRIGATORIO_FUNCTION, valor);
         return this;
     }
-    
+
     public boolean exists() {
-        return !Boolean.FALSE.equals(getTarget().getAttributeValue(SPackageCore.ATR_REQUIRED));
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageCore.ATR_REQUIRED));
     }
 }

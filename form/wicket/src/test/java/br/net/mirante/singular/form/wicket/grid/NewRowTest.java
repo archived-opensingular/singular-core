@@ -8,7 +8,6 @@ import org.junit.Test;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
@@ -26,18 +25,18 @@ public class NewRowTest extends SingularFormBaseTest {
 
         nome = mockType.addFieldString("nome");
         nome.as(AtrBasic.class).label("Nome")
-                .as(AtrBootstrap::new).newRow()
-                .as(AtrBootstrap::new).colPreference(6);
+                .asAtrBootstrap().newRow()
+                .asAtrBootstrap().colPreference(6);
 
         idade = mockType.addFieldInteger("idade");
         idade.as(AtrBasic.class).label("Idade")
-                .as(AtrBootstrap::new).newRow()
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBootstrap().newRow()
+                .asAtrBootstrap().colPreference(2);
 
         email = mockType.addFieldEmail("email");
         email.as(AtrBasic.class).label("E-mail")
-                .as(AtrBootstrap::new).newRow()
-                .as(AtrBootstrap::new).colPreference(8);
+                .asAtrBootstrap().newRow()
+                .asAtrBootstrap().colPreference(8);
     }
 
     @Test

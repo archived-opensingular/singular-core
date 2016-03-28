@@ -17,9 +17,9 @@ import org.w3c.dom.NamedNodeMap;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
@@ -240,7 +240,7 @@ public class MformPersistenciaXML {
         SIList<SIAnnotation> iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(refAnnotation, xmlAnnotations,
                 document.getDocumentFactoryRef().get());
 
-        instance.as(AtrAnnotation::new).loadAnnotations(iAnnotations);
+        instance.asAtrAnnotation().loadAnnotations(iAnnotations);
     }
 
     /** Gera um XML representando as anotações se existirem. */
@@ -250,7 +250,7 @@ public class MformPersistenciaXML {
 
     /** Gera um XML representando as anotações se existirem. */
     public static Optional<MElement> annotationToXml(SInstance instance) {
-        AtrAnnotation annotatedInstance = instance.as(AtrAnnotation::new);
+        AtrAnnotation annotatedInstance = instance.asAtrAnnotation();
         List<SIAnnotation> allAnnotations = annotatedInstance.allAnnotations();
         if (!allAnnotations.isEmpty()) {
             return Optional.of(MformPersistenciaXML.toXML(annotatedInstance.persistentAnnotations()));

@@ -18,7 +18,6 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
@@ -44,7 +43,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
-        notificacaoSimplificada.as(AtrBasic::new).label("Notificação Simplificada - Medicamento de Baixo Risco");
+        notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento de Baixo Risco");
 
             final STypeComposite<?> linhaProducao = notificacaoSimplificada.addFieldComposite("linhaProducao");
             STypeSimple idLinhaProducao = linhaProducao.addFieldInteger("id");
@@ -91,7 +90,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
             final STypeList<STypeComposite<SIComposite>, SIComposite> substancias = notificacaoSimplificada.addFieldListOfComposite("substancias", "concentracaoSubstancia");
             substancias
                     .withView(SViewListByTable::new)
-                    .as(AtrBasic::new)
+                    .asAtrBasic()
                     .label("Substâncias")
                     .dependsOn(configuracaoLinhaProducao)
                     .visivel(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
@@ -102,9 +101,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
             STypeSimple idConfiguracaoLinhaProducaoSubstancia = substancia.addFieldInteger("configuracaoLinhaProducao");
             STypeSimple substanciaDescricao = substancia.addFieldString("descricao");
             substancia
-                    .as(AtrBasic::new)
+                    .asAtrBasic()
                     .label("Substância")
-                    .as(AtrBootstrap::new)
+                    .asAtrBootstrap()
                     .colPreference(6);
             substancia
                     .withSelectView()
@@ -125,10 +124,10 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
             STypeSimple idSubstanciaConcentracao = concentracao.addFieldInteger("idSubstancia");
             STypeSimple descConcentracao = concentracao.addFieldString("descricao");
             concentracao
-                    .as(AtrBasic::new)
+                    .asAtrBasic()
                     .label("Concentração")
                     .dependsOn(substancia)
-                    .as(AtrBootstrap::new)
+                    .asAtrBootstrap()
                     .colPreference(6);
             concentracao
                     .withSelectView()
@@ -146,18 +145,18 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
             STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercialMedicamento");
             nomeComercial
-                    .as(AtrBasic::new)
+                    .asAtrBasic()
                     .label("Nome Comercial do Medicamento")
-                    .as(AtrBootstrap::new)
+                    .asAtrBootstrap()
                     .colPreference(8);
 
             final STypeComposite<?> formaFarmaceutica = notificacaoSimplificada.addFieldComposite("formaFarmaceutica");
             SType<?> idFormaFormaceutica = formaFarmaceutica.addFieldInteger("id");
             STypeSimple descFormaFormaceutica = formaFarmaceutica.addFieldString("descricao");
             formaFarmaceutica
-                    .as(AtrBasic::new)
+                    .asAtrBasic()
                     .label("Forma Farmacêutica")
-                    .as(AtrBootstrap::new)
+                    .asAtrBootstrap()
                     .colPreference(4);
             formaFarmaceutica
                     .withSelectView()
@@ -182,9 +181,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         STypeString descricaoEmbalagemPrimaria = embalagemPrimaria.addFieldString("descricao");
         {
             embalagemPrimaria
-                    .as(AtrBootstrap::new)
+                    .asAtrBootstrap()
                     .colPreference(6)
-                    .as(AtrBasic::new)
+                    .asAtrBasic()
                     .label("Embalagem primária")
                     .getTipo().setView(SViewSelectionBySearchModal::new);
             embalagemPrimaria.withSelectionFromProvider(descricaoEmbalagemPrimaria, (optionsInstance, lb) -> {
@@ -202,9 +201,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         STypeString descricaoEmbalagemSecundaria = embalagemSecundaria.addFieldString("descricao");
         {
             embalagemSecundaria
-                    .as(AtrBootstrap::new)
+                    .asAtrBootstrap()
                     .colPreference(6)
-                    .as(AtrBasic::new)
+                    .asAtrBasic()
                     .label("Embalagem secundária")
                     .getTipo().setView(SViewSelectionBySearchModal::new);
             embalagemSecundaria.withSelectionFromProvider(descricaoEmbalagemSecundaria, (optionsInstance, lb) -> {
@@ -219,18 +218,18 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         }
         STypeInteger quantidade = acondicionamento.addFieldInteger("quantidade", true);
         quantidade
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(3)
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Quantidade");
 
         STypeComposite<SIComposite> unidadeMedida = acondicionamento.addFieldComposite("unidadeMedida");
         STypeString idUnidadeMedida = unidadeMedida.addFieldString("id");
         STypeString descricaoUnidadeMedida = unidadeMedida.addFieldString("descricao");
         unidadeMedida
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(3)
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Unidade de medida")
                 .getTipo().setView(SViewSelectionBySearchModal::new);
         unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (optionsInstance, lb) -> {
@@ -243,7 +242,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         });
 
         STypeList<STypeComposite<SIComposite>, SIComposite> estudosEstabilidade = acondicionamento.addFieldListOfComposite("estudosEstabilidade", "estudoEstabilidade");
-        estudosEstabilidade.as(AtrBasic::new)
+        estudosEstabilidade.asAtrBasic()
                 .label("Estudo de estabilidade")
                 .displayString("<#list _inst as c>${c.arquivo.name}<#sep>, </#sep></#list>");
         STypeComposite<SIComposite> estudoEstabilidade = estudosEstabilidade.getElementsType();
@@ -251,24 +250,24 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
             STypeAttachment f = estudoEstabilidade.addField("arquivo", STypeAttachment.class);
             f.as(AtrBasic.class).label("Informe o caminho do arquivo para o anexo")
-                    .as(AtrBootstrap::new).colPreference(9);
+                    .asAtrBootstrap().colPreference(9);
 
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.as(AtrBasic::new).label("Nome do Arquivo");
+            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
             estudosEstabilidade.withView(SViewListByTable::new);
         }
 
         {
             STypeList<STypeComposite<SIComposite>, SIComposite> layoutsRotulagem = acondicionamento.addFieldListOfComposite("layoutsRotulagem", "layoutRotulagem");
-            layoutsRotulagem.as(AtrBasic::new).label("Layout da rotulagem");
+            layoutsRotulagem.asAtrBasic().label("Layout da rotulagem");
             STypeComposite<SIComposite> layoutRotulagem = layoutsRotulagem.getElementsType();
 
             STypeAttachment f = layoutRotulagem.addField("arquivo", STypeAttachment.class);
             f.as(AtrBasic.class).label("Informe o caminho do arquivo para o anexo")
-                    .as(AtrBootstrap::new).colPreference(9);
+                    .asAtrBootstrap().colPreference(9);
 
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.as(AtrBasic::new).label("Nome do Arquivo");
+            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
             layoutsRotulagem.withView(SViewListByTable::new);
         }
 
@@ -414,7 +413,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         final STypeList<STypeComposite<SIComposite>, SIComposite> layoutsRotulagem = notificacaoSimplificada.addFieldListOfComposite("layoutsRotulagem", "layout");
         layoutsRotulagem
                 .withView(SViewListByTable::new)
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Layouts Rotulagem");
         STypeComposite layout = layoutsRotulagem.getElementsType();
         layout

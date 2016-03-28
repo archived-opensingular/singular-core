@@ -10,8 +10,6 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -24,31 +22,31 @@ public class CaseListByTableDefaultPackage extends SPackage {
 
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> certificacoes = testForm.addFieldListOfComposite("certificacoes", "certificacao");
-        certificacoes.as(AtrBasic::new).label("Certificações");
-        final STypeComposite<?> certificacao = certificacoes.getElementsType();
-        final STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
-        final STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
-        final STypeDate validadeCertificacao = certificacao.addFieldDate("validade");
-        final STypeString nomeCertificacao = certificacao.addFieldString("nome", true);
+        STypeList<STypeComposite<SIComposite>, SIComposite> certificacoes = testForm.addFieldListOfComposite("certificacoes", "certificacao");
+        certificacoes.asAtrBasic().label("Certificações");
+        STypeComposite<?> certificacao = certificacoes.getElementsType();
+        STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
+        STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
+        STypeDate validadeCertificacao = certificacao.addFieldDate("validade");
+        STypeString nomeCertificacao = certificacao.addFieldString("nome", true);
         {
             certificacoes
                     .withView(SViewListByTable::new)
-                    .as(AtrBasic::new).label("Certificações");
+                    .asAtrBasic().label("Certificações");
             certificacao
-                    .as(AtrBasic::new).label("Certificação");
+                    .asAtrBasic().label("Certificação");
             dataCertificacao
-                    .as(AtrBasic::new).label("Data")
-                    .as(AtrBootstrap::new).colPreference(2);
+                    .asAtrBasic().label("Data")
+                    .asAtrBootstrap().colPreference(2);
             entidadeCertificacao
-                    .as(AtrBasic::new).label("Entidade")
-                    .as(AtrBootstrap::new).colPreference(4);
+                    .asAtrBasic().label("Entidade")
+                    .asAtrBootstrap().colPreference(4);
             validadeCertificacao
-                    .as(AtrBasic::new).label("Validade")
-                    .as(AtrBootstrap::new).colPreference(2);
+                    .asAtrBasic().label("Validade")
+                    .asAtrBootstrap().colPreference(2);
             nomeCertificacao
-                    .as(AtrBasic::new).label("Nome")
-                    .as(AtrBootstrap::new).colPreference(4);
+                    .asAtrBasic().label("Nome")
+                    .asAtrBootstrap().colPreference(4);
         }
     }
 }

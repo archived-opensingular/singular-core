@@ -5,10 +5,11 @@
 
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
 
 /**
@@ -22,30 +23,29 @@ public interface SOptionsCompositeProvider extends SOptionsProvider {
     /**
      * Returns the list of options for this selection.
      *
-     * @param optionsInstance : Current isntance used to select the options.
+     * @param instanceWithOptions : Current instance used to select the options.
      * @return list of options from the expected {@link SInstance} type.
      */
     @Override
-    public default SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
+    public default SIList<? extends SInstance> listOptions(SInstance instanceWithOptions, String filter) {
         SType<?> tipo;
-        if (optionsInstance instanceof SIList){
-            tipo = ((SIList) optionsInstance).getElementsType();
+        if (instanceWithOptions instanceof SIList){
+            tipo = ((SIList<?>) instanceWithOptions).getElementsType();
         } else {
-            tipo = optionsInstance.getType();
+            tipo = instanceWithOptions.getType();
         }
-        SListBuilder<STypeComposite> lb = new SListBuilder<>((STypeComposite)tipo);
-        listOptions(optionsInstance, lb);
+        if (!(tipo instanceof STypeComposite)) {
+            throw new SingularFormException("Era esperado ser um tipo composto ou uma lista de de tipo de composto", instanceWithOptions);
+        }
+        SListBuilder lb = new SListBuilder((STypeComposite<?>) tipo);
+        listOptions(instanceWithOptions, lb);
         return lb.getList();
     }
 
     /**
      * Método para montar uma MLista a partir do MListaBuilder
-     *
-     * @param instancia
-     * @param lb
-     * @return
      */
-    public void listOptions(SInstance instancia, SListBuilder<STypeComposite> lb);
+    public void listOptions(SInstance instance, SListBuilder lb);
 
 
 }

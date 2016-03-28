@@ -14,6 +14,7 @@ public abstract class TestPanel extends Panel {
         super(id);
         container = buildContainer("container");
         bodyContainer = buildBodyContainer("body-container");
+        bodyContainer.setOutputMarkupId(true);
         add(container);
         add(bodyContainer);
     }

@@ -19,7 +19,7 @@ public class SIString extends SISimple<String> implements SIComparable<String> {
 
     @Override
     public String toString() {
-        return String.format("MIString('%s')", getValue());
+        return String.format("%s('%s')", getClass().getSimpleName(), getValue());
     }
 
 }

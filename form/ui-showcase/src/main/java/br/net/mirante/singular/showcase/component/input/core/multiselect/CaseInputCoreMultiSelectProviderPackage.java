@@ -26,12 +26,12 @@ public class CaseInputCoreMultiSelectProviderPackage extends SPackage {
 
         STypeString tipoArquivo = pb.createType("opcoesDeArquivo", STypeString.class);
         tipoArquivo.withSelectionFromProvider("filesChoiceProvider");
-        tipoArquivo.as(AtrBasic::new).label("Seleção de Arquivos Persistidos");
+        tipoArquivo.asAtrBasic().label("Seleção de Arquivos Persistidos");
 
 
         STypeList<STypeString, SIString> arquivosSelecionados =
                 tipoMyForm.addFieldListOf("arquivos", tipoArquivo);
-        arquivosSelecionados.as(AtrBasic::new).label("Seleção de Arquivos Persistidos");
+        arquivosSelecionados.asAtrBasic().label("Seleção de Arquivos Persistidos");
 
     }
 }
