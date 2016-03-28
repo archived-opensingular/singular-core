@@ -97,7 +97,7 @@ public class SPackageCurriculo extends SPackage {
         final STypeList<STypeComposite<SIComposite>, SIComposite> formacao = curriculo.addFieldListOfComposite("formacaoAcademica", "cursoAcademico");
         final STypeComposite<?> cursoAcademico = formacao.getElementsType();
         final STypeString academicoTipo = cursoAcademico.addFieldString("tipo", true)
-            .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado");
+            .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado").cast();
         final STypeString academicoNomeCurso = cursoAcademico.addFieldString("nomeCurso", true);
         final STypeString academicoInstituicao = cursoAcademico.addFieldString("instituicao", true);
         final STypeCNPJ academicoCNPJ = cursoAcademico.addField("cnpj", STypeCNPJ.class, false);

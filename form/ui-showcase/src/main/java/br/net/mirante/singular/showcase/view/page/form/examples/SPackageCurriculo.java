@@ -37,21 +37,20 @@ public class SPackageCurriculo extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        final STypeComposite<?> curriculo = pb.createCompositeType("Curriculo");
+        STypeComposite<?> curriculo = pb.createCompositeType("Curriculo");
         {
-            curriculo
-                .asAtrBasic().label("Currículo");
+            curriculo.asAtrBasic().label("Currículo");
         }
 
-        final STypeComposite<?> informacoesPessoais = curriculo.addFieldComposite("informacoesPessoais");
-        final STypePersonName nome = informacoesPessoais.addField("nome", STypePersonName.class, true);
-        final STypeCPF cpf = informacoesPessoais.addField("cpf", STypeCPF.class, true);
-        final STypeDate dtNasc = informacoesPessoais.addFieldDate("dataNascimento", true);
-        final STypeString estadoCivil = informacoesPessoais.addFieldString("estadoCivil", true)
-            .withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
+        STypeComposite<?> informacoesPessoais = curriculo.addFieldComposite("informacoesPessoais");
+        STypePersonName nome = informacoesPessoais.addField("nome", STypePersonName.class, true);
+        STypeCPF cpf = informacoesPessoais.addField("cpf", STypeCPF.class, true);
+        STypeDate dtNasc = informacoesPessoais.addFieldDate("dataNascimento", true);
+        STypeString estadoCivil = informacoesPessoais.addFieldString("estadoCivil", true);
+        estadoCivil.withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
 
         STypeString tipoContato = pb.createType("tipoContato", STypeString.class)
-                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax").cast();
         final STypeList<STypeString, SIString> infoPub = informacoesPessoais.addFieldListOf("infoPub",
                 tipoContato);
         {
@@ -121,7 +120,7 @@ public class SPackageCurriculo extends SPackage {
         final STypeList<STypeComposite<SIComposite>, SIComposite> formacao = curriculo.addFieldListOfComposite("formacaoAcademica", "cursoAcademico");
         final STypeComposite<?> cursoAcademico = formacao.getElementsType();
         final STypeString academicoTipo = cursoAcademico.addFieldString("tipo", true)
-            .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado");
+            .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado").cast();
         final STypeString academicoNomeCurso = cursoAcademico.addFieldString("nomeCurso", true);
         final STypeString academicoInstituicao = cursoAcademico.addFieldString("instituicao", true);
         final STypeCNPJ academicoCNPJ = cursoAcademico.addField("cnpj", STypeCNPJ.class, false);

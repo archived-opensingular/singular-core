@@ -27,7 +27,7 @@ public class MultipleSelectMapperTest {
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
             STypeString gadgets = baseType.addFieldString("gadget")
-                                    .withSelectionOf("iPod", "iPhone", "iMac");
+                                    .withSelectionOf("iPod", "iPhone", "iMac").cast();
             STypeList<STypeString, SIString> gadgetsChoices = baseType
                                     .addFieldListOf("gadgets", gadgets);
             gadgetsChoices.withView(SMultiSelectionBySelectView::new);

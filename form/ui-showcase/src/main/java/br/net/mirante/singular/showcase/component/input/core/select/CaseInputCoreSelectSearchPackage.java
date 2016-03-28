@@ -8,7 +8,6 @@ package br.net.mirante.singular.showcase.component.input.core.select;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
@@ -20,8 +19,8 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
 
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        final STypeString tipoContato = tipoMyForm.addFieldString("tipoContato", true)
-                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        STypeString tipoContato = tipoMyForm.addFieldString("tipoContato", true);
+        tipoContato.withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
         tipoContato.withView(SViewSelectionBySearchModal::new);
         tipoContato.asAtrBasic().label("Contato");

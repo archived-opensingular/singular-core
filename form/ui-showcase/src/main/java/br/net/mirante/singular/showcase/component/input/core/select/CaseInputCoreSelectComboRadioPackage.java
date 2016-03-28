@@ -5,10 +5,9 @@
 
 package br.net.mirante.singular.showcase.component.input.core.select;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
@@ -19,10 +18,10 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        //@destacar:bloco
         //View por Select
-        STypeString tipoContato1 = tipoMyForm.addFieldString("tipoContato1")
-                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        STypeString tipoContato1 = tipoMyForm.addFieldString("tipoContato1");
+        tipoContato1.withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        //@destacar:bloco
         //@destacar:fim
 
         tipoContato1
@@ -31,8 +30,8 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
         //@destacar:bloco
         //View por Radio
-        STypeString tipoContato2 = tipoMyForm.addFieldString("tipoContato2")
-                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        STypeString tipoContato2 = tipoMyForm.addFieldString("tipoContato2");
+        tipoContato2.withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
         //@destacar:fim
 
         tipoContato2
@@ -41,8 +40,8 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
 
 
-        STypeString tipoContato3 = tipoMyForm.addFieldString("tipoContato3")
-                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        STypeString tipoContato3 = tipoMyForm.addFieldString("tipoContato3");
+        tipoContato3.withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
 
         tipoContato3

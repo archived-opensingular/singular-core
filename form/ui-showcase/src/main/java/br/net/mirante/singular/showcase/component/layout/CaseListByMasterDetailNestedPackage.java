@@ -37,17 +37,17 @@ public class CaseListByMasterDetailNestedPackage extends SPackage {
 
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> pets = cargo.addFieldListOfComposite("pets", "pet");
-        final STypeComposite pet = pets.getElementsType();
+        final STypeComposite<?> pet = pets.getElementsType();
         final STypeString nomeDoPet = pet.addFieldString("nome", true);
-        final STypeString tipoDoPet = pet.addFieldString("tipo", true)
-                .withSelectionOf("Gatinho", "Cachorrinho", "Papagaio");
+        final STypeString tipoDoPet = pet.addFieldString("tipo", true);
+        tipoDoPet.withSelectionOf("Gatinho", "Cachorrinho", "Papagaio");
         final STypeInteger idadePet = pet.addFieldInteger("idade");
 
         {
             //@destacar:bloco
             experiencias
                     .withView(SViewListByMasterDetail::new)
-                    .asAtrBasic().label("Experiências profissionais");
+.asAtrBasic().label("Experiências profissionais");
             //@destacar:fim
             dtInicioExperiencia
                     .asAtrBasic().label("Data inicial")
@@ -75,7 +75,8 @@ public class CaseListByMasterDetailNestedPackage extends SPackage {
                     .withView(new SViewListByMasterDetail()
                             .col(nomeDoPet)
                             .col(tipoDoPet))
-                    .asAtrBasic().label("Animais de estimação no trabalho");
+.asAtrBasic()
+                    .label("Animais de estimação no trabalho");
             nomeDoPet
                     .asAtrBasic().label("Nome")
                     .asAtrBootstrap().colPreference(4);

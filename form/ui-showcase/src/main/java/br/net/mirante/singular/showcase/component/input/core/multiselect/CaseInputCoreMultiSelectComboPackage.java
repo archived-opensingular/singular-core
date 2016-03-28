@@ -5,11 +5,10 @@
 
 package br.net.mirante.singular.showcase.component.input.core.multiselect;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -22,8 +21,8 @@ public class CaseInputCoreMultiSelectComboPackage extends SPackage {
 
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        STypeString tipoContato = pb.createType("tipoContato", STypeString.class)
-                 .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        STypeString tipoContato = pb.createType("tipoContato", STypeString.class);
+        tipoContato.withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
         STypeString tipoArquivo = pb.createType("tipoArquivo", STypeString.class);
             tipoArquivo.withSelectionFromProvider("filesChoiceProvider");

@@ -183,7 +183,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                                 "Controle de impureza determinado",
                                 "Restrição de uso em algum país",
                                 "Restrição de uso em alimentos",
-                                "Sem restrições");
+                                "Sem restrições").cast();
 
                 root.addFieldListOf("restricoes", restricao)
                         .withView(SMultiSelectionByCheckboxView::new)
@@ -208,7 +208,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private STypeList<STypeString, SIString> createListaField(PackageBuilder pb) {
                 STypeString sinonimia = pb.createType("sinonimia", STypeString.class)
-                        .withSelectionOf("Sinonímia teste", "Sinonímia teste 2", "Sinonímia teste 3");
+                        .withSelectionOf("Sinonímia teste", "Sinonímia teste 2", "Sinonímia teste 3").cast();
                 STypeList<STypeString, SIString> field = root.addFieldListOf("sinonimiaAssociada",
                         sinonimia);
                 field.withView(SMultiSelectionBySelectView::new)
@@ -244,7 +244,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                         .asAtrBootstrap().colPreference(4);
 
                 STypeString finalidade = pb.createType("finalidade", STypeString.class)
-                        .withSelectionOf("Produção", "Importação", "Exportação", "Comercialização", "Utilização");
+                        .withSelectionOf("Produção", "Importação", "Exportação", "Comercialização", "Utilização").cast();
                 root.addFieldListOf("finalidades", finalidade)
                         .withView(SMultiSelectionByCheckboxView::new);
             }
@@ -260,7 +260,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 root.asAtrBasic().label("Uso pretendido").asAtrBootstrap().colPreference(4);
 
                 STypeString usoPretendido = pb.createType("usoPretendido", STypeString.class)
-                        .withSelectionOf("Uso 1", "Uso 2", "Uso 3");
+                        .withSelectionOf("Uso 1", "Uso 2", "Uso 3").cast();
                 root.addFieldListOf("usosPretendidos",
                         usoPretendido)
                         .withView(SMultiSelectionByPicklistView::new)

@@ -35,7 +35,7 @@ import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
-public class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled {
+public abstract class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
 
@@ -392,8 +392,21 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         throw new SingularFormException("Classe '" + targetClass + "' não funciona como aspecto");
     }
 
+    @Override
     public <T> T as(Function<SAttributeEnabled, T> aspectFactory) {
         return aspectFactory.apply(this);
+    }
+
+    /**
+     * Faz cast do tipo atual para a classe da variável que espera receber o
+     * valor ou dispara ClassCastException se o destino não for compatível. É um
+     * método de conveniência para a interface fluente de construção do tipo,
+     * mas com o porem de acusar o erro de cast apenas em tempo de execução.
+     */
+    public <T> T cast() {
+        // TODO (from Daniel) decidir se esse método fica. Quem que devater o
+        // assunto?
+        return (T) this;
     }
 
     public final <T extends SView> SType<I> withView(Supplier<T> factory) {

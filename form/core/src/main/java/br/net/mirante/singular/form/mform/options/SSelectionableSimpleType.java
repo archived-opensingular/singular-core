@@ -5,12 +5,12 @@
 
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.SType;
-
 import java.util.Collection;
 
+import br.net.mirante.singular.form.mform.SType;
+
 @SuppressWarnings({"rawtypes", "unchecked"})
-public interface SSelectionableSimpleType<BASE extends SType, TIPO_NATIVO> extends SSelectionableType<BASE> {
+public interface SSelectionableSimpleType<BASE extends SType<?>, TIPO_NATIVO> extends SSelectionableType<BASE> {
 
 
     /**
@@ -47,17 +47,17 @@ public interface SSelectionableSimpleType<BASE extends SType, TIPO_NATIVO> exten
     default public SFixedOptionsSimpleProvider withSelection() {
         SFixedOptionsSimpleProvider provider = new SFixedOptionsSimpleProvider((BASE) this, (Collection) null);
         setOptionsProvider(provider);
-        return (SFixedOptionsSimpleProvider) provider;
+        return provider;
     }
 
-    default public <T extends SType<?>> T withSelectionOf(TIPO_NATIVO... opcoes) {
+    default public BASE withSelectionOf(TIPO_NATIVO... opcoes) {
         setOptionsProvider(new SFixedOptionsSimpleProvider((SType<?>) this, opcoes));
-        return (T) this;
+        return (BASE) this;
     }
 
-    default public <T extends SType<?>> T withSelectionOf(Collection<TIPO_NATIVO> opcoes) {
+    default public BASE withSelectionOf(Collection<TIPO_NATIVO> opcoes) {
         setOptionsProvider(new SFixedOptionsSimpleProvider((SType<?>) this, opcoes));
-        return (T) this;
+        return (BASE) this;
     }
 
 
