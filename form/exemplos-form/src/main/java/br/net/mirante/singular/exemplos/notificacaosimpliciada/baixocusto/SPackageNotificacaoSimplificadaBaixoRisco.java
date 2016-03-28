@@ -14,6 +14,7 @@ import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
@@ -312,34 +313,11 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         STypeComposite<SIComposite> empresaTerceirizada = localFabricacao.addFieldComposite("empresaTerceirizada");
 
+
         empresaTerceirizada
                 .asAtrBasic()
                 .dependsOn(tipoLocalFabricacao)
                 .visivel(i -> Integer.valueOf(3).equals(Value.of(i, tipoLocalFabricacao)));
-
-        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao = empresaTerceirizada.addFieldListOfComposite("etapasFabricacao", "etapaFabricacao");
-        STypeComposite<SIComposite> etapaFabricacao = etapasFabricacao.getElementsType();
-        STypeString idEtapaFabricacao = etapaFabricacao.addFieldString("id");
-        STypeString descricaoEtapaFabricacao = etapaFabricacao.addFieldString("descricao");
-
-        etapaFabricacao
-                .setView(SViewSelectionBySearchModal::new);
-        etapaFabricacao
-                .asAtrBasic().label("Etapa de fabricação");
-
-        etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (optionsInstance, lb) -> {
-            for (Pair p : NotificacaoSimplificadaProviderUtils.etapaFabricacao()) {
-                lb
-                        .add()
-                        .set(idEtapaFabricacao, p.getKey())
-                        .set(descricaoEtapaFabricacao, p.getValue());
-            }
-        });
-
-        etapasFabricacao
-                .withView(SViewListByTable::new);
-        etapaFabricacao
-                .asAtrBasic().label("Etapa de fabricação");
 
 
         STypeComposite<SIComposite> empresa = empresaTerceirizada.addFieldComposite("empresa");
@@ -360,6 +338,30 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                         .set(endereco, t.getRight());
             }
         });
+
+        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao = empresaTerceirizada.addFieldListOfComposite("etapasFabricacao", "etapaFabricacao");
+        STypeComposite<SIComposite> etapaFabricacao = etapasFabricacao.getElementsType();
+        STypeString idEtapaFabricacao = etapaFabricacao.addFieldString("id");
+        STypeString descricaoEtapaFabricacao = etapaFabricacao.addFieldString("descricao");
+
+        etapaFabricacao
+                .setView(SViewSelectionBySearchModal::new);
+
+        etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (optionsInstance, lb) -> {
+            for (Pair p : NotificacaoSimplificadaProviderUtils.etapaFabricacao()) {
+                lb
+                        .add()
+                        .set(idEtapaFabricacao, p.getKey())
+                        .set(descricaoEtapaFabricacao, p.getValue());
+            }
+        });
+
+        etapasFabricacao
+                .withView(SViewListByForm::new);
+        etapasFabricacao
+                .asAtrBasic().label("Etapa de fabricação");
+
+
 
 
         STypeComposite<SIComposite> outroLocalFabricacao = localFabricacao.addFieldComposite("outroLocalFabricacao");
