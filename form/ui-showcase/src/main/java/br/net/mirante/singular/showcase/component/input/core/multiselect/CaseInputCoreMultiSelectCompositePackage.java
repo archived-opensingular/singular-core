@@ -21,7 +21,7 @@ public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
         /**
          * Neste caso os campos de chave e valor utilizados serão os padrões "id" e "value".
          */
-        STypeComposite<SIComposite> tipoIngrediente = (STypeComposite<SIComposite>) pb.createCompositeType("tipoIngrediente");
+        STypeComposite<SIComposite> tipoIngrediente = pb.createCompositeType("tipoIngrediente");
         tipoIngrediente.addFieldString("id");
         tipoIngrediente.addFieldString("label");
         tipoIngrediente.withSelectionFromProvider("label", (inst, lb) ->
@@ -39,7 +39,7 @@ public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
          * Neste caso os campos de chave e valor utilizados serão os definidos por
          * "sku" e "nome".
          */
-        STypeComposite<SIComposite> productType = (STypeComposite<SIComposite>) pb.createCompositeType("product");
+        STypeComposite<SIComposite> productType = pb.createCompositeType("product");
         productType.addFieldString("sku");
         productType.addFieldString("nome");
         productType.withSelectionFromProvider("nome", (inst, lb) ->

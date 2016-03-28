@@ -22,13 +22,13 @@ public class CaseListByTableMinimiumAndMaximumPackage extends SPackage {
 
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> certificacoes = testForm.addFieldListOfComposite("certificacoes", "certificacao");
+        STypeList<STypeComposite<SIComposite>, SIComposite> certificacoes = testForm.addFieldListOfComposite("certificacoes", "certificacao");
         certificacoes.asAtrBasic().label("Certificações");
-        final STypeComposite<?> certificacao = certificacoes.getElementsType();
-        final STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
-        final STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
-        final STypeDate validadeCertificacao = certificacao.addFieldDate("validade");
-        final STypeString nomeCertificacao = certificacao.addFieldString("nome", true);
+        STypeComposite<?> certificacao = certificacoes.getElementsType();
+        STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
+        STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
+        STypeDate validadeCertificacao = certificacao.addFieldDate("validade");
+        STypeString nomeCertificacao = certificacao.addFieldString("nome", true);
         {
             certificacoes
                     //@destacar:bloco

@@ -6,7 +6,6 @@
 package br.net.mirante.singular.showcase.component.map;
 
 import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
@@ -17,8 +16,8 @@ public class CaseGoogleMapsPackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
-        final STypeComposite<? extends SIComposite> form = pb.createCompositeType("testForm");
-        final STypeLatitudeLongitude campoCoordenada = form.addField("coordenada", STypeLatitudeLongitude.class);
+        STypeComposite<?> form = pb.createCompositeType("testForm");
+        STypeLatitudeLongitude campoCoordenada = form.addField("coordenada", STypeLatitudeLongitude.class);
 
         campoCoordenada.asAtrCore().required();
     }

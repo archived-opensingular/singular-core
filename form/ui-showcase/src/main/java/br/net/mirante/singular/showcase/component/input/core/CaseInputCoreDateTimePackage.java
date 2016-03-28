@@ -14,8 +14,8 @@ public class CaseInputCoreDateTimePackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
-        final STypeDateTime inicio = tipoMyForm.addFieldDateTime("inicio");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
+        STypeDateTime inicio = tipoMyForm.addFieldDateTime("inicio");
 
         inicio.asAtrBasic().label("Início");
         inicio.asAtrBootstrap().colPreference(3);

@@ -14,7 +14,7 @@ public class CaseSimpleGridPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        final STypeComposite<?> testForm = pb.createCompositeType("testForm");
+        STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         testForm.addFieldString("nome")
                 .as(AtrBasic.class).label("Nome")

@@ -22,32 +22,32 @@ public class CaseListByMasterDetailNestedPackage extends SPackage {
 
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
-        final STypeComposite<?> experiencia = experiencias.getElementsType();
-        final STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
-        final STypeYearMonth dtFimExperiencia = experiencia.addField("fim", STypeYearMonth.class);
-        final STypeString empresa = experiencia.addFieldString("empresa", true);
-        final STypeString atividades = experiencia.addFieldString("atividades");
+        STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
+        STypeComposite<?> experiencia = experiencias.getElementsType();
+        STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
+        STypeYearMonth dtFimExperiencia = experiencia.addField("fim", STypeYearMonth.class);
+        STypeString empresa = experiencia.addFieldString("empresa", true);
+        STypeString atividades = experiencia.addFieldString("atividades");
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> cargos = experiencia.addFieldListOfComposite("cargos", "cargo");
-        final STypeComposite<?> cargo = cargos.getElementsType();
-        final STypeString nome = cargo.addFieldString("nome", true);
-        final STypeYearMonth dtInicioCargo = cargo.addField("inicio", STypeYearMonth.class, true);
-        final STypeYearMonth dtFimCargo = cargo.addField("fim", STypeYearMonth.class);
+        STypeList<STypeComposite<SIComposite>, SIComposite> cargos = experiencia.addFieldListOfComposite("cargos", "cargo");
+        STypeComposite<?> cargo = cargos.getElementsType();
+        STypeString nome = cargo.addFieldString("nome", true);
+        STypeYearMonth dtInicioCargo = cargo.addField("inicio", STypeYearMonth.class, true);
+        STypeYearMonth dtFimCargo = cargo.addField("fim", STypeYearMonth.class);
 
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> pets = cargo.addFieldListOfComposite("pets", "pet");
-        final STypeComposite<?> pet = pets.getElementsType();
-        final STypeString nomeDoPet = pet.addFieldString("nome", true);
-        final STypeString tipoDoPet = pet.addFieldString("tipo", true);
+        STypeList<STypeComposite<SIComposite>, SIComposite> pets = cargo.addFieldListOfComposite("pets", "pet");
+        STypeComposite<?> pet = pets.getElementsType();
+        STypeString nomeDoPet = pet.addFieldString("nome", true);
+        STypeString tipoDoPet = pet.addFieldString("tipo", true);
         tipoDoPet.withSelectionOf("Gatinho", "Cachorrinho", "Papagaio");
-        final STypeInteger idadePet = pet.addFieldInteger("idade");
+        STypeInteger idadePet = pet.addFieldInteger("idade");
 
         {
             //@destacar:bloco
             experiencias
                     .withView(SViewListByMasterDetail::new)
-.asAtrBasic().label("Experiências profissionais");
+                    .asAtrBasic().label("Experiências profissionais");
             //@destacar:fim
             dtInicioExperiencia
                     .asAtrBasic().label("Data inicial")
@@ -75,7 +75,7 @@ public class CaseListByMasterDetailNestedPackage extends SPackage {
                     .withView(new SViewListByMasterDetail()
                             .col(nomeDoPet)
                             .col(tipoDoPet))
-.asAtrBasic()
+                    .asAtrBasic()
                     .label("Animais de estimação no trabalho");
             nomeDoPet
                     .asAtrBasic().label("Nome")

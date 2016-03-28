@@ -15,7 +15,7 @@ public class CaseInputCoreYearMonthPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         tipoMyForm.addField("inicio", STypeYearMonth.class)
                 .as(AtrBasic.class)
                 .label("Data Início")

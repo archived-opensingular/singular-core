@@ -19,7 +19,7 @@ public class CaseInputCoreSelectCompositePackage extends SPackage {
         /**
          * Neste caso os campos de chave e valor utilizados serão os padrões "id" e "value".
          */
-        STypeComposite ingredienteQuimico = tipoMyForm.addFieldComposite("ingredienteQuimico");
+        STypeComposite<?> ingredienteQuimico = tipoMyForm.addFieldComposite("ingredienteQuimico");
         STypeString formulaQuimica = ingredienteQuimico.addFieldString("formulaQuimica");
         STypeString nome = ingredienteQuimico.addFieldString("nome");
 

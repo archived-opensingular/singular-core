@@ -39,7 +39,7 @@ public class TestMFormUtil extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
+        STypeComposite<SIComposite> tipoBloco = pb.createCompositeType("bloco");
         STypeInteger integer1 = tipoBloco.addFieldInteger("integer1");
         STypeString string1 = tipoBloco.addFieldString("string1");
         STypeComposite<?> tipoSubBloco = tipoBloco.addFieldComposite("subBloco");

@@ -16,7 +16,7 @@ public class CaseRowControlGridPackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
-        final STypeComposite<?> testForm = pb.createCompositeType("testForm");
+        STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         testForm.addFieldString("nome")
                 .as(AtrBasic.class).label("Nome")

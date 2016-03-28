@@ -112,7 +112,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
+        STypeComposite<SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldInteger("inicio");
         tipoBloco.addFieldInteger("fim");
         tipoBloco.addFieldListOf("enderecos", STypeString.class);
