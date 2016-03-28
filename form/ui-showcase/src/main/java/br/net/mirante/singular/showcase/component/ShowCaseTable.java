@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import br.net.mirante.singular.showcase.component.file.CaseFileMultipleAttachments;
 import br.net.mirante.singular.showcase.component.input.core.select.*;
 import br.net.mirante.singular.showcase.component.layout.*;
 import com.google.common.base.Throwables;
@@ -84,6 +85,7 @@ public class ShowCaseTable {
         ;
         group("File", Icone.FOLDER)
             .addCase(CaseFileAttachment.class)
+            .addCase(CaseFileMultipleAttachments.class)
         ;
         group("Layout", Icone.GRID)
             .addCase(CaseSimpleGrid.class)

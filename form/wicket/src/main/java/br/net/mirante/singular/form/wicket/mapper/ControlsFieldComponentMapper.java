@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -89,6 +90,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         final BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
+        label.add($b.onConfigure(c -> c.setVisible(StringUtils.isNotEmpty(labelModel.getObject()))));
 
         controls.appendLabel(label);
         controls.newHelpBlock(subtitle)
