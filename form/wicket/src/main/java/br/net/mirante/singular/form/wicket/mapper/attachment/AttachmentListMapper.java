@@ -6,9 +6,7 @@ import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -16,11 +14,7 @@ import br.net.mirante.singular.form.wicket.mapper.AbstractListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.MapperCommons;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.*;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
 import com.google.common.base.Strings;
@@ -42,17 +36,17 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public class AttachmentListMapper extends AbstractListaMapper {
 
-    private final static String CLICK_DELEGATE_SCRIPT_TEMPLATE = "$('#%s').on('click', function(){$('#%s').click();});";
+    private final static String CLICK_DELEGATE_SCRIPT_TEMPLATE  = "$('#%s').on('click', function(){$('#%s').click();});";
+    public final static  String MULTIPLE_HIDDEN_UPLOAD_FIELD_ID = "uploadField";
+
 
     @Override
     public void buildView(WicketBuildContext ctx) {
 
-        final SInstance            instance    = ctx.getCurrentInstance();
-        final SIList<SIAttachment> attachments = (SIList<SIAttachment>) ctx.getCurrentInstance();
+        final SIList<SIAttachment> attachments = ctx.getCurrentInstance();
 
-
-        if (!STypeAttachmentList.class.isAssignableFrom(instance.getType().getClass())) {
-            throw new SingularFormException("O tipo " + instance.getType() + " não é compativel com AttachmentListMapper.");
+        if (!STypeAttachmentList.class.isAssignableFrom(attachments.getType().getClass())) {
+            throw new SingularFormException("O tipo " + attachments.getType() + " não é compativel com AttachmentListMapper.");
         }
 
         final FileUploadField multipleFileUploadHiddenField = buildFileUploadField(ctx.getContainer(),
@@ -65,7 +59,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
 
     private FileUploadField buildFileUploadField(BSContainer<?> container, IModel<SIList<SIAttachment>> attachments) {
 
-        final FileUploadField uploadField = new SFileUploadField("uploadField");
+        final FileUploadField uploadField = new SFileUploadField(MULTIPLE_HIDDEN_UPLOAD_FIELD_ID);
 
         uploadField.add(new AjaxFormSubmitBehavior("change") {
             @Override
@@ -78,7 +72,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
                         attachment.setContent(upload.getBytes());
                         attachment.setFileName(upload.getClientFileName());
                         attachment.setTemporary();
-                        target.add(container);
+                        target.add(container.setOutputMarkupId(true));
                     }
                 }
             }
@@ -164,7 +158,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
             final BSGrid   grid     = new BSGrid("_r");
             final BSRow    row      = grid.newRow();
             final ViewMode viewMode = ctx.getViewMode();
-            wicketBuilder.build(ctx.createChild(row.newCol(12), true, item.getModel()), viewMode);
+            wicketBuilder.build(ctx.createChild(row.newCol(BSCol.MAX_COLS), true, item.getModel()), viewMode);
             item.add(grid);
         }
     }
