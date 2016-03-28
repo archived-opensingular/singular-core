@@ -5,11 +5,9 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.AbstractListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.MapperCommons;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
@@ -37,7 +35,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 public class AttachmentListMapper extends AbstractListaMapper {
 
     private final static String CLICK_DELEGATE_SCRIPT_TEMPLATE  = "$('#%s').on('click', function(){$('#%s').click();});";
-    public final static  String MULTIPLE_HIDDEN_UPLOAD_FIELD_ID = "uploadField";
+    final static         String MULTIPLE_HIDDEN_UPLOAD_FIELD_ID = "uploadField";
 
 
     @Override
@@ -49,8 +47,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
             throw new SingularFormException("O tipo " + attachments.getType() + " não é compativel com AttachmentListMapper.");
         }
 
-        final FileUploadField multipleFileUploadHiddenField = buildFileUploadField(ctx.getContainer(),
-                new MInstanceRootModel<>(attachments));
+        final FileUploadField multipleFileUploadHiddenField = buildFileUploadField(ctx.getContainer(), new MInstanceRootModel<>(attachments));
 
         ctx.getContainer().appendTag("input", true, "type='file' style='display:none' multiple", multipleFileUploadHiddenField);
         ctx.getContainer().appendTag("div", buildMetronicPanel(ctx, multipleFileUploadHiddenField));
@@ -83,11 +80,9 @@ public class AttachmentListMapper extends AbstractListaMapper {
 
     private MetronicPanel buildMetronicPanel(final WicketBuildContext ctx, final FileUploadField multipleFileUploadHiddenField) {
 
-        final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
-        final SIList<?>                 iLista     = listaModel.getObject();
-        final IModel<String>            label      = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
-        final SView                     view       = ctx.getView();
-        final ViewMode                  viewMode   = ctx.getViewMode();
+        final IModel<SIList<SInstance>> listModel    = $m.get(ctx::getCurrentInstance);
+        final SIList<?>                 listInstance = listModel.getObject();
+        final IModel<String>            label        = $m.ofValue(trimToEmpty(listInstance.as(SPackageBasic.aspect()).getLabel()));
 
         return new MetronicPanel("metronicPanel") {
 
@@ -96,7 +91,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
                 heading.appendTag("span", new Label("_title", label));
                 heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
-                if (viewMode.isEdition()) {
+                if (ctx.getViewMode().isEdition()) {
                     appendAddButton(heading, multipleFileUploadHiddenField);
                 }
             }
@@ -110,12 +105,21 @@ public class AttachmentListMapper extends AbstractListaMapper {
             protected void buildContent(BSContainer<?> content, Form<?> form) {
 
                 final TemplatePanel list = content.newTemplateTag(t -> ""
-                        + "      <div wicket:id='_e'>"
-                        + "        <div wicket:id='_r'></div>"
-                        + "      </div>");
+                        + " <div wicket:id='_e'> "
+                        + "     <div wicket:id='_r'></div> "
+                        + " </div> ");
 
-                list.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
-                list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx));
+                list.add($b.onConfigure(c -> c.setVisible(!listModel.getObject().isEmpty())));
+                list.add(new ElementsView("_e", listModel) {
+                    @Override
+                    protected void populateItem(Item<SInstance> item) {
+                        final BSGrid grid = new BSGrid("_r");
+                        final BSRow  row  = grid.newRow();
+                        ctx.getUiBuilderWicket().build(ctx.createChild(row.newCol(BSCol.MAX_COLS), true, item.getModel()), ctx.getViewMode());
+                        item.add(grid);
+                    }
+                });
+
                 content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
             }
 
@@ -125,10 +129,8 @@ public class AttachmentListMapper extends AbstractListaMapper {
     private void appendAddButton(BSContainer<?> container, FileUploadField multipleFileUploadHiddenField) {
         final WebMarkupContainer addButton = new WebMarkupContainer("_add");
         container.newTemplateTag(t -> ""
-                + "<button"
-                + " type='button'"
-                + " wicket:id='_add'"
-                + " class='btn blue btn-sm pull-right'"
+                + "<button type='button'"
+                + " wicket:id='_add' class='btn blue btn-sm pull-right'"
                 + " style='" + MapperCommons.BUTTON_STYLE + "'>"
                 + " <i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
                 + "</button>"
@@ -140,26 +142,4 @@ public class AttachmentListMapper extends AbstractListaMapper {
         }));
     }
 
-    private static final class PanelElementsView extends ElementsView {
-
-        private final WicketBuildContext ctx;
-        private final UIBuilderWicket    wicketBuilder;
-
-        private PanelElementsView(String id, IModel<SIList<SInstance>> model, UIBuilderWicket wicketBuilder,
-                                  WicketBuildContext ctx) {
-            super(id, model);
-            this.wicketBuilder = wicketBuilder;
-            this.ctx = ctx;
-
-        }
-
-        @Override
-        protected void populateItem(Item<SInstance> item) {
-            final BSGrid   grid     = new BSGrid("_r");
-            final BSRow    row      = grid.newRow();
-            final ViewMode viewMode = ctx.getViewMode();
-            wicketBuilder.build(ctx.createChild(row.newCol(BSCol.MAX_COLS), true, item.getModel()), viewMode);
-            item.add(grid);
-        }
-    }
 }
