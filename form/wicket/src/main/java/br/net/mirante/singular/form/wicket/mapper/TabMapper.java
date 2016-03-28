@@ -42,7 +42,8 @@ public class TabMapper extends DefaultCompostoMapper {
                 renderTab(tab.getSubtree(), this, ctx);
             }
 
-            public Collection<Component> toUpdadeOnTab(){
+            @Override
+            public Collection<Component> toUpdadeOnTab() {
                 if(ctx.getRootContext().annotation().enabled()){
                     return newArrayList(ctx.updateOnRefresh());
                 }

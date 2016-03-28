@@ -36,7 +36,6 @@ import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
@@ -72,7 +71,6 @@ public class WicketBuildContext implements Serializable {
     private HashMap<Integer, AnnotationComponent> annotations = newHashMap();
     private HashMap<Integer,Component> annotationsTargetBuffer = newHashMap();
     private BSContainer annotationContainer;
-    private ListBreadcrumbMapper.BreadCrumbPanel breadCrumbPanel;
 
     private SView view;
 
@@ -369,27 +367,6 @@ public class WicketBuildContext implements Serializable {
 
     public void setModel(IModel<? extends SInstance> model) {
         this.model = model;
-    }
-
-    public ListBreadcrumbMapper.BreadCrumbPanel getBreadCrumbPanelInTree() {
-        if (breadCrumbPanel == null) {
-            WicketBuildContext context = this.parent;
-            while (context != null) {
-                if (context.getBreadCrumbPanel() != null) {
-                    return breadCrumbPanel;
-                }
-                context = context.parent;
-            }
-        }
-        return breadCrumbPanel;
-    }
-
-    public ListBreadcrumbMapper.BreadCrumbPanel getBreadCrumbPanel() {
-        return breadCrumbPanel;
-    }
-
-    public void setBreadCrumbPanel(ListBreadcrumbMapper.BreadCrumbPanel breadCrumbPanel) {
-        this.breadCrumbPanel = breadCrumbPanel;
     }
 
     @SuppressWarnings("unchecked")
