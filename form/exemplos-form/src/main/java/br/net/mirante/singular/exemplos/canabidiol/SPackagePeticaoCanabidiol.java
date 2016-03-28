@@ -54,7 +54,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
             final STypeBoolean possuiResponsavelLegal = canabis.addFieldBoolean("possuiResponsavelLegal");
             possuiResponsavelLegal
                     .asAtrCore()
-                    .obrigatorio()
+                    .required()
                     .asAtrBasic()
                     .label("Possui Responsável Legal?");
 
@@ -77,7 +77,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .addField("documentoPaciente", STypeAttachment.class);
             anexoPaciente
                     .asAtrCore()
-                    .obrigatorio()
+                    .required()
                     .asAtrBasic()
                     .label("Documento do Paciente")
                     .subtitle(String.format("Conforme documento informado no campo \"%s\" do paciente", STypePessoa.LABEL_TIPO_DOCUMENTO))
@@ -88,7 +88,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .addField("documentoResponsavel", STypeAttachment.class);
             anexoResponsavelLegal
                     .asAtrCore()
-                    .obrigatorio(instancia -> BooleanUtils.isTrue(Value.of(instancia, possuiResponsavelLegal)))
+                    .required(instancia -> BooleanUtils.isTrue(Value.of(instancia, possuiResponsavelLegal)))
                     .asAtrBasic()
                     .label("Documento do Responsável Legal")
                     .subtitle(String.format("Conforme documento informado no campo \"%s\" do responsável legal", STypePessoa.LABEL_TIPO_DOCUMENTO))
@@ -145,7 +145,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
 
             anexoTermoResponsabilidade
                     .asAtrCore()
-                    .obrigatorio()
+                    .required()
                     .asAtrBasic()
                     .label("Termo de Responsabilidade (Prescritor/Paciente/Responsável Legal)")
                     .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal")

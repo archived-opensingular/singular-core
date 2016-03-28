@@ -79,7 +79,7 @@ public class ExamplePackage extends SPackage {
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", STypeTelefoneNacional.class);
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", STypeAttachment.class);
 
-        this.buyerNome.as(SPackageCore.aspect()).obrigatorio();
+        this.buyerNome.as(SPackageCore.aspect()).required();
 
         this.buyerCpf
             .as(SPackageBasic.aspect())

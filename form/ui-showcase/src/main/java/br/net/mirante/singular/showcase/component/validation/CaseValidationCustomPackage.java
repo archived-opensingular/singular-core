@@ -18,7 +18,7 @@ public class CaseValidationCustomPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         STypeInteger mTipoInteger = tipoMyForm.addFieldInteger("qtd");
         mTipoInteger.asAtrBasic().label("Quantidade");
-        mTipoInteger.asAtrCore().obrigatorio();
+        mTipoInteger.asAtrCore().required();
         mTipoInteger.addInstanceValidator(validatable -> {
             if(validatable.getInstance().getInteger() > 1000){
                 validatable.error("O Campo deve ser menor que 1000");

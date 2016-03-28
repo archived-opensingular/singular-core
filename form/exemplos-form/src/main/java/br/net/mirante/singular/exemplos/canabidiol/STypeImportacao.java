@@ -25,7 +25,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
         modalidade
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Modalidade de Importação")
                 .asAtrBootstrap()
@@ -53,7 +53,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
         naturezaIntermediador
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Natureza do intermediador")
                 // Isso é um bug não sei como descrever
@@ -74,7 +74,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
         this.addFieldString("razaoSocialIntermediador")
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Razão Social")
                 // Isso é um bug não sei como descrever
@@ -86,7 +86,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
         addFieldCNPJ("cnpjIntermediador")
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("CNPJ")
                 // Isso é um bug não sei como descrever
@@ -116,14 +116,14 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
         tipoContato
                 .telefoneFixo
                 .asAtrCore()
-                .obrigatorio();
+                .required();
     }
 
     private void bagagemAcompanhada(STypeString modalidade, String bagagemAcompanhada) {
 
         this.addFieldString("nomePassageiro")
                 .asAtrCore()
-                .obrigatorio(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .required(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .asAtrBasic()
                 .label("Nome do Passageiro")
                 // Isso é um bug não sei como descrever
@@ -135,7 +135,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
         this.addFieldString("passaporte")
                 .asAtrCore()
-                .obrigatorio(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .required(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .asAtrBasic()
                 .label("Número do passaporte")
                 // Isso é um bug não sei como descrever

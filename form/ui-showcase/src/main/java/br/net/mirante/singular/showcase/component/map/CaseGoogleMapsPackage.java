@@ -20,6 +20,6 @@ public class CaseGoogleMapsPackage extends SPackage {
         final STypeComposite<? extends SIComposite> form = pb.createCompositeType("testForm");
         final STypeLatitudeLongitude campoCoordenada = form.addField("coordenada", STypeLatitudeLongitude.class);
 
-        campoCoordenada.asAtrCore().obrigatorio();
+        campoCoordenada.asAtrCore().required();
     }
 }

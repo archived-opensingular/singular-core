@@ -59,7 +59,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         nomeComercial
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Nome Comercial");
 
@@ -82,7 +82,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         composicao
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Composição")
                 .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8)
@@ -109,7 +109,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         enderecoFabricante
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Endereço do fabricante")
 
@@ -145,7 +145,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
         outroMedicamento
                 .addFieldString("outroNome")
                 .asAtrCore()
-                .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
+                .required(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .asAtrBasic()
                 .label("Nome Comercial")
                 .asAtrBootstrap()
@@ -155,7 +155,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         outroComposicao
                 .asAtrCore()
-                .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
+                .required(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .asAtrBasic()
                 .label("Composição")
                 .asAtrBootstrap()
@@ -164,7 +164,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
         outroMedicamento
                 .addFieldString("outroEndereco")
                 .asAtrCore()
-                .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
+                .required(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .asAtrBasic()
                 .label("Endereço do Fabricante")
                 .asAtrBootstrap()
@@ -175,7 +175,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         descricaoQuantidade
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Quantidade solicitada a ser importada no período de 1 (um) ano")
                 .subtitle("Informar as unidades do produto (ex: quantidade de frascos, tubos, caixas)");

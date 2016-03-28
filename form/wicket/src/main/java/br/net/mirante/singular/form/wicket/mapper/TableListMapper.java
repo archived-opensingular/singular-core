@@ -131,7 +131,7 @@ public class TableListMapper extends AbstractListaMapper {
                 final IModel<String> headerModel = $m.ofValue(tCampo.as(SPackageBasic.aspect()).getLabel());
                 final BSTDataCell cell = row.newTHeaderCell(headerModel);
                 final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
-                final boolean isCampoObrigatorio = tCampo.as(SPackageCore.aspect()).isObrigatorio();
+                final boolean isCampoObrigatorio = tCampo.as(SPackageCore.aspect()).isRequired();
 
                 ctx.configureContainer(headerModel);
 

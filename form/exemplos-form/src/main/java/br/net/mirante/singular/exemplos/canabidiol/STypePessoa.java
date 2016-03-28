@@ -24,7 +24,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
         this
                 .addFieldString("nome")
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Nome")
                 .asAtrBootstrap().colPreference(6);
@@ -32,7 +32,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
         this
                 .addFieldDate("dataNascimento")
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Data de Nascimento")
                 .asAtrBootstrap().colPreference(3);
@@ -44,7 +44,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
         tipoDocumento = this.addField("tipoDocumento", STypeDocumentoSelect.class);
         tipoDocumento
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label(LABEL_TIPO_DOCUMENTO)
                 .asAtrBootstrap()
@@ -53,7 +53,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
         this
                 .addFieldString("nomeNoDocumento")
                 .asAtrCore()
-                .obrigatorio(ins -> "55358729".equals(Value.of(ins, tipoDocumento)))
+                .required(ins -> "55358729".equals(Value.of(ins, tipoDocumento)))
                 .asAtrBasic()
                 .label("Nome")
                 .visivel(ins -> "55358729".equals(Value.of(ins, tipoDocumento)))
@@ -64,7 +64,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
         this
                 .addFieldString("numeroDocumento")
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Número")
                 .visivel(ins -> ins.findNearestValue(tipoDocumento).orElse(null) != null)
@@ -73,7 +73,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
 
         addFieldCPF("cpf")
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("CPF")
                 .asAtrBootstrap()

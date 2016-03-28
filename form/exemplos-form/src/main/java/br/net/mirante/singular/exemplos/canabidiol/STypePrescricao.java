@@ -52,7 +52,7 @@ public class STypePrescricao extends STypeComposite<SIComposite> {
                 .addField("receitaMedica", STypeAttachment.class);
         receitaMedica
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Receita Médica")
                 .subtitle("Deve conter: nome do paciente, nome comercial do produto, posologia, quantitativo necessário, tempo de tratamento, data, assinatura e carimbo do prescritor (com nº do CRM).");
@@ -61,7 +61,7 @@ public class STypePrescricao extends STypeComposite<SIComposite> {
                 .addField("laudoMedico", STypeAttachment.class);
         laudoMedico
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Laudo Médico")
                 .subtitle("Deve conter: CID, nome da doença, descrição do caso, tratamentos anteriores e justificativa para a utilização de produto não registrado no Brasil em comparação com as alternativas terapêuticas já existentes e registradas pela Anvisa.");

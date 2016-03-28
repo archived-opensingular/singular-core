@@ -67,7 +67,7 @@ public class SPackagePrototype extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         final STypeComposite<?> meta = pb.createCompositeType(META_FORM);
         meta.addFieldString(NAME_FIELD).asAtrBasic().label("Nome")
-                .asAtrCore().obrigatorio();
+                .asAtrCore().required();
 
         STypeList<STypeComposite<SIComposite>, SIComposite> childFields =
                 meta.addFieldListOfComposite(CHILDREN, "field");
@@ -78,12 +78,12 @@ public class SPackagePrototype extends SPackage {
 
         STypeString nome = fieldType.addFieldString(NAME);
         nome.asAtrBasic().label("Nome")
-                .asAtrCore().obrigatorio()
+                .asAtrCore().required()
                 .asAtrBootstrap().colPreference(3);
 
         STypeString type = fieldType.addFieldString(TYPE);
         type.asAtrBasic().label("Tipo")
-                .asAtrCore().obrigatorio()
+                .asAtrCore().required()
                 .asAtrBootstrap().colPreference(2);
         populateOptions(pb, type.withSelection());
 

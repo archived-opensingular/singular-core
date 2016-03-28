@@ -44,7 +44,7 @@ public class STypeContato extends STypeComposite<SIComposite> {
         email = addFieldEmail("email");
         email
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("E-mail")
                 .asAtrBootstrap()

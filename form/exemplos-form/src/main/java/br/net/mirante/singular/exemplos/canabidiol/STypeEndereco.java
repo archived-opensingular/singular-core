@@ -27,7 +27,7 @@ public class STypeEndereco extends STypeComposite<SIComposite> {
 
         this.addFieldString("logradouro")
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Logradouro")
                 .asAtrBootstrap()
@@ -60,7 +60,7 @@ public class STypeEndereco extends STypeComposite<SIComposite> {
         STypeComposite<?> estado = addFieldComposite("estado");
         estado
                 .asAtrCore()
-                .obrigatorio()
+                .required()
                 .asAtrBasic()
                 .label("Estado")
                 .asAtrBootstrap()
@@ -75,7 +75,7 @@ public class STypeEndereco extends STypeComposite<SIComposite> {
         STypeComposite<?> cidade = addFieldComposite("cidade");
         cidade
                 .asAtrCore()
-                .obrigatorio(inst -> Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
+                .required(inst -> Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
                 .asAtrBasic()
                 .label("Cidade")
                 .visivel(inst -> Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
