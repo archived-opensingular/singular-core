@@ -261,7 +261,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         STypeList<STypeComposite<SIComposite>, SIComposite> locaisFabricacao = acondicionamento.addFieldListOfComposite("locaisFabricacao", "localFabricacao");
         STypeComposite<SIComposite> localFabricacao = locaisFabricacao.getElementsType();
 
-        STypeSimple tipoLocalFabricacao = localFabricacao.addFieldInteger("tipoLocalFabricacao");
+        STypeInteger tipoLocalFabricacao = localFabricacao.addFieldInteger("tipoLocalFabricacao");
         tipoLocalFabricacao
                 .asAtrBasic()
                 .label("Tipo de local de fabricação");
@@ -389,7 +389,10 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .getTipo().setView(SViewSelectionBySearchModal::new);
 
         locaisFabricacao
-                .withView(new SViewListByMasterDetail())
+                .withView(new SViewListByMasterDetail()
+                        .col(tipoLocalFabricacao, "Tipo")
+                        .col(tipoLocalFabricacao, "Local")
+                        .col(tipoLocalFabricacao, "Etapas"))
                 .asAtrBasic().label("Local de fabricação");
 
         STypeInteger prazoValidade = acondicionamento.addFieldInteger("prazoValidade", true);
