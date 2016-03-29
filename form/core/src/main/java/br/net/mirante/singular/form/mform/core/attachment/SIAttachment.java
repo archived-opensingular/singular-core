@@ -134,7 +134,7 @@ public class SIAttachment extends SIComposite {
         return getAttributeValue(STypeAttachment.ATR_IS_TEMPORARY) != null;
     }
 
-    private String getContentType(){
+    private String getContentType() {
         try {
             return new Tika().detect(getContent());
         } catch (IOException e) {
@@ -156,4 +156,18 @@ public class SIAttachment extends SIComposite {
         return isContentTypeBrowserFriendly(getContentType());
     }
 
+    @Override
+    public String toStringDisplayDefault() {
+        if (getFileSize() == null || getFileName() == null) {
+            return super.toStringDisplayDefault();
+        }
+        final String[] sufixo    = new String[]{"B", "KB", "MB", "GB"};
+        int            posSufixo = 0;
+        int            size      = getFileSize();
+        while (size >= 1024 && posSufixo < sufixo.length - 1) {
+            size = size / 1024;
+            posSufixo++;
+        }
+        return getFileName() + " (" + size + " " + sufixo[posSufixo] + ")";
+    }
 }
