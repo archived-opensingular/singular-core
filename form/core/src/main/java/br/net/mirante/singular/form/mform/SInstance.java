@@ -514,7 +514,7 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
     /**
      * Sinaliza essa instancia para remover da hierarquia todos os seus filhos.
      */
-    void removeChildren() {
+    public void removeChildren() {
         if (this instanceof ICompositeInstance) {
             for (SInstance child : ((ICompositeInstance) this).getChildren()) {
                 child.internalOnRemove();

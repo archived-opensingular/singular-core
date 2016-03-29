@@ -158,7 +158,7 @@ public class FileUploadPanel extends Panel {
         @Override
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             super.onSubmit(target, form);
-            model.getObject().deleteReference();
+            model.getObject().clearInstance();
             if (model.getObject().getParent() instanceof SIList) {
                 final SIList parent = (SIList) model.getObject().getParent();
                 parent.remove(parent.indexOf(model.getObject()));
