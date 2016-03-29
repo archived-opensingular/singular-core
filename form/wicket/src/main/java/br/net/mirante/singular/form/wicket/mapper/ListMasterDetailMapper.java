@@ -37,16 +37,12 @@ import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
@@ -258,7 +254,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         });
     }
 
-    protected void appendAddButton(BSContainer<?> container, MasterDetailModal modal, IModel<? extends SInstance> m) {
+    private void appendAddButton(BSContainer<?> container, MasterDetailModal modal, IModel<? extends SInstance> m) {
         container
                 .newTemplateTag(t -> ""
                         + "<button"
@@ -297,14 +293,14 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         private       FormStateUtil.FormState      formState;
 
         @SuppressWarnings("unchecked")
-        public MasterDetailModal(String id,
-                                 IModel<? extends SInstance> model,
-                                 IModel<String> listaLabel,
-                                 WicketBuildContext ctx,
-                                 ViewMode viewMode,
-                                 SViewListByMasterDetail view,
-                                 BSContainer<?> containerExterno,
-                                 UIBuilderWicket wicketBuilder) {
+        MasterDetailModal(String id,
+                          IModel<? extends SInstance> model,
+                          IModel<String> listaLabel,
+                          WicketBuildContext ctx,
+                          ViewMode viewMode,
+                          SViewListByMasterDetail view,
+                          BSContainer<?> containerExterno,
+                          UIBuilderWicket wicketBuilder) {
             super(id, true, false);
 
             this.wicketBuilder = wicketBuilder;
@@ -341,13 +337,13 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         }
 
         private void saveState() {
-            formState = FormStateUtil.keepState(currentInstance.getObject(), getPage());
+            formState = FormStateUtil.keepState(currentInstance.getObject());
         }
 
         private void rollbackState() {
             try {
                 if (formState != null) {
-                    currentInstance.getObject().setValue(FormStateUtil.restoreState(formState));
+                    FormStateUtil.restoreState(currentInstance.getObject(), formState);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -355,23 +351,17 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         }
 
 
-        protected void showNew(AjaxRequestTarget target) {
+        void showNew(AjaxRequestTarget target) {
             closeCallback = this::revert;
-            currentInstance = new MInstanceRootModel<>();
-            listModel.getObject().addNew(instancia -> {
-                currentInstance.setObject(instancia);
-                MasterDetailModal.this.configureNewContent("Adicionar", target);
-
-            });
+            currentInstance = new SInstanceItemListaModel<>(listModel, listModel.getObject().indexOf(listModel.getObject().addNew()));
+            MasterDetailModal.this.configureNewContent("Adicionar", target);
         }
 
-        protected void showExisting(AjaxRequestTarget target, IModel<SInstance> forEdit, WicketBuildContext ctx) {
+        void showExisting(AjaxRequestTarget target, IModel<SInstance> forEdit, WicketBuildContext ctx) {
             String prefix = ctx.getViewMode().isEdition() ? "Editar" : "";
             closeCallback = null;
             currentInstance = forEdit;
-
             saveState();
-
             configureNewContent(prefix, target);
         }
 
@@ -425,16 +415,13 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     }
 
 
-    public static class ColumnType {
+    private static class ColumnType {
 
         private SType<?> type;
         private String customLabel;
         private IFunction<SInstance, String> displayValueFunction = SInstance::toStringDisplay;
 
-        public ColumnType() {
-        }
-
-        public ColumnType(SType<?> type, String customLabel, IFunction<SInstance, String> displayValueFunction) {
+        ColumnType(SType<?> type, String customLabel, IFunction<SInstance, String> displayValueFunction) {
             this.type = type;
             this.customLabel = customLabel;
             if (displayValueFunction != null) {
@@ -442,7 +429,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             }
         }
 
-        public ColumnType(SType<?> type, String customLabel) {
+        ColumnType(SType<?> type, String customLabel) {
             this.type = type;
             this.customLabel = customLabel;
         }
@@ -451,14 +438,14 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             return type;
         }
 
-        public String getCustomLabel() {
+        String getCustomLabel() {
             if (customLabel == null && type != null) {
                 return type.getAttributeValue(SPackageBasic.ATR_LABEL);
             }
             return customLabel;
         }
 
-        public IFunction<SInstance, String> getDisplayValueFunction() {
+        IFunction<SInstance, String> getDisplayValueFunction() {
             return displayValueFunction;
         }
     }

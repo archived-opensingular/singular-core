@@ -91,7 +91,7 @@ public final class SFormUtil {
                 if (current.getParent() instanceof SIList) {
                     int pos = ((SIList<?>) current.getParent()).indexOf(current);
                     if (pos == -1) {
-                        throw new SingularFormException("Filho não encontrado");
+                        throw new SingularFormException(current.getName() + " não é mais filho de "+current.getParent().getName());
                     }
                     sb.append('[').append(pos).append(']');
                 } else {

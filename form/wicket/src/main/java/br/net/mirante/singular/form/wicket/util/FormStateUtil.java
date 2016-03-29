@@ -1,35 +1,25 @@
 package br.net.mirante.singular.form.wicket.util;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
-import br.net.mirante.singular.form.mform.io.FormSerialized;
-import org.apache.wicket.Page;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import java.io.Serializable;
 
 public class FormStateUtil {
 
-    public static FormState keepState(SInstance instance, Page curentPage) {
-        final FormSerialized formSerialized = FormSerializationUtil.toSerializedObject(instance);
-        return new FormState(formSerialized, curentPage);
+    public static FormState keepState(SInstance instance) {
+        return new FormState(Value.dehydrate(instance));
     }
 
-    public static SInstance restoreState(FormState state) {
-        return FormSerializationUtil.toInstance(state.formSerialized);
+    public static void restoreState(final SInstance instance, final FormState state) {
+        instance.clearInstance();
+        Value.hydrate(instance, state.value);
     }
 
     public static class FormState implements Serializable {
-
-        final FormSerialized formSerialized;
-        final Page           page;
-
-        FormState(FormSerialized formSerialized, Page page) {
-            this.formSerialized = formSerialized;
-            this.page = page;
-        }
-
-        public FormSerialized getFormSerialized() {
-            return formSerialized;
+        final Object value;
+        FormState(Object value) {
+            this.value = value;
         }
     }
 }
