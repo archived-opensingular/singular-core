@@ -103,7 +103,7 @@ class TypeBuilder {
     }
 
     public STypeComposite<? extends SIComposite> createRootType() {
-        final STypeComposite<? extends SIComposite> root = pkg.createCompositeType("root");
+        STypeComposite<?> root = pkg.createCompositeType("root");
         SIList children = (SIList) metaInformation.getField(SPackagePrototype.CHILDREN);
         root.asAtrBasic().label(metaInformation.getValueString(SPackagePrototype.NAME));
         addChildFieldsIfAny(root, children);
@@ -170,7 +170,7 @@ class TypeBuilder {
         addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_MAXIMO), fieldType.asAtrBasic()::tamanhoMaximo);
         addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_INTEIRO_MAXIMO), fieldType.asAtrBasic()::tamanhoInteiroMaximo);
         addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_DECIMAL_MAXIMO), fieldType.asAtrBasic()::tamanhoDecimalMaximo);
-        addAttributeIfExists(descriptor.getValueBoolean(SPackagePrototype.OBRIGATORIO), fieldType.asAtrCore()::obrigatorio);
+        addAttributeIfExists(descriptor.getValueBoolean(SPackagePrototype.OBRIGATORIO), fieldType.asAtrCore()::required);
 
     }
 

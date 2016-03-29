@@ -20,10 +20,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.SPackageBootstrap;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -42,6 +39,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
     static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
     static final HintKey<Boolean>                  INLINE     = () -> false;
 
+    @Override
     public void buildView(WicketBuildContext ctx) {
         new CompostoViewBuilder(ctx).buildView();
     }
@@ -75,7 +73,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
         private boolean renderAnnotations() {
             return ctx.getRootContext().annotation().enabled() &&
-                    instance.as(AtrAnnotation::new).isAnnotated();
+                    instance.asAtrAnnotation().isAnnotated();
         }
 
 
@@ -106,7 +104,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
-            IModel<String> label = $m.ofValue(trimToEmpty(instance.as(AtrBasic::new).getLabel()));
+            IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtrBasic().getLabel()));
             if (isNotBlank(label.getObject())) {
                 BSCol column = grid.newColInRow();
                 column.appendTag("h3", new Label("_title", label));
@@ -142,13 +140,13 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             if (hintColWidths.containsKey(tCampo.getName())) {
                 colPref = hintColWidths.get(tCampo.getName());
             } else {
-                colPref = iCampo.as(AtrBootstrap::new).getColPreference(BSCol.MAX_COLS);
+                colPref = iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
             }
 
-            final Optional<Integer> colXs = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColXs());
-            final Optional<Integer> colSm = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColSm());
-            final Optional<Integer> colMd = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColMd());
-            final Optional<Integer> colLg = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColLg());
+            final Optional<Integer> colXs = Optional.ofNullable(iCampo.asAtrBootstrap().getColXs());
+            final Optional<Integer> colSm = Optional.ofNullable(iCampo.asAtrBootstrap().getColSm());
+            final Optional<Integer> colMd = Optional.ofNullable(iCampo.asAtrBootstrap().getColMd());
+            final Optional<Integer> colLg = Optional.ofNullable(iCampo.asAtrBootstrap().getColLg());
 
             col.xs(colXs.orElse(Integer.min(colPref * 4, BSCol.MAX_COLS)));
             col.sm(colSm.orElse(Integer.min(colPref * 3, BSCol.MAX_COLS)));

@@ -8,7 +8,6 @@ package br.net.mirante.singular.showcase.component.input.core.select;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
@@ -20,18 +19,18 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
 
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        final STypeString tipoContato = tipoMyForm.addFieldString("tipoContato", true)
-                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        STypeString tipoContato = tipoMyForm.addFieldString("tipoContato", true);
+        tipoContato.withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
         tipoContato.withView(SViewSelectionBySearchModal::new);
-        tipoContato.as(AtrBasic::new).label("Contato");
+        tipoContato.asAtrBasic().label("Contato");
 
         /**
          * Neste caso vemos como tipos compostos podem ser usados na seleção por busca.
          */
 
         final STypeString degreeType = tipoMyForm.addFieldString("degree");
-        degreeType.as(AtrBasic::new).label("Escolaridade");
+        degreeType.asAtrBasic().label("Escolaridade");
         degreeType.withSelection()
                 .add("Alfabetizado", "Alfabetização")
                 .add("1º Grau", "Ensino Fundamental")
@@ -52,9 +51,9 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
         final STypeString id = planetType.addFieldString("id");
         final STypeString nome = planetType.addFieldString("nome");
 
-        planetType.as(AtrBasic::new).label("Planeta Favorito");
-        planetType.addFieldDecimal("radius").as(AtrBasic::new).label("Raio");
-        planetType.addFieldString("atmosphericComposition").as(AtrBasic::new).label("Composição Atmosférica");
+        planetType.asAtrBasic().label("Planeta Favorito");
+        planetType.addFieldDecimal("radius").asAtrBasic().label("Raio");
+        planetType.addFieldString("atmosphericComposition").asAtrBasic().label("Composição Atmosférica");
         planetType.withSelectionFromProvider("nome", (inst, lb) -> {
                     lb
                             .add().set(id, "1").set(nome, "Mercury").set("radius", 2439.64).set("atmosphericComposition", "He, Na+, P+")

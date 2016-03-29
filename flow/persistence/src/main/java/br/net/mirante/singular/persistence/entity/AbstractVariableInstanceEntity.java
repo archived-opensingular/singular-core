@@ -49,7 +49,7 @@ public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IE
     @Column(name = "NO_VARIAVEL", nullable = false)
     private String name;
 
-    @Column(name = "VL_VARIAVEL", nullable = false, length = 1000)
+    @Column(name = "VL_VARIAVEL", length = 1000)
     private String value;
 
     @ManyToOne

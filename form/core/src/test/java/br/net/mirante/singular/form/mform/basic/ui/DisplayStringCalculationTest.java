@@ -16,7 +16,7 @@ public class DisplayStringCalculationTest {
     private static SIComposite createPedido() {
         SDictionary dict = SDictionary.create();
         PackageBuilder pkt = dict.createNewPackage("teste");
-        STypeComposite<? extends SIComposite> tipoPedido = pkt.createCompositeType("pedido");
+        STypeComposite<SIComposite> tipoPedido = pkt.createCompositeType("pedido");
         tipoPedido.addFieldInteger("cod");
         tipoPedido.addFieldString("nome");
         tipoPedido.addFieldInteger("qtd");

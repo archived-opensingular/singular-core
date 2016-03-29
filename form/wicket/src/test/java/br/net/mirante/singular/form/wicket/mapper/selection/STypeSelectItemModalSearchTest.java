@@ -1,24 +1,23 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
-import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
+
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import java.util.List;
-
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 
 @RunWith(Enclosed.class)
 public class STypeSelectItemModalSearchTest {
@@ -28,15 +27,16 @@ public class STypeSelectItemModalSearchTest {
         protected SViewSelectionBySearchModal view;
         protected STypeSimple nomeUF;
 
+        @Override
         protected void buildBaseType(STypeComposite group) {
             selectType = group.addFieldComposite("originUF");
             selectType.addFieldString("id");
             nomeUF = selectType.addFieldString("nome");
-            selectType.addFieldInteger("population").as(AtrBasic::new).label("População");
-            selectType.addFieldInteger("areasqrkm").as(AtrBasic::new).label("Área");
-            selectType.addFieldInteger("phonecode").as(AtrBasic::new).label("DDD");
-            selectType.addFieldDecimal("gdp").as(AtrBasic::new).label("PIB");
-            selectType.addFieldDecimal("hdi").as(AtrBasic::new).label("IDH");
+            selectType.addFieldInteger("population").asAtrBasic().label("População");
+            selectType.addFieldInteger("areasqrkm").asAtrBasic().label("Área");
+            selectType.addFieldInteger("phonecode").asAtrBasic().label("DDD");
+            selectType.addFieldDecimal("gdp").asAtrBasic().label("PIB");
+            selectType.addFieldDecimal("hdi").asAtrBasic().label("IDH");
             view = (SViewSelectionBySearchModal)
                     selectType.setView(SViewSelectionBySearchModal::new);
         }

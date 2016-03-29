@@ -5,20 +5,6 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
-import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
@@ -33,6 +19,21 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
+import org.apache.wicket.model.IModel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
@@ -89,6 +90,12 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         final BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
+        label.add($b.onConfigure(c -> {
+                    if (StringUtils.isEmpty(labelModel.getObject())) {
+                        c.setVisible(false);
+                    }
+                }
+        ));
 
         controls.appendLabel(label);
         controls.newHelpBlock(subtitle)
@@ -125,8 +132,8 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
             input = appendReadOnlyInput(view, ctx.getExternalContainer(), controls, model, labelModel);
         }
 
-        if(ctx.annotation().enabled()){
-            if(input.getDefaultModel() != null){
+        if (ctx.annotation().enabled()) {
+            if (input.getDefaultModel() != null) {
                 ctx.updateAnnotations(input, (SInstance) input.getDefaultModel().getObject());
             }
         }

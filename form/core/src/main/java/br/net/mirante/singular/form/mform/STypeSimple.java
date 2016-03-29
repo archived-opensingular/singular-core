@@ -19,7 +19,7 @@ import br.net.mirante.singular.form.mform.options.SSelectionableSimpleType;
 @SInfoType(name = "STypeSimple", spackage = SPackageCore.class)
 public class STypeSimple<I extends SISimple<VALUE>, VALUE>
         extends SType<I>
-        implements SSelectionableSimpleType<STypeSimple, VALUE> {
+        implements SSelectionableSimpleType<STypeSimple<I, VALUE>, VALUE> {
 
     private final Class<VALUE> valueClass;
 

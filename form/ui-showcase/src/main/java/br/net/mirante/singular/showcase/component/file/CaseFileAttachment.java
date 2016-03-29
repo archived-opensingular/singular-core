@@ -21,6 +21,5 @@ public class CaseFileAttachment extends CaseBase implements Serializable {
         if(page.isPresent()) {
             getAditionalSources().add(page.get());
         }
-
     }
 }

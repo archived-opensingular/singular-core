@@ -8,19 +8,7 @@ package br.net.mirante.singular.form.mform.core;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import br.net.mirante.singular.form.mform.AtrRef;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SAttributeEnabled;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIPredicate;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeCode;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypePredicate;
-import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
@@ -96,6 +84,7 @@ public class SPackageCore extends SPackage {
         pb.createAttributeIntoType(STypeAttachment.class, STypeAttachment.ATR_IS_TEMPORARY);
 
         pb.createType(STypeLatitudeLongitude.class);
+        pb.createType(STypeAttachmentList.class);
     }
 
     public static Function<SAttributeEnabled, AtrCore> aspect() {

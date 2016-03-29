@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+
 import java.util.Set;
 
 import org.apache.wicket.ClassAttributeModifier;
@@ -17,15 +20,14 @@ import org.apache.wicket.model.IModel;
 import com.google.common.base.Strings;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -38,9 +40,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
-
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListaMapper {
 
@@ -124,15 +123,15 @@ public class TableListMapper extends AbstractListaMapper {
                 row.newTHeaderCell($m.ofValue(""));
             }
 
-            int sumWidthPref = compositeElementsType.getFields().stream().mapToInt((x) -> x.as(AtrBootstrap::new).getColPreference(1)).sum();
+            int sumWidthPref = compositeElementsType.getFields().stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
 
             for (SType<?> tCampo : compositeElementsType.getFields()) {
 
-                final Integer preferentialWidth = tCampo.as(AtrBootstrap::new).getColPreference(1);
+                final Integer preferentialWidth = tCampo.asAtrBootstrap().getColPreference(1);
                 final IModel<String> headerModel = $m.ofValue(tCampo.as(SPackageBasic.aspect()).getLabel());
                 final BSTDataCell cell = row.newTHeaderCell(headerModel);
                 final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
-                final boolean isCampoObrigatorio = tCampo.as(SPackageCore.aspect()).isObrigatorio();
+                final boolean isCampoObrigatorio = tCampo.as(SPackageCore.aspect()).isRequired();
 
                 ctx.configureContainer(headerModel);
 

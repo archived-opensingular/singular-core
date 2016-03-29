@@ -21,7 +21,7 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
         STypeString myHero = tipoMyForm.addFieldString("myHero");
         myHero.withSelectionOf(NAMES);
         myHero.withView(SViewAutoComplete::new)
-                .as(AtrBasic::new).label("Herói Favorito");
+                .asAtrBasic().label("Herói Favorito");
 
         STypeString name = tipoMyForm.addFieldString("email");
         name.withSelectionFromProvider(new SOptionsProvider() {
@@ -44,6 +44,6 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
             }
         });
         name.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC))
-                .as(AtrBasic::new).label("Email");
+                .asAtrBasic().label("Email");
     }
 }

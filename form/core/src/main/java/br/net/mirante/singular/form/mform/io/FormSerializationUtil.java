@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
@@ -75,8 +74,8 @@ public class FormSerializationUtil {
         SInstance root = document.getRoot();
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root);
         MElement annotations = null;
-        if(!root.as(AtrAnnotation::new).allAnnotations().isEmpty()){
-            annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root.as(AtrAnnotation::new).persistentAnnotations());
+        if(!root.asAtrAnnotation().allAnnotations().isEmpty()){
+            annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root.asAtrAnnotation().persistentAnnotations());
         }
 
         checkIfSerializable(root);

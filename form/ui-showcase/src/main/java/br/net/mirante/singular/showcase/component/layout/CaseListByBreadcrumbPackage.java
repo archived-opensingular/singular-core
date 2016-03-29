@@ -24,37 +24,37 @@ public class CaseListByBreadcrumbPackage extends SPackage {
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         testForm.addFieldString("nome", true)
-            .asAtrBasic().label("Nome");
+                .asAtrBasic().label("Nome");
         testForm.addFieldInteger("idade", true)
-            .asAtrBasic().label("Idade");
-        final STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
-        final STypeComposite<?> experiencia = experiencias.getElementsType();
-        final STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
-        final STypeYearMonth dtFimExperiencia = experiencia.addField("fim", STypeYearMonth.class);
-        final STypeString empresa = experiencia.addFieldString("empresa", true);
-        final STypeString cargo = experiencia.addFieldString("cargo", true);
-        final STypeString atividades = experiencia.addFieldString("atividades");
+                .asAtrBasic().label("Idade");
+        STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
+        STypeComposite<?> experiencia = experiencias.getElementsType();
+        STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
+        STypeYearMonth dtFimExperiencia = experiencia.addField("fim", STypeYearMonth.class);
+        STypeString empresa = experiencia.addFieldString("empresa", true);
+        STypeString cargo = experiencia.addFieldString("cargo", true);
+        STypeString atividades = experiencia.addFieldString("atividades");
 
         {
             //@destacar:bloco
             experiencias
                     .withView(SViewBreadcrumb::new)
             //@destacar:fim
-                    .as(AtrBasic::new).label("Experiências profissionais");
+                    .asAtrBasic().label("Experiências profissionais");
             dtInicioExperiencia
-                    .as(AtrBasic::new).label("Data inicial")
-                    .as(AtrBootstrap::new).colPreference(2);
+                    .asAtrBasic().label("Data inicial")
+                    .asAtrBootstrap().colPreference(2);
             dtFimExperiencia
-                    .as(AtrBasic::new).label("Data final")
-                    .as(AtrBootstrap::new).colPreference(2);
+                    .asAtrBasic().label("Data final")
+                    .asAtrBootstrap().colPreference(2);
             empresa
-                    .as(AtrBasic::new).label("Empresa")
-                    .as(AtrBootstrap::new).colPreference(8);
+                    .asAtrBasic().label("Empresa")
+                    .asAtrBootstrap().colPreference(8);
             cargo
-                    .as(AtrBasic::new).label("Cargo");
+                    .asAtrBasic().label("Cargo");
             atividades
                     .withTextAreaView()
-                    .as(AtrBasic::new).label("Atividades Desenvolvidas");
+                    .asAtrBasic().label("Atividades Desenvolvidas");
         }
 
     }

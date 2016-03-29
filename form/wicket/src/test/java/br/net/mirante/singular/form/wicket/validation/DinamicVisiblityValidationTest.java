@@ -17,13 +17,13 @@ public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
     @Override
     protected void buildBaseType(STypeComposite<?> mockType) {
         fieldOne = mockType.addFieldString("fieldOne");
-        fieldOne.asAtrCore().obrigatorio(true);
+        fieldOne.asAtrCore().required(true);
         fieldTwo = mockType.addFieldString("fieldTwo");
 
         fieldTwo.asAtrBasic().dependsOn(fieldOne);
         fieldTwo.asAtrBasic()
                 .visivel(instance -> instance.findNearestValue(fieldOne, String.class).orElse("").equals(testValue));
-        fieldTwo.asAtrCore().obrigatorio(true);
+        fieldTwo.asAtrCore().required(true);
     }
 
     @Test

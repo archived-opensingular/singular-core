@@ -1,5 +1,19 @@
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
+import static org.fest.assertions.api.Assertions.assertThat;
+
+import java.util.List;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.TextArea;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
@@ -10,19 +24,6 @@ import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.mform.io.FormSerialized;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import org.apache.wicket.Component;
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-
-import java.util.List;
-
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class AnnotationWicketTest {
@@ -66,6 +67,7 @@ public class AnnotationWicketTest {
     }
 
     public static class AnnotationForFieldWithLabel extends Base {
+        @Override
         protected void buildBaseType(STypeComposite<?> mockType) {
             super.buildBaseType(mockType);
             annotated1.asAtrBasic().label("The Group");
@@ -77,9 +79,10 @@ public class AnnotationWicketTest {
     }
 
     public static class AnnotationWithLabel extends Base {
+        @Override
         protected void buildBaseType(STypeComposite<?> mockType) {
             super.buildBaseType(mockType);
-            annotated1.as(AtrAnnotation::new).label("Análise do Pedido");
+            annotated1.asAtrAnnotation().label("Análise do Pedido");
         }
 
         @Test public void rendersTheInformedViewLabel(){
@@ -93,7 +96,7 @@ public class AnnotationWicketTest {
         protected void populateInstance(SIComposite instance) {
             instance.getField(notAnnotated.getNameSimple()); //force creation
 
-            SIAnnotation annotation1 = instance.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
+            SIAnnotation annotation1 = instance.getDescendant(annotated1).asAtrAnnotation().annotation();
             annotation1.setText("It is funny how hard it is to come up with these texts");
             annotation1.setApproved(false);
         }
@@ -120,17 +123,17 @@ public class AnnotationWicketTest {
         @Override
         protected void populateInstance(SIComposite instance) {
             SIAnnotation annotation1 = instance.getDescendant(annotated1)
-                    .as(AtrAnnotation::new).annotation();
+                    .asAtrAnnotation().annotation();
             annotation1.setText("The past will haunt ya.");
 
             FormSerialized persisted = FormSerializationUtil
-                    .toSerializedObject(instance.as(AtrAnnotation::new)
+                    .toSerializedObject(instance.asAtrAnnotation()
                             .persistentAnnotations());
             SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
 
             annotation1.setText("What's up doc?");
 
-            instance.as(AtrAnnotation::new).loadAnnotations(backup);
+            instance.asAtrAnnotation().loadAnnotations(backup);
         }
 
         @Test public void itLoadsPersistedDataFromAnnotationsOntoScreen(){
@@ -144,12 +147,12 @@ public class AnnotationWicketTest {
         protected void populateInstance(SIComposite instance) {
             SIComposite old = createInstance(baseType);
 
-            SIAnnotation annotation1 = old.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
+            SIAnnotation annotation1 = old.getDescendant(annotated1).asAtrAnnotation().annotation();
             annotation1.setText("The past will haunt ya.");
-            FormSerialized persisted = FormSerializationUtil.toSerializedObject(old.as(AtrAnnotation::new).persistentAnnotations());
+            FormSerialized persisted = FormSerializationUtil.toSerializedObject(old.asAtrAnnotation().persistentAnnotations());
             SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
 
-            instance.as(AtrAnnotation::new).loadAnnotations(backup);
+            instance.asAtrAnnotation().loadAnnotations(backup);
         }
 
         @Test public void itLoadsPersistedAnnotationsForEmptyFields(){
@@ -165,6 +168,7 @@ class Base extends SingularFormBaseTest {
     protected STypeComposite<? extends SIComposite> baseType,
             annotated1, annotated2, notAnnotated, annotated4;
 
+    @Override
     protected void buildBaseType(STypeComposite<?> mockType) {
         baseType = mockType;
         page.setAsVisualizationView();
@@ -174,18 +178,18 @@ class Base extends SingularFormBaseTest {
 
         annotated1 = mockType.addFieldComposite("annotatedGroup1");
         annotated1.addFieldString("field11");
-        annotated1.as(AtrAnnotation::new).setAnnotated();
+        annotated1.asAtrAnnotation().setAnnotated();
 
         annotated2 = mockType.addFieldComposite("annotatedGroup2");
         annotated2.addFieldString("field121");
         annotated2.addFieldString("field122");
-        annotated2.as(AtrAnnotation::new).setAnnotated();
+        annotated2.asAtrAnnotation().setAnnotated();
 
         notAnnotated = mockType.addFieldComposite("notAnnotatedGroup3");
         notAnnotated.addFieldString("field13");
         annotated4 = notAnnotated.addFieldComposite("annotatedSubGroup4");
         annotated4.addFieldString("field341");
-        annotated4.as(AtrAnnotation::new).setAnnotated();
+        annotated4.asAtrAnnotation().setAnnotated();
 
     }
 
@@ -224,7 +228,7 @@ class Base extends SingularFormBaseTest {
 
     protected AtrAnnotation currentAnnotation(SType field) {
         SIComposite current = (SIComposite) page.getCurrentInstance();
-        return current.getField(field.getNameSimple()).as(AtrAnnotation::new);
+        return current.getField(field.getNameSimple()).asAtrAnnotation();
     }
 
 }

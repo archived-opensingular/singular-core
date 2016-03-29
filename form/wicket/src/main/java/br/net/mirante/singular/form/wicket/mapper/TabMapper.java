@@ -15,8 +15,6 @@ import java.util.function.Function;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
-import com.google.common.base.Optional;
-
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -43,7 +41,7 @@ public class TabMapper extends DefaultCompostoMapper {
             }
 
             @Override
-            public Collection<Component> toUpdadeOnTab() {
+            public Collection<Component> toUpdadeOnTab(){
                 if(ctx.getRootContext().annotation().enabled()){
                     return newArrayList(ctx.updateOnRefresh());
                 }
@@ -97,7 +95,7 @@ public class TabMapper extends DefaultCompostoMapper {
         private void checkSubtree(String name) {
             SInstance field = instance.getField(name);
             if (field != null) {
-                AtrAnnotation annotatedField = field.as(AtrAnnotation::new);
+                AtrAnnotation annotatedField = field.asAtrAnnotation();
                 if (annotatedField.hasAnnotationOnTree()) {
                     checkAnnotation(annotatedField);
                 } else if (ctx.getRootContext().annotation().editable() &&

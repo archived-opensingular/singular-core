@@ -403,7 +403,8 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
         throw new RuntimeException(
                 "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
     }
-    public <T> T as(Function<? super SInstance, T> aspectFactory) {
+    @Override
+    public <T> T as(Function<SAttributeEnabled, T> aspectFactory) {
         return aspectFactory.apply(this);
     }
 
@@ -513,7 +514,7 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
     /**
      * Sinaliza essa instancia para remover da hierarquia todos os seus filhos.
      */
-    void removeChildren() {
+    public void removeChildren() {
         if (this instanceof ICompositeInstance) {
             for (SInstance child : ((ICompositeInstance) this).getChildren()) {
                 child.internalOnRemove();

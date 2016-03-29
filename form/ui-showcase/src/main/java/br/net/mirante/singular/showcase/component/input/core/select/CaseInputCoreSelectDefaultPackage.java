@@ -25,7 +25,7 @@ public class CaseInputCoreSelectDefaultPackage extends SPackage {
             Outra forma de definir suas opções é populando o provedor padrão
          */
         STypeString favvortiteFruit = tipoMyForm.addFieldString("favvortiteFruit");
-        favvortiteFruit.as(AtrBasic::new).label("Fruta Favorita");
+        favvortiteFruit.asAtrBasic().label("Fruta Favorita");
         favvortiteFruit.withSelection().add("Maçã").add("Laranja").add("Banana").add("Goiaba");
 
     }
@@ -36,7 +36,7 @@ public class CaseInputCoreSelectDefaultPackage extends SPackage {
         tipoSelection.withSelectionOf(createOptions(sizeOptions));
         tipoSelection.withRequired(required);
 
-        tipoSelection.as(AtrBasic::new).label("Seleção de " + sizeOptions);
+        tipoSelection.asAtrBasic().label("Seleção de " + sizeOptions);
     }
 
     private static String[] createOptions(int sizeOptions) {

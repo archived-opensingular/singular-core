@@ -274,10 +274,12 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
         if (valorAjustado == null || isVazio(valorAjustado)) {
             if (variavel != null) {
-                ss.delete(variavel);
+                variavel.setValue(null);
+                ss.merge(variavel);
                 ss.refresh(processInstance);
+            } else {
+                return null;
             }
-            return null;
         } else if (variavel == null) {
             // Para não forçar carga
             variavel = newVariableInstance(processInstance, mVariavel.getRef());
