@@ -106,17 +106,16 @@ public class AttachmentListMapper extends AbstractListaMapper {
 
                 final TemplatePanel list = content.newTemplateTag(t -> ""
                         + " <div wicket:id='_e'> "
-                        + "     <div wicket:id='_r'></div> "
+                        + "     <div class='col-md-6' wicket:id='_r'></div> "
                         + " </div> ");
 
                 list.add($b.onConfigure(c -> c.setVisible(!listModel.getObject().isEmpty())));
                 list.add(new ElementsView("_e", listModel) {
                     @Override
                     protected void populateItem(Item<SInstance> item) {
-                        final BSGrid grid = new BSGrid("_r");
-                        final BSRow  row  = grid.newRow();
-                        ctx.getUiBuilderWicket().build(ctx.createChild(row.newCol(BSCol.MAX_COLS), true, item.getModel()), ctx.getViewMode());
-                        item.add(grid);
+                        final BSContainer container = new BSContainer<>("_r");
+                        ctx.getUiBuilderWicket().build(ctx.createChild(container, true, item.getModel()), ctx.getViewMode());
+                        item.add(container);
                     }
                 });
 
@@ -129,7 +128,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
     private void appendAddButton(BSContainer<?> container, FileUploadField multipleFileUploadHiddenField) {
         final WebMarkupContainer addButton = new WebMarkupContainer("_add");
         container.newTemplateTag(t -> ""
-                + "<button type='button'"
+                + "<button type='button' title='Adicionar Arquivo'"
                 + " wicket:id='_add' class='btn blue btn-sm pull-right'"
                 + " style='" + MapperCommons.BUTTON_STYLE + "'>"
                 + " <i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"

@@ -163,11 +163,13 @@ public class SIAttachment extends SIComposite {
         }
         final String[] sufixo    = new String[]{"B", "KB", "MB", "GB"};
         int            posSufixo = 0;
-        int            size      = getFileSize();
-        while (size >= 1024 && posSufixo < sufixo.length - 1) {
-            size = size / 1024;
+        double         bytesSize = getFileSize();
+
+        while (bytesSize > 900 && posSufixo < sufixo.length - 1) {
+            bytesSize = bytesSize / 1024;
             posSufixo++;
         }
-        return getFileName() + " (" + size + " " + sufixo[posSufixo] + ")";
+
+        return getFileName() + " (" + Math.round(bytesSize) + " " + sufixo[posSufixo] + ")";
     }
 }
