@@ -188,7 +188,7 @@ public class NotificacaoSimplificadaProviderUtils {
     public static List<Triple> empresaTerceirizada() {
         List<Triple> list = new ArrayList<>();
 
-        list.add(Triple.of(1, "Aché", "Rua presidentre dutra, São Paulo SP"));
+        list.add(Triple.of(1, "Aché", "Rua presidentre dutra, São Paulo     SP"));
         list.add(Triple.of(2, "Roche", "Anápolis - GO"));
 
         return list;
@@ -198,7 +198,7 @@ public class NotificacaoSimplificadaProviderUtils {
         List<Triple> list = new ArrayList<>();
 
         list.add(Triple.of(1, "Laboratório EMS", "Moema SP"));
-        list.add(Triple.of(1, "Laboratório Fundo de Quintal", "Moema SP"));
+        list.add(Triple.of(2, "Laboratório Fundo de Quintal", "Moema SP"));
 
         return list;
     }
