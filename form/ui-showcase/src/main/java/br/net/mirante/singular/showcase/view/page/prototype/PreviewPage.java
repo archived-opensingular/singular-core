@@ -14,9 +14,6 @@ import org.apache.wicket.Page;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 
-/**
- * Created by nuk on 04/03/16.
- */
 public class PreviewPage extends Template {
 
     private MInstanceRootModel<SIComposite> model;

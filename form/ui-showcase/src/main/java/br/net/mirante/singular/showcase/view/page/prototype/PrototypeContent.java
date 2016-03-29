@@ -36,9 +36,6 @@ import br.net.mirante.singular.showcase.dao.form.PrototypeDAO;
 import br.net.mirante.singular.showcase.view.template.Content;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 
-/**
- * Created by nuk on 03/03/16.
- */
 public class PrototypeContent extends Content {
 
     private static final SDictionary dictionary = SDictionary.create();

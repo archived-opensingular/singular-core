@@ -15,7 +15,9 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
 /**
- * Created by nuk on 21/03/16.
+ * Mapper responsible for rendering the SViewAutoComplete withing wicket.
+ *
+ * @author Fabricio Buzeto
  */
 public class AutocompleteMapper implements ControlsFieldComponentMapper {
     @Override
@@ -43,7 +45,7 @@ public class AutocompleteMapper implements ControlsFieldComponentMapper {
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
         if ((mi != null) && (mi.getValue() != null)) {
-            return String.valueOf(mi.getSelectLabel());
+            return mi.getOptionsConfig().getLabelFromOption(mi);
         }
         return StringUtils.EMPTY;
     }

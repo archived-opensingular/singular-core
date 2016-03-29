@@ -106,6 +106,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeComposite.class,   SViewSelectionByRadio.class,          RadioMapper::new)
                 .register(STypeComposite.class,   SViewSelectionBySelect.class,         SelectMapper::new)
                 .register(STypeComposite.class,   SViewSelectionBySearchModal.class,    SelectModalBuscaMapper::new)
+                .register(STypeComposite.class,   SViewAutoComplete.class,               AutocompleteMapper::new)
                 .register(STypeList.class,        SMultiSelectionBySelectView.class,    MultipleSelectBSMapper::new)
                 .register(STypeList.class,        SMultiSelectionByCheckboxView.class,  MultipleCheckMapper::new)
                 .register(STypeList.class,        SMultiSelectionByPicklistView.class,  PicklistMapper::new)
