@@ -17,6 +17,7 @@ import java.util.List;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -239,10 +240,18 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         private void showCrud(WicketBuildContext ctx, AjaxRequestTarget target, IModel<? extends SInstance> itemModel) {
             ctx.getRootContext().getBreadCrumbs().add((String) ctx.getCurrentInstance().getType().getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
 
+            target.prependJavaScript(String.format("notify|$('#%s').hide('slide', { direction: 'left' }, 500, notify);", ctx.getRootContainer().getMarkupId()));
             ctx.getRootContainer().getItems().removeAll();
             WicketBuildContext childCtx = ctx.createChild(ctx.getRootContainer(), true, itemModel);
             childCtx.setShowBreadcrumb(true);
             ctx.getUiBuilderWicket().build(childCtx, ctx.getViewMode());
+            childCtx.getRootContainer().add(new AttributeAppender("style", Model.of("display: none")) {
+                @Override
+                public boolean isTemporary(Component component) {
+                    return true;
+                }
+            });
+            target.appendJavaScript(String.format("$('#%s').show('slide', { direction: 'right' }, 500);", childCtx.getRootContainer().getMarkupId()));
 
             final BSRow buttonsRow = ctx.getRootContainer().newGrid().newRow();
             appendButtons(ctx, buttonsRow.newCol(11));
@@ -397,12 +406,20 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 originalContext = originalContext.getParent();
             }
 
+            target.prependJavaScript(String.format("notify|$('#%s').hide('slide', { direction: 'right' }, 500, notify);", ctx.getRootContainer().getMarkupId()));
             originalContext.popBreadCrumb();
             originalContext.getContainer().getItems().removeAll();
             if (!ctx.getBreadCrumbStatus().isEmpty()) {
                 originalContext.setSelectedBreadCrumbStatus(ctx.getBreadCrumbStatus().getLast());
             }
             ctx.getUiBuilderWicket().build(originalContext, originalContext.getViewMode());
+            originalContext.getRootContainer().add(new AttributeAppender("style", Model.of("display: none")) {
+                @Override
+                public boolean isTemporary(Component component) {
+                    return true;
+                }
+            });
+            target.appendJavaScript(String.format("$('#%s').show('slide', { direction: 'left' }, 500);", originalContext.getRootContainer().getMarkupId()));
 
             if (!originalContext.isRootContext()) {
                 final BSRow buttonsRow = originalContext.getRootContainer().newGrid().newRow();
