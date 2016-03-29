@@ -29,7 +29,7 @@ import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreDate;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreDateTime;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreDecimal;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreInteger;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreMonetario;
+import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreMoney;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreString;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreTextArea;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreYearMonth;
@@ -80,7 +80,7 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreString.class)
             .addCase(CaseInputCoreTextArea.class)
             .addCase(CaseInputCoreDecimal.class)
-            .addCase(CaseInputCoreMonetario.class)
+            .addCase(CaseInputCoreMoney.class)
             .addCase(CaseInputCoreDateTime.class)
         ;
         group("File", Icone.FOLDER)

@@ -30,7 +30,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
-public class MonetarioMapper implements ControlsFieldComponentMapper {
+public class MoneyMapper implements ControlsFieldComponentMapper {
 
     private static final int DEFAULT_INTEGER_DIGITS = 9;
     private static final int DEFAULT_DIGITS = 2;
@@ -45,7 +45,7 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
                 new MInstanciaValorModel<>(model), String.class) {
             @Override
             public IConverter getConverter(Class type) {
-                return new MonetarioConverter(decimalMaximo);
+                return new MoneyConverter(decimalMaximo);
             }
         };
 
@@ -142,10 +142,10 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
         return nf.format(bigDecimal);
     }
 
-    private class MonetarioConverter implements IConverter {
+    private class MoneyConverter implements IConverter {
         private Integer casasDecimais;
 
-        public MonetarioConverter(Integer casasDecimais) {
+        public MoneyConverter(Integer casasDecimais) {
             this.casasDecimais = casasDecimais;
         }
 

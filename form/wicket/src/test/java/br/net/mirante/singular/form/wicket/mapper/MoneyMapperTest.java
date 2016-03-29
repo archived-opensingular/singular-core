@@ -17,7 +17,7 @@ import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.junit.Assert.*;
 
 @RunWith(Enclosed.class)
-public class MonetarioMapperTest {
+public class MoneyMapperTest {
 
     private static class Base extends SingularFormBaseTest {
         @Override
