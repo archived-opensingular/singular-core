@@ -22,11 +22,11 @@ public class CaseValidationBetweenFieldsPackage extends SPackage {
 
         STypeInteger valorInicial = tipoMyForm.addFieldInteger("valorInicial");
         valorInicial.asAtrBasic().label("Valor Inicial");
-        valorInicial.asAtrCore().required();
+        valorInicial.asAtrBasic().required();
 
         STypeInteger valorFinal = tipoMyForm.addFieldInteger("valorFinal");
         valorFinal.asAtrBasic().label("Valor Final");
-        valorFinal.asAtrCore().required();
+        valorFinal.asAtrBasic().required();
 
         valorFinal.addInstanceValidator(validatable -> {
 

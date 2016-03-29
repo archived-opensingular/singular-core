@@ -223,7 +223,6 @@ public class FileUploadPanel extends Panel {
                 if (upload != null) {
                     model.getObject().setContent(upload.getBytes());
                     model.getObject().setFileName(upload.getClientFileName());
-                    model.getObject().setTemporary();
                     target.add(fileDummyField, fileName, chooseFieldButton, removeFileButton);
                 }
             }

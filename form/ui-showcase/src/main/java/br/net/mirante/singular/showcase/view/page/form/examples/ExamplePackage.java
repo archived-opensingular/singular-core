@@ -12,7 +12,6 @@ import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
@@ -79,7 +78,7 @@ public class ExamplePackage extends SPackage {
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", STypeTelefoneNacional.class);
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", STypeAttachment.class);
 
-        this.buyerNome.as(SPackageCore.aspect()).required();
+        this.buyerNome.as(SPackageBasic.aspect()).required();
 
         this.buyerCpf
             .as(SPackageBasic.aspect())

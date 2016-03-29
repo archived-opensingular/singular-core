@@ -28,7 +28,6 @@ import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -47,7 +46,7 @@ public class TableListMapper extends AbstractListaMapper {
     public void buildView(WicketBuildContext ctx) {
 
         if (!(ctx.getView() instanceof SViewListByTable)) {
-            throw new SingularFormException("TableListMapper deve ser utilizado com MTableListaView", (SInstance) ctx.getCurrentInstance());
+            throw new SingularFormException("TableListMapper deve ser utilizado com MTableListaView", ctx.getCurrentInstance());
         }
 
         if (!(ctx.getCurrentInstance() instanceof SIList)) {
@@ -86,7 +85,7 @@ public class TableListMapper extends AbstractListaMapper {
 
         final SType<SInstance> elementsType = list.getObject().getElementsType();
 
-        if (!(elementsType instanceof STypeComposite) && elementsType.getAttributeValue(SPackageCore.ATR_REQUIRED)) {
+        if (!(elementsType instanceof STypeComposite) && elementsType.getAttributeValue(SPackageBasic.ATR_REQUIRED)) {
             title.add($b.classAppender("singular-form-required"));
         }
 
@@ -131,7 +130,7 @@ public class TableListMapper extends AbstractListaMapper {
                 final IModel<String> headerModel = $m.ofValue(tCampo.as(SPackageBasic.aspect()).getLabel());
                 final BSTDataCell cell = row.newTHeaderCell(headerModel);
                 final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
-                final boolean isCampoObrigatorio = tCampo.as(SPackageCore.aspect()).isRequired();
+                final boolean isCampoObrigatorio = tCampo.as(SPackageBasic.aspect()).isRequired();
 
                 ctx.configureContainer(headerModel);
 

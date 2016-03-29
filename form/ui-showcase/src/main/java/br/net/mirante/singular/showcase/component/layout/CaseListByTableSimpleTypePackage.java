@@ -26,7 +26,7 @@ public class CaseListByTableSimpleTypePackage extends SPackage {
         nomes.asAtrBootstrap().colPreference(6);
         nomes.asAtrBasic().label("Nomes");
 
-        nomes.getElementsType().asAtrCore().required();
+        nomes.getElementsType().asAtrBasic().required();
     }
 
 }

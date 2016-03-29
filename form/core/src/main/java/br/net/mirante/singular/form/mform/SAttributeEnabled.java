@@ -10,7 +10,6 @@ import java.util.function.Function;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
-import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 
 /**
@@ -78,11 +77,6 @@ public interface SAttributeEnabled {
      */
     public default AtrBootstrap asAtrBootstrap() {
         return as(AtrBootstrap::new);
-    }
-
-    /** Retorna o leitor de atributos core para o tipo ou instância atual. */
-    public default AtrCore asAtrCore() {
-        return as(AtrCore::new);
     }
 
     /**
