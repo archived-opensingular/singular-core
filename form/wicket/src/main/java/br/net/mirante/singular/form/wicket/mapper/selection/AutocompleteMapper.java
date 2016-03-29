@@ -46,7 +46,6 @@ public class AutocompleteMapper implements ControlsFieldComponentMapper {
         final SInstance mi = model.getObject();
         if ((mi != null) && (mi.getValue() != null)) {
             return mi.getOptionsConfig().getLabelFromOption(mi);
-//            return String.valueOf(mi.getSelectLabel());
         }
         return StringUtils.EMPTY;
     }

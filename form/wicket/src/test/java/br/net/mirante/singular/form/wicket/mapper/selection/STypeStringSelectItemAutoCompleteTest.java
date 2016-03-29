@@ -15,6 +15,8 @@ import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.mform.options.SOptionsCompositeProvider;
 import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.junit.Ignore;
@@ -24,6 +26,7 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -45,7 +48,11 @@ public class STypeStringSelectItemAutoCompleteTest {
         }
 
         protected SIString fieldInstance() {
-            return page.getCurrentInstance().getDescendant(base);
+            return baseInstance(page.getCurrentInstance());
+        }
+
+        protected SIString baseInstance(SIComposite instance) {
+            return instance.getDescendant(base);
         }
 
         protected TextField fieldComponent() {
@@ -54,6 +61,10 @@ public class STypeStringSelectItemAutoCompleteTest {
 
         protected HiddenField valueComponent() {
             return (HiddenField) ((List) findTag(form.getForm(), HiddenField.class)).get(0);
+        }
+
+        protected Component readOnlyComponent() {
+            return findFirstComponentWithId(form.getForm(), "output");
         }
 
     }
@@ -77,6 +88,19 @@ public class STypeStringSelectItemAutoCompleteTest {
             assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[3-1]);
         }
 
+    }
+
+    public static class ReadOnly extends Base {
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            baseInstance(instance).setValue("Tony Stark");
+            page.setAsVisualizationView();
+        }
+
+        @Test public void renderValue(){
+            assertThat(readOnlyComponent().getDefaultModelObjectAsString())
+                    .isEqualTo("Tony Stark");
+        }
     }
 
     public static class KeyValueSelection extends Base {
@@ -109,6 +133,32 @@ public class STypeStringSelectItemAutoCompleteTest {
             form.setValue(fieldComponent(),"Tony Stark");
             form.submit();
             assertThat(fieldInstance().getValue()).isNullOrEmpty();
+        }
+    }
+
+    public static class ReadOnlyKeyValue extends Base {
+        final String[] KEYS = {"Batman", "Superman", "Flash", "Green Arrow"};
+
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            super.buildBaseType(baseType);
+
+            SFixedOptionsSimpleProvider provider = base.withSelection();
+            for(int i = 0 ; i < OPTIONS.length && i < KEYS.length; i++){
+                provider.add(KEYS[i],OPTIONS[i]);
+            }
+            base.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
+        }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            baseInstance(instance).setValue("Superman");
+            page.setAsVisualizationView();
+        }
+
+        @Test public void renderValue(){
+            assertThat(readOnlyComponent().getDefaultModelObjectAsString())
+                    .isEqualTo("Clark Kent");
         }
 
     }

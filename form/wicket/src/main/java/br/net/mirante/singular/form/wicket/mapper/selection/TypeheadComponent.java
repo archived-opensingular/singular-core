@@ -227,7 +227,7 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     @Override
     public void respond(AjaxRequestTarget target) {
         String r = generateResultOptions(values(filterValue()));
-        requestCycle().scheduleRequestHandlerAfterCurrent(null); 
+        requestCycle().scheduleRequestHandlerAfterCurrent(null);
 
         WebResponse response = (WebResponse) requestCycle().getResponse();
         response.setHeader("Content-Type", "application/json; charset=utf8");
