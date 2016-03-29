@@ -128,7 +128,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
     private void appendAddButton(BSContainer<?> container, FileUploadField multipleFileUploadHiddenField) {
         final WebMarkupContainer addButton = new WebMarkupContainer("_add");
         container.newTemplateTag(t -> ""
-                + "<button type='button'"
+                + "<button type='button' title='Adicionar Arquivo'"
                 + " wicket:id='_add' class='btn blue btn-sm pull-right'"
                 + " style='" + MapperCommons.BUTTON_STYLE + "'>"
                 + " <i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
