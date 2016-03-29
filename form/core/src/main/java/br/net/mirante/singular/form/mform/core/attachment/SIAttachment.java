@@ -63,7 +63,7 @@ public class SIAttachment extends SIComposite {
         super.onRemove();
     }
 
-    public IAttachmentRef getAttachmentRef() {
+    IAttachmentRef getAttachmentRef() {
         final String hash = getFileHashSHA1();
         if (hash == null) {
             return null;
@@ -79,10 +79,6 @@ public class SIAttachment extends SIComposite {
         setValue(STypeAttachment.FIELD_NAME, name);
     }
 
-    public void setFileHashSHA1(String hash) {
-        setValue(STypeAttachment.FIELD_HASH_SHA1, hash);
-    }
-
     public void setFileId(String id) {
         setValue(STypeAttachment.FIELD_FILE_ID, id);
     }
@@ -91,15 +87,11 @@ public class SIAttachment extends SIComposite {
         setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, id);
     }
 
-    public void setFileSize(Integer size) {
-        setValue(STypeAttachment.FIELD_SIZE, size);
-    }
-
     /**
      * Retorna o tamanho do arquivo binário associado ou -1 se não houver
      * arquivo.
      */
-    public Integer getFileSize() {
+    Integer getFileSize() {
         return getValueInteger(STypeAttachment.FIELD_SIZE);
     }
 
@@ -119,7 +111,7 @@ public class SIAttachment extends SIComposite {
         return getAttributeValue(STypeAttachment.ATR_ORIGINAL_ID);
     }
 
-    public String getFileHashSHA1() {
+    String getFileHashSHA1() {
         return getValueString(STypeAttachment.FIELD_HASH_SHA1);
     }
 
@@ -138,11 +130,11 @@ public class SIAttachment extends SIComposite {
         return this;
     }
 
-    public boolean isTemporary() {
+    private boolean isTemporary() {
         return getAttributeValue(STypeAttachment.ATR_IS_TEMPORARY) != null;
     }
 
-    public String getContentType(){
+    private String getContentType(){
         try {
             return new Tika().detect(getContent());
         } catch (IOException e) {
@@ -150,7 +142,7 @@ public class SIAttachment extends SIComposite {
         }
     }
 
-    public boolean isContentTypeBrowserFriendly(String contentType) {
+    boolean isContentTypeBrowserFriendly(String contentType) {
         final List<String> inlineContentTypes = STypeAttachment.INLINE_CONTENT_TYPES;
         for (String inlineContentType : inlineContentTypes) {
             if (contentType.matches(inlineContentType)) {

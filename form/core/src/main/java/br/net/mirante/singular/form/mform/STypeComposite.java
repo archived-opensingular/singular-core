@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.net.mirante.singular.form.mform.basic.view.SViewAttachmentList;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
@@ -22,6 +23,8 @@ import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeMonetary;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.options.SSelectionableCompositeType;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
@@ -117,6 +120,13 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite>
     public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(String fieldSimpleName, T elementsType) {
         STypeList<T, I> novo = createTypeListOf(fieldSimpleName, elementsType);
         return addInternal(fieldSimpleName, novo);
+    }
+
+    public STypeAttachmentList addFieldListOfAttachment(String listName, String fieldName) {
+        STypeAttachmentList novo = extendType(listName, STypeAttachmentList.class);
+        novo.setView(SViewAttachmentList::new);
+        novo.setElementsTypeFieldName(fieldName);
+        return addInternal(listName, novo);
     }
 
     public <I extends SIComposite> STypeList<STypeComposite<I>, I> addFieldListOfComposite(String fieldSimpleName,

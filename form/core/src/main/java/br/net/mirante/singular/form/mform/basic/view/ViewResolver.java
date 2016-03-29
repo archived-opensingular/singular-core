@@ -9,11 +9,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.TreeSet;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.*;
 
 /**
  * <p>
