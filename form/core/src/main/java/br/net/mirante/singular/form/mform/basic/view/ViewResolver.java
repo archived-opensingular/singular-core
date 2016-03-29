@@ -40,6 +40,7 @@ public class ViewResolver {
         addRule(STypeList.class, new ViewRuleTypeListOfTypeSimpleSelectionOf());
         addRule(STypeSimple.class, new ViewRuleTypeSimpleSelectionOf());
         addRule(STypeComposite.class, new ViewRuleTypeSimpleSelectionOf());
+        addRule(STypeList.class, new ViewRuleTypeListOfAttachment());
     }
 
     /**
