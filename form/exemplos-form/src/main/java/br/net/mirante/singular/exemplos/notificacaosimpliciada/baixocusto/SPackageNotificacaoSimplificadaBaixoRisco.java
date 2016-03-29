@@ -14,10 +14,9 @@ import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -25,6 +24,8 @@ import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+
+import java.util.Optional;
 
 public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
@@ -40,6 +41,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
+        notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento de Baixo Risco");
 
         final STypeComposite<?> linhaProducao = notificacaoSimplificada.addFieldComposite("linhaProducao");
@@ -49,7 +51,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         linhaProducao
                 .asAtrBasic()
                 .label("Linha de Produção");
-        linhaProducao.setView(SViewSelectionBySearchModal::new);
+        linhaProducao.setView(SViewSelectionBySelect::new);
         linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (optionsInstance, lb) -> {
             for (Pair p : NotificacaoSimplificadaProviderUtils.linhasProducao()) {
                 lb
@@ -180,7 +182,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .colPreference(6)
                     .asAtrBasic()
                     .label("Embalagem primária")
-                    .getTipo().setView(SViewSelectionBySearchModal::new);
+                    .getTipo().setView(SViewSelectionBySelect::new);
             embalagemPrimaria.withSelectionFromProvider(descricaoEmbalagemPrimaria, (optionsInstance, lb) -> {
                 for (Pair p : NotificacaoSimplificadaProviderUtils.embalagensPrimarias()) {
                     lb
@@ -200,7 +202,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .colPreference(6)
                     .asAtrBasic()
                     .label("Embalagem secundária")
-                    .getTipo().setView(SViewSelectionBySearchModal::new);
+                    .getTipo().setView(SViewSelectionBySelect::new);
             embalagemSecundaria.withSelectionFromProvider(descricaoEmbalagemSecundaria, (optionsInstance, lb) -> {
                 for (Pair p : NotificacaoSimplificadaProviderUtils.embalagensSecundarias()) {
                     lb
@@ -226,7 +228,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .colPreference(3)
                 .asAtrBasic()
                 .label("Unidade de medida")
-                .getTipo().setView(SViewSelectionBySearchModal::new);
+                .getTipo().setView(SViewSelectionBySelect::new);
         unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (optionsInstance, lb) -> {
             for (Pair p : NotificacaoSimplificadaProviderUtils.unidadesMedida()) {
                 lb
@@ -260,11 +262,12 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         STypeList<STypeComposite<SIComposite>, SIComposite> locaisFabricacao = acondicionamento.addFieldListOfComposite("locaisFabricacao", "localFabricacao");
         STypeComposite<SIComposite> localFabricacao = locaisFabricacao.getElementsType();
+        localFabricacao.asAtrBasic().label("Local de Fabricação");
 
-        STypeInteger tipoLocalFabricacao = localFabricacao.addFieldInteger("tipoLocalFabricacao");
+        STypeSimple tipoLocalFabricacao = localFabricacao.addFieldInteger("tipoLocalFabricacao");
         tipoLocalFabricacao
                 .asAtrBasic()
-                .label("Tipo de local de fabricação");
+                .label("Tipo de local");
         tipoLocalFabricacao
                 .withRadioView()
                 .withSelection()
@@ -275,8 +278,10 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
 
         STypeComposite<SIComposite> empresaPropria = localFabricacao.addFieldComposite("empresaPropria");
-        empresaPropria.addFieldString("razaoSocial")
-                .asAtrBasic().label("Razão Social");
+        STypeString razaoSocialPropria = empresaPropria.addFieldString("razaoSocial");
+        razaoSocialPropria
+                .asAtrBasic()
+                .label("Razão Social");
         empresaPropria.addFieldCNPJ("cnpj")
                 .asAtrBasic().label("CNPJ");
         empresaPropria.addFieldString("endereco")
@@ -309,7 +314,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     }
                 })
                 .asAtrBasic().label("Empresa internacional")
-                .getTipo().setView(SViewSelectionBySearchModal::new);
+                .getTipo().setView(SViewSelectionBySelect::new);
 
         STypeComposite<SIComposite> empresaTerceirizada = localFabricacao.addFieldComposite("empresaTerceirizada");
 
@@ -327,7 +332,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         STypeString endereco = empresa.addFieldString("endereco");
         empresa
                 .asAtrBasic().label("Empresa")
-                .getTipo().withView(SViewSelectionBySearchModal::new);
+                .getTipo().withView(SViewSelectionBySelect::new);
 
         empresa.withSelectionFromProvider(razaoSocial, (optionsInstance, lb) -> {
             for (Triple t : NotificacaoSimplificadaProviderUtils.empresaTerceirizada()) {
@@ -339,13 +344,14 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
             }
         });
 
-        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao = empresaTerceirizada.addFieldListOfComposite("etapasFabricacao", "etapaFabricacao");
-        STypeComposite<SIComposite> etapaFabricacao = etapasFabricacao.getElementsType();
+        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao = empresaTerceirizada.addFieldListOfComposite("etapasFabricacao", "etapaFabricacaoWrapper");
+        STypeComposite<SIComposite> etapaFabricacaoWrapper = etapasFabricacao.getElementsType();
+        STypeComposite<SIComposite> etapaFabricacao = etapaFabricacaoWrapper.addFieldComposite("etapaFabricacao");
         STypeString idEtapaFabricacao = etapaFabricacao.addFieldString("id");
         STypeString descricaoEtapaFabricacao = etapaFabricacao.addFieldString("descricao");
 
         etapaFabricacao
-                .setView(SViewSelectionBySearchModal::new);
+                .setView(SViewSelectionBySelect::new);
 
         etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (optionsInstance, lb) -> {
             for (Pair p : NotificacaoSimplificadaProviderUtils.etapaFabricacao()) {
@@ -357,11 +363,11 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         });
 
         etapasFabricacao
-                .withView(SViewListByForm::new);
+                .withView(SViewListByTable::new);
         etapasFabricacao
-                .asAtrBasic().label("Etapa de fabricação");
-
-
+                .asAtrBasic()
+                .label("Etapa de fabricação")
+                .displayString("<#list _inst as c>${c.etapaFabricacao.descricao}<#sep>, </#sep></#list>");
 
 
         STypeComposite<SIComposite> outroLocalFabricacao = localFabricacao.addFieldComposite("outroLocalFabricacao");
@@ -386,13 +392,19 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     }
                 })
                 .asAtrBasic().label("Outro local de fabricação")
-                .getTipo().setView(SViewSelectionBySearchModal::new);
+                .getTipo().setView(SViewSelectionBySelect::new);
 
         locaisFabricacao
                 .withView(new SViewListByMasterDetail()
-                        .col(tipoLocalFabricacao, "Tipo")
-                        .col(tipoLocalFabricacao, "Local")
-                        .col(tipoLocalFabricacao, "Etapas"))
+                        .col(tipoLocalFabricacao)
+                        .col(localFabricacao, i -> {
+                            String label = String.valueOf(Optional.ofNullable(Value.of(i, "outroLocalFabricacao.razaoSocial")).orElse(""));
+                            label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaTerceirizada.empresa.razaoSocial")).orElse(""));
+                            label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaInternacional.razaoSocial")).orElse(""));
+                            label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaPropria.razaoSocial")).orElse(""));
+                            return label;
+                        })
+                        .col(etapasFabricacao))
                 .asAtrBasic().label("Local de fabricação");
 
         STypeInteger prazoValidade = acondicionamento.addFieldInteger("prazoValidade", true);

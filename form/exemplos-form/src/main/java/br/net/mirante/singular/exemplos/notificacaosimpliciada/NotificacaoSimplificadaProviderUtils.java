@@ -179,7 +179,8 @@ public class NotificacaoSimplificadaProviderUtils {
     public static List<Triple> empresaInternacional() {
         List<Triple> list = new ArrayList<>();
 
-        list.add(Triple.of(1, "Empresa 1", "Endereco 1"));
+        list.add(Triple.of(1, "BAYER", "Munique, Alemanha"));
+        list.add(Triple.of(2, "Pfizer", "Nova Iorque, Estados Unidos"));
 
         return list;
     }
@@ -187,7 +188,8 @@ public class NotificacaoSimplificadaProviderUtils {
     public static List<Triple> empresaTerceirizada() {
         List<Triple> list = new ArrayList<>();
 
-        list.add(Triple.of(1, "Empresa 2", "Endereco 2"));
+        list.add(Triple.of(1, "Aché", "Rua presidentre dutra, São Paulo     SP"));
+        list.add(Triple.of(2, "Roche", "Anápolis - GO"));
 
         return list;
     }
@@ -195,18 +197,19 @@ public class NotificacaoSimplificadaProviderUtils {
     public static List<Triple> outroLocalFabricacao() {
         List<Triple> list = new ArrayList<>();
 
-        list.add(Triple.of(1, "Empresa 3", "Endereco 3"));
+        list.add(Triple.of(1, "Laboratório EMS", "Moema SP"));
+        list.add(Triple.of(2, "Laboratório Fundo de Quintal", "Moema SP"));
 
         return list;
     }
 
     public static List<Pair> etapaFabricacao() {
         List<Pair> list = new ArrayList<>();
-        list.add(Pair.of(1, "Teste1"));
-        list.add(Pair.of(2, "Teste2"));
-        list.add(Pair.of(3, "Teste3"));
-        list.add(Pair.of(4, "Teste4"));
-        list.add(Pair.of(5, "Teste5"));
+        list.add(Pair.of(1, "Processo produtivo completo"));
+        list.add(Pair.of(2, "Processo de embalagem primária"));
+        list.add(Pair.of(3, "Processo de embalagem secundária"));
+        list.add(Pair.of(4, "Produção"));
+        list.add(Pair.of(5, "Controle de qualidade"));
         return list;
     }
 }
