@@ -6,12 +6,15 @@
 package br.net.mirante.singular.form.wicket;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,6 +39,7 @@ import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
@@ -74,6 +78,8 @@ public class WicketBuildContext implements Serializable {
 
     private boolean showBreadcrumb;
     private List<String> breadCrumbs = newArrayList("Início");
+    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
+    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus;
 
     private SView view;
 
@@ -391,8 +397,19 @@ public class WicketBuildContext implements Serializable {
         return getRootContext().getBreadCrumbs();
     }
 
-    public void setBreadCrumbs(List<String> breadCrumbs) {
-        this.breadCrumbs = breadCrumbs;
+    public Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> getBreadCrumbStatus() {
+        if (isRootContext()) {
+            return breadCrumbStatus;
+        }
+        return getRootContext().getBreadCrumbStatus();
+    }
+
+    public ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus getSelectedBreadCrumbStatus() {
+        return selectedBreadCrumbStatus;
+    }
+
+    public void setSelectedBreadCrumbStatus(ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus) {
+        this.selectedBreadCrumbStatus = selectedBreadCrumbStatus;
     }
 
     @SuppressWarnings("unchecked")

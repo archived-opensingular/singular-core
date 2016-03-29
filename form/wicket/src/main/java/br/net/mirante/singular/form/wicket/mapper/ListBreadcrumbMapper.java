@@ -39,7 +39,6 @@ import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
@@ -73,7 +72,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
         final IModel<String> listaLabel = newLabelModel(ctx, model);
 
-        BreadCrumbPanel breadcrumbPanel = new BreadCrumbPanel("panel", model, listaLabel, ctx, viewMode, view, ctx.getUiBuilderWicket());
+        BreadCrumbPanel breadcrumbPanel = new BreadCrumbPanel("panel", model, listaLabel, ctx, viewMode, view);
 
         ctx.getContainer().appendTag("div", breadcrumbPanel);
     }
@@ -133,15 +132,14 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
     public static class BreadCrumbPanel extends MetronicPanel {
 
-        final IModel<SIList<SInstance>> listModel;
-        final IModel<String> listaLabel;
-        final WicketBuildContext ctx;
-        final ViewMode viewMode;
-        final SViewBreadcrumb view;
-
+        private IModel<SIList<SInstance>> listModel;
+        private IModel<String> listaLabel;
+        private WicketBuildContext ctx;
+        private SViewBreadcrumb view;
         private IModel<SInstance> currentInstance;
         private String instanceBackupXml;
         private boolean adding;
+        private ViewMode viewMode;
 
         @SuppressWarnings("unchecked")
         public BreadCrumbPanel(String id,
@@ -149,8 +147,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                                IModel<String> listaLabel,
                                WicketBuildContext ctx,
                                ViewMode viewMode,
-                               SViewBreadcrumb view,
-                               UIBuilderWicket wicketBuilder) {
+                               SViewBreadcrumb view) {
             super(id);
             this.listModel = $m.get(() -> (SIList<SInstance>) model.getObject());
             this.listaLabel = listaLabel;
@@ -158,6 +155,29 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
             this.viewMode = viewMode;
             this.view = view;
 
+            BreadCrumbStatus selectedBreadCrumbStatus = ctx.getSelectedBreadCrumbStatus();
+            if (selectedBreadCrumbStatus != null) {
+                currentInstance = selectedBreadCrumbStatus.currentInstance;
+                instanceBackupXml = selectedBreadCrumbStatus.instanceBackupXml;
+                adding = selectedBreadCrumbStatus.adding;
+            }
+        }
+
+        private void pushStatus() {
+            ctx.getBreadCrumbStatus().push(new BreadCrumbStatus(listModel, listaLabel, ctx, view,
+                    currentInstance, instanceBackupXml, adding, viewMode));
+        }
+
+        private void popStatus() {
+            BreadCrumbStatus status = ctx.getBreadCrumbStatus().pop();
+            this.listModel = status.listModel;
+            this.listaLabel = status.listaLabel;
+            this.ctx = status.ctx;
+            this.view = status.view;
+            this.currentInstance = status.currentInstance;
+            this.instanceBackupXml = status.instanceBackupXml;
+            this.adding = status.adding;
+            this.viewMode = status.viewMode;
         }
 
         private void saveState() {
@@ -206,6 +226,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                                     target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
                                 } else {
                                     adding = true;
+                                    pushStatus();
                                     SInstance sInstance = sil.addNew();
                                     IModel<? extends SInstance> itemModel = new SInstanceCampoModel<>(ctx.getRootContext().getModel(), sInstance.getPathFromRoot());
                                     showCrud(ctx, target, itemModel);
@@ -253,10 +274,11 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
         }
 
-        BSDataTable<SInstance, ?> buildTable(String id, IModel<? extends SInstance> model, SViewBreadcrumb view, WicketBuildContext ctx, ViewMode viewMode) {
+        private BSDataTable<SInstance, ?> buildTable(String id, IModel<? extends SInstance> model,
+                                                     SViewBreadcrumb view, WicketBuildContext ctx, ViewMode viewMode) {
 
-            BSDataTableBuilder<SInstance, ?, ?> builder = new BSDataTableBuilder<>(newDataProvider(model)).withNoRecordsToolbar();
-
+            BSDataTableBuilder<SInstance, ?, ?> builder = new BSDataTableBuilder<>(newDataProvider(model));
+            builder.withNoRecordsToolbar();
             configureColumns(view.getColumns(), builder, model, ctx, viewMode, view);
 
             return builder.build(id);
@@ -361,6 +383,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                         (target, rowModel) -> {
                             currentInstance = rowModel;
                             saveState();
+                            pushStatus();
                             showCrud(ctx, target, rowModel);
                         });
             });
@@ -376,10 +399,15 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
             originalContext.popBreadCrumb();
             originalContext.getContainer().getItems().removeAll();
+            if (!ctx.getBreadCrumbStatus().isEmpty()) {
+                originalContext.setSelectedBreadCrumbStatus(ctx.getBreadCrumbStatus().getLast());
+            }
             ctx.getUiBuilderWicket().build(originalContext, originalContext.getViewMode());
 
-            final BSRow buttonsRow = originalContext.getRootContainer().newGrid().newRow();
-            appendButtons(originalContext, buttonsRow.newCol(11));
+            if (!originalContext.isRootContext()) {
+                final BSRow buttonsRow = originalContext.getRootContainer().newGrid().newRow();
+                appendButtons(originalContext, buttonsRow.newCol(11));
+            }
 
             target.add(originalContext.getContainer());
         }
@@ -411,6 +439,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     .add(new ActionAjaxButton("okButton") {
                         @Override
                         protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                            popStatus();
                             hideCrud(ctx, target);
                         }
                     }.add(new Label("label", "OK")));
@@ -424,6 +453,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     .add(new ActionAjaxButton("cancelButton") {
                         @Override
                         protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                            popStatus();
                             rollbackState();
                             hideCrud(ctx, target);
                         }
@@ -431,20 +461,27 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
         }
 
-        private static class BreadCrumbStatus implements Serializable {
+        public static class BreadCrumbStatus implements Serializable {
             final IModel<SIList<SInstance>> listModel;
             final IModel<String> listaLabel;
             final WicketBuildContext ctx;
-            final ViewMode viewMode;
             final SViewBreadcrumb view;
+            final IModel<SInstance> currentInstance;
+            final String instanceBackupXml;
+            final boolean adding;
+            final ViewMode viewMode;
 
             public BreadCrumbStatus(IModel<SIList<SInstance>> listModel, IModel<String> listaLabel,
-                                    WicketBuildContext ctx, ViewMode viewMode, SViewBreadcrumb view) {
+                                    WicketBuildContext ctx, SViewBreadcrumb view, IModel<SInstance> currentInstance,
+                                    String instanceBackupXml, boolean adding, ViewMode viewMode) {
                 this.listModel = listModel;
                 this.listaLabel = listaLabel;
                 this.ctx = ctx;
-                this.viewMode = viewMode;
                 this.view = view;
+                this.currentInstance = currentInstance;
+                this.instanceBackupXml = instanceBackupXml;
+                this.adding = adding;
+                this.viewMode = viewMode;
             }
         }
 
