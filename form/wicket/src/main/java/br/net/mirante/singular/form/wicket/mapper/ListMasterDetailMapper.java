@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import br.net.mirante.singular.form.wicket.util.FormStateUtil;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -283,17 +284,17 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
     private static class MasterDetailModal extends BFModalWindow {
 
-        private final IModel<SIList<SInstance>> listModel;
-        private final IModel<String> listaLabel;
-        private final WicketBuildContext ctx;
-        private final UIBuilderWicket wicketBuilder;
-        private final Component table;
-        private final ViewMode viewMode;
-        private IModel<SInstance> currentInstance;
-        private IConsumer<AjaxRequestTarget> closeCallback;
-        private SViewListByMasterDetail view;
-        private BSContainer<?> containerExterno;
-        private String instanceBackupXml;
+        private final IModel<SIList<SInstance>>    listModel;
+        private final IModel<String>               listaLabel;
+        private final WicketBuildContext           ctx;
+        private final UIBuilderWicket              wicketBuilder;
+        private final Component                    table;
+        private final ViewMode                     viewMode;
+        private       IModel<SInstance>            currentInstance;
+        private       IConsumer<AjaxRequestTarget> closeCallback;
+        private       SViewListByMasterDetail      view;
+        private       BSContainer<?>               containerExterno;
+        private       FormStateUtil.FormState      formState;
 
         @SuppressWarnings("unchecked")
         public MasterDetailModal(String id,
@@ -340,16 +341,13 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         }
 
         private void saveState() {
-            MElement xml = MformPersistenciaXML.toXML(currentInstance.getObject());
-            if (xml != null) instanceBackupXml = xml.toString();
+            formState = FormStateUtil.keepState(currentInstance.getObject(), getPage());
         }
 
         private void rollbackState() {
             try {
-                if (instanceBackupXml != null) {
-                    MElement xml = MParser.parse(instanceBackupXml);
-                    SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getType(), xml);
-                    currentInstance.getObject().setValue(i);
+                if (formState != null) {
+                    currentInstance.getObject().setValue(FormStateUtil.restoreState(formState));
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
