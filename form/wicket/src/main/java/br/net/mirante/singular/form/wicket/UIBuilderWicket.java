@@ -60,7 +60,7 @@ import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
 import br.net.mirante.singular.form.wicket.mapper.LatitudeLongitudeMapper;
 import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.ListMasterDetailMapper;
-import br.net.mirante.singular.form.wicket.mapper.MonetarioMapper;
+import br.net.mirante.singular.form.wicket.mapper.MoneyMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
 import br.net.mirante.singular.form.wicket.mapper.TabMapper;
