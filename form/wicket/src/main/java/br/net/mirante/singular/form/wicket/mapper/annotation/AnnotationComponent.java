@@ -328,12 +328,18 @@ class AnnotationModalWindow extends BFModalWindow{
 
         setBody(createBody());
 
-        this.addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"),
-                createOkButton(parentComponent)
-        );
-        this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
-                createCancelButton()
-        );
+        if(context.annotation().editable()) {
+            this.addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"),
+                    createOkButton(parentComponent)
+            );
+            this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
+                    createCancelButton()
+            );
+        }else{
+            this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Fechar"),
+                    createCancelButton()
+            );
+        }
 
         this.setCloseIconCallback(target -> parentComponent.setKeepOpened(false));
     }
