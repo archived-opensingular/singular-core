@@ -1,9 +1,7 @@
 package br.net.mirante.singular.showcase.component.file;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
-import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.*;
+import org.apache.commons.lang3.StringUtils;
 
 public class CaseFileMultipleAttachmentsPackage extends SPackage {
 
@@ -20,5 +18,10 @@ public class CaseFileMultipleAttachmentsPackage extends SPackage {
         layoutsRotulagem
                 .asAtrBasic()
                 .label("Layouts Rotulagem");
+
+        tipoMyForm.asAtrBasic().displayString(cc -> cc.instance()
+                .findNearest(layoutsRotulagem)
+                .map(SInstance::toStringDisplay)
+                .orElse(StringUtils.EMPTY));
     }
 }
