@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import org.junit.Assert;
 
 import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoA;
@@ -32,9 +33,9 @@ public class TestMPacoteCore extends TestCaseForm {
         STypeBoolean tipoB = dicionario.getTypeOptional(STypeBoolean.class);
         STypeInteger tipoI = dicionario.getTypeOptional(STypeInteger.class);
 
-        Assert.assertFalse(tipoS.getAttributeValue(SPackageCore.ATR_REQUIRED));
-        Assert.assertFalse(tipoB.getAttributeValue(SPackageCore.ATR_REQUIRED));
-        Assert.assertFalse(tipoI.getAttributeValue(SPackageCore.ATR_REQUIRED));
+        Assert.assertFalse(tipoS.getAttributeValue(SPackageBasic.ATR_REQUIRED));
+        Assert.assertFalse(tipoB.getAttributeValue(SPackageBasic.ATR_REQUIRED));
+        Assert.assertFalse(tipoI.getAttributeValue(SPackageBasic.ATR_REQUIRED));
 
         tipoB.withRequired(true);
 
@@ -85,8 +86,8 @@ public class TestMPacoteCore extends TestCaseForm {
         testarAtribuicao(tipoI, false, new Object(), null);
         testarAtribuicao(tipoI, false, false, null);
 
-        assertNull(tipoS.getAttributeInstance(SPackageCore.ATR_EMPTY_TO_NULL));
-        assertEquals(tipoS.getAttributeValue(SPackageCore.ATR_EMPTY_TO_NULL), Boolean.TRUE);
+        assertNull(tipoS.getAttributeInstance(SPackageBasic.ATR_EMPTY_TO_NULL));
+        assertEquals(tipoS.getAttributeValue(SPackageBasic.ATR_EMPTY_TO_NULL), Boolean.TRUE);
         assertTrue(tipoS.getValorAtributoEmptyToNull());
         assertTrue(tipoS.getValorAtributoTrim());
 
@@ -129,9 +130,9 @@ public class TestMPacoteCore extends TestCaseForm {
         STypeBoolean tipoB = dicionario.getTypeOptional(STypeBoolean.class);
         STypeInteger tipoI = dicionario.getTypeOptional(STypeInteger.class);
 
-        Assert.assertNull(tipoS.getAttributeValue(SPackageCore.ATR_DEFAULT_IF_NULL));
-        Assert.assertNull(tipoB.getAttributeValue(SPackageCore.ATR_DEFAULT_IF_NULL));
-        Assert.assertNull(tipoI.getAttributeValue(SPackageCore.ATR_DEFAULT_IF_NULL));
+        Assert.assertNull(tipoS.getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL));
+        Assert.assertNull(tipoB.getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL));
+        Assert.assertNull(tipoI.getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL));
 
         assertException(() -> tipoS.withDefaultValueIfNull(new Integer(1)), "abstrato",
                 "Não deveria ser possível atribuir valor em um isntancia abstrata");

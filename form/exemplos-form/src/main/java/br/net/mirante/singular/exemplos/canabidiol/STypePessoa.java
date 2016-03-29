@@ -23,7 +23,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
 
         this
                 .addFieldString("nome")
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Nome")
@@ -31,7 +31,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
 
         this
                 .addFieldDate("dataNascimento")
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Data de Nascimento")
@@ -43,7 +43,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
         //ruim: Para manter a referencia não pode acionar atributos:
         tipoDocumento = this.addField("tipoDocumento", STypeDocumentoSelect.class);
         tipoDocumento
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label(LABEL_TIPO_DOCUMENTO)
@@ -52,7 +52,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
 
         this
                 .addFieldString("nomeNoDocumento")
-                .asAtrCore()
+                .asAtrBasic()
                 .required(ins -> "55358729".equals(Value.of(ins, tipoDocumento)))
                 .asAtrBasic()
                 .label("Nome")
@@ -63,7 +63,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
 
         this
                 .addFieldString("numeroDocumento")
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Número")
@@ -72,7 +72,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
                 .asAtrBootstrap().colPreference(2);
 
         addFieldCPF("cpf")
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("CPF")

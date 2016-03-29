@@ -2,8 +2,8 @@ package br.net.mirante.singular.form.mform.document;
 
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.TestCaseForm;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.event.ISInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceAttributeChangeEvent;
@@ -49,13 +49,13 @@ public class TestSDocumentEvents extends TestCaseForm {
     public void testAttributeChanges() {
         doc.getInstanceListeners().add(SInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
 
-        root.setAttributeValue(SPackageCore.ATR_REQUIRED, true);
+        root.setAttributeValue(SPackageBasic.ATR_REQUIRED, true);
         assertEventsCount(1, attributeCollector);
 
-        root.setAttributeValue(SPackageCore.ATR_REQUIRED, true);
+        root.setAttributeValue(SPackageBasic.ATR_REQUIRED, true);
         assertEventsCount(1, attributeCollector);
 
-        root.setAttributeValue(SPackageCore.ATR_REQUIRED, false);
+        root.setAttributeValue(SPackageBasic.ATR_REQUIRED, false);
         assertEventsCount(2, attributeCollector);
     }
 
@@ -74,12 +74,12 @@ public class TestSDocumentEvents extends TestCaseForm {
         assertEventsCount(0, attributeCollector);
         assertEventsCount(2, valueCollector);
 
-        root.setAttributeValue(SPackageCore.ATR_REQUIRED, true);
+        root.setAttributeValue(SPackageBasic.ATR_REQUIRED, true);
         assertEventsCount(3, globalCollector);
         assertEventsCount(1, attributeCollector);
         assertEventsCount(2, valueCollector);
 
-        root.setAttributeValue(SPackageCore.ATR_REQUIRED, false);
+        root.setAttributeValue(SPackageBasic.ATR_REQUIRED, false);
         assertEventsCount(4, globalCollector);
         assertEventsCount(2, attributeCollector);
         assertEventsCount(2, valueCollector);

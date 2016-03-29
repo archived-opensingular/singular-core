@@ -8,7 +8,6 @@ package br.net.mirante.singular.form.wicket.mapper;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
@@ -115,7 +114,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
             input.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
-                    if (model.getObject().getAttributeValue(SPackageCore.ATR_REQUIRED)) {
+                    if (model.getObject().getAttributeValue(SPackageBasic.ATR_REQUIRED)) {
                         oldClasses.add("singular-form-required");
                     } else {
                         oldClasses.remove("singular-form-required");

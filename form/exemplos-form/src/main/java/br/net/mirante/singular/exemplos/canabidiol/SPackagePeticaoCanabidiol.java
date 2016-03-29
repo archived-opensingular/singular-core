@@ -53,7 +53,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
 
             final STypeBoolean possuiResponsavelLegal = canabis.addFieldBoolean("possuiResponsavelLegal");
             possuiResponsavelLegal
-                    .asAtrCore()
+                    .asAtrBasic()
                     .required()
                     .asAtrBasic()
                     .label("Possui Responsável Legal?");
@@ -76,7 +76,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
             STypeAttachment anexoPaciente = anexos
                     .addField("documentoPaciente", STypeAttachment.class);
             anexoPaciente
-                    .asAtrCore()
+                    .asAtrBasic()
                     .required()
                     .asAtrBasic()
                     .label("Documento do Paciente")
@@ -87,7 +87,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
             STypeAttachment anexoResponsavelLegal = anexos
                     .addField("documentoResponsavel", STypeAttachment.class);
             anexoResponsavelLegal
-                    .asAtrCore()
+                    .asAtrBasic()
                     .required(instancia -> BooleanUtils.isTrue(Value.of(instancia, possuiResponsavelLegal)))
                     .asAtrBasic()
                     .label("Documento do Responsável Legal")
@@ -144,7 +144,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .addField("anexoTermoResponsabilidade", STypeAttachment.class);
 
             anexoTermoResponsabilidade
-                    .asAtrCore()
+                    .asAtrBasic()
                     .required()
                     .asAtrBasic()
                     .label("Termo de Responsabilidade (Prescritor/Paciente/Responsável Legal)")

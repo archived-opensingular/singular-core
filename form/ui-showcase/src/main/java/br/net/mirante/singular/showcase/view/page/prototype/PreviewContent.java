@@ -167,7 +167,7 @@ class TypeBuilder {
         addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_MAXIMO), fieldType.asAtrBasic()::tamanhoMaximo);
         addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_INTEIRO_MAXIMO), fieldType.asAtrBasic()::tamanhoInteiroMaximo);
         addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_DECIMAL_MAXIMO), fieldType.asAtrBasic()::tamanhoDecimalMaximo);
-        addAttributeIfExists(descriptor.getValueBoolean(SPackagePrototype.OBRIGATORIO), fieldType.asAtrCore()::required);
+        addAttributeIfExists(descriptor.getValueBoolean(SPackagePrototype.OBRIGATORIO), fieldType.asAtrBasic()::required);
 
     }
 

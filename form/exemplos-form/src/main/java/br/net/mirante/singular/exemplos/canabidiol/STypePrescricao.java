@@ -51,7 +51,7 @@ public class STypePrescricao extends STypeComposite<SIComposite> {
         STypeAttachment receitaMedica = this
                 .addField("receitaMedica", STypeAttachment.class);
         receitaMedica
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Receita Médica")
@@ -60,7 +60,7 @@ public class STypePrescricao extends STypeComposite<SIComposite> {
         STypeAttachment laudoMedico = this
                 .addField("laudoMedico", STypeAttachment.class);
         laudoMedico
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Laudo Médico")

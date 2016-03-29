@@ -23,7 +23,7 @@ public class STypeMedico extends STypeComposite<SIComposite> {
 
         this
                 .addFieldString("nome")
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Nome do Médico")
@@ -32,7 +32,7 @@ public class STypeMedico extends STypeComposite<SIComposite> {
 
         this
                 .addFieldString("CRM")
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Número do CRM")
@@ -41,7 +41,7 @@ public class STypeMedico extends STypeComposite<SIComposite> {
 
         STypeComposite<?> estado = addFieldComposite("UFCRM");
         estado
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("UF do CRM")
@@ -67,7 +67,7 @@ public class STypeMedico extends STypeComposite<SIComposite> {
         STypeContato tipoTelefone = this.addField("contato", STypeContato.class);
         tipoTelefone
                 .telefoneFixo
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrAnnotation().setAnnotated();
 
