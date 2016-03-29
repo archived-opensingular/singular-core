@@ -25,6 +25,8 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
+import java.util.Optional;
+
 public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
     public static final String PACOTE = "mform.peticao.notificacaosimplificada";
@@ -39,6 +41,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
+        notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento de Baixo Risco");
 
         final STypeComposite<?> linhaProducao = notificacaoSimplificada.addFieldComposite("linhaProducao");
@@ -259,11 +262,12 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         STypeList<STypeComposite<SIComposite>, SIComposite> locaisFabricacao = acondicionamento.addFieldListOfComposite("locaisFabricacao", "localFabricacao");
         STypeComposite<SIComposite> localFabricacao = locaisFabricacao.getElementsType();
+        localFabricacao.asAtrBasic().label("Local de Fabricação");
 
         STypeSimple tipoLocalFabricacao = localFabricacao.addFieldInteger("tipoLocalFabricacao");
         tipoLocalFabricacao
                 .asAtrBasic()
-                .label("Tipo de local de fabricação");
+                .label("Tipo de local");
         tipoLocalFabricacao
                 .withRadioView()
                 .withSelection()
@@ -274,8 +278,10 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
 
         STypeComposite<SIComposite> empresaPropria = localFabricacao.addFieldComposite("empresaPropria");
-        empresaPropria.addFieldString("razaoSocial")
-                .asAtrBasic().label("Razão Social");
+        STypeString razaoSocialPropria = empresaPropria.addFieldString("razaoSocial");
+        razaoSocialPropria
+                .asAtrBasic()
+                .label("Razão Social");
         empresaPropria.addFieldCNPJ("cnpj")
                 .asAtrBasic().label("CNPJ");
         empresaPropria.addFieldString("endereco")
@@ -359,7 +365,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         etapasFabricacao
                 .withView(SViewListByTable::new);
         etapasFabricacao
-                .asAtrBasic().label("Etapa de fabricação");
+                .asAtrBasic()
+                .label("Etapa de fabricação")
+                .displayString("<#list _inst as c>${c.etapaFabricacao.descricao}<#sep>, </#sep></#list>");
 
 
         STypeComposite<SIComposite> outroLocalFabricacao = localFabricacao.addFieldComposite("outroLocalFabricacao");
@@ -387,7 +395,16 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .getTipo().setView(SViewSelectionBySelect::new);
 
         locaisFabricacao
-                .withView(new SViewListByMasterDetail())
+                .withView(new SViewListByMasterDetail()
+                        .col(tipoLocalFabricacao)
+                        .col(localFabricacao, i -> {
+                            String label = String.valueOf(Optional.ofNullable(Value.of(i, "outroLocalFabricacao.razaoSocial")).orElse(""));
+                            label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaTerceirizada.empresa.razaoSocial")).orElse(""));
+                            label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaInternacional.razaoSocial")).orElse(""));
+                            label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaPropria.razaoSocial")).orElse(""));
+                            return label;
+                        })
+                        .col(etapasFabricacao))
                 .asAtrBasic().label("Local de fabricação");
 
         STypeInteger prazoValidade = acondicionamento.addFieldInteger("prazoValidade", true);
