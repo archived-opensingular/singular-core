@@ -40,6 +40,8 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  * AutoComplete wicket component using Typeahead library.
  * http://twitter.github.io/typeahead.js/
+ * which is abandoned, so better focus on
+ * https://github.com/corejavascript/typeahead.js
  *
  * It is build based on configuration placed withing an SViewAutoComplete.Mode object.
  *
@@ -104,7 +106,7 @@ public class TypeheadComponent extends Panel {
     }
     private String dynamicJSFetch() {
         return "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
-                "{limit: Number.MAX_SAFE_INTEGER, minLength: 0, hint:false }," +
+                "{limit: Infinity, minLength: 0, hint:false }," +
                 "{name: 's-select-typeahead', " +
                 "display: 'value', " +
                 "source: " + createJSBloodhoundOpbject() + " })\n" +
