@@ -5,15 +5,15 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.util.Arrays;
+import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -29,19 +29,12 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
 import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import br.net.mirante.singular.util.wicket.metronic.breadcrumb.MetronicBreadcrumbBar;
-
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @SuppressWarnings("serial")
 public class DefaultCompostoMapper implements IWicketComponentMapper {
@@ -69,38 +62,15 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
         public void buildView() {
-            BSContainer<?> container = ctx.getContainer().newGrid();
-            container.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> buildBreadCrumbBar(id, Arrays.asList("Bread", "Crumb")));
-
-            container
-                    .newTemplateTag(t -> "" +
-                            "<button wicket:id='but' class='btn btn-primary'>" +
-                            "<wicket:container wicket:id='label'></wicket:container>" +
-                            "</button> ")
-                    .add(new ActionAjaxButton("but") {
-                        @Override
-                        protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                            container.removeAll();
-                            container.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> buildBreadCrumbBar(id, Arrays.asList("Bread", "Crumb", "Novo")));
-
-                            target.add(container);
-                        }
-                    }.add(new Label("label", "OK")));
+//            container.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> buildBreadCrumbBar(id, Arrays.asList("Bread", "Crumb")));
 
             final BSGrid grid = createCompositeGrid(ctx);
             buildFields(ctx, grid);
-            if(renderAnnotations()){
+            if (renderAnnotations()) {
                 ctx.getRootContext().updateAnnotations(
                         appendAnnotationToggleButton(grid.newRow(), instance),
                         instance);
             }
-        }
-
-        private MetronicBreadcrumbBar buildBreadCrumbBar(String id, List<String> breadcrumbs) {
-            MetronicBreadcrumbBar breadCrumbBar = new MetronicBreadcrumbBar(id);
-            breadcrumbs.forEach(breadCrumbBar::addBreadCrumb);
-
-            return breadCrumbBar;
         }
 
         private boolean renderAnnotations() {
@@ -188,4 +158,5 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             return col;
         }
     }
+
 }

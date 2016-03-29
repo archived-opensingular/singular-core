@@ -9,8 +9,6 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import br.net.mirante.singular.form.mform.basic.view.*;
-import br.net.mirante.singular.form.wicket.mapper.selection.*;
 import org.apache.wicket.Component;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -19,20 +17,22 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
-import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByCheckboxView;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByPicklistView;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
+import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
-import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.ViewMapperRegistry;
 import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
@@ -69,7 +69,16 @@ import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.AutocompleteMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.BooleanRadioMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.MultipleCheckMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectModalBuscaMapper;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.panel.BreadPanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -84,12 +93,22 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     }
 
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
+
+        if (ctx.getParent() == null || ctx.isShowBreadcrumb()) {
+            ctx.init(this, viewMode);
+            //TODO mostrar apenas para quando tiver breadcrumbmapper na hierarquia
+            BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs());
+            BSRow row = ctx.getContainer().newGrid().newRow();
+            row.newCol().appendTag("div", panel);
+            ctx = ctx.createChild(row.newCol(), true, ctx.getModel());
+        }
+
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
-        if(ctx.isRootContext() && ctx.annotation().enabled()){
+        if (ctx.isRootContext() && ctx.annotation().enabled()) {
             ctx.init(this, viewMode);
             new AnnotationBuilder(this).build(ctx, viewMode, mapper);
-        }else{
+        } else {
             mapper.buildView(ctx.init(this, viewMode));
         }
 

@@ -72,6 +72,9 @@ public class WicketBuildContext implements Serializable {
     private HashMap<Integer,Component> annotationsTargetBuffer = newHashMap();
     private BSContainer annotationContainer;
 
+    private boolean showBreadcrumb;
+    private List<String> breadCrumbs = newArrayList("Início");
+
     private SView view;
 
     public AnnotationMode annotation(){ return annotation; }
@@ -324,6 +327,10 @@ public class WicketBuildContext implements Serializable {
 
     }
 
+    public void popBreadCrumb() {
+        getBreadCrumbs().remove(getBreadCrumbs().size() - 1);
+    }
+
     private static final class InitRootContainerBehavior extends Behavior {
         private final IModel<? extends SInstance> instanceModel;
 
@@ -367,6 +374,25 @@ public class WicketBuildContext implements Serializable {
 
     public void setModel(IModel<? extends SInstance> model) {
         this.model = model;
+    }
+
+    public boolean isShowBreadcrumb() {
+        return showBreadcrumb;
+    }
+
+    public void setShowBreadcrumb(boolean showBreadcrumb) {
+        this.showBreadcrumb = showBreadcrumb;
+    }
+
+    public List<String> getBreadCrumbs() {
+        if (isRootContext()) {
+            return breadCrumbs;
+        }
+        return getRootContext().getBreadCrumbs();
+    }
+
+    public void setBreadCrumbs(List<String> breadCrumbs) {
+        this.breadCrumbs = breadCrumbs;
     }
 
     @SuppressWarnings("unchecked")
