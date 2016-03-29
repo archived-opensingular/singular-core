@@ -41,6 +41,9 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
                 .asAtrBasic().label("Componente Químico");
 
 
+        //@destacar:bloco
+        // Auto Complete padrão com opções pré-definidas para tipos compostos.
+        //@destacar:fim
         STypeComposite<SIComposite> myPlanet = tipoMyForm.addFieldComposite("myPlanet");
 
         STypeString name = myPlanet.addFieldString("name");
@@ -61,6 +64,11 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
                 lb.add().set(name,"Mercury").set(position,1).set(diameter,4879);
                 lb.add().set(name,"Venus").set(position,2).set(diameter,12104);
                 lb.add().set(name,"Earth").set(position,3).set(diameter,12756);
+                lb.add().set(name,"Mars").set(position,4).set(diameter,6792);
+                lb.add().set(name,"Jupiter").set(position,5).set(diameter,142984);
+                lb.add().set(name,"Saturn").set(position,6).set(diameter,120536);
+                lb.add().set(name,"Uranus").set(position,7).set(diameter,51118);
+                lb.add().set(name,"Neptune").set(position,8).set(diameter,49528);
             }
         });
 

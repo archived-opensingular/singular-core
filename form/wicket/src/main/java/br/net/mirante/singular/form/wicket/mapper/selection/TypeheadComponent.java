@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.options.SOptionsConfig;
@@ -173,15 +175,24 @@ class MOptionsModel extends MInstanciaValorModel {
 //        return super.getObject();
     }
 
+    public Class getObjectClass() {
+        if (SIComposite.class.isAssignableFrom(super.getObjectClass())) return String.class;
+        return super.getObjectClass();
+    }
+
     private Object defineValue(String object) {
         if(object != null){
             SInstance value = options().getValueFromKey(object);
-            if(value != null){
+            if(value != null && value instanceof SISimple){
                 return value.getValue();
+            }else{
+                return value;
             }
         }
         return null;
     }
+
+
 
 }
 
