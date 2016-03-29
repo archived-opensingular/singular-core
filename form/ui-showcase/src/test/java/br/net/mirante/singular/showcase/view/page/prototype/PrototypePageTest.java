@@ -31,9 +31,6 @@ import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findOnForm
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-/**
- * Created by nuk on 08/03/16.
- */
 @RunWith(Enclosed.class)
 public class PrototypePageTest {
 

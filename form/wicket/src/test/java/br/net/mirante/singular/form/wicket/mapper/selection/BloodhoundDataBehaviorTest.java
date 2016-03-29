@@ -29,14 +29,12 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-/**
- * Created by nuk on 22/03/16.
- */
 public class BloodhoundDataBehaviorTest {
 
     private WebRequest request;
     private WebResponse response;
     @Captor ArgumentCaptor<String> captor;
+    private RequestCycle cycle;
 
 
     @Before public void init(){
@@ -49,6 +47,14 @@ public class BloodhoundDataBehaviorTest {
         b.respond(null);
 
         verify(response).setHeader("Content-Type", "application/json; charset=utf8");
+    }
+
+    @Test public void specifyThatItWillHandleTheResponseByItself(){
+        SInstance instance = createInstance(createBaseType());
+        BloodhoundDataBehavior b = createBehavior(null, new MInstanceRootModel<>(instance));
+        b.respond(null);
+
+        verify(cycle).scheduleRequestHandlerAfterCurrent(null);
     }
 
     @Test public void returnOptions(){
@@ -119,22 +125,21 @@ public class BloodhoundDataBehaviorTest {
 
     private BloodhoundDataBehavior createBehavior(final String filter,
                                                   IModel model) {
+        cycle = Mockito.mock(RequestCycle.class);
+
+        request = Mockito.mock(WebRequest.class);
+        Mockito.when(cycle.getRequest()).thenReturn(request);
+
+        IRequestParameters params = Mockito.mock(IRequestParameters.class);
+        Mockito.when(request.getRequestParameters()).thenReturn(params);
+
+        Mockito.when(params.getParameterValue("filter")).thenReturn(StringValue.valueOf(filter));
+
+        response = Mockito.mock(WebResponse.class);
+        Mockito.when(cycle.getResponse()).thenReturn(response);
         return new BloodhoundDataBehavior(new MOptionsModel(model)){
                 @Override
                 protected RequestCycle requestCycle() {
-                    RequestCycle cycle = Mockito.mock(RequestCycle.class);
-
-                    request = Mockito.mock(WebRequest.class);
-                    Mockito.when(cycle.getRequest()).thenReturn(request);
-
-                    IRequestParameters params = Mockito.mock(IRequestParameters.class);
-                    Mockito.when(request.getRequestParameters()).thenReturn(params);
-
-                    Mockito.when(params.getParameterValue("filter")).thenReturn(StringValue.valueOf(filter));
-
-                    response = Mockito.mock(WebResponse.class);
-                    Mockito.when(cycle.getResponse()).thenReturn(response);
-
                     return cycle;
                 }
             };

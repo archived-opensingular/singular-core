@@ -36,9 +36,6 @@ import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 import br.net.mirante.singular.form.mform.util.comuns.STypePersonName;
 import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 
-/**
- * Created by nuk on 07/03/16.
- */
 public class SPackagePrototype extends SPackage {
 
     public static final String PACOTE = "mform.prototype",

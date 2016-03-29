@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.options.SOptionsConfig;
@@ -36,7 +38,14 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * Created by nuk on 21/03/16.
+ * AutoComplete wicket component using Typeahead library.
+ * http://twitter.github.io/typeahead.js/
+ * which is abandoned, so better focus on
+ * https://github.com/corejavascript/typeahead.js
+ *
+ * It is build based on configuration placed withing an SViewAutoComplete.Mode object.
+ *
+ * @author Fabricio Buzeto
  */
 public class TypeheadComponent extends Panel {
 
@@ -97,7 +106,7 @@ public class TypeheadComponent extends Panel {
     }
     private String dynamicJSFetch() {
         return "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
-                "{limit: Number.MAX_SAFE_INTEGER, minLength: 0, hint:false }," +
+                "{limit: Infinity, minLength: 0, hint:false }," +
                 "{name: 's-select-typeahead', " +
                 "display: 'value', " +
                 "source: " + createJSBloodhoundOpbject() + " })\n" +
@@ -152,6 +161,11 @@ public class TypeheadComponent extends Panel {
 
 }
 
+/**
+ * Model for selecting data based on SOptionsConfig.
+ *
+ * @author Fabricio Buzeto
+ */
 class MOptionsModel extends MInstanciaValorModel {
 
     public MOptionsModel(IModel model) {
@@ -164,22 +178,38 @@ class MOptionsModel extends MInstanciaValorModel {
 
     @Override
     public void setObject(Object object) {
-        /*String key = options().getKeyFromLabel((String) object);*/
-        if(object != null){
-            SInstance value = options().getValueFromKey((String) object);
-//            super.setObject(value);
-            if(value != null){
-                super.setObject(value.getValue());
-            }else {
-                super.setObject(null);
-            }
+        super.setObject(defineValue((String)object));
+    }
 
-        }else{
-            super.setObject(object);
+    @Override
+    public Object getObject() {
+        return options().getKeyFromOption(getMInstancia());
+    }
+
+    public Class getObjectClass() {
+        if (SIComposite.class.isAssignableFrom(super.getObjectClass())) return String.class;
+        return super.getObjectClass();
+    }
+
+    private Object defineValue(String object) {
+        if(object != null){
+            SInstance value = options().getValueFromKey(object);
+            if(value != null && value instanceof SISimple){
+                return value.getValue();
+            }else{
+                return value;
+            }
         }
+        return null;
     }
 }
 
+/**
+ * Behaviour that implements responses compatible with the Bloodhound fetch library.
+ * https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md
+ *
+ * @author Fabricio Buzeto
+ */
 class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     private MOptionsModel model;
 
@@ -198,23 +228,13 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
 
     @Override
     public void respond(AjaxRequestTarget target) {
-
-//        JSONArray r = createResponse();
-
         String r = generateResultOptions(values(filterValue()));
-        requestCycle().scheduleRequestHandlerAfterCurrent(null); //TODO: Fabs: Test this
+        requestCycle().scheduleRequestHandlerAfterCurrent(null);
 
         WebResponse response = (WebResponse) requestCycle().getResponse();
         response.setHeader("Content-Type", "application/json; charset=utf8");
         response.write(r.toString());
     }
-
-//    private JSONArray createResponse() {
-//        JSONArray r = new JSONArray();
-//        values(filterValue()).forEach((e) -> r.put(newValue(e.getKey(),e.getValue())));
-////        values(filterValue()).forEach((x) -> r.put(x));
-//        return r;
-//    }
 
     private String filterValue() {
         return requestParameter().toString(null);
