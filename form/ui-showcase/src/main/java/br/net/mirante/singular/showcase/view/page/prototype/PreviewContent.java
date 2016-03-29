@@ -31,9 +31,6 @@ import javax.inject.Named;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * Created by nuk on 04/03/16.
- */
 public class PreviewContent extends Content {
 
     @Inject

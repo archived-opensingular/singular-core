@@ -13,9 +13,6 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.util.string.StringValue;
 import org.wicketstuff.annotation.mount.MountPath;
 
-/**
- * Created by nuk on 03/03/16.
- */
 @MountPath("prototype/edit")
 public class PrototypePage extends Template {
     protected static String ID = "id";
