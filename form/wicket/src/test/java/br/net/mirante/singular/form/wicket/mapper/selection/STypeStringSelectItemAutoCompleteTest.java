@@ -1,8 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-/**
- * Created by nuk on 21/03/16.
- */
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
@@ -31,7 +28,7 @@ import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
-public class STypeStringSelectItemAutoComplete {
+public class STypeStringSelectItemAutoCompleteTest {
 
     //TODO: Testar modo read only
 

@@ -22,11 +22,8 @@ import java.util.List;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-/**
- * Created by nuk on 22/03/16.
- */
 @RunWith(Enclosed.class)
-public class STypeStringSelectItemDynamicAutoComplete {
+public class STypeStringSelectItemDynamicAutoCompleteTest {
 
     private static class Base extends SingularFormBaseTest {
 

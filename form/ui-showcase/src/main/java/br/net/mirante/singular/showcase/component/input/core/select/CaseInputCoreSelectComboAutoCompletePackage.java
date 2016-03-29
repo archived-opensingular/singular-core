@@ -43,7 +43,7 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
 
         //@destacar:bloco
         // Auto Complete padrão com opções pré-definidas para tipos compostos.
-        //@destacar:fim
+        //@destacar:fimF
         STypeComposite<SIComposite> myPlanet = tipoMyForm.addFieldComposite("myPlanet");
 
         STypeString name = myPlanet.addFieldString("name");

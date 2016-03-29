@@ -38,7 +38,12 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * Created by nuk on 21/03/16.
+ * AutoComplete wicket component using Typeahead library.
+ * http://twitter.github.io/typeahead.js/
+ *
+ * It is build based on configuration placed withing an SViewAutoComplete.Mode object.
+ *
+ * @author Fabricio Buzeto
  */
 public class TypeheadComponent extends Panel {
 
@@ -154,6 +159,11 @@ public class TypeheadComponent extends Panel {
 
 }
 
+/**
+ * Model for selecting data based on SOptionsConfig.
+ *
+ * @author Fabricio Buzeto
+ */
 class MOptionsModel extends MInstanciaValorModel {
 
     public MOptionsModel(IModel model) {
@@ -172,7 +182,6 @@ class MOptionsModel extends MInstanciaValorModel {
     @Override
     public Object getObject() {
         return options().getKeyFromOption(getMInstancia());
-//        return super.getObject();
     }
 
     public Class getObjectClass() {
@@ -191,11 +200,14 @@ class MOptionsModel extends MInstanciaValorModel {
         }
         return null;
     }
-
-
-
 }
 
+/**
+ * Behaviour that implements responses compatible with the Bloodhound fetch library.
+ * https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md
+ *
+ * @author Fabricio Buzeto
+ */
 class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     private MOptionsModel model;
 
@@ -214,23 +226,13 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
 
     @Override
     public void respond(AjaxRequestTarget target) {
-
-//        JSONArray r = createResponse();
-
         String r = generateResultOptions(values(filterValue()));
-        requestCycle().scheduleRequestHandlerAfterCurrent(null); //TODO: Fabs: Test this
+        requestCycle().scheduleRequestHandlerAfterCurrent(null); 
 
         WebResponse response = (WebResponse) requestCycle().getResponse();
         response.setHeader("Content-Type", "application/json; charset=utf8");
         response.write(r.toString());
     }
-
-//    private JSONArray createResponse() {
-//        JSONArray r = new JSONArray();
-//        values(filterValue()).forEach((e) -> r.put(newValue(e.getKey(),e.getValue())));
-////        values(filterValue()).forEach((x) -> r.put(x));
-//        return r;
-//    }
 
     private String filterValue() {
         return requestParameter().toString(null);

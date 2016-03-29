@@ -25,7 +25,7 @@ import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
-public class STypeCompositeSelectItemAutoComplete {
+public class STypeCompositeSelectItemAutoCompleteTest {
 
     private static class Base extends SingularFormBaseTest {
 
