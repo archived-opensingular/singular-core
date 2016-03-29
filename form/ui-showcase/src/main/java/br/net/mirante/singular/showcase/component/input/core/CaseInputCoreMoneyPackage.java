@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 
-public class CaseInputCoreMonetarioPackage extends SPackage {
+public class CaseInputCoreMoneyPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
