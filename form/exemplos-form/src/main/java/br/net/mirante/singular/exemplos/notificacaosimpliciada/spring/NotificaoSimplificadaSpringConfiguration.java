@@ -25,6 +25,9 @@ public class NotificaoSimplificadaSpringConfiguration {
     @Value("classpath:data/notificacaosimplificada/create_tables.sql")
     private Resource createTables;
 
+    @Value("classpath:data/notificacaosimplificada/inserts.sql")
+    private Resource inserts;
+
     @Bean
     public DriverManagerDataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource("jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=2048;MULTI_THREADED=1");
@@ -59,6 +62,7 @@ public class NotificaoSimplificadaSpringConfiguration {
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(createTables);
+        populator.addScript(inserts);
         return populator;
     }
 

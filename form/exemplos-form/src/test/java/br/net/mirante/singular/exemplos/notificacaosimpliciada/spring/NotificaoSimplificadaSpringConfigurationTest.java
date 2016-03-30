@@ -7,8 +7,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class NotificaoSimplificadaSpringConfigurationTest {
 
     @Test
-    public void testCreateAppContext(){
+    public void testCreateAppContext() {
         final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(NotificaoSimplificadaSpringConfiguration.class);
         Assert.assertNotNull(context);
     }
+
 }
