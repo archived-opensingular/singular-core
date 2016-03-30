@@ -1,9 +1,11 @@
 package br.net.mirante.singular.exemplos.notificacaosimpliciada.spring;
 
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
@@ -20,8 +22,8 @@ import java.util.Properties;
 @ComponentScan("br.net.mirante.singular.exemplos.notificacaosimplificada")
 public class NotificaoSimplificadaSpringConfiguration {
 
-//    @Value("classpath:com/foo/sql/db-schema.sql")
-//    private Resource schemaScript;
+    @Value("classpath:data/notificacaosimplificada/create_tables.sql")
+    private Resource createTables;
 
     @Bean
     public DriverManagerDataSource dataSource() {
@@ -56,7 +58,7 @@ public class NotificaoSimplificadaSpringConfiguration {
 
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//        populator.addScript(schemaScript);
+        populator.addScript(createTables);
         return populator;
     }
 
@@ -73,5 +75,3 @@ public class NotificaoSimplificadaSpringConfiguration {
     }
 
 }
-
-

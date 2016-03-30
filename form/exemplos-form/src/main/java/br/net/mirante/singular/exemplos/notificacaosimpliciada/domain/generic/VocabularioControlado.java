@@ -3,7 +3,6 @@ package br.net.mirante.singular.exemplos.notificacaosimpliciada.domain.generic;
 import br.net.mirante.singular.exemplos.notificacaosimpliciada.domain.TipoTermo;
 import br.net.mirante.singular.exemplos.notificacaosimpliciada.domain.enums.SimNao;
 import br.net.mirante.singular.persistence.entity.BaseEntity;
-import com.sun.istack.internal.NotNull;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
