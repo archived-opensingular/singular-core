@@ -110,6 +110,9 @@ public class WicketBuildContext implements Serializable {
     }
 
     public Optional<Component> getAnnotationTargetFor(SInstance target){
+        if (!isRootContext()) {
+            return getRootContext().getAnnotationTargetFor(target);
+        }
         Component component = annotationsTargetBuffer.get(target.getId());
         if(component != null) return Optional.of(component);
         return Optional.empty();
