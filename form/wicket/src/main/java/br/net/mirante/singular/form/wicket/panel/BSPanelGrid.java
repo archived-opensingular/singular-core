@@ -104,7 +104,7 @@ public abstract class BSPanelGrid extends Panel {
 
     public Collection<Component> toUpdadeOnTab(){   return newArrayList(); }
 
-        public void buildTabContent() {
+    public void buildTabContent() {
         form.remove(container);
         container = new BSGrid("grid");
         form.add(container);

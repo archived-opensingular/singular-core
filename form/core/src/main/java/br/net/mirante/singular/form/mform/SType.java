@@ -324,50 +324,50 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     public SType<I> withInitialValue(Object value) {
-        return with(SPackageCore.ATR_VALOR_INICIAL, value);
+        return with(SPackageBasic.ATR_VALOR_INICIAL, value);
 
     }
 
     public SType<I> withDefaultValueIfNull(Object value) {
-        return with(SPackageCore.ATR_DEFAULT_IF_NULL, value);
+        return with(SPackageBasic.ATR_DEFAULT_IF_NULL, value);
     }
 
     public Object getAttributeValueOrDefaultValueIfNull() {
-        if (Objects.equals(nameSimple, SPackageCore.ATR_DEFAULT_IF_NULL.getNameSimple())) {
+        if (Objects.equals(nameSimple, SPackageBasic.ATR_DEFAULT_IF_NULL.getNameSimple())) {
             return null;
         }
-        return getAttributeValue(SPackageCore.ATR_DEFAULT_IF_NULL);
+        return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL);
     }
 
     public <V extends Object> V getAttributeValueOrDefaultValueIfNull(Class<V> resultClass) {
-        if (Objects.equals(nameSimple, SPackageCore.ATR_DEFAULT_IF_NULL.getNameSimple())) {
+        if (Objects.equals(nameSimple, SPackageBasic.ATR_DEFAULT_IF_NULL.getNameSimple())) {
             return null;
         }
-        return getAttributeValue(SPackageCore.ATR_DEFAULT_IF_NULL, resultClass);
+        return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL, resultClass);
     }
 
     public Object getAttributeValueInitialValue() {
-        return getAttributeValue(SPackageCore.ATR_VALOR_INICIAL);
+        return getAttributeValue(SPackageBasic.ATR_VALOR_INICIAL);
     }
 
     public SType<I> withRequired(Boolean value) {
-        return with(SPackageCore.ATR_REQUIRED, value);
+        return with(SPackageBasic.ATR_REQUIRED, value);
     }
 
     public final Boolean isRequired() {
-        return getAttributeValue(SPackageCore.ATR_REQUIRED);
+        return getAttributeValue(SPackageBasic.ATR_REQUIRED);
     }
 
     public SType<I> withExists(Boolean value) {
-        return with(SPackageCore.ATR_EXISTS, value);
+        return with(SPackageBasic.ATR_EXISTS, value);
     }
 
     public SType<I> withExists(Predicate<I> predicate) {
-        return with(SPackageCore.ATR_EXISTS_FUNCTION, predicate);
+        return with(SPackageBasic.ATR_EXISTS_FUNCTION, predicate);
     }
 
     public final boolean exists() {
-        return !Boolean.FALSE.equals(getAttributeValue(SPackageCore.ATR_EXISTS));
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
     }
 
     //    public MTipo<I> withOnChange(IBehavior<I> behavior) {

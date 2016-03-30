@@ -6,12 +6,15 @@
 package br.net.mirante.singular.form.wicket;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,7 +75,11 @@ public class WicketBuildContext implements Serializable {
     private HashMap<Integer, AnnotationComponent> annotations = newHashMap();
     private HashMap<Integer,Component> annotationsTargetBuffer = newHashMap();
     private BSContainer annotationContainer;
-    private ListBreadcrumbMapper.BreadCrumbPanel breadCrumbPanel;
+
+    private boolean showBreadcrumb;
+    private List<String> breadCrumbs = newArrayList("Início");
+    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
+    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus;
 
     private SView view;
 
@@ -326,6 +333,10 @@ public class WicketBuildContext implements Serializable {
 
     }
 
+    public void popBreadCrumb() {
+        getBreadCrumbs().remove(getBreadCrumbs().size() - 1);
+    }
+
     private static final class InitRootContainerBehavior extends Behavior {
         private final IModel<? extends SInstance> instanceModel;
 
@@ -371,25 +382,34 @@ public class WicketBuildContext implements Serializable {
         this.model = model;
     }
 
-    public ListBreadcrumbMapper.BreadCrumbPanel getBreadCrumbPanelInTree() {
-        if (breadCrumbPanel == null) {
-            WicketBuildContext context = this.parent;
-            while (context != null) {
-                if (context.getBreadCrumbPanel() != null) {
-                    return breadCrumbPanel;
-                }
-                context = context.parent;
-            }
+    public boolean isShowBreadcrumb() {
+        return showBreadcrumb;
+    }
+
+    public void setShowBreadcrumb(boolean showBreadcrumb) {
+        this.showBreadcrumb = showBreadcrumb;
+    }
+
+    public List<String> getBreadCrumbs() {
+        if (isRootContext()) {
+            return breadCrumbs;
         }
-        return breadCrumbPanel;
+        return getRootContext().getBreadCrumbs();
     }
 
-    public ListBreadcrumbMapper.BreadCrumbPanel getBreadCrumbPanel() {
-        return breadCrumbPanel;
+    public Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> getBreadCrumbStatus() {
+        if (isRootContext()) {
+            return breadCrumbStatus;
+        }
+        return getRootContext().getBreadCrumbStatus();
     }
 
-    public void setBreadCrumbPanel(ListBreadcrumbMapper.BreadCrumbPanel breadCrumbPanel) {
-        this.breadCrumbPanel = breadCrumbPanel;
+    public ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus getSelectedBreadCrumbStatus() {
+        return selectedBreadCrumbStatus;
+    }
+
+    public void setSelectedBreadCrumbStatus(ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus) {
+        this.selectedBreadCrumbStatus = selectedBreadCrumbStatus;
     }
 
     @SuppressWarnings("unchecked")

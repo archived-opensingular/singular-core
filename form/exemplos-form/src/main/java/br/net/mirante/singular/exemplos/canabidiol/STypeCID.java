@@ -32,7 +32,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
 
         STypeComposite<?> capitulo = addFieldComposite("capitulo");
         capitulo
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Capítulo")
@@ -57,7 +57,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
 
         STypeComposite<?> grupo = addFieldComposite("grupo");
         grupo
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Grupo")
@@ -86,7 +86,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
 
         STypeComposite<?> categoria = addFieldComposite("categoria");
         categoria
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Categoria")
@@ -115,7 +115,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
 
         STypeComposite<?> subcategoria = addFieldComposite("subcategoria");
         subcategoria
-                .asAtrCore()
+                .asAtrBasic()
                 .required(inst -> ciddao.listSubCategoriasByIdCategoria(Value.of(inst, idCategoria)).size() > 0)
                 .asAtrBasic()
                 .label("Sub-Categoria")

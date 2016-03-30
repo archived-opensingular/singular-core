@@ -23,8 +23,13 @@ public class MetronicBreadcrumbBar extends Panel {
     private List<String> breadcrumbs;
 
     public MetronicBreadcrumbBar(String id) {
+        this(id, new ArrayList<>());
+    }
+
+    public MetronicBreadcrumbBar(String id, List<String> breadcrumbs) {
         super(id);
-        breadcrumbs = new ArrayList<>();
+        this.breadcrumbs = breadcrumbs;
+
     }
 
     @Override
@@ -53,6 +58,7 @@ public class MetronicBreadcrumbBar extends Panel {
         add(breadCrumbsListView);
     }
 
+    @Deprecated
     public MetronicBreadcrumbBar addBreadCrumb(String breadcrumb) {
         breadcrumbs.add(breadcrumb);
         return this;

@@ -7,6 +7,7 @@ package br.net.mirante.singular.form.mform.core;
 
 import java.util.function.Consumer;
 
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.SInfoType;
@@ -25,15 +26,15 @@ public class STypeString extends STypeSimple<SIString, String> {
     }
 
     public boolean getValorAtributoTrim() {
-        return getAttributeValue(SPackageCore.ATR_TRIM);
+        return getAttributeValue(SPackageBasic.ATR_TRIM);
     }
 
     public boolean getValorAtributoEmptyToNull() {
-        return getAttributeValue(SPackageCore.ATR_EMPTY_TO_NULL);
+        return getAttributeValue(SPackageBasic.ATR_EMPTY_TO_NULL);
     }
 
     public STypeString withValorAtributoTrim(boolean valor) {
-        return (STypeString) with(SPackageCore.ATR_TRIM, valor);
+        return (STypeString) with(SPackageBasic.ATR_TRIM, valor);
     }
 
     public <T extends Enum<T>> STypeString withSelectionOf(Class<T> enumType) {

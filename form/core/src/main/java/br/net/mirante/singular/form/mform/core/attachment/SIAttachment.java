@@ -16,11 +16,6 @@ import org.apache.tika.Tika;
 
 public class SIAttachment extends SIComposite {
 
-    private IAttachmentPersistenceHandler getAttachmentHandler() {
-        return isTemporary() ? getDocument().getAttachmentPersistenceTemporaryHandler()
-                : getDocument().getAttachmentPersistencePermanentHandler();
-    }
-
     private AttachmentDocumentService getAttachmentService() {
         return AttachmentDocumentService.lookup(this);
     }
@@ -45,7 +40,7 @@ public class SIAttachment extends SIComposite {
         setValue(STypeAttachment.FIELD_SIZE, ref.getSize());
     }
 
-    public void deleteReference() {
+    void deleteReference() {
         if (getFileId() != null) {
             getAttachmentService().deleteReference(getFileId());
         }
@@ -68,7 +63,13 @@ public class SIAttachment extends SIComposite {
         if (hash == null) {
             return null;
         }
-        final IAttachmentRef ref = getAttachmentHandler().getAttachment(hash);
+
+        IAttachmentRef ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(hash);
+
+        if (ref == null) {
+            ref = getDocument().getAttachmentPersistencePermanentHandler().getAttachment(hash);
+        }
+
         if (ref == null) {
             throw new RuntimeException(errorMsg("Não foi encontrado o arquivo de hash=" + hash + " e nome=" + getFileName()));
         }
@@ -123,15 +124,6 @@ public class SIAttachment extends SIComposite {
     public InputStream getContent() {
         IAttachmentRef ref = getAttachmentRef();
         return ref == null ? null : ref.getContent();
-    }
-
-    public SIAttachment setTemporary() {
-        setAttributeValue(STypeAttachment.ATR_IS_TEMPORARY, "true");
-        return this;
-    }
-
-    private boolean isTemporary() {
-        return getAttributeValue(STypeAttachment.ATR_IS_TEMPORARY) != null;
     }
 
     private String getContentType() {

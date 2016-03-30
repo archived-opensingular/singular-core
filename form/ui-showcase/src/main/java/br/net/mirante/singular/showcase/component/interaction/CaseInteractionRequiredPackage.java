@@ -39,12 +39,12 @@ public class CaseInteractionRequiredPackage extends SPackage {
         recordText.as(SPackageBasic.aspect())
                 .label("Text")
                 .dependsOn(required)
-                .asAtrCore().required(ins -> ins.findNearestValue(required, Boolean.class).orElse(false))
+                .asAtrBasic().required(ins -> ins.findNearestValue(required, Boolean.class).orElse(false))
                 .asAtrBootstrap().colPreference(3);
 
         recordDate.as(SPackageBasic.aspect())
                 .label("Date").dependsOn(required)
-                .asAtrCore().required(ins -> ins.findNearestValue(required, Boolean.class).orElse(false))
+                .asAtrBasic().required(ins -> ins.findNearestValue(required, Boolean.class).orElse(false))
                 .asAtrBootstrap().colPreference(2);
     }
 }

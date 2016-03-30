@@ -68,7 +68,6 @@ public class AttachmentListMapper extends AbstractListaMapper {
                     if (upload != null) {
                         attachment.setContent(upload.getBytes());
                         attachment.setFileName(upload.getClientFileName());
-                        attachment.setTemporary();
                         target.add(container.setOutputMarkupId(true));
                     }
                 }

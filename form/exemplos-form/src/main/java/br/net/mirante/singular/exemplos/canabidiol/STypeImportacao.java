@@ -24,7 +24,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
         STypeString modalidade = this.addFieldString("modalidadeImportacao");
 
         modalidade
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Modalidade de Importação")
@@ -52,7 +52,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
         STypeString naturezaIntermediador = this.addFieldString("naturezaIntermediador");
 
         naturezaIntermediador
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Natureza do intermediador")
@@ -73,7 +73,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
 
         this.addFieldString("razaoSocialIntermediador")
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("Razão Social")
@@ -85,7 +85,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
 
         addFieldCNPJ("cnpjIntermediador")
-                .asAtrCore()
+                .asAtrBasic()
                 .required()
                 .asAtrBasic()
                 .label("CNPJ")
@@ -115,14 +115,14 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrAnnotation().setAnnotated();
         tipoContato
                 .telefoneFixo
-                .asAtrCore()
+                .asAtrBasic()
                 .required();
     }
 
     private void bagagemAcompanhada(STypeString modalidade, String bagagemAcompanhada) {
 
         this.addFieldString("nomePassageiro")
-                .asAtrCore()
+                .asAtrBasic()
                 .required(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .asAtrBasic()
                 .label("Nome do Passageiro")
@@ -134,7 +134,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
 
         this.addFieldString("passaporte")
-                .asAtrCore()
+                .asAtrBasic()
                 .required(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .asAtrBasic()
                 .label("Número do passaporte")

@@ -15,11 +15,13 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STranslatorForAttribute;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.freemarker.FormFreemarkerUtil;
 
 public class AtrBasic extends STranslatorForAttribute {
 
-    public AtrBasic() {}
+    public AtrBasic() {
+    }
 
     public AtrBasic(SAttributeEnabled alvo) {
         super(alvo);
@@ -64,6 +66,7 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_VISIVEL, valor);
         return this;
     }
+
     public AtrBasic visivel(Predicate<SInstance> valor) {
         setAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION, valor);
         return this;
@@ -73,18 +76,52 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_ENABLED, valor);
         return this;
     }
+
     public AtrBasic enabled(Predicate<SInstance> valor) {
         setAttributeValue(SPackageBasic.ATR_ENABLED_FUNCTION, valor);
         return this;
     }
+
     public AtrBasic dependsOn(Supplier<Collection<SType<?>>> valor) {
         setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, valor);
         return this;
     }
+
     public AtrBasic dependsOn(SType<?>... tipos) {
         return dependsOn(() -> Arrays.asList(tipos));
     }
 
+    public AtrBasic required() {
+        return required(true);
+    }
+
+    public AtrBasic required(Boolean value) {
+        setAttributeValue(SPackageBasic.ATR_REQUIRED, value);
+        return this;
+    }
+
+    public AtrBasic required(Predicate<SInstance> valor) {
+        setAttributeValue(SPackageBasic.ATR_OBRIGATORIO_FUNCTION, valor);
+        return this;
+    }
+
+    public Boolean isRequired() {
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_REQUIRED));
+    }
+
+    public AtrBasic exists(Boolean valor) {
+        setAttributeValue(SPackageBasic.ATR_REQUIRED, valor);
+        return this;
+    }
+
+    public AtrBasic exists(Predicate<SInstance> valor) {
+        setAttributeValue(SPackageBasic.ATR_OBRIGATORIO_FUNCTION, valor);
+        return this;
+    }
+
+    public boolean exists() {
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_REQUIRED));
+    }
     //    public AtrBasic onChange(Function<IBehavior<MInstancia>, IBehavior<MInstancia>> behaviorFunction) {
     //        IBehavior<MInstancia> existingBehavior = getOnChange();
     //        IBehavior<MInstancia> newBehavior = behaviorFunction.apply(IBehavior.noopIfNull(existingBehavior));

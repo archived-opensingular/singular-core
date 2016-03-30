@@ -60,9 +60,11 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
         public void buildView() {
+//            container.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> buildBreadCrumbBar(id, Arrays.asList("Bread", "Crumb")));
+
             final BSGrid grid = createCompositeGrid(ctx);
             buildFields(ctx, grid);
-            if(renderAnnotations()){
+            if (renderAnnotations()) {
                 ctx.getRootContext().updateAnnotations(
                         appendAnnotationToggleButton(grid.newRow(), instance),
                         instance);
@@ -154,4 +156,5 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             return col;
         }
     }
+
 }

@@ -23,6 +23,10 @@ public class CaseListByBreadcrumbPackage extends SPackage {
 
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
+        testForm.addFieldString("nome", true)
+                .asAtrBasic().label("Nome");
+        testForm.addFieldInteger("idade", true)
+                .asAtrBasic().label("Idade");
         STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
         STypeComposite<?> experiencia = experiencias.getElementsType();
         STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
