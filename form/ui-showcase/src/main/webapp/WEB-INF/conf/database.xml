@@ -45,9 +45,4 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <jdbc:initialize-database data-source="dataSource" ignore-failures="NONE">
-        <jdbc:script location="classpath:/data/notificacaosimplificada/create_tables.sql" encoding="UTF-8"/>
-        <jdbc:script location="classpath:/data/notificacaosimplificada/inserts.sql" encoding="UTF-8"/>
-    </jdbc:initialize-database>
-
 </beans>
