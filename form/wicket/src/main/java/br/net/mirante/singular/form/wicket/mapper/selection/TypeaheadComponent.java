@@ -28,12 +28,10 @@ import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
 
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.Map;
-import java.util.Optional;
 
-import static br.net.mirante.singular.form.wicket.mapper.selection.TypeheadComponent.generateResultOptions;
-import static br.net.mirante.singular.form.wicket.mapper.selection.TypeheadComponent.newValue;
+import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -47,14 +45,14 @@ import static com.google.common.collect.Maps.newHashMap;
  *
  * @author Fabricio Buzeto
  */
-public class TypeheadComponent extends Panel {
+public class TypeaheadComponent extends Panel {
 
     private final SViewAutoComplete.Mode fetch;
     private WebMarkupContainer container;
     private AbstractAjaxBehavior dynamicFetcher;
     private HiddenField valueField;
 
-    public TypeheadComponent(String id, IModel<?> model, SViewAutoComplete.Mode fetch) {
+    public TypeaheadComponent(String id, IModel<?> model, SViewAutoComplete.Mode fetch) {
         super(id, model);
         this.fetch = fetch;
     }
@@ -68,9 +66,16 @@ public class TypeheadComponent extends Panel {
     private WebMarkupContainer buildContainer() {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
         MOptionsModel options = new MOptionsModel(getDefaultModel());
-        String label = "";
-        if(instance().getValue() != null ){ label = instance().getSelectLabel();    }
-        c.queue(new TextField("label_field", Model.of(label)));
+
+        c.queue(new TextField("label_field", new Model(){
+            @Override
+            public Serializable getObject() {
+                IModel<?> parentModel = TypeaheadComponent.this.getDefaultModel();
+                SInstance instance = (SInstance) parentModel.getObject();
+                if(instance().getValue() != null ){ return instance().getSelectLabel();    }
+                return "";
+            }
+        }));
         c.queue(valueField = new HiddenField("value_field", options));
         add(dynamicFetcher = new BloodhoundDataBehavior(options));
         return c;
@@ -79,7 +84,7 @@ public class TypeheadComponent extends Panel {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("TypeheadComponent.js")));
+        response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("TypeaheadComponent.js")));
         response.render(OnDomReadyHeaderItem.forScript(createJSFetcher()));
     }
 
@@ -101,7 +106,7 @@ public class TypeheadComponent extends Panel {
     private String createBindExpression() {
         return ".bind('typeahead:select', function(ev, suggestion) {\n" +
                 "  console.log(ev, suggestion); \n"+
-                "   $('#" + valueField.getMarkupId() + "').val(suggestion['key']);\n" +
+                "   $('#" + valueField.getMarkupId() + "').val(suggestion['key']).change();\n" +
                 "})";
     }
     private String dynamicJSFetch() {

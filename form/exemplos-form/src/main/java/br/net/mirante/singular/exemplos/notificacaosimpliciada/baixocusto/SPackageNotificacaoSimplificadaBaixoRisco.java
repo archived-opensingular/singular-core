@@ -7,10 +7,7 @@ package br.net.mirante.singular.exemplos.notificacaosimpliciada.baixocusto;
 
 import br.net.mirante.singular.exemplos.notificacaosimpliciada.service.DominioService;
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
+import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
@@ -48,7 +45,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         linhaProducao
                 .asAtrBasic()
                 .label("Linha de Produção");
-        linhaProducao.setView(SViewSelectionBySelect::new);
+        linhaProducao.setView(SViewAutoComplete::new);
         linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (optionsInstance, lb) -> {
             for (Pair p : dominioService(optionsInstance).linhasProducao()) {
                 lb
@@ -179,7 +176,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .colPreference(6)
                     .asAtrBasic()
                     .label("Embalagem primária")
-                    .getTipo().setView(SViewSelectionBySelect::new);
+                    .getTipo().setView(SViewAutoComplete::new);
             embalagemPrimaria.withSelectionFromProvider(descricaoEmbalagemPrimaria, (optionsInstance, lb) -> {
                 for (Pair p : dominioService(optionsInstance).embalagensPrimarias()) {
                     lb
@@ -199,7 +196,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .colPreference(6)
                     .asAtrBasic()
                     .label("Embalagem secundária")
-                    .getTipo().setView(SViewSelectionBySelect::new);
+                    .getTipo().setView(SViewAutoComplete::new);
             embalagemSecundaria.withSelectionFromProvider(descricaoEmbalagemSecundaria, (optionsInstance, lb) -> {
                 for (Pair p : dominioService(optionsInstance).embalagensSecundarias()) {
                     lb
@@ -225,7 +222,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .colPreference(3)
                 .asAtrBasic()
                 .label("Unidade de medida")
-                .getTipo().setView(SViewSelectionBySelect::new);
+                .getTipo().setView(SViewAutoComplete::new);
         unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (optionsInstance, lb) -> {
             for (Pair p : dominioService(optionsInstance).unidadesMedida()) {
                 lb
@@ -311,7 +308,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     }
                 })
                 .asAtrBasic().label("Empresa internacional")
-                .getTipo().setView(SViewSelectionBySelect::new);
+                .getTipo().setView(SViewAutoComplete::new);
 
         STypeComposite<SIComposite> empresaTerceirizada = localFabricacao.addFieldComposite("empresaTerceirizada");
 
@@ -329,7 +326,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         STypeString endereco = empresa.addFieldString("endereco");
         empresa
                 .asAtrBasic().label("Empresa")
-                .getTipo().withView(SViewSelectionBySelect::new);
+                .getTipo().withView(SViewAutoComplete::new);
 
         empresa.withSelectionFromProvider(razaoSocial, (optionsInstance, lb) -> {
             for (Triple t : dominioService(optionsInstance).empresaTerceirizada()) {
@@ -348,7 +345,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         STypeString                                         descricaoEtapaFabricacao = etapaFabricacao.addFieldString("descricao");
 
         etapaFabricacao
-                .setView(SViewSelectionBySelect::new);
+                .setView(SViewAutoComplete::new);
 
         etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (optionsInstance, lb) -> {
             for (Pair p : dominioService(optionsInstance).etapaFabricacao()) {
@@ -389,7 +386,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     }
                 })
                 .asAtrBasic().label("Outro local de fabricação")
-                .getTipo().setView(SViewSelectionBySelect::new);
+                .getTipo().setView(SViewAutoComplete::new);
 
         locaisFabricacao
                 .withView(new SViewListByMasterDetail()
