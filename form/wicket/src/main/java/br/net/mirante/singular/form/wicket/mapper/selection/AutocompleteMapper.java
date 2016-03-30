@@ -4,14 +4,10 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
 /**
@@ -25,10 +21,10 @@ public class AutocompleteMapper implements ControlsFieldComponentMapper {
                                  BSControls formGroup,
                                  IModel<? extends SInstance> model,
                                  IModel<String> labelModel) {
-        Component comp;
+        TypeaheadComponent comp;
 
         validateView(view);
-        formGroup.appendDiv(comp = new TypeheadComponent(model.getObject().getName(),
+        formGroup.appendDiv(comp = new TypeaheadComponent(model.getObject().getName(),
                 model, ((SViewAutoComplete)view).fetch()));
         return comp;
     }
