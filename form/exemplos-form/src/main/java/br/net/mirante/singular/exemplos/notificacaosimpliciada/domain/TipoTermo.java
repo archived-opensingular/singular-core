@@ -105,15 +105,6 @@ public class TipoTermo extends BaseEntity implements MedEntity<Long> {
       }
    }
 
-   public boolean isComplementoSubstancia() {
-      if (ComplementoSubstancia.class.getSimpleName()
-            .equalsIgnoreCase(getNomeEntidade())) {
-         return true;
-      } else {
-         return false;
-      }
-   }
-
    @Override
    public Serializable getCod() {
       return id;

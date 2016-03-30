@@ -1,7 +1,5 @@
 package br.net.mirante.singular.exemplos.notificacaosimpliciada.domain.enums;
 
-import org.apache.commons.lang.BooleanUtils;
-
 public enum SituacaoSimNao {
 	
 	SIM("Sim","S"),
@@ -49,7 +47,7 @@ public enum SituacaoSimNao {
 	}
 	
 	public static SituacaoSimNao fromBoolean(Boolean bool){
-		if (BooleanUtils.isTrue(bool)){
+		if (bool != null && bool.booleanValue()){
 			return SIM;
 		} else {
 			return NAO;

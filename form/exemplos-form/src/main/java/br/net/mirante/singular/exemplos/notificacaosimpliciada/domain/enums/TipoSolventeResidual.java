@@ -1,7 +1,5 @@
 package br.net.mirante.singular.exemplos.notificacaosimpliciada.domain.enums;
 
-import br.gov.anvisa.reg.medicamento.domain.enums.EnumId;
-
 public enum TipoSolventeResidual implements EnumId<TipoSolventeResidual, Character> {
 
 	CLASSE_1('1', "Classe 1 - Solventes que devem ser evitados"),
