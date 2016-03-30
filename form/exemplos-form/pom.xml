@@ -10,7 +10,6 @@
         <version>0.6.3-SNAPSHOT</version>
     </parent>
 
-
     <artifactId>exemplos-form</artifactId>
     <name>[singular :: form :: exemplos-form]</name>
     <packaging>jar</packaging>
@@ -26,6 +25,11 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-wicket</artifactId>
+            <version>0.6.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>singular-support</artifactId>
             <version>0.6.3-SNAPSHOT</version>
         </dependency>
 

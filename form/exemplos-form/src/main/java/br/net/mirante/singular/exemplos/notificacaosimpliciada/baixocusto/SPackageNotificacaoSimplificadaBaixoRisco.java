@@ -5,15 +5,8 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimpliciada.baixocusto;
 
-import br.net.mirante.singular.exemplos.notificacaosimpliciada.NotificacaoSimplificadaProviderUtils;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.exemplos.notificacaosimpliciada.service.DominioService;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
@@ -29,9 +22,13 @@ import java.util.Optional;
 
 public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
-    public static final String PACOTE = "mform.peticao.notificacaosimplificada";
-    public static final String TIPO = "MedicamentoBaixoRisco";
+    public static final String PACOTE        = "mform.peticao.notificacaosimplificada";
+    public static final String TIPO          = "MedicamentoBaixoRisco";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
+
+    private DominioService dominioService(SInstance ins){
+        return ins.getDocument().lookupService(DominioService.class);
+    }
 
     public SPackageNotificacaoSimplificadaBaixoRisco() {
         super(PACOTE);
@@ -44,16 +41,16 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento de Baixo Risco");
 
-        final STypeComposite<?> linhaProducao = notificacaoSimplificada.addFieldComposite("linhaProducao");
-        STypeSimple idLinhaProducao = linhaProducao.addFieldInteger("id");
-        STypeSimple descricaoLinhaProducao = linhaProducao.addFieldString("descricao");
+        final STypeComposite<?> linhaProducao          = notificacaoSimplificada.addFieldComposite("linhaProducao");
+        STypeSimple             idLinhaProducao        = linhaProducao.addFieldInteger("id");
+        STypeSimple             descricaoLinhaProducao = linhaProducao.addFieldString("descricao");
 
         linhaProducao
                 .asAtrBasic()
                 .label("Linha de Produção");
         linhaProducao.setView(SViewSelectionBySelect::new);
         linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (optionsInstance, lb) -> {
-            for (Pair p : NotificacaoSimplificadaProviderUtils.linhasProducao()) {
+            for (Pair p : dominioService(optionsInstance).linhasProducao()) {
                 lb
                         .add()
                         .set(idLinhaProducao, p.getKey())
@@ -62,10 +59,10 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         });
 
 
-        final STypeComposite<?> configuracaoLinhaProducao = notificacaoSimplificada.addFieldComposite("configuracaoLinhaProducao");
-        STypeSimple idConfiguracaoLinhaProducao = configuracaoLinhaProducao.addFieldInteger("id");
-        STypeSimple idLinhaProducaoConfiguracao = configuracaoLinhaProducao.addFieldInteger("idLinhaProducao");
-        STypeSimple descConfiguracaoLinhaProducao = configuracaoLinhaProducao.addFieldString("descricao");
+        final STypeComposite<?> configuracaoLinhaProducao     = notificacaoSimplificada.addFieldComposite("configuracaoLinhaProducao");
+        STypeSimple             idConfiguracaoLinhaProducao   = configuracaoLinhaProducao.addFieldInteger("id");
+        STypeSimple             idLinhaProducaoConfiguracao   = configuracaoLinhaProducao.addFieldInteger("idLinhaProducao");
+        STypeSimple             descConfiguracaoLinhaProducao = configuracaoLinhaProducao.addFieldString("descricao");
 
         configuracaoLinhaProducao
                 .asAtrBasic()
@@ -76,7 +73,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .withSelectView()
                 .withSelectionFromProvider(descConfiguracaoLinhaProducao, (optionsInstance, lb) -> {
                     Integer id = (Integer) Value.of(optionsInstance, idLinhaProducao);
-                    for (Triple p : NotificacaoSimplificadaProviderUtils.configuracoesLinhaProducao(id)) {
+                    for (Triple p : dominioService(optionsInstance).configuracoesLinhaProducao(id)) {
                         lb
                                 .add()
                                 .set(idConfiguracaoLinhaProducao, p.getLeft())
@@ -94,11 +91,11 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .dependsOn(configuracaoLinhaProducao)
                 .visivel(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
 
-        final STypeComposite<?> concentracaoSubstancia = substancias.getElementsType();
-        final STypeComposite<?> substancia = concentracaoSubstancia.addFieldComposite("substancia");
-        STypeSimple idSubstancia = substancia.addFieldInteger("id");
-        STypeSimple idConfiguracaoLinhaProducaoSubstancia = substancia.addFieldInteger("configuracaoLinhaProducao");
-        STypeSimple substanciaDescricao = substancia.addFieldString("descricao");
+        final STypeComposite<?> concentracaoSubstancia                = substancias.getElementsType();
+        final STypeComposite<?> substancia                            = concentracaoSubstancia.addFieldComposite("substancia");
+        STypeSimple             idSubstancia                          = substancia.addFieldInteger("id");
+        STypeSimple             idConfiguracaoLinhaProducaoSubstancia = substancia.addFieldInteger("configuracaoLinhaProducao");
+        STypeSimple             substanciaDescricao                   = substancia.addFieldString("descricao");
         substancia
                 .asAtrBasic()
                 .label("Substância")
@@ -108,7 +105,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .withSelectView()
                 .withSelectionFromProvider(substanciaDescricao, (optionsInstance, lb) -> {
                     Integer id = (Integer) Value.of(optionsInstance, idConfiguracaoLinhaProducao);
-                    for (Triple p : NotificacaoSimplificadaProviderUtils.substancias(id)) {
+                    for (Triple p : dominioService(optionsInstance).substancias(id)) {
                         lb
                                 .add()
                                 .set(idSubstancia, p.getLeft())
@@ -118,10 +115,10 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 });
 
 
-        final STypeComposite<?> concentracao = concentracaoSubstancia.addFieldComposite("concentracao");
-        SType<?> idConcentracacao = concentracao.addFieldInteger("id");
-        STypeSimple idSubstanciaConcentracao = concentracao.addFieldInteger("idSubstancia");
-        STypeSimple descConcentracao = concentracao.addFieldString("descricao");
+        final STypeComposite<?> concentracao             = concentracaoSubstancia.addFieldComposite("concentracao");
+        SType<?>                idConcentracacao         = concentracao.addFieldInteger("id");
+        STypeSimple             idSubstanciaConcentracao = concentracao.addFieldInteger("idSubstancia");
+        STypeSimple             descConcentracao         = concentracao.addFieldString("descricao");
         concentracao
                 .asAtrBasic()
                 .label("Concentração")
@@ -132,7 +129,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .withSelectView()
                 .withSelectionFromProvider(substanciaDescricao, (optionsInstance, lb) -> {
                     Integer id = (Integer) Value.of(optionsInstance, idSubstancia);
-                    for (Triple p : NotificacaoSimplificadaProviderUtils.concentracoes(id)) {
+                    for (Triple p : dominioService(optionsInstance).concentracoes(id)) {
                         lb
                                 .add()
                                 .set(idConcentracacao, p.getLeft())
@@ -149,9 +146,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .asAtrBootstrap()
                 .colPreference(8);
 
-        final STypeComposite<?> formaFarmaceutica = notificacaoSimplificada.addFieldComposite("formaFarmaceutica");
-        SType<?> idFormaFormaceutica = formaFarmaceutica.addFieldInteger("id");
-        STypeSimple descFormaFormaceutica = formaFarmaceutica.addFieldString("descricao");
+        final STypeComposite<?> formaFarmaceutica     = notificacaoSimplificada.addFieldComposite("formaFarmaceutica");
+        SType<?>                idFormaFormaceutica   = formaFarmaceutica.addFieldInteger("id");
+        STypeSimple             descFormaFormaceutica = formaFarmaceutica.addFieldString("descricao");
         formaFarmaceutica
                 .asAtrBasic()
                 .label("Forma Farmacêutica")
@@ -160,7 +157,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         formaFarmaceutica
                 .withSelectView()
                 .withSelectionFromProvider(descFormaFormaceutica, (optionsInstance, lb) -> {
-                    for (Pair p : NotificacaoSimplificadaProviderUtils.formasFarmaceuticas()) {
+                    for (Pair p : dominioService(optionsInstance).formasFarmaceuticas()) {
                         lb
                                 .add()
                                 .set(idFormaFormaceutica, p.getKey())
@@ -173,9 +170,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         STypeComposite<SIComposite> acondicionamento = acondicionamentos.getElementsType();
 
-        STypeComposite<SIComposite> embalagemPrimaria = acondicionamento.addFieldComposite("embalagemPrimaria");
-        STypeString idEmbalagemPrimaria = embalagemPrimaria.addFieldString("id");
-        STypeString descricaoEmbalagemPrimaria = embalagemPrimaria.addFieldString("descricao");
+        STypeComposite<SIComposite> embalagemPrimaria          = acondicionamento.addFieldComposite("embalagemPrimaria");
+        STypeString                 idEmbalagemPrimaria        = embalagemPrimaria.addFieldString("id");
+        STypeString                 descricaoEmbalagemPrimaria = embalagemPrimaria.addFieldString("descricao");
         {
             embalagemPrimaria
                     .asAtrBootstrap()
@@ -184,7 +181,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .label("Embalagem primária")
                     .getTipo().setView(SViewSelectionBySelect::new);
             embalagemPrimaria.withSelectionFromProvider(descricaoEmbalagemPrimaria, (optionsInstance, lb) -> {
-                for (Pair p : NotificacaoSimplificadaProviderUtils.embalagensPrimarias()) {
+                for (Pair p : dominioService(optionsInstance).embalagensPrimarias()) {
                     lb
                             .add()
                             .set(idEmbalagemPrimaria, p.getKey())
@@ -193,9 +190,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
             });
         }
 
-        STypeComposite<SIComposite> embalagemSecundaria = acondicionamento.addFieldComposite("embalagemSecundaria");
-        STypeString idEmbalagemSecundaria = embalagemSecundaria.addFieldString("id");
-        STypeString descricaoEmbalagemSecundaria = embalagemSecundaria.addFieldString("descricao");
+        STypeComposite<SIComposite> embalagemSecundaria          = acondicionamento.addFieldComposite("embalagemSecundaria");
+        STypeString                 idEmbalagemSecundaria        = embalagemSecundaria.addFieldString("id");
+        STypeString                 descricaoEmbalagemSecundaria = embalagemSecundaria.addFieldString("descricao");
         {
             embalagemSecundaria
                     .asAtrBootstrap()
@@ -204,7 +201,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .label("Embalagem secundária")
                     .getTipo().setView(SViewSelectionBySelect::new);
             embalagemSecundaria.withSelectionFromProvider(descricaoEmbalagemSecundaria, (optionsInstance, lb) -> {
-                for (Pair p : NotificacaoSimplificadaProviderUtils.embalagensSecundarias()) {
+                for (Pair p : dominioService(optionsInstance).embalagensSecundarias()) {
                     lb
                             .add()
                             .set(idEmbalagemSecundaria, p.getKey())
@@ -220,9 +217,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .asAtrBasic()
                 .label("Quantidade");
 
-        STypeComposite<SIComposite> unidadeMedida = acondicionamento.addFieldComposite("unidadeMedida");
-        STypeString idUnidadeMedida = unidadeMedida.addFieldString("id");
-        STypeString descricaoUnidadeMedida = unidadeMedida.addFieldString("descricao");
+        STypeComposite<SIComposite> unidadeMedida          = acondicionamento.addFieldComposite("unidadeMedida");
+        STypeString                 idUnidadeMedida        = unidadeMedida.addFieldString("id");
+        STypeString                 descricaoUnidadeMedida = unidadeMedida.addFieldString("descricao");
         unidadeMedida
                 .asAtrBootstrap()
                 .colPreference(3)
@@ -230,7 +227,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .label("Unidade de medida")
                 .getTipo().setView(SViewSelectionBySelect::new);
         unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (optionsInstance, lb) -> {
-            for (Pair p : NotificacaoSimplificadaProviderUtils.unidadesMedida()) {
+            for (Pair p : dominioService(optionsInstance).unidadesMedida()) {
                 lb
                         .add()
                         .set(idUnidadeMedida, p.getKey())
@@ -245,8 +242,8 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .displayString("<#list _inst as c>${c.name}<#sep>, </#sep></#list>");
         {
 
-            STypeAttachment f = estudosEstabilidade.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
+            STypeAttachment f           = estudosEstabilidade.getElementsType();
+            SType<?>        nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
             nomeArquivo.asAtrBasic().label("Nome do Arquivo");
         }
 
@@ -254,14 +251,14 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
             final STypeAttachmentList layoutsRotulagem = acondicionamento.addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
             layoutsRotulagem.asAtrBasic().label("Layout da rotulagem");
 
-            STypeAttachment f = layoutsRotulagem.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
+            STypeAttachment f           = layoutsRotulagem.getElementsType();
+            SType<?>        nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
             nomeArquivo.asAtrBasic().label("Nome do Arquivo");
         }
 
 
         STypeList<STypeComposite<SIComposite>, SIComposite> locaisFabricacao = acondicionamento.addFieldListOfComposite("locaisFabricacao", "localFabricacao");
-        STypeComposite<SIComposite> localFabricacao = locaisFabricacao.getElementsType();
+        STypeComposite<SIComposite>                         localFabricacao  = locaisFabricacao.getElementsType();
         localFabricacao.asAtrBasic().label("Local de Fabricação");
 
         STypeSimple tipoLocalFabricacao = localFabricacao.addFieldInteger("tipoLocalFabricacao");
@@ -277,8 +274,8 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .add(4, "Outro Local de Fabricação");
 
 
-        STypeComposite<SIComposite> empresaPropria = localFabricacao.addFieldComposite("empresaPropria");
-        STypeString razaoSocialPropria = empresaPropria.addFieldString("razaoSocial");
+        STypeComposite<SIComposite> empresaPropria     = localFabricacao.addFieldComposite("empresaPropria");
+        STypeString                 razaoSocialPropria = empresaPropria.addFieldString("razaoSocial");
         razaoSocialPropria
                 .asAtrBasic()
                 .label("Razão Social");
@@ -293,7 +290,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         STypeComposite<SIComposite> empresaInternacional = localFabricacao.addFieldComposite("empresaInternacional");
 
-        STypeString idEmpresaInternacional = empresaInternacional.addFieldString("id");
+        STypeString idEmpresaInternacional   = empresaInternacional.addFieldString("id");
         STypeString razaoSocialInternacional = empresaInternacional.addFieldString("razaoSocial");
         razaoSocialInternacional.asAtrBasic().label("Razão Social");
 
@@ -305,7 +302,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .visivel(i -> Integer.valueOf(2).equals(Value.of(i, tipoLocalFabricacao)));
         empresaInternacional
                 .withSelectionFromProvider(razaoSocialInternacional, (optionsInstance, lb) -> {
-                    for (Triple p : NotificacaoSimplificadaProviderUtils.empresaInternacional()) {
+                    for (Triple p : dominioService(optionsInstance).empresaInternacional()) {
                         lb
                                 .add()
                                 .set(idEmpresaInternacional, p.getLeft())
@@ -325,9 +322,9 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .visivel(i -> Integer.valueOf(3).equals(Value.of(i, tipoLocalFabricacao)));
 
 
-        STypeComposite<SIComposite> empresa = empresaTerceirizada.addFieldComposite("empresa");
-        STypeString idEmpresa = empresa.addFieldString("id");
-        STypeString razaoSocial = empresa.addFieldString("razaoSocial");
+        STypeComposite<SIComposite> empresa     = empresaTerceirizada.addFieldComposite("empresa");
+        STypeString                 idEmpresa   = empresa.addFieldString("id");
+        STypeString                 razaoSocial = empresa.addFieldString("razaoSocial");
         razaoSocial.asAtrBasic().label("Razão Social");
         STypeString endereco = empresa.addFieldString("endereco");
         empresa
@@ -335,7 +332,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .getTipo().withView(SViewSelectionBySelect::new);
 
         empresa.withSelectionFromProvider(razaoSocial, (optionsInstance, lb) -> {
-            for (Triple t : NotificacaoSimplificadaProviderUtils.empresaTerceirizada()) {
+            for (Triple t : dominioService(optionsInstance).empresaTerceirizada()) {
                 lb
                         .add()
                         .set(idEmpresa, t.getLeft())
@@ -344,17 +341,17 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
             }
         });
 
-        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao = empresaTerceirizada.addFieldListOfComposite("etapasFabricacao", "etapaFabricacaoWrapper");
-        STypeComposite<SIComposite> etapaFabricacaoWrapper = etapasFabricacao.getElementsType();
-        STypeComposite<SIComposite> etapaFabricacao = etapaFabricacaoWrapper.addFieldComposite("etapaFabricacao");
-        STypeString idEtapaFabricacao = etapaFabricacao.addFieldString("id");
-        STypeString descricaoEtapaFabricacao = etapaFabricacao.addFieldString("descricao");
+        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao         = empresaTerceirizada.addFieldListOfComposite("etapasFabricacao", "etapaFabricacaoWrapper");
+        STypeComposite<SIComposite>                         etapaFabricacaoWrapper   = etapasFabricacao.getElementsType();
+        STypeComposite<SIComposite>                         etapaFabricacao          = etapaFabricacaoWrapper.addFieldComposite("etapaFabricacao");
+        STypeString                                         idEtapaFabricacao        = etapaFabricacao.addFieldString("id");
+        STypeString                                         descricaoEtapaFabricacao = etapaFabricacao.addFieldString("descricao");
 
         etapaFabricacao
                 .setView(SViewSelectionBySelect::new);
 
         etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (optionsInstance, lb) -> {
-            for (Pair p : NotificacaoSimplificadaProviderUtils.etapaFabricacao()) {
+            for (Pair p : dominioService(optionsInstance).etapaFabricacao()) {
                 lb
                         .add()
                         .set(idEtapaFabricacao, p.getKey())
@@ -372,7 +369,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         STypeComposite<SIComposite> outroLocalFabricacao = localFabricacao.addFieldComposite("outroLocalFabricacao");
 
-        STypeString idOutroLocalFabricacao = outroLocalFabricacao.addFieldString("id");
+        STypeString idOutroLocalFabricacao          = outroLocalFabricacao.addFieldString("id");
         STypeString razaoSocialOutroLocalFabricacao = outroLocalFabricacao.addFieldString("razaoSocial");
         razaoSocialOutroLocalFabricacao.asAtrBasic().label("Razão Social");
         STypeString enderecoOutroLocalFabricacao = outroLocalFabricacao.addFieldString("endereco");
@@ -383,7 +380,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         outroLocalFabricacao
                 .withSelectionFromProvider(razaoSocialOutroLocalFabricacao, (optionsInstance, lb) -> {
-                    for (Triple p : NotificacaoSimplificadaProviderUtils.outroLocalFabricacao()) {
+                    for (Triple p : dominioService(optionsInstance).outroLocalFabricacao()) {
                         lb
                                 .add()
                                 .set(idOutroLocalFabricacao, p.getLeft())

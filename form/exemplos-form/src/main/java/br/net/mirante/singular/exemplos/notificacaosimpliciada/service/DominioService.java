@@ -1,15 +1,18 @@
-package br.net.mirante.singular.exemplos.notificacaosimpliciada;
+package br.net.mirante.singular.exemplos.notificacaosimpliciada.service;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NotificacaoSimplificadaProviderUtils {
+@Service
+public class DominioService {
 
-    public static List<Pair> linhasProducao() {
+    public List<Pair> linhasProducao() {
         List<Pair> list = new ArrayList<>();
         list.add(Pair.of(1, "Comprimidos"));
         list.add(Pair.of(2, "Comprimidos Revestidos"));
@@ -20,7 +23,7 @@ public class NotificacaoSimplificadaProviderUtils {
     }
 
 
-    public static List<Triple> configuracoesLinhaProducao(Integer idLinhaProducao) {
+    public List<Triple> configuracoesLinhaProducao(Integer idLinhaProducao) {
         List<Triple> list = new ArrayList<>();
         list.add(Triple.of(1, 1, "Comprimidos em Camadas"));
         list.add(Triple.of(2, 1, "Comprimidos Placebo"));
@@ -38,7 +41,7 @@ public class NotificacaoSimplificadaProviderUtils {
     }
 
 
-    public static List<Triple> substancias(Integer idConfiguracaoLinhaProducao) {
+    public List<Triple> substancias(Integer idConfiguracaoLinhaProducao) {
         List<Triple> list = new ArrayList<>();
         list.add(Triple.of(1, 1, "Clorpropamida"));
         list.add(Triple.of(2, 1, "Cumarina"));
@@ -80,7 +83,7 @@ public class NotificacaoSimplificadaProviderUtils {
         return list.stream().filter(t -> t.getMiddle().equals(idConfiguracaoLinhaProducao)).collect(Collectors.toList());
     }
 
-    public static List<Pair> formasFarmaceuticas(){
+    public List<Pair> formasFarmaceuticas(){
         List<Pair> list = new ArrayList<>();
         list.add(Pair.of(1, "Adesivo"));
         list.add(Pair.of(2, "Anel"));
@@ -98,7 +101,7 @@ public class NotificacaoSimplificadaProviderUtils {
         return list;
     }
 
-    public static List<Triple> concentracoes(Integer idSubstancia) {
+    public List<Triple> concentracoes(Integer idSubstancia) {
         List<Triple> list = new ArrayList<>();
 
         if (idSubstancia == null) {
@@ -147,7 +150,7 @@ public class NotificacaoSimplificadaProviderUtils {
         return list.stream().filter(t -> t.getMiddle().equals(idSubstanciaFake)).collect(Collectors.toList());
     }
 
-    public static List<Pair> embalagensPrimarias() {
+    public List<Pair> embalagensPrimarias() {
         List<Pair> list = new ArrayList<>();
         list.add(Pair.of(1, "Ampola"));
         list.add(Pair.of(2, "Bisnaga de plástico opaco"));
@@ -157,7 +160,7 @@ public class NotificacaoSimplificadaProviderUtils {
         return list;
     }
 
-    public static List<Pair> embalagensSecundarias() {
+    public List<Pair> embalagensSecundarias() {
         List<Pair> list = new ArrayList<>();
         list.add(Pair.of(1, "Caixa"));
         list.add(Pair.of(2, "Cartucho"));
@@ -166,7 +169,7 @@ public class NotificacaoSimplificadaProviderUtils {
         return list;
     }
 
-    public static List<Pair> unidadesMedida() {
+    public List<Pair> unidadesMedida() {
         List<Pair> list = new ArrayList<>();
         list.add(Pair.of(2, "mg"));
         list.add(Pair.of(1, "g"));
@@ -176,7 +179,7 @@ public class NotificacaoSimplificadaProviderUtils {
         return list;
     }
 
-    public static List<Triple> empresaInternacional() {
+    public List<Triple> empresaInternacional() {
         List<Triple> list = new ArrayList<>();
 
         list.add(Triple.of(1, "BAYER", "Munique, Alemanha"));
@@ -185,7 +188,7 @@ public class NotificacaoSimplificadaProviderUtils {
         return list;
     }
 
-    public static List<Triple> empresaTerceirizada() {
+    public List<Triple> empresaTerceirizada() {
         List<Triple> list = new ArrayList<>();
 
         list.add(Triple.of(1, "Aché", "Rua presidentre dutra, São Paulo     SP"));
@@ -194,7 +197,7 @@ public class NotificacaoSimplificadaProviderUtils {
         return list;
     }
 
-    public static List<Triple> outroLocalFabricacao() {
+    public List<Triple> outroLocalFabricacao() {
         List<Triple> list = new ArrayList<>();
 
         list.add(Triple.of(1, "Laboratório EMS", "Moema SP"));
@@ -203,7 +206,7 @@ public class NotificacaoSimplificadaProviderUtils {
         return list;
     }
 
-    public static List<Pair> etapaFabricacao() {
+    public List<Pair> etapaFabricacao() {
         List<Pair> list = new ArrayList<>();
         list.add(Pair.of(1, "Processo produtivo completo"));
         list.add(Pair.of(2, "Processo de embalagem primária"));
@@ -212,4 +215,5 @@ public class NotificacaoSimplificadaProviderUtils {
         list.add(Pair.of(5, "Controle de qualidade"));
         return list;
     }
+
 }
