@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud.services;
 
+import br.net.mirante.singular.exemplos.notificacaosimpliciada.spring.NotificaoSimplificadaSpringConfiguration;
+import br.net.mirante.singular.form.spring.SpringServiceRegistry;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import br.net.mirante.singular.form.mform.RefService;
@@ -16,10 +19,17 @@ import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
 @Component("showcaseDocumentFactory")
 public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
 
+    private final static SpringServiceRegistry notificaoSimplificadaAppContext;
+
+    static {
+        notificaoSimplificadaAppContext = new SpringServiceRegistry(new AnnotationConfigApplicationContext(NotificaoSimplificadaSpringConfiguration.class));
+    }
+
     @Override
     protected void setupDocument(SDocument document) {
         document.setAttachmentPersistenceTemporaryHandler(RefService.of(new InMemoryAttachmentPersitenceHandler()));
         document.setAttachmentPersistencePermanentHandler(
                 RefService.of(getServiceRegistry().lookupService(IAttachmentPersistenceHandler.class)));
+        document.addServiceRegistry(notificaoSimplificadaAppContext);
     }
 }
