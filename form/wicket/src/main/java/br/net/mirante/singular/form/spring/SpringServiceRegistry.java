@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -39,17 +40,29 @@ public class SpringServiceRegistry implements ServiceRegistry,
 
     @Override
     public <T> T lookupService(String name, Class<T> targetClass) {
-        return applicationContext.getBean(name, targetClass);
+        try {
+            return applicationContext.getBean(name, targetClass);
+        } catch (NoSuchBeanDefinitionException ex) {
+            return null;
+        }
     }
 
     @Override
     public <T> T lookupService(Class<T> targetClass) {
-        return applicationContext.getBean(targetClass);
+        try {
+            return applicationContext.getBean(targetClass);
+        } catch (NoSuchBeanDefinitionException ex) {
+            return null;
+        }
     }
 
     @Override
     public Object lookupService(String name) {
-        return applicationContext.getBean(name);
+        try {
+            return applicationContext.getBean(name);
+        } catch (NoSuchBeanDefinitionException ex) {
+            return null;
+        }
     }
 
     @Override
