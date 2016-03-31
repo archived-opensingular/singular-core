@@ -16,6 +16,7 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Embalagem
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
 
 @Service
@@ -25,14 +26,8 @@ public class DominioService {
     @Inject
     private VocabularioControladoDAO vocabularioControladoDAO;
 
-    public List<Pair> linhasProducao() {
-        List<Pair> list = new ArrayList<>();
-        list.add(Pair.of(1, "Comprimidos"));
-        list.add(Pair.of(2, "Comprimidos Revestidos"));
-        list.add(Pair.of(3, "Cápsulas"));
-        list.add(Pair.of(4, "Cremes e Pomadas"));
-        list.add(Pair.of(5, "Suspensões Extemporâneas"));
-        return list;
+    public List<LinhaCbpf> linhasProducao(String filtro) {
+        return vocabularioControladoDAO.findByDescricao(LinhaCbpf.class, filtro);
     }
 
 
