@@ -153,7 +153,7 @@ class SelectInputModalContainer extends BSContainer {
                 new ActionAjaxButton("limpar") {
                     @Override
                     protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                        model.getObject().clearInstance();
+//                        model.getObject().clearInstance();
                         target.add(valueInput);
                         searchModal.hide(target);
                     }
@@ -183,12 +183,15 @@ class SelectInputModalContainer extends BSContainer {
         builder
                 .appendColumn(new BSActionColumn<SelectOption, Void>(Model.of(""))
                         .appendAction(Model.of("Selecionar"), Icone.HAND_UP, (target, selectedModel) -> {
+                            valueInput.clearInput();
+
                             selectedModel
                                     .getObject()
                                     .copyValueToInstance(model.getObject());
-                            modal.hide(target);
-                            target.add(valueInput);
+
                             valueInput.getBehaviors(AjaxUpdateInputBehavior.class).forEach(b -> b.onUpdate(target));
+                            target.add(valueInput);
+                            modal.hide(target);
                             /**
                              * Limpa o filtro apos fechar a modal
                              */
