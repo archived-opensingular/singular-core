@@ -5,16 +5,15 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
 
-import java.util.EnumSet;
 import java.util.Optional;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.PackageBuilder;
@@ -34,7 +33,6 @@ import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
@@ -66,13 +64,14 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .asAtrBasic()
                 .label("Linha de Produção");
         linhaProducao.setView(SViewAutoComplete::new);
-        linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (optionsInstance, lb) -> {
-            for (Pair p : dominioService(optionsInstance).linhasProducao()) {
-                lb
-                        .add()
-                        .set(idLinhaProducao, p.getKey())
-                        .set(descricaoLinhaProducao, p.getValue());
+        linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (ins, filter) -> {
+            final SIList<?> list = ins.getType().newList();
+            for (LinhaCbpf lc : dominioService(ins).linhasProducao(filter)) {
+                final SIComposite c = (SIComposite) list.addNew();
+                c.setValue(idLinhaProducao, lc.getId());
+                c.setValue(descricaoLinhaProducao, lc.getDescricao());
             }
+            return list;
         });
 
 
