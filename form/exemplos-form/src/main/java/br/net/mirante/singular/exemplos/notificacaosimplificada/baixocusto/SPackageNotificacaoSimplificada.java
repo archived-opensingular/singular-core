@@ -39,6 +39,9 @@ public class SPackageNotificacaoSimplificada extends SPackage {
 
         pb.createType(STypeEmbalagemPrimaria.class);
         pb.createType(STypeEmbalagemSecundaria.class);
+        pb.createType(STypeEmpresaPropria.class);
+        pb.createType(STypeEmpresaInternacional.class);
+        pb.createType(STypeEmpresaTerceirizada.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
@@ -243,98 +246,25 @@ public class SPackageNotificacaoSimplificada extends SPackage {
                 .add(4, "Outro Local de Fabricação");
 
 
-        STypeComposite<SIComposite> empresaPropria     = localFabricacao.addFieldComposite("empresaPropria");
-        STypeString                 razaoSocialPropria = empresaPropria.addFieldString("razaoSocial");
-        razaoSocialPropria
-                .asAtrBasic()
-                .label("Razão Social");
-        empresaPropria.addFieldCNPJ("cnpj")
-                .asAtrBasic().label("CNPJ");
-        empresaPropria.addFieldString("endereco")
-                .asAtrBasic().label("Endereço");
+        final STypeEmpresaPropria empresaPropria = localFabricacao.addField("empresaPropria", STypeEmpresaPropria.class);
+
         empresaPropria.asAtrBasic()
                 .dependsOn(tipoLocalFabricacao)
                 .visivel(i -> Integer.valueOf(1).equals(Value.of(i, tipoLocalFabricacao)));
 
-
-        STypeComposite<SIComposite> empresaInternacional = localFabricacao.addFieldComposite("empresaInternacional");
-
-        STypeString idEmpresaInternacional   = empresaInternacional.addFieldString("id");
-        STypeString razaoSocialInternacional = empresaInternacional.addFieldString("razaoSocial");
-        razaoSocialInternacional.asAtrBasic().label("Razão Social");
-
-        STypeString enderecoInternacional = empresaInternacional.addFieldString("endereco");
+        final STypeEmpresaInternacional empresaInternacional = localFabricacao.addField("empresaInternacional", STypeEmpresaInternacional.class);
 
         empresaInternacional
                 .asAtrBasic()
                 .dependsOn(tipoLocalFabricacao)
                 .visivel(i -> Integer.valueOf(2).equals(Value.of(i, tipoLocalFabricacao)));
-        empresaInternacional
-                .withSelectionFromProvider(razaoSocialInternacional, (optionsInstance, lb) -> {
-                    for (Triple p : dominioService(optionsInstance).empresaInternacional()) {
-                        lb
-                                .add()
-                                .set(idEmpresaInternacional, p.getLeft())
-                                .set(razaoSocialInternacional, p.getMiddle())
-                                .set(enderecoInternacional, p.getRight());
-                    }
-                })
-                .asAtrBasic().label("Empresa internacional")
-                .getTipo().setView(SViewAutoComplete::new);
 
-        STypeComposite<SIComposite> empresaTerceirizada = localFabricacao.addFieldComposite("empresaTerceirizada");
-
+        final STypeEmpresaTerceirizada empresaTerceirizada = localFabricacao.addField("empresaTerceirizada", STypeEmpresaTerceirizada.class);
 
         empresaTerceirizada
                 .asAtrBasic()
                 .dependsOn(tipoLocalFabricacao)
                 .visivel(i -> Integer.valueOf(3).equals(Value.of(i, tipoLocalFabricacao)));
-
-
-        STypeComposite<SIComposite> empresa     = empresaTerceirizada.addFieldComposite("empresa");
-        STypeString                 idEmpresa   = empresa.addFieldString("id");
-        STypeString                 razaoSocial = empresa.addFieldString("razaoSocial");
-        razaoSocial.asAtrBasic().label("Razão Social");
-        STypeString endereco = empresa.addFieldString("endereco");
-        empresa
-                .asAtrBasic().label("Empresa")
-                .getTipo().withView(SViewAutoComplete::new);
-
-        empresa.withSelectionFromProvider(razaoSocial, (optionsInstance, lb) -> {
-            for (Triple t : dominioService(optionsInstance).empresaTerceirizada()) {
-                lb
-                        .add()
-                        .set(idEmpresa, t.getLeft())
-                        .set(razaoSocial, t.getMiddle())
-                        .set(endereco, t.getRight());
-            }
-        });
-
-        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao         = empresaTerceirizada.addFieldListOfComposite("etapasFabricacao", "etapaFabricacaoWrapper");
-        STypeComposite<SIComposite>                         etapaFabricacaoWrapper   = etapasFabricacao.getElementsType();
-        STypeComposite<SIComposite>                         etapaFabricacao          = etapaFabricacaoWrapper.addFieldComposite("etapaFabricacao");
-        STypeString                                         idEtapaFabricacao        = etapaFabricacao.addFieldString("id");
-        STypeString                                         descricaoEtapaFabricacao = etapaFabricacao.addFieldString("descricao");
-
-        etapaFabricacao
-                .setView(SViewAutoComplete::new);
-
-        etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (ins, filter) -> {
-            final SIList<?> list = ins.getType().newList();
-            for (EtapaFabricacao ef : dominioService(ins).etapaFabricacao(filter)) {
-                final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(idEtapaFabricacao, ef.getId());
-                c.setValue(descricaoEtapaFabricacao, ef.getDescricao());
-            }
-            return list;
-        });
-
-        etapasFabricacao
-                .withView(SViewListByTable::new);
-        etapasFabricacao
-                .asAtrBasic()
-                .label("Etapa de fabricação")
-                .displayString("<#list _inst as c>${c.etapaFabricacao.descricao}<#sep>, </#sep></#list>");
 
 
         STypeComposite<SIComposite> outroLocalFabricacao = localFabricacao.addFieldComposite("outroLocalFabricacao");
@@ -370,8 +300,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
                             label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaInternacional.razaoSocial")).orElse(""));
                             label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaPropria.razaoSocial")).orElse(""));
                             return label;
-                        })
-                        .col(etapasFabricacao))
+                        }).col(empresaTerceirizada.etapasFabricacao()))
                 .asAtrBasic().label("Local de fabricação");
 
         STypeInteger prazoValidade = acondicionamento.addFieldInteger("prazoValidade", true);
