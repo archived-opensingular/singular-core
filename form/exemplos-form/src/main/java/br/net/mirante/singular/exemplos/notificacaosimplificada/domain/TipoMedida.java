@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -29,10 +30,6 @@ public class TipoMedida extends BaseEntity implements Serializable {
       this.id = id;
    }
 
-   public void setCod(Long id) {
-      this.id = id;
-   }
-
    @Column(name = "DS_TIPO_UNIDADE_MEDICAMENTO")
    public String getDescricao() {
       return descricao;
@@ -43,8 +40,13 @@ public class TipoMedida extends BaseEntity implements Serializable {
    }
 
    @Override
+   @Transient
    public Serializable getCod() {
       return id;
+   }
+
+   public void setCod(Long id) {
+      this.id = id;
    }
 
 }
