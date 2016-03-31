@@ -5,28 +5,10 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
 
-import java.util.EnumSet;
-import java.util.Optional;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
+import br.net.mirante.singular.exemplos.canabidiol.STypeContato;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
@@ -34,8 +16,10 @@ import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+import org.apache.commons.lang3.tuple.Triple;
+
+import java.util.Optional;
 
 public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
@@ -54,6 +38,8 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
 
+        pb.createType(STypeEmbalagemPrimaria.class);
+
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento de Baixo Risco");
@@ -66,13 +52,14 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .asAtrBasic()
                 .label("Linha de Produção");
         linhaProducao.setView(SViewAutoComplete::new);
-        linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (optionsInstance, lb) -> {
-            for (Pair p : dominioService(optionsInstance).linhasProducao()) {
-                lb
-                        .add()
-                        .set(idLinhaProducao, p.getKey())
-                        .set(descricaoLinhaProducao, p.getValue());
+        linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (ins, filter) -> {
+            final SIList<?> list = ins.getType().newList();
+            for (LinhaCbpf lc : dominioService(ins).linhasProducao(filter)) {
+                final SIComposite c = (SIComposite) list.addNew();
+                c.setValue(idLinhaProducao, lc.getId());
+                c.setValue(descricaoLinhaProducao, lc.getDescricao());
             }
+            return list;
         });
 
 
@@ -188,26 +175,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         STypeComposite<SIComposite> acondicionamento = acondicionamentos.getElementsType();
 
-        STypeComposite<SIComposite> embalagemPrimaria          = acondicionamento.addFieldComposite("embalagemPrimaria");
-        STypeString                 idEmbalagemPrimaria        = embalagemPrimaria.addFieldString("id");
-        STypeString                 descricaoEmbalagemPrimaria = embalagemPrimaria.addFieldString("descricao");
-        {
-            embalagemPrimaria
-                    .asAtrBootstrap()
-                    .colPreference(6)
-                    .asAtrBasic()
-                    .label("Embalagem primária")
-                    .getTipo().setView(SViewAutoComplete::new);
-            embalagemPrimaria.withSelectionFromProvider(descricaoEmbalagemPrimaria, (ins, filter) -> {
-                final SIList<?> list = ins.getType().newList();
-                for (EmbalagemPrimariaBasica emb : dominioService(ins).findEmbalagensBasicas(filter)) {
-                    final SIComposite c = (SIComposite) list.addNew();
-                    c.setValue(idEmbalagemPrimaria, emb.getId());
-                    c.setValue(descricaoEmbalagemPrimaria, emb.getDescricao());
-                }
-                return list;
-            });
-        }
+        final STypeEmbalagemPrimaria embalagemPrimaria = acondicionamento.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
 
         STypeComposite<SIComposite> embalagemSecundaria          = acondicionamento.addFieldComposite("embalagemSecundaria");
         STypeString                 idEmbalagemSecundaria        = embalagemSecundaria.addFieldString("id");
@@ -431,7 +399,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(descricaoEmbalagemPrimaria, "Embalagem primária")
+                        .col(embalagemPrimaria.getDescricaoEmbalagemPrimaria(), "Embalagem primária")
                         .col(descricaoEmbalagemSecundaria, "Embalagem secundária")
                         .col(quantidade)
                         .col(descricaoUnidadeMedida)

@@ -5,44 +5,44 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 @XmlEnum
 public enum TipoInteracao {
-	
-	@XmlEnumValue("M")
-	MEDICAMENTO('M', "Medicamento"),
-	
-	@XmlEnumValue("N")
-	EXAME_NAO_LABORIAL('N', "Exame laboratorial"),
 
-	@XmlEnumValue("D")
-	DOENCA('D', "Doença"),
+    @XmlEnumValue("M")
+    MEDICAMENTO('M', "Medicamento"),
 
-	@XmlEnumValue("A")
-	ALIMENTO('A', "Alimento");
+    @XmlEnumValue("N")
+    EXAME_NAO_LABORIAL('N', "Exame laboratorial"),
 
-	private Character codigo;
-	private String descricao;
+    @XmlEnumValue("D")
+    DOENCA('D', "Doença"),
 
-	private TipoInteracao(Character codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    @XmlEnumValue("A")
+    ALIMENTO('A', "Alimento");
 
-	public Character getCodigo() {
-		return codigo;
-	}
+    private Character codigo;
+    private String    descricao;
 
-	public String getDescricao() {
-		return descricao;
-	}
-	
-	public static TipoInteracao valueOf(Character codigo) {
+    private TipoInteracao(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-		TipoInteracao status[] = TipoInteracao.values();
+    public Character getCodigo() {
+        return codigo;
+    }
 
-		for (TipoInteracao st : status) {
-			if (codigo != null && st.getCodigo().charValue() == codigo.charValue()){
-				return st;
-			}
-		}
-		return null;
-	}
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public static TipoInteracao valueOf(Character codigo) {
+
+        TipoInteracao status[] = TipoInteracao.values();
+
+        for (TipoInteracao st : status) {
+            if (codigo != null && st.getCodigo().charValue() == codigo.charValue()) {
+                return st;
+            }
+        }
+        return null;
+    }
 }

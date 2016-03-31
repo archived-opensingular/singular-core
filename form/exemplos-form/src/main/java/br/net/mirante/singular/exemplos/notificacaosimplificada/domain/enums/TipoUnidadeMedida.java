@@ -9,72 +9,72 @@ import javax.xml.bind.annotation.XmlEnumValue;
 @XmlEnum
 public enum TipoUnidadeMedida implements EnumId<TipoUnidadeMedida, Character> {
 
-	/**
-	 * Tipo de unidade de volune.
-	 */
-	@XmlEnumValue("V")
-	VOLUME('V', "Volume"),
+    /**
+     * Tipo de unidade de volune.
+     */
+    @XmlEnumValue("V")
+    VOLUME('V', "Volume"),
 
-	/**
-	 * Massa
-	 */
-	@XmlEnumValue("M")
-	MASSA('M', "Massa"),
+    /**
+     * Massa
+     */
+    @XmlEnumValue("M")
+    MASSA('M', "Massa"),
 
-	/**
-	 * Energia
-	 */
-	@XmlEnumValue("E")
-	ENERGIA('E', "Energia"),
+    /**
+     * Energia
+     */
+    @XmlEnumValue("E")
+    ENERGIA('E', "Energia"),
 
-	/**
-	 * Temperatura
-	 */
-	@XmlEnumValue("T")
-	TEMPERATURA('T', "Temperatura");
+    /**
+     * Temperatura
+     */
+    @XmlEnumValue("T")
+    TEMPERATURA('T', "Temperatura");
 
-	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoUnidadeMedida";
-	
-	/**
-	 * Identificador do tipo de unidade de medida.
-	 */
-	private final Character codigo;
+    public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoUnidadeMedida";
 
-	/**
-	 * Descrição do tipo de unidade de medida.
-	 */
-	private final String descricao;
+    /**
+     * Identificador do tipo de unidade de medida.
+     */
+    private final Character codigo;
 
-	private TipoUnidadeMedida(Character codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    /**
+     * Descrição do tipo de unidade de medida.
+     */
+    private final String descricao;
 
-	@Override
-	public Character getCodigo() {
-		return this.codigo;
-	}
+    private TipoUnidadeMedida(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-	@Override
-	public String getDescricao() {
-		return this.descricao;
-	}
+    @Override
+    public Character getCodigo() {
+        return this.codigo;
+    }
 
-	@Override
-	public TipoUnidadeMedida getEnum() {
-		return this;
-	}
+    @Override
+    public String getDescricao() {
+        return this.descricao;
+    }
 
-	/**
-	 * @param id
-	 * @return
-	 */
-	public static TipoUnidadeMedida valueOfEnum(Character id) {
-		for (TipoUnidadeMedida tipo : values()) {
-			if (tipo.getCodigo().equals(id)){
-				return tipo;
-			}
-		}
-		return null;
-	}
+    @Override
+    public TipoUnidadeMedida getEnum() {
+        return this;
+    }
+
+    /**
+     * @param id
+     * @return
+     */
+    public static TipoUnidadeMedida valueOfEnum(Character id) {
+        for (TipoUnidadeMedida tipo : values()) {
+            if (tipo.getCodigo().equals(id)) {
+                return tipo;
+            }
+        }
+        return null;
+    }
 }

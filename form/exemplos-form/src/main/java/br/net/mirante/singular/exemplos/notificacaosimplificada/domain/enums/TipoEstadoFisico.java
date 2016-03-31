@@ -2,48 +2,48 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
 public enum TipoEstadoFisico implements EnumId<TipoEstadoFisico, Character> {
 
-	NAO_INFORMADO('4', ""),
-	
-	SOLIDO('0', "Sólido"),
-	
-	SEMISOLIDO('1', "Semi-sólido"),
-	
-	LIQUIDO('2', "Líquido"),
+    NAO_INFORMADO('4', ""),
 
-	GASOSO('3', "Gasoso");
+    SOLIDO('0', "Sólido"),
 
-	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoEstadoFisico";
-	
-	private TipoEstadoFisico(Character codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    SEMISOLIDO('1', "Semi-sólido"),
 
-	private Character codigo;
+    LIQUIDO('2', "Líquido"),
 
-	private String descricao;
+    GASOSO('3', "Gasoso");
 
-	@Override
-	public TipoEstadoFisico getEnum() {
-		return this;
-	}
+    public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoEstadoFisico";
 
-	@Override
-	public Character getCodigo() {
-		return codigo;
-	}
+    private TipoEstadoFisico(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-	@Override
-	public String getDescricao() {
-		return descricao;
-	}
+    private Character codigo;
 
-	public static TipoEstadoFisico valueOfEnum(Character id) {
-		for (TipoEstadoFisico tipo : values()) {
-			if (tipo.getCodigo().equals(id)){
-				return tipo;
-			}
-		}
-		return null;
-	}
+    private String descricao;
+
+    @Override
+    public TipoEstadoFisico getEnum() {
+        return this;
+    }
+
+    @Override
+    public Character getCodigo() {
+        return codigo;
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public static TipoEstadoFisico valueOfEnum(Character id) {
+        for (TipoEstadoFisico tipo : values()) {
+            if (tipo.getCodigo().equals(id)) {
+                return tipo;
+            }
+        }
+        return null;
+    }
 }

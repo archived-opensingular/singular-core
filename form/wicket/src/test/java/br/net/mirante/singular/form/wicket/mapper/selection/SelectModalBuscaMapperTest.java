@@ -3,6 +3,8 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -32,7 +34,7 @@ public class SelectModalBuscaMapperTest extends SingularFormBaseTest {
     }
 
     @Test
-    public void testIfChooseValueInModelUpdatesDependentComponent(){
+    public void testIfChooseValueInModelUpdatesDependentComponent() {
 
         FormComponent dependentFieldComp = findFormComponentsByType(dependentField)
                 .findFirst()
@@ -45,12 +47,13 @@ public class SelectModalBuscaMapperTest extends SingularFormBaseTest {
         tester.assertInvisible(dependentFieldComp.getPageRelativePath());
 
         AjaxLink link = findOnForm(AjaxLink.class, form.getForm(), al -> al.getId().equals("search_link"))
-.findFirst()
+                .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o link para abertura da modal"));
 
         tester.executeAjaxEvent(link, "click");
 
-        List<AjaxLink> links = findOnForm(AjaxLink.class, form.getForm(), al -> al.getId().equals("link"))
+        List<AjaxLink> links = findOnForm(ActionAjaxLink.class, form.getForm(),
+                al -> al.getId().equals("link"))
                 .collect(Collectors.toList());
 
         tester.executeAjaxEvent(links.get(0), "click");

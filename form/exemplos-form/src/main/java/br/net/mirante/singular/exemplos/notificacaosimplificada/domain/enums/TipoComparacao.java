@@ -5,41 +5,41 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 @XmlEnum
 public enum TipoComparacao {
-	
-	@XmlEnumValue("N")
-	EQUIVALENCIA('N', "Equivalencia"),
 
-	@XmlEnumValue("D")
-	SUPERIORIDADE('D', "Superioridade"),
+    @XmlEnumValue("N")
+    EQUIVALENCIA('N', "Equivalencia"),
 
-	@XmlEnumValue("A")
-	NAO_INFERIORIDADE('A', "Nao Inferioridade");
+    @XmlEnumValue("D")
+    SUPERIORIDADE('D', "Superioridade"),
 
-	private Character codigo;
-	private String descricao;
+    @XmlEnumValue("A")
+    NAO_INFERIORIDADE('A', "Nao Inferioridade");
 
-	private TipoComparacao(Character codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    private Character codigo;
+    private String    descricao;
 
-	public Character getCodigo() {
-		return codigo;
-	}
+    private TipoComparacao(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-	public String getDescricao() {
-		return descricao;
-	}
-	
-	public static TipoComparacao valueOf(Character codigo) {
+    public Character getCodigo() {
+        return codigo;
+    }
 
-		TipoComparacao status[] = TipoComparacao.values();
+    public String getDescricao() {
+        return descricao;
+    }
 
-		for (TipoComparacao st : status) {
-			if (codigo != null && st.getCodigo().charValue() == codigo.charValue()){
-				return st;
-			}
-		}
-		return null;
-	}
+    public static TipoComparacao valueOf(Character codigo) {
+
+        TipoComparacao status[] = TipoComparacao.values();
+
+        for (TipoComparacao st : status) {
+            if (codigo != null && st.getCodigo().charValue() == codigo.charValue()) {
+                return st;
+            }
+        }
+        return null;
+    }
 }

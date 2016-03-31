@@ -23,29 +23,30 @@ import javax.xml.bind.annotation.XmlType;
 @Entity
 @Table(name = "TB_EMBALAGEM_PRIMARIA", schema = "DBMEDICAMENTO")
 @PrimaryKeyJoinColumn(name = "CO_EMBALAGEM_PRIMARIA", referencedColumnName = "CO_SEQ_VOCABULARIO_CONTROLADO")
-@NamedQueries({ @NamedQuery(name = "EmbalagemPrimariaBasica.findAll", query = "Select embalagemPrimaria From EmbalagemPrimariaBasica as embalagemPrimaria where embalagemPrimaria.ativa = 'S'  Order by embalagemPrimaria.descricao  ") })
+@NamedQueries({@NamedQuery(name = "EmbalagemPrimariaBasica.findAll", query = "Select embalagemPrimaria From EmbalagemPrimariaBasica as embalagemPrimaria where embalagemPrimaria.ativa = 'S'  Order by embalagemPrimaria.descricao  ")})
 public class EmbalagemPrimariaBasica extends VocabularioControlado {
 
-   private static final long serialVersionUID = 4438185164918181904L;
+    private static final long serialVersionUID = 4438185164918181904L;
 
-   @Column(name = "SG_EMBALAGEM", nullable = false, length = 10)
-   private String sigla;
+    @Column(name = "SG_EMBALAGEM", nullable = false, length = 10)
+    private String sigla;
 
-   public EmbalagemPrimariaBasica() {}
+    public EmbalagemPrimariaBasica() {
+    }
 
-   public EmbalagemPrimariaBasica(Long id, String descricao, String sigla, SimNao ativa) {
-      this.id = id;
-      this.descricao = descricao;
-      this.sigla = sigla;
-      this.ativa = ativa;
-   }
+    public EmbalagemPrimariaBasica(Long id, String descricao, String sigla, SimNao ativa) {
+        this.id = id;
+        this.descricao = descricao;
+        this.sigla = sigla;
+        this.ativa = ativa;
+    }
 
-   public String getSigla() {
-      return sigla;
-   }
+    public String getSigla() {
+        return sigla;
+    }
 
-   public void setSigla(String sigla) {
-      this.sigla = sigla;
-   }
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
+    }
 
 }

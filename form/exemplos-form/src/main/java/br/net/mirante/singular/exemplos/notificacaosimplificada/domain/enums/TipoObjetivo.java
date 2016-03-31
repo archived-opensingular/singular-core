@@ -6,43 +6,43 @@ import javax.xml.bind.annotation.XmlEnumValue;
 @XmlEnum
 public enum TipoObjetivo {
 
-	@XmlEnumValue("T")
-	TREINAMENTO('T', "Tratamento"),
-	
-	@XmlEnumValue("P")
-	PREVENCAO('P', "Prevencao"),
-	
-	@XmlEnumValue("A")
-	AUXILIAR_DIAGNOSTICO('A', "Auxiliar Diagnostico"),
-	
-	@XmlEnumValue("D")
-	DIAGNOSTICO('D',"Diagnostico");
-	
-	private Character codigo;
-	private String descricao;
+    @XmlEnumValue("T")
+    TREINAMENTO('T', "Tratamento"),
 
-	private TipoObjetivo(Character codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    @XmlEnumValue("P")
+    PREVENCAO('P', "Prevencao"),
 
-	public Character getCodigo() {
-		return codigo;
-	}
+    @XmlEnumValue("A")
+    AUXILIAR_DIAGNOSTICO('A', "Auxiliar Diagnostico"),
 
-	public String getDescricao() {
-		return descricao;
-	}
+    @XmlEnumValue("D")
+    DIAGNOSTICO('D', "Diagnostico");
 
-	public static TipoObjetivo valueOf(Character codigo) {
-		
-		TipoObjetivo status[] = TipoObjetivo.values();
-		
-		for (TipoObjetivo st : status) {    
-			if (codigo != null && st.getCodigo().charValue() == codigo.charValue()){
-				return st;
-			}
-		}
-		return null;
-	}
+    private Character codigo;
+    private String    descricao;
+
+    private TipoObjetivo(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
+
+    public Character getCodigo() {
+        return codigo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public static TipoObjetivo valueOf(Character codigo) {
+
+        TipoObjetivo status[] = TipoObjetivo.values();
+
+        for (TipoObjetivo st : status) {
+            if (codigo != null && st.getCodigo().charValue() == codigo.charValue()) {
+                return st;
+            }
+        }
+        return null;
+    }
 }
