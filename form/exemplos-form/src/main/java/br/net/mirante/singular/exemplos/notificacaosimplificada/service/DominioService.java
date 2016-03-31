@@ -1,15 +1,20 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.service;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class DominioService {
+
+    @Inject
+    private VocabularioControladoDAO vocabularioControladoDAO;
 
     public List<Pair> linhasProducao() {
         List<Pair> list = new ArrayList<>();
