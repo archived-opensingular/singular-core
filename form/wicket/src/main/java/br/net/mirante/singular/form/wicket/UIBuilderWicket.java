@@ -102,12 +102,14 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
             BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs());
             BSRow row = ctx.getContainer().newGrid().newRow();
             row.newCol().appendTag("div", panel);
-            ctx = ctx.createChild(row.newCol(), true, ctx.getModel());
+            WicketBuildContext child = ctx.createChild(row.newCol(), true, ctx.getModel());
+            child.annotation(ctx.annotation());
+            ctx = child;
         }
 
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
-        if (ctx.isRootContext() && ctx.annotation().enabled()) {
+        if (ctx.annotation().enabled()) {
             ctx.init(this, viewMode);
             new AnnotationBuilder(this).build(ctx, viewMode, mapper);
         } else {

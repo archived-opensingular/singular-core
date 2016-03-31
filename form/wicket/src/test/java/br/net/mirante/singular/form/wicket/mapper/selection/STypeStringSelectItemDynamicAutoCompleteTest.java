@@ -59,13 +59,13 @@ public class STypeStringSelectItemDynamicAutoCompleteTest {
     public static class Default extends Base {
 
         @Test public void renderField(){
-            assertThat(findTag(form.getForm(), TypeheadComponent.class)).hasSize(1);
+            assertThat(findTag(form.getForm(), TypeaheadComponent.class)).hasSize(1);
             assertThat(findTag(form.getForm(), TextField.class)).hasSize(2);
             assertThat(findTag(form.getForm(), HiddenField.class)).hasSize(1);
         }
 
         @Test public void haveABloodhoundBehabiour(){
-            List<Component> tag = findTag(form.getForm(), TypeheadComponent.class);
+            List<Component> tag = findTag(form.getForm(), TypeaheadComponent.class);
             assertThat(tag.get(0).getBehaviors()).haveAtLeast(1, new Condition<Behavior>() {
                 @Override
                 public boolean matches(Behavior value) {

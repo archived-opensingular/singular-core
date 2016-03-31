@@ -438,8 +438,8 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                                             IFunction<SInstance, String> displayValueFunction) {
             builder.appendPropertyColumn(labelModel, o -> {
                 SIComposite composto = (SIComposite) o;
-                STypeSimple<?, ?> mtipo = (STypeSimple<?, ?>) mTipoModel.getObject();
-                SISimple<?> instancia = composto.findDescendant(mtipo).get();
+                SType<?> mtipo = mTipoModel.getObject();
+                SInstance instancia = composto.findDescendant(mtipo).get();
                 return displayValueFunction.apply(instancia);
             });
         }
