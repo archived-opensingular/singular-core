@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.exemplos.canabidiol.SPackagePeticaoCanabidiol;
-import br.net.mirante.singular.exemplos.notificacaosimpliciada.baixocusto.SPackageNotificacaoSimplificadaBaixoRisco;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto.SPackageNotificacaoSimplificadaBaixoRisco;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.SDictionary;

@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud.services;
 
-import br.net.mirante.singular.exemplos.notificacaosimpliciada.spring.NotificaoSimplificadaSpringConfiguration;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
 import br.net.mirante.singular.form.spring.SpringServiceRegistry;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
