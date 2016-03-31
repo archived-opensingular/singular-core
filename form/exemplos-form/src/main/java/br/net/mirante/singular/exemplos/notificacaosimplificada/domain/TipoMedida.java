@@ -8,43 +8,45 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Entity
 @Table(name = "TB_TIPO_UNIDADE_MEDICAMENTO", schema = "DBMEDICAMENTO")
 public class TipoMedida extends BaseEntity implements Serializable {
 
-   private static final long serialVersionUID = 1762089876181396422L;
+    private static final long serialVersionUID = 1762089876181396422L;
 
-   private Long id;
-   private String descricao;
+    private Long   id;
+    private String descricao;
 
-   @Id
-   @Column(name = "CO_SEQ_TIPO_UNID_MEDICAMENTO")
-   public Long getId() {
-      return id;
-   }
+    @Id
+    @Column(name = "CO_SEQ_TIPO_UNID_MEDICAMENTO")
+    public Long getId() {
+        return id;
+    }
 
-   public void setId(Long id) {
-      this.id = id;
-   }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-   public void setCod(Long id) {
-      this.id = id;
-   }
+    @Column(name = "DS_TIPO_UNIDADE_MEDICAMENTO")
+    public String getDescricao() {
+        return descricao;
+    }
 
-   @Column(name = "DS_TIPO_UNIDADE_MEDICAMENTO")
-   public String getDescricao() {
-      return descricao;
-   }
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 
-   public void setDescricao(String descricao) {
-      this.descricao = descricao;
-   }
+    @Override
+    @Transient
+    public Serializable getCod() {
+        return id;
+    }
 
-   @Override
-   public Serializable getCod() {
-      return id;
-   }
+    public void setCod(Long id) {
+        this.id = id;
+    }
 
 }

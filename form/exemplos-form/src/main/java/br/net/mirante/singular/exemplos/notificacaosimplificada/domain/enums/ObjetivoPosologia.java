@@ -10,72 +10,72 @@ import javax.xml.bind.annotation.XmlEnumValue;
 @XmlEnum
 public enum ObjetivoPosologia implements EnumId<ObjetivoPosologia, Integer> {
 
-	/**
-	 * Tratamento.
-	 */
-	@XmlEnumValue("1")
-	TRATAMENTO(1, "Tratamento"),
+    /**
+     * Tratamento.
+     */
+    @XmlEnumValue("1")
+    TRATAMENTO(1, "Tratamento"),
 
-	/**
-	 * Prevencao
-	 */
-	@XmlEnumValue("2")
-	PREVENCAO(2, "Prevenção"),
+    /**
+     * Prevencao
+     */
+    @XmlEnumValue("2")
+    PREVENCAO(2, "Prevenção"),
 
-	/**
-	 * Auxiliar diagnostico
-	 */
-	@XmlEnumValue("3")
-	AUXILIAR_DIAGNOSTICO(3, "Auxiliar diagnóstico"),
+    /**
+     * Auxiliar diagnostico
+     */
+    @XmlEnumValue("3")
+    AUXILIAR_DIAGNOSTICO(3, "Auxiliar diagnóstico"),
 
-	/**
-	 * Diagnostico
-	 */
-	@XmlEnumValue("4")
-	DIAGNOSTICO(4, "Diagnóstico");
+    /**
+     * Diagnostico
+     */
+    @XmlEnumValue("4")
+    DIAGNOSTICO(4, "Diagnóstico");
 
-	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.ObjetivoPosologia";
-	
-	/**
-	 * Identificador do tipo de unidade de medida.
-	 */
-	private final Integer codigo;
+    public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.ObjetivoPosologia";
 
-	/**
-	 * Descrição do tipo de unidade de medida.
-	 */
-	private final String descricao;
+    /**
+     * Identificador do tipo de unidade de medida.
+     */
+    private final Integer codigo;
 
-	private ObjetivoPosologia(Integer codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    /**
+     * Descrição do tipo de unidade de medida.
+     */
+    private final String descricao;
 
-	@Override
-	public Integer getCodigo() {
-		return this.codigo;
-	}
+    private ObjetivoPosologia(Integer codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-	@Override
-	public String getDescricao() {
-		return this.descricao;
-	}
+    @Override
+    public Integer getCodigo() {
+        return this.codigo;
+    }
 
-	@Override
-	public ObjetivoPosologia getEnum() {
-		return this;
-	}
+    @Override
+    public String getDescricao() {
+        return this.descricao;
+    }
 
-	/**
-	 * @param id
-	 * @return
-	 */
-	public static ObjetivoPosologia valueOfEnum(Integer id) {
-		for (ObjetivoPosologia tipo : values()) {
-			if (tipo.getCodigo().equals(id)){
-				return tipo;
-			}
-		}
-		return null;
-	}
+    @Override
+    public ObjetivoPosologia getEnum() {
+        return this;
+    }
+
+    /**
+     * @param id
+     * @return
+     */
+    public static ObjetivoPosologia valueOfEnum(Integer id) {
+        for (ObjetivoPosologia tipo : values()) {
+            if (tipo.getCodigo().equals(id)) {
+                return tipo;
+            }
+        }
+        return null;
+    }
 }

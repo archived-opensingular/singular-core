@@ -5,38 +5,38 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 @XmlEnum
 public enum TipoControleClinico {
-	
-	@XmlEnumValue("A")
-	ATIVO('A', "Ativo"),
 
-	@XmlEnumValue("P")
-	PLACEBO('P', "Placebo");
+    @XmlEnumValue("A")
+    ATIVO('A', "Ativo"),
 
-	private Character codigo;
-	private String descricao;
+    @XmlEnumValue("P")
+    PLACEBO('P', "Placebo");
 
-	private TipoControleClinico(Character codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    private Character codigo;
+    private String    descricao;
 
-	public Character getCodigo() {
-		return codigo;
-	}
+    private TipoControleClinico(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-	public String getDescricao() {
-		return descricao;
-	}
-	
-	public static TipoControleClinico valueOf(Character codigo) {
+    public Character getCodigo() {
+        return codigo;
+    }
 
-		TipoControleClinico status[] = TipoControleClinico.values();
+    public String getDescricao() {
+        return descricao;
+    }
 
-		for (TipoControleClinico st : status) {
-			if (codigo != null && st.getCodigo().charValue() == codigo.charValue()){
-				return st;
-			}
-		}
-		return null;
-	}
+    public static TipoControleClinico valueOf(Character codigo) {
+
+        TipoControleClinico status[] = TipoControleClinico.values();
+
+        for (TipoControleClinico st : status) {
+            if (codigo != null && st.getCodigo().charValue() == codigo.charValue()) {
+                return st;
+            }
+        }
+        return null;
+    }
 }

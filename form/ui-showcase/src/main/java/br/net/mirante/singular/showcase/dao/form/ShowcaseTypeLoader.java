@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.exemplos.canabidiol.SPackagePeticaoCanabidiol;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto.SPackageNotificacaoSimplificadaBaixoRisco;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto.SPackageNotificacaoSimplificada;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.SDictionary;
@@ -37,7 +37,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
         add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO);
         add(SPackagePeticaoCanabidiol.class, SPackagePeticaoCanabidiol.NOME_COMPLETO);
-        add(SPackageNotificacaoSimplificadaBaixoRisco.class, SPackageNotificacaoSimplificadaBaixoRisco.NOME_COMPLETO);
+        add(SPackageNotificacaoSimplificada.class, SPackageNotificacaoSimplificada.NOME_COMPLETO);
 
         for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {
             for (ShowCaseItem item : group.getItens()) {

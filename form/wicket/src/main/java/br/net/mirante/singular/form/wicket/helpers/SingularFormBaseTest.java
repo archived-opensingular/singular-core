@@ -76,6 +76,6 @@ public abstract class SingularFormBaseTest {
     }
 
     protected void ajaxClick(Component target) {
-        tester.executeAjaxEvent(target, "onclick");
+        tester.executeAjaxEvent(target, "click");
     }
 }

@@ -5,49 +5,49 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlEnum
-@XmlType(namespace="http://www.anvisa.gov.br/reg-med/schema/domains")
+@XmlType(namespace = "http://www.anvisa.gov.br/reg-med/schema/domains")
 public enum TipoCategoriaEnsaio {
 
-	@XmlEnumValue("1")
-	CATEGORIA_I('1', "I"),
-	
-	@XmlEnumValue("2")
-	CATEGORIA_II('2', "II"),
-	
-	@XmlEnumValue("3")
-	CATEGORIA_III('3', "III"),
-	
-	@XmlEnumValue("4")
-	CATEGORIA_IV('4', "IV"),
+    @XmlEnumValue("1")
+    CATEGORIA_I('1', "I"),
 
-	@XmlEnumValue("N")
-	CATEGORIA_NA('N', "N/A");
+    @XmlEnumValue("2")
+    CATEGORIA_II('2', "II"),
 
-	private Character codigo;
-	private String descricao;
+    @XmlEnumValue("3")
+    CATEGORIA_III('3', "III"),
 
-	private TipoCategoriaEnsaio(Character codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    @XmlEnumValue("4")
+    CATEGORIA_IV('4', "IV"),
 
-	public Character getCodigo() {
-		return codigo;
-	}
+    @XmlEnumValue("N")
+    CATEGORIA_NA('N', "N/A");
 
-	public String getDescricao() {
-		return descricao;
-	}
-	
-	public static TipoCategoriaEnsaio valueOf(Character codigo) {
+    private Character codigo;
+    private String    descricao;
 
-		TipoCategoriaEnsaio status[] = TipoCategoriaEnsaio.values();
+    private TipoCategoriaEnsaio(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-		for (TipoCategoriaEnsaio st : status) {
-			if (codigo != null && st.getCodigo().charValue() == codigo.charValue()){
-				return st;
-			}
-		}
-		return null;
-	}
+    public Character getCodigo() {
+        return codigo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public static TipoCategoriaEnsaio valueOf(Character codigo) {
+
+        TipoCategoriaEnsaio status[] = TipoCategoriaEnsaio.values();
+
+        for (TipoCategoriaEnsaio st : status) {
+            if (codigo != null && st.getCodigo().charValue() == codigo.charValue()) {
+                return st;
+            }
+        }
+        return null;
+    }
 }
