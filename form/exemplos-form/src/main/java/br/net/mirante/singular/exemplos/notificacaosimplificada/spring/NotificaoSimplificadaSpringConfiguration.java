@@ -62,6 +62,7 @@ public class NotificaoSimplificadaSpringConfiguration {
 
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(createTables);
         populator.addScript(inserts);
         return populator;
