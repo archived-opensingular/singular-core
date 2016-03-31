@@ -40,8 +40,13 @@ public class TipoMedida extends BaseEntity implements Serializable {
    }
 
    @Override
+   @Transient
    public Serializable getCod() {
       return id;
+   }
+
+   public void setCod(Long id) {
+      this.id = id;
    }
 
 }
