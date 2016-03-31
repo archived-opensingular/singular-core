@@ -5,13 +5,11 @@
 
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
@@ -68,6 +66,26 @@ public class ExamplePackage extends SPackage {
 
         buildBuyerField();
         buildAddressField();
+
+        STypeList<STypeComposite<SIComposite>, SIComposite> originCountry = this.order.addFieldListOfComposite("orginCountry", "country");
+
+        STypeComposite<SIComposite> country = originCountry.getElementsType();
+        originCountry.withView(SViewListByForm::new);
+
+        originCountry.asAtrBasic().label("Países");
+
+        STypeString name = country.addFieldString("name");
+        name.asAtrBasic().label("Nome");
+        country.addFieldInteger("population").asAtrBasic().label("População");
+        country.withSelectionFromProvider(name,(instance, lb) -> {
+            lb.add().set(name,"Brazil")
+                    .add().set(name,"USA")
+                    .add().set(name,"Canada")
+                    .add().set(name,"Bosnia")
+                    .add().set(name,"Argentina")
+                    .add().set(name,"Chile");
+        });
+        country.withView(SViewSelectionBySearchModal::new);
     }
 
     private void buildBuyerField() {
