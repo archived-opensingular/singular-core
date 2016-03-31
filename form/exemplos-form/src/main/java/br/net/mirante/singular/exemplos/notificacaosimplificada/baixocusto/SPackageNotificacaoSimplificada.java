@@ -5,7 +5,6 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
 
-import br.net.mirante.singular.exemplos.canabidiol.STypeContato;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.*;
@@ -27,7 +26,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
     public static final String TIPO          = "MedicamentoBaixoRisco";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
 
-    private DominioService dominioService(SInstance ins){
+    static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);
     }
 
@@ -39,6 +38,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
 
         pb.createType(STypeEmbalagemPrimaria.class);
+        pb.createType(STypeEmbalagemSecundaria.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
@@ -175,29 +175,9 @@ public class SPackageNotificacaoSimplificada extends SPackage {
 
         STypeComposite<SIComposite> acondicionamento = acondicionamentos.getElementsType();
 
-        final STypeEmbalagemPrimaria embalagemPrimaria = acondicionamento.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
+        final STypeEmbalagemPrimaria   embalagemPrimaria   = acondicionamento.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
+        final STypeEmbalagemSecundaria embalagemSecundaria = acondicionamento.addField("embalagemSecundaria", STypeEmbalagemSecundaria.class);
 
-        STypeComposite<SIComposite> embalagemSecundaria          = acondicionamento.addFieldComposite("embalagemSecundaria");
-        STypeString                 idEmbalagemSecundaria        = embalagemSecundaria.addFieldString("id");
-        STypeString                 descricaoEmbalagemSecundaria = embalagemSecundaria.addFieldString("descricao");
-        {
-            embalagemSecundaria
-                    .asAtrBootstrap()
-                    .colPreference(6)
-                    .asAtrBasic()
-                    .label("Embalagem secundária")
-                    .getTipo().setView(SViewAutoComplete::new);
-            embalagemSecundaria.withSelectionFromProvider(descricaoEmbalagemSecundaria, (ins, filter) -> {
-                final SIList<?> list = ins.getType().newList();
-                for (EmbalagemSecundaria es : dominioService(ins).embalagensSecundarias(filter)) {
-                    final SIComposite c = (SIComposite) list.addNew();
-                    c.setValue(idEmbalagemSecundaria, es.getId());
-                    c.setValue(descricaoEmbalagemSecundaria, es.getDescricao());
-                }
-                return list;
-            });
-
-        }
         STypeInteger quantidade = acondicionamento.addFieldInteger("quantidade", true);
         quantidade
                 .asAtrBootstrap()
@@ -215,14 +195,14 @@ public class SPackageNotificacaoSimplificada extends SPackage {
                 .label("Unidade de medida")
                 .getTipo().setView(SViewAutoComplete::new);
         unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (ins, filter) -> {
-                    final SIList<?> list = ins.getType().newList();
-                    for (UnidadeMedida um : dominioService(ins).unidadesMedida(filter)) {
-                        final SIComposite c = (SIComposite) list.addNew();
-                        c.setValue(idUnidadeMedida, um.getId());
-                        c.setValue(descricaoUnidadeMedida, um.getDescricao());
-                    }
-                    return list;
-                });
+            final SIList<?> list = ins.getType().newList();
+            for (UnidadeMedida um : dominioService(ins).unidadesMedida(filter)) {
+                final SIComposite c = (SIComposite) list.addNew();
+                c.setValue(idUnidadeMedida, um.getId());
+                c.setValue(descricaoUnidadeMedida, um.getDescricao());
+            }
+            return list;
+        });
 
         final STypeAttachmentList estudosEstabilidade = acondicionamento.addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
 
@@ -400,7 +380,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
                         .col(embalagemPrimaria.getDescricaoEmbalagemPrimaria(), "Embalagem primária")
-                        .col(descricaoEmbalagemSecundaria, "Embalagem secundária")
+                        .col(embalagemSecundaria.getDescricaoEmbalagemSecundaria(), "Embalagem secundária")
                         .col(quantidade)
                         .col(descricaoUnidadeMedida)
                         .col(estudosEstabilidade, "Estudo de estabilidade")

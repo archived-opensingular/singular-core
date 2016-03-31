@@ -1,17 +1,14 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
+import static br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto.SPackageNotificacaoSimplificada.dominioService;
+
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEmbalagemPrimaria extends STypeComposite<SIComposite> {
-
-    private DominioService dominioService(SInstance ins) {
-        return ins.getDocument().lookupService(DominioService.class);
-    }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -38,7 +35,7 @@ public class STypeEmbalagemPrimaria extends STypeComposite<SIComposite> {
         }
     }
 
-    public STypeString getDescricaoEmbalagemPrimaria() {
+    STypeString getDescricaoEmbalagemPrimaria() {
         return (STypeString) getField("descricao");
     }
 
