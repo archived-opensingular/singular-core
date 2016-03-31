@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.util.tester.TagTester;
@@ -88,7 +89,7 @@ public class STypeStringModalSearchTest  {
 
         @Test public void changeValueWhenSelected(){
             clickOpenLink();
-            List<Component> link = findTag(tester.getLastRenderedPage(), "link", AjaxLink.class);
+            List<Component> link = findTag(tester.getLastRenderedPage(), "link", ActionAjaxLink.class);
             assertThat(link).hasSize(4);
 
             ajaxClick(link.get(3));
