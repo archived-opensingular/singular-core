@@ -1,18 +1,25 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.service;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
 
 @Service
+@Transactional(readOnly = true)
 public class DominioService {
 
     @Inject
@@ -89,22 +96,8 @@ public class DominioService {
         return list.stream().filter(t -> t.getMiddle().equals(idConfiguracaoLinhaProducao)).collect(Collectors.toList());
     }
 
-    public List<Pair> formasFarmaceuticas(){
-        List<Pair> list = new ArrayList<>();
-        list.add(Pair.of(1, "Adesivo"));
-        list.add(Pair.of(2, "Anel"));
-        list.add(Pair.of(3, "Barra"));
-        list.add(Pair.of(4, "Bastão"));
-        list.add(Pair.of(5, "Comprimido"));
-        list.add(Pair.of(6, "Comprimido de Liberação Prolongada"));
-        list.add(Pair.of(7, "Comprimido para Solução"));
-        list.add(Pair.of(8, "Granulado"));
-        list.add(Pair.of(9, "Implante"));
-        list.add(Pair.of(10, "Pó Aerossol"));
-        list.add(Pair.of(11, "Tablete"));
-        list.add(Pair.of(12, "Espuma"));
-
-        return list;
+    public List<FormaFarmaceuticaBasica> formasFarmaceuticas(String filtro){
+        return vocabularioControladoDAO.findByDescricao(FormaFarmaceuticaBasica.class, filtro);
     }
 
     public List<Triple> concentracoes(Integer idSubstancia) {
@@ -161,23 +154,12 @@ public class DominioService {
         return vocabularioControladoDAO.findByDescricao(EmbalagemPrimariaBasica.class, filtro);
     }
 
-    public List<Pair> embalagensSecundarias() {
-        List<Pair> list = new ArrayList<>();
-        list.add(Pair.of(1, "Caixa"));
-        list.add(Pair.of(2, "Cartucho"));
-        list.add(Pair.of(3, "Envelope"));
-        list.add(Pair.of(4, "Caixa térmica"));
-        return list;
+    public List<EmbalagemSecundaria> embalagensSecundarias(String filtro) {
+        return vocabularioControladoDAO.findByDescricao(EmbalagemSecundaria.class, filtro);
     }
 
-    public List<Pair> unidadesMedida() {
-        List<Pair> list = new ArrayList<>();
-        list.add(Pair.of(2, "mg"));
-        list.add(Pair.of(1, "g"));
-        list.add(Pair.of(4, "kg"));
-        list.add(Pair.of(3, "ml"));
-        list.add(Pair.of(5, "l"));
-        return list;
+    public List<UnidadeMedida> unidadesMedida(String filtro) {
+        return vocabularioControladoDAO.findByDescricao(UnidadeMedida.class, filtro);
     }
 
     public List<Triple> empresaInternacional() {
@@ -207,14 +189,8 @@ public class DominioService {
         return list;
     }
 
-    public List<Pair> etapaFabricacao() {
-        List<Pair> list = new ArrayList<>();
-        list.add(Pair.of(1, "Processo produtivo completo"));
-        list.add(Pair.of(2, "Processo de embalagem primária"));
-        list.add(Pair.of(3, "Processo de embalagem secundária"));
-        list.add(Pair.of(4, "Produção"));
-        list.add(Pair.of(5, "Controle de qualidade"));
-        return list;
+    public List<EtapaFabricacao> etapaFabricacao(String filtro) {
+        return vocabularioControladoDAO.findByDescricao(EtapaFabricacao.class, filtro);
     }
 
 }

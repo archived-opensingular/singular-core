@@ -5,19 +5,37 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
 
+import java.util.EnumSet;
+import java.util.Optional;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.*;
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeAttachmentList;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
+import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
-import java.util.Optional;
 
 public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
@@ -155,13 +173,14 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .colPreference(4);
         formaFarmaceutica
                 .withSelectView()
-                .withSelectionFromProvider(descFormaFormaceutica, (optionsInstance, lb) -> {
-                    for (Pair p : dominioService(optionsInstance).formasFarmaceuticas()) {
-                        lb
-                                .add()
-                                .set(idFormaFormaceutica, p.getKey())
-                                .set(descFormaFormaceutica, p.getValue());
+                .withSelectionFromProvider(descFormaFormaceutica, (ins, filter) -> {
+                    final SIList<?> list = ins.getType().newList();
+                    for (FormaFarmaceuticaBasica ffb : dominioService(ins).formasFarmaceuticas(filter)) {
+                        final SIComposite c = (SIComposite) list.addNew();
+                        c.setValue(idFormaFormaceutica, ffb.getId());
+                        c.setValue(descFormaFormaceutica, ffb.getDescricao());
                     }
+                    return list;
                 });
 
 
@@ -179,17 +198,14 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .asAtrBasic()
                     .label("Embalagem primária")
                     .getTipo().setView(SViewAutoComplete::new);
-            embalagemPrimaria.withSelectionFromProvider(descricaoEmbalagemPrimaria, new SOptionsProvider() {
-                        @Override
-                        public SIList<? extends SInstance> listOptions(SInstance ins, String filter) {
-                            final SIList<?> list = ins.getType().newList();
-                            for (EmbalagemPrimariaBasica emb : dominioService(ins).findEmbalagensBasicas(filter)) {
-                                final SIComposite c = (SIComposite) list.addNew();
-                                c.setValue(idEmbalagemPrimaria, emb.getId());
-                                c.setValue(descricaoEmbalagemPrimaria, emb.getDescricao());
-                            }
-                            return list;
-                        }
+            embalagemPrimaria.withSelectionFromProvider(descricaoEmbalagemPrimaria, (ins, filter) -> {
+                final SIList<?> list = ins.getType().newList();
+                for (EmbalagemPrimariaBasica emb : dominioService(ins).findEmbalagensBasicas(filter)) {
+                    final SIComposite c = (SIComposite) list.addNew();
+                    c.setValue(idEmbalagemPrimaria, emb.getId());
+                    c.setValue(descricaoEmbalagemPrimaria, emb.getDescricao());
+                }
+                return list;
             });
         }
 
@@ -203,13 +219,14 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .asAtrBasic()
                     .label("Embalagem secundária")
                     .getTipo().setView(SViewAutoComplete::new);
-            embalagemSecundaria.withSelectionFromProvider(descricaoEmbalagemSecundaria, (optionsInstance, lb) -> {
-                for (Pair p : dominioService(optionsInstance).embalagensSecundarias()) {
-                    lb
-                            .add()
-                            .set(idEmbalagemSecundaria, p.getKey())
-                            .set(descricaoEmbalagemSecundaria, p.getValue());
+            embalagemSecundaria.withSelectionFromProvider(descricaoEmbalagemSecundaria, (ins, filter) -> {
+                final SIList<?> list = ins.getType().newList();
+                for (EmbalagemSecundaria es : dominioService(ins).embalagensSecundarias(filter)) {
+                    final SIComposite c = (SIComposite) list.addNew();
+                    c.setValue(idEmbalagemSecundaria, es.getId());
+                    c.setValue(descricaoEmbalagemSecundaria, es.getDescricao());
                 }
+                return list;
             });
 
         }
@@ -229,14 +246,15 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .asAtrBasic()
                 .label("Unidade de medida")
                 .getTipo().setView(SViewAutoComplete::new);
-        unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (optionsInstance, lb) -> {
-            for (Pair p : dominioService(optionsInstance).unidadesMedida()) {
-                lb
-                        .add()
-                        .set(idUnidadeMedida, p.getKey())
-                        .set(descricaoUnidadeMedida, p.getValue());
-            }
-        });
+        unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (ins, filter) -> {
+                    final SIList<?> list = ins.getType().newList();
+                    for (UnidadeMedida um : dominioService(ins).unidadesMedida(filter)) {
+                        final SIComposite c = (SIComposite) list.addNew();
+                        c.setValue(idUnidadeMedida, um.getId());
+                        c.setValue(descricaoUnidadeMedida, um.getDescricao());
+                    }
+                    return list;
+                });
 
         final STypeAttachmentList estudosEstabilidade = acondicionamento.addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
 
@@ -353,13 +371,14 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         etapaFabricacao
                 .setView(SViewAutoComplete::new);
 
-        etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (optionsInstance, lb) -> {
-            for (Pair p : dominioService(optionsInstance).etapaFabricacao()) {
-                lb
-                        .add()
-                        .set(idEtapaFabricacao, p.getKey())
-                        .set(descricaoEtapaFabricacao, p.getValue());
+        etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (ins, filter) -> {
+            final SIList<?> list = ins.getType().newList();
+            for (EtapaFabricacao ef : dominioService(ins).etapaFabricacao(filter)) {
+                final SIComposite c = (SIComposite) list.addNew();
+                c.setValue(idEtapaFabricacao, ef.getId());
+                c.setValue(descricaoEtapaFabricacao, ef.getDescricao());
             }
+            return list;
         });
 
         etapasFabricacao

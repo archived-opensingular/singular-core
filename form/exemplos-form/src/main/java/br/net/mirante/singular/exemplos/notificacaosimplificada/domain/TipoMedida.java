@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -26,10 +27,6 @@ public class TipoMedida extends BaseEntity implements Serializable {
    }
 
    public void setId(Long id) {
-      this.id = id;
-   }
-
-   public void setCod(Long id) {
       this.id = id;
    }
 
