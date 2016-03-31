@@ -1,9 +1,11 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.service;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -154,14 +156,9 @@ public class DominioService {
         return list.stream().filter(t -> t.getMiddle().equals(idSubstanciaFake)).collect(Collectors.toList());
     }
 
-    public List<Pair> embalagensPrimarias() {
-        List<Pair> list = new ArrayList<>();
-        list.add(Pair.of(1, "Ampola"));
-        list.add(Pair.of(2, "Bisnaga de plástico opaco"));
-        list.add(Pair.of(3, "Blíster de alumínio e plástico opaco"));
-        list.add(Pair.of(4, "Carpule"));
-        list.add(Pair.of(5, "Envelope"));
-        return list;
+    @Transactional
+    public List<EmbalagemPrimariaBasica> findEmbalagensBasicas(String filtro) {
+        return vocabularioControladoDAO.findByDescricao(EmbalagemPrimariaBasica.class, filtro);
     }
 
     public List<Pair> embalagensSecundarias() {

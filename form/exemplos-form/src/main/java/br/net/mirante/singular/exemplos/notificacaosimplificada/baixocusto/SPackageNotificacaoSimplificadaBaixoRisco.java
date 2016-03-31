@@ -5,12 +5,14 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -177,13 +179,17 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .asAtrBasic()
                     .label("Embalagem primária")
                     .getTipo().setView(SViewAutoComplete::new);
-            embalagemPrimaria.withSelectionFromProvider(descricaoEmbalagemPrimaria, (optionsInstance, lb) -> {
-                for (Pair p : dominioService(optionsInstance).embalagensPrimarias()) {
-                    lb
-                            .add()
-                            .set(idEmbalagemPrimaria, p.getKey())
-                            .set(descricaoEmbalagemPrimaria, p.getValue());
-                }
+            embalagemPrimaria.withSelectionFromProvider(descricaoEmbalagemPrimaria, new SOptionsProvider() {
+                        @Override
+                        public SIList<? extends SInstance> listOptions(SInstance ins, String filter) {
+                            final SIList<?> list = ins.getType().newList();
+                            for (EmbalagemPrimariaBasica emb : dominioService(ins).findEmbalagensBasicas(filter)) {
+                                final SIComposite c = (SIComposite) list.addNew();
+                                c.setValue(idEmbalagemPrimaria, emb.getId());
+                                c.setValue(descricaoEmbalagemPrimaria, emb.getDescricao());
+                            }
+                            return list;
+                        }
             });
         }
 

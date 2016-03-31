@@ -1,5 +1,6 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
@@ -26,7 +27,15 @@ public class VocabularioControladoDAOTest {
     @Test
     @Transactional
     public void findByDescricaoForEmbalagemSecundaria() throws Exception {
-        final List<EmbalagemSecundaria> byDescricao = vocabularioControladoDAO.findByDescricao(EmbalagemSecundaria.class, null);
-        Assertions.assertThat(byDescricao).isNotEmpty();
+        final List<EmbalagemSecundaria> result = vocabularioControladoDAO.findByDescricao(EmbalagemSecundaria.class, null);
+        Assertions.assertThat(result).isNotEmpty();
+    }
+
+
+    @Test
+    @Transactional
+    public void findByDescricaoForEmbalagemPrimaria() throws Exception {
+        final List<EmbalagemPrimariaBasica> result = vocabularioControladoDAO.findByDescricao(EmbalagemPrimariaBasica.class, null);
+        Assertions.assertThat(result).isNotEmpty();
     }
 }
