@@ -34,7 +34,7 @@ public enum ObjetivoPosologia implements EnumId<ObjetivoPosologia, Integer> {
 	@XmlEnumValue("4")
 	DIAGNOSTICO(4, "Diagnóstico");
 
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.ObjetivoPosologia";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.ObjetivoPosologia";
 	
 	/**
 	 * Identificador do tipo de unidade de medida.

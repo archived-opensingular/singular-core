@@ -11,7 +11,7 @@ public enum TipoEnsaio implements EnumId<TipoEnsaio, Character> {
 	 */
 	PRODUTO('2', "Controle de Qualidade do Produto");
 
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.TipoEnsaio";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoEnsaio";
 	
 	private TipoEnsaio(Character codigo, String descricao) {
 		this.codigo = codigo;

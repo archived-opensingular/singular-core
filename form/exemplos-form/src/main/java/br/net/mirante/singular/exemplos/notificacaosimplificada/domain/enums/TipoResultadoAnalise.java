@@ -6,7 +6,7 @@ public enum TipoResultadoAnalise {
 	DEFERIDO('S', "Deferido"),
 	INDEFERIDO('N', "Indeferido");
 	
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.TipoResultadoAnalise";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoResultadoAnalise";
 	
 	private Character codigo;
 	private String descricao;

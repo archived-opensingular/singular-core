@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoControleValor;
 import br.net.mirante.singular.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -63,8 +64,8 @@ public class FaixaConcentracao extends BaseEntity implements Serializable {
    }
 
    @Column(name = "DS_SINAL_FAIXA", nullable = false)
-   @Type(type = "com.miranteinfo.seam.hibernate.usertype.GenericEnumUserType", parameters = {
-         @Parameter(name = "enumClassName", value = TipoControleValor.ENUM_CLASS_NAME),
+   @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
+         @Parameter(name = "enumClass", value = TipoControleValor.ENUM_CLASS_NAME),
          @Parameter(name = "identifierMethod", value = "getDescricao"),
          @Parameter(name = "valueOfMethod", value = "valueOfDescricao") })
    public TipoControleValor getSinal() {
@@ -78,5 +79,9 @@ public class FaixaConcentracao extends BaseEntity implements Serializable {
    @Override
    public Serializable getCod() {
       return id;
+   }
+
+   public void setCod(Long id) {
+      this.id = id;
    }
 }

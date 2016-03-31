@@ -14,7 +14,7 @@ public enum TipoClassificacaoCid {
 	@XmlEnumValue("M")
 	MANIFESTACAO('M', "Manifestação");
 
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.TipoClassificacaoCid";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoClassificacaoCid";
 	
 	private Character codigo;
 	private String descricao;

@@ -5,6 +5,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.domain;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.FormaFisica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
+import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -41,15 +42,15 @@ public class Substancia extends VocabularioControlado {
     private String numeroCas;
 
     @Column(name = "ST_SAL", length = 1)
-    @Type(type = "com.miranteinfo.seam.hibernate.usertype.GenericNotNullEnumUserType", parameters = {
-            @Parameter(name = "enumClassName", value = SimNao.ENUM_CLASS_NAME),
+    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
+            @Parameter(name = "enumClass", value = SimNao.ENUM_CLASS_NAME),
             @Parameter(name = "identifierMethod", value = "getCodigo"),
             @Parameter(name = "valueOfMethod", value = "valueOfEnum")})
     private SimNao tipoSal;
 
     @Column(name = "TP_FORMA_FISICA", length = 1)
-    @Type(type = "com.miranteinfo.seam.hibernate.usertype.GenericNotNullEnumUserType", parameters = {
-            @Parameter(name = "enumClassName", value = FormaFisica.ENUM_CLASS_NAME),
+    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
+            @Parameter(name = "enumClass", value = FormaFisica.ENUM_CLASS_NAME),
             @Parameter(name = "identifierMethod", value = "getCodigo"),
             @Parameter(name = "valueOfMethod", value = "valueOfEnum")})
     private FormaFisica tipoFormaFisica;

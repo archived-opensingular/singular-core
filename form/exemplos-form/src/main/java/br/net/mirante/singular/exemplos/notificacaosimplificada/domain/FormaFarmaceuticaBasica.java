@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoEstadoFisico;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
+import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 /**
@@ -30,8 +31,8 @@ public class FormaFarmaceuticaBasica extends VocabularioControlado {
 	private static final long serialVersionUID = -8195769859634924112L;
 
     @Column(name = "TP_ESTADO_FISICO", length = 1)
-    @Type(type = "com.miranteinfo.seam.hibernate.usertype.GenericEnumUserType", parameters = {
-        @Parameter(name = "enumClassName", value = TipoEstadoFisico.ENUM_CLASS_NAME),
+    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
+        @Parameter(name = "enumClass", value = TipoEstadoFisico.ENUM_CLASS_NAME),
         @Parameter(name = "identifierMethod", value = "getCodigo"),
         @Parameter(name = "valueOfMethod", value = "valueOfEnum")})
 	private TipoEstadoFisico tipoEstadoFisico;

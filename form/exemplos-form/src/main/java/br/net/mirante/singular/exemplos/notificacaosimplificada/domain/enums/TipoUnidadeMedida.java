@@ -33,7 +33,7 @@ public enum TipoUnidadeMedida implements EnumId<TipoUnidadeMedida, Character> {
 	@XmlEnumValue("T")
 	TEMPERATURA('T', "Temperatura");
 
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.TipoUnidadeMedida";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoUnidadeMedida";
 	
 	/**
 	 * Identificador do tipo de unidade de medida.

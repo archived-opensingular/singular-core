@@ -7,7 +7,7 @@ public enum TipoTarja implements EnumId<TipoTarja, Character>  {
 	VERMELHA_COM_RETENCAO('3', "Vermelha com retenção"),
 	PRETA('4', "Preta");
 	
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.TipoTarja";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoTarja";
 	
 	private Character codigo;
 	private String descricao;

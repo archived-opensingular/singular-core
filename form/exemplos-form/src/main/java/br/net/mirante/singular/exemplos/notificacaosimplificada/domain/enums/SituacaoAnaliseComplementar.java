@@ -6,7 +6,7 @@ public enum SituacaoAnaliseComplementar implements EnumId<SituacaoAnaliseComplem
 	ESTORNADA('E', "Estornada"),
 	CONCLUIDA('C', "Concluída");
 
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.SituacaoAnaliseComplementar";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SituacaoAnaliseComplementar";
 	
 	private Character codigo;
 	private String descricao;

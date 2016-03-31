@@ -11,7 +11,7 @@ public enum FormaFisica {
 	LIQUIDO('L',"Liquido"),
 	GASOSO('G',"Gasoso");
 	
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.FormaFisica";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.FormaFisica";
 	
 	private Character codigo;
     private String descricao;

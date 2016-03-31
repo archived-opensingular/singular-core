@@ -3,6 +3,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.TipoTermo;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
 import br.net.mirante.singular.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -39,8 +40,8 @@ public abstract class VocabularioControlado extends BaseEntity implements MedEnt
     protected String descricao;
 
     @Column(name = "ST_REGISTRO_ATIVO", nullable = false, length = 1)
-    @Type(type = "com.miranteinfo.seam.hibernate.usertype.GenericEnumUserType", parameters = {
-            @Parameter(name = "enumClassName", value = SimNao.ENUM_CLASS_NAME),
+    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
+            @Parameter(name = "enumClass", value = SimNao.ENUM_CLASS_NAME),
             @Parameter(name = "identifierMethod", value = "getCodigo"),
             @Parameter(name = "valueOfMethod", value = "valueOfEnum")
     })

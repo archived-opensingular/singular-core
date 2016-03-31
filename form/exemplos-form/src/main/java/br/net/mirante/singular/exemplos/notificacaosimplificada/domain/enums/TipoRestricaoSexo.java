@@ -17,7 +17,7 @@ public enum TipoRestricaoSexo {
 	@XmlEnumValue("A")
 	AMBOS('A', "Ambos");
 
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.TipoRestricaoSexo";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoRestricaoSexo";
 	
 	private Character codigo;
 	private String descricao;

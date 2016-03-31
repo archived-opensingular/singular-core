@@ -7,7 +7,7 @@ public enum TipoControleValor implements EnumId<TipoControleValor, Character>  {
 	MENOR('3', "<"),
 	MENOR_IGUAL('4', "<=");
 	
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.TipoControleValor";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoControleValor";
 	
 	private Character codigo;
 	private String descricao;

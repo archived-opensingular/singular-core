@@ -41,6 +41,7 @@ public class NotificaoSimplificadaSpringConfiguration {
         final LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource);
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
+        sessionFactoryBean.setPackagesToScan("br.net.mirante.singular.exemplos.notificacaosimplificada.domain");
         return sessionFactoryBean;
     }
 

@@ -12,7 +12,7 @@ public enum TipoEstadoFisico implements EnumId<TipoEstadoFisico, Character> {
 
 	GASOSO('3', "Gasoso");
 
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.TipoEstadoFisico";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoEstadoFisico";
 	
 	private TipoEstadoFisico(Character codigo, String descricao) {
 		this.codigo = codigo;

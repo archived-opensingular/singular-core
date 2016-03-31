@@ -5,7 +5,7 @@ public enum SituacaoNecessitaAnaliseComplementar {
 	SIM('S', "Sim"),
 	NAO('N', "Não");
 	
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.SituacaoNecessitaAnaliseComplementar";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SituacaoNecessitaAnaliseComplementar";
 	
 	private Character codigo;
 	private String descricao;

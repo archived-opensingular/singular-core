@@ -8,7 +8,7 @@ public enum TipoClassificacao implements EnumId<TipoClassificacao, Character> {
 	
 	USO('U', "Uso");
 
-	public static final String ENUM_CLASS_NAME = "br.gov.anvisa.reg.medicamento.domain.enums.TipoClassificacao";
+	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoClassificacao";
 	
 	private TipoClassificacao(Character codigo, String descricao) {
 		this.codigo = codigo;
