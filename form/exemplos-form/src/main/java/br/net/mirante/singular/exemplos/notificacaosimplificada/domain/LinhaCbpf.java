@@ -37,10 +37,10 @@ public class LinhaCbpf extends VocabularioControlado {
 	private static final long serialVersionUID = -3105005456489332341L;
 
 	@Column(name = "ST_LINHA_RESTRITIVA", nullable = false, length = 1)
-    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
-        @Parameter(name = "enumClassName", value = SimNao.ENUM_CLASS_NAME),
-        @Parameter(name = "identifierMethod", value = "getCodigo"),
-        @Parameter(name = "valueOfMethod", value = "valueOfEnum")})
+	@Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
+			@Parameter(name = "enumClass", value = SimNao.ENUM_CLASS_NAME),
+			@Parameter(name = "identifierMethod", value = "getCodigo"),
+			@Parameter(name = "valueOfMethod", value = "valueOfEnum")})
 	private SimNao situacaoLinhaRestritiva;
 	
 	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
