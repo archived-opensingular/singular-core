@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
-@SInfoType(spackage = SPackageNotificacaoSimplificadaBaixoRisco.class)
+@SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEmbalagemPrimaria extends STypeComposite<SIComposite> {
 
     private DominioService dominioService(SInstance ins) {

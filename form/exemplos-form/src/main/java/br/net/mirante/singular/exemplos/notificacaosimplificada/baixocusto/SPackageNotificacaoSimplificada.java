@@ -21,7 +21,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Optional;
 
-public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
+public class SPackageNotificacaoSimplificada extends SPackage {
 
     public static final String PACOTE        = "mform.peticao.notificacaosimplificada";
     public static final String TIPO          = "MedicamentoBaixoRisco";
@@ -31,7 +31,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         return ins.getDocument().lookupService(DominioService.class);
     }
 
-    public SPackageNotificacaoSimplificadaBaixoRisco() {
+    public SPackageNotificacaoSimplificada() {
         super(PACOTE);
     }
 
