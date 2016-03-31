@@ -5,8 +5,16 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -35,6 +43,12 @@ public class LinhaCbpf extends VocabularioControlado {
 			@Parameter(name = "valueOfMethod", value = "valueOfEnum")})
 	private SimNao situacaoLinhaRestritiva;
 
+	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JoinTable(schema="DBMEDICAMENTO", name="RL_LINHACBPF_FORMAFARMACEUTICA",
+				joinColumns = { @JoinColumn(name="CO_LINHA_CBPF", updatable = false, nullable = false) },
+				inverseJoinColumns = { @JoinColumn(name="CO_FORMA_FARM_ESPEC", updatable = false, nullable = false)})
+	private Set<FormaFarmaceuticaEspecifica> listaFormaFarmaceuticaEspecifica = new LinkedHashSet<FormaFarmaceuticaEspecifica>(0);
+
 	public LinhaCbpf() {
     }
 
@@ -52,4 +66,12 @@ public class LinhaCbpf extends VocabularioControlado {
 		this.situacaoLinhaRestritiva = situacaoLinhaRestritiva;
 	}
 
+	public Set<FormaFarmaceuticaEspecifica> getListaFormaFarmaceuticaEspecifica() {
+		return listaFormaFarmaceuticaEspecifica;
+	}
+
+	public void setListaFormaFarmaceuticaEspecifica(
+			Set<FormaFarmaceuticaEspecifica> listaFormaFarmaceuticaEspecifica) {
+		this.listaFormaFarmaceuticaEspecifica = listaFormaFarmaceuticaEspecifica;
+	}
 }
