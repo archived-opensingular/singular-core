@@ -5,44 +5,44 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 @XmlEnum
 public enum TipoMascaramento {
-	
-	@XmlEnumValue("1")
-	ABERTO('A', "Aberto"),
 
-	@XmlEnumValue("2")
-	CEGO('C', "Cego"),
+    @XmlEnumValue("1")
+    ABERTO('A', "Aberto"),
 
-	@XmlEnumValue("3")
-	DUPLO_CEGO('D', "Duplo Cego"),
-	
-	@XmlEnumValue("3")
-	TRIPLO_CEGO('T', "Triplo Cego");
+    @XmlEnumValue("2")
+    CEGO('C', "Cego"),
 
-	private Character codigo;
-	private String descricao;
+    @XmlEnumValue("3")
+    DUPLO_CEGO('D', "Duplo Cego"),
 
-	private TipoMascaramento(Character codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    @XmlEnumValue("3")
+    TRIPLO_CEGO('T', "Triplo Cego");
 
-	public Character getCodigo() {
-		return codigo;
-	}
+    private Character codigo;
+    private String    descricao;
 
-	public String getDescricao() {
-		return descricao;
-	}
-	
-	public static TipoMascaramento valueOf(Character codigo) {
+    private TipoMascaramento(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-		TipoMascaramento status[] = TipoMascaramento.values();
+    public Character getCodigo() {
+        return codigo;
+    }
 
-		for (TipoMascaramento st : status) {
-			if (codigo != null && st.getCodigo().charValue() == codigo.charValue()){
-				return st;
-			}
-		}
-		return null;
-	}
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public static TipoMascaramento valueOf(Character codigo) {
+
+        TipoMascaramento status[] = TipoMascaramento.values();
+
+        for (TipoMascaramento st : status) {
+            if (codigo != null && st.getCodigo().charValue() == codigo.charValue()) {
+                return st;
+            }
+        }
+        return null;
+    }
 }
