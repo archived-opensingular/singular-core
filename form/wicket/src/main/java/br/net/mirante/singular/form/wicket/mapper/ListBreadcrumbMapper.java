@@ -75,6 +75,12 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
         BreadCrumbPanel breadcrumbPanel = new BreadCrumbPanel("panel", model, listaLabel, ctx, viewMode, view);
 
+        List<String> breadCrumbs = ctx.getRootContext().getBreadCrumbs();
+
+        if (breadCrumbs.isEmpty()) {
+            breadCrumbs.add("Início");
+        }
+
         ctx.getContainer().appendTag("div", breadcrumbPanel);
     }
 
