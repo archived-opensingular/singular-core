@@ -203,13 +203,13 @@ public class SPackageCurriculo extends SPackage {
         // Comportamentos
         // ---------------------------------------------------------------------------------------------
         //        refTemNaEmpresa.withCode("onChange", (temRefNaMepresa) -> {
-        //            temRefNaMepresa.getIrmao(refQuemNaEmpresa).asAtrBasic().visivel(isTrue(temRefNaMepresa));
+        //            temRefNaMepresa.getIrmao(refQuemNaEmpresa).asAtrBasic().visible(isTrue(temRefNaMepresa));
         //        });
 
         // Ou
 
         //        refTemNaEmpresa.withOnChange((temRefNaMepresa) -> {
-        //            temRefNaMepresa.getIrmao(refQuemNaEmpresa).asAtrBasic().visivel(isTrue(temRefNaMepresa));
+        //            temRefNaMepresa.getIrmao(refQuemNaEmpresa).asAtrBasic().visible(isTrue(temRefNaMepresa));
         //        });
 
         // Ou

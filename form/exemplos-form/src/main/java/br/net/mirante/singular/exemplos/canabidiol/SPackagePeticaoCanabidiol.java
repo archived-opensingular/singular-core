@@ -62,7 +62,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
             responsavelLegal
                     .asAtrBasic()
                     .label("Responsável Legal")
-                    .visivel(instancia -> BooleanUtils.isTrue(Value.of(instancia, possuiResponsavelLegal)))
+                    .visible(instancia -> BooleanUtils.isTrue(Value.of(instancia, possuiResponsavelLegal)))
                     .dependsOn(possuiResponsavelLegal);
 
             final STypeComposite<?> anexos = canabis
@@ -71,7 +71,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .asAtrBasic()
                     .label("Anexos")
                     .dependsOn(paciente.tipoDocumento, responsavelLegal.tipoDocumento)
-                    .visivel(instancia -> Value.notNull(instancia, responsavelLegal.tipoDocumento) || Value.notNull(instancia, paciente.tipoDocumento));
+                    .visible(instancia -> Value.notNull(instancia, responsavelLegal.tipoDocumento) || Value.notNull(instancia, paciente.tipoDocumento));
 
             STypeAttachment anexoPaciente = anexos
                     .addField("documentoPaciente", STypeAttachment.class);
@@ -82,7 +82,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .label("Documento do Paciente")
                     .subtitle(String.format("Conforme documento informado no campo \"%s\" do paciente", STypePessoa.LABEL_TIPO_DOCUMENTO))
                     .dependsOn(anexos, paciente.tipoDocumento)
-                    .visivel(instancia -> Value.notNull(instancia, paciente.tipoDocumento));
+                    .visible(instancia -> Value.notNull(instancia, paciente.tipoDocumento));
 
             STypeAttachment anexoResponsavelLegal = anexos
                     .addField("documentoResponsavel", STypeAttachment.class);
@@ -93,7 +93,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .label("Documento do Responsável Legal")
                     .subtitle(String.format("Conforme documento informado no campo \"%s\" do responsável legal", STypePessoa.LABEL_TIPO_DOCUMENTO))
                     .dependsOn(anexos, responsavelLegal.tipoDocumento)
-                    .visivel(instancia -> Value.notNull(instancia, responsavelLegal.tipoDocumento));
+                    .visible(instancia -> Value.notNull(instancia, responsavelLegal.tipoDocumento));
 
             STypeImportacao modalidadeImportacao = canabis
                     .addField("importacao", STypeImportacao.class);
