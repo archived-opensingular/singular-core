@@ -82,7 +82,7 @@ public class FormaFarmaceuticaEspecifica extends VocabularioControlado {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null | !(obj instanceof FormaFarmaceuticaEspecifica)) {
+        if (obj == null || !(obj instanceof FormaFarmaceuticaEspecifica)) {
             return false;
         }
         FormaFarmaceuticaEspecifica other = (FormaFarmaceuticaEspecifica) obj;
