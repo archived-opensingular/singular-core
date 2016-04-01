@@ -31,6 +31,12 @@ public class NotificaoSimplificadaSpringConfiguration {
     @Value("classpath:data/notificacaosimplificada/insert_geral.sql")
     private Resource insertGeral;
 
+    @Value("classpath:data/notificacaosimplificada/create-tables-anvisa.sql")
+    private Resource createTablesAnvisa;
+
+    @Value("classpath:data/notificacaosimplificada/insert-usuario.sql")
+    private Resource insertUsuario;
+
     @Bean
     public DriverManagerDataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource("jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=2048;MULTI_THREADED=1");
@@ -69,6 +75,8 @@ public class NotificaoSimplificadaSpringConfiguration {
         populator.addScript(createTables);
         populator.addScript(inserts);
         populator.addScript(insertGeral);
+        populator.addScript(createTablesAnvisa);
+        populator.addScript(insertUsuario);
         return populator;
     }
 
