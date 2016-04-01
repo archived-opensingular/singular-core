@@ -53,6 +53,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
 
         linhaProducao
                 .asAtrBasic()
+                .required()
                 .label("Linha de Produção");
         linhaProducao.setView(SViewAutoComplete::new);
         linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (ins, filter) -> {
@@ -74,6 +75,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         configuracaoLinhaProducao
                 .asAtrBasic()
                 .label("Descrição")
+                .required()
                 .dependsOn(linhaProducao)
                 .visivel(i -> Value.notNull(i, idLinhaProducao));
         configuracaoLinhaProducao
@@ -92,6 +94,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> substancias = notificacaoSimplificada.addFieldListOfComposite("substancias", "concentracaoSubstancia");
         substancias
+                .withMiniumSizeOf(1)
                 .withView(SViewListByTable::new)
                 .asAtrBasic()
                 .label("Substâncias")
@@ -106,6 +109,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         substancia
                 .asAtrBasic()
                 .label("Substância")
+                .required()
                 .asAtrBootstrap()
                 .colPreference(6);
         substancia
@@ -128,6 +132,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         STypeSimple             descConcentracao         = concentracao.addFieldString("descricao");
         concentracao
                 .asAtrBasic()
+                .required()
                 .label("Concentração")
                 .dependsOn(substancia)
                 .asAtrBootstrap()
@@ -149,6 +154,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercialMedicamento");
         nomeComercial
                 .asAtrBasic()
+                .required()
                 .label("Nome Comercial do Medicamento")
                 .asAtrBootstrap()
                 .colPreference(8);
@@ -158,6 +164,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         STypeSimple             descFormaFormaceutica = formaFarmaceutica.addFieldString("descricao");
         formaFarmaceutica
                 .asAtrBasic()
+                .required()
                 .label("Forma Farmacêutica")
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -174,7 +181,10 @@ public class SPackageNotificacaoSimplificada extends SPackage {
                 });
 
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOfComposite("acondicionamentos", "acondicionamento");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> acondicionamentos = notificacaoSimplificada
+                .addFieldListOfComposite("acondicionamentos", "acondicionamento");
+
+        acondicionamentos.withMiniumSizeOf(1);
 
         STypeComposite<SIComposite> acondicionamento = acondicionamentos.getElementsType();
 
@@ -186,6 +196,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
                 .asAtrBootstrap()
                 .colPreference(3)
                 .asAtrBasic()
+                .required()
                 .label("Quantidade");
 
         STypeComposite<SIComposite> unidadeMedida          = acondicionamento.addFieldComposite("unidadeMedida");
@@ -195,6 +206,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
                 .asAtrBootstrap()
                 .colPreference(3)
                 .asAtrBasic()
+                .required()
                 .label("Unidade de medida")
                 .getTipo().setView(SViewAutoComplete::new);
         unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (ins, filter) -> {
@@ -207,7 +219,10 @@ public class SPackageNotificacaoSimplificada extends SPackage {
             return list;
         });
 
-        final STypeAttachmentList estudosEstabilidade = acondicionamento.addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
+        final STypeAttachmentList estudosEstabilidade = acondicionamento
+                .addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
+
+        estudosEstabilidade.withMiniumSizeOf(1);
 
         estudosEstabilidade.asAtrBasic()
                 .label("Estudo de estabilidade")
@@ -222,6 +237,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         {
             final STypeAttachmentList layoutsRotulagem = acondicionamento.addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
             layoutsRotulagem.asAtrBasic().label("Layout da rotulagem");
+            layoutsRotulagem.withMiniumSizeOf(1);
 
             STypeAttachment f           = layoutsRotulagem.getElementsType();
             SType<?>        nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
@@ -230,12 +246,14 @@ public class SPackageNotificacaoSimplificada extends SPackage {
 
 
         STypeList<STypeComposite<SIComposite>, SIComposite> locaisFabricacao = acondicionamento.addFieldListOfComposite("locaisFabricacao", "localFabricacao");
+
         STypeComposite<SIComposite>                         localFabricacao  = locaisFabricacao.getElementsType();
         localFabricacao.asAtrBasic().label("Local de Fabricação");
 
         STypeSimple tipoLocalFabricacao = localFabricacao.addFieldInteger("tipoLocalFabricacao");
         tipoLocalFabricacao
                 .asAtrBasic()
+                .required()
                 .label("Tipo de local");
         tipoLocalFabricacao
                 .withRadioView()
@@ -292,6 +310,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
                 .getTipo().setView(SViewAutoComplete::new);
 
         locaisFabricacao
+                .withMiniumSizeOf(1)
                 .withView(new SViewListByMasterDetail()
                         .col(tipoLocalFabricacao)
                         .col(localFabricacao, i -> {
@@ -321,6 +340,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
                 .addFieldListOfAttachment("layoutsRotulagem", "layout");
         layoutsRotulagem
                 .asAtrBasic()
+                .required()
                 .label("Layouts Rotulagem");
 
         // config tabs

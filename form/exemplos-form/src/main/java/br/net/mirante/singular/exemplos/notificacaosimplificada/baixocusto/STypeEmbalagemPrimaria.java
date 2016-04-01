@@ -21,6 +21,7 @@ public class STypeEmbalagemPrimaria extends STypeComposite<SIComposite> {
                     .colPreference(6)
                     .asAtrBasic()
                     .label("Embalagem primária")
+                    .required()
                     .getTipo().setView(SViewAutoComplete::new);
 
             this.withSelectionFromProvider(descricaoEmbalagemPrimaria, (ins, filter) -> {
