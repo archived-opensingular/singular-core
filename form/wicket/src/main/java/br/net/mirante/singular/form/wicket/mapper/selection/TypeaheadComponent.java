@@ -55,11 +55,6 @@ public class TypeaheadComponent extends Panel {
     public TypeaheadComponent(String id, IModel<?> model, SViewAutoComplete.Mode fetch) {
         super(id, model);
         this.fetch = fetch;
-    }
-
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
         add(container = buildContainer());
     }
 
@@ -67,7 +62,7 @@ public class TypeaheadComponent extends Panel {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
         MOptionsModel options = new MOptionsModel(getDefaultModel());
 
-        c.queue(new TextField("label_field", new Model(){
+        c.add(new TextField("label_field", new Model(){
             @Override
             public Serializable getObject() {
                 IModel<?> parentModel = TypeaheadComponent.this.getDefaultModel();
@@ -76,7 +71,7 @@ public class TypeaheadComponent extends Panel {
                 return "";
             }
         }));
-        c.queue(valueField = new HiddenField("value_field", options));
+        c.add(valueField = new HiddenField("value_field", options));
         add(dynamicFetcher = new BloodhoundDataBehavior(options));
         return c;
     }

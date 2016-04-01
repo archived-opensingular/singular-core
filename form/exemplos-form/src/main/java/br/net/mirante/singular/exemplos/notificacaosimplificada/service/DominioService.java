@@ -75,7 +75,7 @@ public class DominioService {
         list.add(Triple.of(8, 3, "Cápsula Gelatinosa"));
         list.add(Triple.of(9, 3, "Cápsula de Amido"));
 
-        return list.stream().filter(t -> t.getMiddle().equals(idLinhaProducao % 3)).collect(Collectors.toList());
+        return list.stream().filter(t -> t.getMiddle().equals(idLinhaProducao % 3 + 1)).collect(Collectors.toList());
     }
 
 
