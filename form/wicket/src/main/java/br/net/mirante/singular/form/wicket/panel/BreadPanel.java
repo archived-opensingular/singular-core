@@ -18,7 +18,7 @@ public class BreadPanel extends Panel {
 
     private Form<?> form = new Form<>("panel-form");
     private BSGrid container = new BSGrid("grid");
-    private List<String> breads = new ArrayList<>();
+    protected List<String> breads = new ArrayList<>();
 
     public BreadPanel(String id) {
         this(id, new ArrayList<>());

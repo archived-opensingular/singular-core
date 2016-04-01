@@ -77,7 +77,7 @@ public class WicketBuildContext implements Serializable {
     private BSContainer annotationContainer;
 
     private boolean showBreadcrumb;
-    private List<String> breadCrumbs = newArrayList("Início");
+    private List<String> breadCrumbs = newArrayList();
     private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
     private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus;
 
