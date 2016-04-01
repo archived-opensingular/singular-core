@@ -12,8 +12,10 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.TypeBuilder;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -23,13 +25,15 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
+    public STypeString descricaoTipoEnsaio;
+
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
         STypeComposite<SIComposite> tipoEnsaio = this.addFieldComposite("tipoEnsaio");
         STypeInteger idTipoEnsaio = tipoEnsaio.addFieldInteger("id");
-        STypeString descricaoTipoEnsaio = tipoEnsaio.addFieldString("descricao");
+        descricaoTipoEnsaio = tipoEnsaio.addFieldString("descricao");
         tipoEnsaio.withSelectView().withSelectionFromProvider(descricaoTipoEnsaio, (ins, filter) -> {
             final SIList<?> list = ins.getType().newList();
             for (TipoEnsaioControleQualidade tipo : TipoEnsaioControleQualidade.values()) {
@@ -51,7 +55,8 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                 c.setValue(descricaoTipoReferencia, tipo.getDescricao());
             }
             return list;
-        }).asAtrBasic().dependsOn(tipoEnsaio).visible(i -> Value.notNull(i, tipoEnsaio));
+        }).asAtrBasic().label("Tipo de referência")
+                .dependsOn(tipoEnsaio).visible(i -> Value.notNull(i, tipoEnsaio));
 
         {
             STypeAttachmentList farmacopeicos = this.addFieldListOfAttachment("farmcopeicos", "farmacopeito");
@@ -75,6 +80,17 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
             nomeArquivo.asAtrBasic().label("Nome do Arquivo");
         }
+
+        STypeList<STypeComposite<SIComposite>, SIComposite> guiasOms = this.addFieldListOfComposite("guiasOms", "guiaOms");
+        STypeComposite<SIComposite> guiaOms = guiasOms.getElementsType();
+        STypeInteger edicao = guiaOms.addFieldInteger("edicao");
+        edicao.asAtrBasic().label("Edição");
+        STypeInteger capitulo = guiaOms.addFieldInteger("capitulo");
+        capitulo.asAtrBasic().label("Capítulo");
+        guiasOms
+                .withView(SViewListByMasterDetail::new)
+                .asAtrBasic().dependsOn(tipoReferencia)
+                .label("Guia OMS").visible(i -> TipoReferencia.GUIA_OMS.getId().equals(Value.of(i, idTipoReferencia)));
 
         STypeComposite<SIComposite> especificacaoResultadoLote = this.addFieldComposite("especificacaoResultadoLote");
         especificacaoResultadoLote

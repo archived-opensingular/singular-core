@@ -112,7 +112,8 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
 
         final STypeList<STypeEnsaioControleQualidade, SIComposite> ensaios = notificacaoSimplificada.addFieldListOf("ensaiosControleQualidade", STypeEnsaioControleQualidade.class);
         ensaios
-                .withView(SViewListByMasterDetail::new)
+                .withView(new SViewListByMasterDetail()
+                        .col(ensaios.getElementsType().descricaoTipoEnsaio, "Ensaio"))
                 .asAtrBasic().label("Ensaio de Controle de Qualidade");
 
     }

@@ -54,6 +54,7 @@ public class TypeaheadComponent extends Panel {
     private final SViewAutoComplete.Mode fetch;
     private WebMarkupContainer container;
     private AbstractAjaxBehavior dynamicFetcher;
+    private TextField labelField;
     private HiddenField valueField;
 
     public TypeaheadComponent(String id, IModel<?> model, SViewAutoComplete.Mode fetch) {
@@ -66,7 +67,7 @@ public class TypeaheadComponent extends Panel {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
         MOptionsModel options = new MOptionsModel(getDefaultModel());
 
-        c.add(new TextField("label_field", new Model(){
+        c.add(labelField = new TextField("label_field", new Model(){
             @Override
             public Serializable getObject() {
                 IModel<?> parentModel = TypeaheadComponent.this.getDefaultModel();
