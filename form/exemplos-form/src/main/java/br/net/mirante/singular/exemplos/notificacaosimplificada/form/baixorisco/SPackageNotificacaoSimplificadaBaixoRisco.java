@@ -5,19 +5,12 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaInternacional;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaPropria;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaTerceirizada;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeFormaFarmaceutica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeLinhaProducao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
@@ -151,8 +144,8 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricaoEmbalagemPrimaria, "Embalagem primária")
-                        .col(acondicionamentos.getElementsType().embalagemSecundaria.descricaoEmbalagemSecundaria, "Embalagem secundária")
+                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricao, "Embalagem primária")
+                        .col(acondicionamentos.getElementsType().embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamentos.getElementsType().quantidade)
                         .col(acondicionamentos.getElementsType().unidadeMedida.descricao)
                         .col(acondicionamentos.getElementsType().estudosEstabilidade, "Estudo de estabilidade")

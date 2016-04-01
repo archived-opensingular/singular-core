@@ -149,7 +149,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         acondicionamentos.getElementsType().estudosEstabilidade.asAtrBasic().visible(false);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricaoEmbalagemPrimaria, "Embalagem primária")
+                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricao, "Embalagem primária")
                         .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
     }

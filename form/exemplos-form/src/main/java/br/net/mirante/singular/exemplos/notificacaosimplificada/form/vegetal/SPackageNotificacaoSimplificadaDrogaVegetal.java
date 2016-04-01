@@ -5,10 +5,6 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal;
 
-import javax.persistence.Tuple;
-
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
@@ -19,19 +15,13 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificadaDrogaVegetal.class)
 public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
@@ -108,8 +98,8 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricaoEmbalagemPrimaria, "Embalagem primária")
-                        .col(acondicionamentos.getElementsType().embalagemSecundaria.descricaoEmbalagemSecundaria, "Embalagem secundária")
+                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricao, "Embalagem primária")
+                        .col(acondicionamentos.getElementsType().embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamentos.getElementsType().quantidade)
                         .col(acondicionamentos.getElementsType().unidadeMedida.descricao)
                         .col(acondicionamentos.getElementsType().estudosEstabilidade, "Estudo de estabilidade")
