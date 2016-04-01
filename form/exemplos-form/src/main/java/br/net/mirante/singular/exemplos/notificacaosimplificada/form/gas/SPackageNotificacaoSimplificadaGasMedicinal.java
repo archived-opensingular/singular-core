@@ -19,6 +19,8 @@ import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 
 import java.util.Optional;
 
+import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco.dominioService;
+
 @SInfoType(spackage = SPackageNotificacaoSimplificadaGasMedicinal.class)
 public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
