@@ -63,7 +63,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .label("Descrição")
                 .required()
                 .dependsOn(linhaProducao)
-                .visivel(i -> Value.notNull(i, linhaProducao.id));
+                .visible(i -> Value.notNull(i, linhaProducao.id));
         configuracaoLinhaProducao
                 .withSelectView()
                 .withSelectionFromProvider(descConfiguracaoLinhaProducao, (optionsInstance, lb) -> {
@@ -85,7 +85,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .asAtrBasic()
                 .label("Substâncias")
                 .dependsOn(configuracaoLinhaProducao)
-                .visivel(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
+                .visible(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
 
         final STypeComposite<?> concentracaoSubstancia                = substancias.getElementsType();
         final STypeComposite<?> substancia                            = concentracaoSubstancia.addFieldComposite("substancia");

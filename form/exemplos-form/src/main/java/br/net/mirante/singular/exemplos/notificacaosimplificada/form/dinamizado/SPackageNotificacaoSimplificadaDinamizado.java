@@ -80,7 +80,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .label("Descrição")
                 .required()
                 .dependsOn(linhaProducao)
-                .visivel(i -> Value.notNull(i, linhaProducao.id))
+                .visible(i -> Value.notNull(i, linhaProducao.id))
                 .asAtrBootstrap()
                 .colPreference(4);
         configuracaoLinhaProducao
@@ -100,7 +100,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         formaFarmaceutica
                 .asAtrBasic()
                 .dependsOn(configuracaoLinhaProducao)
-                .visivel(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
+                .visible(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
 
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> formulasHomeopaticas = notificacaoSimplificada.addFieldListOfComposite("formulasHomeopaticas", "formulaHomeopatica");
@@ -110,7 +110,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .asAtrBasic()
                 .label("Descrição")
                 .dependsOn(configuracaoLinhaProducao)
-                .visivel(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
+                .visible(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
 
         final STypeComposite<?> formulaHomeopatica = formulasHomeopaticas.getElementsType();
         final STypeComposite<?> descricaoDinamizada = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
