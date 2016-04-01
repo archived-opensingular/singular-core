@@ -57,7 +57,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Natureza do intermediador")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade);
 
 
@@ -78,7 +78,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Razão Social")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -90,7 +90,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("CNPJ")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(3);
@@ -100,7 +100,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Endereço do Intermediador")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrAnnotation().setAnnotated();
 
@@ -110,7 +110,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Contato do Intermediador")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrAnnotation().setAnnotated();
         tipoContato
@@ -127,7 +127,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Nome do Passageiro")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -139,7 +139,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Número do passaporte")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -148,7 +148,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Nome da empresa aérea")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -157,7 +157,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Número do vôo")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -167,7 +167,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Nome do aeroporto de chegada ao Brasil")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -177,7 +177,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Data e Hora da chegada ao Brasil")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(6);
@@ -189,7 +189,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Número do LI")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> licenciamentoImportacao.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> licenciamentoImportacao.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -202,7 +202,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Número de objeto da empresa de Courrier:\n")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> remessaExpressa.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> remessaExpressa.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -211,7 +211,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Número do AWB (Air Way Bill)")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> remessaExpressa.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> remessaExpressa.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
                 .asAtrBootstrap()
                 .colPreference(4);

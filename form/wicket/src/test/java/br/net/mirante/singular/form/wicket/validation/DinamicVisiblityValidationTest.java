@@ -22,7 +22,7 @@ public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
 
         fieldTwo.asAtrBasic().dependsOn(fieldOne);
         fieldTwo.asAtrBasic()
-                .visivel(instance -> instance.findNearestValue(fieldOne, String.class).orElse("").equals(testValue));
+                .visible(instance -> instance.findNearestValue(fieldOne, String.class).orElse("").equals(testValue));
         fieldTwo.asAtrBasic().required(true);
     }
 

@@ -14,7 +14,6 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
@@ -102,7 +101,6 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         });
         gas.asAtrBasic()
                 .dependsOn(descricao)
-//                .visivel((x) -> x.findNearestValue(descricao).isPresent())
                 .enabled((x) -> x.findNearestValue(descricao).isPresent())
         ;
 
@@ -115,7 +113,6 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         concentracao.withSelectionOf("50mg + 30mg","45mg + 60mg","55mg + 90mg");
         concentracao.asAtrBasic()
                 .dependsOn(descricao)
-//                .visivel((x) -> x.findNearestValue(descricao).isPresent())
                 .enabled((x) -> x.findNearestValue(descricao).isPresent())
         ;
         concentracao.asAtrBootstrap().colPreference(2);
@@ -146,10 +143,10 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
     private void addAcondicionamentos(STypeComposite<?> notificacaoSimplificada) {
         acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
-        acondicionamentos.getElementsType().embalagemSecundaria.asAtrBasic().visivel(false);
-        acondicionamentos.getElementsType().quantidade.asAtrBasic().visivel(false);
-        acondicionamentos.getElementsType().unidadeMedida.asAtrBasic().visivel(false);
-        acondicionamentos.getElementsType().estudosEstabilidade.asAtrBasic().visivel(false);
+        acondicionamentos.getElementsType().embalagemSecundaria.asAtrBasic().visible(false);
+        acondicionamentos.getElementsType().quantidade.asAtrBasic().visible(false);
+        acondicionamentos.getElementsType().unidadeMedida.asAtrBasic().visible(false);
+        acondicionamentos.getElementsType().estudosEstabilidade.asAtrBasic().visible(false);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
                         .col(acondicionamentos.getElementsType().embalagemPrimaria.descricaoEmbalagemPrimaria, "Embalagem primária")

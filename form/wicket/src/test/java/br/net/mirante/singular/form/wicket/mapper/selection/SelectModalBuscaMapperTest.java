@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -29,7 +28,7 @@ public class SelectModalBuscaMapperTest extends SingularFormBaseTest {
 
         dependentField = baseType.addFieldString("dependentField");
         dependentField.asAtrBasic().dependsOn(mandatoryField);
-        dependentField.asAtrBasic().visivel(ins -> StringUtils.isNotEmpty(ins.findNearestValue(mandatoryField, String.class).orElse(null)));
+        dependentField.asAtrBasic().visible(ins -> StringUtils.isNotEmpty(ins.findNearestValue(mandatoryField, String.class).orElse(null)));
 
     }
 

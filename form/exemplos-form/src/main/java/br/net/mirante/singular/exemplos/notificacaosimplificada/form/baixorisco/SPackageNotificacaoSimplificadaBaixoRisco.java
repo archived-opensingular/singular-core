@@ -8,11 +8,6 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaInternacional;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaPropria;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaTerceirizada;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
@@ -77,7 +72,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .label("Descrição")
                 .required()
                 .dependsOn(linhaProducao)
-                .visivel(i -> Value.notNull(i, idLinhaProducao));
+                .visible(i -> Value.notNull(i, idLinhaProducao));
         configuracaoLinhaProducao
                 .withSelectView()
                 .withSelectionFromProvider(descConfiguracaoLinhaProducao, (optionsInstance, lb) -> {
@@ -99,7 +94,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .asAtrBasic()
                 .label("Substâncias")
                 .dependsOn(configuracaoLinhaProducao)
-                .visivel(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
+                .visible(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
 
         final STypeComposite<?> concentracaoSubstancia                = substancias.getElementsType();
         final STypeComposite<?> substancia                            = concentracaoSubstancia.addFieldComposite("substancia");

@@ -137,7 +137,7 @@ public class SPackagePrototype extends SPackage {
         fieldType.addFieldInteger(TAMANHO_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
                 .getTipo().asAtrBasic().label("Tamanho Máximo")
-                .visivel(
+                .visible(
                         (instance) -> {
                             Optional<String> optType = instance.findNearestValue(type, String.class);
                             if (!optType.isPresent()) return false;
@@ -155,13 +155,13 @@ public class SPackagePrototype extends SPackage {
                 .asAtrBootstrap().colPreference(2)
                 .getTipo().asAtrBasic()
                 .label("Tamanho Inteiro")
-                .visivel(ifDecimalPredicate);
+                .visible(ifDecimalPredicate);
 
         fieldType.addFieldInteger(TAMANHO_DECIMAL_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
                 .getTipo().asAtrBasic()
                 .label("Tamanho Decimal")
-                .visivel(ifDecimalPredicate);
+                .visible(ifDecimalPredicate);
     }
 
     private void addFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {

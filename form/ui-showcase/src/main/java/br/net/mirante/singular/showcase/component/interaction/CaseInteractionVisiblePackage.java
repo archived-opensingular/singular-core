@@ -37,7 +37,7 @@ public class CaseInteractionVisiblePackage extends SPackage {
         visible.as(SPackageBasic.aspect()).label("Visible");
 
         record.as(SPackageBasic.aspect())
-                .visivel(ins -> ins.findNearestValue(visible, Boolean.class).orElse(false))
+                .visible(ins -> ins.findNearestValue(visible, Boolean.class).orElse(false))
                 .dependsOn(visible);
 
         recordText.as(SPackageBasic.aspect())

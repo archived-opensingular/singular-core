@@ -78,7 +78,7 @@ public class STypeEndereco extends STypeComposite<SIComposite> {
                 .required(inst -> Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
                 .asAtrBasic()
                 .label("Cidade")
-                .visivel(inst -> Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
+                .visible(inst -> Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
                 .dependsOn(estado)
                 .asAtrBootstrap()
                 .colPreference(3);
