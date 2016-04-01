@@ -3,37 +3,37 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
 public enum TipoResultadoAnalise {
 
-	DEFERIDO('S', "Deferido"),
-	INDEFERIDO('N', "Indeferido");
-	
-	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoResultadoAnalise";
-	
-	private Character codigo;
-	private String descricao;
-	
-	private TipoResultadoAnalise(Character codigo, String descricao){
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    DEFERIDO('S', "Deferido"),
+    INDEFERIDO('N', "Indeferido");
 
-	public Character getCodigo() {
-		return codigo;
-	}
+    public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoResultadoAnalise";
 
-	public String getDescricao() {
-		return descricao;
-	}
-	
-	public static TipoResultadoAnalise valueOfEnum(Character codigo) {
+    private Character codigo;
+    private String    descricao;
 
-		TipoResultadoAnalise tipos[] = TipoResultadoAnalise.values();
+    private TipoResultadoAnalise(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-		for (TipoResultadoAnalise tipo : tipos) {
-			if (codigo != null && tipo.getCodigo().equals( codigo) ){
-				return tipo;
-			}
-		}
-		return null;
-	}
-	
+    public Character getCodigo() {
+        return codigo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public static TipoResultadoAnalise valueOfEnum(Character codigo) {
+
+        TipoResultadoAnalise tipos[] = TipoResultadoAnalise.values();
+
+        for (TipoResultadoAnalise tipo : tipos) {
+            if (codigo != null && tipo.getCodigo().equals(codigo)) {
+                return tipo;
+            }
+        }
+        return null;
+    }
+
 }

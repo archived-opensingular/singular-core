@@ -5,45 +5,45 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlEnum
-@XmlType(namespace="http://www.anvisa.gov.br/reg-med/schema/domains")
+@XmlType(namespace = "http://www.anvisa.gov.br/reg-med/schema/domains")
 public enum TipoRestricaoSexo {
 
-	@XmlEnumValue("M")
-	MASCULINO('M', "Masculino"),
-	
-	@XmlEnumValue("F")
-	FEMININO('F', "Feminino"),
-	
-	@XmlEnumValue("A")
-	AMBOS('A', "Ambos");
+    @XmlEnumValue("M")
+    MASCULINO('M', "Masculino"),
 
-	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoRestricaoSexo";
-	
-	private Character codigo;
-	private String descricao;
+    @XmlEnumValue("F")
+    FEMININO('F', "Feminino"),
 
-	private TipoRestricaoSexo(Character codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    @XmlEnumValue("A")
+    AMBOS('A', "Ambos");
 
-	public Character getCodigo() {
-		return codigo;
-	}
+    public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoRestricaoSexo";
 
-	public String getDescricao() {
-		return descricao;
-	}
-	
-	public static TipoRestricaoSexo valueOfEnum(Character codigo) {
+    private Character codigo;
+    private String    descricao;
 
-		TipoRestricaoSexo status[] = TipoRestricaoSexo.values();
+    private TipoRestricaoSexo(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-		for (TipoRestricaoSexo st : status) {
-			if (codigo != null && st.getCodigo().charValue() == codigo.charValue()){
-				return st;
-			}
-		}
-		return null;
-	}
+    public Character getCodigo() {
+        return codigo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public static TipoRestricaoSexo valueOfEnum(Character codigo) {
+
+        TipoRestricaoSexo status[] = TipoRestricaoSexo.values();
+
+        for (TipoRestricaoSexo st : status) {
+            if (codigo != null && st.getCodigo().charValue() == codigo.charValue()) {
+                return st;
+            }
+        }
+        return null;
+    }
 }

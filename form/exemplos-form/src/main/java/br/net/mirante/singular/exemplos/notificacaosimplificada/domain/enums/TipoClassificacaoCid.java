@@ -5,42 +5,42 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlEnum
-@XmlType(namespace="http://www.anvisa.gov.br/reg-med/schema/domains")
+@XmlType(namespace = "http://www.anvisa.gov.br/reg-med/schema/domains")
 public enum TipoClassificacaoCid {
 
-	@XmlEnumValue("E")
-	ETIOLOGIA('E', "Etiologia"),
-	
-	@XmlEnumValue("M")
-	MANIFESTACAO('M', "Manifestação");
+    @XmlEnumValue("E")
+    ETIOLOGIA('E', "Etiologia"),
 
-	public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoClassificacaoCid";
-	
-	private Character codigo;
-	private String descricao;
+    @XmlEnumValue("M")
+    MANIFESTACAO('M', "Manifestação");
 
-	private TipoClassificacaoCid(Character codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
+    public static final String ENUM_CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoClassificacaoCid";
 
-	public Character getCodigo() {
-		return codigo;
-	}
+    private Character codigo;
+    private String    descricao;
 
-	public String getDescricao() {
-		return descricao;
-	}
-	
-	public static TipoClassificacaoCid valueOfEnum(Character codigo) {
+    private TipoClassificacaoCid(Character codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
-		TipoClassificacaoCid status[] = TipoClassificacaoCid.values();
+    public Character getCodigo() {
+        return codigo;
+    }
 
-		for (TipoClassificacaoCid st : status) {
-			if (codigo != null && st.getCodigo().charValue() == codigo.charValue()){
-				return st;
-			}
-		}
-		return null;
-	}
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public static TipoClassificacaoCid valueOfEnum(Character codigo) {
+
+        TipoClassificacaoCid status[] = TipoClassificacaoCid.values();
+
+        for (TipoClassificacaoCid st : status) {
+            if (codigo != null && st.getCodigo().charValue() == codigo.charValue()) {
+                return st;
+            }
+        }
+        return null;
+    }
 }

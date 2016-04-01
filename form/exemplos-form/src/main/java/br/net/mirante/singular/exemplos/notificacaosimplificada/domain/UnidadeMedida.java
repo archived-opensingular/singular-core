@@ -26,66 +26,67 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "unidade-medida", namespace = "http://www.anvisa.gov.br/reg-med/schema/domains")
 @Entity
 @Table(name = "TB_UNIDADE_MEDIDA_MEDICAMENTO", schema = "DBMEDICAMENTO"
-      , uniqueConstraints = @UniqueConstraint(columnNames = "SG_UNIDADE_MEDIDA_MEDICAMENTO"))
+        , uniqueConstraints = @UniqueConstraint(columnNames = "SG_UNIDADE_MEDIDA_MEDICAMENTO"))
 @PrimaryKeyJoinColumn(name = "CO_UNIDADE_MEDIDA_MEDICAMENTO", referencedColumnName = "CO_SEQ_VOCABULARIO_CONTROLADO")
 @NamedQueries({
-      @NamedQuery(name = "UnidadeMedida.findAll", query = "Select unidadeMedida From UnidadeMedida as unidadeMedida where unidadeMedida.ativa = 'S'  Order by unidadeMedida.descricao  ") })
+        @NamedQuery(name = "UnidadeMedida.findAll", query = "Select unidadeMedida From UnidadeMedida as unidadeMedida where unidadeMedida.ativa = 'S'  Order by unidadeMedida.descricao  ")})
 public class UnidadeMedida extends VocabularioControlado {
 
-   private static final long serialVersionUID = 8565541983395826765L;
+    private static final long serialVersionUID = 8565541983395826765L;
 
-   @Column(name = "SG_UNIDADE_MEDIDA_MEDICAMENTO", unique = true, nullable = false, length = 15)
-   private String sigla;
+    @Column(name = "SG_UNIDADE_MEDIDA_MEDICAMENTO", unique = true, nullable = false, length = 15)
+    private String sigla;
 
-   @ManyToOne(fetch = FetchType.EAGER)
-   @JoinColumn(name = "CO_TIPO_UNIDADE_MEDIDA")
-   private TipoMedida tipo;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "CO_TIPO_UNIDADE_MEDIDA")
+    private TipoMedida tipo;
 
-   public UnidadeMedida() {}
+    public UnidadeMedida() {
+    }
 
-   public UnidadeMedida(Long id, String descricao, String sigla, TipoMedida tipo, SimNao ativa) {
-      this.id = id;
-      this.descricao = descricao;
-      this.sigla = sigla;
-      this.tipo = tipo;
-      this.ativa = ativa;
-   }
+    public UnidadeMedida(Long id, String descricao, String sigla, TipoMedida tipo, SimNao ativa) {
+        this.id = id;
+        this.descricao = descricao;
+        this.sigla = sigla;
+        this.tipo = tipo;
+        this.ativa = ativa;
+    }
 
-   public String getSigla() {
-      return this.sigla;
-   }
+    public String getSigla() {
+        return this.sigla;
+    }
 
-   public void setSigla(String sigla) {
-      this.sigla = sigla;
-   }
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
+    }
 
-   public TipoMedida getTipo() {
-      return this.tipo;
-   }
+    public TipoMedida getTipo() {
+        return this.tipo;
+    }
 
-   public void setTipo(TipoMedida tipo) {
-      this.tipo = tipo;
-   }
+    public void setTipo(TipoMedida tipo) {
+        this.tipo = tipo;
+    }
 
-   @Override
-   public int hashCode() {
-      int hashCode = Integer.MIN_VALUE;
-      if (this.getId() != null) {
-         hashCode += this.getId();
-      }
-      return hashCode;
-   }
+    @Override
+    public int hashCode() {
+        int hashCode = Integer.MIN_VALUE;
+        if (this.getId() != null) {
+            hashCode += this.getId();
+        }
+        return hashCode;
+    }
 
-   @Override
-   public boolean equals(Object obj) {
-      if (obj != null) {
-         if (obj instanceof UnidadeMedida) {
-            UnidadeMedida um = (UnidadeMedida) obj;
-            if (um.getId() != null) {
-               return um.getId().equals(this.getId());
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null) {
+            if (obj instanceof UnidadeMedida) {
+                UnidadeMedida um = (UnidadeMedida) obj;
+                if (um.getId() != null) {
+                    return um.getId().equals(this.getId());
+                }
             }
-         }
-      }
-      return false;
-   }
+        }
+        return false;
+    }
 }

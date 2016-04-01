@@ -25,63 +25,63 @@ import org.hibernate.annotations.Type;
 @Table(name = "TB_FAIXA_CONCENTRACAO", schema = "DBMEDICAMENTO")
 public class FaixaConcentracao extends BaseEntity implements Serializable {
 
-   private static final long serialVersionUID = 8905832888354927426L;
+    private static final long serialVersionUID = 8905832888354927426L;
 
-   private Long              id;
-   private UnidadeMedida     unidadeMedida;
-   private BigDecimal        numero;
-   private TipoControleValor sinal;
+    private Long              id;
+    private UnidadeMedida     unidadeMedida;
+    private BigDecimal        numero;
+    private TipoControleValor sinal;
 
-   @Id
-   @Column(name = "CO_SEQ_FAIXA_CONCENTRACAO", unique = true, nullable = false)
-   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FAIXACONCENTRACAO")
-   @SequenceGenerator(name = "SEQ_FAIXACONCENTRACAO", sequenceName = "DBMEDICAMENTO.SQ_COSEQFAIXACONCENTRACAO", allocationSize = 1)
-   public Long getId() {
-      return id;
-   }
+    @Id
+    @Column(name = "CO_SEQ_FAIXA_CONCENTRACAO", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FAIXACONCENTRACAO")
+    @SequenceGenerator(name = "SEQ_FAIXACONCENTRACAO", sequenceName = "DBMEDICAMENTO.SQ_COSEQFAIXACONCENTRACAO", allocationSize = 1)
+    public Long getId() {
+        return id;
+    }
 
-   public void setId(Long id) {
-      this.id = id;
-   }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-   @ManyToOne(fetch = FetchType.EAGER)
-   @JoinColumn(name = "CO_UNIDADE_MEDIDA", nullable = false)
-   public UnidadeMedida getUnidadeMedida() {
-      return unidadeMedida;
-   }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "CO_UNIDADE_MEDIDA", nullable = false)
+    public UnidadeMedida getUnidadeMedida() {
+        return unidadeMedida;
+    }
 
-   public void setUnidadeMedida(UnidadeMedida unidadeMedida) {
-      this.unidadeMedida = unidadeMedida;
-   }
+    public void setUnidadeMedida(UnidadeMedida unidadeMedida) {
+        this.unidadeMedida = unidadeMedida;
+    }
 
-   @Column(name = "NU_FAIXA", nullable = false)
-   public BigDecimal getNumero() {
-      return numero;
-   }
+    @Column(name = "NU_FAIXA", nullable = false)
+    public BigDecimal getNumero() {
+        return numero;
+    }
 
-   public void setNumero(BigDecimal numero) {
-      this.numero = numero;
-   }
+    public void setNumero(BigDecimal numero) {
+        this.numero = numero;
+    }
 
-   @Column(name = "DS_SINAL_FAIXA", nullable = false)
-   @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
-         @Parameter(name = "enumClass", value = TipoControleValor.ENUM_CLASS_NAME),
-         @Parameter(name = "identifierMethod", value = "getDescricao"),
-         @Parameter(name = "valueOfMethod", value = "valueOfDescricao") })
-   public TipoControleValor getSinal() {
-      return sinal;
-   }
+    @Column(name = "DS_SINAL_FAIXA", nullable = false)
+    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
+            @Parameter(name = "enumClass", value = TipoControleValor.ENUM_CLASS_NAME),
+            @Parameter(name = "identifierMethod", value = "getDescricao"),
+            @Parameter(name = "valueOfMethod", value = "valueOfDescricao")})
+    public TipoControleValor getSinal() {
+        return sinal;
+    }
 
-   public void setSinal(TipoControleValor sinal) {
-      this.sinal = sinal;
-   }
+    public void setSinal(TipoControleValor sinal) {
+        this.sinal = sinal;
+    }
 
-   @Override
-   public Serializable getCod() {
-      return id;
-   }
+    @Override
+    public Serializable getCod() {
+        return id;
+    }
 
-   public void setCod(Long id) {
-      this.id = id;
-   }
+    public void setCod(Long id) {
+        this.id = id;
+    }
 }
