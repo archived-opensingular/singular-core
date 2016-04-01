@@ -2,6 +2,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Optional;
 
+@SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
     static DominioService dominioService(SInstance ins) {
