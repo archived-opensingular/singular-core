@@ -3,13 +3,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.service;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.EnderecoEmpresaInternacionalDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.GenericDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.CategoriaRegulatoriaMedicamento;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
 import org.apache.commons.lang3.tuple.Triple;
@@ -295,5 +289,7 @@ public class DominioService {
         return vocabularioControladoDAO.listAll(CategoriaRegulatoriaMedicamento.class);
     }
 
-
+    public List<Farmacopeia> listFarmacopeias() {
+        return vocabularioControladoDAO.listAll(Farmacopeia.class);
+    }
 }
