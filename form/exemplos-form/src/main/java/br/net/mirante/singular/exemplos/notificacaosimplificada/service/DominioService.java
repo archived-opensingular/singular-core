@@ -23,14 +23,6 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
-import org.apache.commons.lang3.tuple.Triple;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
