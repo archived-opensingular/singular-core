@@ -6,11 +6,12 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.EnderecoEmpresaInternacionalDAO;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.GenericDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
@@ -18,6 +19,8 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabr
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,6 +28,12 @@ public class DominioService {
 
     @Inject
     private VocabularioControladoDAO vocabularioControladoDAO;
+
+    @Inject
+    private GenericDAO genericDAO;
+
+    @Inject
+    private EnderecoEmpresaInternacionalDAO enderecoEmpresaInternacionalDAO;
 
     public List<LinhaCbpf> linhasProducao(String filtro) {
         return vocabularioControladoDAO.findByDescricao(LinhaCbpf.class, filtro);
@@ -157,31 +166,16 @@ public class DominioService {
         return vocabularioControladoDAO.findByDescricao(UnidadeMedida.class, filtro);
     }
 
-    public List<Triple> empresaInternacional() {
-        List<Triple> list = new ArrayList<>();
-
-        list.add(Triple.of(1, "BAYER", "Munique, Alemanha"));
-        list.add(Triple.of(2, "Pfizer", "Nova Iorque, Estados Unidos"));
-
-        return list;
+    public List<EnderecoEmpresaInternacional> empresaInternacional(String filtro) {
+        return enderecoEmpresaInternacionalDAO.buscarEnderecos(filtro, 5);
     }
 
-    public List<Triple> empresaTerceirizada() {
-        List<Triple> list = new ArrayList<>();
-
-        list.add(Triple.of(1, "Aché", "Rua presidentre dutra, São Paulo     SP"));
-        list.add(Triple.of(2, "Roche", "Anápolis - GO"));
-
-        return list;
+    public List<PessoaJuridica> empresaTerceirizada(String filtro) {
+        return genericDAO.findByProperty(PessoaJuridica.class, "razaoSocial", filtro, 5);
     }
 
-    public List<Triple> outroLocalFabricacao() {
-        List<Triple> list = new ArrayList<>();
-
-        list.add(Triple.of(1, "Laboratório EMS", "Moema SP"));
-        list.add(Triple.of(2, "Laboratório Fundo de Quintal", "Moema SP"));
-
-        return list;
+    public List<PessoaJuridica> outroLocalFabricacao(String filtro) {
+        return genericDAO.findByProperty(PessoaJuridica.class, "razaoSocial", filtro, 5);
     }
 
     public List<EtapaFabricacao> etapaFabricacao(String filtro) {

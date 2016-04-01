@@ -1,7 +1,12 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
 
+import static br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto.SPackageNotificacaoSimplificada.dominioService;
+
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -76,14 +81,15 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .visivel(i -> Integer.valueOf(4).equals(Value.of(i, tipoLocalFabricacao)));
 
         outroLocalFabricacao
-                .withSelectionFromProvider(razaoSocialOutroLocalFabricacao, (optionsInstance, lb) -> {
-                    for (Triple p : dominioService(optionsInstance).outroLocalFabricacao()) {
-                        lb
-                                .add()
-                                .set(idOutroLocalFabricacao, p.getLeft())
-                                .set(razaoSocialOutroLocalFabricacao, p.getMiddle())
-                                .set(enderecoOutroLocalFabricacao, p.getRight());
+                .withSelectionFromProvider(razaoSocialOutroLocalFabricacao, (ins, filter) -> {
+                    final SIList<?> list = ins.getType().newList();
+                    for (PessoaJuridica pj : dominioService(ins).outroLocalFabricacao(filter)) {
+                        final SIComposite c = (SIComposite) list.addNew();
+                        c.setValue(idOutroLocalFabricacao, pj.getCod());
+                        c.setValue(razaoSocialOutroLocalFabricacao, pj.getRazaoSocial());
+                        c.setValue(enderecoOutroLocalFabricacao, pj.getEnderecoCompleto());
                     }
+                    return list;
                 })
                 .asAtrBasic().label("Outro local de fabricação")
                 .getTipo().setView(SViewAutoComplete::new);

@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -23,14 +25,15 @@ public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
                 .required()
                 .label("Razão Social");
 
-        withSelectionFromProvider(razaoSocial, (optionsInstance, lb) -> {
-            for (Triple p : dominioService(optionsInstance).empresaInternacional()) {
-                lb
-                        .add()
-                        .set(id, p.getLeft())
-                        .set(razaoSocial, p.getMiddle())
-                        .set(endereco, p.getRight());
+        withSelectionFromProvider(razaoSocial, (ins, filter) -> {
+            final SIList<?> list = ins.getType().newList();
+            for (EnderecoEmpresaInternacional eei : dominioService(ins).empresaInternacional(filter)) {
+                final SIComposite c = (SIComposite) list.addNew();
+                c.setValue(id, eei.getId());
+                c.setValue(razaoSocial, eei.getEmpresaInternacional().getRazaoSocial());
+                c.setValue(endereco, eei.getEnderecoCompleto());
             }
+            return list;
         }).asAtrBasic().label("Empresa internacional").getTipo().setView(SViewAutoComplete::new);
 
     }
