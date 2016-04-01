@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Farmacopeia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
@@ -12,10 +13,13 @@ import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 
 import java.util.Optional;
+
+import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco.dominioService;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificadaGasMedicinal.class)
 public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
@@ -30,10 +34,6 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
     public SPackageNotificacaoSimplificadaGasMedicinal() {
         super(PACOTE);
-    }
-
-    static DominioService dominioService(SInstance ins) {
-        return ins.getDocument().lookupService(DominioService.class);
     }
 
     @Override
@@ -122,9 +122,19 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         informacoesFarmacopeicas = notificacaoSimplificada.addFieldComposite("informacoesFarmacopeicas");
         informacoesFarmacopeicas.asAtrBasic().label("Informações farmacopeicas");
 
-        STypeString farmacopeia = informacoesFarmacopeicas.addFieldString("farmacopeia");
+        STypeComposite farmacopeia = informacoesFarmacopeicas.addFieldComposite("farmacopeia");
         farmacopeia.asAtrBasic().label("Nome");
-        farmacopeia.withSelectionOf("Farmacopeia 1", "Farmacopeia 2", "Farmacopeia 3", "Farmacopeia 4");
+        STypeInteger id = farmacopeia.addFieldInteger("id");
+        STypeString descricao = farmacopeia.addFieldString("descricao");
+        farmacopeia.withSelectionFromProvider(descricao, (ins,filter) -> {
+            final SIList<?> list = ins.getType().newList();
+            for (Farmacopeia f : dominioService(ins).listFarmacopeias()) {
+                final SIComposite c = (SIComposite) list.addNew();
+                c.setValue(id, f.getId());
+                c.setValue(descricao, f.getDescricao());
+            }
+            return list;
+        });
         farmacopeia.withView(SViewSelectionBySearchModal::new);
 
         informacoesFarmacopeicas.addFieldInteger("pagina")
@@ -143,13 +153,14 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
     private void addAcondicionamentos(STypeComposite<?> notificacaoSimplificada) {
         acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
+        acondicionamentos.withMiniumSizeOf(1);
         acondicionamentos.getElementsType().embalagemSecundaria.asAtrBasic().visible(false);
         acondicionamentos.getElementsType().quantidade.asAtrBasic().visible(false);
         acondicionamentos.getElementsType().unidadeMedida.asAtrBasic().visible(false);
         acondicionamentos.getElementsType().estudosEstabilidade.asAtrBasic().visible(false);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricaoEmbalagemPrimaria, "Embalagem primária")
+                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricao, "Embalagem primária")
                         .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
     }

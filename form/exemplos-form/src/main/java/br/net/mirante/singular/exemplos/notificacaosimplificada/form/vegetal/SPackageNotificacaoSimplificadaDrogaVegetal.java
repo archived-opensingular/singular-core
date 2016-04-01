@@ -5,10 +5,6 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal;
 
-import javax.persistence.Tuple;
-
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
@@ -19,19 +15,13 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificadaDrogaVegetal.class)
 public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
@@ -110,8 +100,8 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
         STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamento.embalagemPrimaria.descricaoEmbalagemPrimaria, "Embalagem primária")
-                        .col(acondicionamento.embalagemSecundaria.descricaoEmbalagemSecundaria, "Embalagem secundária")
+                        .col(acondicionamento.embalagemPrimaria.descricao, "Embalagem primária")
+                        .col(acondicionamento.embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamento.estudosEstabilidade, "Estudo de estabilidade")
                         .col(acondicionamento.prazoValidade))
                 .asAtrBasic().label("Acondicionamento");

@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
@@ -14,28 +15,29 @@ import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.voca
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeEmbalagemPrimaria extends STypeComposite<SIComposite> {
 
-    public STypeString descricaoEmbalagemPrimaria;
+    public STypeString descricao;
+    public STypeInteger id;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
-        STypeString idEmbalagemPrimaria        = this.addFieldString("id");
-        descricaoEmbalagemPrimaria = this.addFieldString("descricao");
+        id = this.addFieldInteger("id");
+        descricao = this.addFieldString("descricao");
         {
             this
                     .asAtrBootstrap()
                     .colPreference(6)
                     .asAtrBasic()
                     .label("Embalagem primária")
-                    .required()
-                    .getTipo().setView(SViewAutoComplete::new);
+                    .required();
+            this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
 
-            this.withSelectionFromProvider(descricaoEmbalagemPrimaria, (ins, filter) -> {
+            this.withSelectionFromProvider(descricao, (ins, filter) -> {
                 final SIList<?> list = ins.getType().newList();
                 for (EmbalagemPrimariaBasica emb : dominioService(ins).findEmbalagensBasicas(filter)) {
                     final SIComposite c = (SIComposite) list.addNew();
-                    c.setValue(idEmbalagemPrimaria, emb.getId());
-                    c.setValue(descricaoEmbalagemPrimaria, emb.getDescricao());
+                    c.setValue(id, emb.getId());
+                    c.setValue(descricao, emb.getDescricao());
                 }
                 return list;
             });

@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
+import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
@@ -60,6 +62,7 @@ public class DominioService {
 
     public List<Triple> configuracoesLinhaProducao(Integer idLinhaProducao) {
         List<Triple> list = new ArrayList<>();
+
         list.add(Triple.of(1, 1, "Comprimidos em Camadas"));
         list.add(Triple.of(2, 1, "Comprimidos Placebo"));
         list.add(Triple.of(3, 1, "Comprimidos Simples"));
@@ -72,50 +75,12 @@ public class DominioService {
         list.add(Triple.of(8, 3, "Cápsula Gelatinosa"));
         list.add(Triple.of(9, 3, "Cápsula de Amido"));
 
-        return list.stream().filter(t -> t.getMiddle().equals(idLinhaProducao)).collect(Collectors.toList());
+        return list.stream().filter(t -> t.getMiddle().equals(idLinhaProducao % 3 + 1)).collect(Collectors.toList());
     }
 
 
-    public List<Triple> substancias(Integer idConfiguracaoLinhaProducao) {
-        List<Triple> list = new ArrayList<>();
-        list.add(Triple.of(1, 1, "Clorpropamida"));
-        list.add(Triple.of(2, 1, "Cumarina"));
-        list.add(Triple.of(3, 1, "Metilcelulose"));
-
-        list.add(Triple.of(4, 2, "Bumetanida"));
-        list.add(Triple.of(5, 2, "Pindolol"));
-        list.add(Triple.of(6, 2, "Clopamida"));
-
-        list.add(Triple.of(7, 3, "Clorpropamida"));
-        list.add(Triple.of(8, 3, "Noretisterona"));
-        list.add(Triple.of(9, 3, "Tiabendazol"));
-
-        list.add(Triple.of(10, 4, "Troxerrutina"));
-        list.add(Triple.of(11, 4, "Cumarina"));
-        list.add(Triple.of(12, 4, "Silimarina"));
-
-        list.add(Triple.of(13, 5, "Metionina"));
-        list.add(Triple.of(14, 5, "Ticlopidina"));
-        list.add(Triple.of(15, 5, "Tribenosídeo"));
-
-        list.add(Triple.of(16, 6, "Isometepteno"));
-        list.add(Triple.of(17, 6, "Etinilestradiol"));
-        list.add(Triple.of(18, 6, "Ciproterona"));
-
-        list.add(Triple.of(19, 7, "Metoclopramida"));
-        list.add(Triple.of(20, 7, "Pepsina"));
-        list.add(Triple.of(21, 7, "Simeticona"));
-
-        list.add(Triple.of(22, 8, "Condroitina"));
-        list.add(Triple.of(23, 8, "Glicosamina"));
-        list.add(Triple.of(24, 8, "Dutasterida"));
-
-        list.add(Triple.of(25, 9, "Tansulosina"));
-        list.add(Triple.of(26, 9, "Cianocobalamina"));
-        list.add(Triple.of(27, 9, "Riboflavina"));
-
-
-        return list.stream().filter(t -> t.getMiddle().equals(idConfiguracaoLinhaProducao)).collect(Collectors.toList());
+    public List<Substancia> substancias(Integer idConfiguracaoLinhaProducao, String filter) {
+        return vocabularioControladoDAO.findByDescricao(Substancia.class, filter);
     }
 
 
@@ -167,13 +132,14 @@ public class DominioService {
     }
 
     public List<Triple> concentracoes(Integer idSubstancia) {
+
         List<Triple> list = new ArrayList<>();
 
         if (idSubstancia == null) {
             return list;
         }
-
-        Integer idSubstanciaFake = idSubstancia % 9;
+        
+        Integer idSubstanciaFake = idSubstancia % 9 + 1;
 
 
         list.add(Triple.of(1, 1, "10 mg"));
@@ -223,7 +189,7 @@ public class DominioService {
             return list;
         }
 
-        Integer idDescricaoDinamizadaFake = idDescricaoDinamizada % 9;
+        Integer idDescricaoDinamizadaFake = idDescricaoDinamizada % 9 + 1;
 
 
         list.add(Triple.of(1, 1, "15 DH 0,008 ml"));
@@ -275,7 +241,7 @@ public class DominioService {
     }
 
     public List<UnidadeMedida> unidadesMedida(String filtro) {
-        return vocabularioControladoDAO.findByDescricao(UnidadeMedida.class, filtro);
+        return vocabularioControladoDAO.findUnidadeMedida(filtro);
     }
 
     public List<EnderecoEmpresaInternacional> empresaInternacional(String filtro) {
@@ -318,6 +284,10 @@ public class DominioService {
         list.add(Pair.of(4L, "5mg + 12mg"));
 
         return list;
+    }
+
+	public List<Farmacopeia> listFarmacopeias() {
+        return vocabularioControladoDAO.listAll(Farmacopeia.class);
     }
 
 }
