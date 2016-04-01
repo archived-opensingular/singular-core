@@ -32,7 +32,7 @@ public class STypeFormaFarmaceutica extends STypeComposite<SIComposite> {
                     .label("Forma farmacêutica")
                     .asAtrBootstrap()
                     .colPreference(4);
-            this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
+            this.setView(SViewAutoComplete::new);
 
 
             this.withSelectionFromProvider(descricao, (ins, filter) -> {

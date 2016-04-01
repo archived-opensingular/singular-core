@@ -28,7 +28,7 @@ public class STypeEmbalagemSecundaria extends STypeComposite<SIComposite> {
                 .colPreference(6)
                 .asAtrBasic()
                 .label("Embalagem secundária");
-        this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
+        this.setView(SViewAutoComplete::new);
         withSelectionFromProvider(descricao, (ins, filter) -> {
             final SIList<?> list = ins.getType().newList();
             for (EmbalagemSecundaria es : dominioService(ins).embalagensSecundarias(filter)) {
