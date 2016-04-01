@@ -45,8 +45,8 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
         super.onLoadType(tb);
 
 
-        embalagemPrimaria = (STypeEmbalagemPrimaria) this.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
-        embalagemSecundaria = (STypeEmbalagemSecundaria) this.addField("embalagemSecundaria", STypeEmbalagemSecundaria.class);
+        embalagemPrimaria = this.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
+        embalagemSecundaria = this.addField("embalagemSecundaria", STypeEmbalagemSecundaria.class);
 
         quantidade = this.addFieldInteger("quantidade", true);
         quantidade
