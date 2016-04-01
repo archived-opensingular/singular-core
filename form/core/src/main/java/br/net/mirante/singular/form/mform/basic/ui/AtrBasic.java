@@ -62,12 +62,12 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBasic visivel(Boolean valor) {
+    public AtrBasic visible(Boolean valor) {
         setAttributeValue(SPackageBasic.ATR_VISIVEL, valor);
         return this;
     }
 
-    public AtrBasic visivel(Predicate<SInstance> valor) {
+    public AtrBasic visible(Predicate<SInstance> valor) {
         setAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION, valor);
         return this;
     }

@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral;
 
-import java.io.Serializable;
+import br.net.mirante.singular.persistence.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,8 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import br.net.mirante.singular.persistence.entity.BaseEntity;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "TB_CIDADE", schema = "DBGERAL")
@@ -39,9 +38,9 @@ public class Cidade extends BaseEntity {
     private String nome;
 
     @JoinColumn(name = "CO_PAIS", referencedColumnName = "CO_SEQ_PAIS")
-    @ManyToOne(fetch = FetchType.LAZY, optional=true)
-    private Pais pais;   
-   
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    private Pais pais;
+
     public Integer getId() {
         return id;
     }
@@ -49,7 +48,7 @@ public class Cidade extends BaseEntity {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public UnidadeFederacao getUf() {
         return uf;
     }
@@ -80,9 +79,9 @@ public class Cidade extends BaseEntity {
     }
 
     @Override
-   public String toString() {
-	   return nome;
-   }
+    public String toString() {
+        return nome;
+    }
 }
 
 

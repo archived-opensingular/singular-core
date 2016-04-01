@@ -110,7 +110,6 @@ class SelectInputModalContainer extends BSContainer {
             public void onClick(AjaxRequestTarget target) {
                 target.add(modalContainer);
                 searchModal.getModalBorder().setVisible(true);
-//                searchModal.show(target);
                 target.appendJavaScript(getConfigureBackdropScript());
             }
 
@@ -153,7 +152,6 @@ class SelectInputModalContainer extends BSContainer {
                 new ActionAjaxButton("limpar") {
                     @Override
                     protected void onAction(AjaxRequestTarget target, Form<?> form) {
-//                        model.getObject().clearInstance();
                         target.add(valueInput);
                         searchModal.hide(target);
                     }

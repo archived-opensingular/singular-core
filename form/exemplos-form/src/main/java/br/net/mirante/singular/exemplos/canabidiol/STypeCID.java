@@ -61,7 +61,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .required()
                 .asAtrBasic()
                 .label("Grupo")
-                .visivel(inst -> Value.notNull(inst, (STypeSimple) capitulo.getField("id")))
+                .visible(inst -> Value.notNull(inst, (STypeSimple) capitulo.getField("id")))
                 .dependsOn(capitulo)
                 .asAtrBootstrap()
                 .colPreference(3);
@@ -90,7 +90,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .required()
                 .asAtrBasic()
                 .label("Categoria")
-                .visivel(inst -> Value.notNull(inst, idGrupo))
+                .visible(inst -> Value.notNull(inst, idGrupo))
                 .dependsOn(grupo)
                 .asAtrBootstrap()
                 .colPreference(3);
@@ -120,7 +120,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Sub-Categoria")
 
-                .visivel(inst -> ciddao.listSubCategoriasByIdCategoria(Value.of(inst, idCategoria)).size() > 0)
+                .visible(inst -> ciddao.listSubCategoriasByIdCategoria(Value.of(inst, idCategoria)).size() > 0)
                 .dependsOn(categoria)
                 .asAtrBootstrap()
                 .colPreference(3);

@@ -35,7 +35,7 @@ public class SPackageTesteContatos extends SPackage {
         nome = identificacao.addFieldString("nome", true);
         sobrenome = identificacao.addFieldString("sobrenome");
 //        sobrenome.as(MPacoteBasic.aspect())
-//            .visivel(i -> {
+//            .visible(i -> {
 //                boolean visible = i.findAncestor(contato).get().findDescendant(nome).get().getValor() == null;
 //                System.out.println(">>> " + visible);
 //                return visible;
