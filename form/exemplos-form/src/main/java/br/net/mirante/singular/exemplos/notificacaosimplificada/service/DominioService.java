@@ -286,4 +286,8 @@ public class DominioService {
         return list;
     }
 
+	public List<Farmacopeia> listFarmacopeias() {
+        return vocabularioControladoDAO.listAll(Farmacopeia.class);
+    }
+
 }
