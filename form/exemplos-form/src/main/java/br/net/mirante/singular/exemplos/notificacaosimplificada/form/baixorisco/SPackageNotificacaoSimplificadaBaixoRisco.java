@@ -195,11 +195,11 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
 
         final STypeAttachmentList layoutsRotulagem = notificacaoSimplificada
-                .addFieldListOfAttachment("layoutsRotulagem", "layout");
+                .addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
         layoutsRotulagem
                 .asAtrBasic()
                 .required()
-                .label("Layouts Rotulagem");
+                .label("Layout rotulagem");
 
         // config tabs
         SViewTab tabbed = notificacaoSimplificada.setView(SViewTab::new);
