@@ -42,11 +42,9 @@ public class STypeSubstanciaPopulator {
                 .withMiniumSizeOf(1)
                 .withView(SViewListByTable::new)
                 .asAtrBasic()
-                .label("Substâncias");
-
-        substancias.asAtrBasic()
+                .label("Substâncias")
                 .dependsOn(dependentType)
-                .visivel(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
+                .visible(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
 
         final STypeComposite<?> concentracaoSubstancia                = substancias.getElementsType();
         final STypeComposite<?> substancia                            = concentracaoSubstancia.addFieldComposite("substancia");
