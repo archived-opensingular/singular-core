@@ -19,6 +19,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -89,12 +90,12 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
                     return list;
                 });
 
-        STypeList<STypeComposite<SIComposite>, SIComposite> nomePopulares = notificacaoSimplificada.addFieldListOfComposite("nomesPopulares", "nomePopular");
-        STypeComposite<SIComposite> nomePopular = nomePopulares.getElementsType();
+        STypeList<STypeComposite<SIComposite>, SIComposite> nomesPopulares = notificacaoSimplificada.addFieldListOfComposite("nomesPopulares", "nomePopular");
+        STypeComposite<SIComposite> nomePopular = nomesPopulares.getElementsType();
         STypeString nome = nomePopular.addFieldString("nome");
         nome.asAtrBasic().label("Nome Popular");
 
-        nomePopulares.asAtrBasic().label("Nome Popular");
+        nomesPopulares.asAtrBasic().label("Nome Popular");
 
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();
@@ -115,6 +116,17 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
                 .withView(new SViewListByMasterDetail()
                         .col(ensaios.getElementsType().descricaoTipoEnsaio, "Ensaio"))
                 .asAtrBasic().label("Ensaio de Controle de Qualidade");
+
+        SViewTab tabbed = notificacaoSimplificada.setView(SViewTab::new);
+        tabbed.addTab("medicamento", "Droga Vegetal")
+                .add(nomenclaturaBotanica)
+                .add(concentracao)
+                .add(nomesPopulares)
+        ;
+        tabbed.addTab("acondicionamento", "Acondicionamento")
+                .add(acondicionamentos);
+        tabbed.addTab("ensaio", "Ensaio de Controle de Qualidade")
+                .add(ensaios);
 
     }
 
