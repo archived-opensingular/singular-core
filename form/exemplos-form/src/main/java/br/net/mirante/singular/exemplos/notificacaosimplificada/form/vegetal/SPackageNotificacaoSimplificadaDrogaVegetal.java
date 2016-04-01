@@ -111,7 +111,7 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
                         .col(acondicionamentos.getElementsType().embalagemPrimaria.descricaoEmbalagemPrimaria, "Embalagem primária")
                         .col(acondicionamentos.getElementsType().embalagemSecundaria.descricaoEmbalagemSecundaria, "Embalagem secundária")
                         .col(acondicionamentos.getElementsType().quantidade)
-                        .col(acondicionamentos.getElementsType().descricaoUnidadeMedida)
+                        .col(acondicionamentos.getElementsType().unidadeMedida.descricao)
                         .col(acondicionamentos.getElementsType().estudosEstabilidade, "Estudo de estabilidade")
                         .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
