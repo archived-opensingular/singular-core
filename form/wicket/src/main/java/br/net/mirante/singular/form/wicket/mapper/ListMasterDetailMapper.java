@@ -322,7 +322,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 }
             });
 
-            this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
+            this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
                     if (closeCallback != null) {
