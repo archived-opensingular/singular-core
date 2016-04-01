@@ -1,8 +1,9 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -11,7 +12,6 @@ import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
-import org.apache.commons.lang3.tuple.Triple;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
@@ -77,14 +77,15 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .visivel(i -> Integer.valueOf(4).equals(Value.of(i, tipoLocalFabricacao)));
 
         outroLocalFabricacao
-                .withSelectionFromProvider(razaoSocialOutroLocalFabricacao, (optionsInstance, lb) -> {
-                    for (Triple p : dominioService(optionsInstance).outroLocalFabricacao()) {
-                        lb
-                                .add()
-                                .set(idOutroLocalFabricacao, p.getLeft())
-                                .set(razaoSocialOutroLocalFabricacao, p.getMiddle())
-                                .set(enderecoOutroLocalFabricacao, p.getRight());
+                .withSelectionFromProvider(razaoSocialOutroLocalFabricacao, (ins, filter) -> {
+                    final SIList<?> list = ins.getType().newList();
+                    for (PessoaJuridica pj : dominioService(ins).outroLocalFabricacao(filter)) {
+                        final SIComposite c = (SIComposite) list.addNew();
+                        c.setValue(idOutroLocalFabricacao, pj.getCod());
+                        c.setValue(razaoSocialOutroLocalFabricacao, pj.getRazaoSocial());
+                        c.setValue(enderecoOutroLocalFabricacao, pj.getEnderecoCompleto());
                     }
+                    return list;
                 })
                 .asAtrBasic().label("Outro local de fabricação")
                 .getTipo().setView(SViewAutoComplete::new);

@@ -1,14 +1,18 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
+import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada.dominioService;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInfoType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import org.apache.commons.lang3.tuple.Triple;
-
-import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada.dominioService;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
@@ -23,16 +27,18 @@ public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
         STypeString endereco = empresa.addFieldString("endereco");
         empresa
                 .asAtrBasic().label("Empresa")
+                .displayString("${razaoSocial} - ${endereco}")
                 .getTipo().withView(SViewAutoComplete::new);
 
-        empresa.withSelectionFromProvider(razaoSocial, (optionsInstance, lb) -> {
-            for (Triple t : dominioService(optionsInstance).empresaTerceirizada()) {
-                lb
-                        .add()
-                        .set(idEmpresa, t.getLeft())
-                        .set(razaoSocial, t.getMiddle())
-                        .set(endereco, t.getRight());
+        empresa.withSelectionFromProvider(razaoSocial, (ins, filter) -> {
+            final SIList<?> list = ins.getType().newList();
+            for (PessoaJuridica pj : dominioService(ins).empresaTerceirizada(filter)) {
+                final SIComposite c = (SIComposite) list.addNew();
+                c.setValue(idEmpresa, pj.getCod());
+                c.setValue(razaoSocial, pj.getRazaoSocial());
+                c.setValue(endereco, pj.getEnderecoCompleto());
             }
+            return list;
         });
 
 

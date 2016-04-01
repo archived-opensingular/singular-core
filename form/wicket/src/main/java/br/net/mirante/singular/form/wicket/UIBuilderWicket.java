@@ -98,8 +98,13 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
         if (ctx.getParent() == null || ctx.isShowBreadcrumb()) {
             ctx.init(this, viewMode);
-            //TODO mostrar apenas para quando tiver breadcrumbmapper na hierarquia
-            BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs());
+            BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs()) {
+                @Override
+                public boolean isVisible() {
+                    return !breads.isEmpty();
+                }
+            };
+
             BSRow row = ctx.getContainer().newGrid().newRow();
             row.newCol().appendTag("div", panel);
             WicketBuildContext child = ctx.createChild(row.newCol(), true, ctx.getModel());

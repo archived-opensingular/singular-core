@@ -7,6 +7,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -173,6 +174,14 @@ public class EnderecoEmpresaInternacional extends BaseEntity {
 
     public void setCidadeEstrangeira(String cidadeEstrangeira) {
         this.cidadeEstrangeira = cidadeEstrangeira;
+    }
+
+    public String getEnderecoCompleto() {
+        return String.format("%s, %s, %s - %s",
+                getRua(),
+                getBairro(),
+                Optional.ofNullable(getCidade()).map(Cidade::getNome).orElse(""),
+                Optional.ofNullable(getPais()).map(Pais::getNome).orElse(""));
     }
 
     @Override
