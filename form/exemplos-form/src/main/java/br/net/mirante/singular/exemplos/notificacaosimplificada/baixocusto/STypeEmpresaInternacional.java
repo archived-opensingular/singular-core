@@ -18,7 +18,10 @@ public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
         final STypeString razaoSocial = addFieldString("razaoSocial");
         final STypeString endereco    = addFieldString("endereco");
 
-        razaoSocial.asAtrBasic().label("Razão Social");
+        razaoSocial.
+                asAtrBasic()
+                .required()
+                .label("Razão Social");
 
         withSelectionFromProvider(razaoSocial, (optionsInstance, lb) -> {
             for (Triple p : dominioService(optionsInstance).empresaInternacional()) {

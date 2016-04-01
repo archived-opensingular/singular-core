@@ -55,6 +55,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
 
         linhaProducao
                 .asAtrBasic()
+                .required()
                 .label("Linha de Produção");
         linhaProducao.setView(SViewAutoComplete::new);
         linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (ins, filter) -> {
@@ -76,6 +77,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         configuracaoLinhaProducao
                 .asAtrBasic()
                 .label("Descrição")
+                .required()
                 .dependsOn(linhaProducao)
                 .visivel(i -> Value.notNull(i, idLinhaProducao));
         configuracaoLinhaProducao
@@ -94,6 +96,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> substancias = notificacaoSimplificada.addFieldListOfComposite("substancias", "concentracaoSubstancia");
         substancias
+                .withMiniumSizeOf(1)
                 .withView(SViewListByTable::new)
                 .asAtrBasic()
                 .label("Substâncias")
@@ -108,6 +111,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         substancia
                 .asAtrBasic()
                 .label("Substância")
+                .required()
                 .asAtrBootstrap()
                 .colPreference(6);
         substancia
@@ -130,6 +134,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         STypeSimple             descConcentracao         = concentracao.addFieldString("descricao");
         concentracao
                 .asAtrBasic()
+                .required()
                 .label("Concentração")
                 .dependsOn(substancia)
                 .asAtrBootstrap()
@@ -151,6 +156,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercialMedicamento");
         nomeComercial
                 .asAtrBasic()
+                .required()
                 .label("Nome Comercial do Medicamento")
                 .asAtrBootstrap()
                 .colPreference(8);
@@ -160,6 +166,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         STypeSimple             descFormaFormaceutica = formaFarmaceutica.addFieldString("descricao");
         formaFarmaceutica
                 .asAtrBasic()
+                .required()
                 .label("Forma Farmacêutica")
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -193,6 +200,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
                 .addFieldListOfAttachment("layoutsRotulagem", "layout");
         layoutsRotulagem
                 .asAtrBasic()
+                .required()
                 .label("Layouts Rotulagem");
 
         // config tabs
