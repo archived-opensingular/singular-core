@@ -20,6 +20,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Optional;
 
+@SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class SPackageNotificacaoSimplificada extends SPackage {
 
     public static final String PACOTE        = "mform.peticao.notificacaosimplificada";
@@ -42,6 +43,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         pb.createType(STypeEmpresaInternacional.class);
         pb.createType(STypeEmpresaTerceirizada.class);
         pb.createType(STypeLocalFabricacao.class);
+        pb.createType(STypeAcondicionamento.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
@@ -181,85 +183,17 @@ public class SPackageNotificacaoSimplificada extends SPackage {
                 });
 
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> acondicionamentos = notificacaoSimplificada
-                .addFieldListOfComposite("acondicionamentos", "acondicionamento");
-
-        acondicionamentos.withMiniumSizeOf(1);
-
-        STypeComposite<SIComposite> acondicionamento = acondicionamentos.getElementsType();
-
-        final STypeEmbalagemPrimaria   embalagemPrimaria   = acondicionamento.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
-        final STypeEmbalagemSecundaria embalagemSecundaria = acondicionamento.addField("embalagemSecundaria", STypeEmbalagemSecundaria.class);
-
-        STypeInteger quantidade = acondicionamento.addFieldInteger("quantidade", true);
-        quantidade
-                .asAtrBootstrap()
-                .colPreference(3)
-                .asAtrBasic()
-                .required()
-                .label("Quantidade");
-
-        STypeComposite<SIComposite> unidadeMedida          = acondicionamento.addFieldComposite("unidadeMedida");
-        STypeString                 idUnidadeMedida        = unidadeMedida.addFieldString("id");
-        STypeString                 descricaoUnidadeMedida = unidadeMedida.addFieldString("descricao");
-        unidadeMedida
-                .asAtrBootstrap()
-                .colPreference(3)
-                .asAtrBasic()
-                .required()
-                .label("Unidade de medida")
-                .getTipo().setView(SViewAutoComplete::new);
-        unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (ins, filter) -> {
-            final SIList<?> list = ins.getType().newList();
-            for (UnidadeMedida um : dominioService(ins).unidadesMedida(filter)) {
-                final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(idUnidadeMedida, um.getId());
-                c.setValue(descricaoUnidadeMedida, um.getDescricao());
-            }
-            return list;
-        });
-
-        final STypeAttachmentList estudosEstabilidade = acondicionamento
-                .addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
-
-        estudosEstabilidade.withMiniumSizeOf(1);
-
-        estudosEstabilidade.asAtrBasic()
-                .label("Estudo de estabilidade")
-                .displayString("<#list _inst as c>${c.name}<#sep>, </#sep></#list>");
-        {
-
-            STypeAttachment f           = estudosEstabilidade.getElementsType();
-            SType<?>        nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
-        }
-
-        {
-            final STypeAttachmentList layoutsRotulagem = acondicionamento.addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
-            layoutsRotulagem.asAtrBasic().label("Layout da rotulagem");
-            layoutsRotulagem.withMiniumSizeOf(1);
-
-            STypeAttachment f           = layoutsRotulagem.getElementsType();
-            SType<?>        nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
-        }
-
-
-        STypeList<STypeLocalFabricacao, SIComposite> locaisFabricacao = acondicionamento.addFieldListOf("locaisFabricacao", STypeLocalFabricacao.class);
-
-
-        STypeInteger prazoValidade = acondicionamento.addFieldInteger("prazoValidade", true);
-        prazoValidade.asAtrBasic().label("Prazo de validade (meses)");
-
+        final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(embalagemPrimaria.getDescricaoEmbalagemPrimaria(), "Embalagem primária")
-                        .col(embalagemSecundaria.getDescricaoEmbalagemSecundaria(), "Embalagem secundária")
-                        .col(quantidade)
-                        .col(descricaoUnidadeMedida)
-                        .col(estudosEstabilidade, "Estudo de estabilidade")
-                        .col(prazoValidade))
+                        .col(acondicionamentos.getElementsType().embalagemPrimaria.getDescricaoEmbalagemPrimaria(), "Embalagem primária")
+                        .col(acondicionamentos.getElementsType().embalagemSecundaria.getDescricaoEmbalagemSecundaria(), "Embalagem secundária")
+                        .col(acondicionamentos.getElementsType().quantidade)
+                        .col(acondicionamentos.getElementsType().descricaoUnidadeMedida)
+                        .col(acondicionamentos.getElementsType().estudosEstabilidade, "Estudo de estabilidade")
+                        .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
+
 
 
         final STypeAttachmentList layoutsRotulagem = notificacaoSimplificada

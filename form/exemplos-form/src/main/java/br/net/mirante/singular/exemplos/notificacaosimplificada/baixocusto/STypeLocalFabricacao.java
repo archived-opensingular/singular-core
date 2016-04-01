@@ -8,15 +8,17 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Triple;
 
-import java.util.Optional;
-
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
+
+    STypeSimple tipoLocalFabricacao;
+    STypeEmpresaPropria empresaPropria;
+    STypeEmpresaTerceirizada empresaTerceirizada;
+    STypeComposite<SIComposite> outroLocalFabricacao;
 
     static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);
@@ -28,7 +30,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
         this.asAtrBasic().label("Local de Fabricação");
 
-        STypeSimple tipoLocalFabricacao = this.addFieldInteger("tipoLocalFabricacao");
+        tipoLocalFabricacao = this.addFieldInteger("tipoLocalFabricacao");
         tipoLocalFabricacao
                 .asAtrBasic()
                 .label("Tipo de local");
@@ -41,7 +43,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .add(4, "Outro Local de Fabricação");
 
 
-        final STypeEmpresaPropria empresaPropria = this.addField("empresaPropria", STypeEmpresaPropria.class);
+        empresaPropria = this.addField("empresaPropria", STypeEmpresaPropria.class);
 
         empresaPropria.asAtrBasic()
                 .dependsOn(tipoLocalFabricacao)
@@ -54,7 +56,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .dependsOn(tipoLocalFabricacao)
                 .visivel(i -> Integer.valueOf(2).equals(Value.of(i, tipoLocalFabricacao)));
 
-        final STypeEmpresaTerceirizada empresaTerceirizada = this.addField("empresaTerceirizada", STypeEmpresaTerceirizada.class);
+        empresaTerceirizada = this.addField("empresaTerceirizada", STypeEmpresaTerceirizada.class);
 
         empresaTerceirizada
                 .asAtrBasic()
@@ -62,7 +64,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .visivel(i -> Integer.valueOf(3).equals(Value.of(i, tipoLocalFabricacao)));
 
 
-        STypeComposite<SIComposite> outroLocalFabricacao = this.addFieldComposite("outroLocalFabricacao");
+        outroLocalFabricacao = this.addFieldComposite("outroLocalFabricacao");
 
         STypeString idOutroLocalFabricacao = outroLocalFabricacao.addFieldString("id");
         STypeString razaoSocialOutroLocalFabricacao = outroLocalFabricacao.addFieldString("razaoSocial");
@@ -85,17 +87,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 })
                 .asAtrBasic().label("Outro local de fabricação")
                 .getTipo().setView(SViewAutoComplete::new);
-
-        this
-                .withView(new SViewListByMasterDetail()
-                        .col(tipoLocalFabricacao)
-                        .col(this, i -> {
-                            String label = String.valueOf(Optional.ofNullable(Value.of(i, "outroLocalFabricacao.razaoSocial")).orElse(""));
-                            label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaTerceirizada.empresa.razaoSocial")).orElse(""));
-                            label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaInternacional.razaoSocial")).orElse(""));
-                            label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaPropria.razaoSocial")).orElse(""));
-                            return label;
-                        }).col(empresaTerceirizada.etapasFabricacao()))
-                .asAtrBasic().label("Local de fabricação");
     }
+
+
 }

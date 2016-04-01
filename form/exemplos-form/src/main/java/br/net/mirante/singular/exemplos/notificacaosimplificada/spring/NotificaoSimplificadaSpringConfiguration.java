@@ -28,6 +28,9 @@ public class NotificaoSimplificadaSpringConfiguration {
     @Value("classpath:data/notificacaosimplificada/inserts.sql")
     private Resource inserts;
 
+    @Value("classpath:data/notificacaosimplificada/insert_geral.sql")
+    private Resource insertGeral;
+
     @Bean
     public DriverManagerDataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource("jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=2048;MULTI_THREADED=1");
@@ -65,6 +68,7 @@ public class NotificaoSimplificadaSpringConfiguration {
         populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(createTables);
         populator.addScript(inserts);
+        populator.addScript(insertGeral);
         return populator;
     }
 
