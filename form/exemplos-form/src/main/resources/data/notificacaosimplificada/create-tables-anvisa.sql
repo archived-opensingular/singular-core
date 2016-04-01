@@ -1,3 +1,8 @@
+drop schema DBARRECAD IF EXISTS;
+drop schema DBCORPORATIVO IF EXISTS;
+drop schema DBSEGURANCA IF EXISTS;
+
+
 create schema DBARRECAD;
 create schema DBCORPORATIVO;
 create schema DBSEGURANCA;
