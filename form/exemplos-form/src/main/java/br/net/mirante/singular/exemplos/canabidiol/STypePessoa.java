@@ -56,7 +56,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
                 .required(ins -> "55358729".equals(Value.of(ins, tipoDocumento)))
                 .asAtrBasic()
                 .label("Nome")
-                .visivel(ins -> "55358729".equals(Value.of(ins, tipoDocumento)))
+                .visible(ins -> "55358729".equals(Value.of(ins, tipoDocumento)))
                 .dependsOn(tipoDocumento)
                 .asAtrBootstrap()
                 .colPreference(3);
@@ -67,7 +67,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
                 .required()
                 .asAtrBasic()
                 .label("Número")
-                .visivel(ins -> ins.findNearestValue(tipoDocumento).orElse(null) != null)
+                .visible(ins -> ins.findNearestValue(tipoDocumento).orElse(null) != null)
                 .dependsOn(tipoDocumento)
                 .asAtrBootstrap().colPreference(2);
 

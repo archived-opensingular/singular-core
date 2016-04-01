@@ -48,21 +48,21 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
         empresaPropria.asAtrBasic()
                 .dependsOn(tipoLocalFabricacao)
-                .visivel(i -> Integer.valueOf(1).equals(Value.of(i, tipoLocalFabricacao)));
+                .visible(i -> Integer.valueOf(1).equals(Value.of(i, tipoLocalFabricacao)));
 
         final STypeEmpresaInternacional empresaInternacional = this.addField("empresaInternacional", STypeEmpresaInternacional.class);
 
         empresaInternacional
                 .asAtrBasic()
                 .dependsOn(tipoLocalFabricacao)
-                .visivel(i -> Integer.valueOf(2).equals(Value.of(i, tipoLocalFabricacao)));
+                .visible(i -> Integer.valueOf(2).equals(Value.of(i, tipoLocalFabricacao)));
 
         empresaTerceirizada = this.addField("empresaTerceirizada", STypeEmpresaTerceirizada.class);
 
         empresaTerceirizada
                 .asAtrBasic()
                 .dependsOn(tipoLocalFabricacao)
-                .visivel(i -> Integer.valueOf(3).equals(Value.of(i, tipoLocalFabricacao)));
+                .visible(i -> Integer.valueOf(3).equals(Value.of(i, tipoLocalFabricacao)));
 
 
         outroLocalFabricacao = this.addFieldComposite("outroLocalFabricacao");
@@ -74,7 +74,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
         outroLocalFabricacao
                 .asAtrBasic().label("Outro local de fabricação")
                 .dependsOn(tipoLocalFabricacao)
-                .visivel(i -> Integer.valueOf(4).equals(Value.of(i, tipoLocalFabricacao)));
+                .visible(i -> Integer.valueOf(4).equals(Value.of(i, tipoLocalFabricacao)));
 
         outroLocalFabricacao
                 .withSelectionFromProvider(razaoSocialOutroLocalFabricacao, (ins, filter) -> {

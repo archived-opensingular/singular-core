@@ -46,7 +46,7 @@ public class STypePrescricao extends STypeComposite<SIComposite> {
                 .label("Outros CIDs")
                 .dependsOn(outrosCids)
 
-                .visivel(inst -> BooleanUtils.isTrue(Value.of(inst, outrosCids)));
+                .visible(inst -> BooleanUtils.isTrue(Value.of(inst, outrosCids)));
 
         STypeAttachment receitaMedica = this
                 .addField("receitaMedica", STypeAttachment.class);

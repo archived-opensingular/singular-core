@@ -76,6 +76,9 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
             return list;
         });
 
+        prazoValidade = this.addFieldInteger("prazoValidade", true);
+        prazoValidade.asAtrBasic().label("Prazo de validade (meses)");
+
         estudosEstabilidade = this.addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
 
         estudosEstabilidade.asAtrBasic()
@@ -111,9 +114,6 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
                         }).col(locaisFabricacao.getElementsType().empresaTerceirizada.etapasFabricacao()))
                 .asAtrBasic().label("Local de fabricação");
 
-
-        prazoValidade = this.addFieldInteger("prazoValidade", true);
-        prazoValidade.asAtrBasic().label("Prazo de validade (meses)");
 
     }
 }
