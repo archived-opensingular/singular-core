@@ -5,12 +5,14 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.common.STypeSubstanciaPopulator;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeFormaFarmaceutica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeLinhaProducao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
@@ -25,7 +27,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
     public static final String TIPO          = "MedicamentoBaixoRisco";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
 
-    static DominioService dominioService(SInstance ins) {
+    public static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);
     }
 
@@ -42,24 +44,8 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento de Baixo Risco");
 
-        final STypeComposite<?> linhaProducao          = notificacaoSimplificada.addFieldComposite("linhaProducao");
-        STypeSimple             idLinhaProducao        = linhaProducao.addFieldInteger("id");
-        STypeSimple             descricaoLinhaProducao = linhaProducao.addFieldString("descricao");
+        final STypeLinhaProducao linhaProducao          = notificacaoSimplificada.addField("linhaProducao", STypeLinhaProducao.class);
 
-        linhaProducao
-                .asAtrBasic()
-                .required()
-                .label("Linha de Produção");
-        linhaProducao.setView(SViewAutoComplete::new);
-        linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (ins, filter) -> {
-            final SIList<?> list = ins.getType().newList();
-            for (LinhaCbpf lc : dominioService(ins).linhasProducao(filter)) {
-                final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(idLinhaProducao, lc.getId());
-                c.setValue(descricaoLinhaProducao, lc.getDescricao());
-            }
-            return list;
-        });
 
 
         final STypeComposite<?> configuracaoLinhaProducao     = notificacaoSimplificada.addFieldComposite("configuracaoLinhaProducao");
@@ -72,11 +58,11 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .label("Descrição")
                 .required()
                 .dependsOn(linhaProducao)
-                .visible(i -> Value.notNull(i, idLinhaProducao));
+                .visible(i -> Value.notNull(i, linhaProducao.id));
         configuracaoLinhaProducao
                 .withSelectView()
                 .withSelectionFromProvider(descConfiguracaoLinhaProducao, (optionsInstance, lb) -> {
-                    Integer id = (Integer) Value.of(optionsInstance, idLinhaProducao);
+                    Integer id = (Integer) Value.of(optionsInstance, linhaProducao.id);
                     for (Triple p : dominioService(optionsInstance).configuracoesLinhaProducao(id)) {
                         lb
                                 .add()
@@ -87,64 +73,12 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 });
 
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> substancias = notificacaoSimplificada.addFieldListOfComposite("substancias", "concentracaoSubstancia");
-        substancias
-                .withMiniumSizeOf(1)
-                .withView(SViewListByTable::new)
-                .asAtrBasic()
-                .label("Substâncias")
-                .dependsOn(configuracaoLinhaProducao)
-                .visible(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
-
-        final STypeComposite<?> concentracaoSubstancia                = substancias.getElementsType();
-        final STypeComposite<?> substancia                            = concentracaoSubstancia.addFieldComposite("substancia");
-        STypeSimple             idSubstancia                          = substancia.addFieldInteger("id");
-        STypeSimple             idConfiguracaoLinhaProducaoSubstancia = substancia.addFieldInteger("configuracaoLinhaProducao");
-        STypeSimple             substanciaDescricao                   = substancia.addFieldString("descricao");
-        substancia
-                .asAtrBasic()
-                .label("Substância")
-                .required()
-                .asAtrBootstrap()
-                .colPreference(6);
-        substancia
-                .withSelectView()
-                .withSelectionFromProvider(substanciaDescricao, (optionsInstance, lb) -> {
-                    Integer id = (Integer) Value.of(optionsInstance, idConfiguracaoLinhaProducao);
-                    for (Triple p : dominioService(optionsInstance).substancias(id)) {
-                        lb
-                                .add()
-                                .set(idSubstancia, p.getLeft())
-                                .set(idConfiguracaoLinhaProducaoSubstancia, p.getMiddle())
-                                .set(substanciaDescricao, p.getRight());
-                    }
-                });
-
-
-        final STypeComposite<?> concentracao             = concentracaoSubstancia.addFieldComposite("concentracao");
-        SType<?>                idConcentracacao         = concentracao.addFieldInteger("id");
-        STypeSimple             idSubstanciaConcentracao = concentracao.addFieldInteger("idSubstancia");
-        STypeSimple             descConcentracao         = concentracao.addFieldString("descricao");
-        concentracao
-                .asAtrBasic()
-                .required()
-                .label("Concentração")
-                .dependsOn(substancia)
-                .asAtrBootstrap()
-                .colPreference(6);
-        concentracao
-                .withSelectView()
-                .withSelectionFromProvider(substanciaDescricao, (optionsInstance, lb) -> {
-                    Integer id = (Integer) Value.of(optionsInstance, idSubstancia);
-                    for (Triple p : dominioService(optionsInstance).concentracoes(id)) {
-                        lb
-                                .add()
-                                .set(idConcentracacao, p.getLeft())
-                                .set(idSubstanciaConcentracao, p.getMiddle())
-                                .set(descConcentracao, p.getRight());
-                    }
-                });
-
+        final STypeList<STypeComposite<SIComposite>, SIComposite> substancias = new STypeSubstanciaPopulator(
+                notificacaoSimplificada,
+                configuracaoLinhaProducao,
+                idConfiguracaoLinhaProducao,
+                (ins, filter) -> dominioService(ins).substancias((Integer) Value.of(ins, idConfiguracaoLinhaProducao), filter)
+        ).populate();
 
         STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercialMedicamento");
         nomeComercial
@@ -154,39 +88,19 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .asAtrBootstrap()
                 .colPreference(8);
 
-        final STypeComposite<?> formaFarmaceutica     = notificacaoSimplificada.addFieldComposite("formaFarmaceutica");
-        SType<?>                idFormaFormaceutica   = formaFarmaceutica.addFieldInteger("id");
-        STypeSimple             descFormaFormaceutica = formaFarmaceutica.addFieldString("descricao");
-        formaFarmaceutica
-                .asAtrBasic()
-                .required()
-                .label("Forma Farmacêutica")
-                .asAtrBootstrap()
-                .colPreference(4);
-        formaFarmaceutica
-                .withSelectView()
-                .withSelectionFromProvider(descFormaFormaceutica, (ins, filter) -> {
-                    final SIList<?> list = ins.getType().newList();
-                    for (FormaFarmaceuticaBasica ffb : dominioService(ins).formasFarmaceuticas(filter)) {
-                        final SIComposite c = (SIComposite) list.addNew();
-                        c.setValue(idFormaFormaceutica, ffb.getId());
-                        c.setValue(descFormaFormaceutica, ffb.getDescricao());
-                    }
-                    return list;
-                });
+        final STypeFormaFarmaceutica formaFarmaceutica = notificacaoSimplificada.addField("formaFarmaceutica", STypeFormaFarmaceutica.class);
 
 
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricaoEmbalagemPrimaria, "Embalagem primária")
-                        .col(acondicionamentos.getElementsType().embalagemSecundaria.descricaoEmbalagemSecundaria, "Embalagem secundária")
+                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricao, "Embalagem primária")
+                        .col(acondicionamentos.getElementsType().embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamentos.getElementsType().quantidade)
-                        .col(acondicionamentos.getElementsType().descricaoUnidadeMedida)
+                        .col(acondicionamentos.getElementsType().unidadeMedida.descricao)
                         .col(acondicionamentos.getElementsType().estudosEstabilidade, "Estudo de estabilidade")
                         .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
-
 
 
         final STypeAttachmentList layoutsRotulagem = notificacaoSimplificada

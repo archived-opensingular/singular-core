@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
@@ -14,25 +15,26 @@ import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.voca
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeEmbalagemSecundaria extends STypeComposite<SIComposite> {
 
-    public STypeString descricaoEmbalagemSecundaria;
+    public STypeString descricao;
+    public STypeInteger id;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
 
-        STypeString idEmbalagemSecundaria = addFieldString("id");
-        descricaoEmbalagemSecundaria = addFieldString("descricao");
+        id = addFieldInteger("id");
+        descricao = addFieldString("descricao");
 
         asAtrBootstrap()
                 .colPreference(6)
                 .asAtrBasic()
-                .label("Embalagem secundária")
-                .getTipo().setView(SViewAutoComplete::new);
-        withSelectionFromProvider(descricaoEmbalagemSecundaria, (ins, filter) -> {
+                .label("Embalagem secundária");
+        this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
+        withSelectionFromProvider(descricao, (ins, filter) -> {
             final SIList<?> list = ins.getType().newList();
             for (EmbalagemSecundaria es : dominioService(ins).embalagensSecundarias(filter)) {
                 final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(idEmbalagemSecundaria, es.getId());
-                c.setValue(descricaoEmbalagemSecundaria, es.getDescricao());
+                c.setValue(id, es.getId());
+                c.setValue(descricao, es.getDescricao());
             }
             return list;
         });

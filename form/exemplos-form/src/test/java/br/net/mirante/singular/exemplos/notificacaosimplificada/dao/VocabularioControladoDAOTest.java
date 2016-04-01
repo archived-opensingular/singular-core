@@ -2,6 +2,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
 import org.fest.assertions.api.Assertions;
@@ -31,11 +32,17 @@ public class VocabularioControladoDAOTest {
         Assertions.assertThat(result).isNotEmpty();
     }
 
-
     @Test
     @Transactional
     public void findByDescricaoForEmbalagemPrimaria() throws Exception {
         final List<EmbalagemPrimariaBasica> result = vocabularioControladoDAO.findByDescricao(EmbalagemPrimariaBasica.class, null);
+        Assertions.assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    @Transactional
+    public void findByDescricaoForSubstancia() throws Exception {
+        final List<Substancia> result = vocabularioControladoDAO.findByDescricao(Substancia.class, null);
         Assertions.assertThat(result).isNotEmpty();
     }
 }

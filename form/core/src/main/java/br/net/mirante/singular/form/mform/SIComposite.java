@@ -117,7 +117,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
             fields = ((SIComposite)obj).fields;
             ((SIComposite)obj).fields = null;
         }else{
-            throw new RuntimeException("SIComposite só suporta valores de mesmo tipo");
+            throw new SingularFormException("SIComposite só suporta valores de mesmo tipo");
         }
     }
 

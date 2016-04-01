@@ -1,19 +1,30 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.service;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.EnderecoEmpresaInternacionalDAO;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.GenericDAO;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
+import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.EnderecoEmpresaInternacionalDAO;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.GenericDAO;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.CategoriaRegulatoriaMedicamento;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
 
 @Service
 @Transactional(readOnly = true)
@@ -51,6 +62,7 @@ public class DominioService {
 
     public List<Triple> configuracoesLinhaProducao(Integer idLinhaProducao) {
         List<Triple> list = new ArrayList<>();
+
         list.add(Triple.of(1, 1, "Comprimidos em Camadas"));
         list.add(Triple.of(2, 1, "Comprimidos Placebo"));
         list.add(Triple.of(3, 1, "Comprimidos Simples"));
@@ -63,50 +75,12 @@ public class DominioService {
         list.add(Triple.of(8, 3, "Cápsula Gelatinosa"));
         list.add(Triple.of(9, 3, "Cápsula de Amido"));
 
-        return list.stream().filter(t -> t.getMiddle().equals(idLinhaProducao)).collect(Collectors.toList());
+        return list.stream().filter(t -> t.getMiddle().equals(idLinhaProducao % 3)).collect(Collectors.toList());
     }
 
 
-    public List<Triple> substancias(Integer idConfiguracaoLinhaProducao) {
-        List<Triple> list = new ArrayList<>();
-        list.add(Triple.of(1, 1, "Clorpropamida"));
-        list.add(Triple.of(2, 1, "Cumarina"));
-        list.add(Triple.of(3, 1, "Metilcelulose"));
-
-        list.add(Triple.of(4, 2, "Bumetanida"));
-        list.add(Triple.of(5, 2, "Pindolol"));
-        list.add(Triple.of(6, 2, "Clopamida"));
-
-        list.add(Triple.of(7, 3, "Clorpropamida"));
-        list.add(Triple.of(8, 3, "Noretisterona"));
-        list.add(Triple.of(9, 3, "Tiabendazol"));
-
-        list.add(Triple.of(10, 4, "Troxerrutina"));
-        list.add(Triple.of(11, 4, "Cumarina"));
-        list.add(Triple.of(12, 4, "Silimarina"));
-
-        list.add(Triple.of(13, 5, "Metionina"));
-        list.add(Triple.of(14, 5, "Ticlopidina"));
-        list.add(Triple.of(15, 5, "Tribenosídeo"));
-
-        list.add(Triple.of(16, 6, "Isometepteno"));
-        list.add(Triple.of(17, 6, "Etinilestradiol"));
-        list.add(Triple.of(18, 6, "Ciproterona"));
-
-        list.add(Triple.of(19, 7, "Metoclopramida"));
-        list.add(Triple.of(20, 7, "Pepsina"));
-        list.add(Triple.of(21, 7, "Simeticona"));
-
-        list.add(Triple.of(22, 8, "Condroitina"));
-        list.add(Triple.of(23, 8, "Glicosamina"));
-        list.add(Triple.of(24, 8, "Dutasterida"));
-
-        list.add(Triple.of(25, 9, "Tansulosina"));
-        list.add(Triple.of(26, 9, "Cianocobalamina"));
-        list.add(Triple.of(27, 9, "Riboflavina"));
-
-
-        return list.stream().filter(t -> t.getMiddle().equals(idConfiguracaoLinhaProducao)).collect(Collectors.toList());
+    public List<Substancia> substancias(Integer idConfiguracaoLinhaProducao, String filter) {
+        return vocabularioControladoDAO.findByDescricao(Substancia.class, filter);
     }
 
 
@@ -158,13 +132,14 @@ public class DominioService {
     }
 
     public List<Triple> concentracoes(Integer idSubstancia) {
+
         List<Triple> list = new ArrayList<>();
 
         if (idSubstancia == null) {
             return list;
         }
-
-        Integer idSubstanciaFake = idSubstancia % 9;
+        
+        Integer idSubstanciaFake = idSubstancia % 9 + 1;
 
 
         list.add(Triple.of(1, 1, "10 mg"));
@@ -214,7 +189,7 @@ public class DominioService {
             return list;
         }
 
-        Integer idDescricaoDinamizadaFake = idDescricaoDinamizada % 9;
+        Integer idDescricaoDinamizadaFake = idDescricaoDinamizada % 9 + 1;
 
 
         list.add(Triple.of(1, 1, "15 DH 0,008 ml"));
@@ -266,7 +241,7 @@ public class DominioService {
     }
 
     public List<UnidadeMedida> unidadesMedida(String filtro) {
-        return vocabularioControladoDAO.findByDescricao(UnidadeMedida.class, filtro);
+        return vocabularioControladoDAO.findUnidadeMedida(filtro);
     }
 
     public List<EnderecoEmpresaInternacional> empresaInternacional(String filtro) {
@@ -289,7 +264,30 @@ public class DominioService {
         return vocabularioControladoDAO.listAll(CategoriaRegulatoriaMedicamento.class);
     }
 
-    public List<Farmacopeia> listFarmacopeias() {
+    public List<Pair> nomenclaturaBotanica(String filtro) {
+        List<Pair> list = new ArrayList<>();
+
+        list.add(Pair.of(1L, "Planta1 + Planta2"));
+        list.add(Pair.of(2L, "Planta2 + Planta3"));
+        list.add(Pair.of(3L, "Planta4 + Planta5"));
+        list.add(Pair.of(4L, "Planta6 + Planta7"));
+
+        return list;
+    }
+
+    public List<Pair> concentracao(String filtro) {
+        List<Pair> list = new ArrayList<>();
+
+        list.add(Pair.of(1L, "Planta1 + Planta2"));
+        list.add(Pair.of(2L, "Planta2 + Planta3"));
+        list.add(Pair.of(3L, "Planta4 + Planta5"));
+        list.add(Pair.of(4L, "Planta6 + Planta7"));
+
+        return list;
+    }
+
+	public List<Farmacopeia> listFarmacopeias() {
         return vocabularioControladoDAO.listAll(Farmacopeia.class);
     }
+
 }

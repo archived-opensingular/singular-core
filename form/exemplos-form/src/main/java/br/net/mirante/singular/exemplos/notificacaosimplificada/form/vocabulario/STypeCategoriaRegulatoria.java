@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
@@ -15,29 +16,29 @@ import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.voca
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeCategoriaRegulatoria extends STypeComposite<SIComposite> {
 
-    public STypeString descricaoCategoriaRegularia;
+    public STypeString descricao;
+    public STypeInteger id;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
-        STypeString idCategoriaRegulatoria        = this.addFieldString("id");
-        descricaoCategoriaRegularia = this.addFieldString("descricao");
+        id = this.addFieldInteger("id");
+        descricao = this.addFieldString("descricao");
         {
             this
                     .asAtrBootstrap()
                     .colPreference(4)
                     .asAtrBasic()
                     .label("Classe")
-                    .required()
-                    .getTipo()
-                    .setView(SViewSelectionBySelect::new);
+                    .required();
+            this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
 
-            this.withSelectionFromProvider(descricaoCategoriaRegularia, (ins, filter) -> {
+            this.withSelectionFromProvider(descricao, (ins, filter) -> {
                 final SIList<?> list = ins.getType().newList();
                 for (CategoriaRegulatoriaMedicamento cat : dominioService(ins).listCategoriasRegulatorias()) {
                     final SIComposite c = (SIComposite) list.addNew();
-                    c.setValue(idCategoriaRegulatoria, cat.getId());
-                    c.setValue(descricaoCategoriaRegularia, cat.getDescricao());
+                    c.setValue(id, cat.getId());
+                    c.setValue(descricao, cat.getDescricao());
                 }
                 return list;
             });

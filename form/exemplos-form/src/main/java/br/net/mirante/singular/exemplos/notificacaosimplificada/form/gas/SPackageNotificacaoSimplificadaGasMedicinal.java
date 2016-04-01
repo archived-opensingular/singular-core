@@ -34,10 +34,6 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         super(PACOTE);
     }
 
-    static DominioService dominioService(SInstance ins) {
-        return ins.getDocument().lookupService(DominioService.class);
-    }
-
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
@@ -162,7 +158,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         acondicionamentos.getElementsType().estudosEstabilidade.asAtrBasic().visible(false);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricaoEmbalagemPrimaria, "Embalagem primária")
+                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricao, "Embalagem primária")
                         .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
     }
