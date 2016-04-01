@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -29,9 +30,8 @@ public class STypeCategoriaRegulatoria extends STypeComposite<SIComposite> {
                     .colPreference(4)
                     .asAtrBasic()
                     .label("Classe")
-                    .required()
-                    .getTipo()
-                    .setView(SViewSelectionBySelect::new);
+                    .required();
+            this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
 
             this.withSelectionFromProvider(descricao, (ins, filter) -> {
                 final SIList<?> list = ins.getType().newList();

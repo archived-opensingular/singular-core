@@ -32,7 +32,7 @@ public class STypeUnidadeMedida extends STypeComposite<SIComposite> {
                     .label("Unidade de medida")
                     .asAtrBootstrap()
                     .colPreference(3);
-            this.setView(SViewAutoComplete::new);
+            this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
 
 
             this.withSelectionFromProvider(descricao, (ins, filter) -> {
@@ -40,7 +40,7 @@ public class STypeUnidadeMedida extends STypeComposite<SIComposite> {
                 for (UnidadeMedida lc : dominioService(ins).unidadesMedida(filter)) {
                     final SIComposite c = (SIComposite) list.addNew();
                     c.setValue(id, lc.getId());
-                    c.setValue(descricao, lc.getDescricao());
+                    c.setValue(descricao, lc.getSigla() + "- " + lc.getDescricao());
                 }
                 return list;
             });

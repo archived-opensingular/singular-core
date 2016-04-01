@@ -138,8 +138,9 @@ public class DominioService {
         if (idSubstancia == null) {
             return list;
         }
+        
+        Integer idSubstanciaFake = idSubstancia % 9 + 1;
 
-        Integer idSubstanciaFake = idSubstancia % 2;
 
         list.add(Triple.of(1, 1, "10 mg"));
         list.add(Triple.of(2, 1, "15 mg"));
@@ -188,7 +189,7 @@ public class DominioService {
             return list;
         }
 
-        Integer idDescricaoDinamizadaFake = idDescricaoDinamizada % 9;
+        Integer idDescricaoDinamizadaFake = idDescricaoDinamizada % 9 + 1;
 
 
         list.add(Triple.of(1, 1, "15 DH 0,008 ml"));
@@ -240,7 +241,7 @@ public class DominioService {
     }
 
     public List<UnidadeMedida> unidadesMedida(String filtro) {
-        return vocabularioControladoDAO.findByDescricao(UnidadeMedida.class, filtro);
+        return vocabularioControladoDAO.findUnidadeMedida(filtro);
     }
 
     public List<EnderecoEmpresaInternacional> empresaInternacional(String filtro) {

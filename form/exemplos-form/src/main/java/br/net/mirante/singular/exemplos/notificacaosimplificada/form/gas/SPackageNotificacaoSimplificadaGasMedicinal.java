@@ -32,10 +32,6 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         super(PACOTE);
     }
 
-    static DominioService dominioService(SInstance ins) {
-        return ins.getDocument().lookupService(DominioService.class);
-    }
-
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
