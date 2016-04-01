@@ -1,5 +1,16 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.EnderecoEmpresaInternacionalDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.GenericDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
@@ -12,14 +23,6 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
-import org.apache.commons.lang3.tuple.Triple;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -295,5 +298,26 @@ public class DominioService {
         return vocabularioControladoDAO.listAll(CategoriaRegulatoriaMedicamento.class);
     }
 
+    public List<Pair> nomenclaturaBotanica(String filtro) {
+        List<Pair> list = new ArrayList<>();
+
+        list.add(Pair.of(1L, "Planta1 + Planta2"));
+        list.add(Pair.of(2L, "Planta2 + Planta3"));
+        list.add(Pair.of(3L, "Planta4 + Planta5"));
+        list.add(Pair.of(4L, "Planta6 + Planta7"));
+
+        return list;
+    }
+
+    public List<Pair> concentracao(String filtro) {
+        List<Pair> list = new ArrayList<>();
+
+        list.add(Pair.of(1L, "Planta1 + Planta2"));
+        list.add(Pair.of(2L, "Planta2 + Planta3"));
+        list.add(Pair.of(3L, "Planta4 + Planta5"));
+        list.add(Pair.of(4L, "Planta6 + Planta7"));
+
+        return list;
+    }
 
 }
