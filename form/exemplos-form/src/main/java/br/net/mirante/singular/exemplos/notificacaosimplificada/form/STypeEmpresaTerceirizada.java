@@ -1,15 +1,16 @@
-package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
+package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import org.apache.commons.lang3.tuple.Triple;
 
-import static br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto.SPackageNotificacaoSimplificada.dominioService;
+import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada.dominioService;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {

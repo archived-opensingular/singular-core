@@ -1,6 +1,8 @@
-package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
+package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemPrimaria;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemSecundaria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
@@ -25,16 +27,16 @@ import java.util.Optional;
 public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
 
-    STypeEmbalagemPrimaria embalagemPrimaria;
-    STypeEmbalagemSecundaria embalagemSecundaria;
-    STypeInteger quantidade;
-    STypeComposite<SIComposite> unidadeMedida;
-    STypeString idUnidadeMedida;
-    STypeString descricaoUnidadeMedida;
-    STypeAttachmentList estudosEstabilidade;
-    STypeAttachmentList layoutsRotulagem;
-    STypeList<STypeLocalFabricacao, SIComposite> locaisFabricacao;
-    STypeInteger prazoValidade;
+    public STypeEmbalagemPrimaria embalagemPrimaria;
+    public STypeEmbalagemSecundaria embalagemSecundaria;
+    public STypeInteger quantidade;
+    public STypeComposite<SIComposite> unidadeMedida;
+    public STypeString idUnidadeMedida;
+    public STypeString descricaoUnidadeMedida;
+    public STypeAttachmentList estudosEstabilidade;
+    public STypeAttachmentList layoutsRotulagem;
+    public STypeList<STypeLocalFabricacao, SIComposite> locaisFabricacao;
+    public STypeInteger prazoValidade;
 
     static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);
@@ -45,8 +47,8 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
         super.onLoadType(tb);
 
 
-        embalagemPrimaria = (STypeEmbalagemPrimaria) this.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
-        embalagemSecundaria = (STypeEmbalagemSecundaria) this.addField("embalagemSecundaria", STypeEmbalagemSecundaria.class);
+        embalagemPrimaria = this.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
+        embalagemSecundaria = this.addField("embalagemSecundaria", STypeEmbalagemSecundaria.class);
 
         quantidade = this.addFieldInteger("quantidade", true);
         quantidade

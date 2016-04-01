@@ -1,9 +1,10 @@
-package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
+package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto.SPackageNotificacaoSimplificada.dominioService;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
@@ -20,10 +21,10 @@ import org.apache.commons.lang3.tuple.Triple;
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
-    STypeSimple tipoLocalFabricacao;
-    STypeEmpresaPropria empresaPropria;
-    STypeEmpresaTerceirizada empresaTerceirizada;
-    STypeComposite<SIComposite> outroLocalFabricacao;
+    public STypeSimple tipoLocalFabricacao;
+    public STypeEmpresaPropria empresaPropria;
+    public STypeEmpresaTerceirizada empresaTerceirizada;
+    public STypeComposite<SIComposite> outroLocalFabricacao;
 
     static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);

@@ -1,5 +1,6 @@
-package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
+package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;

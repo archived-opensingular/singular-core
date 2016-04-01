@@ -3,27 +3,30 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
+package br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaInternacional;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaPropria;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaTerceirizada;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Triple;
 
-import java.util.Optional;
+@SInfoType(spackage = SPackageNotificacaoSimplificadaBaixoRisco.class)
+public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
-@SInfoType(spackage = SPackageNotificacaoSimplificada.class)
-public class SPackageNotificacaoSimplificada extends SPackage {
-
-    public static final String PACOTE        = "mform.peticao.notificacaosimplificada";
+    public static final String PACOTE        = "mform.peticao.notificacaosimplificada.baixorisco";
     public static final String TIPO          = "MedicamentoBaixoRisco";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
 
@@ -31,19 +34,14 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         return ins.getDocument().lookupService(DominioService.class);
     }
 
-    public SPackageNotificacaoSimplificada() {
+    public SPackageNotificacaoSimplificadaBaixoRisco() {
         super(PACOTE);
     }
 
+
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        pb.createType(STypeEmbalagemPrimaria.class);
-        pb.createType(STypeEmbalagemSecundaria.class);
-        pb.createType(STypeEmpresaPropria.class);
-        pb.createType(STypeEmpresaInternacional.class);
-        pb.createType(STypeEmpresaTerceirizada.class);
-        pb.createType(STypeLocalFabricacao.class);
-        pb.createType(STypeAcondicionamento.class);
+        pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
@@ -186,8 +184,8 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamentos.getElementsType().embalagemPrimaria.getDescricaoEmbalagemPrimaria(), "Embalagem primária")
-                        .col(acondicionamentos.getElementsType().embalagemSecundaria.getDescricaoEmbalagemSecundaria(), "Embalagem secundária")
+                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricaoEmbalagemPrimaria, "Embalagem primária")
+                        .col(acondicionamentos.getElementsType().embalagemSecundaria.descricaoEmbalagemSecundaria, "Embalagem secundária")
                         .col(acondicionamentos.getElementsType().quantidade)
                         .col(acondicionamentos.getElementsType().descricaoUnidadeMedida)
                         .col(acondicionamentos.getElementsType().estudosEstabilidade, "Estudo de estabilidade")
@@ -197,11 +195,11 @@ public class SPackageNotificacaoSimplificada extends SPackage {
 
 
         final STypeAttachmentList layoutsRotulagem = notificacaoSimplificada
-                .addFieldListOfAttachment("layoutsRotulagem", "layout");
+                .addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
         layoutsRotulagem
                 .asAtrBasic()
                 .required()
-                .label("Layouts Rotulagem");
+                .label("Layout rotulagem");
 
         // config tabs
         SViewTab tabbed = notificacaoSimplificada.setView(SViewTab::new);

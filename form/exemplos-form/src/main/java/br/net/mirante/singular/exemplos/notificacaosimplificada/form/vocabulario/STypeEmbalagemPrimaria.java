@@ -1,20 +1,26 @@
-package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
+package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInfoType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
-import static br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto.SPackageNotificacaoSimplificada.dominioService;
+import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
 
-@SInfoType(spackage = SPackageNotificacaoSimplificada.class)
+@SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeEmbalagemPrimaria extends STypeComposite<SIComposite> {
+
+    public STypeString descricaoEmbalagemPrimaria;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         STypeString idEmbalagemPrimaria        = this.addFieldString("id");
-        STypeString descricaoEmbalagemPrimaria = this.addFieldString("descricao");
+        descricaoEmbalagemPrimaria = this.addFieldString("descricao");
         {
             this
                     .asAtrBootstrap()
@@ -36,8 +42,5 @@ public class STypeEmbalagemPrimaria extends STypeComposite<SIComposite> {
         }
     }
 
-    STypeString getDescricaoEmbalagemPrimaria() {
-        return (STypeString) getField("descricao");
-    }
 
 }

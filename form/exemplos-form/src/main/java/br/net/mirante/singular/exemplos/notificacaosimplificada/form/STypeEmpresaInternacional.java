@@ -1,4 +1,4 @@
-package br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto;
+package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import org.apache.commons.lang3.tuple.Triple;
 
-import static br.net.mirante.singular.exemplos.notificacaosimplificada.baixocusto.SPackageNotificacaoSimplificada.dominioService;
+import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada.dominioService;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
@@ -16,9 +16,9 @@ public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        final STypeString id          = addFieldString("id");
+        final STypeString id = addFieldString("id");
         final STypeString razaoSocial = addFieldString("razaoSocial");
-        final STypeString endereco    = addFieldString("endereco");
+        final STypeString endereco = addFieldString("endereco");
 
         razaoSocial.
                 asAtrBasic()
