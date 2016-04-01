@@ -6,12 +6,15 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.options.SOptionsConfig;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -32,6 +35,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -55,11 +59,6 @@ public class TypeaheadComponent extends Panel {
     public TypeaheadComponent(String id, IModel<?> model, SViewAutoComplete.Mode fetch) {
         super(id, model);
         this.fetch = fetch;
-    }
-
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
         add(container = buildContainer());
     }
 
@@ -67,7 +66,7 @@ public class TypeaheadComponent extends Panel {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
         MOptionsModel options = new MOptionsModel(getDefaultModel());
 
-        c.queue(new TextField("label_field", new Model(){
+        c.add(new TextField("label_field", new Model(){
             @Override
             public Serializable getObject() {
                 IModel<?> parentModel = TypeaheadComponent.this.getDefaultModel();
@@ -76,7 +75,8 @@ public class TypeaheadComponent extends Panel {
                 return "";
             }
         }));
-        c.queue(valueField = new HiddenField("value_field", options));
+        c.add(valueField = new HiddenField("value_field", options));
+        $b.addAjaxUpdate(valueField, IPartialPageRequestHandler::add);
         add(dynamicFetcher = new BloodhoundDataBehavior(options));
         return c;
     }

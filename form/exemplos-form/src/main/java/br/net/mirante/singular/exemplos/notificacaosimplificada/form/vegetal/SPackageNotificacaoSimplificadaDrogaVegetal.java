@@ -44,6 +44,7 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
         pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
+        notificacaoSimplificada.asAtrBasic().displayString("${nomenclaturaBotanica.descricao} - ${concentracao.descricao}");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Droga Vegetal");
 
         final STypeComposite<?> nomenclaturaBotanica     = notificacaoSimplificada.addFieldComposite("nomenclaturaBotanica");
@@ -61,8 +62,8 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
                     final SIList<?> list = ins.getType().newList();
                     for (Pair p : dominioService(ins).nomenclaturaBotanica(filter)) {
                         final SIComposite c = (SIComposite) list.addNew();
-                        c.setValue(idNomenclaturaBotanica, p.getRight());
-                        c.setValue(descNomenclaturaBotanica, p.getLeft());
+                        c.setValue(idNomenclaturaBotanica, p.getLeft());
+                        c.setValue(descNomenclaturaBotanica, p.getRight());
                     }
                     return list;
                 });
@@ -82,8 +83,8 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
                     final SIList<?> list = ins.getType().newList();
                     for (Pair p : dominioService(ins).concentracao(filter)) {
                         final SIComposite c = (SIComposite) list.addNew();
-                        c.setValue(idConcentracao, p.getRight());
-                        c.setValue(descConcentracao, p.getLeft());
+                        c.setValue(idConcentracao, p.getLeft());
+                        c.setValue(descConcentracao, p.getRight());
                     }
                     return list;
                 });
@@ -96,15 +97,18 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
         nomePopulares.asAtrBasic().label("Nome Popular");
 
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
+        STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricao, "Embalagem primária")
-                        .col(acondicionamentos.getElementsType().embalagemSecundaria.descricao, "Embalagem secundária")
-                        .col(acondicionamentos.getElementsType().quantidade)
-                        .col(acondicionamentos.getElementsType().unidadeMedida.descricao)
-                        .col(acondicionamentos.getElementsType().estudosEstabilidade, "Estudo de estabilidade")
-                        .col(acondicionamentos.getElementsType().prazoValidade))
+                        .col(acondicionamento.embalagemPrimaria.descricao, "Embalagem primária")
+                        .col(acondicionamento.embalagemSecundaria.descricao, "Embalagem secundária")
+                        .col(acondicionamento.estudosEstabilidade, "Estudo de estabilidade")
+                        .col(acondicionamento.prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
+        acondicionamento.quantidade.asAtrBasic().visible(false);
+        acondicionamento.unidadeMedida.asAtrBasic().visible(false);
+        acondicionamento.layoutsRotulagem.asAtrBasic().visible(false);
+        acondicionamento.locaisFabricacao.asAtrBasic().visible(false);
 
         final STypeList<STypeEnsaioControleQualidade, SIComposite> ensaios = notificacaoSimplificada.addFieldListOf("ensaiosControleQualidade", STypeEnsaioControleQualidade.class);
         ensaios
