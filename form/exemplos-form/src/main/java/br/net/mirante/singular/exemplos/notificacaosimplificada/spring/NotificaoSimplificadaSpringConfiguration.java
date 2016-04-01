@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.spring;
 
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.h2.Driver;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,10 +40,15 @@ public class NotificaoSimplificadaSpringConfiguration {
     private Resource insertUsuario;
 
     @Bean
-    public DriverManagerDataSource dataSource() {
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource("jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=2048;MULTI_THREADED=1");
+    public BasicDataSource dataSource() {
+        final BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setUrl("jdbc:h2:file:./notificacaodb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1");
         dataSource.setUsername("sa");
         dataSource.setPassword("sa");
+        dataSource.setDriver(new Driver());
+        dataSource.setInitialSize(5);
+        dataSource.setMinIdle(1);
+        dataSource.setMaxTotal(10);
         return dataSource;
     }
 
