@@ -10,6 +10,8 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeCategoriaRegulatoria;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeFormaFarmaceutica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeLinhaProducao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -64,26 +66,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .colPreference(8);
 
 
-        final STypeComposite<?> linhaProducao = notificacaoSimplificada.addFieldComposite("linhaProducao");
-        STypeSimple idLinhaProducao = linhaProducao.addFieldInteger("id");
-        STypeSimple descricaoLinhaProducao = linhaProducao.addFieldString("descricao");
+        final STypeLinhaProducao linhaProducao = notificacaoSimplificada.addField("linhaProducao", STypeLinhaProducao.class);
 
-        linhaProducao
-                .asAtrBasic()
-                .required()
-                .label("Linha de Produção")
-                .asAtrBootstrap()
-                .colPreference(4);
-        linhaProducao.setView(SViewAutoComplete::new);
-        linhaProducao.withSelectionFromProvider(descricaoLinhaProducao, (ins, filter) -> {
-            final SIList<?> list = ins.getType().newList();
-            for (LinhaCbpf lc : dominioService(ins).linhasProducao(filter)) {
-                final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(idLinhaProducao, lc.getId());
-                c.setValue(descricaoLinhaProducao, lc.getDescricao());
-            }
-            return list;
-        });
 
 
         final STypeComposite<?> configuracaoLinhaProducao = notificacaoSimplificada.addFieldComposite("configuracaoLinhaProducao");
@@ -96,13 +80,13 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .label("Descrição")
                 .required()
                 .dependsOn(linhaProducao)
-                .visivel(i -> Value.notNull(i, idLinhaProducao))
+                .visivel(i -> Value.notNull(i, linhaProducao.id))
                 .asAtrBootstrap()
                 .colPreference(4);
         configuracaoLinhaProducao
                 .withSelectView()
                 .withSelectionFromProvider(descConfiguracaoLinhaProducao, (optionsInstance, lb) -> {
-                    Integer id = (Integer) Value.of(optionsInstance, idLinhaProducao);
+                    Integer id = (Integer) Value.of(optionsInstance, linhaProducao.id);
                     for (Triple p : dominioService(optionsInstance).configuracoesLinhaProducaoDinamizado(id)) {
                         lb
                                 .add()
@@ -112,28 +96,11 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                     }
                 });
 
-        final STypeComposite<?> formaFarmaceutica = notificacaoSimplificada.addFieldComposite("formaFarmaceutica");
-        SType<?> idFormaFormaceutica = formaFarmaceutica.addFieldInteger("id");
-        STypeSimple descFormaFormaceutica = formaFarmaceutica.addFieldString("descricao");
+        final STypeFormaFarmaceutica formaFarmaceutica = notificacaoSimplificada.addField("formaFarmaceutica", STypeFormaFarmaceutica.class);
         formaFarmaceutica
                 .asAtrBasic()
-                .required()
-                .label("Forma Farmacêutica")
                 .dependsOn(configuracaoLinhaProducao)
-                .visivel(i -> Value.notNull(i, idConfiguracaoLinhaProducao))
-                .asAtrBootstrap()
-                .colPreference(4);
-        formaFarmaceutica
-                .withSelectView()
-                .withSelectionFromProvider(descFormaFormaceutica, (ins, filter) -> {
-                    final SIList<?> list = ins.getType().newList();
-                    for (FormaFarmaceuticaBasica ffb : dominioService(ins).formasFarmaceuticas(filter)) {
-                        final SIComposite c = (SIComposite) list.addNew();
-                        c.setValue(idFormaFormaceutica, ffb.getId());
-                        c.setValue(descFormaFormaceutica, ffb.getDescricao());
-                    }
-                    return list;
-                });
+                .visivel(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
 
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> formulasHomeopaticas = notificacaoSimplificada.addFieldListOfComposite("formulasHomeopaticas", "formulaHomeopatica");
