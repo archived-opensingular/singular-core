@@ -1,11 +1,10 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemPrimaria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemSecundaria;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeUnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
@@ -14,7 +13,6 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -30,13 +28,11 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
     public STypeEmbalagemPrimaria embalagemPrimaria;
     public STypeEmbalagemSecundaria embalagemSecundaria;
     public STypeInteger quantidade;
-    public STypeComposite<SIComposite> unidadeMedida;
-    public STypeString idUnidadeMedida;
-    public STypeString descricaoUnidadeMedida;
     public STypeAttachmentList estudosEstabilidade;
     public STypeAttachmentList layoutsRotulagem;
     public STypeList<STypeLocalFabricacao, SIComposite> locaisFabricacao;
     public STypeInteger prazoValidade;
+    public STypeUnidadeMedida unidadeMedida;
 
     static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);
@@ -57,24 +53,8 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Quantidade");
 
-        unidadeMedida = this.addFieldComposite("unidadeMedida");
-        idUnidadeMedida = unidadeMedida.addFieldString("id");
-        descricaoUnidadeMedida = unidadeMedida.addFieldString("descricao");
-        unidadeMedida
-                .asAtrBootstrap()
-                .colPreference(3)
-                .asAtrBasic()
-                .label("Unidade de medida")
-                .getTipo().setView(SViewAutoComplete::new);
-        unidadeMedida.withSelectionFromProvider(descricaoUnidadeMedida, (ins, filter) -> {
-            final SIList<?> list = ins.getType().newList();
-            for (UnidadeMedida um : dominioService(ins).unidadesMedida(filter)) {
-                final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(idUnidadeMedida, um.getId());
-                c.setValue(descricaoUnidadeMedida, um.getDescricao());
-            }
-            return list;
-        });
+        unidadeMedida = this.addField("unidadeMedida", STypeUnidadeMedida.class);
+
 
         prazoValidade = this.addFieldInteger("prazoValidade", true);
         prazoValidade.asAtrBasic().label("Prazo de validade (meses)");
