@@ -1,18 +1,5 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
-import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.EnderecoEmpresaInternacionalDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.GenericDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
@@ -20,11 +7,22 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Categoria
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Farmacopeia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -84,7 +82,6 @@ public class DominioService {
     }
 
 
-
     public List<Triple> descricoesHomeopaticas(Integer idConfiguracaoLinhaProducao) {
         List<Triple> list = new ArrayList<>();
         list.add(Triple.of(1, 1, "Echinacea angustifolia"));
@@ -138,7 +135,7 @@ public class DominioService {
         if (idSubstancia == null) {
             return list;
         }
-        
+
         Integer idSubstanciaFake = idSubstancia % 9 + 1;
 
 
@@ -286,7 +283,7 @@ public class DominioService {
         return list;
     }
 
-	public List<Farmacopeia> listFarmacopeias() {
+    public List<Farmacopeia> listFarmacopeias() {
         return vocabularioControladoDAO.listAll(Farmacopeia.class);
     }
 
