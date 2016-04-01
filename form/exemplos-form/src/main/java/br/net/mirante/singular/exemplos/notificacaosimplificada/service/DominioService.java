@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.CategoriaRegulatoriaMedicamento;
+import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
@@ -188,4 +190,7 @@ public class DominioService {
         return vocabularioControladoDAO.findByDescricao(EtapaFabricacao.class, filtro);
     }
 
+    public List<CategoriaRegulatoriaMedicamento> listCategoriasRegulatorias() {
+        return vocabularioControladoDAO.listAll(CategoriaRegulatoriaMedicamento.class);
+    }
 }

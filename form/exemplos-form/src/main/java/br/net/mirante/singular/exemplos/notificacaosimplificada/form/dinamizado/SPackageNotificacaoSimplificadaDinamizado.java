@@ -8,6 +8,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeCategoriaRegulatoria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -46,6 +47,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento Dinamizado");
+
+        STypeCategoriaRegulatoria classe = notificacaoSimplificada.addField("classe", STypeCategoriaRegulatoria.class);
+
 
         STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercialMedicamento");
         nomeComercial
@@ -110,22 +114,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .asAtrBasic()
                 .required()
                 .label("Referências das indicações propostas");
-
-
-        // config tabs
-        SViewTab tabbed = notificacaoSimplificada.setView(SViewTab::new);
-        tabbed.addTab("medicamento", "Medicamento")
-//                .add(linhaProducao)
-//                .add(configuracaoLinhaProducao)
-//                .add(substancias)
-                .add(formaFarmaceutica)
-                .add(nomeComercial);
-        tabbed.addTab("acondicionamento", "Acondicionamento")
-                .add(acondicionamentos);
-        tabbed.addTab("layoutsRotulagem", "Rotulagem")
-                .add(layoutsBula)
-                .add(layoutsRotulagem)
-                .add(indicacoesPropostas);
 
     }
 

@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral;
 
-import java.io.Serializable;
+import br.net.mirante.singular.persistence.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,8 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import br.net.mirante.singular.persistence.entity.BaseEntity;
+import java.io.Serializable;
 
 @XmlType(name = "pais", namespace = "http://www.anvisa.gov.br/geral/schema/domains")
 @XmlRootElement(name = "pais", namespace = "http://www.anvisa.gov.br/geral/schema/domains")
@@ -23,10 +22,8 @@ import br.net.mirante.singular.persistence.entity.BaseEntity;
 @Table(name = "TB_PAIS", schema = "DBGERAL")
 public class Pais extends BaseEntity {
 
-    private static final long serialVersionUID = 1L;
-   
     public static final Integer CODIGO_BRASIL = 1;
-
+    private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "CO_SEQ_PAIS", nullable = false, precision = 6, scale = 0)
     private Integer id;
@@ -38,8 +35,8 @@ public class Pais extends BaseEntity {
     private String sigla;
 
     @Transient
-    public boolean isBrasil(){
-        if(this.id != null && this.id.equals(CODIGO_BRASIL)){
+    public boolean isBrasil() {
+        if (this.id != null && this.id.equals(CODIGO_BRASIL)) {
             return true;
         }
         return false;
@@ -81,6 +78,6 @@ public class Pais extends BaseEntity {
 
     @Override
     public String toString() {
-    	return nome;
+        return nome;
     }
 }
