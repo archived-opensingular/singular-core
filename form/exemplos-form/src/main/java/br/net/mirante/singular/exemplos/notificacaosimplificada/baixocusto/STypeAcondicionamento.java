@@ -100,7 +100,7 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
         locaisFabricacao
                 .withView(new SViewListByMasterDetail()
                         .col(locaisFabricacao.getElementsType().tipoLocalFabricacao)
-                        .col(this, i -> {
+                        .col(locaisFabricacao.getElementsType(), i -> {
                             String label = String.valueOf(Optional.ofNullable(Value.of(i, "outroLocalFabricacao.razaoSocial")).orElse(""));
                             label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaTerceirizada.empresa.razaoSocial")).orElse(""));
                             label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaInternacional.razaoSocial")).orElse(""));
