@@ -6,7 +6,10 @@
 package br.net.mirante.singular.flow.core.renderer;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -108,9 +111,27 @@ public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
 
     @Override
     public byte[] generateImage(ProcessDefinition<?> definicao) {
-        final ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         drawDiagrama(generateDiagrama(definicao), os);
-        return os.toByteArray();
+        
+        ByteArrayInputStream in = new ByteArrayInputStream(os.toByteArray());
+        BufferedImage buffer;
+        try {
+            //Removendo marca dágua da imagem
+            buffer = ImageIO.read(in);
+            Graphics graphics = buffer.createGraphics();
+            
+            graphics.setColor(Color.WHITE);
+            graphics.fillRect(0, buffer.getHeight() - 25, 150, 25);
+            
+            graphics.dispose();
+            
+            os = new ByteArrayOutputStream();
+            ImageIO.write(buffer, "PNG", os);
+            return os.toByteArray();
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     private Graph2DView generateDiagrama(ProcessDefinition<?> definicao) {
