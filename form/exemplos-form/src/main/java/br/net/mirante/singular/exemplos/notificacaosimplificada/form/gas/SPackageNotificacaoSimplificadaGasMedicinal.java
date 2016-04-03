@@ -41,6 +41,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
+        notificacaoSimplificada.asAtrBasic().displayString("${descricao} - ${gas}  ${concentracao}");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Gás Medicinal");
 
         addDescricao(notificacaoSimplificada);
