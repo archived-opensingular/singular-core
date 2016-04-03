@@ -99,6 +99,7 @@ public abstract class SingularTemplate extends WebPage {
         add.accept("/singular-static/resources/singular/plugins/syntaxHighlighter/css/shThemeDefault.css");
         add.accept("/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.css");
         add.accept("/singular-static/resources/metronic/global/plugins/typeahead/typeahead.css");
+        add.accept("/singular-static/resources/singular/css/custom.css");
         add.accept("resources/custom/css/custom.css");
 
         return cssHeaderItens;
