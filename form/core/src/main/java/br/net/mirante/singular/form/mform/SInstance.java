@@ -61,7 +61,7 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
         return document;
     }
 
-    private String selectLabel;
+    protected String selectLabel;
 
     @Override
     public void setSelectLabel(String selectLabel) {
