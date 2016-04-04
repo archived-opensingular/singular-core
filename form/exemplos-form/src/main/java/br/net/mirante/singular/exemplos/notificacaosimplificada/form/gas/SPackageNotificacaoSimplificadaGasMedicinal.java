@@ -56,18 +56,6 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
         addRotulagens(notificacaoSimplificada);
 
-        SViewTab tabbed = notificacaoSimplificada.setView(SViewTab::new);
-        tabbed.addTab("medicamento", "Gás")
-                .add(descricao)
-                .add(gas)
-                .add(concentracao)
-                .add(informacoesFarmacopeicas)
-                .add(listaAnexos)
-        ;
-        tabbed.addTab("acondicionamento", "Acondicionamento")
-                .add(acondicionamentos);
-        tabbed.addTab("layoutsRotulagem", "Rotulagem")
-                .add(rotulagens);
     }
 
     private void addDescricao(STypeComposite<?> notificacaoSimplificada) {

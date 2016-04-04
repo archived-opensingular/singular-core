@@ -110,19 +110,6 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 .required()
                 .label("Layout rotulagem");
 
-        // config tabs
-        SViewTab tabbed = notificacaoSimplificada.setView(SViewTab::new);
-        tabbed.addTab("medicamento", "Medicamento")
-                .add(linhaProducao)
-                .add(configuracaoLinhaProducao)
-                .add(substancias)
-                .add(formaFarmaceutica)
-                .add(nomeComercial);
-        tabbed.addTab("acondicionamento", "Acondicionamento")
-                .add(acondicionamentos);
-        tabbed.addTab("layoutsRotulagem", "Rotulagem")
-                .add(layoutsRotulagem);
-
     }
 
 }
