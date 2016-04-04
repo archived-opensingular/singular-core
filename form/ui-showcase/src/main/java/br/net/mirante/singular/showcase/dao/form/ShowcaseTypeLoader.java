@@ -15,7 +15,7 @@ import br.net.mirante.singular.exemplos.canabidiol.SPackagePeticaoCanabidiol;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado.SPackageNotificacaoSimplificadaDinamizado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.SPackageNotificacaoSimplificadaGasMedicinal;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal.SPackageNotificacaoSimplificadaDrogaVegetal;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal.SPackageNotificacaoSimplificadaFitoterapico;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.SDictionary;
@@ -43,7 +43,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(SPackageNotificacaoSimplificadaBaixoRisco.class, SPackageNotificacaoSimplificadaBaixoRisco.NOME_COMPLETO);
         add(SPackageNotificacaoSimplificadaDinamizado.class, SPackageNotificacaoSimplificadaDinamizado.NOME_COMPLETO);
         add(SPackageNotificacaoSimplificadaGasMedicinal.class, SPackageNotificacaoSimplificadaGasMedicinal.NOME_COMPLETO);
-        add(SPackageNotificacaoSimplificadaDrogaVegetal.class, SPackageNotificacaoSimplificadaDrogaVegetal.NOME_COMPLETO);
+        add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO);
 
         for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {
             for (ShowCaseItem item : group.getItens()) {

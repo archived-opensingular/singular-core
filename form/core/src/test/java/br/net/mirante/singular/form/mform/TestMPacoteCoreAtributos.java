@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteB;
+import br.net.mirante.singular.form.mform.SCorePackageTest.TestPacoteB;
 import br.net.mirante.singular.form.mform.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno1;
 import br.net.mirante.singular.form.mform.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno2;
 import br.net.mirante.singular.form.mform.core.SIInteger;

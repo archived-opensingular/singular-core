@@ -23,8 +23,6 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.IRequestCycle;
-import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -282,17 +280,7 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     @Override
     public void respond(AjaxRequestTarget target) {
         String r = generateResultOptions(values(filterValue()));
-        requestCycle().scheduleRequestHandlerAfterCurrent(new IRequestHandler() {
-            @Override
-            public void respond(IRequestCycle requestCycle) {
-
-            }
-
-            @Override
-            public void detach(IRequestCycle requestCycle) {
-
-            }
-        });
+        requestCycle().scheduleRequestHandlerAfterCurrent(null);
 
         WebResponse response = (WebResponse) requestCycle().getResponse();
         response.setHeader("Content-Type", "application/json; charset=utf8");
@@ -313,16 +301,16 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     private Map<String, String> values(String filter) {
-        if (filter != null && (lastFilter == null || !lastFilter.equals(filter))) {
+        if (lastFilter == null || !lastFilter.equals(filter)) {
             lastFilter = filter;
             if (options() == null) {
                 return newHashMap();
             }
             Map<String, String> map = options().listSelectOptions(filter);
-            if (map == null) {
-                return newHashMap();
-            }
             lastMap = map;
+        }
+        if (lastMap == null) {
+            lastMap = newHashMap();
         }
         return lastMap;
     }
