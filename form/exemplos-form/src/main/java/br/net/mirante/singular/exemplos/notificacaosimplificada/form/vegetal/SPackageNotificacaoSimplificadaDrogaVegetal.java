@@ -5,6 +5,8 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
@@ -19,10 +21,9 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeString;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificadaDrogaVegetal.class)
 public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
@@ -54,7 +55,7 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
         nomenclaturaBotanica
                 .asAtrBasic()
                 .required()
-                .label("Nomenclatura botânica")
+.label("Nomenclatura botânica")
                 .asAtrBootstrap()
                 .colPreference(4);
         nomenclaturaBotanica
@@ -75,7 +76,7 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
         concentracao
                 .asAtrBasic()
                 .required()
-                .label("Concentração/Unidade de medida")
+.label("Concentração/Unidade de medida")
                 .asAtrBootstrap()
                 .colPreference(4);
         concentracao
@@ -96,12 +97,13 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
         nome.asAtrBasic().label("Nome Popular");
 
         nomesPopulares.asAtrBasic().label("Nome Popular");
+        nomesPopulares.withView(SViewListByTable::new);
 
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamento.embalagemPrimaria.descricao, "Embalagem primária")
+.col(acondicionamento.embalagemPrimaria.descricao, "Embalagem primária")
                         .col(acondicionamento.embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamento.estudosEstabilidade, "Estudo de estabilidade")
                         .col(acondicionamento.prazoValidade))
