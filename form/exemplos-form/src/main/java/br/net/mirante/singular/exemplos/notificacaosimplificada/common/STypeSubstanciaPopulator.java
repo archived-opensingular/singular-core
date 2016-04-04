@@ -59,7 +59,7 @@ public class STypeSubstanciaPopulator {
                 .asAtrBootstrap()
                 .colPreference(6);
         substancia
-                .withView(new SViewAutoComplete());
+                .withView( () -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
         substancia
                 .withSelectionFromProvider(substanciaDescricao, (SOptionsProvider) (i, f) -> {
                     final SIList<?> list = i.getType().newList();
