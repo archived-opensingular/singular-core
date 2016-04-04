@@ -23,7 +23,7 @@ public class SPackageVocabularioControlado extends SPackage {
     public static final String TIPO          = "VocabularioControlado";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
 
-    static DominioService dominioService(SInstance ins) {
+    public static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);
     }
 

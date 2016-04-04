@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -59,6 +60,7 @@ public class SOptionsConfig {
 
     /**
      * Reexecuta o listAvailableOptions do provider do tipo.
+     *
      * @param filter
      */
     private void reloadOptionsFromProvider(String filter) {
@@ -75,35 +77,60 @@ public class SOptionsConfig {
             }
             LOGGER.warn("Opções recarregadas para " + toString());
             if (newOptions != null && !newOptions.equals(options)) {
-                options = newOptions;
-                optionsKeyInstanceMap = HashBiMap.create(options.size());
-                optionsKeylabelMap = HashBiMap.create(options.size());
-                for (br.net.mirante.singular.form.mform.SInstance instance : options) {
-                    /* ignora silenciosamente valores duplicados */
-                    if (!optionsKeyInstanceMap.inverse().containsKey(instance) &&
-                            !optionsKeylabelMap.inverse().containsKey(Optional
-                                    .ofNullable(instance)
-                                    .map(SInstance::getSelectLabel)
-                                    .orElse(null))) {
-                        String key = newUniqueKey();
-                        optionsKeyInstanceMap.put(key, instance);
-                        optionsKeylabelMap.put(key, instance.getSelectLabel());
-                    } else {
-                        logger.warn(String.format(" Valor ou descriação de opção de seleção ignorado durante a montagem da seleção simples. Value: %s, Label: %s",
-                                Optional
-                                        .ofNullable(instance)
-                                        .map(SInstance::getValue)
-                                        .orElse("null "),
-                                Optional
-                                        .ofNullable(instance)
-                                        .map(SInstance::getSelectLabel)
-                                        .orElse("null ")));
-                    }
-                }
+                remapValues(newOptions);
             }
         } else {
             optionsKeyInstanceMap = HashBiMap.create();
             optionsKeylabelMap = HashBiMap.create();
+        }
+    }
+
+    private void remapValues(SIList<? extends SInstance> newOptions) {
+        options = newOptions;
+        if (optionsKeyInstanceMap == null){
+            optionsKeyInstanceMap = HashBiMap.create(options.size());
+            optionsKeylabelMap = HashBiMap.create(options.size());
+        }
+        removeValuesNotPresent();
+        mapNewValues();
+    }
+
+    private void mapNewValues() {
+        for (br.net.mirante.singular.form.mform.SInstance instance : options) {
+                    /* ignora silenciosamente valores duplicados */
+            if (!optionsKeyInstanceMap.inverse().containsKey(instance) &&
+                    !optionsKeylabelMap.inverse().containsKey(Optional
+                            .ofNullable(instance)
+                            .map(SInstance::getSelectLabel)
+                            .orElse(null))) {
+                String key = newUniqueKey();
+                optionsKeyInstanceMap.put(key, instance);
+                optionsKeylabelMap.put(key, instance.getSelectLabel());
+            } else {
+                logger.warn(String.format(" Valor ou descriação de opção de seleção ignorado durante a montagem da seleção simples. Value: %s, Label: %s",
+                        Optional
+                                .ofNullable(instance)
+                                .map(SInstance::getValue)
+                                .orElse("null "),
+                        Optional
+                                .ofNullable(instance)
+                                .map(SInstance::getSelectLabel)
+                                .orElse("null ")));
+            }
+        }
+    }
+
+    private void removeValuesNotPresent() {
+        if (optionsKeylabelMap != null) {
+            Iterator<SInstance> it = optionsKeyInstanceMap.values().iterator();
+            while (it.hasNext()) {
+                SInstance instance = it.next();
+                if (!options.getValues().contains(instance)) {
+                    Object key = optionsKeyInstanceMap.inverse().get(instance);
+                    it.remove();
+                    optionsKeylabelMap.remove(key);
+                }
+            }
         }
     }
 
@@ -162,7 +189,7 @@ public class SOptionsConfig {
         return listSelectOptions(null);
     }
 
-    public Map<String,String> listSelectOptions(String filter) {
+    public Map<String, String> listSelectOptions(String filter) {
         reloadOptionsFromProvider(filter);
         return optionsKeylabelMap;
     }

@@ -9,6 +9,7 @@ import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.core.STypeDate;
+import br.net.mirante.singular.form.mform.core.STypeDateTime;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import org.joda.time.DateTime;
 
@@ -25,6 +26,11 @@ public class CaseInputCoreSelectOtherTypesPackage extends SPackage {
         STypeDate tipoData = tipoMyForm.addFieldDate("inicio");
         tipoData.withSelectionOf(new Date(), DateTime.parse("2015-11-20").toDate());
         tipoData.withSelectView();
+
+        //Select de Data-hora
+        STypeDateTime tipoDataHora = tipoMyForm.addFieldDateTime("fim");
+        tipoDataHora.withSelectionOf(new Date(), DateTime.parse("2015-11-20T15:20:00.000").toDate());
+        tipoDataHora.withSelectView();
 
         //Select de Inteiros
         STypeInteger tipoInteiro = tipoMyForm.addFieldInteger("qtd");

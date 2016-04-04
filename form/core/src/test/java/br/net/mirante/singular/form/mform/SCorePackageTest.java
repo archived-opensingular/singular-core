@@ -3,18 +3,17 @@ package br.net.mirante.singular.form.mform;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import org.junit.Assert;
 
-import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoA;
-import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoB;
-import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoComCargaInterna;
-import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoX;
+import br.net.mirante.singular.form.mform.SCorePackageTest.TestPacoteA.TestTipoA;
+import br.net.mirante.singular.form.mform.SCorePackageTest.TestPacoteA.TestTipoB;
+import br.net.mirante.singular.form.mform.SCorePackageTest.TestPacoteA.TestTipoComCargaInterna;
+import br.net.mirante.singular.form.mform.SCorePackageTest.TestPacoteA.TestTipoX;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
-public class TestMPacoteCore extends TestCaseForm {
+public class SCorePackageTest extends TestCaseForm {
 
     public void testBasicLoad() {
         SDictionary.create();
