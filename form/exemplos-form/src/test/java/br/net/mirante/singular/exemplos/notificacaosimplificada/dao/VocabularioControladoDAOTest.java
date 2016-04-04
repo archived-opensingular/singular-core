@@ -1,11 +1,11 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
 import org.fest.assertions.api.Assertions;
+import org.hamcrest.collection.IsCollectionWithSize;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,5 +44,19 @@ public class VocabularioControladoDAOTest {
     public void findByDescricaoForSubstancia() throws Exception {
         final List<Substancia> result = vocabularioControladoDAO.findByDescricao(Substancia.class, null);
         Assertions.assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    @Transactional
+    public void listCategoriasRegulatoriasMedicamentoDinamizado() throws Exception {
+        final List<CategoriaRegulatoriaMedicamento> result = vocabularioControladoDAO.listCategoriasRegulatoriasMedicamentoDinamizado(null);
+        Assert.assertThat("Não foi possivel encontrar os tipos de medicamento dinamizado", result, IsCollectionWithSize.hasSize(3));
+    }
+
+    @Test
+    @Transactional
+    public void listarLinhasProducaoDinamizado() throws Exception {
+        final List<LinhaCbpf> result = vocabularioControladoDAO.listarLinhasProducaoDinamizado(null);
+        Assert.assertThat("Não foi possivel encontrar os linhas de producao para dinamizado", result, IsCollectionWithSize.hasSize(4));
     }
 }

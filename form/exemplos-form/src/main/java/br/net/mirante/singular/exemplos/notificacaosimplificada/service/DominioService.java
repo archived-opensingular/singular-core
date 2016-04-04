@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,8 +121,11 @@ public class DominioService {
         list.add(Triple.of(26, 9, "Cactus grandiflorus"));
         list.add(Triple.of(27, 9, "Avena sativa"));
 
+        if(idConfiguracaoLinhaProducao == null){
+            return Collections.emptyList();
+        }
 
-        return list.stream().filter(t -> t.getMiddle().equals(idConfiguracaoLinhaProducao)).collect(Collectors.toList());
+        return list.stream().filter(t -> t.getMiddle().equals(idConfiguracaoLinhaProducao % 9 + 1)).collect(Collectors.toList());
     }
 
     public List<FormaFarmaceuticaBasica> formasFarmaceuticas(String filtro) {
@@ -261,6 +265,10 @@ public class DominioService {
         return vocabularioControladoDAO.listAll(CategoriaRegulatoriaMedicamento.class);
     }
 
+    public List<CategoriaRegulatoriaMedicamento> listCategoriasRegulatoriasMedicamentoDinamizado(String filtro) {
+        return vocabularioControladoDAO.listCategoriasRegulatoriasMedicamentoDinamizado(filtro);
+    }
+
     public List<Pair> nomenclaturaBotanica(String filtro) {
         List<Pair> list = new ArrayList<>();
 
@@ -287,4 +295,7 @@ public class DominioService {
         return vocabularioControladoDAO.listAll(Farmacopeia.class);
     }
 
+    public List<LinhaCbpf> listarLinhasProducaoDinamizado(String filtro) {
+        return vocabularioControladoDAO.listarLinhasProducaoDinamizado(filtro);
+    }
 }
