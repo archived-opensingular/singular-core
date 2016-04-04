@@ -44,6 +44,8 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
             return list;
         });
 
+        tipoEnsaio.asAtrBasic().label("Ensaio de Controle de Qualidade").required();
+
         STypeComposite<SIComposite> tipoReferencia = this.addFieldComposite("tipoReferencia");
         STypeInteger idTipoReferencia = tipoReferencia.addFieldInteger("id");
         STypeString descricaoTipoReferencia = tipoReferencia.addFieldString("descricao");
@@ -56,6 +58,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
             }
             return list;
         }).asAtrBasic().label("Tipo de referência")
+                .required()
                 .dependsOn(tipoEnsaio).visible(i -> Value.notNull(i, tipoEnsaio));
 
         {
@@ -84,9 +87,9 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
         STypeList<STypeComposite<SIComposite>, SIComposite> guiasOms = this.addFieldListOfComposite("guiasOms", "guiaOms");
         STypeComposite<SIComposite> guiaOms = guiasOms.getElementsType();
         STypeInteger edicao = guiaOms.addFieldInteger("edicao");
-        edicao.asAtrBasic().label("Edição");
+        edicao.asAtrBasic().label("Edição").required();
         STypeInteger capitulo = guiaOms.addFieldInteger("capitulo");
-        capitulo.asAtrBasic().label("Capítulo");
+        capitulo.asAtrBasic().label("Capítulo").required();
         guiasOms
                 .withView(SViewListByMasterDetail::new)
                 .asAtrBasic().dependsOn(tipoReferencia)
