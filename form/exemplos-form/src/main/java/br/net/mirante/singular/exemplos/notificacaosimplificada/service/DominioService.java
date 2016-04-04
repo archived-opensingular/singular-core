@@ -121,7 +121,7 @@ public class DominioService {
         list.add(Triple.of(26, 9, "Cactus grandiflorus"));
         list.add(Triple.of(27, 9, "Avena sativa"));
 
-        if(idConfiguracaoLinhaProducao == null){
+        if (idConfiguracaoLinhaProducao == null) {
             return Collections.emptyList();
         }
 
@@ -130,6 +130,10 @@ public class DominioService {
 
     public List<FormaFarmaceuticaBasica> formasFarmaceuticas(String filtro) {
         return vocabularioControladoDAO.findByDescricao(FormaFarmaceuticaBasica.class, filtro);
+    }
+
+    public List<FormaFarmaceuticaBasica> formasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado, String filtro) {
+        return vocabularioControladoDAO.formasFarmaceuticasDinamizadas(configuracoesDinamizado, filtro);
     }
 
     public List<Triple> concentracoes(Integer idSubstancia) {
