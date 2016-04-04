@@ -23,8 +23,6 @@ import org.joda.time.format.ISODateTimeFormat;
 public class STypeDate extends STypeSimple<SIDate, Date> {
     private static final Logger LOGGER = Logger.getLogger(SIDate.class.getName());
 
-    public static final String FORMAT = "dd/MM/yyyy";
-
     public STypeDate() {
         super(SIDate.class, Date.class);
     }
@@ -46,6 +44,12 @@ public class STypeDate extends STypeSimple<SIDate, Date> {
         }
     }
 
+    private Date handleError(String value, Exception e) {
+        String msg = String.format("Can't parse value '%s' with format '%s'.", value, "dd/MM/yyyy");
+        LOGGER.log(Level.WARNING, msg, e);
+        throw Throwables.propagate(e);
+    }
+
     @Override
     protected String toStringPersistence(Date originalValue) {
         if (originalValue != null) {
@@ -60,18 +64,12 @@ public class STypeDate extends STypeSimple<SIDate, Date> {
         return latinFormatter().format(date);
     }
 
-    private DateTimeFormatter isoFormarter() {
+    private static DateTimeFormatter isoFormarter() {
         return ISODateTimeFormat.date();
     }
 
-    private SimpleDateFormat latinFormatter() {
-        return new SimpleDateFormat(STypeDate.FORMAT);
-    }
-
-    private Date handleError(String value, Exception e) {
-        String msg = String.format("Can't parse value '%s' with format '%s'.", value, STypeDate.FORMAT);
-        LOGGER.log(Level.WARNING, msg, e);
-        throw Throwables.propagate(e);
+    private static SimpleDateFormat latinFormatter() {
+        return new SimpleDateFormat("dd/MM/yyyy");
     }
 
 }
