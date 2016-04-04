@@ -301,7 +301,7 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     private Map<String, String> values(String filter) {
-        if (filter != null && (lastFilter == null || !lastFilter.equals(filter))) {
+        if (lastFilter == null || !lastFilter.equals(filter)) {
             lastFilter = filter;
             if (options() == null) {
                 return newHashMap();
