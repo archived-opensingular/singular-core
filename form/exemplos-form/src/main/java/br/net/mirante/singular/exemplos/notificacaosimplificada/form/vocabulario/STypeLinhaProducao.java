@@ -10,14 +10,27 @@ import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
 
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeLinhaProducao extends STypeComposite<SIComposite> {
 
-    public STypeString descricao;
+    public STypeString  descricao;
     public STypeInteger id;
+
+    protected SOptionsProvider getProvider() {
+        return (ins, filter) -> {
+            final SIList<?> list = ins.getType().newList();
+            for (LinhaCbpf lc : dominioService(ins).linhasProducao(filter)) {
+                final SIComposite c = (SIComposite) list.addNew();
+                c.setValue(id, lc.getId());
+                c.setValue(descricao, lc.getDescricao());
+            }
+            return list;
+        };
+    }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -34,16 +47,7 @@ public class STypeLinhaProducao extends STypeComposite<SIComposite> {
                     .colPreference(4);
             this.setView(SViewAutoComplete::new);
 
-
-            this.withSelectionFromProvider(descricao, (ins, filter) -> {
-                final SIList<?> list = ins.getType().newList();
-                for (LinhaCbpf lc : dominioService(ins).linhasProducao(filter)) {
-                    final SIComposite c = (SIComposite) list.addNew();
-                    c.setValue(id, lc.getId());
-                    c.setValue(descricao, lc.getDescricao());
-                }
-                return list;
-            });
+            this.withSelectionFromProvider(descricao, getProvider());
 
         }
     }

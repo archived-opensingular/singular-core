@@ -34,7 +34,6 @@ public class STypeFormaFarmaceutica extends STypeComposite<SIComposite> {
                     .colPreference(4);
             this.setView(SViewAutoComplete::new);
 
-
             this.withSelectionFromProvider(descricao, (ins, filter) -> {
                 final SIList<?> list = ins.getType().newList();
                 for (FormaFarmaceuticaBasica lc : dominioService(ins).formasFarmaceuticas(filter)) {

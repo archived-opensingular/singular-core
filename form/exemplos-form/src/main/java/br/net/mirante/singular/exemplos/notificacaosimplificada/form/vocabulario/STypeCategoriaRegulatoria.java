@@ -35,7 +35,7 @@ public class STypeCategoriaRegulatoria extends STypeComposite<SIComposite> {
 
             this.withSelectionFromProvider(descricao, (ins, filter) -> {
                 final SIList<?> list = ins.getType().newList();
-                for (CategoriaRegulatoriaMedicamento cat : dominioService(ins).listCategoriasRegulatorias()) {
+                for (CategoriaRegulatoriaMedicamento cat : dominioService(ins).listCategoriasRegulatoriasMedicamentoDinamizado(filter)) {
                     final SIComposite c = (SIComposite) list.addNew();
                     c.setValue(id, cat.getId());
                     c.setValue(descricao, cat.getDescricao());
