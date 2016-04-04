@@ -6,8 +6,6 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.options.SOptionsConfig;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -36,7 +34,6 @@ import java.util.Map;
 
 import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -44,7 +41,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * http://twitter.github.io/typeahead.js/
  * which is abandoned, so better focus on
  * https://github.com/corejavascript/typeahead.js
- *
+ * <p>
  * It is build based on configuration placed withing an SViewAutoComplete.Mode object.
  *
  * @author Fabricio Buzeto
@@ -63,16 +60,31 @@ public class TypeaheadComponent extends Panel {
         add(container = buildContainer());
     }
 
+    protected static String generateResultOptions(Map<String, String> options) {
+        JSONArray arr = new JSONArray();
+        options.entrySet().forEach((e) -> arr.put(newValue(e.getKey(), e.getValue())));
+        return arr.toString();
+    }
+
+    protected static JSONObject newValue(String key, String label) {
+        JSONObject value = new JSONObject();
+        value.put("key", key);
+        value.put("value", label);
+        return value;
+    }
+
     private WebMarkupContainer buildContainer() {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
         MOptionsModel options = new MOptionsModel(getDefaultModel());
 
-        c.add(labelField = new TextField("label_field", new Model(){
+        c.add(labelField = new TextField("label_field", new Model() {
             @Override
             public Serializable getObject() {
                 IModel<?> parentModel = TypeaheadComponent.this.getDefaultModel();
                 SInstance instance = (SInstance) parentModel.getObject();
-                if(instance().getValue() != null ){ return instance().getSelectLabel();    }
+                if (instance().getValue() != null) {
+                    return instance().getSelectLabel();
+                }
                 return "";
             }
         }));
@@ -90,26 +102,58 @@ public class TypeaheadComponent extends Panel {
     }
 
     private String createJSFetcher() {
-        if(fetch == SViewAutoComplete.Mode.STATIC){ return staticJSFetch();
-        }else { return dynamicJSFetch();    }
+        if (fetch == SViewAutoComplete.Mode.STATIC) {
+            return staticJSFetch();
+        } else {
+            return dynamicJSFetch();
+        }
     }
 
     private String staticJSFetch() {
         return "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
-                "{hint: true, highlight: true, minLength: 0 }, " +
+                "{hint: true, highlight: true, minLength: 0}," +
                 "{name: 's-select-typeahead', " +
-                "display: 'value', "+
+                "display: 'value', " +
                 "source: window.substringMatcher(" + jsOptionArray() + ") })\n" +
-                createBindExpression()+
+                createBindExpression() +
                 ";";
     }
 
     private String createBindExpression() {
         return ".bind('typeahead:select', function(ev, suggestion) {\n" +
-                "  console.log(ev, suggestion); \n"+
                 "   $('#" + valueField.getMarkupId() + "').val(suggestion['key']).change();\n" +
-                "})";
+                "   $(this).focusout();\n" +
+                "   $(this).focus();\n" +
+                "   $(this).data('openPlease', false);\n" +
+                "   $(this).typeahead('close');\n" +
+                "})\n" +
+                ".bind('typeahead:change', function(ev, suggestion) {\n" +
+                "   $(this).data('openPlease', true);\n" +
+                "   $(this).typeahead('open');\n" +
+                "})\n" +
+                ".bind('typeahead:open', function(ev, suggestion) {\n" +
+                "   if ($(this).data('openPlease') != true && $(this).typeahead('val') != ''){\n" +
+                "       $(this).typeahead('close');\n" +
+                "   }\n" +
+                "})" +
+                ".bind('typeahead:close', function(ev, suggestion) {\n" +
+                "    $(this).data('openPlease', false);\n" +
+                "})" +
+                ".keyup( function(e) {\n" +
+                "   if (e.keyCode == 13){\n" +
+                "       e.preventDefault();" +
+                "   } else {\n" +
+                "       $(this).trigger('typeahead:change');\n" +
+                "   }" +
+                "})" +
+                ".focus(function(e) {\n" +
+                "   var ttInput = $(this);\n" +
+                "   var currentValue = ttInput.val();\n" +
+                "   ttInput.val('');\n" +
+                "   ttInput.val(currentValue);\n" +
+                "})\n";
     }
+
     private String dynamicJSFetch() {
         return "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
                 "{limit: Infinity, minLength: 0, hint:false }," +
@@ -122,14 +166,14 @@ public class TypeaheadComponent extends Panel {
 
     private String createJSBloodhoundOpbject() {
         return "new Bloodhound({\n" +
-                    "  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),\n" +
-                    "  queryTokenizer: Bloodhound.tokenizers.whitespace,\n" +
-                    "  prefetch: '"+dynamicFetcher.getCallbackUrl()+"',\n" +
-                    "  remote: {\n" +
-                    "    url: '"+dynamicFetcher.getCallbackUrl()+"&filter=%QUERY',\n" +
-                    "    wildcard: '%QUERY'\n" +
-                    "  }\n" +
-                    "})";
+                "  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),\n" +
+                "  queryTokenizer: Bloodhound.tokenizers.whitespace,\n" +
+                "  prefetch: '" + dynamicFetcher.getCallbackUrl() + "',\n" +
+                "  remote: {\n" +
+                "    url: '" + dynamicFetcher.getCallbackUrl() + "&filter=%QUERY',\n" +
+                "    wildcard: '%QUERY'\n" +
+                "  }\n" +
+                "})";
     }
 
     private String jsOptionArray() {
@@ -146,19 +190,6 @@ public class TypeaheadComponent extends Panel {
 
     private SInstance instance() {
         return (SInstance) getDefaultModelObject();
-    }
-
-    protected static String generateResultOptions(Map<String, String> options) {
-        JSONArray arr = new JSONArray();
-        options.entrySet().forEach((e) -> arr.put(newValue(e.getKey(),e.getValue())));
-        return arr.toString();
-    }
-
-    protected static JSONObject newValue(String key, String label) {
-        JSONObject value = new JSONObject();
-        value.put("key", key);
-        value.put("value", label);
-        return value;
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
@@ -178,18 +209,18 @@ class MOptionsModel extends MInstanciaValorModel {
         super(model);
     }
 
-    SOptionsConfig options(){
+    SOptionsConfig options() {
         return getMInstancia().getOptionsConfig();
-    }
-
-    @Override
-    public void setObject(Object object) {
-        super.setObject(defineValue((String)object));
     }
 
     @Override
     public Object getObject() {
         return options().getKeyFromOption(getMInstancia());
+    }
+
+    @Override
+    public void setObject(Object object) {
+        super.setObject(defineValue((String) object));
     }
 
     public Class getObjectClass() {
@@ -198,11 +229,11 @@ class MOptionsModel extends MInstanciaValorModel {
     }
 
     private Object defineValue(String object) {
-        if(object != null){
+        if (object != null) {
             SInstance value = options().getValueFromKey(object);
-            if(value != null && value instanceof SISimple){
+            if (value != null && value instanceof SISimple) {
                 return value.getValue();
-            }else{
+            } else {
                 return value;
             }
         }
@@ -228,7 +259,7 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
         return false;
     }
 
-    SOptionsConfig options(){
+    SOptionsConfig options() {
         return model.options();
     }
 
@@ -256,9 +287,9 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     private Map<String, String> values(String filter) {
-        if(options() == null) return newHashMap();
+        if (options() == null) return newHashMap();
         Map<String, String> map = options().listSelectOptions(filter);
-        if(map == null) return newHashMap();
+        if (map == null) return newHashMap();
         return map;
     }
 
