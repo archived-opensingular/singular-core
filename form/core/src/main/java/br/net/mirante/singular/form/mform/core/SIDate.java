@@ -23,4 +23,11 @@ public class SIDate extends SISimple<Date> implements SIComparable<Date> {
         return YearMonth.from(getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     }
 
+    @Override
+    public String getSelectLabel() {
+        if (selectLabel == null) {
+            return getType().toStringDisplayDefault(getValue());
+        }
+        return super.getSelectLabel();
+    }
 }

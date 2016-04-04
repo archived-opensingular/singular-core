@@ -22,7 +22,6 @@ import org.apache.wicket.util.convert.IConverter;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
@@ -50,13 +49,13 @@ public class DateMapper implements ControlsFieldComponentMapper {
                     @Override
                     public Date convertToObject(String date, Locale locale) throws ConversionException {
                         try {
-                            SimpleDateFormat sdf = new SimpleDateFormat(STypeDate.FORMAT);
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                             sdf.setLenient(false);
                             return sdf.parse(date);
                         } catch (ParseException e) {
                             String msg = String.format(
                                 "Can't parse value '%s' with format '%s'.",
-                                date, STypeDate.FORMAT);
+                                date, "dd/MM/yyyy");
                             LOGGER.log(Level.WARNING, msg, e);
                             throw new ConversionException(e);
                         }
@@ -64,7 +63,7 @@ public class DateMapper implements ControlsFieldComponentMapper {
 
                     @Override
                     public String convertToString(Date date, Locale locale) {
-                        return (new SimpleDateFormat(STypeDate.FORMAT)).format(date);
+                        return (new SimpleDateFormat("dd/MM/yyyy")).format(date);
                     }
                 });
             }
@@ -85,7 +84,7 @@ public class DateMapper implements ControlsFieldComponentMapper {
             SInstance instancia = model.getObject();
             if (instancia.getValue() instanceof Date) {
                 Date dt = (Date) instancia.getValue();
-                final SimpleDateFormat formattter = new SimpleDateFormat(STypeDate.FORMAT);
+                final SimpleDateFormat formattter = new SimpleDateFormat("dd/MM/yyyy");
                 return formattter.format(dt);
             }
         }
