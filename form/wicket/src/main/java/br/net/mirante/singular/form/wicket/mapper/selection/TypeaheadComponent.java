@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -22,6 +23,8 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -121,6 +124,7 @@ public class TypeaheadComponent extends Panel {
 
     private String createBindExpression() {
         return ".bind('typeahead:select', function(ev, suggestion) {\n" +
+                " console.log('select'); " +
                 "   $('#" + valueField.getMarkupId() + "').val(suggestion['key']).change();\n" +
                 "   $(this).focusout();\n" +
                 "   $(this).focus();\n" +
@@ -128,10 +132,12 @@ public class TypeaheadComponent extends Panel {
                 "   $(this).typeahead('close');\n" +
                 "})\n" +
                 ".bind('typeahead:change', function(ev, suggestion) {\n" +
+                " console.log('change'); " +
                 "   $(this).data('openPlease', true);\n" +
                 "   $(this).typeahead('open');\n" +
                 "})\n" +
                 ".bind('typeahead:open', function(ev, suggestion) {\n" +
+                " console.log('open'); " +
                 "   if ($(this).data('openPlease') != true && $(this).typeahead('val') != ''){\n" +
                 "       $(this).typeahead('close');\n" +
                 "   }\n" +
@@ -147,6 +153,7 @@ public class TypeaheadComponent extends Panel {
                 "   }" +
                 "})" +
                 ".focus(function(e) {\n" +
+                " console.log('focus'); " +
                 "   var ttInput = $(this);\n" +
                 "   var currentValue = ttInput.val();\n" +
                 "   ttInput.val('');\n" +
@@ -168,7 +175,8 @@ public class TypeaheadComponent extends Panel {
         return "new Bloodhound({\n" +
                 "  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),\n" +
                 "  queryTokenizer: Bloodhound.tokenizers.whitespace,\n" +
-                "  prefetch: '" + dynamicFetcher.getCallbackUrl() + "',\n" +
+                "  cache: false, " +
+                "  prefetch: null," +
                 "  remote: {\n" +
                 "    url: '" + dynamicFetcher.getCallbackUrl() + "&filter=%QUERY',\n" +
                 "    wildcard: '%QUERY'\n" +
@@ -203,7 +211,7 @@ public class TypeaheadComponent extends Panel {
  *
  * @author Fabricio Buzeto
  */
-class MOptionsModel extends MInstanciaValorModel {
+class MOptionsModel extends MInstanciaValorModel implements Loggable {
 
     public MOptionsModel(IModel model) {
         super(model);
@@ -220,7 +228,12 @@ class MOptionsModel extends MInstanciaValorModel {
 
     @Override
     public void setObject(Object object) {
-        super.setObject(defineValue((String) object));
+        Object definedValue = defineValue((String) object);
+        if (definedValue != null) {
+            super.setObject(definedValue);
+        } else {
+            getLogger().warn("Valor submetido para o Autocomplete foi ignorado.");
+        }
     }
 
     public Class getObjectClass() {
@@ -250,6 +263,9 @@ class MOptionsModel extends MInstanciaValorModel {
 class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     private MOptionsModel model;
 
+    private String lastFilter = null;
+    private Map<String, String> lastMap = null;
+
     public BloodhoundDataBehavior(MOptionsModel model) {
         this.model = model;
     }
@@ -266,7 +282,17 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     @Override
     public void respond(AjaxRequestTarget target) {
         String r = generateResultOptions(values(filterValue()));
-        requestCycle().scheduleRequestHandlerAfterCurrent(null);
+        requestCycle().scheduleRequestHandlerAfterCurrent(new IRequestHandler() {
+            @Override
+            public void respond(IRequestCycle requestCycle) {
+
+            }
+
+            @Override
+            public void detach(IRequestCycle requestCycle) {
+
+            }
+        });
 
         WebResponse response = (WebResponse) requestCycle().getResponse();
         response.setHeader("Content-Type", "application/json; charset=utf8");
@@ -287,10 +313,18 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     private Map<String, String> values(String filter) {
-        if (options() == null) return newHashMap();
-        Map<String, String> map = options().listSelectOptions(filter);
-        if (map == null) return newHashMap();
-        return map;
+        if (filter != null && (lastFilter == null || !lastFilter.equals(filter))) {
+            lastFilter = filter;
+            if (options() == null) {
+                return newHashMap();
+            }
+            Map<String, String> map = options().listSelectOptions(filter);
+            if (map == null) {
+                return newHashMap();
+            }
+            lastMap = map;
+        }
+        return lastMap;
     }
 
     protected RequestCycle requestCycle() {
