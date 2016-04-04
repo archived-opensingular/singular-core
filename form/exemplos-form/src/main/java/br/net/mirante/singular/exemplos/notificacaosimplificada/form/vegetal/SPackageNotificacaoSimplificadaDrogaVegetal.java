@@ -119,17 +119,6 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
                         .col(ensaios.getElementsType().descricaoTipoEnsaio, "Ensaio"))
                 .asAtrBasic().label("Ensaio de Controle de Qualidade");
 
-        SViewTab tabbed = notificacaoSimplificada.setView(SViewTab::new);
-        tabbed.addTab("medicamento", "Droga Vegetal")
-                .add(nomenclaturaBotanica)
-                .add(concentracao)
-                .add(nomesPopulares)
-        ;
-        tabbed.addTab("acondicionamento", "Acondicionamento")
-                .add(acondicionamentos);
-        tabbed.addTab("ensaio", "Ensaio de Controle de Qualidade")
-                .add(ensaios);
-
     }
 
 }
