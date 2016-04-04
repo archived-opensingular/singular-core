@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.CategoriaRegulatoriaMedicamento;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.support.persistence.BaseDAO;
@@ -31,7 +33,6 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
     }
 
 
-
     public List<UnidadeMedida> findUnidadeMedida(String descricao) {
         final Criteria criteria = getSession().createCriteria(UnidadeMedida.class);
         if (descricao != null) {
@@ -43,4 +44,23 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
         return criteria.list();
     }
 
+    public List<CategoriaRegulatoriaMedicamento> listCategoriasRegulatoriasMedicamentoDinamizado(String filtro) {
+        final Criteria     criteria     = getSession().createCriteria(CategoriaRegulatoriaMedicamento.class);
+        criteria.add(Restrictions.in("descricao", new String[]{"Homeopático", "Antroposófico", "Anti-homotóxico"}));
+        if (filtro != null) {
+            criteria.add(Restrictions.ilike("descricao", filtro, MatchMode.ANYWHERE));
+        }
+        criteria.addOrder(Order.asc("descricao"));
+        return criteria.list();
+    }
+
+    public List<LinhaCbpf> listarLinhasProducaoDinamizado(String filtro) {
+        final Criteria     criteria     = getSession().createCriteria(LinhaCbpf.class);
+        criteria.add(Restrictions.in("descricao", new String[]{"Sólidos", "Semi- sólidos", "Líquidos", "Sólidos Estéreis"}));
+        if (filtro != null) {
+            criteria.add(Restrictions.ilike("descricao", filtro, MatchMode.ANYWHERE));
+        }
+        criteria.addOrder(Order.asc("descricao"));
+        return criteria.list();
+    }
 }

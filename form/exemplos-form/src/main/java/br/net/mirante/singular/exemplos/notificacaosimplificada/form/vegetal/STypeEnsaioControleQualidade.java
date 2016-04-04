@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal;
 
+import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco.dominioService;
+
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Farmacopeia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
@@ -16,6 +19,7 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -62,20 +66,38 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                 .dependsOn(tipoEnsaio).visible(i -> Value.notNull(i, tipoEnsaio));
 
         {
-            STypeAttachmentList farmacopeicos = this.addFieldListOfAttachment("farmcopeicos", "farmacopeito");
-            farmacopeicos
-                    .asAtrBasic().label("Farmacopêico")
+            STypeComposite<SIComposite> informacoesFarmacopeicas = this.addFieldComposite("informacoesFarmacopeicas");
+            informacoesFarmacopeicas
+                    .asAtrBasic()
                     .dependsOn(tipoReferencia)
                     .visible(i -> TipoReferencia.FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
 
-            STypeAttachment f = farmacopeicos.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
+            STypeComposite farmacopeia = informacoesFarmacopeicas.addFieldComposite("farmacopeia");
+            farmacopeia.asAtrBasic().label("Nome");
+            STypeInteger id = farmacopeia.addFieldInteger("id");
+            STypeString descricao = farmacopeia.addFieldString("descricao");
+            farmacopeia.withSelectionFromProvider(descricao, (ins, filter) -> {
+                final SIList<?> list = ins.getType().newList();
+                for (Farmacopeia f : dominioService(ins).listFarmacopeias()) {
+                    final SIComposite c = (SIComposite) list.addNew();
+                    c.setValue(id, f.getId());
+                    c.setValue(descricao, f.getDescricao());
+                }
+                return list;
+            });
+            farmacopeia.withView(SViewSelectionBySearchModal::new);
+
+            informacoesFarmacopeicas.addFieldString("edicao")
+                    .asAtrBasic().label("Ediçao")
+                    .asAtrBootstrap().colPreference(2);
+            informacoesFarmacopeicas.addFieldInteger("pagina")
+                    .asAtrBasic().label("Página")
+                    .asAtrBootstrap().colPreference(2);
         }
 
         {
             STypeAttachmentList resultadosLote = this.addFieldListOfAttachment("resultadosLote", "resuladoLote");
-            resultadosLote.asAtrBasic().label("Resultado para um lote")
+            resultadosLote.asAtrBasic().label("Metodologia/Especificação/Resultado para um lote")
                     .dependsOn(tipoReferencia)
                     .visible(i -> TipoReferencia.NAO_FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
 
@@ -84,21 +106,19 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
             nomeArquivo.asAtrBasic().label("Nome do Arquivo");
         }
 
-        STypeList<STypeComposite<SIComposite>, SIComposite> guiasOms = this.addFieldListOfComposite("guiasOms", "guiaOms");
-        STypeComposite<SIComposite> guiaOms = guiasOms.getElementsType();
-        STypeInteger edicao = guiaOms.addFieldInteger("edicao");
-        edicao.asAtrBasic().label("Edição").required();
-        STypeInteger capitulo = guiaOms.addFieldInteger("capitulo");
-        capitulo.asAtrBasic().label("Capítulo").required();
-        guiasOms
-                .withView(SViewListByMasterDetail::new)
+        STypeString justificativa = this.addFieldString("justificativa");
+        justificativa
                 .asAtrBasic().dependsOn(tipoReferencia)
-                .label("Guia OMS").visible(i -> TipoReferencia.GUIA_OMS.getId().equals(Value.of(i, idTipoReferencia)));
+                .label("Justificativa").visible(i -> TipoReferencia.NAO_SE_APLICA.getId().equals(Value.of(i, idTipoReferencia)))
+                .tamanhoMaximo(600)
+                .getTipo().withView(SViewTextArea::new);
 
         STypeComposite<SIComposite> especificacaoResultadoLote = this.addFieldComposite("especificacaoResultadoLote");
         especificacaoResultadoLote
                 .asAtrBasic().dependsOn(tipoEnsaio)
-                .visible(i -> TipoEnsaioControleQualidade.ORGANOLEPTICO.getId().equals(Value.of(i, idTipoEnsaio)));
+                .visible(
+                        i -> TipoEnsaioControleQualidade.ORGANOLEPTICO.getId().equals(Value.of(i, idTipoEnsaio))
+                                ||  TipoEnsaioControleQualidade.CONTAMINANTES_MICROBIOLOGICOS.getId().equals(Value.of(i, idTipoEnsaio)));
 
         STypeString descricao = especificacaoResultadoLote.addFieldString("descricao");
         descricao
@@ -176,8 +196,8 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
     enum TipoReferencia {
         FARMACOPEICO(1, "Farmacopêico"),
-        NAO_FARMACOPEICO(2, "Não Farmacopêico"),
-        GUIA_OMS(3, "Guia OMS");
+        NAO_FARMACOPEICO(2, "Não farmacopêico"),
+        NAO_SE_APLICA(3, "Não se aplica");
 
         private Integer id;
         private String descricao;
