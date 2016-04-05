@@ -48,10 +48,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento Dinamizado");
-        notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list formulasHomeopaticas as c>${c.descricaoDinamizada.descricao} ${c.diluicao.descricao}<#sep>, </#sep></#list>) ");
+        notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${linhaProducao.descricao} (<#list formulasHomeopaticas as c>${c.descricaoDinamizada.descricao} ${c.diluicao.descricao}<#sep>, </#sep></#list>) ");
 
         notificacaoSimplificada.addField("classe", STypeCategoriaRegulatoria.class);
-
 
         final STypeLinhaProducaoDinamizado linhaProducao = notificacaoSimplificada.addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
 
@@ -66,9 +65,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         final STypeComposite<?> formulaHomeopatica                             = formulasHomeopaticas.getElementsType();
         final STypeComposite<?> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
-        STypeInteger            idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
-        STypeSimple             idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
-        STypeSimple             descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
+        final STypeInteger      idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
+        final STypeSimple       idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
+        final STypeSimple       descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
         descricaoDinamizada
                 .asAtrBasic()
                 .label("Descrição")
@@ -147,7 +146,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         diluicao
                 .withSelectView()
                 .withSelectionFromProvider(descConcentracao, (optionsInstance, lb) -> {
-                    Integer id = (Integer) Value.of(optionsInstance, idDescricaoDinamizada);
+                    Integer id = Value.of(optionsInstance, idDescricaoDinamizada);
                     for (Triple p : dominioService(optionsInstance).diluicoes(id)) {
                         lb
                                 .add()

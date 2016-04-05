@@ -156,10 +156,13 @@ public class WicketFormProcessing {
                     return false;
                 }
 
-                final SType<?> type = ins.getType();
+                final SType<?>            type          = ins.getType();
+                final Optional<SInstance> thisAncestor  = SInstances.findAncestor(ins, STypeList.class);
+                final Optional<SInstance> otherAncestor = SInstances.findAncestor(((IMInstanciaAwareModel) fieldInstance).getMInstancia(), STypeList.class);
 
                 boolean wasUpdated             = updatedInstanceIds.contains(ins.getId());
                 boolean dependsOnType          = depends.apply(type);
+                boolean isBothInList           = thisAncestor.map(SInstance::getPathFull).map(path -> path.equals(otherAncestor.map(SInstance::getPathFull).orElse(null))).orElse(false);
                 boolean isInTheSameIndexOfList = indexsKey.equals(getIndexsKey(ins.getPathFull()));
                 boolean childrenDepends        = false;
 
@@ -167,7 +170,9 @@ public class WicketFormProcessing {
                     childrenDepends = depends.apply(((STypeList) type).getElementsType());
                 }
 
-                return wasUpdated || (childrenDepends || dependsOnType) && isInTheSameIndexOfList;
+                return wasUpdated
+                        || (childrenDepends || dependsOnType) && !isBothInList
+                        || (childrenDepends || dependsOnType) && isInTheSameIndexOfList;
             };
 
             component.getPage().visitChildren(Component.class, (c, visit) -> {
