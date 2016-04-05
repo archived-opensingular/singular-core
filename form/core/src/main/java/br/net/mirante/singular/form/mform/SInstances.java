@@ -126,6 +126,15 @@ public abstract class SInstances {
         return findAncestor(node, ancestorType).get();
     }
 
+    public static <A extends SType> Optional<SInstance> findAncestor(SInstance node, Class<A> ancestorType) {
+        for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent()) {
+            if (parent.getType().getClass().equals(ancestorType)) {
+                return Optional.of(parent);
+            }
+        }
+        return Optional.empty();
+    }
+
     /**
      * Busca por um ancestral de <code>node</code> do tipo especificado.
      * @param node instância inicial da busca
