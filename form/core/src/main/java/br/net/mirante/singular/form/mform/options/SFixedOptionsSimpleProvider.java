@@ -12,6 +12,7 @@ import br.net.mirante.singular.form.mform.STypeSimple;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 @SuppressWarnings("serial")
 public class SFixedOptionsSimpleProvider implements SOptionsProvider {
