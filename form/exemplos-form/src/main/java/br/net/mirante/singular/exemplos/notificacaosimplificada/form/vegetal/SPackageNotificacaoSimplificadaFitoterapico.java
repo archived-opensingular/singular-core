@@ -20,23 +20,23 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
-@SInfoType(spackage = SPackageNotificacaoSimplificadaDrogaVegetal.class)
-public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
+@SInfoType(spackage = SPackageNotificacaoSimplificadaFitoterapico.class)
+public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
 
-    public static final String PACOTE        = "mform.peticao.notificacaosimplificada.vegetal";
-    public static final String TIPO          = "MedicamentoDrogaVegetal";
+    public static final String PACOTE        = "mform.peticao.notificacaosimplificada.fitoterapico";
+    public static final String TIPO          = "MedicamentoProdutoTradicionalFitoterapico";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
 
     static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);
     }
 
-    public SPackageNotificacaoSimplificadaDrogaVegetal() {
+    public SPackageNotificacaoSimplificadaFitoterapico() {
         super(PACOTE);
     }
 
@@ -47,7 +47,7 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtrBasic().displayString("${nomenclaturaBotanica.descricao} - ${concentracao.descricao}");
-        notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Droga Vegetal");
+        notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Produto Tradicional Fitoterápico");
 
         final STypeComposite<?> nomenclaturaBotanica     = notificacaoSimplificada.addFieldComposite("nomenclaturaBotanica");
         SType<?>                idNomenclaturaBotanica   = nomenclaturaBotanica.addFieldInteger("id");
@@ -55,7 +55,7 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
         nomenclaturaBotanica
                 .asAtrBasic()
                 .required()
-.label("Nomenclatura botânica")
+                .label("Nomenclatura botânica")
                 .asAtrBootstrap()
                 .colPreference(4);
         nomenclaturaBotanica
@@ -70,13 +70,14 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
                     return list;
                 });
 
-        final STypeComposite<?> concentracao     = notificacaoSimplificada.addFieldComposite("concentracao");
+        STypeList<STypeComposite<SIComposite>, SIComposite> concentracoes = notificacaoSimplificada.addFieldListOfComposite("concentracoes", "concentracao");
+        STypeComposite<SIComposite> concentracao = concentracoes.getElementsType();
         SType<?>                idConcentracao   = concentracao.addFieldInteger("id");
         STypeSimple             descConcentracao = concentracao.addFieldString("descricao");
         concentracao
                 .asAtrBasic()
                 .required()
-.label("Concentração/Unidade de medida")
+                .label("Concentração/Unidade de medida")
                 .asAtrBootstrap()
                 .colPreference(4);
         concentracao
@@ -90,20 +91,22 @@ public class SPackageNotificacaoSimplificadaDrogaVegetal extends SPackage {
                     }
                     return list;
                 });
+        concentracoes
+                .withView(SViewListByForm::new)
+                .asAtrBasic().label("Concentração");
 
-        STypeList<STypeComposite<SIComposite>, SIComposite> nomesPopulares = notificacaoSimplificada.addFieldListOfComposite("nomesPopulares", "nomePopular");
-        STypeComposite<SIComposite> nomePopular = nomesPopulares.getElementsType();
-        STypeString nome = nomePopular.addFieldString("nome");
-        nome.asAtrBasic().label("Nome Popular");
+        STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
 
-        nomesPopulares.asAtrBasic().label("Nome Popular");
-        nomesPopulares.withView(SViewListByTable::new);
+        nomeComercial
+                .asAtrBasic()
+                .required()
+                .label("Nome Comercial");
 
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-.col(acondicionamento.embalagemPrimaria.descricao, "Embalagem primária")
+                        .col(acondicionamento.embalagemPrimaria.descricao, "Embalagem primária")
                         .col(acondicionamento.embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamento.estudosEstabilidade, "Estudo de estabilidade")
                         .col(acondicionamento.prazoValidade))
