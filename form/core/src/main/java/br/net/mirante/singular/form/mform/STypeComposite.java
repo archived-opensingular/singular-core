@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import br.net.mirante.singular.form.mform.basic.view.SViewAttachmentList;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
@@ -23,8 +24,6 @@ import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeMonetary;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.options.SSelectionableCompositeType;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
@@ -42,6 +41,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite>
     private transient FieldMapOfRecordType fieldsConsolidated;
 
     private SOptionsProvider optionsProvider;
+    private Consumer<INSTANCE_TYPE> updateListener;
 
     private String selectLabel;
 
@@ -385,4 +385,12 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite>
         }
     }
 
+    public STypeComposite<INSTANCE_TYPE> withUpdateListener(Consumer<INSTANCE_TYPE> consumer) {
+        this.updateListener = consumer;
+        return this;
+    }
+
+    public Consumer<INSTANCE_TYPE> getUpdateListener() {
+        return updateListener;
+    }
 }

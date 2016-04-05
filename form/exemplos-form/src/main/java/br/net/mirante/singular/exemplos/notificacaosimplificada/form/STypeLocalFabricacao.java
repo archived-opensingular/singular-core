@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
+import static br.net.mirante.singular.form.mform.util.SQuery.*;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.SPackageNotificacaoSimplificadaGasMedicinal;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
@@ -51,6 +53,12 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
 
         empresaPropria = this.addField("empresaPropria", STypeEmpresaPropria.class);
+
+        empresaPropria.withUpdateListener((i) ->
+                $(i)
+                    .find(empresaPropria.razaoSocialPropria).val("Empresa de teste").end()
+                    .find(empresaPropria.cnpj).val("11111111000191").end()
+                    .find(empresaPropria.endereco).val("SCLN 211 BLOCO B SUBSOLO").end());
 
         empresaPropria.asAtrBasic()
                 .dependsOn(tipoLocalFabricacao)

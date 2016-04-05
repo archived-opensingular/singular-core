@@ -62,6 +62,10 @@ public class DominioService {
     public List<Triple> configuracoesLinhaProducao(Integer idLinhaProducao) {
         List<Triple> list = new ArrayList<>();
 
+        if (idLinhaProducao == null) {
+            return list;
+        }
+
         list.add(Triple.of(1, 1, "Comprimidos em Camadas"));
         list.add(Triple.of(2, 1, "Comprimidos Placebo"));
         list.add(Triple.of(3, 1, "Comprimidos Simples"));

@@ -102,14 +102,6 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                         .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
 
-
-        final STypeAttachmentList layoutsRotulagem = notificacaoSimplificada
-                .addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
-        layoutsRotulagem
-                .asAtrBasic()
-                .required()
-                .label("Layout rotulagem");
-
     }
 
 }
