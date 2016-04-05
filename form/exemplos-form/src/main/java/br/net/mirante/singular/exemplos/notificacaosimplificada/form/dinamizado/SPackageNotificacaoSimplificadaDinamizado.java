@@ -14,10 +14,12 @@ import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectModalBuscaMapper;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Collection;
@@ -108,8 +110,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                                 .findFirst().isPresent();
                     })
                     .asAtrBootstrap()
-                    .colPreference(4);
-            formaFarmaceutica.setView(SViewAutoComplete::new);
+                    .colPreference(12);
+            formaFarmaceutica.setView(SViewSelectionBySearchModal::new);
             formaFarmaceutica.withSelectionFromProvider(descricao, (ins, filter) -> {
                 final SIList<?>           list     = ins.getType().newList();
                 final SIList<SIComposite> formulas = ins.findNearest(formulasHomeopaticas).orElse(null);
