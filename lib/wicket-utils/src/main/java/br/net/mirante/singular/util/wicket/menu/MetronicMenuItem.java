@@ -103,7 +103,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
     protected boolean configureActiveItem() {
 
         if (menuItemUrl != null) {
-            Pattern onlyLetters = Pattern.compile("[^a-z]");
+            Pattern onlyLetters = Pattern.compile("[^a-zA-Z0-9]");
             String url = onlyLetters.matcher(getRequest().getUrl().toString()).replaceAll("");
             String thisUrl = onlyLetters.matcher(menuItemUrl).replaceAll("");
 
