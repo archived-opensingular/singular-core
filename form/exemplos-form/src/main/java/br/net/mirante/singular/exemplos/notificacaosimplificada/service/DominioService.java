@@ -236,7 +236,6 @@ public class DominioService {
         return list.stream().filter(t -> t.getMiddle().equals(idDescricaoDinamizadaFake)).collect(Collectors.toList());
     }
 
-    @Transactional
     public List<EmbalagemPrimariaBasica> findEmbalagensBasicas(String filtro) {
         return vocabularioControladoDAO.findByDescricao(EmbalagemPrimariaBasica.class, filtro);
     }

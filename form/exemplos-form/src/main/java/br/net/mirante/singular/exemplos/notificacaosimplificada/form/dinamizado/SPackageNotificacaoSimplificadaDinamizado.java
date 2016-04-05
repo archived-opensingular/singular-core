@@ -165,7 +165,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                         .col(acondicionamentos.getElementsType().embalagemPrimaria.descricao, "Embalagem primária")
                         .col(acondicionamentos.getElementsType().embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamentos.getElementsType().quantidade)
-                        .col(acondicionamentos.getElementsType().unidadeMedida.descricao, "Unidade de medida")
+                        .col(acondicionamentos.getElementsType().unidadeMedida.sigla, "Unidade de medida")
                         .col(acondicionamentos.getElementsType().estudosEstabilidade, "Estudo de estabilidade")
                         .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");

@@ -12,17 +12,19 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
+import static java.lang.String.format;
 
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeUnidadeMedida extends STypeComposite<SIComposite> {
 
-    public STypeString descricao;
+    public STypeString sigla, descricao;
     public STypeInteger id;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         id = this.addFieldInteger("id");
+        sigla = this.addFieldString("sigla");
         descricao = this.addFieldString("descricao");
         {
 
@@ -35,12 +37,14 @@ public class STypeUnidadeMedida extends STypeComposite<SIComposite> {
             this.setView(SViewAutoComplete::new);
 
 
-            this.withSelectionFromProvider(descricao, (ins, filter) -> {
+            this.withSelectionFromProvider(sigla, (ins, filter) -> {
                 final SIList<?> list = ins.getType().newList();
                 for (UnidadeMedida lc : dominioService(ins).unidadesMedida(filter)) {
                     final SIComposite c = (SIComposite) list.addNew();
                     c.setValue(id, lc.getId());
-                    c.setValue(descricao, lc.getSigla() + "- " + lc.getDescricao());
+                    c.setValue(sigla, lc.getSigla() );
+                    c.setValue(descricao, lc.getDescricao());
+                    c.setSelectLabel(format("%s - %s", lc.getSigla(), lc.getDescricao()) );
                 }
                 return list;
             });
