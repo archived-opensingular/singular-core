@@ -30,7 +30,8 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
     private STypeString descricao, gas, concentracao;
     private STypeComposite<SIComposite> informacoesFarmacopeicas;
     private STypeList<STypeAcondicionamento, SIComposite> acondicionamentos;
-    private STypeAttachmentList listaAnexos, rotulagens;
+    private STypeAttachmentList listaAnexos;
+    private STypeString nomeComercial;
 
     public SPackageNotificacaoSimplificadaGasMedicinal() {
         super(PACOTE);
@@ -45,8 +46,8 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Gás Medicinal");
 
         addDescricao(notificacaoSimplificada);
-        addGas(notificacaoSimplificada);
         addConcentracao(notificacaoSimplificada);
+        addNomeComercial(notificacaoSimplificada);
 
         addInformacoesFarmacopeicas(notificacaoSimplificada);
 
@@ -54,46 +55,13 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
         addAcondicionamentos(notificacaoSimplificada);
 
-        addRotulagens(notificacaoSimplificada);
-
     }
 
     private void addDescricao(STypeComposite<?> notificacaoSimplificada) {
         descricao = notificacaoSimplificada.addFieldString("descricao");
         descricao.asAtrBasic().label("Descrição");
+        descricao.asAtrBootstrap().colPreference(2);
         descricao.withSelectionOf("TRATAMENTO RESPIRATÓRIO E REANIMAÇÃO", "ANESTESIA", "TRATAMENTO DA DOR");
-    }
-
-    private void addGas(STypeComposite<?> notificacaoSimplificada) {
-        gas = notificacaoSimplificada.addFieldString("gas");
-        gas.asAtrBasic().label("Gás");
-        gas.withSelectionFromProvider(new SOptionsProvider() {
-            @Override
-            public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
-                Optional<Object> descValue = optionsInstance.findNearestValue(descricao);
-                SIList<?> r = gas.newList();
-                if(descValue.isPresent()){
-                    String[] options =  {};
-                    if(descValue.get().equals("TRATAMENTO RESPIRATÓRIO E REANIMAÇÃO")){
-                        options = new String[]{"Oxigênio","VasoKinox","KEOL"};
-                    }else if(descValue.get().equals("ANESTESIA")){
-                        options = new String[]{"LENOXe", "Protóxido de azoto medicinal"};
-                    }else if(descValue.get().equals("TRATAMENTO DA DOR")){
-                        options = new String[]{"Kalinox"};
-                    }
-                    for(String c : options){
-                        r.addNew().setValue(c);
-                    }
-                }
-                return r;
-            }
-        });
-        gas.asAtrBasic()
-                .dependsOn(descricao)
-                .enabled((x) -> x.findNearestValue(descricao).isPresent())
-        ;
-
-        gas.asAtrBootstrap().colPreference(2);
     }
 
     private void addConcentracao(STypeComposite<?> notificacaoSimplificada) {
@@ -105,6 +73,16 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
                 .enabled((x) -> x.findNearestValue(descricao).isPresent())
         ;
         concentracao.asAtrBootstrap().colPreference(2);
+    }
+
+    private void addNomeComercial(STypeComposite<?> notificacaoSimplificada) {
+        nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
+        nomeComercial
+                .asAtrBasic()
+                .label("Nome Comercial")
+                .asAtrBootstrap()
+                .newRow().colPreference(4);
+
     }
 
     private void addInformacoesFarmacopeicas(STypeComposite<?> notificacaoSimplificada) {
@@ -126,11 +104,11 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         });
         farmacopeia.withView(SViewSelectionBySearchModal::new);
 
-        informacoesFarmacopeicas.addFieldInteger("pagina")
-                .asAtrBasic().label("Página")
-                .asAtrBootstrap().colPreference(2);
         informacoesFarmacopeicas.addFieldString("edicao")
                 .asAtrBasic().label("Ediçao")
+                .asAtrBootstrap().colPreference(2);
+        informacoesFarmacopeicas.addFieldInteger("pagina")
+                .asAtrBasic().label("Página")
                 .asAtrBootstrap().colPreference(2);
     }
 
@@ -152,12 +130,6 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
                         .col(acondicionamentos.getElementsType().embalagemPrimaria.descricao, "Embalagem primária")
                         .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
-    }
-
-    private STypeAttachmentList addRotulagens(STypeComposite<?> notificacaoSimplificada) {
-        rotulagens = notificacaoSimplificada.addFieldListOfAttachment("rotulagens", "rotulagem");
-        rotulagens.asAtrBasic().label("Layout de Rotulagem");
-        return rotulagens;
     }
 
 }
