@@ -71,7 +71,7 @@ public class SPackageHabilitacaoEmpresa extends SPackage {
         STypeString link = dadosRE.addFieldString("link");
         link
                 .asAtrBootstrap().newRow().colPreference(8)
-                .asAtrBasic().label("Link da RE de CPF publicada no D.O.U")
+                .asAtrBasic().label("Link da RE de CBPF publicada no D.O.U")
                 .required();
 
         STypeComposite<SIComposite> dadosPeticaoCBPF = habilitacaoEmpresa.addFieldComposite("dadosPeticaoCBPF");
