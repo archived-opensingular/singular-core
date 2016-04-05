@@ -52,7 +52,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         notificacaoSimplificada.addField("classe", STypeCategoriaRegulatoria.class);
 
-
         final STypeLinhaProducaoDinamizado linhaProducao = notificacaoSimplificada.addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> formulasHomeopaticas = notificacaoSimplificada.addFieldListOfComposite("formulasHomeopaticas", "formulaHomeopatica");
@@ -66,9 +65,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         final STypeComposite<?> formulaHomeopatica                             = formulasHomeopaticas.getElementsType();
         final STypeComposite<?> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
-        STypeInteger            idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
-        STypeSimple             idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
-        STypeSimple             descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
+        final STypeInteger      idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
+        final STypeSimple       idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
+        final STypeSimple       descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
         descricaoDinamizada
                 .asAtrBasic()
                 .label("Descrição")
@@ -147,7 +146,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         diluicao
                 .withSelectView()
                 .withSelectionFromProvider(descConcentracao, (optionsInstance, lb) -> {
-                    Integer id = (Integer) Value.of(optionsInstance, idDescricaoDinamizada);
+                    Integer id = Value.of(optionsInstance, idDescricaoDinamizada);
                     for (Triple p : dominioService(optionsInstance).diluicoes(id)) {
                         lb
                                 .add()

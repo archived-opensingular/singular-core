@@ -76,9 +76,11 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
 
         if (configuracoesDinamizado != null && !configuracoesDinamizado.isEmpty()) {
             int mod = 3;
+            hql.append(" AND ( 1=1");
             configuracoesDinamizado.forEach(i -> {
-                hql.append(" AND mod(").append("fb.id,").append(mod).append(") = ").append(i % mod);
+                hql.append(" OR mod(").append("fb.id,").append(mod).append(") = ").append(i % mod);
             });
+            hql.append(" ) ");
         }
 
         if (filtro != null) {
