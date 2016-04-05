@@ -20,11 +20,14 @@ public class STypeEmpresaPropria extends STypeComposite<SIComposite> {
         razaoSocialPropria = addFieldString("razaoSocial");
         razaoSocialPropria
                 .asAtrBasic()
-                .label("Razão Social");
+                .label("Razão Social")
+                .enabled(false);
         (cnpj = addFieldCNPJ("cnpj"))
-                .asAtrBasic().label("CNPJ");
+                .asAtrBasic().label("CNPJ")
+                .enabled(false);
         (endereco = addFieldString("endereco"))
-                .asAtrBasic().label("Endereço");
+                .asAtrBasic().label("Endereço")
+                .enabled(false);
     }
 
 }
