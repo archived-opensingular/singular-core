@@ -71,7 +71,8 @@ public class SIAttachment extends SIComposite {
         }
 
         if (ref == null) {
-            throw new RuntimeException(errorMsg("Não foi encontrado o arquivo de hash=" + hash + " e nome=" + getFileName()));
+            //todo trocar para SingularException, rever se é relevante uma vez que crash a aplicacao pela falta de um anexo.
+//            throw new RuntimeException(errorMsg("Não foi encontrado o arquivo de hash=" + hash + " e nome=" + getFileName()));
         }
         return ref;
     }

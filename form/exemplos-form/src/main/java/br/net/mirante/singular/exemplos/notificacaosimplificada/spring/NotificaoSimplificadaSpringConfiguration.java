@@ -1,5 +1,6 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.spring;
 
+import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.h2.Driver;
 import org.hibernate.SessionFactory;
@@ -19,10 +20,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+@AutoScanDisabled
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
 @ComponentScan("br.net.mirante.singular.exemplos.notificacaosimplificada")
 public class NotificaoSimplificadaSpringConfiguration {
+
+    @Value("classpath:data/notificacaosimplificada/drops.sql")
+    private Resource drops;
 
     @Value("classpath:data/notificacaosimplificada/create_tables.sql")
     private Resource createTables;
@@ -79,6 +84,7 @@ public class NotificaoSimplificadaSpringConfiguration {
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSqlScriptEncoding("UTF-8");
+        populator.addScript(drops);
         populator.addScript(createTables);
         populator.addScript(inserts);
         populator.addScript(insertGeral);

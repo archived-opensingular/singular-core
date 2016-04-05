@@ -1,11 +1,8 @@
-drop schema DBARRECAD IF EXISTS;
-drop schema DBCORPORATIVO IF EXISTS;
-drop schema DBSEGURANCA IF EXISTS;
 
 
-create schema DBARRECAD;
-create schema DBCORPORATIVO;
-create schema DBSEGURANCA;
+create schema if not exists DBARRECAD;
+create schema if not exists DBCORPORATIVO;
+create schema if not exists DBSEGURANCA;
 
 /*==============================================================*/
 /* Table: TL_TRANSACAO                                          */
