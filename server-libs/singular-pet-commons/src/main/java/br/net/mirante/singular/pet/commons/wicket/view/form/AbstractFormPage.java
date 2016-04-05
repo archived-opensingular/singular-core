@@ -284,13 +284,15 @@ public abstract class AbstractFormPage extends Template {
         public AnnotationMode annotationMode = AnnotationMode.NONE;
         public String formId;
         public String type;
+        public String processType;
 
         public FormPageConfig() {
         }
 
-        public FormPageConfig(String type, String formId, AnnotationMode annotationMode, ViewMode viewMode) {
+        public FormPageConfig(String type, String processType, String formId, AnnotationMode annotationMode, ViewMode viewMode) {
             this.type = type;
             this.formId = formId;
+            this.processType = processType;
             this.annotationMode = annotationMode;
             this.viewMode = viewMode;
         }
