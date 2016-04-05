@@ -72,7 +72,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
                 .dependsOn(descricao)
                 .enabled((x) -> x.findNearestValue(descricao).isPresent())
         ;
-        concentracao.asAtrBootstrap().colPreference(2);
+        concentracao.asAtrBootstrap().colPreference(3);
     }
 
     private void addNomeComercial(STypeComposite<?> notificacaoSimplificada) {
