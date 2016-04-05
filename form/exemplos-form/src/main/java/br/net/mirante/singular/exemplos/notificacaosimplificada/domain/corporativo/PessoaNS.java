@@ -22,10 +22,9 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Schemas;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.enums.TipoPessoa;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.enums.TipoPessoaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.Cidade;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.Pais;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.UnidadeFederacao;
 import br.net.mirante.singular.persistence.entity.BaseEntity;
 import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 
@@ -33,18 +32,18 @@ import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 @Table(schema = Schemas.DBCORPORATIVO, name = "TB_PESSOA")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TP_PESSOA")
-public abstract class Pessoa extends BaseEntity {
+public abstract class PessoaNS extends BaseEntity {
 
     @Id
     @Column(name = "ID_PESSOA")
     private String cod;
 
     @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
-            @Parameter(name = "enumClass", value = TipoPessoa.CLASS_NAME),
+            @Parameter(name = "enumClass", value = TipoPessoaNS.CLASS_NAME),
             @Parameter(name = "identifierMethod", value = "getCod"),
             @Parameter(name = "valueOfMethod", value = "valueOfEnum")})
     @Column(name = "TP_PESSOA", insertable = false, updatable = false)
-    private TipoPessoa tipoPessoa;
+    private TipoPessoaNS tipoPessoa;
 
     @JoinColumn(name = "CO_CIDADE", nullable = false)
     @ManyToOne
@@ -75,11 +74,11 @@ public abstract class Pessoa extends BaseEntity {
         this.cod = cod;
     }
 
-    public TipoPessoa getTipoPessoa() {
+    public TipoPessoaNS getTipoPessoa() {
         return tipoPessoa;
     }
 
-    public void setTipoPessoa(TipoPessoa tipoPessoa) {
+    public void setTipoPessoa(TipoPessoaNS tipoPessoa) {
         this.tipoPessoa = tipoPessoa;
     }
 

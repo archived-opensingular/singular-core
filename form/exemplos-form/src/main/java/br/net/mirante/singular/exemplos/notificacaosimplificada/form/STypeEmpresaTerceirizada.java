@@ -3,7 +3,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada.dominioService;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInfoType;
@@ -32,7 +32,7 @@ public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
 
         empresa.withSelectionFromProvider(razaoSocial, (ins, filter) -> {
             final SIList<?> list = ins.getType().newList();
-            for (PessoaJuridica pj : dominioService(ins).empresaTerceirizada(filter)) {
+            for (PessoaJuridicaNS pj : dominioService(ins).empresaTerceirizada(filter)) {
                 final SIComposite c = (SIComposite) list.addNew();
                 c.setValue(idEmpresa, pj.getCod());
                 c.setValue(razaoSocial, pj.getRazaoSocial());

@@ -5,24 +5,24 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.enums;
 
-public enum TipoPessoa {
+public enum TipoPessoaNS {
 
 
     JURIDICA("J", "Jurídica"),
     FISICA("F", "Física");
 
-    public static final String CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.enums.TipoPessoa";
+    public static final String CLASS_NAME = "br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.enums.TipoPessoaNS";
 
     private String cod;
     private String descricao;
 
-    TipoPessoa(String cod, String descricao) {
+    TipoPessoaNS(String cod, String descricao) {
         this.cod = cod;
         this.descricao = descricao;
     }
 
-    public static TipoPessoa valueOfEnum(String cod) {
-        for (TipoPessoa tipo : TipoPessoa.values()) {
+    public static TipoPessoaNS valueOfEnum(String cod) {
+        for (TipoPessoaNS tipo : TipoPessoaNS.values()) {
             if (cod.equals(tipo.getCod())) {
                 return tipo;
             }

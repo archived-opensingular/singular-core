@@ -9,15 +9,19 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.core.STypeTime;
 
 public class CaseInputCoreDatePackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
-        tipoMyForm.addFieldDate("inicio")
+        tipoMyForm.addFieldDate("inicioDia")
                   .as(AtrBasic.class).label("Data Início")
                   .asAtrBootstrap().colPreference(2);
+        tipoMyForm.addField("inicioHora", STypeTime.class)
+                .as(AtrBasic.class).label("Hora Início")
+                .asAtrBootstrap().colPreference(2);
     }
 
 }

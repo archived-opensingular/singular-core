@@ -12,7 +12,7 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarm
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -121,7 +121,7 @@ public class DominioService {
         list.add(Triple.of(26, 9, "Cactus grandiflorus"));
         list.add(Triple.of(27, 9, "Avena sativa"));
 
-        if(idConfiguracaoLinhaProducao == null){
+        if (idConfiguracaoLinhaProducao == null) {
             return Collections.emptyList();
         }
 
@@ -130,6 +130,10 @@ public class DominioService {
 
     public List<FormaFarmaceuticaBasica> formasFarmaceuticas(String filtro) {
         return vocabularioControladoDAO.findByDescricao(FormaFarmaceuticaBasica.class, filtro);
+    }
+
+    public List<FormaFarmaceuticaBasica> formasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado, String filtro) {
+        return vocabularioControladoDAO.formasFarmaceuticasDinamizadas(configuracoesDinamizado, filtro);
     }
 
     public List<Triple> concentracoes(Integer idSubstancia) {
@@ -248,12 +252,12 @@ public class DominioService {
         return enderecoEmpresaInternacionalDAO.buscarEnderecos(filtro, 5);
     }
 
-    public List<PessoaJuridica> empresaTerceirizada(String filtro) {
-        return genericDAO.findByProperty(PessoaJuridica.class, "razaoSocial", filtro, 5);
+    public List<PessoaJuridicaNS> empresaTerceirizada(String filtro) {
+        return genericDAO.findByProperty(PessoaJuridicaNS.class, "razaoSocial", filtro, 5);
     }
 
-    public List<PessoaJuridica> outroLocalFabricacao(String filtro) {
-        return genericDAO.findByProperty(PessoaJuridica.class, "razaoSocial", filtro, 5);
+    public List<PessoaJuridicaNS> outroLocalFabricacao(String filtro) {
+        return genericDAO.findByProperty(PessoaJuridicaNS.class, "razaoSocial", filtro, 5);
     }
 
     public List<EtapaFabricacao> etapaFabricacao(String filtro) {

@@ -5,19 +5,25 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeCategoriaRegulatoria;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeFormaFarmaceutica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
+import br.net.mirante.singular.form.mform.core.SIInteger;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificadaDinamizado.class)
 public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
@@ -42,10 +48,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento Dinamizado");
-        notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list formulasHomeopaticas as c>${c.descricaoDinamizada.descricao} ${c.diluicao.descricao}<#sep>, </#sep></#list>) ");
+        notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${linhaProducao.descricao} (<#list formulasHomeopaticas as c>${c.descricaoDinamizada.descricao} ${c.diluicao.descricao}<#sep>, </#sep></#list>) ");
 
         notificacaoSimplificada.addField("classe", STypeCategoriaRegulatoria.class);
-
 
         final STypeLinhaProducaoDinamizado linhaProducao = notificacaoSimplificada.addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
 
@@ -60,9 +65,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         final STypeComposite<?> formulaHomeopatica                             = formulasHomeopaticas.getElementsType();
         final STypeComposite<?> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
-        STypeSimple             idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
-        STypeSimple             idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
-        STypeSimple             descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
+        final STypeInteger      idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
+        final STypeSimple       idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
+        final STypeSimple       descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
         descricaoDinamizada
                 .asAtrBasic()
                 .label("Descrição")
@@ -81,19 +86,51 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                     }
                 });
 
-        final STypeFormaFarmaceutica formaFarmaceutica = notificacaoSimplificada.addField("formaFarmaceutica", STypeFormaFarmaceutica.class);
-        formaFarmaceutica
-                .asAtrBasic()
-                .dependsOn(descricaoDinamizada)
-                .visible(i -> {
-                    final SIList<SIComposite> list = i.findNearest(formulasHomeopaticas).orElse(null);
-                    return !(list == null || list.isEmpty()) && list.stream()
-                            .map(SIComposite::getChildren)
-                            .flatMap(Collection::stream)
-                            .map(ins -> ins.findNearest(descricaoDinamizada))
-                            .filter(ins -> ins.isPresent() && Value.notNull(ins.get(), idDescricaoDinamizada))
-                            .findFirst().isPresent();
-                });
+        final STypeComposite formaFarmaceutica = notificacaoSimplificada.addFieldComposite("formaFarmaceutica");
+
+        {
+
+            final STypeInteger id        = formaFarmaceutica.addFieldInteger("id");
+            final STypeString  descricao = formaFarmaceutica.addFieldString("descricao");
+
+            formaFarmaceutica
+                    .asAtrBasic()
+                    .label("Forma farmacêutica")
+                    .required()
+                    .dependsOn(descricaoDinamizada)
+                    .visible(i -> {
+                        final SIList<SIComposite> list = i.findNearest(formulasHomeopaticas).orElse(null);
+                        return !(list == null || list.isEmpty()) && list.stream()
+                                .map(SIComposite::getChildren)
+                                .flatMap(Collection::stream)
+                                .map(ins -> ins.findNearest(descricaoDinamizada))
+                                .filter(ins -> ins.isPresent() && Value.notNull(ins.get(), idDescricaoDinamizada))
+                                .findFirst().isPresent();
+                    })
+                    .asAtrBootstrap()
+                    .colPreference(4);
+            formaFarmaceutica.setView(SViewAutoComplete::new);
+            formaFarmaceutica.withSelectionFromProvider(descricao, (ins, filter) -> {
+                final SIList<?>           list     = ins.getType().newList();
+                final SIList<SIComposite> formulas = ins.findNearest(formulasHomeopaticas).orElse(null);
+                if (formulas != null) {
+                    final List<Integer> ids = formulas.stream()
+                            .flatMap(f -> f.getChildren().stream())
+                            .map(i -> i.findNearest(idDescricaoDinamizada))
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .map(SIInteger::getValue)
+                            .collect(Collectors.toList());
+                    for (FormaFarmaceuticaBasica lc : dominioService(ins).formasFarmaceuticasDinamizadas(ids, filter)) {
+                        final SIComposite c = (SIComposite) list.addNew();
+                        c.setValue(id, lc.getId());
+                        c.setValue(descricao, lc.getDescricao());
+                    }
+                }
+                return list;
+            });
+
+        }
 
         final STypeComposite<?> diluicao                 = formulaHomeopatica.addFieldComposite("diluicao");
         final SType<?>          idConcentracacao         = diluicao.addFieldInteger("id");
@@ -109,7 +146,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         diluicao
                 .withSelectView()
                 .withSelectionFromProvider(descConcentracao, (optionsInstance, lb) -> {
-                    Integer id = (Integer) Value.of(optionsInstance, idDescricaoDinamizada);
+                    Integer id = Value.of(optionsInstance, idDescricaoDinamizada);
                     for (Triple p : dominioService(optionsInstance).diluicoes(id)) {
                         lb
                                 .add()
