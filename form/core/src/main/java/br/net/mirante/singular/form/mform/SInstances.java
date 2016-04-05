@@ -63,7 +63,7 @@ public abstract class SInstances {
      * Percorre todos as instâncias filha da instancia informada chamando o
      * consumidor, incundo os filhos dos filhos. Ou seja, faz um pecorrimento em
      * profundidade. Não chama o consumidor para a instância raiz.
-     * @param instance
+     * @param instance a instância a ser visitada
      */
     public static void visitAllChildrenIncludingEmpty(SInstance instance, Consumer<SInstance> consumer) {
         visitAllChildrenIncludingEmpty(instance, false, consumer);
@@ -73,7 +73,7 @@ public abstract class SInstances {
      * Percorre todos as instâncias filha da instancia informada chamando o
      * consumidor, incundo os filhos dos filhos. Ou seja, faz um pecorrimento em
      * profundidade. Não chama o consumidor para a instância raiz.
-     * @param instance
+     * @param instance a instância a ser visitada
      * @param childrenFirst se true o percorrimento é bottom-up
      */
     public static void visitAllChildrenIncludingEmpty(SInstance instance, boolean childrenFirst, Consumer<SInstance> consumer) {
@@ -179,12 +179,12 @@ public abstract class SInstances {
     public static <A extends SInstance> Optional<A> findNearest(SInstance node, SType<A> targetType) {
         return SInstances.findCommonAncestor(node, targetType)
             .flatMap(ancestor -> ancestor.findDescendant(targetType))
-            .map(targetNode -> (A) targetNode);
+            .map(targetNode -> targetNode);
     }
 
     /**
      * Lista os ancestrais de <code>node</code>.
-     * @param node instância inicial da busca
+     * @param instance instância inicial da busca
      * @return Lista das instâncias de ancestrais do tipo especificado
      */
     public static List<SInstance> listAscendants(SInstance instance) {
@@ -196,7 +196,7 @@ public abstract class SInstances {
     }
     /**
      * Lista os ancestrais de <code>node</code>.
-     * @param node instância inicial da busca
+     * @param instance instância inicial da busca
      * @return Lista das instâncias de ancestrais do tipo especificado
      */
     public static List<SInstance> listAscendants(SInstance instance, SType<?> limitInclusive) {
@@ -205,7 +205,7 @@ public abstract class SInstances {
 
     /**
      * Lista os ancestrais de <code>node</code>.
-     * @param node instância inicial da busca
+     * @param instance instância inicial da busca
      * @return Lista das instâncias de ancestrais do tipo especificado
      */
     public static List<SInstance> listAscendants(SInstance instance, SType<?> limitInclusive, boolean selfIncluded) {
@@ -234,14 +234,14 @@ public abstract class SInstances {
 
     /**
      * Busca pelo primeiro descendente de <code>node</code> do tipo especificado.
-     * @param node instância inicial da busca
+     * @param instance instância inicial da busca
      * @param descendantType tipo do descendente
      * @return Optional da instância do primeiro descendente do tipo especificado
      */
     @SuppressWarnings("unchecked")
-    public static <D extends SInstance> Optional<D> findDescendant(SInstance instancia, SType<D> descendantType) {
+    public static <D extends SInstance> Optional<D> findDescendant(SInstance instance, SType<D> descendantType) {
         final Deque<SInstance> deque = new ArrayDeque<>();
-        deque.add(instancia);
+        deque.add(instance);
         while (!deque.isEmpty()) {
             final SInstance node = deque.removeFirst();
             if (node.getType() == descendantType) {
@@ -255,7 +255,7 @@ public abstract class SInstances {
 
     /**
      * Lista os descendentes de <code>node</code> do tipo especificado.
-     * @param node instância inicial da busca
+     * @param instance instância inicial da busca
      * @param descendantType tipo do descendente
      * @return Lista das instâncias de descendentes do tipo especificado
      */
@@ -265,7 +265,7 @@ public abstract class SInstances {
 
     /**
      * Lista os descendentes de <code>node</code> do tipo especificado.
-     * @param node instância inicial da busca
+     * @param instance instância inicial da busca
      * @param descendantType tipo do descendente
      * @return Lista das instâncias de descendentes do tipo especificado
      */
@@ -287,7 +287,7 @@ public abstract class SInstances {
 
     /**
      * Retorna uma Stream que percorre os descendentes de <code>node</code> do tipo especificado.
-     * @param node instância inicial da busca
+     * @param root instância inicial da busca
      * @param descendantType tipo do descendente
      * @return Stream das instâncias de descendentes do tipo especificado
      */
@@ -300,7 +300,7 @@ public abstract class SInstances {
 
     /**
      * Retorna uma Stream que percorre os descendentes de <code>node</code> do tipo especificado.
-     * @param node instância inicial da busca
+     * @param root instância inicial da busca
      * @return Stream das instâncias de descendentes
      */
     public static Stream<SInstance> streamDescendants(SInstance root, boolean includeRoot) {
