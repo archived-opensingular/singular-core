@@ -50,7 +50,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento Dinamizado");
-        notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${linhaProducao.descricao} (<#list formulasHomeopaticas as c>${c.descricaoDinamizada.descricao} ${c.diluicao.descricao}<#sep>, </#sep></#list>) ");
+        notificacaoSimplificada.asAtrBasic().displayString("${nomeComercial} - ${linhaProducao.descricao} (<#list formulasHomeopaticas as c>${c.descricaoDinamizada.descricao} ${c.diluicao.descricao}<#sep>, </#sep></#list>) ");
 
         notificacaoSimplificada.addField("classe", STypeCategoriaRegulatoria.class);
 
@@ -170,7 +170,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                         .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
 
-        final STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercialMedicamento");
+        final STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
         nomeComercial
                 .asAtrBasic()
                 .required()
