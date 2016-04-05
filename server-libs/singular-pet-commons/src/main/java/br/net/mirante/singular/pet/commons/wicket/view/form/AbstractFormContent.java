@@ -181,7 +181,7 @@ public abstract class AbstractFormContent extends Content {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
                 MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
-                setFormXML(getFormModel(), rootXml.toStringExato());
+                setFormXML(getFormModel(), Optional.ofNullable(rootXml).map(MElement::toStringExato).orElse(null));
                 processAnnotations(getCurrentInstance().getObject());
                 getCurrentInstance().getObject().getDocument().persistFiles();
                 saveForm(getCurrentInstance());

@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import br.net.mirante.singular.pet.commons.util.AutoScanDisabled;
+import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 
 @EnableWebMvc
 @EnableWebSecurity
