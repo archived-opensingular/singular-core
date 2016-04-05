@@ -12,7 +12,7 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarm
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -249,12 +249,12 @@ public class DominioService {
         return enderecoEmpresaInternacionalDAO.buscarEnderecos(filtro, 5);
     }
 
-    public List<PessoaJuridica> empresaTerceirizada(String filtro) {
-        return genericDAO.findByProperty(PessoaJuridica.class, "razaoSocial", filtro, 5);
+    public List<PessoaJuridicaNS> empresaTerceirizada(String filtro) {
+        return genericDAO.findByProperty(PessoaJuridicaNS.class, "razaoSocial", filtro, 5);
     }
 
-    public List<PessoaJuridica> outroLocalFabricacao(String filtro) {
-        return genericDAO.findByProperty(PessoaJuridica.class, "razaoSocial", filtro, 5);
+    public List<PessoaJuridicaNS> outroLocalFabricacao(String filtro) {
+        return genericDAO.findByProperty(PessoaJuridicaNS.class, "razaoSocial", filtro, 5);
     }
 
     public List<EtapaFabricacao> etapaFabricacao(String filtro) {

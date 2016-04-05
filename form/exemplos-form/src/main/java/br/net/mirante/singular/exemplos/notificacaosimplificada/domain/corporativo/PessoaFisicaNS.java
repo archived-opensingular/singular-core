@@ -19,7 +19,7 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Schemas;
 @Table(schema = Schemas.DBCORPORATIVO, name = "TB_PESSOA_FISICA")
 @DiscriminatorValue("F")
 @PrimaryKeyJoinColumn(name = "ID_PESSOA_FISICA", referencedColumnName = "ID_PESSOA")
-public class PessoaFisica extends Pessoa {
+public class PessoaFisicaNS extends PessoaNS {
 
 
     @Column(name = "NO_PESSOA_FISICA")

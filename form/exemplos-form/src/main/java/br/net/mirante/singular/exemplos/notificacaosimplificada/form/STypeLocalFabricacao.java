@@ -1,6 +1,6 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
@@ -79,7 +79,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
         outroLocalFabricacao
                 .withSelectionFromProvider(razaoSocialOutroLocalFabricacao, (ins, filter) -> {
                     final SIList<?> list = ins.getType().newList();
-                    for (PessoaJuridica pj : dominioService(ins).outroLocalFabricacao(filter)) {
+                    for (PessoaJuridicaNS pj : dominioService(ins).outroLocalFabricacao(filter)) {
                         final SIComposite c = (SIComposite) list.addNew();
                         c.setValue(idOutroLocalFabricacao, pj.getCod());
                         c.setValue(razaoSocialOutroLocalFabricacao, pj.getRazaoSocial());
