@@ -18,7 +18,8 @@ public class ServerProperties {
     static {
         //TODO propriedades provisórias, quando definirmos uma forma de externalizar
         // essas configurações, esse código será removido
-        mapa.put(SINGULAR_WS_ENDERECO, "http://localhost:8080/canabidiol/SingularWS?wsdl");
+        //TODO prover solução melhor para todos os contextos de aplicação
+        mapa.put(SINGULAR_WS_ENDERECO, "http://localhost:8080/notificacaosimplificada/SingularWS?wsdl");
         mapa.put(SINGULAR_SERVIDOR_ENDERECO, "http://localhost:8080/singular/peticionamento");
         mapa.put(SINGULAR_MODULE_FORM_ENDERECO, "/peticionamento");
     }
