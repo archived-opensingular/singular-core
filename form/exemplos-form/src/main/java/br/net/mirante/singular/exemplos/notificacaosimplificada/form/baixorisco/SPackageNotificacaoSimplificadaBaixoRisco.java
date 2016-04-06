@@ -41,7 +41,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
-        notificacaoSimplificada.asAtrBasic().displayString("${nomeComercialMedicamento} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
+        notificacaoSimplificada.asAtrBasic().displayString("${nomeComercial} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Medicamento de Baixo Risco");
 
         final STypeLinhaProducao linhaProducao          = notificacaoSimplificada.addField("linhaProducao", STypeLinhaProducao.class);
@@ -80,11 +80,11 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                 (ins, filter) -> dominioService(ins).substancias((Integer) Value.of(ins, idConfiguracaoLinhaProducao), filter)
         ).populate();
 
-        STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercialMedicamento");
+        STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
         nomeComercial
                 .asAtrBasic()
                 .required()
-                .label("Nome Comercial do Medicamento")
+                .label("Nome Comercial")
                 .asAtrBootstrap()
                 .colPreference(8);
 
@@ -101,14 +101,6 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                         .col(acondicionamentos.getElementsType().estudosEstabilidade, "Estudo de estabilidade")
                         .col(acondicionamentos.getElementsType().prazoValidade))
                 .asAtrBasic().label("Acondicionamento");
-
-
-        final STypeAttachmentList layoutsRotulagem = notificacaoSimplificada
-                .addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
-        layoutsRotulagem
-                .asAtrBasic()
-                .required()
-                .label("Layout rotulagem");
 
     }
 

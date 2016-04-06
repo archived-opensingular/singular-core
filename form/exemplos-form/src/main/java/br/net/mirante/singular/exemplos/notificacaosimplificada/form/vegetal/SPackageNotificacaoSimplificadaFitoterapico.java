@@ -22,7 +22,6 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificadaFitoterapico.class)
@@ -46,7 +45,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
-        notificacaoSimplificada.asAtrBasic().displayString("${nomenclaturaBotanica.descricao} - ${concentracao.descricao}");
+        notificacaoSimplificada.asAtrBasic().displayString("${nomenclaturaBotanica.descricao} - (<#list concentracoes as c>${c.descricao} <#sep>, </#sep></#list>)");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Produto Tradicional Fitoterápico");
 
         final STypeComposite<?> nomenclaturaBotanica     = notificacaoSimplificada.addFieldComposite("nomenclaturaBotanica");

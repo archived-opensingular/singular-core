@@ -31,7 +31,6 @@ import org.apache.wicket.util.visit.Visits;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.event.ISInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceEvent;
-import br.net.mirante.singular.form.mform.options.SSelectionableType;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
@@ -137,6 +136,15 @@ public class WicketFormProcessing {
         // atualizar documento e recuperar os IDs das instancias com atributos alterados
         final ISInstanceListener.EventCollector eventCollector = new ISInstanceListener.EventCollector();
         fieldInstance.getObject().getDocument().updateAttributes(eventCollector);
+
+        SType<?> sType = fieldInstance.getObject().getType();
+
+        if (sType instanceof STypeComposite) {
+            STypeComposite c = (STypeComposite) sType;
+            if (c.getUpdateListener() != null) {
+                c.getUpdateListener().accept(fieldInstance.getObject());
+            }
+        }
 
         final String indexsKey = getIndexsKey(((IMInstanciaAwareModel) fieldInstance).getMInstancia().getPathFull());
 

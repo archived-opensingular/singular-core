@@ -20,7 +20,7 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
 
     @Override
     public TIPO_NATIVO getValue() {
-        if (valueCalculation != null) {
+        if (valueCalculation != null && value != null) {
             return valueCalculation.calculate(new CalculationContext(this));
         }
         return value;

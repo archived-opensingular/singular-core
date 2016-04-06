@@ -62,6 +62,10 @@ public class DominioService {
     public List<Triple> configuracoesLinhaProducao(Integer idLinhaProducao) {
         List<Triple> list = new ArrayList<>();
 
+        if (idLinhaProducao == null) {
+            return list;
+        }
+
         list.add(Triple.of(1, 1, "Comprimidos em Camadas"));
         list.add(Triple.of(2, 1, "Comprimidos Placebo"));
         list.add(Triple.of(3, 1, "Comprimidos Simples"));
@@ -236,7 +240,6 @@ public class DominioService {
         return list.stream().filter(t -> t.getMiddle().equals(idDescricaoDinamizadaFake)).collect(Collectors.toList());
     }
 
-    @Transactional
     public List<EmbalagemPrimariaBasica> findEmbalagensBasicas(String filtro) {
         return vocabularioControladoDAO.findByDescricao(EmbalagemPrimariaBasica.class, filtro);
     }
