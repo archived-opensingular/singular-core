@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.persistence.service;
 
+import org.hibernate.Hibernate;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
@@ -18,7 +19,9 @@ public class ProcessRetrieveService extends AbstractHibernateService {
     }
 
     public ProcessInstanceEntity retrieveProcessInstanceByCod(Integer cod) {
-        return getSession().retrieve(ProcessInstanceEntity.class, cod);
+        ProcessInstanceEntity pi =  getSession().retrieve(ProcessInstanceEntity.class, cod);
+        pi.getTasks().forEach(t -> Hibernate.initialize(t.getTask()));
+        return pi;
     }
 
 }
