@@ -79,6 +79,7 @@ public class TypeaheadComponent extends Panel {
         MOptionsModel options = new MOptionsModel(getDefaultModel());
 
         c.add(labelField = new TextField("label_field", new Model() {
+
             @Override
             public Serializable getObject() {
                 IModel<?> parentModel = TypeaheadComponent.this.getDefaultModel();
@@ -89,6 +90,7 @@ public class TypeaheadComponent extends Panel {
                 return "";
             }
         }));
+
         c.add(valueField = new HiddenField("value_field", options));
         $b.addAjaxUpdate(valueField, IPartialPageRequestHandler::add);
         add(dynamicFetcher = new BloodhoundDataBehavior(options));
@@ -115,6 +117,7 @@ public class TypeaheadComponent extends Panel {
                 "{hint: true, highlight: true, minLength: 0}," +
                 "{name: 's-select-typeahead', " +
                 "display: 'value', " +
+                "typeaheadAppendToBody: 'true', " +
                 "source: window.substringMatcher(" + jsOptionArray() + ") })\n" +
                 createBindExpression() +
                 ";";
