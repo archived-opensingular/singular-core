@@ -55,11 +55,17 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         STypeComposite<SIComposite> caracteristicas = notificacaoSimplificada.addFieldComposite("caracteristicas");
         caracteristicas.asAtrAnnotation().setAnnotated();
         STypeComposite<SIComposite> listaAcondicionamentos = notificacaoSimplificada.addFieldComposite("listaAcondicionamento");
-        listaAcondicionamentos.asAtrAnnotation().setAnnotated();
+        listaAcondicionamentos
+                .asAtrBasic().label("Acondicionamentos")
+                .asAtrAnnotation().setAnnotated();
         STypeComposite<SIComposite> listaLayoutFolheto = notificacaoSimplificada.addFieldComposite("listaLayoutFolheto");
-        listaLayoutFolheto.asAtrAnnotation().setAnnotated();
+        listaLayoutFolheto
+                .asAtrBasic().label("Layout dos folhetos")
+                .asAtrAnnotation().setAnnotated();
         STypeComposite<SIComposite> listaReferencias = notificacaoSimplificada.addFieldComposite("listaReferencias");
-        listaReferencias.asAtrAnnotation().setAnnotated();
+        listaReferencias
+                .asAtrBasic().label("Referências das indicações propostas")
+                .asAtrAnnotation().setAnnotated();
         STypeComposite<SIComposite> nomeComercialComposto = notificacaoSimplificada.addFieldComposite("nomeComercial");
         nomeComercialComposto.asAtrAnnotation().setAnnotated();
 
