@@ -18,9 +18,20 @@ public class ProcessRetrieveService extends AbstractHibernateService {
         this.sessionLocator = sessionLocator;
     }
 
+    /**
+     *
+     * @param cod
+     * @return
+     * @deprecated
+     * Transformar em DTO essa busca da vários problemas de lazy para o historico (HistoricoContent)
+     */
+    @Deprecated
     public ProcessInstanceEntity retrieveProcessInstanceByCod(Integer cod) {
         ProcessInstanceEntity pi =  getSession().retrieve(ProcessInstanceEntity.class, cod);
-        pi.getTasks().forEach(t -> Hibernate.initialize(t.getTask()));
+        pi.getTasks().forEach(t -> {
+            Hibernate.initialize(t.getTask());
+            Hibernate.initialize(t.getAllocatedUser());
+        });
         return pi;
     }
 
