@@ -1,21 +1,16 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.CategoriaRegulatoriaMedicamento;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.support.persistence.BaseDAO;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Long> {
@@ -93,4 +88,22 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
         return setParametersQuery(getSession().createQuery(hql.toString()), params).list();
     }
 
+
+    public List<Substancia> findSubstanciasByIdConfiguracaoLinhaProducao(Integer idConfig) {
+
+        final StringBuilder       hql    = new StringBuilder();
+        final Map<String, Object> params = new HashMap<>();
+
+        hql.append(" SELECT s FROM  Substancia s WHERE 1=1 ");
+
+        if (idConfig != null) {
+            int mod = 15;
+            hql.append(" AND MOD(s.id, ").append(mod).append(") = :idConfiguracaoLinhaProducao ");
+            params.put("idConfiguracaoLinhaProducao", idConfig);
+        }
+
+        int maxResults = ObjectUtils.defaultIfNull(idConfig, 5) % 6;
+
+        return setParametersQuery(getSession().createQuery(hql.toString()), params).setMaxResults(maxResults).list();
+    }
 }

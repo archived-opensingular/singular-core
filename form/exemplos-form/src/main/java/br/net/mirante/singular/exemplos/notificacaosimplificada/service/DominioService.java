@@ -81,11 +81,9 @@ public class DominioService {
         return list.stream().filter(t -> t.getMiddle().equals(idLinhaProducao % 3 + 1)).collect(Collectors.toList());
     }
 
-
-    public List<Substancia> substancias(Integer idConfiguracaoLinhaProducao, String filter) {
-        return vocabularioControladoDAO.findByDescricao(Substancia.class, filter);
+    public List<Substancia> findSubstanciasByIdConfiguracaoLinhaProducao(Integer idConfiguracaoLinhaProducao) {
+        return vocabularioControladoDAO.findSubstanciasByIdConfiguracaoLinhaProducao(idConfiguracaoLinhaProducao);
     }
-
 
     public List<Triple> descricoesHomeopaticas(Integer idConfiguracaoLinhaProducao) {
         List<Triple> list = new ArrayList<>();
