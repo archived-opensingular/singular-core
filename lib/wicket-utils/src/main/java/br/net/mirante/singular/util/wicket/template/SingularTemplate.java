@@ -152,6 +152,7 @@ public abstract class SingularTemplate extends WebPage {
         add.accept("/singular-static/resources/metronic/layout4/scripts/layout.js");
         add.accept("/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.js");
         add.accept("/singular-static/resources/metronic/global/plugins/typeahead/typeahead.bundle.min.js");
+        add.accept("/singular-static/resources/singular/plugins/stringjs/string.min.js");
 
         return scriptHeaderItens;
     }

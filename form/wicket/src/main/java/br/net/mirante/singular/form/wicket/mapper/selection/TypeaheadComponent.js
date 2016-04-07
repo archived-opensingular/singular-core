@@ -1,20 +1,15 @@
 if( window.substringMatcher == undefined) {
 
-    window.substringMatcher = function (strs) {
+    window.substringMatcher = function (value_list) {
+        this.clearText = function(x){return S(x).latinise().s ;};
         return function findMatches(q, cb) {
-            var matches, substringRegex;
+            var matches = [];
 
-            // an array that will be populated with substring matches
-            matches = [];
+            substrRegex = new RegExp(clearText(q), 'i');
 
-            // regex used to determine if a string contains the substring `q`
-            substrRegex = new RegExp(q, 'i');
-
-            // iterate through the pool of strings and for any string that
-            // contains the substring `q`, add it to the `matches` array
-            $.each(strs, function (i, str) {
-                if (substrRegex.test(str['value'])) {
-                    matches.push(str);
+            $.each(value_list, function (i, value) {
+                if (substrRegex.test(clearText(value['value']))) {
+                    matches.push(value);
                 }
             });
 
