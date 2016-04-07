@@ -82,7 +82,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     private UIComponentMapper customMapper;
 
-    private Consumer<I> updateListener;
+    private Consumer<SInstance> updateListener;
 
     public SType() {
         this(null, (Class<SType>) null, null);
@@ -426,7 +426,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     public SType<I> withUpdateListener(Consumer<I> consumer) {
-        this.updateListener = consumer;
+        this.updateListener = (Consumer<SInstance>) consumer;
         return this;
     }
 
@@ -685,7 +685,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return customMapper;
     }
 
-    public Consumer<I> getUpdateListener() {
+    public Consumer<SInstance> getUpdateListener() {
         return updateListener;
     }
 
