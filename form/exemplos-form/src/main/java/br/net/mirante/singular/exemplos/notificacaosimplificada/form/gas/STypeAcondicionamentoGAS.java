@@ -2,6 +2,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemPrimaria;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SType;
@@ -38,7 +39,6 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
                 .add("Caminhão Tanque");
         embalagemPrimaria
                 .asAtrBasic()
-                .displayString("${descricao}")
                 .label("Emabalagem Primária")
                 .asAtrBootstrap()
                 .colPreference(4);

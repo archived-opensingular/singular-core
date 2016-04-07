@@ -7,6 +7,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
 import java.util.List;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -26,10 +27,10 @@ public class EnderecoEmpresaInternacionalDAO extends BaseDAO<EnderecoEmpresaInte
         String hql =
                 " SELECT ende FROM EnderecoEmpresaInternacional ende " +
                 " JOIN ende.empresaInternacional emp " +
-                " WHERE lower(emp.razaoSocial) like :filtro ";
+                " WHERE lower(emp.razaoSocial) like :filtro and emp.ativo = :ativo ";
 
         Query query = getSession().createQuery(hql);
-
+        query.setParameter("ativo", SimNao.SIM);
         query.setParameter("filtro", "%" + filtro.toLowerCase() + "%");
 
         if (maxResults != null) {
