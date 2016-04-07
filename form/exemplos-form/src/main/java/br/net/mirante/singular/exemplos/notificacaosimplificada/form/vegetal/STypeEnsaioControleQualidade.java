@@ -89,6 +89,10 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                 .tamanhoMaximo(600)
                 .getTipo().withView(SViewTextArea::new);
 
+        this.addFieldListOfAttachment("resultadosControleQualidade", "resultado")
+        .asAtrBasic()
+        .label("Resultados do controle da qualidade");
+
     }
 
     enum TipoEnsaioControleQualidade {

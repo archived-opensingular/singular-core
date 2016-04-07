@@ -13,15 +13,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByCheckboxView;
-import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByPicklistView;
-import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
+import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
@@ -68,9 +60,16 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
         dadosResponsavel = new DadosResponsavel(pb, peticionamento);
         componentes = new Componente(pb, peticionamento);
+        STypeString choice = peticionamento.addFieldString("choice");
+        choice.asAtrBasic().label("Escolha um número");
+        choice.withView(SViewAutoComplete::new);
+        choice.withSelectionOf("One","Two","Three","Four","Five","Six","Seven");
+
+        SType<?> forshow = peticionamento.addFieldString("forshow").asAtrBasic().label("Just here").getTipo();
 
         SViewTab tabbed = new SViewTab();
-        tabbed.addTab("tudo", "Tudo").add(dadosResponsavel.root).add(componentes.root);
+        tabbed.addTab("tudo", "Tudo").add(dadosResponsavel.root).add(componentes.root)
+                .add(choice).add(forshow);
         tabbed.addTab(dadosResponsavel.root);
         tabbed.addTab(componentes.root);
         peticionamento.withView(tabbed);

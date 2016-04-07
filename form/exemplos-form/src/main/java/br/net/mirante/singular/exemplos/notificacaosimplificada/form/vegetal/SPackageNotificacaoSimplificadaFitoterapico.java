@@ -15,6 +15,7 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
@@ -100,6 +101,11 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
                     }
                 });
 
+        notificacaoSimplificada.addFieldListOfAttachment("formulas", "formula")
+        .asAtrBasic()
+        .label("Fórmula do produto");
+
+
         STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
 
         nomeComercial
@@ -111,7 +117,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamento.embalagemPrimaria.descricao, "Embalagem primária")
+                        .col(acondicionamento.embalagemPrimaria, "Embalagem primária")
                         .col(acondicionamento.embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamento.estudosEstabilidade, "Estudo de estabilidade")
                         .col(acondicionamento.prazoValidade))

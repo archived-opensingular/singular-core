@@ -7,6 +7,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.STypeAcondicionamentoGAS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal.STypeEnsaioControleQualidade;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
@@ -52,6 +53,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         pb.createType(STypeEmpresaInternacional.class);
         pb.createType(STypeEmpresaTerceirizada.class);
         pb.createType(STypeLocalFabricacao.class);
+        pb.createType(STypeAcondicionamentoGAS.class);
         pb.createType(STypeAcondicionamento.class);
         pb.createType(STypeFarmacopeiaReferencia.class);
         pb.createType(STypeEnsaioControleQualidade.class);
