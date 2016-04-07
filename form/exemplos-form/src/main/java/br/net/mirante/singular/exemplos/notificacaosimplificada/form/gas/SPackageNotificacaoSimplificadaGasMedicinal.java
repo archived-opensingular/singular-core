@@ -21,7 +21,7 @@ import br.net.mirante.singular.form.mform.core.STypeString;
 public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
     public static final String PACOTE = "mform.peticao.notificacaosimplificada.gas";
-    public static final String TIPO = "MedicamentoGasMedicinal";
+    public static final String TIPO = "MedicamentoGasNMedicinal";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
     private STypeString descricao, gas, concentracao;
     private STypeComposite<SIComposite> informacoesFarmacopeicas;
