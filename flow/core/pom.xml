@@ -51,13 +51,13 @@
         <dependency>
             <groupId>y.ed</groupId>
             <artifactId>yfiles</artifactId>
-            <version>2.12.2</version>
+            <version>2.12.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>y.ed</groupId>
             <artifactId>ybpmn</artifactId>
-            <version>2.1.2</version>
+            <version>2.1.5</version>
             <scope>provided</scope>
         </dependency>
 
