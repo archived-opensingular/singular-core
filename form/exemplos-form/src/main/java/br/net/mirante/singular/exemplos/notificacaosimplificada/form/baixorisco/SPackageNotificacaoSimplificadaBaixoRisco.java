@@ -94,7 +94,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamentos.getElementsType().embalagemPrimaria.descricao, "Embalagem primária")
+                        .col(acondicionamentos.getElementsType().embalagemPrimaria, "Embalagem primária")
                         .col(acondicionamentos.getElementsType().embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamentos.getElementsType().quantidade)
                         .col(acondicionamentos.getElementsType().unidadeMedida.sigla, "Unidade de medida")

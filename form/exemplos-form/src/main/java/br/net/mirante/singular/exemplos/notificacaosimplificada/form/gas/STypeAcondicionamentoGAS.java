@@ -1,12 +1,10 @@
-package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
+package br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemPrimaria;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemSecundaria;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeUnidadeMedida;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -14,63 +12,37 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import java.util.Optional;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
-public class STypeAcondicionamento extends STypeComposite<SIComposite> {
+public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
 
-
-    public STypeEmbalagemPrimaria embalagemPrimaria;
-    public STypeEmbalagemSecundaria embalagemSecundaria;
-    public STypeInteger quantidade;
-    public STypeAttachmentList estudosEstabilidade;
+    public SType embalagemPrimaria;
     public STypeAttachmentList layoutsRotulagem;
     public STypeList<STypeLocalFabricacao, SIComposite> locaisFabricacao;
-    public STypeInteger prazoValidade;
-    public STypeUnidadeMedida unidadeMedida;
 
-    static DominioService dominioService(SInstance ins) {
-        return ins.getDocument().lookupService(DominioService.class);
-    }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
 
-        embalagemPrimaria = this.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
-        embalagemPrimaria.asAtrBasic().displayString("${descricao}");
-        embalagemSecundaria = this.addField("embalagemSecundaria", STypeEmbalagemSecundaria.class);
-
-        quantidade = this.addFieldInteger("quantidade", true);
-        quantidade
-                .asAtrBootstrap()
-                .colPreference(3)
+        embalagemPrimaria = this.addFieldString("embalagemPrimaria");
+        ((STypeSimple) embalagemPrimaria)
+                .withSelectView()
+                .withSelection()
+                .add("Cilindro")
+                .add("Tanque")
+                .add("Caminhão Tanque");
+        embalagemPrimaria
                 .asAtrBasic()
-                .label("Quantidade");
+                .label("Emabalagem Primária")
+                .asAtrBootstrap()
+                .colPreference(4);
 
-        unidadeMedida = this.addField("unidadeMedida", STypeUnidadeMedida.class);
-
-
-        prazoValidade = this.addFieldInteger("prazoValidade", true);
-        prazoValidade.asAtrBasic().label("Prazo de validade (meses)");
-
-        estudosEstabilidade = this.addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
-
-        estudosEstabilidade.asAtrBasic()
-                .label("Estudo de estabilidade")
-                .displayString("<#list _inst as c>${c.name}<#sep>, </#sep></#list>");
-        {
-
-            STypeAttachment f = estudosEstabilidade.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
-        }
 
         {
             layoutsRotulagem = this.addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
@@ -97,4 +69,5 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
 
     }
+
 }
