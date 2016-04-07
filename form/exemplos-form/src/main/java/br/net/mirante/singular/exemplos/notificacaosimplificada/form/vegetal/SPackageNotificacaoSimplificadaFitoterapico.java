@@ -15,6 +15,7 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
@@ -99,6 +100,11 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
                         elem.setValue(unidade, "mg");
                     }
                 });
+
+        notificacaoSimplificada.addFieldListOfAttachment("formulas", "formula")
+        .asAtrBasic()
+        .label("Fórmula do produto");
+
 
         STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
 
