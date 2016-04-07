@@ -117,7 +117,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
-                        .col(acondicionamento.embalagemPrimaria.descricao, "Embalagem primária")
+                        .col(acondicionamento.embalagemPrimaria, "Embalagem primária")
                         .col(acondicionamento.embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamento.estudosEstabilidade, "Estudo de estabilidade")
                         .col(acondicionamento.prazoValidade))
