@@ -8,6 +8,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Farmacopeia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
@@ -81,7 +82,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
         nomeComercial
                 .asAtrBasic()
-                .label("Nome Comercial")
+                .label("Nome do gás")
                 .asAtrBootstrap()
                 .newRow().colPreference(4);
 
@@ -91,27 +92,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         informacoesFarmacopeicas = notificacaoSimplificada.addFieldComposite("informacoesFarmacopeicas");
         informacoesFarmacopeicas.asAtrBasic().label("Informações farmacopeicas");
 
-        STypeComposite farmacopeia = informacoesFarmacopeicas.addFieldComposite("farmacopeia");
-        farmacopeia.asAtrBasic().label("Nome");
-        STypeInteger id = farmacopeia.addFieldInteger("id");
-        STypeString descricao = farmacopeia.addFieldString("descricao");
-        farmacopeia.withSelectionFromProvider(descricao, (ins, filter) -> {
-            final SIList<?> list = ins.getType().newList();
-            for (Farmacopeia f : dominioService(ins).listFarmacopeias()) {
-                final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(id, f.getId());
-                c.setValue(descricao, f.getDescricao());
-            }
-            return list;
-        });
-        farmacopeia.withView(SViewSelectionBySearchModal::new);
-
-        informacoesFarmacopeicas.addFieldString("edicao")
-                .asAtrBasic().label("Ediçao")
-                .asAtrBootstrap().colPreference(2);
-        informacoesFarmacopeicas.addFieldInteger("pagina")
-                .asAtrBasic().label("Página")
-                .asAtrBootstrap().colPreference(2);
+        STypeFarmacopeiaReferencia farmacopeia = informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
     }
 
     private STypeAttachmentList addAnexos(STypeComposite<?> notificacaoSimplificada) {
