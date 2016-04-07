@@ -44,6 +44,7 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
 
         embalagemPrimaria = this.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
+        embalagemPrimaria.asAtrBasic().displayString("${descricao}");
         embalagemSecundaria = this.addField("embalagemSecundaria", STypeEmbalagemSecundaria.class);
 
         quantidade = this.addFieldInteger("quantidade", true);
