@@ -82,7 +82,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
         nomeComercial
                 .asAtrBasic()
-                .label("Nome Comercial")
+                .label("Nome do gás")
                 .asAtrBootstrap()
                 .newRow().colPreference(4);
 
