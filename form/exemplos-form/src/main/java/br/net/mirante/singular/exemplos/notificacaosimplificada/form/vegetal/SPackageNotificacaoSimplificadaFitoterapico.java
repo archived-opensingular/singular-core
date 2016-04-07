@@ -99,7 +99,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         nomeComercial
                 .asAtrBasic()
                 .required()
-                .label("Nome Comercial");
+                .label("Nome do medicamento");
 
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();

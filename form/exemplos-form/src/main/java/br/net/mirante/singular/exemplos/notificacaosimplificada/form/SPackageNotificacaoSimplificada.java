@@ -53,6 +53,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
         pb.createType(STypeEmpresaTerceirizada.class);
         pb.createType(STypeLocalFabricacao.class);
         pb.createType(STypeAcondicionamento.class);
+        pb.createType(STypeFarmacopeiaReferencia.class);
         pb.createType(STypeEnsaioControleQualidade.class);
     }
 

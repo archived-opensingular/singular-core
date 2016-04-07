@@ -191,7 +191,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         nomeComercial
                 .asAtrBasic()
                 .required()
-                .label("Nome Comercial")
+                .label("Nome do medicamento")
                 .asAtrBootstrap()
                 .colPreference(4);
 
