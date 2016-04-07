@@ -5,17 +5,24 @@
     <style type="text/css">
 
         .row.equalheights {
-            overflow: hidden;
+            /*overflow: hidden;*/
+            display: flex;
         }
 
         .row.equalheights > [class*="col-"] {
-            margin-bottom: -99999px;
-            padding-bottom: 99999px;
+            /*margin-bottom: -99999px;
+            padding-bottom: 99999px;*/
+            display: flex;
         }
 
         .row.equalheights > div > ul.nav {
             margin-bottom: inherit;
             padding-bottom: inherit;
+            width: 100%;
+        }
+
+        .row.equalheights > div > .tab-content {
+            width: 100%;
         }
 
     </style>
