@@ -41,7 +41,6 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite>
     private transient FieldMapOfRecordType fieldsConsolidated;
 
     private SOptionsProvider optionsProvider;
-    private Consumer<INSTANCE_TYPE> updateListener;
 
     private String selectLabel;
 
@@ -383,14 +382,5 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite>
         public SType<?> getField() {
             return field;
         }
-    }
-
-    public STypeComposite<INSTANCE_TYPE> withUpdateListener(Consumer<INSTANCE_TYPE> consumer) {
-        this.updateListener = consumer;
-        return this;
-    }
-
-    public Consumer<INSTANCE_TYPE> getUpdateListener() {
-        return updateListener;
     }
 }

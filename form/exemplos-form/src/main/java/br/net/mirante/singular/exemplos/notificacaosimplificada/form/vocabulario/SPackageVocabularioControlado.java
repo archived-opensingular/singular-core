@@ -40,6 +40,7 @@ public class SPackageVocabularioControlado extends SPackage {
         pb.createType(STypeLinhaProducao.class);
         pb.createType(STypeFormaFarmaceutica.class);
         pb.createType(STypeUnidadeMedida.class);
+        pb.createType(STypeFarmacopeia.class);
     }
 
 }

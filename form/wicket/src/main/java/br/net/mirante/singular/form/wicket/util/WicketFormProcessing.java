@@ -139,10 +139,9 @@ public class WicketFormProcessing {
 
         SType<?> sType = fieldInstance.getObject().getType();
 
-        if (sType instanceof STypeComposite) {
-            STypeComposite c = (STypeComposite) sType;
-            if (c.getUpdateListener() != null) {
-                c.getUpdateListener().accept(fieldInstance.getObject());
+        if (sType instanceof STypeComposite || sType instanceof STypeList) {
+            if (sType.getUpdateListener() != null) {
+                sType.getUpdateListener().accept(fieldInstance.getObject());
             }
         }
 
