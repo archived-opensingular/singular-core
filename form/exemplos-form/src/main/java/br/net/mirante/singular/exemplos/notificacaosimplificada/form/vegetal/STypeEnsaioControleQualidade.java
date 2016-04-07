@@ -89,26 +89,18 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                 .tamanhoMaximo(600)
                 .getTipo().withView(SViewTextArea::new);
 
-        STypeComposite<SIComposite> especificacaoResultadoLote = this.addFieldComposite("especificacaoResultadoLote");
-        especificacaoResultadoLote
-                .asAtrBasic().dependsOn(tipoEnsaio)
-                .visible(
-                        i -> TipoEnsaioControleQualidade.ORGANOLEPTICO.getId().equals(Value.of(i, idTipoEnsaio))
-                                ||  TipoEnsaioControleQualidade.CONTAMINANTES_MICROBIOLOGICOS.getId().equals(Value.of(i, idTipoEnsaio)));
-
-
     }
 
     enum TipoEnsaioControleQualidade {
-        PROSPECCAO_FITOQUIMICA_CCD(1, "Prospecção fitoquímica ou CCD"),
-//        LAUDO_BOTANICO(2, "Laudo botânico"),
-        GRANULOMETRIA(3, "Granulometria"),
-        TEOR_CINZAS_TOTAIS(4, "Teor de cinzas totais"),
-        UMIDADE(5, "Umidade"),
-        CONTAMINANTES_MACROSCOPICO(6, "Contaminantes macroscópicos"),
-        CONTAMINANTES_MICROBIOLOGICOS(7, "Contaminantes microbiológicos"),
-        TESTE_LIMITE_METAIS(8, "Teste limite para metais pesados"),
-        ORGANOLEPTICO(9, "Organoléptico");
+        PROSPECCAO_FITOQUIMICA_CCD(1, "Perfil cromatográfico"),
+        LAUDO_BOTANICO(2, "Teor"),
+//        GRANULOMETRIA(3, "Granulometria"),
+//        TEOR_CINZAS_TOTAIS(4, "Teor de cinzas totais"),
+//        UMIDADE(5, "Umidade"),
+//        CONTAMINANTES_MACROSCOPICO(6, "Contaminantes macroscópicos"),
+//        CONTAMINANTES_MICROBIOLOGICOS(7, "Contaminantes microbiológicos"),
+//        TESTE_LIMITE_METAIS(8, "Teste limite para metais pesados"),
+//        ORGANOLEPTICO(9, "Organoléptico");
 
         private Integer id;
         private String descricao;
