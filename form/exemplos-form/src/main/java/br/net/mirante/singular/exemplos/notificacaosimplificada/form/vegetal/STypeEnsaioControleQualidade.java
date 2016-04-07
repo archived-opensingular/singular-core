@@ -93,7 +93,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
     enum TipoEnsaioControleQualidade {
         PROSPECCAO_FITOQUIMICA_CCD(1, "Perfil cromatográfico"),
-        LAUDO_BOTANICO(2, "Teor"),
+        LAUDO_BOTANICO(2, "Teor");
 //        GRANULOMETRIA(3, "Granulometria"),
 //        TEOR_CINZAS_TOTAIS(4, "Teor de cinzas totais"),
 //        UMIDADE(5, "Umidade"),
