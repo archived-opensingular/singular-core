@@ -6,7 +6,6 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.common.STypeSubstanciaPopulator;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeFormaFarmaceutica;
@@ -14,8 +13,6 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Triple;
@@ -89,7 +86,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         final STypeFormaFarmaceutica formaFarmaceutica = baixoRisco.addField("formaFarmaceutica", STypeFormaFarmaceutica.class);
 
 
-        final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
+        final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = baixoRisco.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         {
             acondicionamentos
                     .withView(new SViewListByMasterDetail()
