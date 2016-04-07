@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
