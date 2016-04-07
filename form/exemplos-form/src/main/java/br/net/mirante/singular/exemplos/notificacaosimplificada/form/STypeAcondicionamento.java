@@ -33,6 +33,7 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
     public STypeList<STypeLocalFabricacao, SIComposite> locaisFabricacao;
     public STypeInteger prazoValidade;
     public STypeUnidadeMedida unidadeMedida;
+    public STypeAttachmentList laudosControle;
 
     static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);
@@ -67,6 +68,19 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
         {
 
             STypeAttachment f = estudosEstabilidade.getElementsType();
+            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
+            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
+        }
+
+        laudosControle = this.addFieldListOfAttachment("laudosControle", "laudoControle");
+
+        laudosControle.asAtrBasic()
+                .visible(false)
+                .label("Laudo de controle dos insumos ativos e do produto acabado")
+                .displayString("<#list _inst as c>${c.name}<#sep>, </#sep></#list>");
+        {
+
+            STypeAttachment f = laudosControle.getElementsType();
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
             nomeArquivo.asAtrBasic().label("Nome do Arquivo");
         }
