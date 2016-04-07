@@ -5,21 +5,16 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal;
 
-import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco.dominioService;
-
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Farmacopeia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -72,27 +67,8 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                     .dependsOn(tipoReferencia)
                     .visible(i -> TipoReferencia.FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
 
-            STypeComposite farmacopeia = informacoesFarmacopeicas.addFieldComposite("farmacopeia");
-            farmacopeia.asAtrBasic().label("Nome");
-            STypeInteger id = farmacopeia.addFieldInteger("id");
-            STypeString descricao = farmacopeia.addFieldString("descricao");
-            farmacopeia.withSelectionFromProvider(descricao, (ins, filter) -> {
-                final SIList<?> list = ins.getType().newList();
-                for (Farmacopeia f : dominioService(ins).listFarmacopeias()) {
-                    final SIComposite c = (SIComposite) list.addNew();
-                    c.setValue(id, f.getId());
-                    c.setValue(descricao, f.getDescricao());
-                }
-                return list;
-            });
-            farmacopeia.withView(SViewSelectionBySearchModal::new);
+            STypeFarmacopeiaReferencia farmacopeia = informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
 
-            informacoesFarmacopeicas.addFieldString("edicao")
-                    .asAtrBasic().label("Ediçao")
-                    .asAtrBootstrap().colPreference(2);
-            informacoesFarmacopeicas.addFieldInteger("pagina")
-                    .asAtrBasic().label("Página")
-                    .asAtrBootstrap().colPreference(2);
         }
 
         {
@@ -120,49 +96,6 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                         i -> TipoEnsaioControleQualidade.ORGANOLEPTICO.getId().equals(Value.of(i, idTipoEnsaio))
                                 ||  TipoEnsaioControleQualidade.CONTAMINANTES_MICROBIOLOGICOS.getId().equals(Value.of(i, idTipoEnsaio)));
 
-        STypeString descricao = especificacaoResultadoLote.addFieldString("descricao");
-        descricao
-                .asAtrBasic()
-                .required()
-                .label("Especificação e resultados para um lote")
-                .tamanhoMaximo(600)
-                .getTipo().withView(SViewTextArea::new);
-
-        STypeString bacterias = especificacaoResultadoLote.addFieldString("bacterias");
-        bacterias
-                .asAtrBasic()
-                .label("Bactérias")
-                .asAtrBootstrap().colPreference(4);
-
-        STypeString salmonela = especificacaoResultadoLote.addFieldString("salmonela");
-        salmonela
-                .asAtrBasic()
-                .label("Salmonela")
-                .asAtrBootstrap().colPreference(4);
-
-        STypeString fungos = especificacaoResultadoLote.addFieldString("fungos");
-        fungos
-                .asAtrBasic()
-                .label("Fungos")
-                .asAtrBootstrap().colPreference(4);
-
-        STypeString aflatoxina = especificacaoResultadoLote.addFieldString("aflatoxina");
-        aflatoxina
-                .asAtrBasic()
-                .label("Aflatoxina")
-                .asAtrBootstrap().colPreference(4);
-
-        STypeString ecoli = especificacaoResultadoLote.addFieldString("ecoli");
-        ecoli
-                .asAtrBasic()
-                .label("E.coli")
-                .asAtrBootstrap().colPreference(4);
-
-        STypeString outras = especificacaoResultadoLote.addFieldString("outras");
-        outras
-                .asAtrBasic()
-                .label("Outras enterobactérias")
-                .asAtrBootstrap().colPreference(4);
 
     }
 
