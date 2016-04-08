@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.lang.Bytes;
 
 import java.util.List;
 
@@ -57,7 +58,8 @@ public class AttachmentListMapper extends AbstractListaMapper {
     private FileUploadField buildFileUploadField(BSContainer<?> container, IModel<SIList<SIAttachment>> attachments) {
 
         final FileUploadField uploadField = new SFileUploadField(MULTIPLE_HIDDEN_UPLOAD_FIELD_ID);
-
+//        uploadField.getForm().setMultiPart(true);
+//        uploadField.getForm().setFileMaxSize(Bytes.MAX);
         uploadField.add(new AjaxFormSubmitBehavior("change") {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {

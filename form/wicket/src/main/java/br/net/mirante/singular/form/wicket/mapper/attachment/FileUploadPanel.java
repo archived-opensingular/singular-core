@@ -29,6 +29,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.resource.ContentDisposition;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
 
 import br.net.mirante.singular.form.mform.SInstance;
@@ -62,6 +63,8 @@ public class FileUploadPanel extends Panel {
         @Override
         protected void onConfigure() {
             super.onConfigure();
+//            getForm().setFileMaxSize(Bytes.MAX);
+//            getForm().setMultiPart(true);
             setVisible(viewMode.isEdition());
         }
     };
@@ -222,6 +225,15 @@ public class FileUploadPanel extends Panel {
     protected void configureBehaviours() {
         super.onConfigure();
         uploadField.add(new AjaxFormSubmitBehavior("change") {
+
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+                getForm().setMultiPart(true);
+                getForm().setFileMaxSize(Bytes.MAX);
+                getForm().setMaxSize(Bytes.MAX);
+            }
+
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
                 super.onSubmit(target);

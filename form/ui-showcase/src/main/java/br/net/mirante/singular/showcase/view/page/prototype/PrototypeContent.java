@@ -16,6 +16,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValue;
 
 import br.net.mirante.singular.form.mform.SDictionary;
@@ -68,6 +69,9 @@ public class PrototypeContent extends Content {
         super.onInitialize();
 
         Form newItemForm = new Form("prototype_form");
+        newItemForm.setMultiPart(true);
+        newItemForm.setFileMaxSize(Bytes.MAX);
+        newItemForm.setMaxSize(Bytes.MAX);
         newItemForm.setOutputMarkupId(true);
         queue(buildSingularFormPanel());
 
