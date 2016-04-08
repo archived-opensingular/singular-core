@@ -16,8 +16,14 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.*;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
 import com.google.common.base.Strings;
+import org.apache.wicket.Application;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -25,6 +31,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.lang.Bytes;
 
 import java.util.List;
@@ -58,8 +65,6 @@ public class AttachmentListMapper extends AbstractListaMapper {
     private FileUploadField buildFileUploadField(BSContainer<?> container, IModel<SIList<SIAttachment>> attachments) {
 
         final FileUploadField uploadField = new SFileUploadField(MULTIPLE_HIDDEN_UPLOAD_FIELD_ID);
-//        uploadField.getForm().setMultiPart(true);
-//        uploadField.getForm().setFileMaxSize(Bytes.MAX);
         uploadField.add(new AjaxFormSubmitBehavior("change") {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
@@ -74,10 +79,39 @@ public class AttachmentListMapper extends AbstractListaMapper {
                     }
                 }
             }
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.getAjaxCallListeners().add(new AjaxCallListener(){
+                    @Override
+                    public CharSequence getPrecondition(Component component) {
+                        return generateOnchangeValidationJS(
+                                component.getApplication(),
+                                "$('#"+uploadField.getMarkupId()+"')[0]");
+                    }
+                });
+            }
+
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                super.renderHead(component, response);
+                response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("FileUploadPanel.js")));
+            }
         });
 
         return uploadField;
     }
+
+    private PackageResourceReference resourceRef(String resourceName) {
+        return new PackageResourceReference(getClass(), resourceName);
+    }
+
+    private String generateOnchangeValidationJS(Application application, String element) {
+        Bytes max = application.getApplicationSettings().getDefaultMaximumUploadSize();
+        return "FileUploadPanel.validateInputFile( "+ element +" ,"+max.bytes()+")";
+    }
+
 
     private MetronicPanel buildMetronicPanel(final WicketBuildContext ctx, final FileUploadField multipleFileUploadHiddenField) {
 

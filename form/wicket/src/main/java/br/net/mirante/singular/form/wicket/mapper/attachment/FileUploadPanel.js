@@ -1,6 +1,6 @@
 if(! window.FileUploadPanel){
     window.FileUploadPanel = function(){};
-    window.FileUploadPanel.validateInputFile = function(input, maxSize, erase){
+    window.FileUploadPanel.validateInputFile = function(input, maxSize){
         if( input.files[0].size  > maxSize) {
             toastr.error("Arquivo não pode ser maior que "+FileUploadPanel.humaneSize(maxSize));
             FileUploadPanel.resetFormElement(input);
