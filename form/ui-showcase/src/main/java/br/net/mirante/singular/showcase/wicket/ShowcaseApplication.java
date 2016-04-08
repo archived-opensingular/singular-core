@@ -51,7 +51,10 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
         Locale.setDefault(new Locale("pt", "BR"));
 
         getApplicationSettings().setAccessDeniedPage(Error403Page.class);
+        // in case you change this value, don't forget to check the configuration
+        // for your application server. It must allow it.
         getApplicationSettings().setDefaultMaximumUploadSize(Bytes.megabytes(10));
+
 
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(true);
