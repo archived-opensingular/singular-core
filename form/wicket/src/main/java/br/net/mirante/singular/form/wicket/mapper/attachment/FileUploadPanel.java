@@ -14,14 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.AjaxCallListener;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -33,8 +29,6 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.resource.ContentDisposition;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
 
 import br.net.mirante.singular.form.mform.SInstance;
@@ -47,7 +41,6 @@ import org.apache.wicket.util.time.Duration;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import static java.lang.String.format;
 
 /**
  * FileUploadPanel
@@ -155,7 +148,13 @@ public class FileUploadPanel extends Panel {
             }
             return StringUtils.EMPTY;
         }
-    });
+    }){
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            add($b.attr("title", $m.ofValue(model.getObject().getFileName())));
+        }
+    };
 
     /**
      * Markup do botão de remover arquivos,
@@ -250,7 +249,7 @@ public class FileUploadPanel extends Panel {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
-                response.render(OnDomReadyHeaderItem.forScript(format(CLICK_DELEGATE_SCRIPT_TEMPLATE,
+                response.render(OnDomReadyHeaderItem.forScript(String.format(CLICK_DELEGATE_SCRIPT_TEMPLATE,
                         chooseFieldButton.getMarkupId(true), uploadField.getMarkupId(true))));
             }
         });
