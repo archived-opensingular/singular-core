@@ -122,9 +122,6 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
 
     public AnnotationMode annotation(){return annotation;};
 
-//    public void enableAnnotation() {this.annotationEnabled = true;}
-//    public void disableAnnotation() {this.annotationEnabled = false;}
-
     /**
      * Constrói o body container
      *

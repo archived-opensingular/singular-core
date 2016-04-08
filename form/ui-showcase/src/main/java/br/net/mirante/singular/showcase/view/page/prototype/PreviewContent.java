@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.util.lang.Bytes;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,6 +52,9 @@ public class PreviewContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
         Form enclosing = new Form("just-a-form");
+        enclosing.setMultiPart(true);
+        enclosing.setFileMaxSize(Bytes.MAX);
+        enclosing.setMaxSize(Bytes.MAX);
         enclosing.add(new SingularFormPanel<String>("singular-panel", singularFormConfig) {
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
