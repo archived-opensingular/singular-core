@@ -252,10 +252,11 @@ public class DominioService {
     public List<Pair> nomenclaturaBotanica(String filtro) {
         List<Pair> list = new ArrayList<>();
 
-        list.add(Pair.of(1L, "Planta1 + Planta2"));
-        list.add(Pair.of(2L, "Planta2 + Planta3"));
-        list.add(Pair.of(3L, "Planta4 + Planta5"));
-        list.add(Pair.of(4L, "Planta6 + Planta7"));
+        long i = 1L;
+        list.add(Pair.of(i++, "Achillea millefolium"));
+        list.add(Pair.of(i++, "Achyrocline satureioides + Aesculus hippocastanum"));
+        list.add(Pair.of(i++, "Glycyrrhiza glabra + Cynara scolymus"));
+        list.add(Pair.of(i++, "Zingiber officinale\n"));
 
         return list;
     }
@@ -263,10 +264,11 @@ public class DominioService {
     public List<Pair> concentracao(String filtro) {
         List<Pair> list = new ArrayList<>();
 
-        list.add(Pair.of(1L, "30mg + 90mg"));
-        list.add(Pair.of(2L, "50mg + 60mg"));
-        list.add(Pair.of(3L, "20mg + 10mg"));
-        list.add(Pair.of(4L, "5mg + 12mg"));
+        long i = 1L;
+        list.add(Pair.of(i++, "30mg"));
+        list.add(Pair.of(i++, "50mg + 60mg"));
+        list.add(Pair.of(i++, "20mg + 10mg"));
+        list.add(Pair.of(i++, "5mg"));
 
         return list;
     }
