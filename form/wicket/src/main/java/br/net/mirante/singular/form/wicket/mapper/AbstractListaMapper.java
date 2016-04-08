@@ -29,6 +29,8 @@ import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
     protected static AddButton appendAddButton(final IModel<SIList<SInstance>> mLista, final Form<?> form,
@@ -123,6 +125,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
             this.elementsView = elementsView;
             this.modelLista = mLista;
             this.item = item;
+            add($b.attr("title", "Nova Linha"));
         }
 
         @Override
@@ -153,6 +156,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
             this.setDefaultFormProcessing(false);
             this.elementsView = elementsView;
             this.item = item;
+            add($b.attr("title", "Remover Linha"));
         }
 
         @Override
@@ -182,6 +186,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
             super(id, form);
             this.setDefaultFormProcessing(false);
             modelLista = mLista;
+            add($b.attr("title", "Adicionar Linha"));
         }
 
         @Override
