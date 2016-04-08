@@ -148,7 +148,13 @@ public class FileUploadPanel extends Panel {
             }
             return StringUtils.EMPTY;
         }
-    });
+    }){
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            add($b.attr("title", $m.ofValue(model.getObject().getFileName())));
+        }
+    };
 
     /**
      * Markup do botão de remover arquivos,

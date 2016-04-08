@@ -2,11 +2,27 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
 <wicket:panel>
+    <style>
+        .attachmentShadow {
+            background: -webkit-linear-gradient(right, transparent, white);
+            background: -o-linear-gradient(right, transparent, white);
+            background: -moz-linear-gradient(right, transparent, white);
+            background: linear-gradient( to right, transparent, white);
+            width: 55px;
+            height: 30px;
+            position: absolute;
+            float: right;
+            right: 25px;
+            top: 0;
+            pointer-events: none;
+        }
+    </style>
     <input type="file" wicket:id="fileUpload" style="display:none;"/>
     <div wicket:id="panelWrapper">
         <div style="white-space: nowrap;">
-            <div wicket:id="fileDummyField">
+            <div wicket:id="fileDummyField" style="position: absolute; overflow: hidden;">
                 <i class="fa fa-file"></i>&nbsp;
+                <span class="attachmentShadow"></span>
                 <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>
             </div>
         </div>
