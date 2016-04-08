@@ -342,7 +342,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         private void rollbackState() {
             try {
-                if (formState != null) {
+                if (formState != null && currentInstance.getObject() != null) {
                     FormStateUtil.restoreState(currentInstance.getObject(), formState);
                 }
             } catch (Exception e) {
