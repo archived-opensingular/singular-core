@@ -93,11 +93,13 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
                 .withView(() -> new SViewListByTable().disableNew().disableDelete())
                 .withUpdateListener(list -> {
                     String value = Value.of(list, descNomenclaturaBotanica);
-                    String[] values = value.split("\\+");
-                    for (String plantinha : values) {
-                        SIComposite elem = list.addNew();
-                        elem.setValue(planta, plantinha);
-                        elem.setValue(unidade, "mg");
+                    if (value != null) {
+                        String[] values = value.split("\\+");
+                        for (String plantinha : values) {
+                            SIComposite elem = list.addNew();
+                            elem.setValue(planta, plantinha);
+                            elem.setValue(unidade, "mg");
+                        }
                     }
                 });
 
