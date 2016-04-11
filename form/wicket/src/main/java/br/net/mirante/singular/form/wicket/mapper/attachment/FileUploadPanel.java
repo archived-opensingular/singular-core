@@ -14,10 +14,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -29,6 +32,8 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.resource.ContentDisposition;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
 
 import br.net.mirante.singular.form.mform.SInstance;
@@ -232,6 +237,18 @@ public class FileUploadPanel extends Panel {
                     target.add(fileDummyField, fileName, chooseFieldButton, removeFileButton);
                 }
             }
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.getAjaxCallListeners().add(new AjaxCallListener(){
+                    @Override
+                    public CharSequence getPrecondition(Component component) {
+                        return generateOnchangeValidationJS(
+                                "$('#"+uploadField.getMarkupId()+"')[0]");
+                    }
+                });
+            }
         });
         chooseFieldButton.add(new Behavior() {
             @Override
@@ -243,6 +260,21 @@ public class FileUploadPanel extends Panel {
         });
         chooseFieldButton.add($b.onConfigure(c -> c.setVisible(model.getObject().isEmptyOfData() && viewMode.isEdition())));
         removeFileButton.add($b.onConfigure(c -> c.setVisible(!model.getObject().isEmptyOfData() && viewMode.isEdition())));
+    }
+
+    private String generateOnchangeValidationJS(String element) {
+        Bytes max = getApplication().getApplicationSettings().getDefaultMaximumUploadSize();
+        return "FileUploadPanel.validateInputFile( "+ element +" ,"+max.bytes()+")";
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("FileUploadPanel.js")));
+    }
+
+    private PackageResourceReference resourceRef(String resourceName) {
+        return new PackageResourceReference(getClass(), resourceName);
     }
 
     /**
