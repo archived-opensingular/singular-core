@@ -234,7 +234,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                     new ActionConfig<>()
                             .iconeModel(Model.of(openModalIcon), Model.of(MapperCommons.ICON_STYLE))
                             .buttonModel(Model.of("blue-madison"))
-                            .title(Model.of("Editar"))
+                            .title(viewMode.isEdition() && view.isEditEnabled() ? Model.of("Editar") : Model.of("Visualizar"))
                             .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                     (target, rowModel) -> {
                         modal.showExisting(target, rowModel, ctx);
