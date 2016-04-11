@@ -50,13 +50,15 @@ public class Menu extends Panel {
         public void renderHead(Component component, IHeaderResponse response) {
             super.renderHead(component, response);
             StringBuilder js = new StringBuilder();
-            js.append("window.Singular = window.Singular || {};");
-            js.append("window.Singular.atualizarContadores = function(){ ");
-            js.append(" $(document).ready(function(){ ");
-            js.append("     $(document).ready(function(){");
-            js.append("         $.getJSON('").append(getCallbackUrl()).append("', function(json) { ");
+            js.append(" window.Singular = window.Singular || {};");
+            js.append(" window.Singular.contadores =  window.Singular.contadores || []; ");
+            js.append(" (function() {");
+            js.append("     var novoContador = function(){ ");
+            js.append("         $(document).ready(function(){ ");
+            js.append("             $(document).ready(function(){");
+            js.append("                 $.getJSON('").append(getCallbackUrl()).append("', function(json) { ");
             for (int i = 0; i < itens.size(); i++) {
-                final String markupId = itens.get(i).getLeft().getMarkupId();
+                final String markupId    = itens.get(i).getLeft().getMarkupId();
                 final String currentItem = "item" + i;
                 js.append("var ").append(currentItem).append(" = ").append(" $('#").append(markupId).append("');");
                 js.append(currentItem).append(".hide(); ");
@@ -64,19 +66,22 @@ public class Menu extends Panel {
                 js.append(currentItem).append(".html(json.").append(currentItem).append(");");
                 js.append(currentItem).append(".fadeIn('slow'); ");
             }
+            js.append("                 });");
+            js.append("             });");
             js.append("         });");
-            js.append("     });");
-            js.append(" });");
-            js.append("};");
-            js.append("window.Singular.atualizarContadores(); ");
+            js.append("     };");
+            js.append("     novoContador(); ");
+            js.append("     window.Singular.contadores.push(novoContador); ");
+            js.append(" }());");
+            js.append(" window.Singular.atualizarContadores  = function(){$(window.Singular.contadores).each(function(){this();});}; ");
             response.render(OnDomReadyHeaderItem.forScript(js));
         }
 
         @Override
         protected void respond(AjaxRequestTarget target) {
-            final String type = "application/json";
-            final String encoding = "UTF-8";
-            final StringBuilder json = new StringBuilder();
+            final String        type     = "application/json";
+            final String        encoding = "UTF-8";
+            final StringBuilder json     = new StringBuilder();
             json.append("{");
             for (int i = 0; i < itens.size(); i++) {
                 json.append("\"item").append(i).append("\"").append(":").append(itens.get(i).getRight().get());
