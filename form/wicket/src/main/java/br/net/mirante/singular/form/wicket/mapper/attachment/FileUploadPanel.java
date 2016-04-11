@@ -153,7 +153,7 @@ public class FileUploadPanel extends Panel {
             }
             return StringUtils.EMPTY;
         }
-    }){
+    }) {
         @Override
         protected void onConfigure() {
             super.onConfigure();
@@ -194,7 +194,17 @@ public class FileUploadPanel extends Panel {
         this.viewMode = viewMode;
         uploadField.setModel(new WrapperAwareModel(model));
         fileDummyField = buildFileDummyField("fileDummyField");
-        add(uploadField, panelWrapper.add(chooseFieldButton, removeFileButton, fileDummyField.add(downloadLink.add(fileName))));
+        add(uploadField, panelWrapper.add(chooseFieldButton, removeFileButton, fileDummyField.add(buildAttachmentShadow(), downloadLink.add(fileName))));
+    }
+
+    public WebMarkupContainer buildAttachmentShadow() {
+        WebMarkupContainer attachmentShadow = new WebMarkupContainer("attachmentShadow");
+        if (viewMode.isEdition()) {
+            attachmentShadow.add($b.classAppender("attachmentShadow"));
+        } else {
+            attachmentShadow.add($b.attr("style", "display:none;"));
+        }
+        return attachmentShadow;
     }
 
     /**
@@ -212,13 +222,16 @@ public class FileUploadPanel extends Panel {
     }
 
     private WebMarkupContainer buildFileDummyField(String id) {
+        WebMarkupContainer markup;
         if (viewMode.isEdition()) {
-            WebMarkupContainer field = new WebMarkupContainer(id);
-            field.add($b.classAppender("form-control"));
-            return field;
+            markup = new WebMarkupContainer(id);
+            markup.add($b.classAppender("form-control"));
+            markup.add($b.classAppender("fileDummyField"));
+            return markup;
         } else {
-            return BSWellBorder.small(id);
+            markup = BSWellBorder.small(id);
         }
+        return markup;
     }
 
     /**
@@ -241,11 +254,11 @@ public class FileUploadPanel extends Panel {
             @Override
             protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
                 super.updateAjaxAttributes(attributes);
-                attributes.getAjaxCallListeners().add(new AjaxCallListener(){
+                attributes.getAjaxCallListeners().add(new AjaxCallListener() {
                     @Override
                     public CharSequence getPrecondition(Component component) {
                         return generateOnchangeValidationJS(
-                                "$('#"+uploadField.getMarkupId()+"')[0]");
+                                "$('#" + uploadField.getMarkupId() + "')[0]");
                     }
                 });
             }
@@ -264,7 +277,7 @@ public class FileUploadPanel extends Panel {
 
     private String generateOnchangeValidationJS(String element) {
         Bytes max = getApplication().getApplicationSettings().getDefaultMaximumUploadSize();
-        return "FileUploadPanel.validateInputFile( "+ element +" ,"+max.bytes()+")";
+        return "FileUploadPanel.validateInputFile( " + element + " ," + max.bytes() + ")";
     }
 
     @Override
