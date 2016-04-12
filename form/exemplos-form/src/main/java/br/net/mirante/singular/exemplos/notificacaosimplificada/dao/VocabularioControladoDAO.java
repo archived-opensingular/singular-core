@@ -10,7 +10,10 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Long> {
@@ -73,13 +76,15 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
             int mod = 3;
             hql.append(" AND ( 1=1");
             configuracoesDinamizado.forEach(i -> {
-                hql.append(" OR mod(").append("fb.id,").append(mod).append(") = ").append(i % mod);
+                if (i != null) {
+                    hql.append(" OR mod(").append("fb.id,").append(mod).append(") = ").append(i % mod);
+                }
             });
             hql.append(" ) ");
         }
 
         if (filtro != null) {
-            hql.append(" AND fb.descricao like :filtro");
+            hql.append(" AND upper(fb.descricao) like upper(:filtro)");
             params.put("filtro", "%" + filtro + "%");
         }
 
