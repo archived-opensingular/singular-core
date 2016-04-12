@@ -169,8 +169,8 @@ public class AnnotationComponent extends Panel {
             protected void onInitialize() {
                 super.onInitialize();
                 final BFModalWindow thiz = this;
-
-                thiz.setBody(new Label("alert",$m.ofValue("Deseja realmente apagar este comentário?")));
+                thiz.setTitleText($m.ofValue("Você está prestes a remover este comentário."));
+                thiz.setBody(new Label("alert",$m.ofValue("Deseja realmente prosseguir e apagá-lo?")));
 
                 this.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Apagar"),
                     new ActionAjaxButton("deleteBtn"){

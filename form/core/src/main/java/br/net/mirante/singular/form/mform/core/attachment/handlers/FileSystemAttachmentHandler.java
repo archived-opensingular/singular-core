@@ -146,4 +146,20 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
             throw new SingularFormException("Erro lendo origem de dados", e);
         }
     }
+
+    /**
+     * @return Creates a temporary handler for temporary files.
+     * @throws IOException
+     */
+    public static FileSystemAttachmentHandler newTemporaryHandler() throws IOException {
+        return new FileSystemAttachmentHandler(createTemporaryFolder());
+    }
+
+    public static File createTemporaryFolder() throws IOException {
+        File tmpDir = File.createTempFile("singular", "showcase");
+        tmpDir.delete();
+        tmpDir.mkdir();
+        tmpDir.deleteOnExit();
+        return tmpDir;
+    }
 }
