@@ -23,10 +23,9 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
     public static final String PACOTE = "mform.peticao.notificacaosimplificada.gas";
     public static final String TIPO = "MedicamentoGasMedicinal";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
-    private STypeString descricao, gas, concentracao;
+    private STypeString descricao;
     private STypeComposite<SIComposite> informacoesFarmacopeicas;
     private STypeList<STypeAcondicionamentoGAS, SIComposite> acondicionamentos;
-    private STypeAttachmentList listaAnexos;
     private STypeString nomeComercial;
 
     public SPackageNotificacaoSimplificadaGasMedicinal() {
@@ -42,13 +41,8 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Gás Medicinal");
 
         addDescricao(notificacaoSimplificada);
-//        addConcentracao(notificacaoSimplificada);
         addNomeComercial(notificacaoSimplificada);
-
         addInformacoesFarmacopeicas(notificacaoSimplificada);
-
-//        addMetodologiaEspecificacao(notificacaoSimplificada);
-
         addAcondicionamentos(notificacaoSimplificada);
 
     }
@@ -60,17 +54,6 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         descricao.asAtrBootstrap().colPreference(6);
         descricao.withSelectionOf("Ciclopropano  99,5%", "Óxido nitroso (NO2) 70%", "Ar comprimido medicinal 79% N2 + 21% O2 ");
     }
-//
-//    private void addConcentracao(STypeComposite<?> notificacaoSimplificada) {
-//        concentracao = notificacaoSimplificada.addFieldString("concentracao");
-//        concentracao.asAtrBasic().label("Concentração/Unidade de medida");
-//        concentracao.withSelectionOf("50mg + 30mg", "45mg + 60mg", "55mg + 90mg");
-//        concentracao.asAtrBasic()
-//                .dependsOn(descricao)
-//                .enabled((x) -> x.findNearestValue(descricao).isPresent())
-//        ;
-//        concentracao.asAtrBootstrap().colPreference(3);
-//    }
 
     private void addNomeComercial(STypeComposite<?> notificacaoSimplificada) {
         nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
@@ -88,12 +71,6 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
         STypeFarmacopeiaReferencia farmacopeia = informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
     }
-
-//    private STypeAttachmentList addMetodologiaEspecificacao(STypeComposite<?> notificacaoSimplificada) {
-//        listaAnexos = notificacaoSimplificada.addFieldListOfAttachment("listaDeAnexosDeMetodologiaEEspecificacao", "AnexoDeMetodologiaEEspecificacao");
-//        listaAnexos.asAtrBasic().label("Metodologia e especificação");
-//        return listaAnexos;
-//    }
 
     private void addAcondicionamentos(STypeComposite<?> notificacaoSimplificada) {
         acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamentoGAS.class);

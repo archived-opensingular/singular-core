@@ -20,9 +20,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -187,6 +191,27 @@ public class DominioService {
     }
 
 
+    public Triple diluicao(Integer idDescricaoDinamizada) {
+        Map<Integer, Triple> mapa = new HashMap<>();
+
+        if (idDescricaoDinamizada == null) {
+            return null;
+        }
+
+        mapa.put(1, Triple.of(1, BigDecimal.valueOf(10), BigDecimal.valueOf(30)));
+        mapa.put(2, Triple.of(2, BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(3, Triple.of(3, BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(4, Triple.of(4, BigDecimal.valueOf(40), BigDecimal.valueOf(80)));
+        mapa.put(5, Triple.of(5, BigDecimal.valueOf(5), BigDecimal.valueOf(8)));
+        mapa.put(6, Triple.of(6, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(7, Triple.of(7, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(8, Triple.of(8, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(9, Triple.of(9, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+
+        Integer idDescricaoDinamizadaFake = idDescricaoDinamizada % 9 + 1;
+        return mapa.get(idDescricaoDinamizadaFake);
+    }
+
     public List<Triple> diluicoes(Integer idDescricaoDinamizada) {
         List<Triple> list = new ArrayList<>();
 
@@ -307,5 +332,26 @@ public class DominioService {
 
     public Pair[] indicacoesTerapeuticas() {
             return new Pair[0];
+    }
+
+    public Pair rangeConcentracoes(Integer idNomenclatura) {
+        Map<Integer, Pair> mapa = new HashMap<>();
+
+        if (idNomenclatura == null) {
+            return null;
+        }
+
+        mapa.put(1, Pair.of(BigDecimal.valueOf(10), BigDecimal.valueOf(30)));
+        mapa.put(2, Pair.of(BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(3, Pair.of(BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(4, Pair.of(BigDecimal.valueOf(40), BigDecimal.valueOf(80)));
+        mapa.put(5, Pair.of(BigDecimal.valueOf(5), BigDecimal.valueOf(8)));
+        mapa.put(6, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(7, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(8, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(9, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+
+        Integer idNomenclaturaFake = idNomenclatura % 9 + 1;
+        return mapa.get(idNomenclaturaFake);
     }
 }
