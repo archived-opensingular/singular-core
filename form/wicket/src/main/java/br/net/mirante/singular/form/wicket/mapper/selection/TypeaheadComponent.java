@@ -21,15 +21,12 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.IRequestCycle;
-import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.http.WebResponse;
+import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
-import org.apache.wicket.util.time.Time;
 
 import java.util.Map;
 import java.util.Optional;
@@ -51,13 +48,13 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class TypeaheadComponent extends SingularFormComponentPanel<SInstance, String> {
 
-    private static final String BLOODHOUND_SUGGESTION_KEY_NAME = "key";
+    private static final String BLOODHOUND_SUGGESTION_KEY_NAME   = "key";
     private static final String BLOODHOUND_SUGGESTION_LABEL_NAME = "value";
     private final SViewAutoComplete.Mode fetch;
-    private WebMarkupContainer container;
-    private AbstractAjaxBehavior dynamicFetcher;
-    private HiddenField valueField;
-    private TextField<String> labelField;
+    private       WebMarkupContainer     container;
+    private       AbstractAjaxBehavior   dynamicFetcher;
+    private       HiddenField            valueField;
+    private       TextField<String>      labelField;
 
     @SuppressWarnings("unchecked")
     public TypeaheadComponent(String id, IModel<? extends SInstance> model, SViewAutoComplete.Mode fetch) {
@@ -252,7 +249,7 @@ public class TypeaheadComponent extends SingularFormComponentPanel<SInstance, St
     private void updateModel(Object value) {
         if (value != null) {
             MSelectionInstanceModel model = (MSelectionInstanceModel) getDefaultModel();
-            String label = optionsConfig().getLabelFromKey(value);
+            String                  label = optionsConfig().getLabelFromKey(value);
             if (label != null) {
                 model.setObject(new SelectOption(label, value));
             }
@@ -290,22 +287,8 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
 
     @Override
     public void respond(AjaxRequestTarget target) {
-        String r = generateResultOptions(values(filterValue()));
-
-        requestCycle().scheduleRequestHandlerAfterCurrent(new IRequestHandler() {
-            @Override
-            public void respond(IRequestCycle requestCycle) {
-                WebResponse response = (WebResponse) requestCycle().getResponse();
-                response.setLastModifiedTime(Time.now());
-                response.disableCaching();
-                response.setHeader("Content-Type", "application/json; charset=utf8");
-                response.write(r.toString());
-            }
-
-            @Override
-            public void detach(IRequestCycle requestCycle) {
-            }
-        });
+        requestCycle().scheduleRequestHandlerAfterCurrent(
+                new TextRequestHandler("application/json", "utf-8", generateResultOptions(values(filterValue()))));
     }
 
     private String filterValue() {

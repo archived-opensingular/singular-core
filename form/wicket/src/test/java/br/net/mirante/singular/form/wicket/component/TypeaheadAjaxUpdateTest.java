@@ -12,7 +12,6 @@ import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -26,7 +25,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Ultima execução : 08/04/2016
  * Falhou: Não que eu saiba
  */
-@Ignore
 public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
     STypeString                 genero;
