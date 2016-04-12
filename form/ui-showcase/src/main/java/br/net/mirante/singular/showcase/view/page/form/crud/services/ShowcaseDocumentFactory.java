@@ -6,6 +6,7 @@
 package br.net.mirante.singular.showcase.view.page.form.crud.services;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
 import br.net.mirante.singular.form.spring.SpringServiceRegistry;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,13 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistence
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static br.net.mirante.singular.form.mform.RefService.*;
 
 @Component("showcaseDocumentFactory")
 public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
@@ -27,9 +35,26 @@ public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
 
     @Override
     protected void setupDocument(SDocument document) {
-        document.setAttachmentPersistenceTemporaryHandler(RefService.of(new InMemoryAttachmentPersitenceHandler()));
+        try {
+            document.setAttachmentPersistenceTemporaryHandler(of(newTemporaryHandler()));
+        } catch (IOException e) {
+            Logger.getLogger(this.getClass().getName()).log(Level.WARNING,"Could not create temporary file folder, using memory instead",e);
+            document.setAttachmentPersistenceTemporaryHandler(of(new InMemoryAttachmentPersitenceHandler()));
+        }
         document.setAttachmentPersistencePermanentHandler(
-                RefService.of(getServiceRegistry().lookupService(IAttachmentPersistenceHandler.class)));
+                of(getServiceRegistry().lookupService(IAttachmentPersistenceHandler.class)));
         document.addServiceRegistry(notificaoSimplificadaAppContext);
+    }
+
+    private FileSystemAttachmentHandler newTemporaryHandler() throws IOException {
+        return new FileSystemAttachmentHandler(createTemporaryFolder());
+    }
+
+    private File createTemporaryFolder() throws IOException {
+        File tmpDir = File.createTempFile("singular", "showcase");
+        tmpDir.delete();
+        tmpDir.mkdir();
+        tmpDir.deleteOnExit();
+        return tmpDir;
     }
 }

@@ -5,10 +5,18 @@
 
 package br.net.mirante.singular.form.spring;
 
+import br.net.mirante.singular.form.mform.RefService;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Representa uma factory que não faz nada com o documento e que aponta o
