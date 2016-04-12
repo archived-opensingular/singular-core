@@ -331,17 +331,19 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 }
             });
 
-            this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
-                @Override
-                protected void onAction(AjaxRequestTarget target) {
-                    if (closeCallback != null) {
-                        closeCallback.accept(target);
+            if (viewMode.isEdition()) {
+                this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
+                    @Override
+                    protected void onAction(AjaxRequestTarget target) {
+                        if (closeCallback != null) {
+                            closeCallback.accept(target);
+                        }
+                        rollbackState();
+                        target.add(table);
+                        MasterDetailModal.this.hide(target);
                     }
-                    rollbackState();
-                    target.add(table);
-                    MasterDetailModal.this.hide(target);
-                }
-            });
+                });
+            }
 
         }
 

@@ -69,7 +69,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         addCaracteristicas(notificacaoSimplificada);
         addNomeComercial(notificacaoSimplificada);
-        addInformacoesFarmacopeicas(notificacaoSimplificada);
         addAcondicionamentos(notificacaoSimplificada);
         addListaFormulaProduto(notificacaoSimplificada);
         addIndicacaoTerapeutica(notificacaoSimplificada);
@@ -118,11 +117,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 });
 
 
-        final STypeDecimal potencia = formulaHomeopatica.addFieldDecimal("potencia");
+        final STypeInteger potencia = formulaHomeopatica.addFieldInteger("potencia");
         potencia
-                .asAtrBasic().label("Potência")
-                .tamanhoInteiroMaximo(5)
-                .tamanhoDecimalMaximo(5);
+                .asAtrBasic().label("Potência");
 
         final STypeString  escala   = formulaHomeopatica.addFieldString("escala");
         escala
@@ -130,18 +127,19 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         potencia.addInstanceValidator(validatable -> {
             Integer idDescricao = validatable.getInstance().findNearest(descricaoDinamizada).get().findNearest(idDescricaoDinamizada).get().getValue();
-            final BigDecimal value = validatable.getInstance().getValue();
-            final List<Triple> triples = dominioService(validatable.getInstance()).diluicoes(idDescricao);
-            for (Triple t : triples) {
+            final Integer value = validatable.getInstance().getValue();
+            final Triple t = dominioService(validatable.getInstance()).diluicao(idDescricao);
+            if (t != null) {
                 final BigDecimal min = (BigDecimal) t.getMiddle();
                 final BigDecimal max = (BigDecimal) t.getRight();
                 String faixa = String.format("%s - %s", min, max);
                 if (value == null) {
 
-                } else if (value.compareTo(min) < 0 ) {
+                } else if (BigDecimal.valueOf(value).compareTo(min) < 0) {
                     validatable.error(String.format("O valor está fora da faixa de concentração: %s", faixa));
-                } else if (value.compareTo(max) > 0 ) {
+                } else if (BigDecimal.valueOf(value).compareTo(max) > 0) {
                     validatable.error(String.format("O valor está fora da faixa de concentração: %s", faixa));
+
                 }
             }
         });
@@ -195,13 +193,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
             });
 
         }
-    }
-
-    private void addInformacoesFarmacopeicas(STypeComposite<?> notificacaoSimplificada) {
-        STypeComposite<SIComposite> informacoesFarmacopeicas = notificacaoSimplificada.addFieldComposite("informacoesFarmacopeicas");
-        informacoesFarmacopeicas.asAtrBasic().label("Informações farmacopeicas");
-
-        STypeFarmacopeiaReferencia farmacopeia = informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
     }
 
     private void addAcondicionamentos(STypeComposite<?> notificacaoSimplificada) {

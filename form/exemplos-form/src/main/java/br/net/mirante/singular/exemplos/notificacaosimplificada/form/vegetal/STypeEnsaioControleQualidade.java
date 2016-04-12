@@ -25,6 +25,7 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
     public STypeString descricaoTipoEnsaio;
+    public STypeString descricaoTipoReferencia;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -47,7 +48,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
         STypeComposite<SIComposite> tipoReferencia = this.addFieldComposite("tipoReferencia");
         STypeInteger idTipoReferencia = tipoReferencia.addFieldInteger("id");
-        STypeString descricaoTipoReferencia = tipoReferencia.addFieldString("descricao");
+        descricaoTipoReferencia = tipoReferencia.addFieldString("descricao");
         tipoReferencia.withRadioView().withSelectionFromProvider(descricaoTipoReferencia, (ins, filter) -> {
             final SIList<?> list = ins.getType().newList();
             for (TipoReferencia tipo : TipoReferencia.values()) {
@@ -91,7 +92,8 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
         this.addFieldListOfAttachment("resultadosControleQualidade", "resultado")
         .asAtrBasic()
-        .label("Resultados do controle da qualidade");
+        .label("Resultados do controle da qualidade")
+        .required();
 
     }
 
