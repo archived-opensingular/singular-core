@@ -80,16 +80,16 @@ public class SelectOptionIndex implements Loggable {
         return instance;
     }
 
-    public Object getKey(SInstance instance) {
-        Object key = optionsKeyInstanceMap.inverse().get(instance);
+    public String getKey(SInstance instance) {
+        String key = optionsKeyInstanceMap.inverse().get(instance);
         if (key == null) {
             key = old_optionsKeyInstanceMap.inverse().get(instance);
         }
         return key;
     }
 
-    public Object getKey(String label) {
-        Object key = optionsKeylabelMap.inverse().get(label);
+    public String getKey(String label) {
+        String key = optionsKeylabelMap.inverse().get(label);
         if (key == null) {
             key = old_optionsKeylabelMap.inverse().get(label);
         }

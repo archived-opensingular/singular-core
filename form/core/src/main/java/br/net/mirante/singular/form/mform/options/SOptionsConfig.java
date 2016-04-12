@@ -87,6 +87,7 @@ public class SOptionsConfig implements Loggable {
 
 
     public String getLabelFromKey(Object key) {
+//        init();
         if (key == null || index == null) {
             return null;
         }
@@ -94,20 +95,23 @@ public class SOptionsConfig implements Loggable {
     }
 
     public String getKeyFromLabel(String label) {
+//        init();
         if (label == null || index == null) {
             return null;
         }
-        return String.valueOf(index.getKey(label));
+        return index.getKey(label);
     }
 
     public String getKeyFromOption(SInstance option) {
+//        init();
         if (option == null || index == null) {
             return null;
         }
-        return String.valueOf(index.getKey(option));
+        return index.getKey(option);
     }
 
     public String getLabelFromOption(SInstance option) {
+        init();
         if (option == null || index == null) {
             return null;
         }
@@ -121,7 +125,8 @@ public class SOptionsConfig implements Loggable {
      * @return
      */
     public SInstance getValueFromKey(Object key) {
-        if (key == null) {
+//        init();
+        if (key == null || index == null) {
             return null;
         }
         return index.getInstance(key);
