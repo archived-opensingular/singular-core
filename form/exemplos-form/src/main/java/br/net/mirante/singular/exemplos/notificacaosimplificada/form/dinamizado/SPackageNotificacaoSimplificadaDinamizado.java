@@ -5,42 +5,30 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado;
 
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeCategoriaRegulatoria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificadaDinamizado.class)
 public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
@@ -235,8 +223,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeAttachmentList formulasProduto =
                 listaFormulaProduto.addFieldListOfAttachment("formulasProduto", "formulaProduto");
         formulasProduto
+                .withMiniumSizeOf(1)
                 .asAtrBasic()
-                .required()
                 .label("Fórmula do produto");
     }
 
@@ -248,8 +236,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeAttachmentList layoutsBula =
                 listaLayoutFolheto.addFieldListOfAttachment("layoutsfolheto", "layoutfolheto");
         layoutsBula
+                .withMiniumSizeOf(1)
                 .asAtrBasic()
-                .required()
                 .label("Layout folheto");
     }
 
@@ -261,8 +249,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeAttachmentList indicacoesPropostas =
                 listaReferencias.addFieldListOfAttachment("indicacoesPropostas", "indicacaoProposta");
         indicacoesPropostas
+                .withMiniumSizeOf(1)
                 .asAtrBasic()
-                .required()
                 .label("Referências das indicações propostas");
     }
 
