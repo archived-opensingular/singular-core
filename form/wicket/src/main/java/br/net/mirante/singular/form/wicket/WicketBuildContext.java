@@ -341,6 +341,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     private static final class InitRootContainerBehavior extends Behavior {
+
         private final IModel<? extends SInstance> instanceModel;
 
         public InitRootContainerBehavior(IModel<? extends SInstance> instanceModel) {
@@ -349,11 +350,14 @@ public class WicketBuildContext implements Serializable {
 
         @Override
         public void onConfigure(Component component) {
-            instanceModel.getObject().getDocument().updateAttributes(null);
+            if( instanceModel.getObject() != null) {
+                instanceModel.getObject().getDocument().updateAttributes(null);
+            }
         }
     }
 
     private static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
+
         @Override
         public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
             WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m);
@@ -363,6 +367,7 @@ public class WicketBuildContext implements Serializable {
         public void onError(Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel) {
             WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel);
         }
+
     }
 
     public UIBuilderWicket getUiBuilderWicket() {

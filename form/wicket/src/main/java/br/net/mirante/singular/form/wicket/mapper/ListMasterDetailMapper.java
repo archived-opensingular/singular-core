@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import br.net.mirante.singular.form.wicket.util.FormStateUtil;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -220,6 +221,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 actionColumn.appendAction(new ActionConfig<>()
                                 .iconeModel(Model.of(Icone.MINUS), Model.of(MapperCommons.ICON_STYLE))
                                 .buttonModel(Model.of("red"))
+                                .title(Model.of("Remover"))
                                 .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                         (target, rowModel) -> {
                             SIList<?> sList = ((SIList<?>) model.getObject());
@@ -232,6 +234,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                     new ActionConfig<>()
                             .iconeModel(Model.of(openModalIcon), Model.of(MapperCommons.ICON_STYLE))
                             .buttonModel(Model.of("blue-madison"))
+                            .title(viewMode.isEdition() && view.isEditEnabled() ? Model.of("Editar") : Model.of("Visualizar"))
                             .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                     (target, rowModel) -> {
                         modal.showExisting(target, rowModel, ctx);
@@ -263,6 +266,12 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                         + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
                         + "</button>")
                 .add(new AjaxLink<Void>("_add") {
+                    @Override
+                    protected void onInitialize() {
+                        super.onInitialize();
+                        add(WicketUtils.$b.attr("title", "Adicionar"));
+                    }
+
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         final SInstance si = m.getObject();
@@ -342,7 +351,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         private void rollbackState() {
             try {
-                if (formState != null) {
+                if (formState != null && currentInstance.getObject() != null) {
                     FormStateUtil.restoreState(currentInstance.getObject(), formState);
                 }
             } catch (Exception e) {

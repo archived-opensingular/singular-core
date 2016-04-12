@@ -18,6 +18,7 @@ public class FormStateUtil {
 
     public static class FormState implements Serializable {
         final Object value;
+
         FormState(Object value) {
             this.value = value;
         }

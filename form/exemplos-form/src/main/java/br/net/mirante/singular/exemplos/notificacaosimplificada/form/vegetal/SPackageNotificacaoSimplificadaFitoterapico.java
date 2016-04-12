@@ -48,7 +48,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
-        notificacaoSimplificada.asAtrBasic().displayString("${nomenclaturaBotanica.descricao} - (<#list concentracoes as c>${c.descricao} <#sep>, </#sep></#list>)");
+        notificacaoSimplificada.asAtrBasic().displayString("${nomenclaturaBotanica.descricao} - ${nomeComercial}");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Produto Tradicional Fitoterápico");
 
         final STypeComposite<?> nomenclaturaBotanica     = notificacaoSimplificada.addFieldComposite("nomenclaturaBotanica");
@@ -93,11 +93,13 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
                 .withView(() -> new SViewListByTable().disableNew().disableDelete())
                 .withUpdateListener(list -> {
                     String value = Value.of(list, descNomenclaturaBotanica);
-                    String[] values = value.split("\\+");
-                    for (String plantinha : values) {
-                        SIComposite elem = list.addNew();
-                        elem.setValue(planta, plantinha);
-                        elem.setValue(unidade, "mg");
+                    if (value != null) {
+                        String[] values = value.split("\\+");
+                        for (String plantinha : values) {
+                            SIComposite elem = list.addNew();
+                            elem.setValue(planta, plantinha);
+                            elem.setValue(unidade, "mg");
+                        }
                     }
                 });
 

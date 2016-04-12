@@ -25,7 +25,7 @@ public class STypeFarmacopeiaReferencia extends STypeComposite<SIComposite> {
         farmacopeia.withView(SViewSelectionBySearchModal::new);
 
         this.addFieldString("edicao")
-                .asAtrBasic().label("Ediçao")
+                .asAtrBasic().label("Edição")
                 .asAtrBootstrap().colPreference(2);
         this.addFieldString("pagina")
                 .asAtrBasic().label("Página")

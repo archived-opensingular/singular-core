@@ -2,11 +2,30 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
 <wicket:panel>
+    <style>
+        .fileDummyField {
+            position: absolute !important;
+        }
+        .attachmentShadow {
+            background: -webkit-linear-gradient(right, transparent, white);
+            background: -o-linear-gradient(right, transparent, white);
+            background: -moz-linear-gradient(right, transparent, white);
+            background: linear-gradient( to right, transparent, white);
+            width: 55px;
+            height: 30px;
+            position: absolute;
+            float: right;
+            right: 5px;
+            top: 0;
+            pointer-events: none;
+        }
+    </style>
     <input type="file" wicket:id="fileUpload" style="display:none;"/>
     <div wicket:id="panelWrapper">
         <div style="white-space: nowrap;">
-            <div wicket:id="fileDummyField">
+            <div wicket:id="fileDummyField" style="overflow: hidden !important;">
                 <i class="fa fa-file"></i>&nbsp;
+                <span wicket:id="attachmentShadow" ></span>
                 <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>
             </div>
         </div>
@@ -16,7 +35,7 @@
                 <span class="glyphicon glyphicon-plus"></span> Escolher
             </button>
             <button wicket:id="removeFileButton" class="btn btn-sm red"
-                    style="padding: 7px 7px;" type="button">
+                    style="padding: 7px 7px;" title="Remover" type="button">
                 <span class="glyphicon glyphicon-trash"></span>
             </button>
         </span>
