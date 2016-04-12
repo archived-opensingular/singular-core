@@ -28,8 +28,8 @@ public class BSWellBorder extends Border {
     private WebMarkupContainer buildWell(String sizeClass) {
         return new WebMarkupContainer("well") {
             @Override
-            protected void onConfigure() {
-                super.onConfigure();
+            protected void onInitialize() {
+                super.onInitialize();
                 add($b.attrAppender("style", sizeClass, StringUtils.SPACE));
             }
         };
