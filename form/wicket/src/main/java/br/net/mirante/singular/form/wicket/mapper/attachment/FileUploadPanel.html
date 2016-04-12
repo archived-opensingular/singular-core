@@ -5,7 +5,6 @@
     <style>
         .fileDummyField {
             position: absolute !important;
-            overflow: hidden !important;
         }
         .attachmentShadow {
             background: -webkit-linear-gradient(right, transparent, white);
@@ -24,7 +23,7 @@
     <input type="file" wicket:id="fileUpload" style="display:none;"/>
     <div wicket:id="panelWrapper">
         <div style="white-space: nowrap;">
-            <div wicket:id="fileDummyField">
+            <div wicket:id="fileDummyField" style="overflow: hidden !important;">
                 <i class="fa fa-file"></i>&nbsp;
                 <span wicket:id="attachmentShadow" ></span>
                 <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>

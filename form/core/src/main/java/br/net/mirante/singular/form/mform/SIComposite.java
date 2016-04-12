@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import br.net.mirante.singular.form.mform.STypeComposite.FieldMapOfRecordType;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 public class SIComposite extends SInstance implements ICompositeInstance {
 
@@ -114,8 +115,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     public void setValue(Object obj) {
         if(obj instanceof SIComposite){
             clearInstance();
-            fields = ((SIComposite)obj).fields;
-            ((SIComposite)obj).fields = null;
+            Value.hydrate(this, Value.dehydrate((SInstance) obj));
         }else{
             throw new SingularFormException("SIComposite só suporta valores de mesmo tipo");
         }
