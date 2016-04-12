@@ -54,6 +54,7 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
         // in case you change this value, don't forget to check the configuration
         // for your application server. It must allow it.
         getApplicationSettings().setDefaultMaximumUploadSize(Bytes.megabytes(10));
+        getApplicationSettings().setDefaultMaximumUploadSize(Bytes.MAX);
 
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(true);
