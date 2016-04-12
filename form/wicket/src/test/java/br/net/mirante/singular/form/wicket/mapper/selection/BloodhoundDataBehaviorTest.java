@@ -137,7 +137,7 @@ public class BloodhoundDataBehaviorTest {
 
         response = Mockito.mock(WebResponse.class);
         Mockito.when(cycle.getResponse()).thenReturn(response);
-        return new BloodhoundDataBehavior(new MOptionsModel(model)){
+        return new BloodhoundDataBehavior((MSelectionInstanceModel) model){
                 @Override
                 protected RequestCycle requestCycle() {
                     return cycle;

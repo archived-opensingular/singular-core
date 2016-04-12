@@ -5,19 +5,15 @@
 
 package br.net.mirante.singular.form.mform.options;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import com.google.common.base.Throwables;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigInteger;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Mapeia cada MInstancia fornecida pelo OptionsProvider para uma par de
@@ -26,14 +22,10 @@ import java.util.Optional;
  * devem ser utilizadas para persistir. O objetivo dessas chaves é mapear um
  * valor na tela para uma MInstancia e memória no lado do servidor.
  */
-public class SOptionsConfig {
+public class SOptionsConfig implements Loggable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SOptionsConfig.class);
-    private Logger logger = LoggerFactory.getLogger(SOptionsConfig.class);
-    private BigInteger keySeed = BigInteger.ZERO;
-    private BiMap<String, SInstance> optionsKeyInstanceMap;
-    private BiMap<String, String> optionsKeylabelMap;
-    private SIList<? extends SInstance> options;
+        private SIList<? extends SInstance> options;
+    private SelectOptionIndex index = null;
     private SSelectionableInstance instance;
 
     public SOptionsConfig(SSelectionableInstance instancia) {
@@ -47,13 +39,14 @@ public class SOptionsConfig {
         return instance.getType().getOptionsProvider();
     }
 
-    private BiMap<String, SInstance> getOptions() {
+    private SelectOptionIndex getOptions() {
         init();
-        return optionsKeyInstanceMap;
+        return index;
     }
 
     private void init() {
-        if (optionsKeyInstanceMap == null) {
+        if (index == null) {
+            index = new SelectOptionIndex();
             reloadOptionsFromProvider(null);
         }
     }
@@ -75,97 +68,50 @@ public class SOptionsConfig {
                 }
                 throw Throwables.propagate(e);
             }
-            LOGGER.warn("Opções recarregadas para " + toString());
+            getLogger().warn("Opções recarregadas para " + toString());
             if (newOptions != null && !newOptions.equals(options)) {
                 remapValues(newOptions);
             }
         } else {
-            optionsKeyInstanceMap = HashBiMap.create();
-            optionsKeylabelMap = HashBiMap.create();
+            index = new SelectOptionIndex();
         }
     }
 
     private void remapValues(SIList<? extends SInstance> newOptions) {
         options = newOptions;
-        if (optionsKeyInstanceMap == null){
-            optionsKeyInstanceMap = HashBiMap.create(options.size());
-            optionsKeylabelMap = HashBiMap.create(options.size());
+        if (index == null) {
+            index = new SelectOptionIndex();
         }
-        removeValuesNotPresent();
-        mapNewValues();
-    }
-
-    private void mapNewValues() {
-        for (br.net.mirante.singular.form.mform.SInstance instance : options) {
-                    /* ignora silenciosamente valores duplicados */
-            if (!optionsKeyInstanceMap.inverse().containsKey(instance) &&
-                    !optionsKeylabelMap.inverse().containsKey(Optional
-                            .ofNullable(instance)
-                            .map(SInstance::getSelectLabel)
-                            .orElse(null))) {
-                String key = newUniqueKey();
-                optionsKeyInstanceMap.put(key, instance);
-                optionsKeylabelMap.put(key, instance.getSelectLabel());
-            } else {
-                logger.warn(String.format(" Valor ou descriação de opção de seleção ignorado durante a montagem da seleção simples. Value: %s, Label: %s",
-                        Optional
-                                .ofNullable(instance)
-                                .map(SInstance::getValue)
-                                .orElse("null "),
-                        Optional
-                                .ofNullable(instance)
-                                .map(SInstance::getSelectLabel)
-                                .orElse("null ")));
-            }
-        }
-    }
-
-    private void removeValuesNotPresent() {
-        if (optionsKeylabelMap != null) {
-            Iterator<SInstance> it = optionsKeyInstanceMap.values().iterator();
-            while (it.hasNext()) {
-                SInstance instance = it.next();
-                if (!options.getValues().contains(instance)) {
-                    Object key = optionsKeyInstanceMap.inverse().get(instance);
-                    it.remove();
-                    optionsKeylabelMap.remove(key);
-                }
-            }
-        }
-    }
-
-    private String newUniqueKey() {
-        keySeed = keySeed.add(BigInteger.ONE);
-        return String.valueOf(keySeed);
+        index.reindex(newOptions);
     }
 
 
-    public String getLabelFromKey(String key) {
-        if (key == null || optionsKeylabelMap == null) {
+    public String getLabelFromKey(Object key) {
+        if (key == null || index == null) {
             return null;
         }
-        return optionsKeylabelMap.get(key);
+        return index.getLabel(key);
     }
 
     public String getKeyFromLabel(String label) {
-        if (label == null || optionsKeylabelMap == null) {
+        if (label == null || index == null) {
             return null;
         }
-        return optionsKeylabelMap.inverse().get(label);
+        return String.valueOf(index.getKey(label));
     }
 
     public String getKeyFromOption(SInstance option) {
-        if (option == null) {
+        if (option == null || index == null) {
             return null;
         }
-        return getOptions().inverse().get(option);
+        return String.valueOf(index.getKey(option));
     }
 
     public String getLabelFromOption(SInstance option) {
-        if (option == null) {
+        if (option == null || index == null) {
             return null;
         }
-        return getLabelFromKey(getOptions().inverse().get(option));
+        return index.getLabel(option);
     }
 
     /**
@@ -174,11 +120,11 @@ public class SOptionsConfig {
      * @param key
      * @return
      */
-    public SInstance getValueFromKey(String key) {
+    public SInstance getValueFromKey(Object key) {
         if (key == null) {
             return null;
         }
-        return getOptions().get(key);
+        return index.getInstance(key);
     }
 
     /**
@@ -191,6 +137,6 @@ public class SOptionsConfig {
 
     public Map<String, String> listSelectOptions(String filter) {
         reloadOptionsFromProvider(filter);
-        return optionsKeylabelMap;
+        return index.listKeyLabel();
     }
 }
