@@ -76,14 +76,16 @@ public class TestMoptionsConfigTipoComposto {
 
     @Test
     public void testValueFromKey() {
+        periodo.getOptionsConfig().listSelectOptions();
         String keyFromOption = periodo.getOptionsConfig().getKeyFromOption(opcaoPeriodo);
         Assert.assertNotNull(keyFromOption);
-        Assert.assertEquals(periodo, opcaoPeriodo.getOptionsConfig().getValueFromKey(keyFromOption));
+        Assert.assertEquals(opcaoPeriodo, periodo.getOptionsConfig().getValueFromKey(keyFromOption));
         Assert.assertEquals(opcaoPeriodo.getValue(), periodo.getValue());
     }
 
     @Test
     public void testeLabelFromKey() {
+        periodo.getOptionsConfig().listSelectOptions();
         String keyFromOption = periodo.getOptionsConfig().getKeyFromOption(opcaoPeriodo);
         String label = periodo.getOptionsConfig().getLabelFromKey(keyFromOption);
         Assert.assertEquals(opcaoPeriodo.getSelectLabel(), label);
@@ -98,6 +100,7 @@ public class TestMoptionsConfigTipoComposto {
 
     @Test
     public void testKeyValueMapping(){
+        periodo.getOptionsConfig().listSelectOptions();
         for(SInstance instancia : _periodo.getOptionsProvider().listAvailableOptions(periodo, null)){
             String key = periodo.getOptionsConfig().getKeyFromOption(instancia);
             Assert.assertEquals(instancia, periodo.getOptionsConfig().getValueFromKey(key));

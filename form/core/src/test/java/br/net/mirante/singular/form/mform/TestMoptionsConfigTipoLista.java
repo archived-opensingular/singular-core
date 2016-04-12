@@ -85,6 +85,7 @@ public class TestMoptionsConfigTipoLista {
 
     @Test
     public void testValueFromKey() {
+        listaAlertas.getOptionsConfig().listSelectOptions();
         String keyFromOption1 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta1);
         String keyFromOption2 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta2);
         String keyFromOption3 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta3);
@@ -102,6 +103,7 @@ public class TestMoptionsConfigTipoLista {
 
     @Test
     public void testeLabelFromKey() {
+        listaAlertas.getOptionsConfig().listSelectOptions();
         String keyFromOption1 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta1);
         String keyFromOption2 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta2);
         String keyFromOption3 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta3);
@@ -122,6 +124,7 @@ public class TestMoptionsConfigTipoLista {
 
     @Test
     public void testKeyValueMapping(){
+        listaAlertas.getOptionsConfig().listSelectOptions();
         for(SInstance instancia : _alerta.getOptionsProvider().listAvailableOptions(listaAlertas, null)){
             String key = listaAlertas.getOptionsConfig().getKeyFromOption(instancia);
             Assert.assertEquals(instancia, listaAlertas.getOptionsConfig().getValueFromKey(key));
