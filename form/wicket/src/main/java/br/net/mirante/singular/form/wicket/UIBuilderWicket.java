@@ -103,9 +103,9 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     protected ViewMapperRegistry<IWicketComponentMapper> newViewMapperRegistry() {
         //@formatter:off
         return new ViewMapperRegistry<IWicketComponentMapper>()
-                .register(STypeSimple.class,    SViewSelectionByRadio.class,            RadioMapper::new)
-                .register(STypeSimple.class,    SViewSelectionBySelect.class,           SelectMapper::new)
-                .register(STypeSimple.class,    SViewReadOnly.class,                    ReadOnlyControlsFieldComponentMapper::new)
+                .register(STypeSimple.class,     SViewSelectionByRadio.class,           RadioMapper::new)
+                .register(STypeSimple.class,     SViewSelectionBySelect.class,          SelectMapper::new)
+                .register(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
                 .register(STypeInteger.class,                                           IntegerMapper::new)
@@ -133,7 +133,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeList.class,        SViewListByTable.class,               TableListMapper::new)
                 .register(STypeList.class,        SViewListByForm.class,                PanelListaMapper::new)
                 .register(STypeList.class,        SViewListByMasterDetail.class,        ListMasterDetailMapper::new)
-                .register(STypeList.class,      SViewBreadcrumb.class,                  ListBreadcrumbMapper::new)
+                .register(STypeList.class,        SViewBreadcrumb.class,                ListBreadcrumbMapper::new)
                 .register(STypeDateTime.class,                                          DateTimeMapper::new)
                 .register(STypeDateTime.class,    SViewDateTime.class,                  DateTimeMapper::new)
                 .register(STypeTime.class,                                              TimeMapper::new)

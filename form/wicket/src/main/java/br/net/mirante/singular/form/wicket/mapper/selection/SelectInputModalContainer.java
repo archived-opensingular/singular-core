@@ -148,8 +148,8 @@ class SelectInputModalContainer extends BSContainer {
          * Limpa o filtro apos fechar a modal
          */
         searchModal.setCloseIconCallback(target -> clearModel.accept(filterModel));
-        searchModal.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Limpar"),
-                new ActionAjaxButton("limpar") {
+        searchModal.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Fechar"),
+                new ActionAjaxButton("fechar") {
                     @Override
                     protected void onAction(AjaxRequestTarget target, Form<?> form) {
                         target.add(valueInput);

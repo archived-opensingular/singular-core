@@ -55,7 +55,8 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
     private void addDescricao(STypeComposite<?> notificacaoSimplificada) {
         descricao = notificacaoSimplificada.addFieldString("descricao");
-        descricao.asAtrBasic().label("Descrição");
+        descricao.asAtrBasic().label("Descrição").required();
+        descricao.withSelectView();
         descricao.asAtrBootstrap().colPreference(6);
         descricao.withSelectionOf("Ciclopropano  99,5%", "Óxido nitroso (NO2) 70%", "Ar comprimido medicinal 79% N2 + 21% O2 ");
     }

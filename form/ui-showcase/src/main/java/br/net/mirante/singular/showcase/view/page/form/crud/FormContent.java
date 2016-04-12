@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValue;
 
 import javax.inject.Inject;
@@ -90,6 +91,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private Form<?> buildForm() {
         Form<?> form = new Form<>("save-form");
         form.setMultiPart(true);
+        form.setFileMaxSize(Bytes.MAX);
+        form.setMaxSize(Bytes.MAX);
         form.add(buildSingularBasePanel());
         form.add(buildSaveButton());
         form.add(buildSaveAnnotationButton());

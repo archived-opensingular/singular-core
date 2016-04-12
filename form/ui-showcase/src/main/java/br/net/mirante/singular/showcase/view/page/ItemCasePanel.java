@@ -46,6 +46,7 @@ import br.net.mirante.singular.showcase.component.ResourceRef;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
+import org.apache.wicket.util.lang.Bytes;
 
 
 public class ItemCasePanel extends Panel implements SingularWicketContainer<ItemCasePanel, Void> {
@@ -76,6 +77,9 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         add(buildHeaderText());
 
         Form<Void> form = new Form<>("form");
+        form.setMultiPart(true);
+        form.setFileMaxSize(Bytes.MAX);
+        form.setMaxSize(Bytes.MAX);
         form.add(buildSingularBasePanel());
         form.add(buildButtons());
         form.add(viewXmlModal);

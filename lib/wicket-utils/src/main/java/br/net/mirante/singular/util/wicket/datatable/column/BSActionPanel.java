@@ -68,7 +68,12 @@ public class BSActionPanel<T> extends Panel {
 
         actionConfig.link.add($b.attr("data-toggle", "tooltip"));
         actionConfig.link.add($b.attr("data-placement", "bottom"));
-        actionConfig.link.add($b.attr("title", actionConfig.labelModel));
+
+        if(actionConfig.title != null) {
+            actionConfig.link.add($b.attr("title", actionConfig.title));
+        } else {
+            actionConfig.link.add($b.attr("title", actionConfig.labelModel));
+        }
 
         return this;
     }
@@ -130,6 +135,7 @@ public class BSActionPanel<T> extends Panel {
         protected MarkupContainer link;
         protected IModel<String> buttonModel = $m.ofValue("black");
         protected IModel<String> style;
+        protected IModel<String> title;
         protected boolean withText = false;
         protected IBiFunction<T, String, MarkupContainer> linkFactory;
 
@@ -180,6 +186,11 @@ public class BSActionPanel<T> extends Panel {
 
         public ActionConfig<T> linkFactory(IBiFunction<T, String, MarkupContainer> linkFactory) {
             this.linkFactory = linkFactory;
+            return this;
+        }
+
+        public ActionConfig<T> title(IModel<String> title){
+            this.title = title;
             return this;
         }
     }
