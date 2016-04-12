@@ -80,7 +80,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
     private void addCaracteristicas(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> caracteristicas =  notificacaoSimplificada.addFieldComposite("caracteristicas");
-        caracteristicas.asAtrAnnotation().setAnnotated();
         caracteristicas.addField("classe", STypeCategoriaRegulatoria.class);
 
         final STypeLinhaProducaoDinamizado linhaProducao = caracteristicas.addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
@@ -227,7 +226,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
     private void addNomeComercial(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> nomeComercialComposto = notificacaoSimplificada.addFieldComposite("nomeComercial");
-        nomeComercialComposto.asAtrAnnotation().setAnnotated();
 
         final STypeString nomeComercial = nomeComercialComposto.addFieldString("nomeComercial");
         nomeComercial
@@ -241,7 +239,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     private void addListaFormulaProduto(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> listaFormulaProduto = notificacaoSimplificada.addFieldComposite("listaFormulaProduto");
         listaFormulaProduto
-                .asAtrBasic().label("Fórmulas do produto");
+                .asAtrBasic().label("Fórmulas do produto")
+                .asAtrAnnotation().setAnnotated();
         final STypeAttachmentList formulasProduto =
                 listaFormulaProduto.addFieldListOfAttachment("formulasProduto", "formulaProduto");
         formulasProduto

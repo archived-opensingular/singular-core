@@ -164,8 +164,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
         public static LocalFabricacao[] getValues(boolean gas) {
             if (gas) {
-                return new LocalFabricacao[]{PRODUCAO_PROPRIA, EMPRESA_INTERNACIONAL,
-                        EMPRESA_TERCEIRIZADA, ENVASADORA};
+                return values();
             } else {
                 return new LocalFabricacao[]{PRODUCAO_PROPRIA, EMPRESA_INTERNACIONAL,
                         EMPRESA_TERCEIRIZADA, OUTRO_LOCAL_FABRICACAO};
