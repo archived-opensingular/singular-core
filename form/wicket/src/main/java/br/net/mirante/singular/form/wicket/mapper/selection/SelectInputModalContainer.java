@@ -72,7 +72,8 @@ class SelectInputModalContainer extends BSContainer {
                               BSContainer modalContainer,
                               IModel<? extends SInstance> model,
                               SViewSelectionBySearchModal view,
-                              IMInstanciaAwareModel<String> valueInputModel) {
+                              IMInstanciaAwareModel<String> valueInputModel)
+    {
         super(id);
         this.formGroup = formGroup;
         this.modalContainer = modalContainer;
@@ -268,9 +269,16 @@ class SelectInputModalContainer extends BSContainer {
         return new SortableDataProvider<SelectOption, Void>() {
             @Override
             public Iterator<? extends SelectOption> iterator(long first, long count) {
-                return filterOptions(filtro, options)
-                        .collect(Collectors.toList())
-                        .iterator();
+                final List<SelectOption> list = filterOptions(filtro, options).collect(Collectors.toList());
+                int fromIndex = 0;
+                if(list.size() >= first){
+                    fromIndex = (int) first;
+                }
+                int toIndex = list.size();
+                if(list.size() >= fromIndex + count){
+                    toIndex = fromIndex + (int) count;
+                }
+                return list.subList(fromIndex, toIndex).iterator();
             }
 
             @Override
