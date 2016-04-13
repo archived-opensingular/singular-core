@@ -648,15 +648,3 @@ table.table-bordered.dataTable {
         padding: 0 0 0 5px;
     }
 }
-
-.btn.blue:not(.btn-outline) {
-    color: #333333;
-    background-color: #E5E5E5;
-    border-color: #E5E5E5;
-}
-
-.btn.blue:not(.btn-outline) :hover {
-    color: #333333;
-    background-color: #d5d5d5;
-    border-color: #cdcdcd;
-}
