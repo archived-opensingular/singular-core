@@ -26,13 +26,14 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
     public STypeString descricaoTipoEnsaio;
     public STypeString descricaoTipoReferencia;
+    public STypeInteger idTipoEnsaio;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
         STypeComposite<SIComposite> tipoEnsaio = this.addFieldComposite("tipoEnsaio");
-        STypeInteger idTipoEnsaio = tipoEnsaio.addFieldInteger("id");
+        idTipoEnsaio = tipoEnsaio.addFieldInteger("id");
         descricaoTipoEnsaio = tipoEnsaio.addFieldString("descricao");
         tipoEnsaio.withSelectView().withSelectionFromProvider(descricaoTipoEnsaio, (ins, filter) -> {
             final SIList<?> list = ins.getType().newList();
@@ -44,7 +45,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
             return list;
         });
 
-        tipoEnsaio.asAtrBasic().label("Ensaio de Controle de Qualidade").required();
+        tipoEnsaio.asAtrBasic().label("Ensaio de Controle de Qualidade").enabled(false);
 
         STypeComposite<SIComposite> tipoReferencia = this.addFieldComposite("tipoReferencia");
         STypeInteger idTipoReferencia = tipoReferencia.addFieldInteger("id");
@@ -59,7 +60,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
             return list;
         }).asAtrBasic().label("Tipo de referência")
                 .required()
-                .dependsOn(tipoEnsaio).visible(i -> Value.notNull(i, tipoEnsaio));
+                .dependsOn(tipoEnsaio).visible(i -> !TipoEnsaioControleQualidade.RESULTADOS.getId().equals(Value.of(i, idTipoEnsaio)));
 
         {
             STypeComposite<SIComposite> informacoesFarmacopeicas = this.addFieldComposite("informacoesFarmacopeicas");
@@ -93,20 +94,15 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
         this.addFieldListOfAttachment("resultadosControleQualidade", "resultado")
         .asAtrBasic()
         .label("Resultados do controle da qualidade")
+        .visible(i -> TipoEnsaioControleQualidade.RESULTADOS.getId().equals(Value.of(i, idTipoEnsaio)))
         .required();
 
     }
 
     enum TipoEnsaioControleQualidade {
         PROSPECCAO_FITOQUIMICA_CCD(1, "Perfil cromatográfico"),
-        LAUDO_BOTANICO(2, "Teor");
-//        GRANULOMETRIA(3, "Granulometria"),
-//        TEOR_CINZAS_TOTAIS(4, "Teor de cinzas totais"),
-//        UMIDADE(5, "Umidade"),
-//        CONTAMINANTES_MACROSCOPICO(6, "Contaminantes macroscópicos"),
-//        CONTAMINANTES_MICROBIOLOGICOS(7, "Contaminantes microbiológicos"),
-//        TESTE_LIMITE_METAIS(8, "Teste limite para metais pesados"),
-//        ORGANOLEPTICO(9, "Organoléptico");
+        LAUDO_BOTANICO(2, "Teor"),
+        RESULTADOS(3, "Resultados do controle da qualidade");
 
         private Integer id;
         private String descricao;

@@ -6,7 +6,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Optional;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
@@ -151,11 +151,24 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         acondicionamento.locaisFabricacao.asAtrBasic().visible(false);
 
         final STypeList<STypeEnsaioControleQualidade, SIComposite> ensaios = notificacaoSimplificada.addFieldListOf("ensaiosControleQualidade", STypeEnsaioControleQualidade.class);
+        final STypeEnsaioControleQualidade ensaio = ensaios.getElementsType();
         ensaios
                 .withView(new SViewListByMasterDetail()
-                        .col(ensaios.getElementsType().descricaoTipoEnsaio, "Ensaio")
-                        .col(ensaios.getElementsType().descricaoTipoReferencia, "Tipo de referência"))
+                        .col(ensaio.descricaoTipoEnsaio, "Ensaio")
+                        .col(ensaio.descricaoTipoReferencia, "Tipo de referência")
+                        .disableNew().disableDelete())
                 .asAtrBasic().label("Ensaio de Controle de Qualidade");
+
+
+        notificacaoSimplificada.withInitListener(ins -> {
+            final Optional<SIList<SIComposite>> lista = ins.findNearest(ensaios);
+
+            for (STypeEnsaioControleQualidade.TipoEnsaioControleQualidade tipoEnsaioControleQualidade : STypeEnsaioControleQualidade.TipoEnsaioControleQualidade.values()) {
+                final SIComposite siComposite = lista.get().addNew();
+                siComposite.findNearest(ensaio.idTipoEnsaio).get().setValue(tipoEnsaioControleQualidade.getId());
+                siComposite.findNearest(ensaio.descricaoTipoEnsaio).get().setValue(tipoEnsaioControleQualidade.getDescricao());
+            }
+        });
 
     }
 
