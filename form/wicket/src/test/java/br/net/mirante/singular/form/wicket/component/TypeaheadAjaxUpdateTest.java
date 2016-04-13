@@ -12,7 +12,6 @@ import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -23,10 +22,9 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Verifica se é possivel selecionar um valor apos
  * o componente de typeahead ser atualizado via ajax por outro componente.
  *
- * Ultima execução : 06/04/2016
- * Falhou: Sim
+ * Ultima execução : 08/04/2016
+ * Falhou: Não que eu saiba
  */
-@Ignore
 public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
     STypeString                 genero;
@@ -96,6 +94,29 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
             tester.executeAjaxEvent(selecaoGenero, "change");
             setAndCheckValue(input);
         }
+
+    }
+
+    @Test
+    public void assertSave() {
+
+        FormComponent selecaoGenero = findFirstFormComponentsByType(page.getForm(), genero);
+        FormComponent input         = findFirstFormComponentsByType(page.getForm(), pessoa);
+
+        {
+            form.select(getFormRelativePath(selecaoGenero), 1);
+            tester.executeAjaxEvent(selecaoGenero, "change");
+            setAndCheckValue(input);
+        }
+
+        {
+            form.select(getFormRelativePath(selecaoGenero), 0);
+            tester.executeAjaxEvent(selecaoGenero, "change");
+            setAndCheckValue(input);
+        }
+
+        tester.submitForm(form.getForm());
+        assertThat(input.getModel().getObject()).isNotNull();
 
     }
 

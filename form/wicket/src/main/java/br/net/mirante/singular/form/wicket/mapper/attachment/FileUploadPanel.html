@@ -3,6 +3,9 @@
 <body>
 <wicket:panel>
     <style>
+        .fileDummyField {
+            position: absolute !important;
+        }
         .attachmentShadow {
             background: -webkit-linear-gradient(right, transparent, white);
             background: -o-linear-gradient(right, transparent, white);
@@ -12,7 +15,7 @@
             height: 30px;
             position: absolute;
             float: right;
-            right: 25px;
+            right: 5px;
             top: 0;
             pointer-events: none;
         }
@@ -20,9 +23,9 @@
     <input type="file" wicket:id="fileUpload" style="display:none;"/>
     <div wicket:id="panelWrapper">
         <div style="white-space: nowrap;">
-            <div wicket:id="fileDummyField" style="position: absolute; overflow: hidden;">
+            <div wicket:id="fileDummyField" style="overflow: hidden !important;">
                 <i class="fa fa-file"></i>&nbsp;
-                <span class="attachmentShadow"></span>
+                <span wicket:id="attachmentShadow" ></span>
                 <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>
             </div>
         </div>

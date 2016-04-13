@@ -63,6 +63,7 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
                             label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaTerceirizada.empresa.razaoSocial")).orElse(""));
                             label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaInternacional.razaoSocial")).orElse(""));
                             label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaPropria.razaoSocial")).orElse(""));
+                            label += String.valueOf(Optional.ofNullable(Value.of(i, "envasadora.razaoSocial")).orElse(""));
                             return label;
                         }).col(locaisFabricacao.getElementsType().empresaTerceirizada.etapasFabricacao()))
                 .asAtrBasic().label("Local de fabricação");

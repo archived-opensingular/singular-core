@@ -22,6 +22,8 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -244,7 +246,8 @@ class SelectInputModalContainer extends BSContainer {
 
         BSContainer inputGroupButton = new BSContainer(id + "inputGroupButton");
         inputGroup.appendTag("span", true, "class=\"input-group-btn\"", inputGroupButton);
-        inputGroupButton.appendTag("a", true, "class=\"btn default\"", new AjaxSubmitLink("link", form) {
+        final AjaxSubmitLink ajaxSubmitLink;
+        inputGroupButton.appendTag("a", true, "class=\"btn default\"", ajaxSubmitLink = new AjaxSubmitLink("link", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -259,6 +262,23 @@ class SelectInputModalContainer extends BSContainer {
                 super.onComponentTagBody(markupStream, openTag);
             }
         });
+
+        inputFiltro.add(new Behavior() {
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                String js = "";
+                js += " $('#" + inputFiltro.getMarkupId(true) + "').on('keydown', function(e) { ";
+                js += "     if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) { ";
+                js += "         $('#" + ajaxSubmitLink.getMarkupId(true) + "').click();         ";
+                js += "         return false;                                                   ";
+                js += "     } else {                                                            ";
+                js += "         return true;                                                    ";
+                js += "     }                                                                   ";
+                js += " });                                                                     ";
+                String wrapper = ";(function(){%s}());";
+                response.render(OnDomReadyHeaderItem.forScript(String.format(wrapper, js)));
+            }
+        });
     }
 
     private SortableDataProvider<SelectOption, Void> buildDataProvider(
@@ -268,9 +288,16 @@ class SelectInputModalContainer extends BSContainer {
         return new SortableDataProvider<SelectOption, Void>() {
             @Override
             public Iterator<? extends SelectOption> iterator(long first, long count) {
-                return filterOptions(filtro, options)
-                        .collect(Collectors.toList())
-                        .iterator();
+                final List<SelectOption> list      = filterOptions(filtro, options).collect(Collectors.toList());
+                int                      fromIndex = 0;
+                if (list.size() >= first) {
+                    fromIndex = (int) first;
+                }
+                int toIndex = list.size();
+                if (list.size() >= fromIndex + count) {
+                    toIndex = fromIndex + (int) count;
+                }
+                return list.subList(fromIndex, toIndex).iterator();
             }
 
             @Override

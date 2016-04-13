@@ -24,7 +24,9 @@ import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,10 +66,6 @@ public class DominioService {
     public List<Triple> configuracoesLinhaProducao(Integer idLinhaProducao) {
         List<Triple> list = new ArrayList<>();
 
-        if (idLinhaProducao == null) {
-            return list;
-        }
-
         list.add(Triple.of(1, 1, "Comprimidos em Camadas"));
         list.add(Triple.of(2, 1, "Comprimidos Placebo"));
         list.add(Triple.of(3, 1, "Comprimidos Simples"));
@@ -83,9 +81,11 @@ public class DominioService {
         return list.stream().filter(t -> t.getMiddle().equals(idLinhaProducao % 3 + 1)).collect(Collectors.toList());
     }
 
-    public List<Substancia> findSubstanciasByIdConfiguracaoLinhaProducao(Integer idConfiguracaoLinhaProducao) {
-        return vocabularioControladoDAO.findSubstanciasByIdConfiguracaoLinhaProducao(idConfiguracaoLinhaProducao);
+
+    public List<Substancia> substancias(Integer idConfiguracaoLinhaProducao, String filter) {
+        return vocabularioControladoDAO.findByDescricao(Substancia.class, filter);
     }
+
 
     public List<Triple> descricoesHomeopaticas(Integer idConfiguracaoLinhaProducao) {
         List<Triple> list = new ArrayList<>();
@@ -191,6 +191,27 @@ public class DominioService {
     }
 
 
+    public Triple diluicao(Integer idDescricaoDinamizada) {
+        Map<Integer, Triple> mapa = new HashMap<>();
+
+        if (idDescricaoDinamizada == null) {
+            return null;
+        }
+
+        mapa.put(1, Triple.of(1, BigDecimal.valueOf(10), BigDecimal.valueOf(30)));
+        mapa.put(2, Triple.of(2, BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(3, Triple.of(3, BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(4, Triple.of(4, BigDecimal.valueOf(40), BigDecimal.valueOf(80)));
+        mapa.put(5, Triple.of(5, BigDecimal.valueOf(5), BigDecimal.valueOf(8)));
+        mapa.put(6, Triple.of(6, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(7, Triple.of(7, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(8, Triple.of(8, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(9, Triple.of(9, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+
+        Integer idDescricaoDinamizadaFake = idDescricaoDinamizada % 9 + 1;
+        return mapa.get(idDescricaoDinamizadaFake);
+    }
+
     public List<Triple> diluicoes(Integer idDescricaoDinamizada) {
         List<Triple> list = new ArrayList<>();
 
@@ -200,19 +221,47 @@ public class DominioService {
 
         Integer idDescricaoDinamizadaFake = idDescricaoDinamizada % 9 + 1;
 
-        list.add(Triple.of(1, BigDecimal.valueOf(10), BigDecimal.valueOf(30)));
-        list.add(Triple.of(2, BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
-        list.add(Triple.of(3, BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
-        list.add(Triple.of(4, BigDecimal.valueOf(40), BigDecimal.valueOf(80)));
-        list.add(Triple.of(5, BigDecimal.valueOf(5), BigDecimal.valueOf(8)));
-        list.add(Triple.of(6, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
-        list.add(Triple.of(7, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
-        list.add(Triple.of(8, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
-        list.add(Triple.of(9, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
 
-        return list.stream().filter(t -> t.getLeft().equals(idDescricaoDinamizadaFake)).collect(Collectors.toList());
+        list.add(Triple.of(1, 1, "15 DH 0,008 ml"));
+        list.add(Triple.of(2, 1, "5 CH"));
+        list.add(Triple.of(3, 1, "30 CH"));
+
+        list.add(Triple.of(4, 2, "15 DH 0,009 ml"));
+        list.add(Triple.of(5, 2, "15 DH 0,00098 ml"));
+        list.add(Triple.of(6, 2, "55 CH"));
+
+        list.add(Triple.of(7, 3, "15D 0,008 ml"));
+        list.add(Triple.of(8, 3, "1 LM 0,02 ml"));
+        list.add(Triple.of(9, 3, "129 LM 0,02 ml"));
+
+        list.add(Triple.of(10, 4, "75 DH 0,02 ml"));
+        list.add(Triple.of(11, 4, "5 DH 0,031 ml"));
+        list.add(Triple.of(12, 4, "9 LM 0,073 ml"));
+
+        list.add(Triple.of(13, 5, "5 DH 0,0221 ml"));
+        list.add(Triple.of(14, 5, "19 CH 1L"));
+        list.add(Triple.of(15, 5, "31 CH 500 ml"));
+
+        list.add(Triple.of(16, 6, "31 CH 0,456 ml"));
+        list.add(Triple.of(17, 6, "31 CH 0,56 ml"));
+        list.add(Triple.of(18, 6, "31 CH 0,123 ml"));
+
+        list.add(Triple.of(19, 7, "11 CH 0,03 ml"));
+        list.add(Triple.of(20, 7, "121 CH 0,0000001 ml"));
+        list.add(Triple.of(21, 7, "2 CH 0,005 ml"));
+
+        list.add(Triple.of(22, 8, "35 DH 0,025 ml"));
+        list.add(Triple.of(23, 8, "45 DH 0,034 ml"));
+        list.add(Triple.of(24, 8, "5 DH 0,012 ml"));
+
+        list.add(Triple.of(25, 9, "65 LM 0,302 ml"));
+        list.add(Triple.of(26, 9, "75 CH 0,042 ml"));
+        list.add(Triple.of(27, 9, "85 DH 0,072 ml"));
+
+        return list.stream().filter(t -> t.getMiddle().equals(idDescricaoDinamizadaFake)).collect(Collectors.toList());
     }
 
+    @Transactional
     public List<EmbalagemPrimariaBasica> findEmbalagensBasicas(String filtro) {
         return vocabularioControladoDAO.findByDescricao(EmbalagemPrimariaBasica.class, filtro);
     }
@@ -281,28 +330,28 @@ public class DominioService {
         return vocabularioControladoDAO.listarLinhasProducaoDinamizado(filtro);
     }
 
-    public List<Pair> indicacoesTerapeuticas() {
-        List<Pair> list = new ArrayList<>();
+    public Pair[] indicacoesTerapeuticas() {
+            return new Pair[0];
+    }
 
-        long i = 1;
-        list.add(Pair.of(i++, "Acne"));
-        list.add(Pair.of(i++, "Acidez estomacal"));
-        list.add(Pair.of(i++, "Alergia"));
-        list.add(Pair.of(i++, "Anti-sépticos nasais"));
-        list.add(Pair.of(i++, "Anti-sépticos oculares"));
-        list.add(Pair.of(i++, "Cólica"));
-        list.add(Pair.of(i++, "Dermatite seborreica"));
-        list.add(Pair.of(i++, "Enjôo"));
-        list.add(Pair.of(i++, "Epigastralgia"));
-        list.add(Pair.of(i++, "Esofagite"));
-        list.add(Pair.of(i++, "Irritação ocular"));
-        list.add(Pair.of(i++, "Lombalgia"));
-        list.add(Pair.of(i++, "Má digestão"));
-        list.add(Pair.of(i++, "Pirose"));
-        list.add(Pair.of(i++, "Queimação"));
-        list.add(Pair.of(i++, "Tosse"));
-        list.add(Pair.of(i++, "Vômito"));
+    public Pair rangeConcentracoes(Integer idNomenclatura) {
+        Map<Integer, Pair> mapa = new HashMap<>();
 
-        return list;
+        if (idNomenclatura == null) {
+            return null;
+        }
+
+        mapa.put(1, Pair.of(BigDecimal.valueOf(10), BigDecimal.valueOf(30)));
+        mapa.put(2, Pair.of(BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(3, Pair.of(BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(4, Pair.of(BigDecimal.valueOf(40), BigDecimal.valueOf(80)));
+        mapa.put(5, Pair.of(BigDecimal.valueOf(5), BigDecimal.valueOf(8)));
+        mapa.put(6, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(7, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(8, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(9, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+
+        Integer idNomenclaturaFake = idNomenclatura % 9 + 1;
+        return mapa.get(idNomenclaturaFake);
     }
 }

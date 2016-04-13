@@ -83,7 +83,7 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
                         }
                     }
                 } else {
-                    final String valorString = String.valueOf(valor);
+                    final String valorString = String.valueOf(Optional.ofNullable(valor).orElse(""));
                     final String labelFromKey = getOptionsConfig().getLabelFromKey(valorString);
                     if(labelFromKey == null){
                         return valorString;
