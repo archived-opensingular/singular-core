@@ -60,6 +60,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     private Set<SType<?>> dependentTypes;
 
+    private Consumer<SInstance> initListener;
+
     /**
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
      * outros pontos.
@@ -534,6 +536,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
                 }
             }
             instanceCount++;
+
+            if (initListener != null) {
+                initListener.accept(newInstance);
+            }
+
             return newInstance;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new SingularFormException("Erro instanciando o tipo '" + getName() + "' para o tipo '" + original.getName() + "'", e);
@@ -687,6 +694,10 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     public Consumer<SInstance> getUpdateListener() {
         return updateListener;
+    }
+
+    public void withInitListener(Consumer<SInstance> initListener) {
+        this.initListener = initListener;
     }
 
 }
