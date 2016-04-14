@@ -22,6 +22,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 
 import java.io.Serializable;
 import java.util.List;
@@ -180,16 +181,19 @@ public abstract class AbstractFormPage extends Template {
 
             @Override
             protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                setFormXML(getFormModel(), xml.toStringExato());
-                if (AbstractFormPage.this.config.annotationMode.editable()) {
-                    Optional<String> xmlAnnotation = MformPersistenciaXML.annotationToXmlString(getCurrentInstance().getObject());
-                    setAnnotationsXML(getFormModel(), xmlAnnotation.orElse(null));
+                try{
+                    setFormXML(getFormModel(), xml.toStringExato());
+                    if (AbstractFormPage.this.config.annotationMode.editable()) {
+                        Optional<String> xmlAnnotation = MformPersistenciaXML.annotationToXmlString(getCurrentInstance().getObject());
+                        setAnnotationsXML(getFormModel(), xmlAnnotation.orElse(null));
+                    }
+                    AbstractFormPage.this.executeTransition(transitionName, getFormModel());
+                    target.appendJavaScript("Singular.atualizarContentWorklist();");
+                    addToastrSuccessMessageWorklist("message.action.success", transitionName);
+                    target.appendJavaScript("window.close();");
+                }catch (Exception e){ // org.hibernate.StaleObjectStateException
+                    addToastrErrorMessage("message.save.concurrent_error");
                 }
-                AbstractFormPage.this.executeTransition(transitionName, getFormModel());
-                target.appendJavaScript("Singular.atualizarContentWorklist();");
-                addToastrSuccessMessageWorklist("message.action.success", transitionName);
-
-                target.appendJavaScript("window.close();");
             }
 
             @Override

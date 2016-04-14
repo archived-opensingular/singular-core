@@ -29,6 +29,7 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -184,10 +185,13 @@ public abstract class AbstractFormContent extends Content {
                 setFormXML(getFormModel(), Optional.ofNullable(rootXml).map(MElement::toStringExato).orElse(null));
                 processAnnotations(getCurrentInstance().getObject());
                 getCurrentInstance().getObject().getDocument().persistFiles();
-                saveForm(getCurrentInstance());
-
-                addToastrSuccessMessage("message.success");
-                atualizarContentWorklist(target);
+                try{
+                    saveForm(getCurrentInstance());
+                    addToastrSuccessMessage("message.success");
+                    atualizarContentWorklist(target);
+                }catch (HibernateOptimisticLockingFailureException e){
+                    addToastrErrorMessage("message.save.concurrent_error");
+                }
             }
         };
         return button.add(visibleOnlyInEditionBehaviour());
@@ -214,8 +218,12 @@ public abstract class AbstractFormContent extends Content {
 
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                save(target);
-                addToastrSuccessMessage("message.success");
+                try {
+                    save(target);
+                    addToastrSuccessMessage("message.success");
+                }catch (HibernateOptimisticLockingFailureException e){
+                    addToastrErrorMessage("message.save.concurrent_error");
+                }
             }
 
             @Override
