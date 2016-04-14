@@ -10,14 +10,14 @@
         <version>0.1.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>singular-pet-server</artifactId>
-    <name>[singular-server :: server-libs :: singular-pet-server]</name>
+    <artifactId>flow-server-commons</artifactId>
+    <name>[singular-server :: server-libs :: flow-server-commons]</name>
     <packaging>jar</packaging>
 
     <build>
         <resources>
             <resource>
-                <filtering>false</filtering>
+                <filtering>true</filtering>
                 <directory>src/main/resources</directory>
             </resource>
             <resource>
@@ -35,11 +35,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>br.net.mirante</groupId>
-            <artifactId>singular-pet-commons</artifactId>
-            <version>0.1.3-SNAPSHOT</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
-
-
+ 
 </project>

@@ -15,9 +15,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>singular-pet-commons</module>
-        <module>singular-pet-module</module>
-        <module>singular-pet-server</module>
+        <module>flow-server-commons</module>
+        <module>flow-module</module>
+        <module>flow-server</module>
+        <module>pet-server-libs</module>
     </modules>
 
 
