@@ -67,8 +67,6 @@ public abstract class SingularTemplate extends WebPage {
 
     protected void initSkins() {
         skinOptions.addDefaulSkin("Default", CssHeaderItem.forUrl("/singular-static/resources/metronic/layout4/css/themes/default.css"));
-        skinOptions.addSkin("Vermelho", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/red.css"));
-        skinOptions.addSkin("Verde", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/green.css"));
         skinOptions.addSkin("Anvisa", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/anvisa.css"));
         skinOptions.addSkin("Montreal", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/montreal.css"));
     }
