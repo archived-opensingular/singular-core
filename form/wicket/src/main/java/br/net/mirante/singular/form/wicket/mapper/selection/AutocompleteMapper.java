@@ -3,9 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
@@ -15,12 +13,10 @@ import org.apache.wicket.model.IModel;
  *
  * @author Fabricio Buzeto
  */
-public class AutocompleteMapper implements ControlsFieldComponentMapper {
+public class AutocompleteMapper extends ControlsFieldComponentAbstractMapper {
+
     @Override
-    public Component appendInput(SView view, BSContainer bodyContainer,
-                                 BSControls formGroup,
-                                 IModel<? extends SInstance> model,
-                                 IModel<String> labelModel) {
+    public Component appendInput() {
         TypeaheadComponent comp;
 
         validateView(view);
