@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal;
 
+import java.math.BigDecimal;
+import java.util.Optional;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
@@ -15,13 +18,12 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
+import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
@@ -75,7 +77,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         STypeList<STypeComposite<SIComposite>, SIComposite> concentracoes = notificacaoSimplificada.addFieldListOfComposite("concentracoes", "concentracao");
         STypeComposite<SIComposite> concentracao = concentracoes.getElementsType();
         SType<?>                planta   = concentracao.addFieldString("planta");
-        STypeSimple             valorConcentracao = concentracao.addFieldDecimal("concentracao");
+        STypeDecimal            valorConcentracao = concentracao.addFieldDecimal("concentracao");
         STypeSimple             unidade = concentracao.addFieldString("unidade");
         planta
                 .asAtrBasic().enabled(false).label("Nomenclatura botânica").asAtrBootstrap().colPreference(4);
@@ -102,6 +104,25 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
                         }
                     }
                 });
+
+        valorConcentracao.addInstanceValidator(validatable -> {
+            Integer idNomenclatura = validatable.getInstance().findNearest(nomenclaturaBotanica).get().findNearest(idNomenclaturaBotanica).get().getValue();
+            final BigDecimal value = validatable.getInstance().getValue();
+
+            final Pair p = dominioService(validatable.getInstance()).rangeConcentracoes(idNomenclatura);
+            if (p != null) {
+                final BigDecimal min = (BigDecimal) p.getLeft();
+                final BigDecimal max = (BigDecimal) p.getRight();
+                String faixa = String.format("%s - %s", min, max);
+                if (value == null) {
+
+                } else if (value.compareTo(min) < 0 ) {
+                    validatable.error(String.format("O valor está fora da faixa de concentração: %s", faixa));
+                } else if (value.compareTo(max) > 0 ) {
+                    validatable.error(String.format("O valor está fora da faixa de concentração: %s", faixa));
+                }
+            }
+        });
 
         notificacaoSimplificada.addFieldListOfAttachment("formulas", "formula")
         .asAtrBasic()
@@ -130,10 +151,24 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         acondicionamento.locaisFabricacao.asAtrBasic().visible(false);
 
         final STypeList<STypeEnsaioControleQualidade, SIComposite> ensaios = notificacaoSimplificada.addFieldListOf("ensaiosControleQualidade", STypeEnsaioControleQualidade.class);
+        final STypeEnsaioControleQualidade ensaio = ensaios.getElementsType();
         ensaios
                 .withView(new SViewListByMasterDetail()
-                        .col(ensaios.getElementsType().descricaoTipoEnsaio, "Ensaio"))
+                        .col(ensaio.descricaoTipoEnsaio, "Ensaio")
+                        .col(ensaio.descricaoTipoReferencia, "Tipo de referência")
+                        .disableNew().disableDelete())
                 .asAtrBasic().label("Ensaio de Controle de Qualidade");
+
+
+        notificacaoSimplificada.withInitListener(ins -> {
+            final Optional<SIList<SIComposite>> lista = ins.findNearest(ensaios);
+
+            for (STypeEnsaioControleQualidade.TipoEnsaioControleQualidade tipoEnsaioControleQualidade : STypeEnsaioControleQualidade.TipoEnsaioControleQualidade.values()) {
+                final SIComposite siComposite = lista.get().addNew();
+                siComposite.findNearest(ensaio.idTipoEnsaio).get().setValue(tipoEnsaioControleQualidade.getId());
+                siComposite.findNearest(ensaio.descricaoTipoEnsaio).get().setValue(tipoEnsaioControleQualidade.getDescricao());
+            }
+        });
 
     }
 

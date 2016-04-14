@@ -5,10 +5,6 @@
 
 package br.net.mirante.singular.util.wicket.template;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -20,6 +16,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class SingularTemplate extends WebPage {
 
@@ -70,6 +70,7 @@ public abstract class SingularTemplate extends WebPage {
         skinOptions.addSkin("Vermelho", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/red.css"));
         skinOptions.addSkin("Verde", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/green.css"));
         skinOptions.addSkin("Anvisa", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/anvisa.css"));
+        skinOptions.addSkin("Montreal", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/montreal.css"));
     }
 
     public List<CssHeaderItem> getDefaultCSSUrls() {

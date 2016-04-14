@@ -5,42 +5,30 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado;
 
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeCategoriaRegulatoria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificadaDinamizado.class)
 public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
@@ -69,7 +57,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         addCaracteristicas(notificacaoSimplificada);
         addNomeComercial(notificacaoSimplificada);
-        addInformacoesFarmacopeicas(notificacaoSimplificada);
         addAcondicionamentos(notificacaoSimplificada);
         addListaFormulaProduto(notificacaoSimplificada);
         addIndicacaoTerapeutica(notificacaoSimplificada);
@@ -80,7 +67,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
     private void addCaracteristicas(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> caracteristicas =  notificacaoSimplificada.addFieldComposite("caracteristicas");
-        caracteristicas.asAtrAnnotation().setAnnotated();
         caracteristicas.addField("classe", STypeCategoriaRegulatoria.class);
 
         final STypeLinhaProducaoDinamizado linhaProducao = caracteristicas.addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
@@ -119,11 +105,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 });
 
 
-        final STypeDecimal potencia = formulaHomeopatica.addFieldDecimal("potencia");
+        final STypeInteger potencia = formulaHomeopatica.addFieldInteger("potencia");
         potencia
-                .asAtrBasic().label("Potência")
-                .tamanhoInteiroMaximo(5)
-                .tamanhoDecimalMaximo(5);
+                .asAtrBasic().label("Potência");
 
         final STypeString  escala   = formulaHomeopatica.addFieldString("escala");
         escala
@@ -131,18 +115,19 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         potencia.addInstanceValidator(validatable -> {
             Integer idDescricao = validatable.getInstance().findNearest(descricaoDinamizada).get().findNearest(idDescricaoDinamizada).get().getValue();
-            final BigDecimal value = validatable.getInstance().getValue();
-            final List<Triple> triples = dominioService(validatable.getInstance()).diluicoes(idDescricao);
-            for (Triple t : triples) {
+            final Integer value = validatable.getInstance().getValue();
+            final Triple t = dominioService(validatable.getInstance()).diluicao(idDescricao);
+            if (t != null) {
                 final BigDecimal min = (BigDecimal) t.getMiddle();
                 final BigDecimal max = (BigDecimal) t.getRight();
                 String faixa = String.format("%s - %s", min, max);
                 if (value == null) {
 
-                } else if (value.compareTo(min) < 0 ) {
+                } else if (BigDecimal.valueOf(value).compareTo(min) < 0) {
                     validatable.error(String.format("O valor está fora da faixa de concentração: %s", faixa));
-                } else if (value.compareTo(max) > 0 ) {
+                } else if (BigDecimal.valueOf(value).compareTo(max) > 0) {
                     validatable.error(String.format("O valor está fora da faixa de concentração: %s", faixa));
+
                 }
             }
         });
@@ -198,13 +183,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         }
     }
 
-    private void addInformacoesFarmacopeicas(STypeComposite<?> notificacaoSimplificada) {
-        STypeComposite<SIComposite> informacoesFarmacopeicas = notificacaoSimplificada.addFieldComposite("informacoesFarmacopeicas");
-        informacoesFarmacopeicas.asAtrBasic().label("Informações farmacopeicas");
-
-        STypeFarmacopeiaReferencia farmacopeia = informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
-    }
-
     private void addAcondicionamentos(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> listaAcondicionamentos = notificacaoSimplificada.addFieldComposite("listaAcondicionamento");
         listaAcondicionamentos
@@ -227,7 +205,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
     private void addNomeComercial(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> nomeComercialComposto = notificacaoSimplificada.addFieldComposite("nomeComercial");
-        nomeComercialComposto.asAtrAnnotation().setAnnotated();
 
         final STypeString nomeComercial = nomeComercialComposto.addFieldString("nomeComercial");
         nomeComercial
@@ -241,12 +218,13 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     private void addListaFormulaProduto(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> listaFormulaProduto = notificacaoSimplificada.addFieldComposite("listaFormulaProduto");
         listaFormulaProduto
-                .asAtrBasic().label("Fórmulas do produto");
+                .asAtrBasic().label("Fórmulas do produto")
+                .asAtrAnnotation().setAnnotated();
         final STypeAttachmentList formulasProduto =
                 listaFormulaProduto.addFieldListOfAttachment("formulasProduto", "formulaProduto");
         formulasProduto
+                .withMiniumSizeOf(1)
                 .asAtrBasic()
-                .required()
                 .label("Fórmula do produto");
     }
 
@@ -258,8 +236,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeAttachmentList layoutsBula =
                 listaLayoutFolheto.addFieldListOfAttachment("layoutsfolheto", "layoutfolheto");
         layoutsBula
+                .withMiniumSizeOf(1)
                 .asAtrBasic()
-                .required()
                 .label("Layout folheto");
     }
 
@@ -271,8 +249,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeAttachmentList indicacoesPropostas =
                 listaReferencias.addFieldListOfAttachment("indicacoesPropostas", "indicacaoProposta");
         indicacoesPropostas
+                .withMiniumSizeOf(1)
                 .asAtrBasic()
-                .required()
                 .label("Referências das indicações propostas");
     }
 
