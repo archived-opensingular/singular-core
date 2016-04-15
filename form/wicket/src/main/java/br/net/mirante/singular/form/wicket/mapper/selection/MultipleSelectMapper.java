@@ -5,34 +5,30 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
+import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import static org.apache.wicket.util.lang.Generics.newArrayList;
 
 @SuppressWarnings("serial")
-public class MultipleSelectMapper implements ControlsFieldComponentMapper {
+public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Component appendInput(SView view, BSContainer bodyContainer,
-                                 BSControls formGroup, final IModel<? extends SInstance> model,
-                                 IModel<String> labelModel) {
+    public Component appendInput() {
         final List<SelectOption> opcoesValue;
         final STypeList tipoLista;
         if (model.getObject().getType() instanceof STypeList) {

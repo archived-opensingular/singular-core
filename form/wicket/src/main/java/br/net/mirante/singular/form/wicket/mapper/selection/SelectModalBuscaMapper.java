@@ -5,23 +5,20 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-
-public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
+public class SelectModalBuscaMapper extends ControlsFieldComponentAbstractMapper {
 
 
-    public Component appendInput(SView view, BSContainer bodyContainer, BSControls formGroup,
-                                 IModel<? extends SInstance> model, IModel<String> labelModel)
+    public Component appendInput()
     {
         if (view instanceof SViewSelectionBySearchModal) {
             return formGroupAppender(formGroup, bodyContainer, model, (SViewSelectionBySearchModal) view);

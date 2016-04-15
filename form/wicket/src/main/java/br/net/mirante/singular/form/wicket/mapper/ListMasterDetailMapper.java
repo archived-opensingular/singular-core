@@ -12,6 +12,8 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import br.net.mirante.singular.form.wicket.util.FormStateUtil;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
@@ -252,6 +254,10 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         builder.appendPropertyColumn(labelModel, o -> {
             SIComposite composto = (SIComposite) o;
             SType<?> mtipo = mTipoModel.getObject();
+            if(mtipo == null){
+                Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Não foi especificado o valor da coluna para "+o);
+                return null;
+            }
             SInstance instancia = composto.findDescendant(mtipo).get();
             return displayValueFunction.apply(instancia);
         });

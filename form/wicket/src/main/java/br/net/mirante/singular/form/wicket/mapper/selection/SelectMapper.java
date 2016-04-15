@@ -5,9 +5,12 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import java.util.List;
-
-import br.net.mirante.singular.form.mform.options.SOptionsConfig;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
@@ -15,21 +18,13 @@ import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import java.util.List;
 
 @SuppressWarnings({"rawtypes", "serial"})
-public class SelectMapper implements ControlsFieldComponentMapper {
+public class SelectMapper extends ControlsFieldComponentAbstractMapper {
 
     @Override
-    public Component appendInput(SView view, BSContainer bodyContainer,
-                                 BSControls formGroup, IModel<? extends SInstance> model,
-                                 IModel<String> labelModel) {
+    public Component appendInput() {
         return formGroupAppender(formGroup, model, getOpcoesValue(model), view);
     }
 
