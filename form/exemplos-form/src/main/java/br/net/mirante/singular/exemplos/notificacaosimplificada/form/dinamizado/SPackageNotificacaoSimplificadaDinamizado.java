@@ -191,6 +191,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos =
                 listaAcondicionamentos.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();
+        acondicionamentos.withMiniumSizeOf(1);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
                         .col(acondicionamento.embalagemPrimaria, "Embalagem primária")
