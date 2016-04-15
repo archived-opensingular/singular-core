@@ -1,6 +1,5 @@
-package br.net.mirante.singular.server.commons.spring.security;
+package br.net.mirante.singular.server.commons.config;
 
-import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import org.apache.wicket.request.Request;
 
@@ -10,10 +9,9 @@ import javax.servlet.http.HttpServletRequest;
  * Utilitário para prover a configuração de contexto atual e os métodos utilitários
  * relacionados.
  */
-public enum ServerContext {
+public enum ServerContext implements IServerContext {
 
-    PETICIONAMENTO("/peticionamento/*", ConfigProperties.PETICIONAMENTO_CONTEXT_KEY),
-    ANALISE("/analise/*", ConfigProperties.ANALISE_CONTEXT_KEY);
+    WORKLIST("/worklist/*", ConfigProperties.ANALISE_CONTEXT_KEY);
 
     private final String contextPath;
 
@@ -33,10 +31,10 @@ public enum ServerContext {
     public static ServerContext getContextFromRequest(HttpServletRequest request) {
         String contextPath = request.getContextPath();
         String context = request.getPathInfo().replaceFirst(contextPath, "");
-        if (context.startsWith(ANALISE.getUrlPath())) {
-            return ServerContext.ANALISE;
-        } else if (context.startsWith(PETICIONAMENTO.getUrlPath())) {
-            return ServerContext.PETICIONAMENTO;
+        for (ServerContext ctx : ServerContext.values()){
+            if (context.startsWith(ctx.getUrlPath())) {
+                return ctx;
+            }
         }
         throw new SingularServerException("Não foi possível determinar o contexto do servidor do singular: peticionamento ou analise");
     }

@@ -21,7 +21,7 @@ import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 
-public abstract class PetApplication extends AuthenticatedWebApplication
+public abstract class SingularApplication extends AuthenticatedWebApplication
         implements ApplicationContextAware {
 
     public static final String BASE_FOLDER = "/tmp/fileUploader";
@@ -30,8 +30,8 @@ public abstract class PetApplication extends AuthenticatedWebApplication
 
     private ApplicationContext ctx;
 
-    public static PetApplication get() {
-        return (PetApplication) WebApplication.get();
+    public static SingularApplication get() {
+        return (SingularApplication) WebApplication.get();
     }
 
     @Override

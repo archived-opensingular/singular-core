@@ -2,6 +2,7 @@ package br.net.mirante.singular.server.commons.spring.security;
 
 
 
+import br.net.mirante.singular.server.commons.config.ServerContext;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

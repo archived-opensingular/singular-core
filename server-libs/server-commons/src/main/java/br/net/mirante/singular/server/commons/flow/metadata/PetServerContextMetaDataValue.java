@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.commons.flow.metadata;
 
-import br.net.mirante.singular.server.commons.spring.security.ServerContext;
+import br.net.mirante.singular.server.commons.config.ServerContext;
 import br.net.mirante.singular.flow.core.property.MetaDataRef;
 
 import java.util.ArrayList;

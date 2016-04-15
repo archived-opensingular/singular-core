@@ -1,7 +1,7 @@
 package br.net.mirante.singular.pet.module.test;
 
 
-import br.net.mirante.singular.server.commons.spring.security.ServerContext;
+import br.net.mirante.singular.server.commons.config.ServerContext;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.junit.Assert;
 import org.junit.Test;

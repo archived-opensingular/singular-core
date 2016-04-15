@@ -1,5 +1,6 @@
 package br.net.mirante.singular.server.commons.spring.security;
 
+import br.net.mirante.singular.server.commons.config.ServerContext;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;

@@ -11,7 +11,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 
 import br.net.mirante.singular.server.commons.spring.security.SecurityUtil;
-import br.net.mirante.singular.server.commons.spring.security.ServerContext;
+import br.net.mirante.singular.server.commons.config.ServerContext;
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 
 /**
