@@ -15,9 +15,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>singular-pet-commons</module>
-        <module>singular-pet-module</module>
-        <module>singular-pet-server</module>
+        <module>server-commons</module>
+        <module>server-module</module>
+        <module>server-core</module>
+        <module>p-server-libs</module>
     </modules>
 
 

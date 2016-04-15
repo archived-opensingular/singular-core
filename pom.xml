@@ -14,7 +14,6 @@
     <modules>
         <module>server-libs</module>
         <module>sso</module>
-        <module>worklist</module>
     </modules>
 
     <distributionManagement>
