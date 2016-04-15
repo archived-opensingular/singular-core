@@ -117,7 +117,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         private final Item<SInstance> item;
         private final ElementsView elementsView;
 
-        private InserirButton(String id, ElementsView elementsView, Form<?> form, IModel<SIList<SInstance>> mLista, Item<SInstance> item) {
+        protected InserirButton(String id, ElementsView elementsView, Form<?> form, IModel<SIList<SInstance>> mLista, Item<SInstance> item) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             this.elementsView = elementsView;
@@ -148,7 +148,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         private final ElementsView elementsView;
         private final Item<SInstance> item;
 
-        private RemoverButton(String id, Form<?> form, ElementsView elementsView, Item<SInstance> item) {
+        protected RemoverButton(String id, Form<?> form, ElementsView elementsView, Item<SInstance> item) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             this.elementsView = elementsView;

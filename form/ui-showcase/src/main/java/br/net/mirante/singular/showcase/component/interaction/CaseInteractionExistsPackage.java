@@ -9,7 +9,6 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDate;
@@ -42,9 +41,9 @@ public class CaseInteractionExistsPackage extends SPackage {
                 .asAtrBasic().dependsOn(exists);
 
         recordText.asAtrBasic().label("Text")
-                .as(AtrBootstrap::new).colPreference(3);
+                .asAtrBootstrap().colPreference(3);
 
         recordDate.asAtrBasic().label("Date")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBootstrap().colPreference(2);
     }
 }

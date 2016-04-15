@@ -16,11 +16,11 @@ public class SimpleVisibilityValidationTest extends SingularFormBaseTest {
     protected void buildBaseType(STypeComposite<?> mockType) {
 
         fieldOne = mockType.addFieldString("fieldOne");
-        fieldOne.asAtrCore().obrigatorio(true);
+        fieldOne.asAtrBasic().required(true);
 
         fieldTwo = mockType.addFieldString("fieldTwo");
-        fieldTwo.asAtrBasic().visivel(i -> false);
-        fieldTwo.asAtrCore().obrigatorio(true);
+        fieldTwo.asAtrBasic().visible(i -> false);
+        fieldTwo.asAtrBasic().required(true);
     }
 
     @Test

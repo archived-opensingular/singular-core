@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.SIList;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
@@ -35,7 +37,10 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
+import org.apache.wicket.util.time.Duration;
+
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 /**
  * FileUploadPanel
@@ -88,6 +93,10 @@ public class FileUploadPanel extends Panel {
      * DownloadLink, escreve o arquivo do SIAttachment.
      */
     private final Link<Void> downloadLink = new Link<Void>("downloadLink") {
+
+        private static final String SELF = "_self", BLANK = "_blank";
+        private IModel<String> target = $m.ofValue(SELF);
+
         @Override
         public void onClick() {
             final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
@@ -96,10 +105,35 @@ public class FileUploadPanel extends Panel {
                     outputStream.write(model.getObject().getContentAsByteArray());
                 }
             };
+
             final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
+
             requestHandler.setFileName(model.getObject().getFileName());
-            requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+            requestHandler.setCacheDuration(Duration.NONE);
+
+            if (model.getObject().isContentTypeBrowserFriendly()) {
+                requestHandler.setContentDisposition(ContentDisposition.INLINE);
+            } else {
+                requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+            }
+
             getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
+        }
+
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new AttributeModifier("target", target));
+        }
+
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            if (model.getObject().isContentTypeBrowserFriendly()) {
+                target.setObject(BLANK);
+            } else {
+                target.setObject(SELF);
+            }
         }
     };
 
@@ -125,7 +159,13 @@ public class FileUploadPanel extends Panel {
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             super.onSubmit(target, form);
             model.getObject().clearInstance();
-            target.add(fileDummyField, fileName, removeFileButton, chooseFieldButton);
+            if (model.getObject().getParent() instanceof SIList) {
+                final SIList parent = (SIList) model.getObject().getParent();
+                parent.remove(parent.indexOf(model.getObject()));
+                target.add(form);
+            } else {
+                target.add(fileDummyField, fileName, removeFileButton, chooseFieldButton);
+            }
         }
     };
 
@@ -183,7 +223,6 @@ public class FileUploadPanel extends Panel {
                 if (upload != null) {
                     model.getObject().setContent(upload.getBytes());
                     model.getObject().setFileName(upload.getClientFileName());
-                    model.getObject().setTemporary();
                     target.add(fileDummyField, fileName, chooseFieldButton, removeFileButton);
                 }
             }

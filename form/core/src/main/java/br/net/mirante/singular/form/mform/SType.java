@@ -23,13 +23,10 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
-import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
@@ -84,6 +81,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     private SView view;
 
     private UIComponentMapper customMapper;
+
+    private Consumer<I> updateListener;
 
     public SType() {
         this(null, (Class<SType>) null, null);
@@ -327,50 +326,50 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     public SType<I> withInitialValue(Object value) {
-        return with(SPackageCore.ATR_VALOR_INICIAL, value);
+        return with(SPackageBasic.ATR_VALOR_INICIAL, value);
 
     }
 
     public SType<I> withDefaultValueIfNull(Object value) {
-        return with(SPackageCore.ATR_DEFAULT_IF_NULL, value);
+        return with(SPackageBasic.ATR_DEFAULT_IF_NULL, value);
     }
 
     public Object getAttributeValueOrDefaultValueIfNull() {
-        if (Objects.equals(nameSimple, SPackageCore.ATR_DEFAULT_IF_NULL.getNameSimple())) {
+        if (Objects.equals(nameSimple, SPackageBasic.ATR_DEFAULT_IF_NULL.getNameSimple())) {
             return null;
         }
-        return getAttributeValue(SPackageCore.ATR_DEFAULT_IF_NULL);
+        return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL);
     }
 
     public <V extends Object> V getAttributeValueOrDefaultValueIfNull(Class<V> resultClass) {
-        if (Objects.equals(nameSimple, SPackageCore.ATR_DEFAULT_IF_NULL.getNameSimple())) {
+        if (Objects.equals(nameSimple, SPackageBasic.ATR_DEFAULT_IF_NULL.getNameSimple())) {
             return null;
         }
-        return getAttributeValue(SPackageCore.ATR_DEFAULT_IF_NULL, resultClass);
+        return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL, resultClass);
     }
 
     public Object getAttributeValueInitialValue() {
-        return getAttributeValue(SPackageCore.ATR_VALOR_INICIAL);
+        return getAttributeValue(SPackageBasic.ATR_VALOR_INICIAL);
     }
 
     public SType<I> withRequired(Boolean value) {
-        return with(SPackageCore.ATR_REQUIRED, value);
+        return with(SPackageBasic.ATR_REQUIRED, value);
     }
 
     public final Boolean isRequired() {
-        return getAttributeValue(SPackageCore.ATR_REQUIRED);
+        return getAttributeValue(SPackageBasic.ATR_REQUIRED);
     }
 
     public SType<I> withExists(Boolean value) {
-        return with(SPackageCore.ATR_EXISTS, value);
+        return with(SPackageBasic.ATR_EXISTS, value);
     }
 
     public SType<I> withExists(Predicate<I> predicate) {
-        return with(SPackageCore.ATR_EXISTS_FUNCTION, predicate);
+        return with(SPackageBasic.ATR_EXISTS_FUNCTION, predicate);
     }
 
     public final boolean exists() {
-        return !Boolean.FALSE.equals(getAttributeValue(SPackageCore.ATR_EXISTS));
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
     }
 
     //    public MTipo<I> withOnChange(IBehavior<I> behavior) {
@@ -395,21 +394,21 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         throw new SingularFormException("Classe '" + targetClass + "' não funciona como aspecto");
     }
 
-    public AtrBasic asAtrBasic() {
-        return as(AtrBasic::new);
-    }
-
-    public AtrBootstrap asAtrBootstrap() {
-        return as(AtrBootstrap::new);
-    }
-
-    public AtrCore asAtrCore() {
-        return as(AtrCore::new);
-    }
-
-
-    public <T> T as(Function<? super SType<I>, T> aspectFactory) {
+    @Override
+    public <T> T as(Function<SAttributeEnabled, T> aspectFactory) {
         return aspectFactory.apply(this);
+    }
+
+    /**
+     * Faz cast do tipo atual para a classe da variável que espera receber o
+     * valor ou dispara ClassCastException se o destino não for compatível. É um
+     * método de conveniência para a interface fluente de construção do tipo,
+     * mas com o porem de acusar o erro de cast apenas em tempo de execução.
+     */
+    public <T> T cast() {
+        // TODO (from Daniel) decidir se esse método fica. Quem que devater o
+        // assunto?
+        return (T) this;
     }
 
     public final <T extends SView> SType<I> withView(Supplier<T> factory) {
@@ -423,6 +422,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             initializer.accept(mView);
         }
         setView(mView);
+        return this;
+    }
+
+    public SType<I> withUpdateListener(Consumer<I> consumer) {
+        this.updateListener = consumer;
         return this;
     }
 
@@ -680,4 +684,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     public UIComponentMapper getCustomMapper() {
         return customMapper;
     }
+
+    public Consumer<I> getUpdateListener() {
+        return updateListener;
+    }
+
 }

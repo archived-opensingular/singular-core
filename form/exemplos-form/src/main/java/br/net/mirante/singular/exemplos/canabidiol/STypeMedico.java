@@ -10,11 +10,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 
 
@@ -27,53 +23,53 @@ public class STypeMedico extends STypeComposite<SIComposite> {
 
         this
                 .addFieldString("nome")
-                .as(AtrCore::new)
-                .obrigatorio()
-                .as(AtrBasic::new)
+                .asAtrBasic()
+                .required()
+                .asAtrBasic()
                 .label("Nome do Médico")
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(6);
 
         this
                 .addFieldString("CRM")
-                .as(AtrCore::new)
-                .obrigatorio()
-                .as(AtrBasic::new)
+                .asAtrBasic()
+                .required()
+                .asAtrBasic()
                 .label("Número do CRM")
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(3);
 
-        STypeComposite<?> estado = this.addFieldComposite("UFCRM");
+        STypeComposite<?> estado = addFieldComposite("UFCRM");
         estado
-                .as(AtrCore::new)
-                .obrigatorio()
-                .as(AtrBasic::new)
+                .asAtrBasic()
+                .required()
+                .asAtrBasic()
                 .label("UF do CRM")
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(3);
         estado.addFieldString("sigla");
         STypeString nomeUF = estado.addFieldString("nome");
         estado
-                .withSelectionFromProvider(nomeUF, (SOptionsProvider) inst -> SelectBuilder.buildEstados(estado));
+                .withSelectionFromProvider(nomeUF, (SOptionsProvider) (inst, f) -> SelectBuilder.buildEstados(estado));
 
-        this.addFieldCPF("cpf")
-                .as(AtrBasic::new)
+        addFieldCPF("cpf")
+                .asAtrBasic()
                 .label("CPF")
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(3);
 
 
         this.addField("endereco", STypeEndereco.class)
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Endereço")
-                .as(AtrAnnotation::new).setAnnotated();
+                .asAtrAnnotation().setAnnotated();
 
         STypeContato tipoTelefone = this.addField("contato", STypeContato.class);
         tipoTelefone
                 .telefoneFixo
-                .as(AtrCore::new)
-                .obrigatorio()
-                .as(AtrAnnotation::new).setAnnotated();
+                .asAtrBasic()
+                .required()
+                .asAtrAnnotation().setAnnotated();
 
     }
 }

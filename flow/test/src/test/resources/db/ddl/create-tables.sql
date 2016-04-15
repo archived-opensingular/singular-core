@@ -17,7 +17,7 @@
 --DROP SCHEMA DBSINGULAR
 --IF EXISTS CASCADE;
 DROP ALL OBJECTS;
-CREATE SCHEMA DBSINGULAR;
+CREATE SCHEMA  if not exists DBSINGULAR;
 
 /*==============================================================*/
 /* Table: RL_PERMISSAO_PROCESSO                                 */

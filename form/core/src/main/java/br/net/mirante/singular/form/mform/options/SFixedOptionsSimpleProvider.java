@@ -12,6 +12,7 @@ import br.net.mirante.singular.form.mform.STypeSimple;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 @SuppressWarnings("serial")
 public class SFixedOptionsSimpleProvider implements SOptionsProvider {
@@ -81,7 +82,7 @@ public class SFixedOptionsSimpleProvider implements SOptionsProvider {
     }
 
     @Override
-    public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+    public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
         return options;
     }
 

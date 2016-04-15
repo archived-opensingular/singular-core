@@ -16,6 +16,11 @@ import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeSimple;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 @SInfoType(name = "DateTime", spackage = SPackageCore.class)
 public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
@@ -32,21 +37,42 @@ public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
         super(classeInstancia, Date.class);
     }
 
-    @Override
     public Date fromString(String value) {
+        if (Strings.isNullOrEmpty(value)) return null;
         try {
-            if (Strings.isNullOrEmpty(value)) return null;
-            return (new SimpleDateFormat(FORMAT)).parse(value);
-        } catch (ParseException e) {
-            String msg = String.format("Can't parse value '%s' with format '%s'.", value, FORMAT);
-            LOGGER.log(Level.WARNING, msg, e);
-            throw Throwables.propagate(e);
+            return isoFormarter().parseDateTime(value).toDate();
+        } catch (Exception e) {
+            try{
+                return latinFormatter().parse(value);
+            } catch (Exception ex) {
+                return handleError(value, ex);
+            }
         }
+    }
+
+    private Date handleError(String value, Exception e) {
+        String msg = String.format("Can't parse value '%s' with format '%s'.", value, "dd/MM/yyyy");
+        LOGGER.log(Level.WARNING, msg, e);
+        throw Throwables.propagate(e);
+    }
+
+    @Override
+    public String toStringDisplayDefault(Date date) {
+        return latinFormatter().format(date);
     }
 
     @Override
     protected String toStringPersistence(Date originalValue) {
-        return (new SimpleDateFormat(FORMAT)).format(originalValue);
+        DateTime instant = new DateTime(originalValue);
+        return isoFormarter().print(instant.withZone(DateTimeZone.UTC));
+    }
+
+    private static DateTimeFormatter isoFormarter() {
+        return DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ").withZone(DateTimeZone.UTC);
+    }
+
+    private static SimpleDateFormat latinFormatter() {
+        return new SimpleDateFormat("dd/MM/yyyy HH:mm");
     }
 
 }

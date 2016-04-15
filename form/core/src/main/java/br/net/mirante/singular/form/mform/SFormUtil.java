@@ -22,26 +22,26 @@ public final class SFormUtil {
 
     private static Pattern idPattern;
 
-    public static boolean isValidSimpleName(String name) {
+    static boolean isValidSimpleName(String name) {
         if (idPattern == null) {
             idPattern = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
         }
         return idPattern.matcher(name).matches();
     }
 
-    public static void validateSimpleName(String name) {
+    static void validateSimpleName(String name) {
         if (!isValidSimpleName(name)) {
             throw new RuntimeException("'" + name + "' não é um nome válido para tipo ou atributo");
         }
     }
 
-    public static void validatePackageName(String name) {
+    static void validatePackageName(String name) {
         if (!SourceVersion.isName(name)) {
             throw new RuntimeException("'" + name + "' não é um nome válido para um pacote");
         }
     }
 
-    public static SType<?> resolveFieldType(SType<?> type, PathReader pathReader) {
+    static SType<?> resolveFieldType(SType<?> type, PathReader pathReader) {
         while (!pathReader.isEmpty()) {
             type = resolveFieldTypeInternal(type, pathReader);
             pathReader = pathReader.next();
@@ -91,7 +91,7 @@ public final class SFormUtil {
                 if (current.getParent() instanceof SIList) {
                     int pos = ((SIList<?>) current.getParent()).indexOf(current);
                     if (pos == -1) {
-                        throw new SingularFormException("Filho não encontrado");
+                        throw new SingularFormException(current.getName() + " não é mais filho de "+current.getParent().getName());
                     }
                     sb.append('[').append(pos).append(']');
                 } else {

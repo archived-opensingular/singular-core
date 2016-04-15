@@ -59,6 +59,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     public void clearInstance() {
         if (values != null) {
             values.forEach(SInstance::clearInstance);
+            values.clear();
         }
     }
 
@@ -195,8 +196,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     public void setValue(Object obj) {
         if(obj instanceof SIList){
             clearInstance();
-            values = newArrayList(((SIList)obj).values);
-            elementsType = ((SIList)obj).elementsType;
+            values = newArrayList(((SIList)obj).getValues());
+            elementsType = ((SIList)obj).getElementsType();
             ((SIList) obj).getValue().clear();
         }else{
             throw new RuntimeException("SList só suporta valores de mesmo tipo");
@@ -315,6 +316,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public String toString() {
-        return String.format("MILista(%s)", getAllChildren());
+        return String.format("%s(%s)", getClass().getSimpleName(), getAllChildren());
     }
 }

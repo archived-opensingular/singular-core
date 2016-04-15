@@ -72,6 +72,7 @@ public class FormFreemarkerUtilTest {
         assertMerge(curriculo, "certificados[0].data", "C1: ${toStringDisplayDefault()}").isEqualTo("C1: 10/03/2016");
 
         assertMerge(curriculo, null, "<#list certificados as c>${c.nome};</#list>").isEqualTo("Java;Oracle;");
+        assertMerge(curriculo, "certificados", "<#list _inst as c>${c.nome};</#list>").isEqualTo("Java;Oracle;");
     }
 
     private static AbstractAssert<StringAssert, String> assertMerge(SIComposite composite, String path, String templateString) {

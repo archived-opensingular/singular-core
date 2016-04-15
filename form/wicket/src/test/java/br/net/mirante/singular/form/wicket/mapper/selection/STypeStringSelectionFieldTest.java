@@ -35,7 +35,7 @@ public class STypeStringSelectionFieldTest {
         }
     }
 
-    public static class A extends Base {
+    public static class Default extends Base {
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
             super.buildBaseType(baseType);

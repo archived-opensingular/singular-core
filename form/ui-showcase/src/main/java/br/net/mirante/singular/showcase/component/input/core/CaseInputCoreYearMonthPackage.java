@@ -9,18 +9,17 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 
 public class CaseInputCoreYearMonthPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         tipoMyForm.addField("inicio", STypeYearMonth.class)
                 .as(AtrBasic.class)
                 .label("Data Início")
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(2);
     }
 

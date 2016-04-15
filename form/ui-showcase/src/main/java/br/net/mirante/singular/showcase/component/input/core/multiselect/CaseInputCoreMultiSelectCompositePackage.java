@@ -21,7 +21,7 @@ public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
         /**
          * Neste caso os campos de chave e valor utilizados serão os padrões "id" e "value".
          */
-        STypeComposite<SIComposite> tipoIngrediente = (STypeComposite<SIComposite>) pb.createCompositeType("tipoIngrediente");
+        STypeComposite<SIComposite> tipoIngrediente = pb.createCompositeType("tipoIngrediente");
         tipoIngrediente.addFieldString("id");
         tipoIngrediente.addFieldString("label");
         tipoIngrediente.withSelectionFromProvider("label", (inst, lb) ->
@@ -33,13 +33,13 @@ public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
         );
         STypeList<STypeComposite<SIComposite>, SIComposite> ingredienteQuimico =
                 tipoMyForm.addFieldListOf("ingredientes", tipoIngrediente);
-        ingredienteQuimico.as(AtrBasic::new).label("Componentes Químicos");
+        ingredienteQuimico.asAtrBasic().label("Componentes Químicos");
 
         /**
          * Neste caso os campos de chave e valor utilizados serão os definidos por
          * "sku" e "nome".
          */
-        STypeComposite<SIComposite> productType = (STypeComposite<SIComposite>) pb.createCompositeType("product");
+        STypeComposite<SIComposite> productType = pb.createCompositeType("product");
         productType.addFieldString("sku");
         productType.addFieldString("nome");
         productType.withSelectionFromProvider("nome", (inst, lb) ->
@@ -50,6 +50,6 @@ public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
                         .add().set("sku", "SKU456789").set("nome", "Pirâmide"));
         STypeList<STypeComposite<SIComposite>, SIComposite> produtos =
                 tipoMyForm.addFieldListOf("products", productType);
-        produtos.as(AtrBasic::new).label("Produtos");
+        produtos.asAtrBasic().label("Produtos");
     }
 }

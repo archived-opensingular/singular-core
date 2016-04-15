@@ -5,17 +5,16 @@
 
 package br.net.mirante.singular.form.mform.core.attachment;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
 
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SingularFormException;
+import org.apache.tika.Tika;
 
 public class SIAttachment extends SIComposite {
-
-    private IAttachmentPersistenceHandler getAttachmentHandler() {
-        return isTemporary() ? getDocument().getAttachmentPersistenceTemporaryHandler()
-                : getDocument().getAttachmentPersistencePermanentHandler();
-    }
 
     private AttachmentDocumentService getAttachmentService() {
         return AttachmentDocumentService.lookup(this);
@@ -41,7 +40,7 @@ public class SIAttachment extends SIComposite {
         setValue(STypeAttachment.FIELD_SIZE, ref.getSize());
     }
 
-    public void deleteReference() {
+    void deleteReference() {
         if (getFileId() != null) {
             getAttachmentService().deleteReference(getFileId());
         }
@@ -59,24 +58,27 @@ public class SIAttachment extends SIComposite {
         super.onRemove();
     }
 
-    public IAttachmentRef getAttachmentRef() {
+    IAttachmentRef getAttachmentRef() {
         final String hash = getFileHashSHA1();
         if (hash == null) {
             return null;
         }
-        final IAttachmentRef ref = getAttachmentHandler().getAttachment(hash);
+
+        IAttachmentRef ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(hash);
+
         if (ref == null) {
-            throw new RuntimeException(errorMsg("Não foi encontrado o arquivo de hash=" + hash + " e nome=" + getFileName()));
+            ref = getDocument().getAttachmentPersistencePermanentHandler().getAttachment(hash);
+        }
+
+        if (ref == null) {
+            //todo trocar para SingularException, rever se é relevante uma vez que crash a aplicacao pela falta de um anexo.
+//            throw new RuntimeException(errorMsg("Não foi encontrado o arquivo de hash=" + hash + " e nome=" + getFileName()));
         }
         return ref;
     }
 
     public void setFileName(String name) {
         setValue(STypeAttachment.FIELD_NAME, name);
-    }
-
-    public void setFileHashSHA1(String hash) {
-        setValue(STypeAttachment.FIELD_HASH_SHA1, hash);
     }
 
     public void setFileId(String id) {
@@ -87,15 +89,11 @@ public class SIAttachment extends SIComposite {
         setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, id);
     }
 
-    public void setFileSize(Integer size) {
-        setValue(STypeAttachment.FIELD_SIZE, size);
-    }
-
     /**
      * Retorna o tamanho do arquivo binário associado ou -1 se não houver
      * arquivo.
      */
-    public Integer getFileSize() {
+    Integer getFileSize() {
         return getValueInteger(STypeAttachment.FIELD_SIZE);
     }
 
@@ -115,7 +113,7 @@ public class SIAttachment extends SIComposite {
         return getAttributeValue(STypeAttachment.ATR_ORIGINAL_ID);
     }
 
-    public String getFileHashSHA1() {
+    String getFileHashSHA1() {
         return getValueString(STypeAttachment.FIELD_HASH_SHA1);
     }
 
@@ -129,14 +127,42 @@ public class SIAttachment extends SIComposite {
         return ref == null ? null : ref.getContent();
     }
 
-    public SIAttachment setTemporary() {
-        setAttributeValue(STypeAttachment.ATR_IS_TEMPORARY, "true");
-        return this;
+    private String getContentType() {
+        try {
+            return new Tika().detect(getContent());
+        } catch (IOException e) {
+            throw new SingularFormException("Não foi possivel detectar o content type.");
+        }
     }
 
-    public boolean isTemporary() {
-        return getAttributeValue(STypeAttachment.ATR_IS_TEMPORARY) != null;
+    boolean isContentTypeBrowserFriendly(String contentType) {
+        final List<String> inlineContentTypes = STypeAttachment.INLINE_CONTENT_TYPES;
+        for (String inlineContentType : inlineContentTypes) {
+            if (contentType.matches(inlineContentType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
+    public boolean isContentTypeBrowserFriendly() {
+        return isContentTypeBrowserFriendly(getContentType());
+    }
 
+    @Override
+    public String toStringDisplayDefault() {
+        if (getFileSize() == null || getFileName() == null) {
+            return super.toStringDisplayDefault();
+        }
+        final String[] sufixo    = new String[]{"B", "KB", "MB", "GB"};
+        int            posSufixo = 0;
+        double         bytesSize = getFileSize();
+
+        while (bytesSize > 900 && posSufixo < sufixo.length - 1) {
+            bytesSize = bytesSize / 1024;
+            posSufixo++;
+        }
+
+        return getFileName() + " (" + Math.round(bytesSize) + " " + sufixo[posSufixo] + ")";
+    }
 }

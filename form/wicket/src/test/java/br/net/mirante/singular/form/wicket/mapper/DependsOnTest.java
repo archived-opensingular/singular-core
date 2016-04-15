@@ -152,7 +152,7 @@ public class DependsOnTest {
             element.as(SPackageBasic.aspect())
                     .label("Word")
                     .dependsOn(category);
-            element.withSelectionFromProvider(ins -> {
+            element.withSelectionFromProvider((ins, f) -> {
                 String prefix = ins.findNearest(category).get().getValue();
                 return (prefix == null)
                         ? ins.getType().newList()

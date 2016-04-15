@@ -19,6 +19,7 @@ import br.net.mirante.singular.form.mform.SInstanceViewState;
 import br.net.mirante.singular.form.mform.SInstances;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 
 public class InstanceValidationContext {
@@ -65,7 +66,7 @@ public class InstanceValidationContext {
     }
 
     protected boolean checkRequired(SInstance instance, boolean ignoreDisabledAndInvisible) {
-        if (!Boolean.TRUE.equals(instance.getAttributeValue(SPackageCore.ATR_REQUIRED)))
+        if (!Boolean.TRUE.equals(instance.getAttributeValue(SPackageBasic.ATR_REQUIRED)))
             return true;
 
         if (instance instanceof ICompositeInstance) {

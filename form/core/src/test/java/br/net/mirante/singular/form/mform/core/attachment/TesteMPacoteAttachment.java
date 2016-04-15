@@ -51,7 +51,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
         STypeAttachment tipo = pb.createType("arquivo", STypeAttachment.class);
-        return tipo.newInstance().setTemporary();
+        return tipo.newInstance();
     }
 
     public void testUpdateContent() {
@@ -220,9 +220,6 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
         final SIAttachment arquivo1 = bloco.getField("arquivo1", SIAttachment.class);
         final SIAttachment arquivo2 = bloco.getField("arquivo2", SIAttachment.class);
-
-        arquivo1.setTemporary();
-        arquivo2.setTemporary();
 
         arquivo1.setContent(conteudo1);
         arquivo2.setContent(conteudo2);

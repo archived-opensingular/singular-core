@@ -27,37 +27,37 @@ public class AtrBootstrap extends STranslatorForAttribute {
     }
 
     public AtrBootstrap colPreference(Integer valor) {
-        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_PREFERENCE, valor);
+        setAttributeValue(SPackageBootstrap.ATR_COL_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colXs(Integer valor) {
-        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_XS_PREFERENCE, valor);
+        setAttributeValue(SPackageBootstrap.ATR_COL_XS_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colSm(Integer valor) {
-        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_SM_PREFERENCE, valor);
+        setAttributeValue(SPackageBootstrap.ATR_COL_SM_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colMd(Integer valor) {
-        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_MD_PREFERENCE, valor);
+        setAttributeValue(SPackageBootstrap.ATR_COL_MD_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colLg(Integer valor) {
-        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_LG_PREFERENCE, valor);
+        setAttributeValue(SPackageBootstrap.ATR_COL_LG_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap newRow() {
-        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW, true);
+        setAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW, true);
         return this;
     }
 
     public Integer getColPreference() {
-        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_PREFERENCE);
+        return getAttributeValue(SPackageBootstrap.ATR_COL_PREFERENCE);
     }
 
     public Integer getColPreference(Integer defaultValue) {
@@ -65,7 +65,7 @@ public class AtrBootstrap extends STranslatorForAttribute {
     }
 
     public Integer getColXs() {
-        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_XS_PREFERENCE);
+        return getAttributeValue(SPackageBootstrap.ATR_COL_XS_PREFERENCE);
     }
 
     public Integer getColXs(Integer defaultValue) {
@@ -73,7 +73,7 @@ public class AtrBootstrap extends STranslatorForAttribute {
     }
 
     public Integer getColSm() {
-        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_SM_PREFERENCE);
+        return getAttributeValue(SPackageBootstrap.ATR_COL_SM_PREFERENCE);
     }
 
     public Integer getColSm(Integer defaultValue) {
@@ -81,7 +81,7 @@ public class AtrBootstrap extends STranslatorForAttribute {
     }
 
     public Integer getColMd() {
-        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_MD_PREFERENCE);
+        return getAttributeValue(SPackageBootstrap.ATR_COL_MD_PREFERENCE);
     }
 
     public Integer getColMd(Integer defaultValue) {
@@ -89,7 +89,7 @@ public class AtrBootstrap extends STranslatorForAttribute {
     }
 
     public Integer getColLg() {
-        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_LG_PREFERENCE);
+        return getAttributeValue(SPackageBootstrap.ATR_COL_LG_PREFERENCE);
     }
 
     public Integer getColLg(Integer defaultValue) {
@@ -101,6 +101,6 @@ public class AtrBootstrap extends STranslatorForAttribute {
     }
 
     public Boolean getOnNewRow() {
-        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
+        return getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
     }
 }

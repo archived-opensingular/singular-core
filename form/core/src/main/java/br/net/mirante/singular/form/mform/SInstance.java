@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -60,7 +61,7 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
         return document;
     }
 
-    private String selectLabel;
+    protected String selectLabel;
 
     @Override
     public void setSelectLabel(String selectLabel) {
@@ -76,7 +77,7 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
                 Object valor = this.getValue();
                 if (valor instanceof Iterable) {
                     for (SInstance mi : (Iterable<SInstance>)valor) {
-                        if (label.equals(mi.getName())) {
+                        if (label != null && label.equals(mi.getName())) {
                             Object valorCampo = mi.getValue();
                             return valorCampo == null ? "" : valorCampo.toString();
                         }
@@ -403,27 +404,28 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
         throw new RuntimeException(
                 "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
     }
-    public <T> T as(Function<? super SInstance, T> aspectFactory) {
+    @Override
+    public <T> T as(Function<SAttributeEnabled, T> aspectFactory) {
         return aspectFactory.apply(this);
     }
 
     public boolean isRequired() {
-        return SInstances.attributeValue(this, SPackageCore.ATR_REQUIRED, false);
+        return SInstances.attributeValue(this, SPackageBasic.ATR_REQUIRED, false);
     }
     public void setRequired(Boolean value) {
-        setAttributeValue(SPackageCore.ATR_REQUIRED, value);
+        setAttributeValue(SPackageBasic.ATR_REQUIRED, value);
     }
     public void updateRequired() {
-        SInstances.updateBooleanAttribute(this, SPackageCore.ATR_REQUIRED, SPackageCore.ATR_OBRIGATORIO_FUNCTION);
+        SInstances.updateBooleanAttribute(this, SPackageBasic.ATR_REQUIRED, SPackageBasic.ATR_OBRIGATORIO_FUNCTION);
     }
     public boolean exists() {
-        return SInstances.attributeValue(this, SPackageCore.ATR_EXISTS, true);
+        return SInstances.attributeValue(this, SPackageBasic.ATR_EXISTS, true);
     }
     public void setExists(Boolean value) {
-        setAttributeValue(SPackageCore.ATR_EXISTS, value);
+        setAttributeValue(SPackageBasic.ATR_EXISTS, value);
     }
     public void updateExists() {
-        SInstances.updateBooleanAttribute(this, SPackageCore.ATR_EXISTS, SPackageCore.ATR_EXISTS_FUNCTION);
+        SInstances.updateBooleanAttribute(this, SPackageBasic.ATR_EXISTS, SPackageBasic.ATR_EXISTS_FUNCTION);
         if (!exists())
             SInstances.visitAll(this, true, SInstance::resetValue);
     }
@@ -513,7 +515,7 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
     /**
      * Sinaliza essa instancia para remover da hierarquia todos os seus filhos.
      */
-    void removeChildren() {
+    public void removeChildren() {
         if (this instanceof ICompositeInstance) {
             for (SInstance child : ((ICompositeInstance) this).getChildren()) {
                 child.internalOnRemove();

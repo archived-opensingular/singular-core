@@ -124,7 +124,7 @@ public enum FilterFieldType {
         if (sType != null) {
             sType.asAtrBasic().label(fc.getLabel());
             sType.asAtrBootstrap().colPreference(fc.getSize());
-            sType.asAtrCore().obrigatorio(fc.getRequired());
+            sType.asAtrBasic().required(fc.getRequired());
         }
     }
 

@@ -4,6 +4,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +56,10 @@ public abstract class SingularFormBaseTest {
         return TestFinders.findFormComponentsByType(form, type);
     }
 
+    protected static FormComponent findFirstFormComponentsByType(Form form, SType type){
+        return TestFinders.findFormComponentsByType(form, type).findFirst().orElseThrow(() -> new SingularFormException("Não foi possivel encontrar"));
+    }
+
     protected static <T extends Component> Stream<T> findOnForm(Class<T> classOfQuery, Form form, Predicate<T> predicate) {
         return  TestFinders.findOnForm(classOfQuery, form, predicate);
     }
@@ -76,6 +81,6 @@ public abstract class SingularFormBaseTest {
     }
 
     protected void ajaxClick(Component target) {
-        tester.executeAjaxEvent(target, "onclick");
+        tester.executeAjaxEvent(target, "click");
     }
 }

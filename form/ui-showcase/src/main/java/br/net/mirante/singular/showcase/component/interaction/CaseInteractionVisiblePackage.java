@@ -9,7 +9,6 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDate;
@@ -38,15 +37,15 @@ public class CaseInteractionVisiblePackage extends SPackage {
         visible.as(SPackageBasic.aspect()).label("Visible");
 
         record.as(SPackageBasic.aspect())
-                .visivel(ins -> ins.findNearestValue(visible, Boolean.class).orElse(false))
+                .visible(ins -> ins.findNearestValue(visible, Boolean.class).orElse(false))
                 .dependsOn(visible);
 
         recordText.as(SPackageBasic.aspect())
                 .label("Text")
-                .as(AtrBootstrap::new).colPreference(3);
+                .asAtrBootstrap().colPreference(3);
 
         recordDate.as(SPackageBasic.aspect())
                 .label("Date")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBootstrap().colPreference(2);
     }
 }

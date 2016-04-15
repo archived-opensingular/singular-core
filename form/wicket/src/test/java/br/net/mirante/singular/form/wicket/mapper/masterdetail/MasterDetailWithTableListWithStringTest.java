@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.masterdetail;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,13 +16,10 @@ import org.junit.Test;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
-
-import static org.fest.assertions.api.Assertions.assertThat;
 
 public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTest {
 
@@ -35,7 +34,7 @@ public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTes
         final STypeComposite<SIComposite> mockTypeMasterDetailComposite = mockMasterDetail.getElementsType();
 
         mockMasterDetail.withView(SViewListByMasterDetail::new);
-        mockMasterDetail.as(AtrBasic::new)
+        mockMasterDetail.asAtrBasic()
                 .label("Mock Type Master Detail ");
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> mockList
@@ -44,7 +43,7 @@ public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTes
         final STypeComposite<?> mockTypeComposite = mockList.getElementsType();
 
         mockList.withView(SViewListByTable::new);
-        mockList.as(AtrBasic::new)
+        mockList.asAtrBasic()
                 .label("Mock Type Composite");
 
         simpleString = mockTypeComposite.addFieldString("mockTypeComposite");
@@ -105,7 +104,7 @@ public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTes
     }
 
     private AbstractLink findMasterDetailLink() {
-        return findOnForm(AbstractLink.class, form.getForm(), (b) -> true)
+        return findOnForm(AbstractLink.class, form.getForm(), (b) -> b.getId().equals("_add"))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar do mestre detalhe"));
     }

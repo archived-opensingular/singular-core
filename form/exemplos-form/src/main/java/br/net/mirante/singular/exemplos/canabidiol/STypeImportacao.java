@@ -9,13 +9,8 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.mform.core.AtrCore;
-import br.net.mirante.singular.form.mform.core.STypeDateTime;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 @SInfoType(spackage = SPackagePeticaoCanabidiol.class)
@@ -29,11 +24,11 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
         STypeString modalidade = this.addFieldString("modalidadeImportacao");
 
         modalidade
-                .as(AtrCore::new)
-                .obrigatorio()
-                .as(AtrBasic::new)
+                .asAtrBasic()
+                .required()
+                .asAtrBasic()
                 .label("Modalidade de Importação")
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(12);
 
         modalidade
@@ -57,12 +52,12 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
         STypeString naturezaIntermediador = this.addFieldString("naturezaIntermediador");
 
         naturezaIntermediador
-                .as(AtrCore::new)
-                .obrigatorio()
-                .as(AtrBasic::new)
+                .asAtrBasic()
+                .required()
+                .asAtrBasic()
                 .label("Natureza do intermediador")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade);
 
 
@@ -78,125 +73,125 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
 
         this.addFieldString("razaoSocialIntermediador")
-                .as(AtrCore::new)
-                .obrigatorio()
-                .as(AtrBasic::new)
+                .asAtrBasic()
+                .required()
+                .asAtrBasic()
                 .label("Razão Social")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(4);
 
 
-        this.addFieldCNPJ("cnpjIntermediador")
-                .as(AtrCore::new)
-                .obrigatorio()
-                .as(AtrBasic::new)
+        addFieldCNPJ("cnpjIntermediador")
+                .asAtrBasic()
+                .required()
+                .asAtrBasic()
                 .label("CNPJ")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(3);
 
 
         this.addField("enderecoIntermediador", STypeEndereco.class)
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Endereço do Intermediador")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrAnnotation::new).setAnnotated();
+                .asAtrAnnotation().setAnnotated();
 
 
         STypeContato tipoContato = this.addField("contato", STypeContato.class);
         tipoContato
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Contato do Intermediador")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrAnnotation::new).setAnnotated();
+                .asAtrAnnotation().setAnnotated();
         tipoContato
                 .telefoneFixo
-                .as(AtrCore::new)
-                .obrigatorio();
+                .asAtrBasic()
+                .required();
     }
 
     private void bagagemAcompanhada(STypeString modalidade, String bagagemAcompanhada) {
 
         this.addFieldString("nomePassageiro")
-                .as(AtrCore::new)
-                .obrigatorio(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
-                .as(AtrBasic::new)
+                .asAtrBasic()
+                .required(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .asAtrBasic()
                 .label("Nome do Passageiro")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(4);
 
 
         this.addFieldString("passaporte")
-                .as(AtrCore::new)
-                .obrigatorio(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
-                .as(AtrBasic::new)
+                .asAtrBasic()
+                .required(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .asAtrBasic()
                 .label("Número do passaporte")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(4);
 
         this.addFieldString("companhiaAerea")
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Nome da empresa aérea")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(4);
 
         this.addFieldString("numeroVoo")
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Número do vôo")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(4);
 
 
         this.addFieldString("aeroportoChegada")
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Nome do aeroporto de chegada ao Brasil")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(4);
 
 
         this.addFieldDateTime("dataChegada")
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Data e Hora da chegada ao Brasil")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(6);
     }
 
 
     private void licenciamentoImportacao(STypeString modalidade, String licenciamentoImportacao) {
         this.addFieldString("numeroLI")
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Número do LI")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> licenciamentoImportacao.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> licenciamentoImportacao.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(4);
 
     }
@@ -204,21 +199,21 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
     private void remessaExpressa(STypeString modalidade, String remessaExpressa) {
 
         this.addFieldString("rastreadorCourier")
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Número de objeto da empresa de Courrier:\n")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> remessaExpressa.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> remessaExpressa.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(4);
 
         this.addFieldString("awb")
-                .as(AtrBasic::new)
+                .asAtrBasic()
                 .label("Número do AWB (Air Way Bill)")
                 // Isso é um bug não sei como descrever
-                .visivel(instancia -> remessaExpressa.equals(Value.of(instancia, modalidade)))
+                .visible(instancia -> remessaExpressa.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade)
-                .as(AtrBootstrap::new)
+                .asAtrBootstrap()
                 .colPreference(4);
     }
 

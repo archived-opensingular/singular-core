@@ -5,13 +5,20 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import java.io.Serializable;
-import java.util.*;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
 
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
-import com.google.common.collect.Lists;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
@@ -30,7 +37,10 @@ import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
+import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.resource.FormDefaultStyles;
@@ -39,9 +49,6 @@ import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class WicketBuildContext implements Serializable {
@@ -68,6 +75,11 @@ public class WicketBuildContext implements Serializable {
     private HashMap<Integer, AnnotationComponent> annotations = newHashMap();
     private HashMap<Integer,Component> annotationsTargetBuffer = newHashMap();
     private BSContainer annotationContainer;
+
+    private boolean showBreadcrumb;
+    private List<String> breadCrumbs = newArrayList();
+    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
+    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus;
 
     private SView view;
 
@@ -98,6 +110,9 @@ public class WicketBuildContext implements Serializable {
     }
 
     public Optional<Component> getAnnotationTargetFor(SInstance target){
+        if (!isRootContext()) {
+            return getRootContext().getAnnotationTargetFor(target);
+        }
         Component component = annotationsTargetBuffer.get(target.getId());
         if(component != null) return Optional.of(component);
         return Optional.empty();
@@ -321,6 +336,10 @@ public class WicketBuildContext implements Serializable {
 
     }
 
+    public void popBreadCrumb() {
+        getBreadCrumbs().remove(getBreadCrumbs().size() - 1);
+    }
+
     private static final class InitRootContainerBehavior extends Behavior {
         private final IModel<? extends SInstance> instanceModel;
 
@@ -364,6 +383,36 @@ public class WicketBuildContext implements Serializable {
 
     public void setModel(IModel<? extends SInstance> model) {
         this.model = model;
+    }
+
+    public boolean isShowBreadcrumb() {
+        return showBreadcrumb;
+    }
+
+    public void setShowBreadcrumb(boolean showBreadcrumb) {
+        this.showBreadcrumb = showBreadcrumb;
+    }
+
+    public List<String> getBreadCrumbs() {
+        if (isRootContext()) {
+            return breadCrumbs;
+        }
+        return getRootContext().getBreadCrumbs();
+    }
+
+    public Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> getBreadCrumbStatus() {
+        if (isRootContext()) {
+            return breadCrumbStatus;
+        }
+        return getRootContext().getBreadCrumbStatus();
+    }
+
+    public ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus getSelectedBreadCrumbStatus() {
+        return selectedBreadCrumbStatus;
+    }
+
+    public void setSelectedBreadCrumbStatus(ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus) {
+        this.selectedBreadCrumbStatus = selectedBreadCrumbStatus;
     }
 
     @SuppressWarnings("unchecked")

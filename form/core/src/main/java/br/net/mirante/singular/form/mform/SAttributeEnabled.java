@@ -5,8 +5,19 @@
 
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+import java.util.function.Function;
 
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
+import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+
+/**
+ * Representa um entidade habilitada para ter atributos lidos ou alterados.
+ * Tipicamente os atributos são de uma instância, tipo ou um proxy de atributos.
+ *
+ * @author Daniel C. Bordin
+ */
 public interface SAttributeEnabled {
 
     default <V> void setAttributeCalculation(AtrRef<?, ?, V> atr, SimpleValueCalculation<V> value) {
@@ -48,5 +59,31 @@ public interface SAttributeEnabled {
     }
 
     SDictionary getDictionary();
+
+    /**
+     * Transforma o tipo ou instância atual de acordo com a função de
+     * mapeamento.
+     */
+    public <TR> TR as(Function<SAttributeEnabled, TR> wrapper);
+
+    /** Retorna o leitor de atributos básicos para o tipo ou instância atual. */
+    public default AtrBasic asAtrBasic() {
+        return as(AtrBasic::new);
+    }
+
+    /**
+     * Retorna o leitor de atributos de Bootstrap para o tipo ou instância
+     * atual.
+     */
+    public default AtrBootstrap asAtrBootstrap() {
+        return as(AtrBootstrap::new);
+    }
+
+    /**
+     * Retorna o leitor de atributos de anotação para o tipo ou instância atual.
+     */
+    public default AtrAnnotation asAtrAnnotation() {
+        return as(AtrAnnotation::new);
+    }
 
 }

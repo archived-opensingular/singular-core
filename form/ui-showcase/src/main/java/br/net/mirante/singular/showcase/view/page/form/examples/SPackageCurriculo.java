@@ -5,28 +5,26 @@
 
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
+import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 import br.net.mirante.singular.form.mform.util.comuns.STypePersonName;
+import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 
 public class SPackageCurriculo extends SPackage {
 
@@ -39,44 +37,43 @@ public class SPackageCurriculo extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        final STypeComposite<?> curriculo = pb.createCompositeType("Curriculo");
+        STypeComposite<?> curriculo = pb.createCompositeType("Curriculo");
         {
-            curriculo
-                .as(AtrBasic::new).label("Currículo");
+            curriculo.asAtrBasic().label("Currículo");
         }
 
-        final STypeComposite<?> informacoesPessoais = curriculo.addFieldComposite("informacoesPessoais");
-        final STypePersonName nome = informacoesPessoais.addField("nome", STypePersonName.class, true);
-        final STypeCPF cpf = informacoesPessoais.addField("cpf", STypeCPF.class, true);
-        final STypeDate dtNasc = informacoesPessoais.addFieldDate("dataNascimento", true);
-        final STypeString estadoCivil = informacoesPessoais.addFieldString("estadoCivil", true)
-            .withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
+        STypeComposite<?> informacoesPessoais = curriculo.addFieldComposite("informacoesPessoais");
+        STypePersonName nome = informacoesPessoais.addField("nome", STypePersonName.class, true);
+        STypeCPF cpf = informacoesPessoais.addField("cpf", STypeCPF.class, true);
+        STypeDate dtNasc = informacoesPessoais.addFieldDate("dataNascimento", true);
+        STypeString estadoCivil = informacoesPessoais.addFieldString("estadoCivil", true);
+        estadoCivil.withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
 
         STypeString tipoContato = pb.createType("tipoContato", STypeString.class)
-                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax").cast();
         final STypeList<STypeString, SIString> infoPub = informacoesPessoais.addFieldListOf("infoPub",
                 tipoContato);
         {
             informacoesPessoais
-                .as(AtrBasic::new).label("Informações Pessoais");
+                .asAtrBasic().label("Informações Pessoais");
             nome
-                .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50)
-                .as(AtrBootstrap::new).colPreference(7);
+                .asAtrBasic().label("Nome").subtitle("nome completo").tamanhoMaximo(50)
+                .asAtrBootstrap().colPreference(7);
             cpf
-                .as(AtrBasic::new).subtitle("cadastro de pessoa física")
-                .as(AtrBootstrap::new).colPreference(3);
+                .asAtrBasic().subtitle("cadastro de pessoa física")
+                .asAtrBootstrap().colPreference(3);
             dtNasc
-                .as(AtrBasic::new).label("Dt.Nasc.").subtitle("dd/mm/aaaa")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Dt.Nasc.").subtitle("dd/mm/aaaa")
+                .asAtrBootstrap().colPreference(2);
             estadoCivil
                 .withRadioView()
-                .as(AtrBasic::new).label("Estado Civil")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Estado Civil")
+                .asAtrBootstrap().colPreference(2);
             infoPub
                 .withRequired(true)
                 .withView(SMultiSelectionBySelectView::new)
-                .as(AtrBasic::new).label("Informação Pública")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Informação Pública")
+                .asAtrBootstrap().colPreference(2);
         }
 
         final STypeComposite<?> contatos = informacoesPessoais.addFieldComposite("contatos");
@@ -86,19 +83,19 @@ public class SPackageCurriculo extends SPackage {
         final STypeTelefoneNacional telCel = contatos.addField("telefoneCelular", STypeTelefoneNacional.class);
         {
             contatos
-                .as(AtrBasic::new).label("Contatos");
+                .asAtrBasic().label("Contatos");
             email
-                .as(AtrBasic::new).label("e-Mail")
-                .as(AtrBootstrap::new).colPreference(6);
+                .asAtrBasic().label("e-Mail")
+                .asAtrBootstrap().colPreference(6);
             telFixo
-                .as(AtrBasic::new).label("Tel.Fixo")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Tel.Fixo")
+                .asAtrBootstrap().colPreference(2);
             telFixo2
-                .as(AtrBasic::new).label("Tel.Fixo")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Tel.Fixo")
+                .asAtrBootstrap().colPreference(2);
             telCel
-                .as(AtrBasic::new).label("Tel.Celular")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Tel.Celular")
+                .asAtrBootstrap().colPreference(2);
         }
 
         final STypeComposite<?> referencia = curriculo.addFieldComposite("referencia");
@@ -107,23 +104,23 @@ public class SPackageCurriculo extends SPackage {
         final STypeString refQuemNaEmpresa = referencia.addFieldString("colaboradorContato");
         {
             referencia
-                .as(AtrBasic::new).label("Referência");
+                .asAtrBasic().label("Referência");
             refTemNaEmpresa
-                .as(AtrBasic::new).label("Conhece colaborador na empresa")
-                .as(AtrBootstrap::new).colPreference(4);
+                .asAtrBasic().label("Conhece colaborador na empresa")
+                .asAtrBootstrap().colPreference(4);
             foiIndicado.withRadioView();
             foiIndicado
-                .as(AtrBasic::new).label("Foi indicado")
-                .as(AtrBootstrap::new).colPreference(3);
+                .asAtrBasic().label("Foi indicado")
+                .asAtrBootstrap().colPreference(3);
             refQuemNaEmpresa
-                .as(AtrBasic::new).label("Colaborador")
-                .as(AtrBootstrap::new).colPreference(5);
+                .asAtrBasic().label("Colaborador")
+                .asAtrBootstrap().colPreference(5);
         }
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> formacao = curriculo.addFieldListOfComposite("formacaoAcademica", "cursoAcademico");
         final STypeComposite<?> cursoAcademico = formacao.getElementsType();
         final STypeString academicoTipo = cursoAcademico.addFieldString("tipo", true)
-            .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado");
+            .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado").cast();
         final STypeString academicoNomeCurso = cursoAcademico.addFieldString("nomeCurso", true);
         final STypeString academicoInstituicao = cursoAcademico.addFieldString("instituicao", true);
         final STypeCNPJ academicoCNPJ = cursoAcademico.addField("cnpj", STypeCNPJ.class, false);
@@ -131,24 +128,24 @@ public class SPackageCurriculo extends SPackage {
         final STypeYearMonth academicoMesConclusao = cursoAcademico.addField("mesConclusao", STypeYearMonth.class, true);
         {
             formacao
-                .as(AtrBasic::new).label("Formação Acadêmica");
+                .asAtrBasic().label("Formação Acadêmica");
             academicoTipo
                 .withRadioView()
-                .as(AtrBasic::new).label("Tipo");
+                .asAtrBasic().label("Tipo");
             academicoNomeCurso
-                .as(AtrBasic::new).label("Nome");
+                .asAtrBasic().label("Nome");
             academicoInstituicao
-                .as(AtrBasic::new).label("Instituição")
-                .as(AtrBootstrap::new).colPreference(3);
+                .asAtrBasic().label("Instituição")
+                .asAtrBootstrap().colPreference(3);
             academicoCNPJ
-                .as(AtrBootstrap::new).colPreference(3);
+                .asAtrBootstrap().colPreference(3);
             academicoCargaHoraria
-                .as(AtrBasic::new).label("Carga Horária (h)")
-                .as(AtrBasic::new).tamanhoMaximo(5)
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Carga Horária (h)")
+                .asAtrBasic().tamanhoMaximo(5)
+                .asAtrBootstrap().colPreference(2);
             academicoMesConclusao
-                .as(AtrBasic::new).label("Mês de Conclusão")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Mês de Conclusão")
+                .asAtrBootstrap().colPreference(2);
         }
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = curriculo.addFieldListOfComposite("experienciasProfissionais", "experiencia");
@@ -161,21 +158,21 @@ public class SPackageCurriculo extends SPackage {
         {
             experiencias
                 .withView(SViewListByForm::new)
-                .as(AtrBasic::new).label("Experiências profissionais");
+                .asAtrBasic().label("Experiências profissionais");
             dtInicioExperiencia
-                .as(AtrBasic::new).label("Data inicial")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Data inicial")
+                .asAtrBootstrap().colPreference(2);
             dtFimExperiencia
-                .as(AtrBasic::new).label("Data final")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Data final")
+                .asAtrBootstrap().colPreference(2);
             empresa
-                .as(AtrBasic::new).label("Empresa")
-                .as(AtrBootstrap::new).colPreference(8);
+                .asAtrBasic().label("Empresa")
+                .asAtrBootstrap().colPreference(8);
             cargo
-                .as(AtrBasic::new).label("Cargo");
+                .asAtrBasic().label("Cargo");
             atividades
                 .withTextAreaView()
-                .as(AtrBasic::new).label("Atividades Desenvolvidas");
+                .asAtrBasic().label("Atividades Desenvolvidas");
         }
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> certificacoes = curriculo.addFieldListOfComposite("certificacoes", "certificacao");
@@ -187,28 +184,28 @@ public class SPackageCurriculo extends SPackage {
         {
             certificacoes
                 .withView(SViewListByTable::new)
-                .as(AtrBasic::new).label("Certificações");
+                .asAtrBasic().label("Certificações");
             certificacao
-                .as(AtrBasic::new).label("Certificação");
+                .asAtrBasic().label("Certificação");
             dataCertificacao
-                .as(AtrBasic::new).label("Data")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Data")
+                .asAtrBootstrap().colPreference(2);
             entidadeCertificacao
-                .as(AtrBasic::new).label("Entidade")
-                .as(AtrBootstrap::new).colPreference(10);
+                .asAtrBasic().label("Entidade")
+                .asAtrBootstrap().colPreference(10);
             validadeCertificacao
-                .as(AtrBasic::new).label("Validade")
-                .as(AtrBootstrap::new).colPreference(2);
+                .asAtrBasic().label("Validade")
+                .asAtrBootstrap().colPreference(2);
             nomeCertificacao
-                .as(AtrBasic::new).label("Nome")
-                .as(AtrBootstrap::new).colPreference(10);
+                .asAtrBasic().label("Nome")
+                .asAtrBootstrap().colPreference(10);
         }
 
         final STypeString informacoesAdicionais = curriculo.addFieldString("informacoesAdicionais");
         {
             informacoesAdicionais
                     .withTextAreaView()
-                    .as(AtrBasic::new).label("Informações adicionais");
+                    .asAtrBasic().label("Informações adicionais");
         }
 
 //        pb.debug();
@@ -228,13 +225,13 @@ public class SPackageCurriculo extends SPackage {
         // Comportamentos
         // ---------------------------------------------------------------------------------------------
         //        refTemNaEmpresa.withCode("onChange", (temRefNaMepresa) -> {
-        //            temRefNaMepresa.getIrmao(refQuemNaEmpresa).as(AtrBasic::new).visivel(isTrue(temRefNaMepresa));
+        //            temRefNaMepresa.getIrmao(refQuemNaEmpresa).asAtrBasic().visible(isTrue(temRefNaMepresa));
         //        });
 
         // Ou
 
         //        refTemNaEmpresa.withOnChange((temRefNaMepresa) -> {
-        //            temRefNaMepresa.getIrmao(refQuemNaEmpresa).as(AtrBasic::new).visivel(isTrue(temRefNaMepresa));
+        //            temRefNaMepresa.getIrmao(refQuemNaEmpresa).asAtrBasic().visible(isTrue(temRefNaMepresa));
         //        });
 
         // Ou
