@@ -1,9 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
@@ -11,16 +8,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 
-public class ReadOnlyControlsFieldComponentMapper implements ControlsFieldComponentMapper {
+public class ReadOnlyControlsFieldComponentMapper extends ControlsFieldComponentAbstractMapper {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ReadOnlyControlsFieldComponentMapper.class);
 
     @Override
-    public Component appendInput(SView view,
-                                 BSContainer bodyContainer,
-                                 BSControls formGroup,
-                                 IModel<? extends SInstance> model,
-                                 IModel<String> labelModel) {
+    public Component appendInput() {
 
         final FormComponent<?> field = new TextField<>(model.getObject().getName(), new Model<String>() {
             @Override

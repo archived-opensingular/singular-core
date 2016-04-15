@@ -36,57 +36,46 @@ import java.util.Set;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
-public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
+public abstract class ControlsFieldComponentAbstractMapper implements IWicketComponentMapper {
 
-    HintKey<Boolean> NO_DECORATION = () -> false;
+    final static HintKey<Boolean> NO_DECORATION = (HintKey<Boolean>) () -> false;
 
-    /**
-     * @param view          Instancia da MView utilizada para configurar o componente
-     * @param bodyContainer Container não aninhado no formulário, utilizado para adicionar modais por exemplo
-     * @param formGroup     Container onde dever adicionado o input
-     * @param model         Model da MInstancia
-     * @param labelModel    Model contendo o label do componente
-     * @return Retorna o componente  já adicionado ao formGroup
-     */
-    @SuppressWarnings("rawtypes")
-    Component appendInput(SView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel);
+    protected WicketBuildContext          ctx;
+    protected SView                       view;
+    protected BSContainer                 bodyContainer;
+    protected BSControls                  formGroup;
+    protected IModel<? extends SInstance> model;
+    protected IModel<String>              labelModel;
 
-    String getReadOnlyFormattedText(IModel<? extends SInstance> model);
 
-    /**
-     * @param view          Instancia da MView utilizada para configurar o componente
-     * @param bodyContainer Container não aninhado no formulário, utilizado para adicionar modais por exemplo
-     * @param formGroup     Container onde dever adicionado o input
-     * @param model         Model da MInstancia
-     * @param labelModel    Model contendo o label do componentes
-     * @return Retorna o componente  já adicionado ao formGroup
-     */
-    @SuppressWarnings("rawtypes")
-    default Component appendReadOnlyInput(SView view, BSContainer bodyContainer, BSControls formGroup,
-                                          IModel<? extends SInstance> model, IModel<String> labelModel) {
-        final SInstance mi = model.getObject();
+    protected abstract Component appendInput();
+
+    protected abstract String getReadOnlyFormattedText(IModel<? extends SInstance> model);
+
+    protected Component appendReadOnlyInput() {
+        final SInstance    mi   = model.getObject();
         final BOutputPanel comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(model)));
         formGroup.appendTag("div", comp);
         return comp;
     }
 
-    default void buildView(WicketBuildContext ctx) {
+    public void buildView(WicketBuildContext ctx) {
 
-        final IModel<? extends SInstance> model = ctx.getModel();
-        final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
+        this.ctx = ctx;
+        this.model = ctx.getModel();
+        this.labelModel = new AtributoModel<>(model, SPackageBasic.ATR_LABEL);
+        this.view = ctx.getView();
+        this.bodyContainer = ctx.getExternalContainer();
 
+        final boolean                hintNoDecoration      = ctx.getHint(NO_DECORATION);
         final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);
+        final BSContainer<?>         container             = ctx.getContainer();
+        final AtributoModel<String>  subtitle              = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
+        final ViewMode               viewMode              = ctx.getViewMode();
+        final BSLabel                label                 = new BSLabel("label", labelModel);
 
-        final BSContainer<?> container = ctx.getContainer();
-        final BSControls controls = container.newFormGroup();
+        this.formGroup = container.newFormGroup();
 
-        final AtributoModel<String> labelModel = new AtributoModel<>(model, SPackageBasic.ATR_LABEL);
-        final AtributoModel<String> subtitle = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
-
-        final ViewMode viewMode = ctx.getViewMode();
-        final SView view = ctx.getView();
-
-        final BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
         label.add($b.onConfigure(c -> {
@@ -96,8 +85,8 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
                 }
         ));
 
-        controls.appendLabel(label);
-        controls.newHelpBlock(subtitle)
+        formGroup.appendLabel(label);
+        formGroup.newHelpBlock(subtitle)
                 .add($b.classAppender("hidden-xs"))
                 .add($b.classAppender("hidden-sm"))
                 .add($b.classAppender("hidden-md"))
@@ -106,11 +95,9 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         final Component input;
 
         if (viewMode.isEdition()) {
-
-            input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
-            controls.appendFeedback(controls, feedbackMessageFilter);
+            input = appendInput();
+            formGroup.appendFeedback(formGroup, feedbackMessageFilter);
             input.add(DisabledClassBehavior.getInstance());
-
             input.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
@@ -122,13 +109,11 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
                     return oldClasses;
                 }
             })));
-
             for (FormComponent fc : findAjaxComponents(input)) {
                 ctx.configure(this, fc);
             }
-
         } else {
-            input = appendReadOnlyInput(view, ctx.getExternalContainer(), controls, model, labelModel);
+            input = appendReadOnlyInput();
         }
 
         if (ctx.annotation().enabled()) {
@@ -142,8 +127,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         }
     }
 
-
-    default FormComponent[] findAjaxComponents(Component input) {
+    protected FormComponent[] findAjaxComponents(Component input) {
         if (input instanceof FormComponent) {
             return new FormComponent[]{(FormComponent) input};
         } else if (input instanceof MarkupContainer) {

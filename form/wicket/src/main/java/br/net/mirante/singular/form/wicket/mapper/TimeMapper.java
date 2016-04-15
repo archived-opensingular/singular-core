@@ -1,14 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.core.STypeDateTime;
 import br.net.mirante.singular.form.mform.core.STypeTime;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MIDateTimeModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.json.JSONObject;
@@ -20,16 +16,14 @@ import org.apache.wicket.model.IModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by nuk on 04/04/16.
  */
-public class TimeMapper implements ControlsFieldComponentMapper {
+public class TimeMapper extends ControlsFieldComponentAbstractMapper {
 
     @Override
-    public Component appendInput(SView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput() {
         final TextField<String> time = new TextField<>("time",
                 new MIDateTimeModel.TimeModel(new MInstanciaValorModel<>(model)));
         time.add(new Behavior() {

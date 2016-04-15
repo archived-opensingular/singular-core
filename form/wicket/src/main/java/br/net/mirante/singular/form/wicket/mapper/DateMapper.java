@@ -5,13 +5,14 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
+import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
+import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
+import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
@@ -20,26 +21,21 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
-import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
-import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
-import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
-public class DateMapper implements ControlsFieldComponentMapper {
+public class DateMapper extends ControlsFieldComponentAbstractMapper {
 
     private static final Logger LOGGER = Logger.getLogger(DateMapper.class.getName());
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Component appendInput(SView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput() {
         @SuppressWarnings("unchecked")
         TextField<?> comp = new TextField<Date>(model.getObject().getName(),
             new MInstanciaValorModel<>(model), Date.class) {

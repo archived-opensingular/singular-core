@@ -5,13 +5,10 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.json.JsonFunction;
@@ -19,13 +16,12 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.IConverter;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 public class DecimalMapper extends StringMapper {
 
@@ -33,7 +29,7 @@ public class DecimalMapper extends StringMapper {
     private static final int DEFAULT_DIGITS = 2;
 
     @Override
-    public Component appendInput(SView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput() {
         Integer decimalMaximo = getDecimalMaximo(model);
         TextField<String> comp = new TextField<String>(model.getObject().getName(),
                 new MInstanciaValorModel<>(model), String.class) {
