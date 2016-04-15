@@ -1,5 +1,6 @@
 package br.net.mirante.singular.server.commons.wicket;
 
+import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.spring.security.ServerContext;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
 import org.apache.wicket.Session;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class PetSession extends AuthenticatedWebSession {
 
+    private ProcessGroupEntity categoriaSelecionada;
 
     public PetSession(Request request, Response response) {
         super(request);
@@ -77,6 +79,14 @@ public class PetSession extends AuthenticatedWebSession {
             return (T) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         }
         return null;
+    }
+
+    public ProcessGroupEntity getCategoriaSelecionada() {
+        return categoriaSelecionada;
+    }
+
+    public void setCategoriaSelecionada(ProcessGroupEntity categoriaSelecionada) {
+        this.categoriaSelecionada = categoriaSelecionada;
     }
 }
 
