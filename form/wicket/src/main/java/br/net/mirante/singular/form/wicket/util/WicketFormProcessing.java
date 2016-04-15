@@ -139,10 +139,8 @@ public class WicketFormProcessing {
 
         SType<?> sType = fieldInstance.getObject().getType();
 
-        if (sType instanceof STypeComposite || sType instanceof STypeList) {
-            if (sType.getUpdateListener() != null) {
-                sType.getUpdateListener().accept(fieldInstance.getObject());
-            }
+        if (sType.getUpdateListener() != null) {
+            sType.getUpdateListener().accept(fieldInstance.getObject());
         }
 
         final String indexsKey = getIndexsKey(((IMInstanciaAwareModel) fieldInstance).getMInstancia().getPathFull());

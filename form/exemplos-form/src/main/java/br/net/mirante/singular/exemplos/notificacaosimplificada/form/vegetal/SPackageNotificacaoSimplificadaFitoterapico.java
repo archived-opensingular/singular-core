@@ -138,6 +138,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
 
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();
+        acondicionamentos.withMiniumSizeOf(1);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
                         .col(acondicionamento.embalagemPrimaria, "Embalagem primária")

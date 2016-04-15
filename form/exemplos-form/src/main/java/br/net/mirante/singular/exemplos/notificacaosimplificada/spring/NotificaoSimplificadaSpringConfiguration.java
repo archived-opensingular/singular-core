@@ -1,8 +1,9 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.spring;
 
-import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.h2.Driver;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +18,7 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
-import java.util.Properties;
+import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 
 @AutoScanDisabled
 @Configuration
@@ -81,12 +81,14 @@ public class NotificaoSimplificadaSpringConfiguration {
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSqlScriptEncoding("UTF-8");
-        populator.addScript(drops);
-        populator.addScript(createTables);
-        populator.addScript(inserts);
-        populator.addScript(insertGeral);
-        populator.addScript(createTablesAnvisa);
-        populator.addScript(insertUsuario);
+        if (Boolean.valueOf(System.getProperty("anvisa.enabled.h2.inserts", "true"))) {
+            populator.addScript(drops);
+            populator.addScript(createTables);
+            populator.addScript(inserts);
+            populator.addScript(insertGeral);
+            populator.addScript(createTablesAnvisa);
+            populator.addScript(insertUsuario);
+        }
         return populator;
     }
 

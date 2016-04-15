@@ -82,8 +82,8 @@ public class DominioService {
     }
 
 
-    public List<Substancia> substancias(Integer idConfiguracaoLinhaProducao, String filter) {
-        return vocabularioControladoDAO.findByDescricao(Substancia.class, filter);
+    public List<Substancia> findSubstanciasByIdConfiguracaoLinhaProducao(Integer idConfiguracaoLinhaProducao) {
+        return vocabularioControladoDAO.findSubstanciasByIdConfiguracaoLinhaProducao(idConfiguracaoLinhaProducao);
     }
 
 
@@ -330,8 +330,29 @@ public class DominioService {
         return vocabularioControladoDAO.listarLinhasProducaoDinamizado(filtro);
     }
 
-    public Pair[] indicacoesTerapeuticas() {
-            return new Pair[0];
+    public List<Pair> indicacoesTerapeuticas() {
+        List<Pair> list = new ArrayList<>();
+
+        long i = 1;
+        list.add(Pair.of(i++, "Acne"));
+        list.add(Pair.of(i++, "Acidez estomacal"));
+        list.add(Pair.of(i++, "Alergia"));
+        list.add(Pair.of(i++, "Anti-sépticos nasais"));
+        list.add(Pair.of(i++, "Anti-sépticos oculares"));
+        list.add(Pair.of(i++, "Cólica"));
+        list.add(Pair.of(i++, "Dermatite seborreica"));
+        list.add(Pair.of(i++, "Enjôo"));
+        list.add(Pair.of(i++, "Epigastralgia"));
+        list.add(Pair.of(i++, "Esofagite"));
+        list.add(Pair.of(i++, "Irritação ocular"));
+        list.add(Pair.of(i++, "Lombalgia"));
+        list.add(Pair.of(i++, "Má digestão"));
+        list.add(Pair.of(i++, "Pirose"));
+        list.add(Pair.of(i++, "Queimação"));
+        list.add(Pair.of(i++, "Tosse"));
+        list.add(Pair.of(i++, "Vômito"));
+
+        return list;
     }
 
     public Pair rangeConcentracoes(Integer idNomenclatura) {
