@@ -82,8 +82,8 @@ public class DominioService {
     }
 
 
-    public List<Substancia> substancias(Integer idConfiguracaoLinhaProducao, String filter) {
-        return vocabularioControladoDAO.findByDescricao(Substancia.class, filter);
+    public List<Substancia> findSubstanciasByIdConfiguracaoLinhaProducao(Integer idConfiguracaoLinhaProducao) {
+        return vocabularioControladoDAO.findSubstanciasByIdConfiguracaoLinhaProducao(idConfiguracaoLinhaProducao);
     }
 
 
