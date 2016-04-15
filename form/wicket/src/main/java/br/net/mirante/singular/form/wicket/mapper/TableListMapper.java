@@ -5,26 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-
-import java.util.Set;
-
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-
-import com.google.common.base.Strings;
-
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
@@ -39,6 +20,18 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
+import com.google.common.base.Strings;
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+
+import java.util.Set;
+
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListaMapper {
 
@@ -61,7 +54,7 @@ public class TableListMapper extends AbstractListaMapper {
 
         addMinimumSize(currentType, iLista);
 
-        ctx.setHint(ControlsFieldComponentMapper.NO_DECORATION, true);
+        ctx.setHint(ControlsFieldComponentAbstractMapper.NO_DECORATION, true);
         ctx.getContainer().appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(id,
                 (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
                 (c, form) -> builContent(c, form, list, ctx, view, isEdition),

@@ -98,6 +98,7 @@ public class DependsOnTest {
     }
 
     public static class WithUnexistantDependendSelectedValues extends Base {
+
         protected void populateInstance(SIComposite instance) {
             instance.getDescendant(category).setValue("vegetables");
             instance.getDescendant(element).setValue("gluten");

@@ -5,22 +5,14 @@
 
 package br.net.mirante.singular.form.validation;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.SInstanceViewState;
-import br.net.mirante.singular.form.mform.SInstances;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
+import static java.lang.Boolean.TRUE;
 
 public class InstanceValidationContext {
 
@@ -52,27 +44,31 @@ public class InstanceValidationContext {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public <I extends SInstance> void validateInstance(IInstanceValidatable<I> validatable) {
         final I instance = validatable.getInstance();
-
-        if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance) && !checkRequired(instance, true)) {
-            validatable.error(new ValidationError(instance, ValidationErrorLevel.ERROR, "Campo obrigatório"));
-            return;
-        }
-
-        final SType<I> tipo = (SType<I>) instance.getType();
-        for (IInstanceValidator<I> validator : tipo.getValidators()) {
-            validatable.setDefaultLevel(tipo.getValidatorErrorLevel(validator));
-            validator.validate((IInstanceValidatable) validatable);
+        if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance)) {
+            if (!checkIfIsRequiredAndIfIsFilled(instance)) {
+                validatable.error(new ValidationError(instance, ValidationErrorLevel.ERROR, "Campo obrigatório"));
+                return;
+            }
+            final SType<I> tipo = (SType<I>) instance.getType();
+            for (IInstanceValidator<I> validator : tipo.getValidators()) {
+                validatable.setDefaultLevel(tipo.getValidatorErrorLevel(validator));
+                validator.validate((IInstanceValidatable) validatable);
+            }
         }
     }
 
-    protected boolean checkRequired(SInstance instance, boolean ignoreDisabledAndInvisible) {
-        if (!Boolean.TRUE.equals(instance.getAttributeValue(SPackageBasic.ATR_REQUIRED)))
+    /**
+     * Chea se a instancia é obrigatoria e se a mesma foi preenchida
+     * @param instance
+     * @return true se estiver OK
+     */
+    protected boolean checkIfIsRequiredAndIfIsFilled(SInstance instance) {
+        if (!TRUE.equals(instance.getAttributeValue(SPackageBasic.ATR_REQUIRED))) {
             return true;
-
+        }
         if (instance instanceof ICompositeInstance) {
             ICompositeInstance comp = (ICompositeInstance) instance;
             return comp.streamDescendants(false).anyMatch(it -> it.getValue() != null);
-
         } else {
             return (instance.getValue() != null);
         }

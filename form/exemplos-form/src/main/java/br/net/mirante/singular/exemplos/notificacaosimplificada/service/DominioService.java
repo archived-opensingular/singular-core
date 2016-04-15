@@ -20,9 +20,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,10 +65,6 @@ public class DominioService {
 
     public List<Triple> configuracoesLinhaProducao(Integer idLinhaProducao) {
         List<Triple> list = new ArrayList<>();
-
-        if (idLinhaProducao == null) {
-            return list;
-        }
 
         list.add(Triple.of(1, 1, "Comprimidos em Camadas"));
         list.add(Triple.of(2, 1, "Comprimidos Placebo"));
@@ -191,6 +191,27 @@ public class DominioService {
     }
 
 
+    public Triple diluicao(Integer idDescricaoDinamizada) {
+        Map<Integer, Triple> mapa = new HashMap<>();
+
+        if (idDescricaoDinamizada == null) {
+            return null;
+        }
+
+        mapa.put(1, Triple.of(1, BigDecimal.valueOf(10), BigDecimal.valueOf(30)));
+        mapa.put(2, Triple.of(2, BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(3, Triple.of(3, BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(4, Triple.of(4, BigDecimal.valueOf(40), BigDecimal.valueOf(80)));
+        mapa.put(5, Triple.of(5, BigDecimal.valueOf(5), BigDecimal.valueOf(8)));
+        mapa.put(6, Triple.of(6, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(7, Triple.of(7, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(8, Triple.of(8, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(9, Triple.of(9, BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+
+        Integer idDescricaoDinamizadaFake = idDescricaoDinamizada % 9 + 1;
+        return mapa.get(idDescricaoDinamizadaFake);
+    }
+
     public List<Triple> diluicoes(Integer idDescricaoDinamizada) {
         List<Triple> list = new ArrayList<>();
 
@@ -240,6 +261,7 @@ public class DominioService {
         return list.stream().filter(t -> t.getMiddle().equals(idDescricaoDinamizadaFake)).collect(Collectors.toList());
     }
 
+    @Transactional
     public List<EmbalagemPrimariaBasica> findEmbalagensBasicas(String filtro) {
         return vocabularioControladoDAO.findByDescricao(EmbalagemPrimariaBasica.class, filtro);
     }
@@ -279,10 +301,11 @@ public class DominioService {
     public List<Pair> nomenclaturaBotanica(String filtro) {
         List<Pair> list = new ArrayList<>();
 
-        list.add(Pair.of(1L, "Planta1 + Planta2"));
-        list.add(Pair.of(2L, "Planta2 + Planta3"));
-        list.add(Pair.of(3L, "Planta4 + Planta5"));
-        list.add(Pair.of(4L, "Planta6 + Planta7"));
+        long i = 1L;
+        list.add(Pair.of(i++, "Achillea millefolium"));
+        list.add(Pair.of(i++, "Achyrocline satureioides + Aesculus hippocastanum"));
+        list.add(Pair.of(i++, "Glycyrrhiza glabra + Cynara scolymus"));
+        list.add(Pair.of(i++, "Zingiber officinale\n"));
 
         return list;
     }
@@ -290,10 +313,11 @@ public class DominioService {
     public List<Pair> concentracao(String filtro) {
         List<Pair> list = new ArrayList<>();
 
-        list.add(Pair.of(1L, "30mg + 90mg"));
-        list.add(Pair.of(2L, "50mg + 60mg"));
-        list.add(Pair.of(3L, "20mg + 10mg"));
-        list.add(Pair.of(4L, "5mg + 12mg"));
+        long i = 1L;
+        list.add(Pair.of(i++, "30mg"));
+        list.add(Pair.of(i++, "50mg + 60mg"));
+        list.add(Pair.of(i++, "20mg + 10mg"));
+        list.add(Pair.of(i++, "5mg"));
 
         return list;
     }
@@ -304,5 +328,30 @@ public class DominioService {
 
     public List<LinhaCbpf> listarLinhasProducaoDinamizado(String filtro) {
         return vocabularioControladoDAO.listarLinhasProducaoDinamizado(filtro);
+    }
+
+    public Pair[] indicacoesTerapeuticas() {
+            return new Pair[0];
+    }
+
+    public Pair rangeConcentracoes(Integer idNomenclatura) {
+        Map<Integer, Pair> mapa = new HashMap<>();
+
+        if (idNomenclatura == null) {
+            return null;
+        }
+
+        mapa.put(1, Pair.of(BigDecimal.valueOf(10), BigDecimal.valueOf(30)));
+        mapa.put(2, Pair.of(BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(3, Pair.of(BigDecimal.valueOf(25), BigDecimal.valueOf(50)));
+        mapa.put(4, Pair.of(BigDecimal.valueOf(40), BigDecimal.valueOf(80)));
+        mapa.put(5, Pair.of(BigDecimal.valueOf(5), BigDecimal.valueOf(8)));
+        mapa.put(6, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(7, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(8, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+        mapa.put(9, Pair.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
+
+        Integer idNomenclaturaFake = idNomenclatura % 9 + 1;
+        return mapa.get(idNomenclaturaFake);
     }
 }

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.wicket.mapper.*;
 import org.apache.wicket.Component;
@@ -20,25 +21,6 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByCheckboxView;
-import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByPicklistView;
-import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.basic.view.SViewAttachmentList;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
-import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
-import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
-import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
-import br.net.mirante.singular.form.mform.basic.view.ViewMapperRegistry;
-import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
@@ -121,8 +103,9 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     protected ViewMapperRegistry<IWicketComponentMapper> newViewMapperRegistry() {
         //@formatter:off
         return new ViewMapperRegistry<IWicketComponentMapper>()
-                .register(STypeSimple.class,    SViewSelectionByRadio.class,            RadioMapper::new)
-                .register(STypeSimple.class,    SViewSelectionBySelect.class,           SelectMapper::new)
+                .register(STypeSimple.class,     SViewSelectionByRadio.class,           RadioMapper::new)
+                .register(STypeSimple.class,     SViewSelectionBySelect.class,          SelectMapper::new)
+                .register(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
                 .register(STypeInteger.class,                                           IntegerMapper::new)
@@ -142,6 +125,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeComposite.class,   SViewSelectionBySelect.class,         SelectMapper::new)
                 .register(STypeComposite.class,   SViewSelectionBySearchModal.class,    SelectModalBuscaMapper::new)
                 .register(STypeComposite.class,   SViewAutoComplete.class,              AutocompleteMapper::new)
+                .register(STypeComposite.class,   SViewReadOnly.class,                  ReadOnlyControlsFieldComponentMapper::new)
                 .register(STypeList.class,        SMultiSelectionBySelectView.class,    MultipleSelectBSMapper::new)
                 .register(STypeList.class,        SMultiSelectionByCheckboxView.class,  MultipleCheckMapper::new)
                 .register(STypeList.class,        SMultiSelectionByPicklistView.class,  PicklistMapper::new)
@@ -149,7 +133,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeList.class,        SViewListByTable.class,               TableListMapper::new)
                 .register(STypeList.class,        SViewListByForm.class,                PanelListaMapper::new)
                 .register(STypeList.class,        SViewListByMasterDetail.class,        ListMasterDetailMapper::new)
-                .register(STypeList.class,      SViewBreadcrumb.class,                  ListBreadcrumbMapper::new)
+                .register(STypeList.class,        SViewBreadcrumb.class,                ListBreadcrumbMapper::new)
                 .register(STypeDateTime.class,                                          DateTimeMapper::new)
                 .register(STypeDateTime.class,    SViewDateTime.class,                  DateTimeMapper::new)
                 .register(STypeTime.class,                                              TimeMapper::new)

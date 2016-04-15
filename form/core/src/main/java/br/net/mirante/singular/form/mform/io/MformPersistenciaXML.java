@@ -114,6 +114,7 @@ public class MformPersistenciaXML {
     private static void fromXML(SInstance instancia, MElement xml) {
         if (xml == null)
             return; // Não precisa fazer nada
+        instancia.clearInstance();
         lerAtributos(instancia, xml);
         if (instancia instanceof SISimple) {
             SISimple<?> instanciaS = (SISimple<?>) instancia;

@@ -5,6 +5,18 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.wicket.behavior.MoneyMaskBehavior;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.IConverter;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -14,23 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.convert.IConverter;
-
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.wicket.behavior.MoneyMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
-
-public class MoneyMapper implements ControlsFieldComponentMapper {
+public class MoneyMapper extends ControlsFieldComponentAbstractMapper {
 
     private static final int DEFAULT_INTEGER_DIGITS = 9;
     private static final int DEFAULT_DIGITS = 2;
@@ -38,8 +34,7 @@ public class MoneyMapper implements ControlsFieldComponentMapper {
     private static final String PRECISION = "precision";
 
     @Override
-    public Component appendInput(SView view, BSContainer bodyContainer, BSControls formGroup,
-                                 IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput() {
         Integer decimalMaximo = getDecimalMaximo(model);
         TextField<String> comp = new TextField<String>(model.getObject().getName(),
                 new MInstanciaValorModel<>(model), String.class) {

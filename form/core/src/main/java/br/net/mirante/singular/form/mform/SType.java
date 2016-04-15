@@ -60,6 +60,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     private Set<SType<?>> dependentTypes;
 
+    private Consumer<SInstance> initListener;
+
     /**
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
      * outros pontos.
@@ -82,7 +84,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     private UIComponentMapper customMapper;
 
-    private Consumer<I> updateListener;
+    private Consumer<SInstance> updateListener;
 
     public SType() {
         this(null, (Class<SType>) null, null);
@@ -426,7 +428,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     public SType<I> withUpdateListener(Consumer<I> consumer) {
-        this.updateListener = consumer;
+        this.updateListener = (Consumer<SInstance>) consumer;
         return this;
     }
 
@@ -534,6 +536,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
                 }
             }
             instanceCount++;
+
+            if (initListener != null) {
+                initListener.accept(newInstance);
+            }
+
             return newInstance;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new SingularFormException("Erro instanciando o tipo '" + getName() + "' para o tipo '" + original.getName() + "'", e);
@@ -685,8 +692,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return customMapper;
     }
 
-    public Consumer<I> getUpdateListener() {
+    public Consumer<SInstance> getUpdateListener() {
         return updateListener;
+    }
+
+    public void withInitListener(Consumer<SInstance> initListener) {
+        this.initListener = initListener;
     }
 
 }
