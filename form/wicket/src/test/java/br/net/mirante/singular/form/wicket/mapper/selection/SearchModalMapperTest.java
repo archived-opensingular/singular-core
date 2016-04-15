@@ -10,12 +10,12 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 
 
-public class SelectModalBuscaMapperTest extends SingularFormBaseTest {
+public class SearchModalMapperTest extends SingularFormBaseTest {
 
     STypeString mandatoryField;
     STypeString dependentField;
@@ -24,7 +24,7 @@ public class SelectModalBuscaMapperTest extends SingularFormBaseTest {
     protected void buildBaseType(STypeComposite<?> baseType) {
 
         mandatoryField = baseType.addFieldString("mandatoryField", true).withSelectionOf("1", "2")
-                .withView(SViewSelectionBySearchModal::new).cast();
+                .withView(() -> new SViewSearchModal()).cast();
 
         dependentField = baseType.addFieldString("dependentField");
         dependentField.asAtrBasic().dependsOn(mandatoryField);

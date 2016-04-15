@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
@@ -28,7 +28,7 @@ public class STypeStringModalSearchTest  {
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
             selectType = baseType.addFieldString("favoriteFruit");
-            selectType.withView(SViewSelectionBySearchModal::new);
+            selectType.withView(() -> new SViewSearchModal());
         }
 
         protected void assertHasATable() {

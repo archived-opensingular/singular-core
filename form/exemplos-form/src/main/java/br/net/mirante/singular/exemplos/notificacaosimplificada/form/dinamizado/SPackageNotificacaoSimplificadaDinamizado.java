@@ -13,7 +13,7 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioS
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
@@ -159,7 +159,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                     })
                     .asAtrBootstrap()
                     .colPreference(12);
-            formaFarmaceutica.setView(SViewSelectionBySearchModal::new);
+            formaFarmaceutica.setView(() -> {
+                return new SViewSearchModal();
+            });
             formaFarmaceutica.withSelectionFromProvider(descricao, (ins, filter) -> {
                 final SIList<?>           list     = ins.getType().newList();
                 final SIList<SIComposite> formulas = ins.findNearest(formulasHomeopaticas).orElse(null);

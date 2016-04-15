@@ -4,6 +4,7 @@ import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.junit.Test;
@@ -14,7 +15,6 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
@@ -23,9 +23,9 @@ import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 public class STypeSelectItemModalSearchTest {
 
     private static class Base extends SingularFormBaseTest {
-        protected STypeComposite selectType;
-        protected SViewSelectionBySearchModal view;
-        protected STypeSimple nomeUF;
+        protected STypeComposite   selectType;
+        protected SViewSearchModal view;
+        protected STypeSimple      nomeUF;
 
         @Override
         protected void buildBaseType(STypeComposite group) {
@@ -37,8 +37,10 @@ public class STypeSelectItemModalSearchTest {
             selectType.addFieldInteger("phonecode").asAtrBasic().label("DDD");
             selectType.addFieldDecimal("gdp").asAtrBasic().label("PIB");
             selectType.addFieldDecimal("hdi").asAtrBasic().label("IDH");
-            view = (SViewSelectionBySearchModal)
-                    selectType.setView(SViewSelectionBySearchModal::new);
+            view = (SViewSearchModal)
+                    selectType.setView(() -> {
+                        return new SViewSearchModal();
+                    });
         }
 
         protected SIList<?> novoProvider(SSelectionableInstance... selects) {
@@ -107,7 +109,7 @@ public class STypeSelectItemModalSearchTest {
             super.buildBaseType(group);
             selectType.withSelectionFromProvider(nomeUF,
                     (SOptionsProvider) (inst, f) -> novoProvider(federaldistrict(), goias()));
-            view.setAdditionalFields("population", "phonecode");
+//            view.setAdditionalFields("population", "phonecode");
         }
 
         @Test

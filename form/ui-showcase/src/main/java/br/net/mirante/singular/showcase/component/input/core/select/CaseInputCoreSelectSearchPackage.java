@@ -6,10 +6,19 @@
 package br.net.mirante.singular.showcase.component.input.core.select;
 
 import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal.Column;
+import br.net.mirante.singular.form.mform.provider.ValueToSICompositeConverter;
+import br.net.mirante.singular.form.mform.provider.PagedResultProvider;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CaseInputCoreSelectSearchPackage extends SPackage {
 
@@ -17,53 +26,68 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
 
-        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
+        final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        STypeString tipoContato = tipoMyForm.addFieldString("tipoContato", true);
-        tipoContato.withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        final STypeComposite funcionario = tipoMyForm.addFieldComposite("funcionario");
+        funcionario.asAtrBasic().label("Funcionario").displayString("${nome} - ${cargo}");
+        funcionario.addFieldString("nome");
+        funcionario.addFieldString("cargo");
 
-        tipoContato.withView(SViewSelectionBySearchModal::new);
-        tipoContato.asAtrBasic().label("Contato");
-
-        /**
-         * Neste caso vemos como tipos compostos podem ser usados na seleção por busca.
-         */
-
-        final STypeString degreeType = tipoMyForm.addFieldString("degree");
-        degreeType.asAtrBasic().label("Escolaridade");
-        degreeType.withSelection()
-                .add("Alfabetizado", "Alfabetização")
-                .add("1º Grau", "Ensino Fundamental")
-                .add("2º Grau", "Ensino Médio")
-                .add("Técnico", "Escola Técnica")
-                .add("Graduado", "Superior")
-                .add("Pós", "Pós Graduação")
-                .add("MsC", "Mestrado")
-                .add("PhD", "Doutorado");
-        degreeType.withView(SViewSelectionBySearchModal::new);
-
-        /**
-         *  No tipo composto é possível expandir a seleção para exibir outros campos além
-         *  do valor de descrição, fornecendo maior flexibilidade e abrangência.
-         **/
-
-        final STypeComposite<?> planetType = tipoMyForm.addFieldComposite("planet");
-        final STypeString id = planetType.addFieldString("id");
-        final STypeString nome = planetType.addFieldString("nome");
-
-        planetType.asAtrBasic().label("Planeta Favorito");
-        planetType.addFieldDecimal("radius").asAtrBasic().label("Raio");
-        planetType.addFieldString("atmosphericComposition").asAtrBasic().label("Composição Atmosférica");
-        planetType.withSelectionFromProvider("nome", (inst, lb) -> {
-                    lb
-                            .add().set(id, "1").set(nome, "Mercury").set("radius", 2439.64).set("atmosphericComposition", "He, Na+, P+")
-                            .add().set(id, "2").set(nome, "Venus").set("radius", 6051.59).set("atmosphericComposition", "CO2, N2")
-                            .add().set(id, "3").set(nome, "Earth").set("radius", 6378.1).set("atmosphericComposition", "N2, O2, Ar")
-                            .add().set(id, "4").set(nome, "Mars").set("radius", 3397.00).set("atmosphericComposition", "CO2, N2, Ar");
-                }
+        funcionario.withView(new SViewSearchModal()
+                .withTitle("Buscar Profissionais")
+                .withFilter(filter -> {
+                    filter.addFieldString("nome")
+                            .asAtrBasic().label("Nome")
+                            .asAtrBootstrap().colPreference(6);
+                    filter.addFieldString("cargo")
+                            .asAtrBasic().label("Cargo")
+                            .asAtrBootstrap().colPreference(6);
+                })
+                .withProvider(new MyProvider())
+                .withConverter((ValueToSICompositeConverter<Pair>) (newFunc, pair) -> {
+                    newFunc.setValue("nome", pair.getLeft());
+                    newFunc.setValue("cargo", pair.getRight());
+                })
+                .withColumns(
+                        Column.of("left", "Nome"),
+                        Column.of("right", "Cargo")
+                )
         );
-        planetType.setView(SViewSelectionBySearchModal::new)
-                .setAdditionalFields("radius", "atmosphericComposition");
+
     }
+
+    private static class MyProvider implements PagedResultProvider<Pair> {
+
+        @Override
+        public Long getSize(SInstance filter) {
+            return 3L;
+        }
+
+        @Override
+        public List<Pair> load(SInstance filter, long first, long count) {
+            List<Pair> pairs = new ArrayList<>();
+
+            pairs.add(Pair.of("Danilo", "Engenheiro da Computação"));
+            pairs.add(Pair.of("Vinicius", "Cientista da computação"));
+            pairs.add(Pair.of("Delfino", "Cientista da computação"));
+
+            if (Value.of(filter, "nome") != null) {
+                pairs = pairs
+                        .stream()
+                        .filter(p -> ((String) p.getLeft()).toUpperCase().contains(Value.of(filter, "nome").toString().toUpperCase()))
+                        .collect(Collectors.toList());
+            }
+
+            if (Value.of(filter, "cargo") != null) {
+                pairs = pairs
+                        .stream()
+                        .filter(p -> ((String) p.getRight()).toUpperCase().contains(Value.of(filter, "cargo").toString().toUpperCase()))
+                        .collect(Collectors.toList());
+            }
+
+            return pairs;
+        }
+    }
+
 
 }

@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeFarmacopeiaReferencia extends STypeComposite<SIComposite> {
@@ -22,7 +22,7 @@ public class STypeFarmacopeiaReferencia extends STypeComposite<SIComposite> {
 
         STypeFarmacopeia farmacopeia = this.addField("farmacopeia", STypeFarmacopeia.class);
 
-        farmacopeia.withView(SViewSelectionBySearchModal::new);
+        farmacopeia.withView(() -> new SViewSearchModal());
 
         this.addFieldString("edicao")
                 .asAtrBasic().label("Edição")

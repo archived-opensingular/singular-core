@@ -171,4 +171,8 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
     public void setViewMode(ViewMode viewMode) {
         this.viewMode = viewMode;
     }
+
+    public SFormConfig<KEY> getSingularFormConfig() {
+        return singularFormConfig;
+    }
 }
