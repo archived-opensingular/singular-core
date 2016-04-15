@@ -16,6 +16,8 @@ import java.util.TreeMap;
 
 import br.net.mirante.singular.showcase.component.file.CaseFileMultipleAttachments;
 import br.net.mirante.singular.showcase.component.input.core.select.*;
+import br.net.mirante.singular.showcase.component.interaction.CaseInitListener;
+import br.net.mirante.singular.showcase.component.interaction.CaseUpdateListener;
 import br.net.mirante.singular.showcase.component.layout.*;
 import com.google.common.base.Throwables;
 
@@ -116,6 +118,8 @@ public class ShowCaseTable {
             .addCase(CaseInteractionVisible.class)
             .addCase(CaseInteractionRequired.class)
             .addCase(CaseInteractionDependsOnOptions.class)
+            .addCase(CaseInitListener.class)
+            .addCase(CaseUpdateListener.class)
         ;
         group("Custom", Icone.WRENCH)
                 .addCase(CaseCustomStringMapper.class)
