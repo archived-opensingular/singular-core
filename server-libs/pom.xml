@@ -15,10 +15,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>flow-server-commons</module>
-        <module>flow-module</module>
-        <module>flow-server</module>
-        <module>pet-server-libs</module>
+        <module>server-commons</module>
+        <module>server-module</module>
+        <module>server-core</module>
+        <module>p-server-libs</module>
     </modules>
 
 

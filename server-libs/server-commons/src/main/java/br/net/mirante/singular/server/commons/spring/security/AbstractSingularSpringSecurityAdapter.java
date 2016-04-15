@@ -1,0 +1,15 @@
+package br.net.mirante.singular.server.commons.spring.security;
+
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+public abstract class AbstractSingularSpringSecurityAdapter extends WebSecurityConfigurerAdapter {
+
+
+    protected abstract ServerContext getContext();
+
+
+    protected String[] getDefaultPublicUrls() {
+        return new String[]{"/rest/**", "/resources/**", "/index.html", getContext().getUrlPath() + "/wicket/resource/**"};
+    }
+
+}
