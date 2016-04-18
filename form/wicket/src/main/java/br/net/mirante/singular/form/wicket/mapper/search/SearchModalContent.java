@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider.Column;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
@@ -33,7 +34,7 @@ class SearchModalContent extends Panel {
     private final IConsumer<AjaxRequestTarget> selectCallback;
 
     private SingularFormPanel innerSingularFormPanel;
-    private MarkupContainer   resultTalbe;
+    private MarkupContainer   resultTable;
 
     SearchModalContent(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
@@ -44,13 +45,10 @@ class SearchModalContent extends Panel {
     }
 
     private void validate() {
-        if (view.getPagedResultProvider() == null) {
+        if (getInstance().asAtrProvider().getProvider() == null) {
             throw new SingularFormException("O provider não foi informado");
         }
-        if (view.getFilterBuilder() == null) {
-            throw new SingularFormException("O filter não foi informado");
-        }
-        if (view.getConverter() == null) {
+        if (getInstance().asAtrProvider().getConverter() == null) {
             throw new SingularFormException("O converter não foi informado");
         }
     }
@@ -76,7 +74,7 @@ class SearchModalContent extends Panel {
                         final STypeComposite<SIComposite> filter = SDictionary.create()
                                 .createNewPackage("filterPackage")
                                 .createCompositeType("filter");
-                        view.getFilterBuilder().accept(filter);
+                        getInstance().asAtrProvider().getProvider().loadFilterDefinition(filter);
                         return filter;
                     }
                 };
@@ -90,25 +88,26 @@ class SearchModalContent extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
-                target.add(resultTalbe);
+                target.add(resultTable);
             }
         });
 
         BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
             @Override
             public long size() {
-                return view.getPagedResultProvider().getSize((SInstance) innerSingularFormPanel.getRootInstance().getObject());
+                return getInstance().asAtrProvider().getProvider().getSize((SInstance) innerSingularFormPanel.getRootInstance().getObject());
             }
 
             @Override
             public Iterator iterator(int first, int count, Object sortProperty, boolean ascending) {
-                return view.getPagedResultProvider().load((SInstance) innerSingularFormPanel.getRootInstance().getObject(), first, count).iterator();
+                return getInstance().asAtrProvider().getProvider().load((SInstance) innerSingularFormPanel.getRootInstance().getObject(), first, count).iterator();
             }
         });
 
         builder.setRowsPerPage(view.getPageSize());
 
-        for (SViewSearchModal.Column column : view.getColumns()) {
+        for (Object o : getInstance().asAtrProvider().getProvider().getColumns()) {
+            final Column column = (Column) o;
             builder.appendPropertyColumn(Model.of(column.getLabel()), object -> {
                 try {
                     final Method getter = object.getClass().getMethod("get" + WordUtils.capitalize(column.getProperty()));
@@ -122,12 +121,17 @@ class SearchModalContent extends Panel {
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
                 .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(Icone.HAND_UP)),
                         (IBSAction<Object>) (target, model) -> {
-                            view.getConverter().convert(ctx.getModel().getObject(), model.getObject());
+                            getInstance().asAtrProvider().getConverter()
+                                    .convert(getInstance(), model.getObject());
                             selectCallback.accept(target);
                         })
         );
 
-        add(resultTalbe = builder.build("resultTalbe"));
+        add(resultTable = builder.build("resultTable"));
+    }
+
+    private SInstance getInstance() {
+        return ctx.getModel().getObject();
     }
 
 }

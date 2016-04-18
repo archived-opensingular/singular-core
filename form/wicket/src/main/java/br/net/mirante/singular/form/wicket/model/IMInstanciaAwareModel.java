@@ -5,11 +5,10 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
-import java.util.Optional;
-
+import br.net.mirante.singular.form.mform.SInstance;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import java.util.Optional;
 
 public interface IMInstanciaAwareModel<T> extends IModel<T> {
     SInstance getMInstancia();

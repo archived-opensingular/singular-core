@@ -5,8 +5,8 @@ import br.net.mirante.singular.form.mform.SInstance;
 import java.io.Serializable;
 
 @FunctionalInterface
-public interface ValueToSInstanceConverter<S extends SInstance, T> extends Serializable {
+public interface ValueToSInstanceConverter<T> extends Serializable {
 
-    void convert(S emptyInstance, T object);
+    void convert(SInstance emptyInstance, T object);
 
 }

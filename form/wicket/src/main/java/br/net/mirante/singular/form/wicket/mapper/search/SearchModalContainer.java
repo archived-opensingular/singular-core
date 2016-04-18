@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.form.wicket.model.BaseIMInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -33,7 +33,7 @@ class SearchModalContainer extends Panel {
         super(id);
         this.ctx = ctx;
         this.view = (SViewSearchModal) ctx.getView();
-        this.valueModel = new BaseIMInstanceAwareModel<String>() {
+        this.valueModel = new AbstractMInstanceAwareModel<String>() {
             @Override
             public String getObject() {
                 if (!getMInstancia().isEmptyOfData()) {

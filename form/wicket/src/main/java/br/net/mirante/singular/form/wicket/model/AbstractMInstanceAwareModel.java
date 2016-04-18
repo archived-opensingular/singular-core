@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.model;
 
-public abstract class BaseIMInstanceAwareModel<T> implements IMInstanciaAwareModel<T> {
+public abstract class AbstractMInstanceAwareModel<T> implements IMInstanciaAwareModel<T> {
 
     @Override
     public void setObject(T object) {
@@ -9,4 +9,5 @@ public abstract class BaseIMInstanceAwareModel<T> implements IMInstanciaAwareMod
     @Override
     public void detach() {
     }
+
 }

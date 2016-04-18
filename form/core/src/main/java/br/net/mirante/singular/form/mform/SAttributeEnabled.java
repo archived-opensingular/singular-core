@@ -5,12 +5,13 @@
 
 package br.net.mirante.singular.form.mform;
 
-import java.util.function.Function;
-
+import br.net.mirante.singular.form.mform.basic.provider.AtrProvider;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+
+import java.util.function.Function;
 
 /**
  * Representa um entidade habilitada para ter atributos lidos ou alterados.
@@ -85,5 +86,10 @@ public interface SAttributeEnabled {
     public default AtrAnnotation asAtrAnnotation() {
         return as(AtrAnnotation::new);
     }
+
+    default AtrProvider asAtrProvider() {
+        return as(AtrProvider::new);
+    }
+
 
 }

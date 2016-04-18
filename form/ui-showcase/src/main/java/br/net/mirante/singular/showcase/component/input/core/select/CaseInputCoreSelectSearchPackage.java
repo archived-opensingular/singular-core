@@ -5,18 +5,16 @@
 
 package br.net.mirante.singular.showcase.component.input.core.select;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
-import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal.Column;
-import br.net.mirante.singular.form.mform.provider.ValueToSICompositeConverter;
-import br.net.mirante.singular.form.mform.provider.PagedResultProvider;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.ValueToSInstanceConverter;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,33 +28,34 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
 
         final STypeComposite funcionario = tipoMyForm.addFieldComposite("funcionario");
         funcionario.asAtrBasic().label("Funcionario").displayString("${nome} - ${cargo}");
-        funcionario.addFieldString("nome");
-        funcionario.addFieldString("cargo");
+        final STypeString nome  = funcionario.addFieldString("nome");
+        final STypeString cargo = funcionario.addFieldString("cargo");
 
-        funcionario.withView(new SViewSearchModal()
-                .withTitle("Buscar Profissionais")
-                .withFilter(filter -> {
-                    filter.addFieldString("nome")
-                            .asAtrBasic().label("Nome")
-                            .asAtrBootstrap().colPreference(6);
-                    filter.addFieldString("cargo")
-                            .asAtrBasic().label("Cargo")
-                            .asAtrBootstrap().colPreference(6);
-                })
-                .withProvider(new MyProvider())
-                .withConverter((ValueToSICompositeConverter<Pair>) (newFunc, pair) -> {
-                    newFunc.setValue("nome", pair.getLeft());
-                    newFunc.setValue("cargo", pair.getRight());
-                })
-                .withColumns(
-                        Column.of("left", "Nome"),
-                        Column.of("right", "Cargo")
-                )
-        );
+        funcionario.withView(new SViewSearchModal().title("Buscar Profissionais"))
+                .asAtrProvider()
+                .provider(new MyProvider())
+                .converter(new ValueToSInstanceConverter<Pair>() {
+                    @Override
+                    public void convert(SInstance newFunc, Pair pair) {
+                        ((SIComposite) newFunc).setValue(nome, pair.getLeft());
+                        ((SIComposite) newFunc).setValue(cargo, pair.getRight());
+                    }
+                });
 
     }
 
-    private static class MyProvider implements PagedResultProvider<Pair> {
+    private static class MyProvider implements FilteredPagedProvider<Pair> {
+
+        @Override
+        public void loadFilterDefinition(STypeComposite<?> filter) {
+            filter.addFieldString("nome").asAtrBasic().label("Nome").asAtrBootstrap().colPreference(6);
+            filter.addFieldString("cargo").asAtrBasic().label("Cargo").asAtrBootstrap().colPreference(6);
+        }
+
+        @Override
+        public List<Column> getColumns() {
+            return Arrays.asList(Column.of("left", "Nome"), Column.of("right", "Cargo"));
+        }
 
         @Override
         public Long getSize(SInstance filter) {
@@ -87,6 +86,7 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
 
             return pairs;
         }
+
     }
 
 
