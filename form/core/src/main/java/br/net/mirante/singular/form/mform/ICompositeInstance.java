@@ -5,7 +5,6 @@
 
 package br.net.mirante.singular.form.mform;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -13,8 +12,9 @@ import java.util.stream.Stream;
 
 public interface ICompositeInstance {
 
-    public Collection<? extends SInstance> getChildren();
-    public default Collection<? extends SInstance> getAllChildren() {
+    public List<? extends SInstance> getChildren();
+
+    public default List<? extends SInstance> getAllChildren() {
         return getChildren();
     }
 
