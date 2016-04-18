@@ -59,7 +59,9 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
 
         prazoValidade = this.addFieldInteger("prazoValidade", true);
-        prazoValidade.asAtrBasic().label("Prazo de validade (meses)");
+        prazoValidade
+            .asAtrBasic().label("Prazo de validade (meses)")
+            .asAtrBootstrap().colPreference(3);
 
         estudosEstabilidade = this.addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
 
