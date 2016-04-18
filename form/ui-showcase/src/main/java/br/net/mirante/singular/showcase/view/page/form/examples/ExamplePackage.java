@@ -8,7 +8,7 @@ package br.net.mirante.singular.showcase.view.page.form.examples;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
-import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
@@ -84,7 +84,7 @@ public class ExamplePackage extends SPackage {
                     .add().set(name,"Argentina")
                     .add().set(name,"Chile");
         });
-        country.withView(() -> new SViewSearchModal());
+        country.withView(SViewSelectionBySelect::new);
     }
 
     private void buildBuyerField() {

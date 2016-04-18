@@ -13,6 +13,9 @@ public class SViewSearchModal extends SView {
     private String       title    = StringUtils.EMPTY;
     private Integer      pageSize = 5;
 
+    public SViewSearchModal() {
+    }
+
     public SViewSearchModal title(String title) {
         this.title = title;
         return this;

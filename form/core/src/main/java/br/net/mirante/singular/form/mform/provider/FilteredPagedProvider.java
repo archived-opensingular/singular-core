@@ -10,9 +10,9 @@ public interface FilteredPagedProvider<R> extends Serializable {
 
     void loadFilterDefinition(STypeComposite<?> filter);
 
-    Long getSize(SInstance filter);
+    Long getSize(SInstance rootInstance, SInstance filter);
 
-    List<R> load(SInstance filter, long first, long count);
+    List<R> load(SInstance rootInstance, SInstance filter, long first, long count);
 
     List<Column> getColumns();
 

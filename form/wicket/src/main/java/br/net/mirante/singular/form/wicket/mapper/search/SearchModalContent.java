@@ -95,12 +95,14 @@ class SearchModalContent extends Panel {
         BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
             @Override
             public long size() {
-                return getInstance().asAtrProvider().getProvider().getSize((SInstance) innerSingularFormPanel.getRootInstance().getObject());
+                return getInstance().asAtrProvider().getProvider()
+                        .getSize(ctx.getRootContext().getCurrentInstance(), (SInstance) innerSingularFormPanel.getRootInstance().getObject());
             }
 
             @Override
             public Iterator iterator(int first, int count, Object sortProperty, boolean ascending) {
-                return getInstance().asAtrProvider().getProvider().load((SInstance) innerSingularFormPanel.getRootInstance().getObject(), first, count).iterator();
+                return getInstance().asAtrProvider().getProvider()
+                        .load(ctx.getRootContext().getCurrentInstance(), (SInstance) innerSingularFormPanel.getRootInstance().getObject(), first, count).iterator();
             }
         });
 

@@ -27,13 +27,14 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
         final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         final STypeComposite funcionario = tipoMyForm.addFieldComposite("funcionario");
-        funcionario.asAtrBasic().label("Funcionario").displayString("${nome} - ${cargo}");
+        funcionario.asAtrBasic().label("Funcionario").displayString("${nome} - ${graduacao}");
+
         final STypeString nome  = funcionario.addFieldString("nome");
-        final STypeString cargo = funcionario.addFieldString("cargo");
+        final STypeString cargo = funcionario.addFieldString("graduacao");
 
         funcionario.withView(new SViewSearchModal().title("Buscar Profissionais"))
                 .asAtrProvider()
-                .provider(new MyProvider())
+                .provider(new FuncionarioProvider())
                 .converter(new ValueToSInstanceConverter<Pair>() {
                     @Override
                     public void toInstance(SInstance newFunc, Pair pair) {
@@ -44,31 +45,31 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
 
     }
 
-    private static class MyProvider implements FilteredPagedProvider<Pair> {
+    private static class FuncionarioProvider implements FilteredPagedProvider<Pair> {
 
         @Override
         public void loadFilterDefinition(STypeComposite<?> filter) {
             filter.addFieldString("nome").asAtrBasic().label("Nome").asAtrBootstrap().colPreference(6);
-            filter.addFieldString("cargo").asAtrBasic().label("Cargo").asAtrBootstrap().colPreference(6);
+            filter.addFieldString("graduacao").asAtrBasic().label("Graduação").asAtrBootstrap().colPreference(6);
         }
 
         @Override
         public List<Column> getColumns() {
-            return Arrays.asList(Column.of("left", "Nome"), Column.of("right", "Cargo"));
+            return Arrays.asList(Column.of("left", "Nome"), Column.of("right", "Graduação"));
         }
 
         @Override
-        public Long getSize(SInstance filter) {
+        public Long getSize(SInstance root, SInstance filter) {
             return 3L;
         }
 
         @Override
-        public List<Pair> load(SInstance filter, long first, long count) {
+        public List<Pair> load(SInstance root, SInstance filter, long first, long count) {
             List<Pair> pairs = new ArrayList<>();
 
-            pairs.add(Pair.of("Danilo", "Engenheiro da Computação"));
-            pairs.add(Pair.of("Vinicius", "Cientista da computação"));
-            pairs.add(Pair.of("Delfino", "Cientista da computação"));
+            pairs.add(Pair.of("Danilo", "Engenheria da computação"));
+            pairs.add(Pair.of("Vinicius", "Ciência da computação"));
+            pairs.add(Pair.of("Delfino", "Ciência da computação"));
 
             if (Value.of(filter, "nome") != null) {
                 pairs = pairs
@@ -77,10 +78,10 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
                         .collect(Collectors.toList());
             }
 
-            if (Value.of(filter, "cargo") != null) {
+            if (Value.of(filter, "graduacao") != null) {
                 pairs = pairs
                         .stream()
-                        .filter(p -> ((String) p.getRight()).toUpperCase().contains(Value.of(filter, "cargo").toString().toUpperCase()))
+                        .filter(p -> ((String) p.getRight()).toUpperCase().contains(Value.of(filter, "graduacao").toString().toUpperCase()))
                         .collect(Collectors.toList());
             }
 

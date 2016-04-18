@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.mform.provider;
 import br.net.mirante.singular.form.mform.SAttributeEnabled;
 import br.net.mirante.singular.form.mform.STranslatorForAttribute;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
-import br.net.mirante.singular.form.mform.converter.ValueToSInstanceConverter;
 
 public class AtrProvider extends STranslatorForAttribute {
 
@@ -19,7 +18,7 @@ public class AtrProvider extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrProvider converter(ValueToSInstanceConverter valor) {
+    public AtrProvider converter(SInstanceConverter valor) {
         setAttributeValue(SPackageProvider.CONVERTER, valor);
         return this;
     }
