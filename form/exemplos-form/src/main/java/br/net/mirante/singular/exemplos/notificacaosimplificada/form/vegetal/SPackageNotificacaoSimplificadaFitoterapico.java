@@ -29,7 +29,6 @@ import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Pair;
 
-@SInfoType(spackage = SPackageNotificacaoSimplificadaFitoterapico.class)
 public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
 
     public static final String PACOTE        = "mform.peticao.notificacaosimplificada.fitoterapico";
