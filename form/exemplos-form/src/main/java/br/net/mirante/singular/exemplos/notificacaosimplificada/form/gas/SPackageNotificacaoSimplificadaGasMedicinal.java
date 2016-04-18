@@ -17,7 +17,6 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
-@SInfoType(spackage = SPackageNotificacaoSimplificadaGasMedicinal.class)
 public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
     public static final String PACOTE = "mform.peticao.notificacaosimplificada.gas";

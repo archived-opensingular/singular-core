@@ -29,7 +29,6 @@ import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Pair;
 
-@SInfoType(spackage = SPackageNotificacaoSimplificadaFitoterapico.class)
 public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
 
     public static final String PACOTE        = "mform.peticao.notificacaosimplificada.fitoterapico";
@@ -138,6 +137,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
 
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos = notificacaoSimplificada.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
         STypeAcondicionamento acondicionamento = acondicionamentos.getElementsType();
+        acondicionamentos.withMiniumSizeOf(1);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
                         .col(acondicionamento.embalagemPrimaria, "Embalagem primária")
