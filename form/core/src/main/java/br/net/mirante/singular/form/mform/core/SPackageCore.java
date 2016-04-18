@@ -5,21 +5,25 @@
 
 package br.net.mirante.singular.form.mform.core;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeAttachmentList;
+import br.net.mirante.singular.form.mform.STypeCode;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.STypePredicate;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 
-@SuppressWarnings({"unchecked", "rawtypes"})
 public class SPackageCore extends SPackage {
 
-    public static final String NOME = "mform.core";
-
-
-
+    public static final String NAME = "singular.form.core";
 
     public SPackageCore() {
-        super(NOME);
+        super(NAME);
     }
 
     @Override
