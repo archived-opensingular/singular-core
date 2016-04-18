@@ -8,6 +8,7 @@ package br.net.mirante.singular.form.wicket.mapper.search;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
@@ -66,6 +67,10 @@ class SearchModalContainer extends Panel {
         modal.setBody(new SearchModalContent("selectInputModalContent", ctx, (target) -> {
             modal.hide(target);
             target.add(valueField);
+            valueField.getBehaviors(AjaxUpdateInputBehavior.class)
+                    .stream()
+                    .findFirst().
+                    ifPresent(ajax -> ajax.onUpdate(target));
         }));
         ctx.getRootContainer().appendTag("div", modal);
     }

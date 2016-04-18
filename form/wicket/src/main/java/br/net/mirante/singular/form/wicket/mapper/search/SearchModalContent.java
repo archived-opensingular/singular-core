@@ -112,10 +112,15 @@ class SearchModalContent extends Panel {
             final Column column = (Column) o;
             builder.appendPropertyColumn(Model.of(column.getLabel()), object -> {
                 try {
-                    final Method getter = object.getClass().getMethod("get" + WordUtils.capitalize(column.getProperty()));
-                    return getter.invoke(object);
+                    if (column.getProperty() != null) {
+                        final Method getter = object.getClass().getMethod("get" + WordUtils.capitalize(column.getProperty()));
+                        getter.setAccessible(true);
+                        return getter.invoke(object);
+                    } else {
+                        return object;
+                    }
                 } catch (Exception ex) {
-                    throw new SingularFormException("Não foi possivel recuperar a propriedade " + column.getProperty() + " via metodo get na classe " + object.getClass());
+                    throw new SingularFormException("Não foi possivel recuperar a propriedade '" + column.getProperty() + "' via metodo get na classe " + object.getClass());
                 }
             });
         }

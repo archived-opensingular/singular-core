@@ -6,7 +6,6 @@
 package br.net.mirante.singular.form.wicket.mapper.search;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -19,9 +18,6 @@ public class SearchModalMapper extends ControlsFieldComponentAbstractMapper {
     public Component appendInput()
     {
         if (view instanceof SViewSearchModal) {
-            if(ctx.getModel().getObject().asAtrBasic().getDisplayString() == null){
-                throw new SingularFormException("Para uso do SViewSearchModal é necessario informar o string display.");
-            }
             final SearchModalContainer selectModalBusca = new SearchModalContainer("SelectModalBusca", ctx);
             formGroup.appendDiv(selectModalBusca);
             return selectModalBusca;
