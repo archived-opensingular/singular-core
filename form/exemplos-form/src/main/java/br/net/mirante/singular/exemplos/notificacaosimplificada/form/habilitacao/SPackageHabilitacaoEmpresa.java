@@ -19,7 +19,6 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
-@SInfoType(spackage = SPackageHabilitacaoEmpresa.class)
 public class SPackageHabilitacaoEmpresa extends SPackage {
 
     public static final String PACOTE        = "mform.peticao.notificacaosimplificada.habilitacao";

@@ -10,13 +10,33 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.core.*;
+import br.net.mirante.singular.form.mform.AtrRef;
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SAttributeEnabled;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIPredicate;
+import br.net.mirante.singular.form.mform.SISupplier;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeBehavior;
+import br.net.mirante.singular.form.mform.STypePredicate;
+import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.STypeSupplier;
+import br.net.mirante.singular.form.mform.core.SIBoolean;
+import br.net.mirante.singular.form.mform.core.SIInteger;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
+import br.net.mirante.singular.form.mform.core.STypeDate;
+import br.net.mirante.singular.form.mform.core.STypeDecimal;
+import br.net.mirante.singular.form.mform.core.STypeFormula;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class SPackageBasic extends SPackage {
 
-    public static final String NOME = "mform.basic";
+    public static final String NAME = "singular.form.basic";
 
     //@formatter:off
     public static final AtrRef<STypeString, SIString, String>                     ATR_LABEL                  = new AtrRef<>(SPackageBasic.class, "label", STypeString.class, SIString.class, String.class);
@@ -51,7 +71,7 @@ public class SPackageBasic extends SPackage {
     //@formatter:on
 
     public SPackageBasic() {
-        super(NOME);
+        super(NAME);
     }
 
     @Override

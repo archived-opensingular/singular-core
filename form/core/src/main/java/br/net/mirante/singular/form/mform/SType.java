@@ -647,8 +647,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             return name.substring(getName().length() + 1);
         } else if (isEqualsStart(name, scope.getName())) {
             return name.substring(scope.getName().length() + 1);
-        } else if (isEqualsStart(name, SPackageCore.NOME)) {
-            String v = name.substring(SPackageCore.NOME.length() + 1);
+        } else if (isEqualsStart(name, SPackageCore.NAME)) {
+            String v = name.substring(SPackageCore.NAME.length() + 1);
             if (aggressive) {
                 if (isEqualsStart(v, "SType")) {
                     v = v.substring(6);
@@ -656,8 +656,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             }
             return v;
         } else if (aggressive) {
-            if (isEqualsStart(name, SPackageBasic.NOME)) {
-                return name.substring(SPackageBasic.NOME.length() + 1);
+            if (isEqualsStart(name, SPackageBasic.NAME)) {
+                return name.substring(SPackageBasic.NAME.length() + 1);
             }
         }
         return name;

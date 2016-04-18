@@ -29,7 +29,7 @@ public class SPackageBootstrap extends SPackage {
             = new AtrRef<>(SPackageBootstrap.class, "newRow", STypeBoolean.class, SIBoolean.class, Boolean.class);
 
     public SPackageBootstrap() {
-        super("mform.plaf.bootstrap");
+        super("singular.form.plaf.bootstrap");
     }
 
     @Override
