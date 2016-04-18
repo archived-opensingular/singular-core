@@ -10,7 +10,7 @@ import java.util.List;
 public class MenuGroupDTO {
 
     private String label;
-    private List<String> processes;
+    private List<ProcessDTO> processes;
 
     public String getLabel() {
         return label;
@@ -20,11 +20,11 @@ public class MenuGroupDTO {
         this.label = label;
     }
 
-    public List<String> getProcesses() {
+    public List<ProcessDTO> getProcesses() {
         return processes;
     }
 
-    public void setProcesses(List<String> processes) {
+    public void setProcesses(List<ProcessDTO> processes) {
         this.processes = processes;
     }
 }

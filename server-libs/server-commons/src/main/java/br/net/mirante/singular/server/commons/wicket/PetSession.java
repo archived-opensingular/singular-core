@@ -1,8 +1,7 @@
 package br.net.mirante.singular.server.commons.wicket;
 
-import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
-import br.net.mirante.singular.server.commons.spring.security.ServerContext;
-import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
+import java.util.List;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
@@ -10,9 +9,16 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
+import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
+import br.net.mirante.singular.server.commons.spring.security.ServerContext;
+import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
+
 public class PetSession extends AuthenticatedWebSession {
 
     private ProcessGroupEntity categoriaSelecionada;
+
+    private List<ProcessDTO> processes;
 
     public PetSession(Request request, Response response) {
         super(request);
@@ -87,6 +93,14 @@ public class PetSession extends AuthenticatedWebSession {
 
     public void setCategoriaSelecionada(ProcessGroupEntity categoriaSelecionada) {
         this.categoriaSelecionada = categoriaSelecionada;
+    }
+
+    public List<ProcessDTO> getProcesses() {
+        return processes;
+    }
+
+    public void setProcesses(List<ProcessDTO> processes) {
+        this.processes = processes;
     }
 }
 
