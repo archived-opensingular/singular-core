@@ -6,12 +6,17 @@ import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
 import br.net.mirante.singular.flow.core.ws.SingularWS;
+import br.net.mirante.singular.persistence.entity.Actor;
+import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
+import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.test.support.TestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.junit.*;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -41,7 +46,6 @@ public class RelocationTest extends TestSupport {
         ProcessInstance id = p.newInstance();
         id.start();
 
-
         assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
 
         new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1");
@@ -49,6 +53,77 @@ public class RelocationTest extends TestSupport {
 
         new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2");
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(2));
+    }
+
+    @Test public void relocatesTaskUser2(){
+        P p = new P();
+        ProcessInstance id = p.newInstance();
+        id.start();
+
+
+        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
+
+        Actor u1 = testDAO.getSomeUser(1);
+        TaskInstance t = id.getCurrentTask();
+        t.relocateTask(u1, u1, false, "Just for fun", null);
+        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u1);
+
+        sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().evict(t.getEntityTaskInstance());
+
+        Actor u2 = testDAO.getSomeUser(2);
+        t.relocateTask(u2, u2, false, "Just want to watch the world burn", t.getEntityTaskInstance().getVersionStamp()+1);
+        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u2);
+    }
+
+    @Ignore
+    @Test public void relocatesTaskUser3() {
+        P p = new P();
+        ProcessInstance id = p.newInstance();
+        id.start();
+
+        TaskInstanceEntity o = nTE(id);
+        save(o);
+        o.setBeginDate(new Date());
+        update(o);
+        o.setBeginDate(new Date());
+        update(o);
+
+        TaskInstanceEntity o1 = nTE(id);
+        o1.setCod(o.getCod());
+        o1.setVersionStamp(o.getVersionStamp()-1);
+        update(o1);
+
+        sessionFactory.getCurrentSession().flush();
+    }
+
+    private void update(TaskInstanceEntity o) {
+//        testDAO.update(o);
+//        sessionFactory.getCurrentSession().evict(o);
+        save(o);
+    }
+
+    private void save(TaskInstanceEntity o) {
+//        testDAO.save(o);
+//        sessionFactory.getCurrentSession().evict(o);
+//        sessionFactory.getCurrentSession().close();
+        Session s = sessionFactory.getCurrentSession();
+//        Session s = sessionFactory.openSession();
+//        Transaction t = s.beginTransaction();
+        s.saveOrUpdate(o);
+        s.flush();
+        s.evict(o);
+//        t.commit();
+//        s.close();
+    }
+
+    private TaskInstanceEntity nTE(ProcessInstance id) {
+        TaskInstanceEntity t = id.getCurrentTask().getEntityTaskInstance();
+        TaskInstanceEntity o = new TaskInstanceEntity();
+        o.setTask((TaskVersionEntity) t.getTask());
+        o.setProcessInstance(t.getProcessInstance());
+        o.setBeginDate(new Date());
+        return o;
     }
 
 

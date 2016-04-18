@@ -100,6 +100,12 @@ public class TaskInstance {
         return (X) entityTask;
     }
 
+    public final <X extends IEntityTaskInstance> X getEntityTaskInstance(Integer versionStamp) {
+        IEntityTaskInstance e = getEntityTaskInstance();
+        e.setVersionStamp(versionStamp);
+        return (X) e;
+    }
+
     private IEntityTaskVersion getTaskVersion() {
         return entityTask.getTask();
     }
@@ -176,7 +182,14 @@ public class TaskInstance {
         return new TransitionRef(this, getFlowTask().getTransicaoOrException(transitionName));
     }
 
-    public void relocateTask(MUser author, MUser user, boolean notify, String relocationCause) {
+    public void relocateTask(MUser author, MUser user,
+                             boolean notify, String relocationCause) {
+        relocateTask(author, user, notify, relocationCause, null);
+    }
+
+    public void relocateTask(MUser author, MUser user,
+                             boolean notify, String relocationCause,
+                             Integer versionStamp) {
         if (user != null && !isPeople()) {
             throw new SingularFlowException(
                     getProcessInstance().createErrorMsg("A tarefa '" + getName() + "' não pode ser realocada, pois não é do tipo pessoa"));
@@ -188,7 +201,7 @@ public class TaskInstance {
 
         endLastAllocation();
 
-        getPersistenceService().relocateTask(getEntityTaskInstance(), user);
+        getPersistenceService().relocateTask(getEntityTaskInstance(versionStamp), user);
 
         String trimmedRelocationCause = StringUtils.trimToNull(relocationCause);
 
