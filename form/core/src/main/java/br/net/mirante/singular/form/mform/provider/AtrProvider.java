@@ -1,9 +1,9 @@
-package br.net.mirante.singular.form.mform.basic.provider;
+package br.net.mirante.singular.form.mform.provider;
 
 import br.net.mirante.singular.form.mform.SAttributeEnabled;
 import br.net.mirante.singular.form.mform.STranslatorForAttribute;
-import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.mform.provider.ValueToSInstanceConverter;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.converter.ValueToSInstanceConverter;
 
 public class AtrProvider extends STranslatorForAttribute {
 
@@ -28,7 +28,7 @@ public class AtrProvider extends STranslatorForAttribute {
         return getAttributeValue(SPackageProvider.PROVIDER);
     }
 
-    public ValueToSInstanceConverter getConverter() {
+    public SInstanceConverter getConverter() {
         return getAttributeValue(SPackageProvider.CONVERTER);
     }
 

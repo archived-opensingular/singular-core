@@ -7,9 +7,9 @@ package br.net.mirante.singular.showcase.component.input.core.select;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
+import br.net.mirante.singular.form.mform.converter.ValueToSInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.mform.provider.ValueToSInstanceConverter;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -36,7 +36,7 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
                 .provider(new MyProvider())
                 .converter(new ValueToSInstanceConverter<Pair>() {
                     @Override
-                    public void convert(SInstance newFunc, Pair pair) {
+                    public void toInstance(SInstance newFunc, Pair pair) {
                         ((SIComposite) newFunc).setValue(nome, pair.getLeft());
                         ((SIComposite) newFunc).setValue(cargo, pair.getRight());
                     }

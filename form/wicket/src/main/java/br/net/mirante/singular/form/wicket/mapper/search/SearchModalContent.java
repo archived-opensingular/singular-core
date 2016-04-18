@@ -121,8 +121,9 @@ class SearchModalContent extends Panel {
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
                 .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(Icone.HAND_UP)),
                         (IBSAction<Object>) (target, model) -> {
-                            getInstance().asAtrProvider().getConverter()
-                                    .convert(getInstance(), model.getObject());
+                            getInstance().asAtrProvider()
+                                    .getConverter()
+                                    .toInstance(getInstance(), model.getObject());
                             selectCallback.accept(target);
                         })
         );

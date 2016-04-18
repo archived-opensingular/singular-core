@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.basic.provider.AtrProvider;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.provider.AtrProvider;
 
 import java.util.function.Function;
 
