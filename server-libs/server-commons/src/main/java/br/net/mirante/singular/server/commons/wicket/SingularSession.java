@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.commons.wicket;
 
-import br.net.mirante.singular.server.commons.config.ServerContext;
+import br.net.mirante.singular.server.commons.config.IServerContext;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
@@ -9,15 +9,15 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class PetSession extends AuthenticatedWebSession {
+public class SingularSession extends AuthenticatedWebSession {
 
 
-    public PetSession(Request request, Response response) {
+    public SingularSession(Request request, Response response) {
         super(request);
     }
 
-    public static PetSession get() {
-        return (PetSession) Session.get();
+    public static SingularSession get() {
+        return (SingularSession) Session.get();
     }
 
     @Override
@@ -53,18 +53,10 @@ public class PetSession extends AuthenticatedWebSession {
         return getUserDetails() != null;
     }
 
-    public boolean isAnalise() {
-        return isAuthtenticated() && getUserDetails().isAnalise();
-    }
-
-    public boolean isPeticionamento() {
-        return isAuthtenticated() && getUserDetails().isPeticionamento();
-    }
-
     /**
      * @return O contexto atual da sessão ou null caso ainda não tenha sido definido.
      */
-    public ServerContext getServerContext() {
+    public IServerContext getServerContext() {
         if (isAuthtenticated()) {
             return getUserDetails().getServerContext();
         }

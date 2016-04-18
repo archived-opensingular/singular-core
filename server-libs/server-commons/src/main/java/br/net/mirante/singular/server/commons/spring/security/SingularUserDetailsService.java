@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.commons.spring.security;
 
-import br.net.mirante.singular.server.commons.config.ServerContext;
+import br.net.mirante.singular.server.commons.config.IServerContext;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,10 +29,12 @@ public interface SingularUserDetailsService extends UserDetailsService, UserDeta
     @Override
     public default SingularUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        return loadUserByUsername(username, ServerContext.getContextFromRequest(request));
+        return loadUserByUsername(username, IServerContext.getContextFromRequest(request, getContexts()));
     }
 
 
-    public SingularUserDetails loadUserByUsername(String username, ServerContext context) throws UsernameNotFoundException;
+    public SingularUserDetails loadUserByUsername(String username, IServerContext context) throws UsernameNotFoundException;
+
+    public IServerContext[] getContexts();
 
 }

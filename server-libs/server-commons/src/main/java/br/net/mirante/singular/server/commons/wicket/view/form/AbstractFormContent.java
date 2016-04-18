@@ -14,7 +14,7 @@ import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.server.commons.wicket.PetSession;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
@@ -99,7 +99,7 @@ public abstract class AbstractFormContent extends Content {
             int index = 0;
             for (MTransition t : trans) {
                 if (t.getMetaDataValue(PetServerContextMetaData.KEY) != null
-                        && t.getMetaDataValue(PetServerContextMetaData.KEY).isEnabledOn(PetSession.get().getServerContext())) {
+                        && t.getMetaDataValue(PetServerContextMetaData.KEY).isEnabledOn(SingularSession.get().getServerContext())) {
                     String btnId = "flow-btn" + index;
                     buildFlowTransitionButton(
                             btnId,

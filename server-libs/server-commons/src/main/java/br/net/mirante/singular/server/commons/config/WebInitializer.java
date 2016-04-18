@@ -2,6 +2,8 @@ package br.net.mirante.singular.server.commons.config;
 
 import br.net.mirante.singular.server.commons.wicket.SingularApplication;
 import org.apache.wicket.protocol.http.WicketFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -18,6 +20,9 @@ import java.util.EnumSet;
 public abstract class WebInitializer {
 
 
+    static final String SINGULAR_SECURITY = "[SINGULAR][WEB] %s";
+    public static final Logger logger = LoggerFactory.getLogger(SpringSecurityInitializer.class);
+
     public void init(ServletContext ctx) throws ServletException {
         onStartup(ctx);
     }
@@ -25,6 +30,7 @@ public abstract class WebInitializer {
     protected void onStartup(ServletContext ctx) throws ServletException {
         addSessionListener(ctx);
         for (IServerContext context : getServerContexts()) {
+            logger.info(String.format(SINGULAR_SECURITY, "Setting up web context: "+context.getContextPath()));
             addWicketFilter(ctx, context);
         }
     }

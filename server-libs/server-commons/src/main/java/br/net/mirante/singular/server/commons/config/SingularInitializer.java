@@ -41,7 +41,11 @@ public interface SingularInitializer extends WebApplicationInitializer {
                     Optional
                             .ofNullable(springHibernateInitializer)
                             .map(SpringHibernateInitializer::getSpringMVCServletMapping)
-                            .orElse(null));
+                            .orElse(null),
+                    Optional
+                            .ofNullable(webInitializer)
+                            .map(WebInitializer::getServerContexts)
+                            .orElse(ServerContext.values()));
         } else {
             logger.info(String.format(SINGULAR, " Null springSecurityInitializer, skipping Spring Security configuration"));
         }

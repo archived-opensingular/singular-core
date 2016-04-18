@@ -73,12 +73,12 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
 
     @Override
     public Session newSession(Request request, Response response) {
-        return new PetSession(request, response);
+        return new SingularSession(request, response);
     }
 
     @Override
     protected Class<? extends AbstractAuthenticatedWebSession> getWebSessionClass() {
-        return PetSession.class;
+        return SingularSession.class;
     }
 
     @Override

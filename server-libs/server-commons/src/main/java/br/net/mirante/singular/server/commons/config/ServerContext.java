@@ -11,11 +11,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 public enum ServerContext implements IServerContext {
 
-    WORKLIST("/worklist/*", ConfigProperties.ANALISE_CONTEXT_KEY);
 
+    WORKLIST("/worklist/*", "singular.worklist");
+
+    private final String propertiesBaseKey;
     private final String contextPath;
 
-    ServerContext(String deaultPath, String key) {
+    ServerContext(String deaultPath, String propertiesBaseKey) {
+        this.propertiesBaseKey = propertiesBaseKey;
+        String key = propertiesBaseKey + ".context";
         String path = ConfigProperties.get(key);
         if (path == null || path.length() <= 0) {
             this.contextPath = deaultPath;
@@ -24,19 +28,9 @@ public enum ServerContext implements IServerContext {
         }
     }
 
-    public static ServerContext getContextFromRequest(Request request) {
-        return getContextFromRequest((HttpServletRequest) request.getContainerRequest());
-    }
-
-    public static ServerContext getContextFromRequest(HttpServletRequest request) {
-        String contextPath = request.getContextPath();
-        String context = request.getPathInfo().replaceFirst(contextPath, "");
-        for (ServerContext ctx : ServerContext.values()){
-            if (context.startsWith(ctx.getUrlPath())) {
-                return ctx;
-            }
-        }
-        throw new SingularServerException("Não foi possível determinar o contexto do servidor do singular: peticionamento ou analise");
+    @Override
+    public String getPropertiesBaseKey() {
+        return propertiesBaseKey;
     }
 
     /**

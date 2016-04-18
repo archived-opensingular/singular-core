@@ -1,28 +1,22 @@
 package br.net.mirante.singular.server.commons.spring.security;
 
 
-
-import br.net.mirante.singular.server.commons.config.ServerContext;
+import br.net.mirante.singular.server.commons.config.IServerContext;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Arrays;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public interface SingularUserDetails extends UserDetails {
 
-    public default boolean isAnalise(){
-        return  ServerContext.ANALISE.equals(getServerContext());
+    public default boolean isContext(IServerContext context) {
+        return context.equals(getServerContext());
     }
 
-    public default boolean isPeticionamento(){
-        return  ServerContext.PETICIONAMENTO.equals(getServerContext());
-    }
-
-    public ServerContext getServerContext();
+    public IServerContext getServerContext();
 
     public String getDisplayName();
 

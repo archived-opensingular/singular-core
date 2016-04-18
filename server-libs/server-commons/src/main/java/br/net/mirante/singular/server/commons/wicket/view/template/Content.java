@@ -2,7 +2,7 @@ package br.net.mirante.singular.server.commons.wicket.view.template;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
-import br.net.mirante.singular.server.commons.wicket.PetSession;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.SingularToastrHelper;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -63,8 +63,8 @@ public abstract class Content extends Panel {
         return toolbar.add(toolbarItem.apply(toolbar.newChildId()));
     }
 
-    public PetSession getPetSession() {
-        return PetSession.get();
+    public SingularSession getPetSession() {
+        return SingularSession.get();
     }
 
     public void addToastrSuccessMessage(String messageKey, String... args) {

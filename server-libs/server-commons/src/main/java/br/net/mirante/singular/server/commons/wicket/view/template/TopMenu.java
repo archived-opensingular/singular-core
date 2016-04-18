@@ -3,7 +3,7 @@ package br.net.mirante.singular.server.commons.wicket.view.template;
 import java.util.Optional;
 
 import br.net.mirante.singular.server.commons.spring.security.SecurityUtil;
-import br.net.mirante.singular.server.commons.wicket.PetSession;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.StatelessLink;
@@ -35,7 +35,7 @@ public class TopMenu extends Panel {
 
     protected void buildContent() {
         queue(new WebMarkupContainer("sideBarToggle").setVisible(withSideBar));
-        queue(new Label("nome", $m.ofValue(PetSession.get().getName())));
+        queue(new Label("nome", $m.ofValue(SingularSession.get().getName())));
 
         WebMarkupContainer avatar = new WebMarkupContainer("codrh");
         Optional<String> avatarSrc = Optional.ofNullable(null);

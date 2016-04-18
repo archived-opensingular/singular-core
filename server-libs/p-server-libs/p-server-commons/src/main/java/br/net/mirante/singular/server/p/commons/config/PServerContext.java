@@ -13,12 +13,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 public enum PServerContext implements IServerContext {
 
-    PETITION("/peticionamento/*", br.net.mirante.singular.server.commons.config.ConfigProperties.PETICIONAMENTO_CONTEXT_KEY),
-    ANALYSIS("/worklist/*", br.net.mirante.singular.server.commons.config.ConfigProperties.ANALISE_CONTEXT_KEY);
+    PETITION("/petition/*", "singular.petition"),
+    WORKLIST("/worklist/*", "singular.worklist");
 
     private final String contextPath;
+    private final String propertiesBaseKey;
 
-    PServerContext(String deaultPath, String key) {
+    PServerContext(String deaultPath, String propertiesBaseKey) {
+        this.propertiesBaseKey = propertiesBaseKey;
+        String key = propertiesBaseKey + ".context";
         String path = ConfigProperties.get(key);
         if (path == null || path.length() <= 0) {
             this.contextPath = deaultPath;
@@ -34,12 +37,17 @@ public enum PServerContext implements IServerContext {
     public static PServerContext getContextFromRequest(HttpServletRequest request) {
         String contextPath = request.getContextPath();
         String context = request.getPathInfo().replaceFirst(contextPath, "");
-        for (PServerContext ctx : PServerContext.values()){
+        for (PServerContext ctx : PServerContext.values()) {
             if (context.startsWith(ctx.getUrlPath())) {
                 return ctx;
             }
         }
-        throw new SingularServerException("Não foi possível determinar o contexto do servidor do singular: peticionamento ou analise");
+        throw new SingularServerException("Não foi possível determinar o contexto do servidor do singular");
+    }
+
+    @Override
+    public String getPropertiesBaseKey() {
+        return propertiesBaseKey;
     }
 
     /**
