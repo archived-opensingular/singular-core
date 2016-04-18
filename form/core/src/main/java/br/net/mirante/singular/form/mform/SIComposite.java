@@ -6,7 +6,6 @@
 package br.net.mirante.singular.form.mform;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +46,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      *
      * @return instancias dos campos
      */
-    public Collection<SInstance> getFields() {
+    public List<SInstance> getFields() {
         return (fields == null) ? Collections.emptyList() : fields.getFields();
     }
 
@@ -56,19 +55,19 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      *
      * @return instancias dos campos
      */
-    public Collection<SInstance> getAllFields() {
+    public List<SInstance> getAllFields() {
         for (SType<?> field : getType().getFields())
             getField(field.getNameSimple());
         return getFields();
     }
 
     @Override
-    public Collection<SInstance> getChildren() {
+    public List<SInstance> getChildren() {
         return getFields();
     }
 
     @Override
-    public Collection<SInstance> getAllChildren() {
+    public List<SInstance> getAllChildren() {
         return getAllFields();
     }
 
