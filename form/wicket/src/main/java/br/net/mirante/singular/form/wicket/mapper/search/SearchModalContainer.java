@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper.search;
 
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -37,8 +38,17 @@ class SearchModalContainer extends Panel {
         this.valueModel = new AbstractMInstanceAwareModel<String>() {
             @Override
             public String getObject() {
-                if (!getMInstancia().isEmptyOfData()) {
-                    return getMInstancia().toStringDisplay();
+                final SInstance mi = getMInstancia();
+                if (mi != null && mi.getValue() != null) {
+                    if (!mi.isEmptyOfData()) {
+                        if (mi.asAtrBasic().getDisplayString() != null) {
+                            return mi.toStringDisplay();
+                        }
+                        if (!(mi instanceof SIComposite)) {
+                            return String.valueOf(mi.getValue());
+                        }
+                        return mi.toString();
+                    }
                 }
                 return null;
             }

@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper.search;
 
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
@@ -15,8 +16,7 @@ import org.apache.wicket.model.IModel;
 public class SearchModalMapper extends ControlsFieldComponentAbstractMapper {
 
 
-    public Component appendInput()
-    {
+    public Component appendInput() {
         if (view instanceof SViewSearchModal) {
             final SearchModalContainer selectModalBusca = new SearchModalContainer("SelectModalBusca", ctx);
             formGroup.appendDiv(selectModalBusca);
@@ -29,7 +29,13 @@ public class SearchModalMapper extends ControlsFieldComponentAbstractMapper {
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
         if (mi != null && mi.getValue() != null) {
-            return mi.toStringDisplay();
+            if (mi.asAtrBasic().getDisplayString() != null) {
+                return mi.toStringDisplay();
+            }
+            if (!(mi instanceof SIComposite)) {
+                return String.valueOf(mi.getValue());
+            }
+            return mi.toString();
         }
         return StringUtils.EMPTY;
     }
