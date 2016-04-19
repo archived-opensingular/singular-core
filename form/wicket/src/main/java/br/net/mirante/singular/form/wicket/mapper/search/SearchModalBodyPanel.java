@@ -115,7 +115,7 @@ class SearchModalBodyPanel extends Panel {
         }
 
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
-                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(Icone.HAND_UP)),
+                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(Icone.HAND_UP)).title(Model.of("Filtrar")),
                         (IBSAction<Object>) (target, model) ->
                         {
                             SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
