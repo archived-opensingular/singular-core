@@ -33,7 +33,7 @@ public class STypeUnidadeMedida extends STypeComposite<SIComposite> {
                     .required()
                     .label("Unidade de medida")
                     .asAtrBootstrap()
-                    .colPreference(5);
+                    .colPreference(4);
             this.setView(SViewAutoComplete::new);
 
 
