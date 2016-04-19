@@ -50,4 +50,6 @@ public interface IServerContext {
 
     public String getPropertiesBaseKey();
 
+    public String getName();
+
 }

@@ -19,35 +19,34 @@ public enum PServerContext implements IServerContext {
     private final String contextPath;
     private final String propertiesBaseKey;
 
-    PServerContext(String deaultPath, String propertiesBaseKey) {
+    PServerContext(String defaultPath, String propertiesBaseKey) {
         this.propertiesBaseKey = propertiesBaseKey;
         String key = propertiesBaseKey + ".context";
         String path = ConfigProperties.get(key);
         if (path == null || path.length() <= 0) {
-            this.contextPath = deaultPath;
-        } else {
-            this.contextPath = path;
+            path = defaultPath;
         }
-    }
-
-    public static PServerContext getContextFromRequest(Request request) {
-        return getContextFromRequest((HttpServletRequest) request.getContainerRequest());
-    }
-
-    public static PServerContext getContextFromRequest(HttpServletRequest request) {
-        String contextPath = request.getContextPath();
-        String context = request.getPathInfo().replaceFirst(contextPath, "");
-        for (PServerContext ctx : PServerContext.values()) {
-            if (context.startsWith(ctx.getUrlPath())) {
-                return ctx;
+        if (!path.endsWith("/*")) {
+            if (path.endsWith("*")) {
+                path = path.substring(0, path.length() - 2) + "/*";
+            } else if (path.endsWith("/")) {
+                path += "*";
+            } else {
+                path += "/*";
             }
         }
-        throw new SingularServerException("Não foi possível determinar o contexto do servidor do singular");
+        this.contextPath = path;
     }
+
 
     @Override
     public String getPropertiesBaseKey() {
         return propertiesBaseKey;
+    }
+
+    @Override
+    public String getName() {
+        return this.name();
     }
 
     /**
@@ -78,5 +77,7 @@ public enum PServerContext implements IServerContext {
         String path = getContextPath().replace("*", "").replace(".", "").trim();
         return path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
     }
+
+
 
 }

@@ -1,10 +1,5 @@
 package br.net.mirante.singular.server.commons.config;
 
-import br.net.mirante.singular.server.commons.exception.SingularServerException;
-import org.apache.wicket.request.Request;
-
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Utilitário para prover a configuração de contexto atual e os métodos utilitários
  * relacionados.
@@ -17,20 +12,33 @@ public enum ServerContext implements IServerContext {
     private final String propertiesBaseKey;
     private final String contextPath;
 
-    ServerContext(String deaultPath, String propertiesBaseKey) {
+    ServerContext(String defaultPath, String propertiesBaseKey) {
         this.propertiesBaseKey = propertiesBaseKey;
         String key = propertiesBaseKey + ".context";
         String path = ConfigProperties.get(key);
         if (path == null || path.length() <= 0) {
-            this.contextPath = deaultPath;
-        } else {
-            this.contextPath = path;
+            path = defaultPath;
         }
+        if (!path.endsWith("/*")) {
+            if (path.endsWith("*")) {
+                path = path.substring(0, path.length() - 2) + "/*";
+            } else if (path.endsWith("/")) {
+                path += "*";
+            } else {
+                path += "/*";
+            }
+        }
+        this.contextPath = path;
     }
 
     @Override
     public String getPropertiesBaseKey() {
         return propertiesBaseKey;
+    }
+
+    @Override
+    public String getName() {
+        return this.name();
     }
 
     /**
@@ -61,5 +69,6 @@ public enum ServerContext implements IServerContext {
         String path = getContextPath().replace("*", "").replace(".", "").trim();
         return path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
     }
+
 
 }

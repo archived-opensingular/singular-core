@@ -41,9 +41,9 @@ public abstract class WebInitializer {
 
 
     protected void addWicketFilter(ServletContext ctx, IServerContext context) {
-        FilterRegistration.Dynamic wicketFilterAnalise = ctx.addFilter(context.getClass().getName(), WicketFilter.class);
+        FilterRegistration.Dynamic wicketFilterAnalise = ctx.addFilter(context.getName()+System.identityHashCode(context), WicketFilter.class);
         wicketFilterAnalise.setInitParameter("applicationClassName", getWicketApplicationClass(context).getName());
-        wicketFilterAnalise.setInitParameter("filterMappingUrlPattern", context.getContextPath());
+        wicketFilterAnalise.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, context.getContextPath());
         wicketFilterAnalise.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, context.getContextPath());
     }
 
