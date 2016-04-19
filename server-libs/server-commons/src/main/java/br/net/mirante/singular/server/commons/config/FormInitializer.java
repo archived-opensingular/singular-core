@@ -18,8 +18,6 @@ public abstract class FormInitializer {
 
     protected abstract Class<? extends SpringTypeLoader> typeLoader();
 
-    protected abstract Class<? extends HibernateSingularFlowConfigurationBean> flowConfigurationBean();
-
     public void init(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         Class<?> documentFactory = documentFactory();
         if (documentFactory != null) {
@@ -33,13 +31,6 @@ public abstract class FormInitializer {
             applicationContext.register(typeLoader);
         } else {
             logger.info(String.format(SINGULAR_FORM, " Null Form Type Loader, skipping Form Type Loader configuration. "));
-        }
-
-        Class<?> flowConfigurationBean = flowConfigurationBean();
-        if (flowConfigurationBean != null) {
-            applicationContext.register(flowConfigurationBean);
-        } else {
-            logger.info(String.format(SINGULAR_FORM, " Null Flow Configuration Bean, skipping Flow Configuration. "));
         }
     }
 
