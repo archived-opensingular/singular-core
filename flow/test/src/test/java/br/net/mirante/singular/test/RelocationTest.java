@@ -11,6 +11,7 @@ import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.test.support.TestSupport;
 import org.hibernate.Session;
+import org.hibernate.StaleObjectStateException;
 import org.hibernate.Transaction;
 import org.junit.*;
 import org.springframework.test.context.ActiveProfiles;
@@ -55,7 +56,7 @@ public class RelocationTest extends TestSupport {
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(2));
     }
 
-    @Test public void relocatesTaskUser2(){
+    @Test(expected = StaleObjectStateException.class) public void rejectsRelocationWithInvalidVersionNumber(){
         P p = new P();
         ProcessInstance id = p.newInstance();
         id.start();
@@ -72,7 +73,29 @@ public class RelocationTest extends TestSupport {
         sessionFactory.getCurrentSession().evict(t.getEntityTaskInstance());
 
         Actor u2 = testDAO.getSomeUser(2);
-        t.relocateTask(u2, u2, false, "Just want to watch the world burn", t.getEntityTaskInstance().getVersionStamp()+1);
+        t.relocateTask(u2, u2, false, "Just want to watch the world burn",
+                t.getEntityTaskInstance().getVersionStamp()-1);
+        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u2);
+    }
+
+    @Test public void acceptsRelocationWithValidVersionNumber(){
+        P p = new P();
+        ProcessInstance id = p.newInstance();
+        id.start();
+
+
+        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
+
+        Actor u1 = testDAO.getSomeUser(1);
+        TaskInstance t = id.getCurrentTask();
+        t.relocateTask(u1, u1, false, "Just for fun", null);
+        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u1);
+
+        sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().evict(t.getEntityTaskInstance());
+
+        Actor u2 = testDAO.getSomeUser(2);
+        t.relocateTask(u2, u2, false, "Just want to watch the world burn", t.getEntityTaskInstance().getVersionStamp());
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u2);
     }
 
