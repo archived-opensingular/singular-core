@@ -1,7 +1,9 @@
 package br.net.mirante.singular.server.commons.wicket.listener;
 
 import br.net.mirante.singular.server.commons.config.IServerContext;
+import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 import br.net.mirante.singular.server.commons.spring.security.SecurityUtil;
+import br.net.mirante.singular.server.commons.wicket.SingularApplication;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import org.apache.wicket.core.request.handler.IPageClassRequestHandler;
@@ -21,9 +23,10 @@ public class SingularServerContextListener extends AbstractRequestCycleListener 
 
     @Override
     public void onRequestHandlerResolved(RequestCycle cycle, IRequestHandler handler) {
+        SingularServerConfiguration singularServerConfiguration = SingularApplication.get().getApplicationContext().getBean(SingularServerConfiguration.class);
         if (SingularSession.get().isAuthtenticated() && isPageRequest(handler)) {
             HttpServletRequest request = (HttpServletRequest) cycle.getRequest().getContainerRequest();
-            IServerContext context = IServerContext.getContextFromRequest(request, null);
+            IServerContext context = IServerContext.getContextFromRequest(request, singularServerConfiguration.getContexts());
             if (!SingularSession.get().getServerContext().equals(context)) {
                 resetLogin(cycle);
             }
