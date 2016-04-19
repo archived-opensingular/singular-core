@@ -30,8 +30,7 @@ public interface SOptionsProvider extends Serializable {
         return null;
     }
 
-    /**
-     * Returns the list of options available for this selection, considering
+    /*** Returns the list of options available for this selection, considering
      * also the old state of it.
      *
      * @param selectedValueInstance : Current isntance used to select the options.

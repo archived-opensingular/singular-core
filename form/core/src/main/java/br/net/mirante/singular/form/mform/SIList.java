@@ -263,7 +263,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
-    public Collection<E> getChildren() {
+    public List<E> getChildren() {
         return getValues();
     }
 

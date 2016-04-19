@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.wicket.mapper.*;
+import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
 import org.apache.wicket.Component;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -37,7 +38,6 @@ import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapp
 import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectModalBuscaMapper;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.BreadPanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
@@ -110,7 +110,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
                 .register(STypeInteger.class,                                           IntegerMapper::new)
                 .register(STypeString.class,                                            StringMapper::new)
-                .register(STypeString.class,     SViewSelectionBySearchModal.class,     SelectModalBuscaMapper::new)
+                .register(STypeString.class,     SViewSearchModal.class,     SearchModalMapper::new)
                 .register(STypeString.class,     SViewTextArea.class,                   TextAreaMapper::new)
                 .register(STypeString.class,     SViewAutoComplete.class,               AutocompleteMapper::new)
                 .register(STypeDate.class,                                              DateMapper::new)
@@ -123,7 +123,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeComposite.class,   SViewTab.class,                       TabMapper::new)
                 .register(STypeComposite.class,   SViewSelectionByRadio.class,          RadioMapper::new)
                 .register(STypeComposite.class,   SViewSelectionBySelect.class,         SelectMapper::new)
-                .register(STypeComposite.class,   SViewSelectionBySearchModal.class,    SelectModalBuscaMapper::new)
+                .register(STypeComposite.class,   SViewSearchModal.class,    SearchModalMapper::new)
                 .register(STypeComposite.class,   SViewAutoComplete.class,              AutocompleteMapper::new)
                 .register(STypeComposite.class,   SViewReadOnly.class,                  ReadOnlyControlsFieldComponentMapper::new)
                 .register(STypeList.class,        SMultiSelectionBySelectView.class,    MultipleSelectBSMapper::new)

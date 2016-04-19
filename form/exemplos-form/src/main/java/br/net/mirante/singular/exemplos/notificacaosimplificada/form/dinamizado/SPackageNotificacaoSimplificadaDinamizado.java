@@ -13,24 +13,24 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioS
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
+import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-@SInfoType(spackage = SPackageNotificacaoSimplificadaDinamizado.class)
 public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
     public static final String PACOTE        = "mform.peticao.notificacaosimplificada.dinamizado";
@@ -66,10 +66,10 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     }
 
     private void addCaracteristicas(STypeComposite<?> notificacaoSimplificada) {
-        STypeComposite<SIComposite> caracteristicas =  notificacaoSimplificada.addFieldComposite("caracteristicas");
+        STypeComposite<SIComposite> caracteristicas = notificacaoSimplificada.addFieldComposite("caracteristicas");
         caracteristicas.addField("classe", STypeCategoriaRegulatoria.class);
 
-        final STypeLinhaProducaoDinamizado linhaProducao = caracteristicas.addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
+        final STypeLinhaProducaoDinamizado                        linhaProducao        = caracteristicas.addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
         final STypeList<STypeComposite<SIComposite>, SIComposite> formulasHomeopaticas = caracteristicas.addFieldListOfComposite("formulasHomeopaticas", "formulaHomeopatica");
 
         formulasHomeopaticas
@@ -109,18 +109,18 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         potencia
                 .asAtrBasic().label("Potência");
 
-        final STypeString  escala   = formulaHomeopatica.addFieldString("escala");
+        final STypeString escala = formulaHomeopatica.addFieldString("escala");
         escala
                 .asAtrBasic().label("Escala");
 
         potencia.addInstanceValidator(validatable -> {
-            Integer idDescricao = validatable.getInstance().findNearest(descricaoDinamizada).get().findNearest(idDescricaoDinamizada).get().getValue();
-            final Integer value = validatable.getInstance().getValue();
-            final Triple t = dominioService(validatable.getInstance()).diluicao(idDescricao);
+            Integer       idDescricao = validatable.getInstance().findNearest(descricaoDinamizada).get().findNearest(idDescricaoDinamizada).get().getValue();
+            final Integer value       = validatable.getInstance().getValue();
+            final Triple  t           = dominioService(validatable.getInstance()).diluicao(idDescricao);
             if (t != null) {
-                final BigDecimal min = (BigDecimal) t.getMiddle();
-                final BigDecimal max = (BigDecimal) t.getRight();
-                String faixa = String.format("%s - %s", min, max);
+                final BigDecimal min   = (BigDecimal) t.getMiddle();
+                final BigDecimal max   = (BigDecimal) t.getRight();
+                String           faixa = String.format("%s - %s", min, max);
                 if (value == null) {
 
                 } else if (BigDecimal.valueOf(value).compareTo(min) < 0) {
@@ -157,29 +157,34 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                                 .filter(ins -> ins.isPresent() && Value.notNull(ins.get(), idDescricaoDinamizada))
                                 .findFirst().isPresent();
                     })
+                    .displayString("${descricao}")
                     .asAtrBootstrap()
                     .colPreference(12);
-            formaFarmaceutica.setView(SViewSelectionBySearchModal::new);
-            formaFarmaceutica.withSelectionFromProvider(descricao, (ins, filter) -> {
-                final SIList<?>           list     = ins.getType().newList();
-                final SIList<SIComposite> formulas = ins.findNearest(formulasHomeopaticas).orElse(null);
-                if (formulas != null) {
-                    final List<Integer> ids = formulas.stream()
-                            .flatMap(f -> f.getChildren().stream())
-                            .map(i -> i.findNearest(idDescricaoDinamizada))
-                            .filter(Optional::isPresent)
-                            .map(Optional::get)
-                            .map(SIInteger::getValue)
-                            .collect(Collectors.toList());
-                    for (FormaFarmaceuticaBasica lc : dominioService(ins).formasFarmaceuticasDinamizadas(ids, filter)) {
-                        final SIComposite c = (SIComposite) list.addNew();
-                        c.setValue(id, lc.getId());
-                        c.setValue(descricao, lc.getDescricao());
-                    }
-                }
-                return list;
+            formaFarmaceutica.withView(new SViewSearchModal(), (Consumer<SViewSearchModal>) view -> {
+                view.title("Buscar formas farmacêutica");
             });
-
+            formaFarmaceutica
+                    .asAtrProvider()
+                    .provider(new FormaFarmaceuticaProvider() {
+                        @Override
+                        List<Integer> getIds(SInstance root) {
+                            final SIList<SIComposite> formulas = root.findNearest(formulasHomeopaticas).orElse(null);
+                            final List<Integer>       ids      = new ArrayList<>();
+                            if (formulas != null) {
+                                ids.addAll(formulas.stream()
+                                        .flatMap(f -> f.getChildren().stream())
+                                        .map(i -> i.findNearest(idDescricaoDinamizada))
+                                        .filter(Optional::isPresent)
+                                        .map(Optional::get)
+                                        .map(SIInteger::getValue)
+                                        .collect(Collectors.toList()));
+                            }
+                            return ids;
+                        }
+                    }).converter((ValueToSICompositeConverter<FormaFarmaceuticaBasica>) (ins, desc) -> {
+                ins.setValue(id, desc.getId());
+                ins.setValue(descricao, desc.getDescricao());
+            });
         }
     }
 
@@ -256,9 +261,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     }
 
     private void addIndicacaoTerapeutica(STypeComposite<?> notificacaoSimplificada) {
-        final STypeComposite<?> indicacaoTerapeutica           = notificacaoSimplificada.addFieldComposite("indicacaoTerapeutica");
-        final STypeInteger      idIndicacaoTerapeutica         = indicacaoTerapeutica.addFieldInteger("id");
-        final STypeSimple       descricaoIndicacaoTerapeutica  = indicacaoTerapeutica.addFieldString("descricao");
+        final STypeComposite<?> indicacaoTerapeutica          = notificacaoSimplificada.addFieldComposite("indicacaoTerapeutica");
+        final STypeInteger      idIndicacaoTerapeutica        = indicacaoTerapeutica.addFieldInteger("id");
+        final STypeSimple       descricaoIndicacaoTerapeutica = indicacaoTerapeutica.addFieldString("descricao");
         indicacaoTerapeutica
                 .asAtrBasic()
                 .label("Indicação terapêutica")
@@ -297,5 +302,38 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
     }
 
+    private abstract class FormaFarmaceuticaProvider implements FilteredPagedProvider<FormaFarmaceuticaBasica> {
+
+        abstract List<Integer> getIds(SInstance root);
+
+        @Override
+        public void loadFilterDefinition(STypeComposite<?> filter) {
+            filter.addFieldString("descricao").asAtrBasic().label("Descrição");
+            final STypeString conceito = filter.addFieldString("conceito");
+            conceito.withTextAreaView();
+            conceito.asAtrBasic().label("Conceito");
+        }
+
+        @Override
+        public Long getSize(SInstance root, SInstance filter) {
+            return dominioService(root)
+                    .countFormasFarmaceuticasDinamizadas(getIds(root),
+                            Value.of(filter, "descricao"), Value.of(filter, "conceito"));
+        }
+
+        @Override
+        public List<FormaFarmaceuticaBasica> load(SInstance root, SInstance filter, long first, long count) {
+            return dominioService(root)
+                    .formasFarmaceuticasDinamizadas(getIds(root),
+                            Value.of(filter, "descricao"), Value.of(filter, "conceito"),
+                            first, count);
+        }
+
+        @Override
+        public List<Column> getColumns() {
+            return Arrays.asList(Column.of("conceito", "Conceito"), Column.of("descricao", "Descrição"));
+        }
+
+    }
 }
 

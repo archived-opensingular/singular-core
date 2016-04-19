@@ -7,6 +7,7 @@ package br.net.mirante.singular.form.mform.core;
 
 import java.util.function.Consumer;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,7 +56,7 @@ public class STypeString extends STypeSimple<SIString, String> {
      * Configura o tipo para utilizar a view {@link SViewTextArea} e invoca o initializer 
      */
     @SafeVarargs
-    public final STypeString withTextAreaView(Consumer<SViewTextArea>...initializers) {
+    public final STypeString withTextAreaView(IConsumer<SViewTextArea>...initializers) {
         withView(new SViewTextArea(), initializers);
         return this;
     }
