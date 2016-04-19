@@ -15,12 +15,12 @@ import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 @EnableWebSecurity
 @Configuration
 @ComponentScan(
-        basePackages = {"br.net.mirante.singular, br.gov.anvisa"},
+        basePackages = {"br.net.mirante.singular"},
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ANNOTATION,
                         value = AutoScanDisabled.class)
         })
-public class PetServerSpringAppConfig extends WebMvcConfigurerAdapter {
+public class SingularServerSpringAppConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.commons.config;
 
-import br.net.mirante.singular.server.commons.spring.PetServerSpringAppConfig;
+import br.net.mirante.singular.server.commons.spring.SingularServerSpringAppConfig;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -44,14 +44,14 @@ public abstract class SpringHibernateInitializer {
 
     /**
      * Fornece a classe que será utilizada como configuração java do Spring.
-     * A classe fornecida deve herdar de {@link PetServerSpringAppConfig} e deve
+     * A classe fornecida deve herdar de {@link SingularServerSpringAppConfig} e deve
      * ser anotada com {@link org.springframework.context.annotation.Configuration}.
      * As principais configurações do pet server são feitas pela superclasse bastando declarar
      * na classe informada apenas as configurações e beans do spring específicos da aplicação
      *
-     * @return Uma classe concreta que herda de {@link PetServerSpringAppConfig} e anotada com {@link org.springframework.context.annotation.Configuration}
+     * @return Uma classe concreta que herda de {@link SingularServerSpringAppConfig} e anotada com {@link org.springframework.context.annotation.Configuration}
      */
-    protected abstract Class<? extends PetServerSpringAppConfig> getSpringConfigurationClass();
+    protected abstract Class<? extends SingularServerSpringAppConfig> getSpringConfigurationClass();
 
     protected String getSpringMVCServletMapping() {
         return "/*";
