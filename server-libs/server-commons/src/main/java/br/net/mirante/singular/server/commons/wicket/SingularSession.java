@@ -2,8 +2,6 @@ package br.net.mirante.singular.server.commons.wicket;
 
 import java.util.List;
 
-import br.net.mirante.singular.server.commons.config.IServerContext;
-import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
@@ -12,8 +10,8 @@ import org.apache.wicket.request.Response;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
+import br.net.mirante.singular.server.commons.config.IServerContext;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
-import br.net.mirante.singular.server.commons.spring.security.ServerContext;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
 
 public class SingularSession extends AuthenticatedWebSession {
