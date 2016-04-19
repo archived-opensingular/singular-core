@@ -5,53 +5,27 @@
 
 package br.net.mirante.singular.showcase.component;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-
-import br.net.mirante.singular.showcase.component.file.CaseFileMultipleAttachments;
-import br.net.mirante.singular.showcase.component.input.core.select.*;
-import br.net.mirante.singular.showcase.component.interaction.CaseInitListener;
-import br.net.mirante.singular.showcase.component.interaction.CaseUpdateListener;
-import br.net.mirante.singular.showcase.component.layout.*;
-import com.google.common.base.Throwables;
-
 import br.net.mirante.singular.showcase.component.custom.CaseCustomStringMapper;
 import br.net.mirante.singular.showcase.component.custom.CaseCustonRangeMapper;
 import br.net.mirante.singular.showcase.component.custom.comment.CaseAnnotation;
 import br.net.mirante.singular.showcase.component.file.CaseFileAttachment;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreBasic;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreBoolean;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreDate;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreDateTime;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreDecimal;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreInteger;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreMoney;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreString;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreTextArea;
-import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreYearMonth;
-import br.net.mirante.singular.showcase.component.input.core.multiselect.CaseInputCoreMultiSelectCheckbox;
-import br.net.mirante.singular.showcase.component.input.core.multiselect.CaseInputCoreMultiSelectCombo;
-import br.net.mirante.singular.showcase.component.input.core.multiselect.CaseInputCoreMultiSelectComposite;
-import br.net.mirante.singular.showcase.component.input.core.multiselect.CaseInputCoreMultiSelectDefault;
-import br.net.mirante.singular.showcase.component.input.core.multiselect.CaseInputCoreMultiSelectPickList;
-import br.net.mirante.singular.showcase.component.input.core.multiselect.CaseInputCoreMultiSelectProvider;
-import br.net.mirante.singular.showcase.component.interaction.CaseInteractionDependsOnOptions;
-import br.net.mirante.singular.showcase.component.interaction.CaseInteractionEnabled;
-import br.net.mirante.singular.showcase.component.interaction.CaseInteractionExists;
-import br.net.mirante.singular.showcase.component.interaction.CaseInteractionRequired;
-import br.net.mirante.singular.showcase.component.interaction.CaseInteractionVisible;
+import br.net.mirante.singular.showcase.component.file.CaseFileMultipleAttachments;
+import br.net.mirante.singular.showcase.component.input.core.*;
+import br.net.mirante.singular.showcase.component.input.core.multiselect.*;
+import br.net.mirante.singular.showcase.component.input.core.search.CaseInputModalSearch;
+import br.net.mirante.singular.showcase.component.input.core.select.*;
+import br.net.mirante.singular.showcase.component.interaction.*;
+import br.net.mirante.singular.showcase.component.layout.*;
 import br.net.mirante.singular.showcase.component.map.CaseGoogleMaps;
 import br.net.mirante.singular.showcase.component.validation.CaseValidationBetweenFields;
 import br.net.mirante.singular.showcase.component.validation.CaseValidationCustom;
 import br.net.mirante.singular.showcase.component.validation.CaseValidationPartial;
 import br.net.mirante.singular.showcase.component.validation.CaseValidationRequired;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import com.google.common.base.Throwables;
+
+import java.io.Serializable;
+import java.util.*;
 
 public class ShowCaseTable {
 
@@ -76,7 +50,7 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreMultiSelectPickList.class)
             .addCase(CaseInputCoreMultiSelectComposite.class)
             .addCase(CaseInputCoreMultiSelectProvider.class)
-            .addCase(CaseInputCoreSelectSearch.class)
+            .addCase(CaseInputModalSearch.class)
             .addCase(CaseInputCoreBasic.class)
             .addCase(CaseInputCoreBoolean.class)
             .addCase(CaseInputCoreString.class)

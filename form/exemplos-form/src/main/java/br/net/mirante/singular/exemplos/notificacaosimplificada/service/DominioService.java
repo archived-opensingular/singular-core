@@ -3,15 +3,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.service;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.EnderecoEmpresaInternacionalDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.GenericDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.CategoriaRegulatoriaMedicamento;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Farmacopeia;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,13 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -136,8 +123,13 @@ public class DominioService {
         return vocabularioControladoDAO.findByDescricao(FormaFarmaceuticaBasica.class, filtro);
     }
 
-    public List<FormaFarmaceuticaBasica> formasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado, String filtro) {
-        return vocabularioControladoDAO.formasFarmaceuticasDinamizadas(configuracoesDinamizado, filtro);
+    public List<FormaFarmaceuticaBasica> formasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado,
+                                                                        String descricao, String conceito, long first, long count) {
+        return vocabularioControladoDAO.formasFarmaceuticasDinamizadas(configuracoesDinamizado, descricao, conceito, first, count);
+    }
+
+    public Long countFormasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado, String descricao, String conceito) {
+        return vocabularioControladoDAO.countformasFarmaceuticasDinamizadas(configuracoesDinamizado, descricao, conceito);
     }
 
     public List<Triple> concentracoes(Integer idSubstancia) {
