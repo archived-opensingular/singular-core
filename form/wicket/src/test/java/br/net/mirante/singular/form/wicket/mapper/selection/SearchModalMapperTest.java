@@ -3,10 +3,10 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
-import br.net.mirante.singular.form.mform.converter.ValueToSInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 
 public class SearchModalMapperTest extends SingularFormBaseTest {
 
-    STypeString mandatoryField;
-    STypeString dependentField;
+    private STypeString mandatoryField;
+    private STypeString dependentField;
 
     @Override
     protected void buildBaseType(STypeComposite<?> baseType) {
@@ -52,12 +52,6 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
                 return Collections.singletonList(Column.of("String"));
             }
         });
-        mandatoryField.asAtrProvider().converter(new ValueToSInstanceConverter() {
-            @Override
-            public void toInstance(SInstance ins, Object obj) {
-                ins.setValue(obj);
-            }
-        });
         dependentField = baseType.addFieldString("dependentField");
         dependentField.asAtrBasic().dependsOn(mandatoryField);
         dependentField.asAtrBasic().visible(ins -> StringUtils.isNotEmpty(ins.findNearestValue(mandatoryField, String.class).orElse(null)));
@@ -77,7 +71,7 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
 
         tester.assertInvisible(dependentFieldComp.getPageRelativePath());
 
-        Button link = findOnForm(Button.class, form.getForm(), al -> al.getId().equals("modalTrigger"))
+        Button link = findOnForm(Button.class, form.getForm(), al -> al.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o link para abertura da modal"));
 

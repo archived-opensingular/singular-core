@@ -4,11 +4,11 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
-import br.net.mirante.singular.form.mform.converter.ValueToSInstanceConverter;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Button;
@@ -29,7 +29,7 @@ public class STypeStringModalSearchTest {
 
     private static class Base extends SingularFormBaseTest {
 
-        protected STypeString selectType;
+        STypeString selectType;
 
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
@@ -56,17 +56,16 @@ public class STypeStringModalSearchTest {
                     return  Collections.singletonList(Column.of("Fruta"));
                 }
             });
-            selectType.asAtrProvider().converter((ValueToSInstanceConverter) SInstance::setValue);
         }
 
-        protected void assertHasATable() {
+        void assertHasATable() {
             String    responseTxt = tester.getLastResponse().getDocument();
             TagTester table       = TagTester.createTagByAttribute(responseTxt, "table");
             assertThat(table).isNotNull();
         }
 
-        protected void clickOpenLink() {
-            List<Component> search_link1 = findTag(form.getForm(), "modalTrigger", Button.class);
+        void clickOpenLink() {
+            List<Component> search_link1 = findTag(form.getForm(), SearchModalPanel.MODAL_TRIGGER_ID, Button.class);
             ajaxClick(search_link1.get(0));
         }
 

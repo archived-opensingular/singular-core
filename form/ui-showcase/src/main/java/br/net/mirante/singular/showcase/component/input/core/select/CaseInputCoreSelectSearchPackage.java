@@ -5,9 +5,12 @@
 
 package br.net.mirante.singular.showcase.component.input.core.select;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
-import br.net.mirante.singular.form.mform.converter.ValueToSInstanceConverter;
+import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
@@ -35,12 +38,9 @@ public class CaseInputCoreSelectSearchPackage extends SPackage {
         funcionario.withView(new SViewSearchModal().title("Buscar Profissionais"))
                 .asAtrProvider()
                 .provider(new FuncionarioProvider())
-                .converter(new ValueToSInstanceConverter<Pair>() {
-                    @Override
-                    public void toInstance(SInstance newFunc, Pair pair) {
-                        ((SIComposite) newFunc).setValue(nome, pair.getLeft());
-                        ((SIComposite) newFunc).setValue(cargo, pair.getRight());
-                    }
+                .converter((ValueToSICompositeConverter<Pair>) (newFunc, pair) -> {
+                    newFunc.setValue(nome, pair.getLeft());
+                    newFunc.setValue(cargo, pair.getRight());
                 });
 
     }

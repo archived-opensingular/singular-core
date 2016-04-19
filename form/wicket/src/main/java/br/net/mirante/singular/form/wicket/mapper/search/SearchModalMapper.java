@@ -15,10 +15,9 @@ import org.apache.wicket.model.IModel;
 
 public class SearchModalMapper extends ControlsFieldComponentAbstractMapper {
 
-
     public Component appendInput() {
         if (view instanceof SViewSearchModal) {
-            final SearchModalContainer selectModalBusca = new SearchModalContainer("SelectModalBusca", ctx);
+            final SearchModalPanel selectModalBusca = new SearchModalPanel("SelectModalBusca", ctx);
             formGroup.appendDiv(selectModalBusca);
             return selectModalBusca;
         }

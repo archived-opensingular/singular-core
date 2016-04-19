@@ -22,7 +22,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.lang.Objects;
 
-class SearchModalContainer extends Panel {
+public class SearchModalPanel extends Panel {
+
+    public static final String VALUE_FIELD_ID = "valueField";
+    public static final String SELECT_INPUT_MODAL_CONTENT_ID = "selectInputModalContent";
+    public static final String MODAL_TRIGGER_ID = "modalTrigger";
 
     private final WicketBuildContext            ctx;
     private final IMInstanciaAwareModel<String> valueModel;
@@ -31,7 +35,7 @@ class SearchModalContainer extends Panel {
     private TextField<String> valueField;
     private BFModalWindow     modal;
 
-    SearchModalContainer(String id, WicketBuildContext ctx) {
+    SearchModalPanel(String id, WicketBuildContext ctx) {
         super(id);
         this.ctx = ctx;
         this.view = (SViewSearchModal) ctx.getView();
@@ -64,17 +68,13 @@ class SearchModalContainer extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         buildAndAppendModalToRootContainer();
-        add(valueField = buildValueField(), buildModelTrigger());
-    }
-
-    private TextField<String> buildValueField() {
-        return new TextField<>("valueField", valueModel);
+        add(valueField = new TextField<>(VALUE_FIELD_ID, valueModel), buildModelTrigger());
     }
 
     private void buildAndAppendModalToRootContainer() {
         modal = new BFModalWindow(ctx.getRootContainer().newChildId(), false, false);
         modal.setTitleText(Model.of(Objects.defaultIfNull(view.getTitle(), StringUtils.EMPTY)));
-        modal.setBody(new SearchModalContent("selectInputModalContent", ctx, (target) -> {
+        modal.setBody(new SearchModalBodyPanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, (target) -> {
             modal.hide(target);
             target.add(valueField);
             valueField.getBehaviors(AjaxUpdateInputBehavior.class)
@@ -86,7 +86,7 @@ class SearchModalContainer extends Panel {
     }
 
     private Button buildModelTrigger() {
-        final Button modalTrigger = new Button("modalTrigger");
+        final Button modalTrigger = new Button(MODAL_TRIGGER_ID);
         modalTrigger.add(new AjaxEventBehavior("click") {
             @Override
             protected void onEvent(AjaxRequestTarget target) {

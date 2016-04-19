@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
-import br.net.mirante.singular.form.mform.converter.ValueToSInstanceConverter;
+import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
@@ -165,7 +165,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
             });
             formaFarmaceutica
                     .asAtrProvider()
-                    .provider(new FormaFarmaceuticaProvider(){
+                    .provider(new FormaFarmaceuticaProvider() {
                         @Override
                         List<Integer> getIds(SInstance root) {
                             final SIList<SIComposite> formulas = root.findNearest(formulasHomeopaticas).orElse(null);
@@ -181,11 +181,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                             }
                             return ids;
                         }
-                    }).converter((ValueToSInstanceConverter<FormaFarmaceuticaBasica>) (ins, desc) -> {
-                if (ins instanceof SIComposite) {
-                    ((SIComposite) ins).setValue(id, desc.getId());
-                    ((SIComposite) ins).setValue(descricao, desc.getDescricao());
-                }
+                    }).converter((ValueToSICompositeConverter<FormaFarmaceuticaBasica>) (ins, desc) -> {
+                ins.setValue(id, desc.getId());
+                ins.setValue(descricao, desc.getDescricao());
             });
         }
     }
@@ -320,14 +318,14 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         public Long getSize(SInstance root, SInstance filter) {
             return dominioService(root)
                     .countFormasFarmaceuticasDinamizadas(getIds(root),
-                            Value.of(filter, "descricao") , Value.of(filter, "conceito"));
+                            Value.of(filter, "descricao"), Value.of(filter, "conceito"));
         }
 
         @Override
         public List<FormaFarmaceuticaBasica> load(SInstance root, SInstance filter, long first, long count) {
             return dominioService(root)
                     .formasFarmaceuticasDinamizadas(getIds(root),
-                            Value.of(filter, "descricao") , Value.of(filter, "conceito"),
+                            Value.of(filter, "descricao"), Value.of(filter, "conceito"),
                             first, count);
         }
 

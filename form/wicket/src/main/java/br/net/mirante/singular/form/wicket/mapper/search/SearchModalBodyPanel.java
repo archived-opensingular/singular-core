@@ -4,6 +4,8 @@ import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.converter.SimpleSInstanceConverter;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider.Column;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -27,7 +30,11 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 
 @SuppressWarnings("unchecked")
-class SearchModalContent extends Panel {
+class SearchModalBodyPanel extends Panel {
+
+    public static final String FILTER_BUTTON_ID = "filterButton";
+    public static final String FORM_PANEL_ID    = "formPanel";
+    public static final String RESULT_TABLE_ID  = "resultTable";
 
     private final WicketBuildContext           ctx;
     private final SViewSearchModal             view;
@@ -36,7 +43,7 @@ class SearchModalContent extends Panel {
     private SingularFormPanel innerSingularFormPanel;
     private MarkupContainer   resultTable;
 
-    SearchModalContent(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
+    SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
         this.ctx = ctx;
         this.view = (SViewSearchModal) ctx.getView();
@@ -48,51 +55,33 @@ class SearchModalContent extends Panel {
         if (getInstance().asAtrProvider().getProvider() == null) {
             throw new SingularFormException("O provider não foi informado");
         }
-        if (getInstance().asAtrProvider().getConverter() == null) {
-            throw new SingularFormException("O converter não foi informado");
+        if (getInstance().asAtrProvider().getConverter() == null
+                && (getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
+            throw new SingularFormException("O tipo não é simples e o converter não foi informado.");
         }
     }
 
     @Override
     protected void onInitialize() {
-
         super.onInitialize();
+        add(innerSingularFormPanel = buildInnerSingularFormPanel());
+        add(buildFilterButton());
+        add(resultTable = buildResultTable());
+    }
 
-        final SingularFormPanel parentSingularFormPanel = this.visitParents(SingularFormPanel.class, new IVisitor<SingularFormPanel, SingularFormPanel>() {
-            @Override
-            public void component(SingularFormPanel parent, IVisit<SingularFormPanel> visit) {
-                visit.stop(parent);
-            }
-        });
-
-        innerSingularFormPanel = new SingularFormPanel("formPanel", parentSingularFormPanel.getSingularFormConfig()) {
-            @Override
-            protected SInstance createInstance(SFormConfig singularFormConfig) {
-                RefType filterRefType = new RefType() {
-                    @Override
-                    protected SType<?> retrieve() {
-                        final STypeComposite<SIComposite> filter = SDictionary.create()
-                                .createNewPackage("filterPackage")
-                                .createCompositeType("filter");
-                        getInstance().asAtrProvider().getProvider().loadFilterDefinition(filter);
-                        return filter;
-                    }
-                };
-                return singularFormConfig.getDocumentFactory().createInstance(filterRefType);
-            }
-        };
-
-        add(innerSingularFormPanel);
-
-        add(new AjaxButton("filterButton") {
+    private AjaxButton buildFilterButton() {
+        return new AjaxButton(FILTER_BUTTON_ID) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
                 target.add(resultTable);
             }
-        });
+        };
+    }
 
-        BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
+    private WebMarkupContainer buildResultTable() {
+
+        final BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
             @Override
             public long size() {
                 return getInstance().asAtrProvider().getProvider()
@@ -127,15 +116,47 @@ class SearchModalContent extends Panel {
 
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
                 .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(Icone.HAND_UP)),
-                        (IBSAction<Object>) (target, model) -> {
-                            getInstance().asAtrProvider()
-                                    .getConverter()
-                                    .toInstance(getInstance(), model.getObject());
+                        (IBSAction<Object>) (target, model) ->
+                        {
+                            SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
+                            if (converter == null && !(getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
+                                converter = new SimpleSInstanceConverter<>();
+                            }
+                            if (converter != null) {
+                                converter.toInstance(getInstance(), model.getObject());
+                            }
                             selectCallback.accept(target);
                         })
         );
 
-        add(resultTable = builder.build("resultTable"));
+        return builder.build(RESULT_TABLE_ID);
+    }
+
+    private SingularFormPanel buildInnerSingularFormPanel() {
+
+        final SingularFormPanel parentSingularFormPanel = this.visitParents(SingularFormPanel.class, new IVisitor<SingularFormPanel, SingularFormPanel>() {
+            @Override
+            public void component(SingularFormPanel parent, IVisit<SingularFormPanel> visit) {
+                visit.stop(parent);
+            }
+        });
+
+        return new SingularFormPanel(FORM_PANEL_ID, parentSingularFormPanel.getSingularFormConfig()) {
+            @Override
+            protected SInstance createInstance(SFormConfig singularFormConfig) {
+                RefType filterRefType = new RefType() {
+                    @Override
+                    protected SType<?> retrieve() {
+                        final STypeComposite<SIComposite> filter = SDictionary.create()
+                                .createNewPackage("filterPackage")
+                                .createCompositeType("filter");
+                        getInstance().asAtrProvider().getProvider().loadFilterDefinition(filter);
+                        return filter;
+                    }
+                };
+                return singularFormConfig.getDocumentFactory().createInstance(filterRefType);
+            }
+        };
     }
 
     private SInstance getInstance() {

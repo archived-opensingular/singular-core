@@ -4,9 +4,10 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
-import br.net.mirante.singular.form.mform.converter.ValueToSInstanceConverter;
+import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Button;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
 
-    STypeComposite<SIComposite> notebook;
+    private STypeComposite<SIComposite> notebook;
 
     @Override
     protected void buildBaseType(STypeComposite<?> baseType) {
@@ -60,23 +61,20 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
                 );
             }
         });
-        notebook.asAtrProvider().converter(new ValueToSInstanceConverter<Notebook>() {
-            @Override
-            public void toInstance(SInstance ins, Notebook note) {
-                ((SIComposite) ins).setValue("marca", note.marca);
-                ((SIComposite) ins).setValue("memoria", note.memoria);
-                ((SIComposite) ins).setValue("disco", note.disco);
-                ((SIComposite) ins).setValue("sistemaOperacional", note.sistemaOperacional);
-            }
+        notebook.asAtrProvider().converter((ValueToSICompositeConverter<Notebook>) (ins, note) -> {
+            ins.setValue("marca", note.marca);
+            ins.setValue("memoria", note.memoria);
+            ins.setValue("disco", note.disco);
+            ins.setValue("sistemaOperacional", note.sistemaOperacional);
         });
     }
 
     private static class Notebook implements Serializable {
 
-        protected String marca;
-        protected String memoria;
-        protected String disco;
-        protected String sistemaOperacional;
+        String marca;
+        String memoria;
+        String disco;
+        String sistemaOperacional;
 
         Notebook(String marca, String memoria, String disco, String sistemaOperacional) {
             this.marca = marca;
@@ -105,7 +103,7 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
     @Test
     public void testSelection(){
 
-        Button link = findOnForm(Button.class, form.getForm(), al -> al.getId().equals("modalTrigger"))
+        Button link = findOnForm(Button.class, form.getForm(), al -> al.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o link para abertura da modal"));
 

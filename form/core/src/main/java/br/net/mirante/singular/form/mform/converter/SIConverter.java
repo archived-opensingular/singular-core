@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.converter;
 
 import br.net.mirante.singular.form.mform.SInstance;
 
-public class SIConverter<C extends ValueToSInstanceConverter<T>, T> extends SInstance {
+public class SIConverter<C extends SInstanceConverter<T>, T> extends SInstance {
 
     private C converter;
 
