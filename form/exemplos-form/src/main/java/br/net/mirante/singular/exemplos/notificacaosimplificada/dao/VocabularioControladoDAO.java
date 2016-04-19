@@ -65,7 +65,40 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
         return criteria.list();
     }
 
-    public List<FormaFarmaceuticaBasica> formasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado, String filtro) {
+    public Long countformasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado,
+                                                    String descricao, String conceito) {
+
+        final StringBuilder       hql    = new StringBuilder();
+        final Map<String, Object> params = new HashMap<>();
+
+        hql.append(" SELECT count(fb.id) FROM  FormaFarmaceuticaBasica fb WHERE 1=1 ");
+
+        if (configuracoesDinamizado != null && !configuracoesDinamizado.isEmpty()) {
+            int mod = 3;
+            hql.append(" AND ( 1=1");
+            configuracoesDinamizado.forEach(i -> {
+                if (i != null) {
+                    hql.append(" OR mod(").append("fb.id,").append(mod).append(") = ").append(i % mod);
+                }
+            });
+            hql.append(" ) ");
+        }
+
+        if (descricao != null) {
+            hql.append(" AND upper(fb.descricao) like upper(:filtro)");
+            params.put("filtro", "%" + descricao + "%");
+        }
+
+        if (conceito != null) {
+            hql.append(" AND upper(fb.conceito) like upper(:conceito)");
+            params.put("conceito", "%" + conceito + "%");
+        }
+
+        return (Long) setParametersQuery(getSession().createQuery(hql.toString()), params).uniqueResult();
+    }
+
+    public List<FormaFarmaceuticaBasica> formasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado,
+                                                                        String descricao, String conceito, long first, long count) {
 
         final StringBuilder       hql    = new StringBuilder();
         final Map<String, Object> params = new HashMap<>();
@@ -83,14 +116,22 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
             hql.append(" ) ");
         }
 
-        if (filtro != null) {
+        if (descricao != null) {
             hql.append(" AND upper(fb.descricao) like upper(:filtro)");
-            params.put("filtro", "%" + filtro + "%");
+            params.put("filtro", "%" + descricao + "%");
+        }
+
+        if (conceito != null) {
+            hql.append(" AND upper(fb.conceito) like upper(:conceito)");
+            params.put("conceito", "%" + conceito + "%");
         }
 
         hql.append(" order by fb.descricao");
 
-        return setParametersQuery(getSession().createQuery(hql.toString()), params).list();
+        return setParametersQuery(getSession().createQuery(hql.toString()), params)
+                .setFirstResult((int) first)
+                .setMaxResults((int) count)
+                .list();
     }
 
 

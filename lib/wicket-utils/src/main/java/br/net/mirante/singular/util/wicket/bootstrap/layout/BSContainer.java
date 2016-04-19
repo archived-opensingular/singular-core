@@ -171,4 +171,8 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
             target.appendJavaScript(";bootbox.alert('" + message + "');");
         }
     }
+
+    public String newChildId(){
+        return items.newChildId();
+    }
 }

@@ -47,7 +47,6 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
     protected IModel<? extends SInstance> model;
     protected IModel<String>              labelModel;
 
-
     protected abstract Component appendInput();
 
     protected abstract String getReadOnlyFormattedText(IModel<? extends SInstance> model);
