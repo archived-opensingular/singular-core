@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class TestServerContext {
 
     /**
-     * Contexto registrado no arquivo properties server.properties para o petcionamento
+     * Contexto registrado no arquivo properties singular.properties para o petcionamento
      */
     private static final String WORKLIST_CONTEXT = "/pettest";
 
@@ -25,11 +25,11 @@ public class TestServerContext {
         Mockito.when(mockedRequest.getPathInfo()).thenReturn("/singular" + WORKLIST_CONTEXT + "/caixaentrada");
         return mockedRequest;
     }
-//
-//    @Test
-//    public void testContextFromRequest() {
-//        Assert.assertEquals(ServerContext.WORKLIST, IServerContext.getContextFromRequest(getRequest()));
-//    }
+
+    @Test
+    public void testContextFromRequest() {
+        Assert.assertEquals(ServerContext.WORKLIST, IServerContext.getContextFromRequest(getRequest(), ServerContext.values()));
+    }
 
     @Test
     public void testRegexFromContextPath() {
