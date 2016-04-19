@@ -13,6 +13,9 @@ public interface SingularInitializer extends WebApplicationInitializer {
 
     public static final Logger logger = LoggerFactory.getLogger(SingularInitializer.class);
     static final String SINGULAR = "[SINGULAR] %s";
+    static final String SERVLET_ATTRIBUTE_WEB_CONFIGURATION = "Singular-webInitializer";
+    static final String SERVLET_ATTRIBUTE_SPRING_HIBERNATE_CONFIGURATION = "Singular-springHibernateInitializer";
+
 
     @Override
     default void onStartup(ServletContext ctx) throws ServletException {
@@ -33,7 +36,6 @@ public interface SingularInitializer extends WebApplicationInitializer {
         } else {
             logger.info(String.format(SINGULAR, " Null springHibernateInitializer, skipping Spring configuration"));
         }
-
         logger.info(String.format(SINGULAR, " Initializing SpringSecurity "));
         SpringSecurityInitializer springSecurityInitializer = springSecurityConfiguration();
         if (springSecurityInitializer != null) {
@@ -41,7 +43,11 @@ public interface SingularInitializer extends WebApplicationInitializer {
                     Optional
                             .ofNullable(springHibernateInitializer)
                             .map(SpringHibernateInitializer::getSpringMVCServletMapping)
-                            .orElse(null));
+                            .orElse(null),
+                    Optional
+                            .ofNullable(webInitializer)
+                            .map(WebInitializer::getServerContexts)
+                            .orElse(ServerContext.values()));
         } else {
             logger.info(String.format(SINGULAR, " Null springSecurityInitializer, skipping Spring Security configuration"));
         }
@@ -61,7 +67,15 @@ public interface SingularInitializer extends WebApplicationInitializer {
         } else {
             logger.info(String.format(SINGULAR, " Null flowInitializer, skipping Singular Flow configuration"));
         }
+
+
+        if (applicationContext != null){
+            applicationContext.register(SingularServerConfiguration.class);
+            ctx.setAttribute(SERVLET_ATTRIBUTE_WEB_CONFIGURATION, webInitializer);
+            ctx.setAttribute(SERVLET_ATTRIBUTE_SPRING_HIBERNATE_CONFIGURATION, springHibernateInitializer);
+        }
     }
+
 
 
     public WebInitializer webConfiguration();

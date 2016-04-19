@@ -1,8 +1,9 @@
 package br.net.mirante.singular.server.commons.config;
 
-import br.net.mirante.singular.server.commons.spring.security.ServerContext;
-import br.net.mirante.singular.server.commons.wicket.PetApplication;
+import br.net.mirante.singular.server.commons.wicket.SingularApplication;
 import org.apache.wicket.protocol.http.WicketFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -19,36 +20,35 @@ import java.util.EnumSet;
 public abstract class WebInitializer {
 
 
+    static final String SINGULAR_SECURITY = "[SINGULAR][WEB] %s";
+    public static final Logger logger = LoggerFactory.getLogger(SpringSecurityInitializer.class);
+
     public void init(ServletContext ctx) throws ServletException {
         onStartup(ctx);
     }
 
     protected void onStartup(ServletContext ctx) throws ServletException {
         addSessionListener(ctx);
-        addWicketFilterPeticionamento(ctx);
-        addWicketFilterAnalise(ctx);
+        for (IServerContext context : getServerContexts()) {
+            logger.info(String.format(SINGULAR_SECURITY, "Setting up web context: "+context.getContextPath()));
+            addWicketFilter(ctx, context);
+        }
     }
 
-    protected void addWicketFilterAnalise(ServletContext ctx) {
-        FilterRegistration.Dynamic wicketFilterAnalise = ctx.addFilter("AnaliseApplication", WicketFilter.class);
-        wicketFilterAnalise.setInitParameter("applicationClassName", getWicketApplicationClassAnalise().getName());
-        wicketFilterAnalise.setInitParameter("filterMappingUrlPattern", ServerContext.ANALISE.getContextPath());
-        wicketFilterAnalise.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, ServerContext.ANALISE.getContextPath());
+    protected IServerContext[] getServerContexts(){
+        return ServerContext.values();
     }
 
-    protected void addWicketFilterPeticionamento(ServletContext ctx) {
-        FilterRegistration.Dynamic wicketFilterPeticionamento = ctx.addFilter("PeticionamentoApplication", WicketFilter.class);
-        wicketFilterPeticionamento.setInitParameter("applicationClassName", getWicketApplicationClassPeticionamento().getName());
-        wicketFilterPeticionamento.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, ServerContext.PETICIONAMENTO.getContextPath());
-        wicketFilterPeticionamento.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, ServerContext.PETICIONAMENTO.getContextPath());
+
+    protected void addWicketFilter(ServletContext ctx, IServerContext context) {
+        FilterRegistration.Dynamic wicketFilterAnalise = ctx.addFilter(context.getName()+System.identityHashCode(context), WicketFilter.class);
+        wicketFilterAnalise.setInitParameter("applicationClassName", getWicketApplicationClass(context).getName());
+        wicketFilterAnalise.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, context.getContextPath());
+        wicketFilterAnalise.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, context.getContextPath());
     }
 
-    protected Class<? extends PetApplication> getWicketApplicationClassPeticionamento() {
-        return PetApplication.class;
-    }
-
-    protected Class<? extends PetApplication> getWicketApplicationClassAnalise() {
-        return PetApplication.class;
+    protected Class<? extends SingularApplication> getWicketApplicationClass(IServerContext context) {
+        return SingularApplication.class;
     }
 
     /**

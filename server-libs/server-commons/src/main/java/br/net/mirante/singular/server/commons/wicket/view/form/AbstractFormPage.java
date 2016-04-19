@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.server.commons.util.ServerProperties;
+import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -22,7 +22,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 
 import java.io.Serializable;
 import java.util.List;
@@ -50,7 +49,7 @@ public abstract class AbstractFormPage extends Template {
 
         if (config.type == null
                 && config.formId == null) {
-            String urlServidorSingular = ServerProperties.getProperty(ServerProperties.SINGULAR_SERVIDOR_ENDERECO);
+            String urlServidorSingular = ConfigProperties.get(ConfigProperties.SINGULAR_SERVIDOR_ENDERECO);
             throw new RedirectToUrlException(urlServidorSingular);
         }
 

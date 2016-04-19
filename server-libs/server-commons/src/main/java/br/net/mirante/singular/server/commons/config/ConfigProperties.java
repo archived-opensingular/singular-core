@@ -13,29 +13,29 @@ import java.util.Properties;
  */
 public class ConfigProperties {
 
-    public static final String ANALISE_CONTEXT_KEY = "singular.analise.context";
-    public static final String PETICIONAMENTO_CONTEXT_KEY = "singular.peticionamento.context";
+    public static final String SINGULAR_WS_ENDERECO = "singular.ws.endereco";
+    public static final String SINGULAR_SERVIDOR_ENDERECO = "singular.servidor.endereco";
+    public static final String SINGULAR_MODULE_FORM_ENDERECO = "singular.module.form.endereco";
     private static Properties propertiesServer = new Properties();
-    private static Properties propertiesPet = new Properties();
-    private static Properties propertiesAnl = new Properties();
-
 
     static {
         try {
-            String server = System.getProperty("singular.server.props.server", "classpath:server.properties");
-            String peticionamento = System.getProperty("singular.server.props.peticionamento", "classpath:peticionamento.properties");
-            String analise = System.getProperty("singular.server.props.analise", "classpath:analise.properties");
+            String server = System.getProperty("singular.server.props.server", "classpath:singular.properties");
             propertiesServer.load(ResourceUtils.getURL(server).openStream());
-            propertiesPet.load(ResourceUtils.getURL(server).openStream());
-            propertiesPet.load(ResourceUtils.getURL(peticionamento).openStream());
-            propertiesAnl.load(ResourceUtils.getURL(server).openStream());
-            propertiesAnl.load(ResourceUtils.getURL(analise).openStream());
         } catch (IOException e) {
             throw new SingularServerException(
                     "É necessário que os arquivos server.properties, analise.properties e peticionamento.properties estejam disponíveis na raiz do classpath da aplicação." +
                             " É possivel alterar o caminho dos arquivos utilizando as respectivas propriedades de sistema:  singular.server.props.server, singular.server.props.analise, singular.server.props.peticionamento : ", e);
         }
     }
+
+
+    static {
+        propertiesServer.put(SINGULAR_WS_ENDERECO, "http://localhost:8080/notificacaosimplificada/SingularWS?wsdl");
+        propertiesServer.put(SINGULAR_SERVIDOR_ENDERECO, "http://localhost:8080/singular/peticionamento");
+        propertiesServer.put(SINGULAR_MODULE_FORM_ENDERECO, "/peticionamento");
+    }
+
 
     private ConfigProperties() {
     }
@@ -50,26 +50,9 @@ public class ConfigProperties {
         return propertiesServer.getProperty(key);
     }
 
-    /**
-     * Permite acesso as propriedades configuradas para peticionamento:
-     * server.properties e peticionamento.properties
-     *
-     * @return
-     */
-    public static SelectedProperties pet() {
-        return new SelectedProperties(propertiesPet);
+    public static String get(IServerContext context, String key) {
+        return propertiesServer.getProperty(context.getPropertiesBaseKey() + "." + key);
     }
-
-    /**
-     * Permite acesso as propriedades configuradas para analise:
-     * server.properties e analise.properties
-     *
-     * @return
-     */
-    public static SelectedProperties anl() {
-        return new SelectedProperties(propertiesAnl);
-    }
-
 
     public static class SelectedProperties {
 

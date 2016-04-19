@@ -2,7 +2,7 @@ package br.net.mirante.singular.server.commons.wicket.view.template;
 
 import java.util.List;
 
-import br.net.mirante.singular.server.commons.wicket.PetApplication;
+import br.net.mirante.singular.server.commons.wicket.SingularApplication;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -33,7 +33,7 @@ public class Menu extends Panel {
     protected MetronicMenu buildMenu() {
         MetronicMenu menu = new MetronicMenu("menu");
 
-        menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", PetApplication.get().getHomePage()));
+        menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", SingularApplication.get().getHomePage()));
 
         return menu;
     }

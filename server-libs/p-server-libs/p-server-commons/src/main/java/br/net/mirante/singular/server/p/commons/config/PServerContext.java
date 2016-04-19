@@ -1,6 +1,7 @@
-package br.net.mirante.singular.server.commons.spring.security;
+package br.net.mirante.singular.server.p.commons.config;
 
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
+import br.net.mirante.singular.server.commons.config.IServerContext;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import org.apache.wicket.request.Request;
 
@@ -10,35 +11,42 @@ import javax.servlet.http.HttpServletRequest;
  * Utilitário para prover a configuração de contexto atual e os métodos utilitários
  * relacionados.
  */
-public enum ServerContext {
+public enum PServerContext implements IServerContext {
 
-    PETICIONAMENTO("/peticionamento/*", ConfigProperties.PETICIONAMENTO_CONTEXT_KEY),
-    ANALISE("/analise/*", ConfigProperties.ANALISE_CONTEXT_KEY);
+    PETITION("/petition/*", "singular.petition"),
+    WORKLIST("/worklist/*", "singular.worklist");
 
     private final String contextPath;
+    private final String propertiesBaseKey;
 
-    ServerContext(String deaultPath, String key) {
+    PServerContext(String defaultPath, String propertiesBaseKey) {
+        this.propertiesBaseKey = propertiesBaseKey;
+        String key = propertiesBaseKey + ".context";
         String path = ConfigProperties.get(key);
         if (path == null || path.length() <= 0) {
-            this.contextPath = deaultPath;
-        } else {
-            this.contextPath = path;
+            path = defaultPath;
         }
+        if (!path.endsWith("/*")) {
+            if (path.endsWith("*")) {
+                path = path.substring(0, path.length() - 2) + "/*";
+            } else if (path.endsWith("/")) {
+                path += "*";
+            } else {
+                path += "/*";
+            }
+        }
+        this.contextPath = path;
     }
 
-    public static ServerContext getContextFromRequest(Request request) {
-        return getContextFromRequest((HttpServletRequest) request.getContainerRequest());
+
+    @Override
+    public String getPropertiesBaseKey() {
+        return propertiesBaseKey;
     }
 
-    public static ServerContext getContextFromRequest(HttpServletRequest request) {
-        String contextPath = request.getContextPath();
-        String context = request.getPathInfo().replaceFirst(contextPath, "");
-        if (context.startsWith(ANALISE.getUrlPath())) {
-            return ServerContext.ANALISE;
-        } else if (context.startsWith(PETICIONAMENTO.getUrlPath())) {
-            return ServerContext.PETICIONAMENTO;
-        }
-        throw new SingularServerException("Não foi possível determinar o contexto do servidor do singular: peticionamento ou analise");
+    @Override
+    public String getName() {
+        return this.name();
     }
 
     /**
@@ -69,5 +77,7 @@ public enum ServerContext {
         String path = getContextPath().replace("*", "").replace(".", "").trim();
         return path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
     }
+
+
 
 }
