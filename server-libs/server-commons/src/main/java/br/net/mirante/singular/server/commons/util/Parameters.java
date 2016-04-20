@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.commons.uilt;
+package br.net.mirante.singular.server.commons.util;
 
 
 public class Parameters {

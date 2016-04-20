@@ -5,7 +5,7 @@ import br.net.mirante.singular.server.commons.config.ServerContext;
 import br.net.mirante.singular.server.commons.dto.ITaskInstanceDTO;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.service.IAnalisePeticaoService;
-import br.net.mirante.singular.server.commons.uilt.Parameters;
+import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
