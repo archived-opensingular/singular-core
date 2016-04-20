@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Map;
 
 public class DispatcherPageUtil {
 
@@ -61,6 +62,11 @@ public class DispatcherPageUtil {
 
         private DispatcherPageUrlAdditionalParamsBuilder(String url) {
             this.url = url;
+        }
+
+        public DispatcherPageUrlAdditionalParamsBuilder params(Map<String, String> params) {
+            params.forEach(this::param);
+            return this;
         }
 
         public DispatcherPageUrlAdditionalParamsBuilder param(String name, Object value) {
