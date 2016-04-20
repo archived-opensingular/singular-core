@@ -6,9 +6,11 @@ import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 public abstract class AbstractAnalisePeticaoService<T extends ITaskInstanceDTO> implements IAnalisePeticaoService<T> {
 
     @Inject
