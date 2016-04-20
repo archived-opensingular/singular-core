@@ -4,8 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import br.net.mirante.singular.server.commons.wicket.view.PetModulePage;
+
 import br.net.mirante.singular.server.commons.wicket.view.SingularToastrHelper;
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -28,7 +29,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 
-public abstract class Template extends PetModulePage {
+public abstract class Template extends SingularTemplate {
 
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
 

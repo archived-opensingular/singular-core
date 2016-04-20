@@ -15,6 +15,8 @@ public interface SingularInitializer extends WebApplicationInitializer {
     static final String SINGULAR = "[SINGULAR] %s";
     static final String SERVLET_ATTRIBUTE_WEB_CONFIGURATION = "Singular-webInitializer";
     static final String SERVLET_ATTRIBUTE_SPRING_HIBERNATE_CONFIGURATION = "Singular-springHibernateInitializer";
+    static final String SERVLET_ATTRIBUTE_FORM_CONFIGURATION_CONFIGURATION = "Singular-formInitializer";
+    static final String SERVLET_ATTRIBUTE_FLOW_CONFIGURATION_CONFIGURATION = "Singular-flowInitializer";
 
 
     @Override
@@ -42,11 +44,11 @@ public interface SingularInitializer extends WebApplicationInitializer {
             springSecurityConfiguration().init(ctx, applicationContext,
                     Optional
                             .ofNullable(springHibernateInitializer)
-                            .map(SpringHibernateInitializer::getSpringMVCServletMapping)
+                            .map(SpringHibernateInitializer::springMVCServletMapping)
                             .orElse(null),
                     Optional
                             .ofNullable(webInitializer)
-                            .map(WebInitializer::getServerContexts)
+                            .map(WebInitializer::serverContexts)
                             .orElse(ServerContext.values()));
         } else {
             logger.info(String.format(SINGULAR, " Null springSecurityInitializer, skipping Spring Security configuration"));
@@ -73,6 +75,8 @@ public interface SingularInitializer extends WebApplicationInitializer {
             applicationContext.register(SingularServerConfiguration.class);
             ctx.setAttribute(SERVLET_ATTRIBUTE_WEB_CONFIGURATION, webInitializer);
             ctx.setAttribute(SERVLET_ATTRIBUTE_SPRING_HIBERNATE_CONFIGURATION, springHibernateInitializer);
+            ctx.setAttribute(SERVLET_ATTRIBUTE_FLOW_CONFIGURATION_CONFIGURATION, flowInitializer);
+            ctx.setAttribute(SERVLET_ATTRIBUTE_FORM_CONFIGURATION_CONFIGURATION, formInitializer);
         }
     }
 

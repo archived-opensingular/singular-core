@@ -29,13 +29,13 @@ public abstract class WebInitializer {
 
     protected void onStartup(ServletContext ctx) throws ServletException {
         addSessionListener(ctx);
-        for (IServerContext context : getServerContexts()) {
+        for (IServerContext context : serverContexts()) {
             logger.info(String.format(SINGULAR_SECURITY, "Setting up web context: "+context.getContextPath()));
             addWicketFilter(ctx, context);
         }
     }
 
-    protected IServerContext[] getServerContexts(){
+    protected IServerContext[] serverContexts(){
         return ServerContext.values();
     }
 

@@ -47,6 +47,13 @@
             <version>2.4.0</version>
         </dependency>
 
+        <!-- JGraph API -->
+        <dependency>
+            <groupId>jgraph</groupId>
+            <artifactId>jgraph</artifactId>
+            <version>2.1.0.8</version>
+        </dependency>
+
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>

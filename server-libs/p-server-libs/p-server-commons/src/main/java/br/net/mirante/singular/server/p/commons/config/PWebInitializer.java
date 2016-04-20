@@ -11,7 +11,7 @@ public abstract class PWebInitializer extends WebInitializer {
 
 
     @Override
-    protected IServerContext[] getServerContexts() {
+    protected IServerContext[] serverContexts() {
         return PServerContext.values();
     }
 
