@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.persistence.util;
 
+import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
 import org.hibernate.SessionFactory;
 import org.springframework.util.Assert;
 
@@ -58,6 +59,7 @@ public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigur
     public void setUserService(IUserService userService) {
         this.userService = userService;
     }
+
 
     @Override
     protected IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService() {

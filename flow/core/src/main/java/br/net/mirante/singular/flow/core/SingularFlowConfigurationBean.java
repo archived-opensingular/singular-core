@@ -28,7 +28,6 @@ import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.schedule.quartz.QuartzScheduleService;
 
-//TODO implementacao default, essa classe deveria vir implementada por default, muita coisa para definir
 public abstract class SingularFlowConfigurationBean {
 
     public static final String PREFIXO = "SGL";
@@ -43,6 +42,10 @@ public abstract class SingularFlowConfigurationBean {
     protected SingularFlowConfigurationBean(String processGroupCod) {
         super();
         this.processGroupCod = processGroupCod;
+    }
+
+    protected SingularFlowConfigurationBean() {
+        super();
     }
 
     final void start() {
