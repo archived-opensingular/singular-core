@@ -1,5 +1,6 @@
 package br.net.mirante.singular.server.commons.flow;
 
+import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
 import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
@@ -16,6 +17,7 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
     protected void postConstruct() {
         this.setProcessGroupCod(singularServerConfiguration.getProcessGroupCod());
         this.setDefinitionsBasePackage(singularServerConfiguration.getDefinitionsBasePackage());
+        Flow.setConf(this);
     }
 
     @Override
