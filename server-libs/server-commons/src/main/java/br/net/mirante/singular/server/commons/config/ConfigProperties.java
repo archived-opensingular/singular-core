@@ -16,6 +16,7 @@ public class ConfigProperties {
     public static final String SINGULAR_WS_ENDERECO = "singular.ws.endereco";
     public static final String SINGULAR_SERVIDOR_ENDERECO = "singular.servidor.endereco";
     public static final String SINGULAR_MODULE_FORM_ENDERECO = "singular.module.form.endereco";
+    public static final String SINGULAR_DEV_MODE = "singular.config.dev";
     private static Properties propertiesServer = new Properties();
 
     static {
