@@ -230,6 +230,9 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
         BaseDataProvider<T, String> dataProvider = new BaseDataProvider<T, String>() {
             @Override
             public long size() {
+                if (getProcessesNames().isEmpty()) {
+                    return 0;
+                }
                 return countQuickSearch(novoFiltro(), getProcessesNames());
             }
 

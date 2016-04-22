@@ -1,5 +1,6 @@
 package br.net.mirante.singular.server.commons.wicket;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +89,10 @@ public class SingularSession extends AuthenticatedWebSession {
 
     public void setCategoriaSelecionada(ProcessGroupEntity categoriaSelecionada) {
         this.categoriaSelecionada = categoriaSelecionada;
+    }
+
+    public Map<ProcessGroupEntity, List<MenuGroupDTO>> getMap() {
+        return Collections.unmodifiableMap(map);
     }
 
     public void addMenu(ProcessGroupEntity categoria, List<MenuGroupDTO> menusGroupDTO) {
