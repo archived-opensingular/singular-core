@@ -78,11 +78,26 @@ public class RelocationTest  {
 
         assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
 
-        new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1");
+        new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", null);
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
 
-        new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2");
+        new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 1);
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(2));
+    }
+
+    @Test public void rejectssRelocationTaskUserWithWrongVersionLock(){
+        P p = new P();
+        ProcessInstance id = p.newInstance();
+        id.start();
+
+        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
+
+        new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", 0);
+        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
+
+        thrown.expectMessage("Your Task Version Number is Outdated.");
+        new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 0);
+        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
     }
 
 
@@ -121,12 +136,8 @@ public class RelocationTest  {
         t.relocateTask(u1, u1, false, "Just for fun", null);
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u1);
 
-//        session.flush();
-//        session.evict(t.getEntityTaskInstance());
-
         Actor u2 = testDAO.getSomeUser(2);
         t.relocateTask(u2, u2, false, "Just want to watch the world burn", t.getEntityTaskInstance().getVersionStamp());
-//        session.flush();
 
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u2);
     }

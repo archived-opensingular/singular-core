@@ -61,6 +61,7 @@ public class SingularWS {
         if (user == null) {
             throw new WebServiceException("Usuário não encontrado");
         }
+        if(version == null) version = 0;
         processInstance.getCurrentTask().relocateTask(user, user, false, "", version);
     }
 
