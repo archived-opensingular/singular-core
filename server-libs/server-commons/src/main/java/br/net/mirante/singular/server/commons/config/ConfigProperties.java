@@ -28,14 +28,6 @@ public class ConfigProperties {
         }
     }
 
-
-    static {
-        propertiesServer.put(SINGULAR_WS_ENDERECO, "http://localhost:8080/notificacaosimplificada/SingularWS?wsdl");
-        propertiesServer.put(SINGULAR_SERVIDOR_ENDERECO, "http://localhost:8080/singular/peticionamento");
-        propertiesServer.put(SINGULAR_MODULE_FORM_ENDERECO, "/peticionamento");
-    }
-
-
     private ConfigProperties() {
     }
 
@@ -46,25 +38,20 @@ public class ConfigProperties {
      * @return
      */
     public static String get(String key) {
-        return propertiesServer.getProperty(key);
+        return lookupProperty(key);
     }
 
     public static String get(IServerContext context, String key) {
-        return propertiesServer.getProperty(context.getPropertiesBaseKey() + "." + key);
+        return lookupProperty(context.getPropertiesBaseKey() + "." + key);
     }
 
-    public static class SelectedProperties {
 
-        private Properties selected;
-
-        protected SelectedProperties(Properties selected) {
-            this.selected = selected;
+    private static String lookupProperty(String key) {
+        if (propertiesServer.containsKey(key)) {
+            Object value = propertiesServer.get(key);
+            return value == null ? null : value.toString();
         }
-
-        public String get(String key) {
-            return selected.getProperty(key);
-        }
+        return System.getProperty(key);
     }
-
 
 }
