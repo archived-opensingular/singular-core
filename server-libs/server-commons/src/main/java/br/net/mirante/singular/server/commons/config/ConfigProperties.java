@@ -24,8 +24,7 @@ public class ConfigProperties {
             propertiesServer.load(ResourceUtils.getURL(server).openStream());
         } catch (IOException e) {
             throw new SingularServerException(
-                    "É necessário que os arquivos server.properties, analise.properties e peticionamento.properties estejam disponíveis na raiz do classpath da aplicação." +
-                            " É possivel alterar o caminho dos arquivos utilizando as respectivas propriedades de sistema:  singular.server.props.server, singular.server.props.analise, singular.server.props.peticionamento : ", e);
+                    "É necessário que os arquivo  singular.properties esteja disponivel na raiz do classpath da aplicação.", e);
         }
     }
 
