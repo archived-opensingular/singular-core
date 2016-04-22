@@ -47,9 +47,8 @@ public abstract class WebInitializer {
         wicketFilterAnalise.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, context.getContextPath());
     }
 
-    protected Class<? extends SingularApplication> getWicketApplicationClass(IServerContext context) {
-        return SingularApplication.class;
-    }
+    protected abstract Class<? extends SingularApplication> getWicketApplicationClass(IServerContext context);
+
 
     /**
      * Configura o timeout da sessão web em minutos
