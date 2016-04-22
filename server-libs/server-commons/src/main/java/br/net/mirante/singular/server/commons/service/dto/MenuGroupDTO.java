@@ -5,9 +5,10 @@
 
 package br.net.mirante.singular.server.commons.service.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class MenuGroupDTO {
+public class MenuGroupDTO implements Serializable {
 
     private String label;
     private List<ProcessDTO> processes;

@@ -3,6 +3,7 @@ package br.net.mirante.singular.server.p.commons.view;
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_PARAM_NAME;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,6 @@ import org.apache.wicket.model.Model;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
-import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.p.commons.dto.IPetitionDTO;
@@ -49,7 +49,9 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
 
     private String processGroupCod;
 
-    private String siglaProcesso;
+    private String menu;
+
+    private List<ProcessDTO> processes;
 
     /**
      * Form padrão
@@ -96,18 +98,14 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
      */
     private final BSModalBorder deleteModal = construirModalBorder();
 
-    public AbstractCaixaContent(String id, String processGroupCod, String siglaProcesso) {
+    public AbstractCaixaContent(String id, String processGroupCod, String menu) {
         super(id);
         this.processGroupCod = processGroupCod;
-        this.siglaProcesso = siglaProcesso;
+        this.menu = menu;
     }
 
 
     protected abstract String getBaseUrl();
-
-    protected String getSiglaProcesso() {
-        return siglaProcesso;
-    }
 
     protected String getProcessGroupCod() {
         return processGroupCod;
@@ -162,7 +160,7 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
                 .baseURL(getBaseUrl())
                 .formAction(formActions.getId())
                 .formId(peticao.getCod())
-                .params(getcriarLinkParameters())
+                .params(getcriarLinkParameters(peticao))
                 .build();
 
         WebMarkupContainer link = new WebMarkupContainer(id);
@@ -171,9 +169,9 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
         return link;
     }
 
-    protected Map<String, String> getcriarLinkParameters(){
+    protected Map<String, String> getcriarLinkParameters(T peticao){
         Map<String, String> params = new HashMap<>();
-        params.put(SIGLA_PARAM_NAME, getSiglaProcesso());
+        params.put(SIGLA_PARAM_NAME, peticao.getProcessType());
         return params;
     }
 
@@ -248,10 +246,14 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
             }
 
             private List<String> getProcessesNames() {
-                return SingularSession.get().getProcesses()
-                        .stream()
-                        .map(ProcessDTO::getAbbreviation)
-                        .collect(Collectors.toList());
+                if (getProcesses() == null) {
+                    return Collections.emptyList();
+                } else {
+                    return getProcesses()
+                            .stream()
+                            .map(ProcessDTO::getAbbreviation)
+                            .collect(Collectors.toList());
+                }
             }
         };
         Pair<String, SortOrder> sort = getSortProperty();
@@ -271,4 +273,19 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
 
     protected abstract long countQuickSearch(QuickFilter filter, List<String> processesNames);
 
+    public List<ProcessDTO> getProcesses() {
+        return processes;
+    }
+
+    public void setProcesses(List<ProcessDTO> processes) {
+        this.processes = processes;
+    }
+
+    public String getMenu() {
+        return menu;
+    }
+
+    public void setMenu(String menu) {
+        this.menu = menu;
+    }
 }

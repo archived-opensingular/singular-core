@@ -5,4 +5,6 @@ import java.io.Serializable;
 public interface IPetitionDTO extends Serializable {
 
     Long getCod();
+
+    String getProcessType();
 }
