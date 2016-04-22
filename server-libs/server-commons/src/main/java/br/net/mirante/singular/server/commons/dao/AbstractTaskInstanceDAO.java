@@ -52,7 +52,7 @@ public abstract class AbstractTaskInstanceDAO<T extends ITaskInstanceDTO> extend
                 count ?
                         " count( distinct ti )" :
                         " new " + tipoTaskInstanceDTO.getName() + " (pi.cod," +
-                                " ti.cod, td.cod," +
+                                " ti.cod, td.cod, ti.versionStamp, " +
                                 " t.numeroProcesso," +
                                 " p.creationDate," +
                                 " pi.description, " +
