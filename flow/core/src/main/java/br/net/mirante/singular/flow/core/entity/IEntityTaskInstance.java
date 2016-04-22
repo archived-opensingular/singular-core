@@ -26,6 +26,10 @@ public interface IEntityTaskInstance extends IEntityByCod<Integer> {
 
     Date getTargetEndDate();
 
+    void setVersionStamp(Integer v);
+
+    Integer getVersionStamp();
+
     void setTargetEndDate(Date targetEndDate);
 
     void setAllocatedUser(MUser allocatedUser);
