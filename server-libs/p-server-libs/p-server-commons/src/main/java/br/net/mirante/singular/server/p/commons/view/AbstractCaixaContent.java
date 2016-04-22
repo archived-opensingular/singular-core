@@ -1,5 +1,27 @@
 package br.net.mirante.singular.server.p.commons.view;
 
+import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_PARAM_NAME;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
@@ -15,27 +37,6 @@ import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.metronic.menu.DropdownMenu;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_PARAM_NAME;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 /**
  * Classe base para construição de caixas do servidor de petições
@@ -46,7 +47,7 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
 
     public static final int DEFAULT_ROWS_PER_PAGE = 15;
 
-    private String moduleContext;
+    private String processGroupCod;
 
     private String siglaProcesso;
 
@@ -95,9 +96,9 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
      */
     private final BSModalBorder deleteModal = construirModalBorder();
 
-    public AbstractCaixaContent(String id, String moduleContext, String siglaProcesso) {
+    public AbstractCaixaContent(String id, String processGroupCod, String siglaProcesso) {
         super(id);
-        this.moduleContext = moduleContext;
+        this.processGroupCod = processGroupCod;
         this.siglaProcesso = siglaProcesso;
     }
 
@@ -108,8 +109,8 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
         return siglaProcesso;
     }
 
-    protected String getModuleContext() {
-        return moduleContext;
+    protected String getProcessGroupCod() {
+        return processGroupCod;
     }
 
     protected abstract void appendPropertyColumns(BSDataTableBuilder<T, String, IColumn<T, String>> builder);
