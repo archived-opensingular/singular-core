@@ -52,7 +52,6 @@ public abstract class FlowMetadataRESTAdapter implements IFlowMetadataREST {
     @RequestMapping(value = PATH_PROCESS_DEFINITION_DIAGRAM, method = RequestMethod.GET)
     @Override
     public byte[] processDefinitionDiagram(@RequestParam String groupToken, @RequestParam String processDefinitionKey) {
-        Flow.setConf(singularFlowConfigurationBean);
         ProcessDefinition<?> definicao = Flow.getProcessDefinitionWith(processDefinitionKey);
         if (definicao != null) {
             if (definicao instanceof ProcessDefinition) {
