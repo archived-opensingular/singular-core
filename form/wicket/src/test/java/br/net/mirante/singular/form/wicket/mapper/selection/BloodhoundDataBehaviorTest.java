@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import org.apache.wicket.Component;
 import org.apache.wicket.request.Url;
 import org.hamcrest.Matchers;
 import org.json.JSONArray;
@@ -27,9 +28,9 @@ public class BloodhoundDataBehaviorTest extends SingularFormBaseTest {
     }
 
     private void executeBloodhoundDataBehavior(String query) {
-        final TypeaheadComponent           typeaheadComponent      = (TypeaheadComponent) findFirstFormComponentsByType(page.getForm(), string);
+        final Component                    typeaheadComponent      =  findFirstFormComponentsByType(page.getForm(), string).getParent().getParent();
         final List<BloodhoundDataBehavior> bloodhoundDataBehaviors = typeaheadComponent.getBehaviors(BloodhoundDataBehavior.class);
-        Assert.assertThat("O componente possui mais de um BloodhoundDataBehavior", bloodhoundDataBehaviors, Matchers.hasSize(1));
+        Assert.assertThat("O componente possui mais de um ou nenhum BloodhoundDataBehavior", bloodhoundDataBehaviors, Matchers.hasSize(1));
         String url = String.valueOf(bloodhoundDataBehaviors.get(0).getCallbackUrl());
         if (query != null) {
             url += "&filter=" + query;

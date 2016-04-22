@@ -5,29 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.util;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import br.net.mirante.singular.form.mform.*;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.feedback.FeedbackMessages;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.Visits;
-
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.event.ISInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceEvent;
@@ -37,6 +15,29 @@ import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackMessage;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.FeedbackMessages;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.Visits;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -46,6 +47,8 @@ import static java.util.stream.Collectors.toSet;
  * @author ronaldtm
  */
 public class WicketFormProcessing {
+
+    public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>(){};
 
     public static void onFormError(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance) {
         container.visitChildren((c, v) -> {
@@ -122,11 +125,13 @@ public class WicketFormProcessing {
          */
         refreshComponents(formComponent, target, fieldInstance);
 
-        // Validação do valor do componente
-        final InstanceValidationContext validationContext = new InstanceValidationContext(fieldInstance.getObject());
-        validationContext.validateSingle();
-        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-            associateErrorsToComponents(validationContext, formComponent, fieldInstance);
+        if (RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST) == null || !RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST)) {
+            // Validação do valor do componente
+            final InstanceValidationContext validationContext = new InstanceValidationContext(fieldInstance.getObject());
+            validationContext.validateSingle();
+            if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
+                associateErrorsToComponents(validationContext, formComponent, fieldInstance);
+            }
         }
 
     }

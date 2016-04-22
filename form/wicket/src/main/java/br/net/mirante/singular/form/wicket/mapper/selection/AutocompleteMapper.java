@@ -17,12 +17,10 @@ public class AutocompleteMapper extends ControlsFieldComponentAbstractMapper {
 
     @Override
     public Component appendInput() {
-        TypeaheadComponent comp;
-
         validateView(view);
-        formGroup.appendDiv(comp = new TypeaheadComponent(model.getObject().getName(),
-                model, ((SViewAutoComplete)view).fetch()));
-        return comp;
+        final TypeaheadComponent comp = new TypeaheadComponent(model.getObject().getName(), model, ((SViewAutoComplete)view).fetch());
+        formGroup.appendDiv(comp);
+        return comp.getValueField();
     }
 
     private void validateView(SView view) {
