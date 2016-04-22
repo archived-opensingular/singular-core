@@ -6,11 +6,7 @@
 package br.net.mirante.singular.flow.core;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -102,7 +98,11 @@ public class TaskInstance {
 
     public final <X extends IEntityTaskInstance> X getEntityTaskInstance(Integer versionStamp) {
         IEntityTaskInstance e = getEntityTaskInstance();
-        e.setVersionStamp(versionStamp);
+        if(versionStamp != null){
+            if(versionStamp < e.getVersionStamp()){
+                throw new RuntimeException("Your Task Version Number is Outdated.");
+            }
+        }
         return (X) e;
     }
 
