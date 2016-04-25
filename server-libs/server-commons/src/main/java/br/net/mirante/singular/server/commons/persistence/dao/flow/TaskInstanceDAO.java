@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.commons.persistence.dao;
+package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;

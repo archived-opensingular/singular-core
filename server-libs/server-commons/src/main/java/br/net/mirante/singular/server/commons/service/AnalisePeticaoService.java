@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.commons.service;
 
-import br.net.mirante.singular.server.commons.persistence.dao.TaskInstanceDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import org.apache.commons.lang3.math.NumberUtils;

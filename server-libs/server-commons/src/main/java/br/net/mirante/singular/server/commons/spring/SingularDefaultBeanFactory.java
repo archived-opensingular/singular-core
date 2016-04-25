@@ -1,23 +1,25 @@
-package br.net.mirante.singular.server.core.spring;
+package br.net.mirante.singular.server.commons.spring;
 
 import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.server.commons.persistence.dao.TaskInstanceDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.FileDao;
+import br.net.mirante.singular.server.commons.persistence.dao.form.PeticaoDAO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
+import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
+import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetails;
 import br.net.mirante.singular.server.commons.ws.ServiceFactoryUtil;
-import br.net.mirante.singular.server.core.persistence.dao.flow.ActorDAO;
-import br.net.mirante.singular.server.core.persistence.dao.flow.GrupoProcessoDAO;
-import br.net.mirante.singular.server.core.persistence.dao.form.FileDao;
-import br.net.mirante.singular.server.core.persistence.dao.form.PeticaoDAO;
-import br.net.mirante.singular.server.core.service.PetitionService;
-import br.net.mirante.singular.server.core.spring.security.WUserDetailService;
+
 import org.springframework.context.annotation.Bean;
 
-public class DefaultBeansFactory {
+public class SingularDefaultBeanFactory {
 
     @Bean(name = "peticionamentoUserDetailService")
-    public WUserDetailService worklistUserDetailServiceFactory() {
-        return new WUserDetailService();
+    public DefaultUserDetailService worklistUserDetailServiceFactory() {
+        return new DefaultUserDetailService();
     }
 
     @Bean

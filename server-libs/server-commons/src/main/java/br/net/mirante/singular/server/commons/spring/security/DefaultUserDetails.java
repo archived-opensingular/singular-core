@@ -1,14 +1,13 @@
-package br.net.mirante.singular.server.core.spring.security;
+package br.net.mirante.singular.server.commons.spring.security;
 
 
 
 import br.net.mirante.singular.server.commons.config.IServerContext;
-import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WUserDetails implements SingularUserDetails {
+public class DefaultUserDetails implements SingularUserDetails {
 
     private String displayName;
 
@@ -18,7 +17,7 @@ public class WUserDetails implements SingularUserDetails {
 
     private String username;
 
-    public WUserDetails(String username, List<String> roles, String displayName, IServerContext context) {
+    public DefaultUserDetails(String username, List<String> roles, String displayName, IServerContext context) {
         this.username = username;
         this.roles = roles;
         this.displayName = displayName;

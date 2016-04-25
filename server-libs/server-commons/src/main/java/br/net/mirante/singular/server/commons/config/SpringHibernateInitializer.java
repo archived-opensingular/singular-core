@@ -22,6 +22,8 @@ public abstract class SpringHibernateInitializer {
         AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
         applicationContext.register(springConfigurationClass());
         applicationContext.register(swaggerConfig());
+        applicationContext.register(beanFactory());
+        applicationContext.register(persistenceConfiguration());
         addSpringContextListener(ctx, applicationContext);
         addSpringRequestContextListener(ctx, applicationContext);
         addSpringMVCServlet(ctx, applicationContext);
@@ -56,7 +58,15 @@ public abstract class SpringHibernateInitializer {
      *
      * @return Uma classe concreta que herda de {@link SingularServerSpringAppConfig} e anotada com {@link org.springframework.context.annotation.Configuration}
      */
-    protected abstract Class<? extends SingularServerSpringAppConfig> springConfigurationClass();
+
+    protected Class<? extends SingularServerSpringAppConfig> springConfigurationClass() {
+        return SingularServerSpringAppConfig.class;
+    }
+
+
+    protected abstract Class<?> beanFactory();
+
+    protected abstract Class<?> persistenceConfiguration();
 
     protected String springMVCServletMapping() {
         return "/*";

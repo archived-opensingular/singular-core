@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.core.persistence.entity.form;
+package br.net.mirante.singular.server.commons.persistence.entity.form;
 
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.persistence.util.Constants;

@@ -1,12 +1,13 @@
-package br.net.mirante.singular.server.core.persistence.dao.form;
+package br.net.mirante.singular.server.commons.persistence.dao.form;
 
 
 import br.net.mirante.singular.commons.lambda.IBiConsumer;
 import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
+import br.net.mirante.singular.server.commons.persistence.entity.form.Peticao;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
-import br.net.mirante.singular.server.core.persistence.dto.PeticaoDTO;
-import br.net.mirante.singular.server.core.persistence.entity.form.Peticao;
+
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.Criteria;
@@ -16,7 +17,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;

@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.core.persistence.dao.flow;
+package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
 import br.net.mirante.singular.commons.base.SingularProperties;
 import br.net.mirante.singular.flow.core.MUser;
@@ -8,7 +8,6 @@ import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 
-import javax.inject.Named;
 import java.sql.PreparedStatement;
 
 

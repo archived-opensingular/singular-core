@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.core.wicket.historico;
 
 
+
 import br.net.mirante.singular.server.commons.wicket.historico.AbstractHistoricoContent;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.core.wicket.entrada.EntradaAnalisePage;

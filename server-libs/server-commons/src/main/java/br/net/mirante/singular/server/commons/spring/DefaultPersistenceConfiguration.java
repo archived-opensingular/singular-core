@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.core.spring;
+package br.net.mirante.singular.server.commons.spring;
 
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;

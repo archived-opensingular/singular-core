@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.core.service;
+package br.net.mirante.singular.server.commons.service;
 
 
 import br.net.mirante.singular.flow.core.Flow;
@@ -6,12 +6,13 @@ import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
+import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.PeticaoDAO;
+
+import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
+import br.net.mirante.singular.server.commons.persistence.entity.form.Peticao;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
-import br.net.mirante.singular.server.core.persistence.dao.flow.GrupoProcessoDAO;
-import br.net.mirante.singular.server.core.persistence.dao.form.PeticaoDAO;
-import br.net.mirante.singular.server.core.persistence.dto.PeticaoDTO;
-import br.net.mirante.singular.server.core.persistence.entity.form.Peticao;
-import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;

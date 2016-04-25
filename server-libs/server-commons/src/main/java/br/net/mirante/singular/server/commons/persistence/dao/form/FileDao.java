@@ -1,18 +1,17 @@
-package br.net.mirante.singular.server.core.persistence.dao.form;
+package br.net.mirante.singular.server.commons.persistence.dao.form;
 
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.IdGenerator;
-import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.HashUtil;
-import br.net.mirante.singular.server.core.persistence.entity.form.ArquivoPeticao;
+
+import br.net.mirante.singular.server.commons.persistence.entity.form.ArquivoPeticao;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;

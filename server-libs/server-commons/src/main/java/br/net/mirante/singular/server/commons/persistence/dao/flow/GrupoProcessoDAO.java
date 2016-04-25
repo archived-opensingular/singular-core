@@ -3,12 +3,11 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.server.core.persistence.dao.flow;
+package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

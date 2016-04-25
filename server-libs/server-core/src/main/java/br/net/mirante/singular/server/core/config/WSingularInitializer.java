@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.core.config;
 
 import br.net.mirante.singular.server.commons.config.SingularInitializer;
+import br.net.mirante.singular.server.commons.config.SpringHibernateInitializer;
 
 
 public interface WSingularInitializer extends SingularInitializer {
@@ -12,7 +13,7 @@ public interface WSingularInitializer extends SingularInitializer {
 
 
     @Override
-    default WSpringHibernateInitializer springHibernateConfiguration(){
+    default SpringHibernateInitializer springHibernateConfiguration() {
         return new WSpringHibernateInitializer();
     }
 }

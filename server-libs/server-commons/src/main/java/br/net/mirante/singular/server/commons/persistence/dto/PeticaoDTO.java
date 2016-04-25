@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.core.persistence.dto;
+package br.net.mirante.singular.server.commons.persistence.dto;
 
 import java.io.Serializable;
 import java.util.Date;
