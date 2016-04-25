@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.commons.historico;
+package br.net.mirante.singular.server.commons.wicket.historico;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;

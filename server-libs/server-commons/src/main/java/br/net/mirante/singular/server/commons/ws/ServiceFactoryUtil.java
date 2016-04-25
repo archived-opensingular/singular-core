@@ -8,12 +8,12 @@ import org.apache.log4j.Logger;
 
 import javax.xml.ws.BindingProvider;
 
-public abstract class AbstractServiceFactoryUtil implements IServiceFactoryUtil {
+public class ServiceFactoryUtil {
 
     /**
      * Constante LOGGER.
      */
-    private static final Logger LOGGER = Logger.getLogger(AbstractServiceFactoryUtil.class);
+    private static final Logger LOGGER = Logger.getLogger(ServiceFactoryUtil.class);
 
     /**
      * Campo singular service.
@@ -25,7 +25,6 @@ public abstract class AbstractServiceFactoryUtil implements IServiceFactoryUtil 
      *
      * @return uma referência de singular ws
      */
-    @Override
     public SingularWS getSingularWS() {
         if (singularService == null) {
             singularService = new SingularWSService().getSingularWSPort();

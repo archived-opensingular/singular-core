@@ -1,8 +1,8 @@
-package br.net.mirante.singular.server.commons.dao;
+package br.net.mirante.singular.server.commons.persistence.dao;
 
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
-import br.net.mirante.singular.server.commons.dto.ITaskInstanceDTO;
+import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import com.google.common.base.Joiner;
@@ -14,11 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractTaskInstanceDAO<T extends ITaskInstanceDTO> extends BaseDAO<TaskInstanceEntity, Integer> implements ITaskInstanceDAO<T> {
+public class TaskInstanceDAO<T extends TaskInstanceDTO> extends BaseDAO<TaskInstanceEntity, Integer>  {
 
     protected Class<T> tipoTaskInstanceDTO;
 
-    public AbstractTaskInstanceDAO() {
+    public TaskInstanceDAO() {
         Type superclass = getClass().getGenericSuperclass();
         if (superclass instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) superclass;
@@ -42,7 +42,7 @@ public abstract class AbstractTaskInstanceDAO<T extends ITaskInstanceDTO> extend
     };
 
 
-    @Override
+
     public List<T> findTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas) {
         return buildQuery(sortProperty, ascending, siglaFluxo, idsPerfis, filtroRapido, concluidas, false).setMaxResults(count).setFirstResult(first).list();
     }
@@ -53,11 +53,11 @@ public abstract class AbstractTaskInstanceDAO<T extends ITaskInstanceDTO> extend
                         " count( distinct ti )" :
                         " new " + tipoTaskInstanceDTO.getName() + " (pi.cod," +
                                 " ti.cod, td.cod," +
-                                " t.numeroProcesso," +
+//                                " t.numeroProcesso," +
                                 " p.creationDate," +
                                 " pi.description, " +
-                                " pessoa.nome," +
-                                " pessoa.razaoSocial, " +
+//                                " pessoa.nome," +
+//                                " pessoa.razaoSocial, " +
                                 " au , " +
                                 " tv.name, " +
                                 " p.type, " +
@@ -79,9 +79,9 @@ public abstract class AbstractTaskInstanceDAO<T extends ITaskInstanceDTO> extend
                         " left join ti.allocatedUser au " +
                         " left join ti.task tv " +
                         " left join tv.taskDefinition td  " +
-                        " left join p.transacao t " +
-                        " left join t.entidade pessoa, " +
-                        " TaskRight tr " +
+//                        " left join p.transacao t " +
+//                        " left join t.entidade pessoa " +
+                        " , TaskRight tr " +
                         " left join tr.taskDefinition tdr " +
                         " where 1 = 1" +
                         " and td.cod = tdr.cod " +
@@ -114,7 +114,7 @@ public abstract class AbstractTaskInstanceDAO<T extends ITaskInstanceDTO> extend
                     "    ( " + JPAQueryUtil.formattDateTimeClause("ti.beginDate", "filter") + " ) " +
                     " or ( " + JPAQueryUtil.formattDateTimeClause("pi.beginDate", "filter") + " ) " +
                     " or ( upper(t.numeroProcesso)  like upper(:cleanFilter) ) " +
-                    " or ( upper(pessoa.nome) " + like + " or upper(pessoa.razaoSocial) " + like + " ) " +
+//                    " or ( upper(pessoa.nome) " + like + " or upper(pessoa.razaoSocial) " + like + " ) " +
                     " or ( upper(pi.description)  " + like + " ) " +
                     " or ( upper(tv.name) " + like + " ) " +
                     " or ( upper(au.nome) " + like + " ) " +
@@ -134,7 +134,7 @@ public abstract class AbstractTaskInstanceDAO<T extends ITaskInstanceDTO> extend
         return " order by " + sortPropertyToAliases.get(sortProperty) + (ascending ? " ASC " : " DESC ");
     }
 
-    @Override
+
     public Integer countTasks(String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas) {
         return ((Number) buildQuery(null, true, siglaFluxo, idsPerfis, filtroRapido, concluidas, true).uniqueResult()).intValue();
     }
