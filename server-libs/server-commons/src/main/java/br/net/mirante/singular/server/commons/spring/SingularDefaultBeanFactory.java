@@ -11,6 +11,7 @@ import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetails;
+import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
 import br.net.mirante.singular.server.commons.ws.ServiceFactoryUtil;
 
 import org.springframework.context.annotation.Bean;
@@ -18,7 +19,7 @@ import org.springframework.context.annotation.Bean;
 public class SingularDefaultBeanFactory {
 
     @Bean(name = "peticionamentoUserDetailService")
-    public DefaultUserDetailService worklistUserDetailServiceFactory() {
+    public SingularUserDetailsService worklistUserDetailServiceFactory() {
         return new DefaultUserDetailService();
     }
 
