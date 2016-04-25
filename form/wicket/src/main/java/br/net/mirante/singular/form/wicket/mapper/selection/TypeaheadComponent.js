@@ -61,7 +61,6 @@
                 _$typeaheadField.attr('readonly', true);
                 _$typeaheadField.after(clear);
                 $('#' + container + '_clear').on('click', onClear);
-                _$typeaheadField.blur();
             }
 
             $typeaheadField.on('typeahead:selected', function (event, selection) {
