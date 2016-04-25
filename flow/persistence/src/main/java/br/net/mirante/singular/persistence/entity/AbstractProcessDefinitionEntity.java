@@ -79,6 +79,7 @@ public abstract class AbstractProcessDefinitionEntity<GROUP extends IEntityProce
     @OneToMany(mappedBy = "processDefinition", fetch = FetchType.LAZY)
     private List<PROCESS_VERSION> versions = new ArrayList<>();
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -87,38 +88,47 @@ public abstract class AbstractProcessDefinitionEntity<GROUP extends IEntityProce
         this.cod = cod;
     }
 
+    @Override
     public CATEGORY getCategory() {
         return category;
     }
 
+    @Override
     public void setCategory(IEntityCategory category) {
         this.category = (CATEGORY) category;
     }
 
+    @Override
     public String getKey() {
         return key;
     }
 
+    @Override
     public void setKey(String key) {
         this.key = key;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getDefinitionClassName() {
         return definitionClassName;
     }
 
+    @Override
     public void setDefinitionClassName(String definitionClassName) {
         this.definitionClassName = definitionClassName;
     }
 
+    @Override
     public List<TASK_DEF> getTaskDefinitions() {
         return taskDefinitions;
     }
@@ -127,6 +137,7 @@ public abstract class AbstractProcessDefinitionEntity<GROUP extends IEntityProce
         this.taskDefinitions = taskDefinitions;
     }
 
+    @Override
     public List<ROLE_DEF> getRoles() {
         return roles;
     }
@@ -135,6 +146,7 @@ public abstract class AbstractProcessDefinitionEntity<GROUP extends IEntityProce
         this.roles = roles;
     }
 
+    @Override
     public List<PROCESS_VERSION> getVersions() {
         return versions;
     }
@@ -143,13 +155,14 @@ public abstract class AbstractProcessDefinitionEntity<GROUP extends IEntityProce
         this.versions = versions;
     }
 
+    @Override
     public GROUP getProcessGroup() {
         return processGroup;
     }
 
+    @Override
     public void setProcessGroup(IEntityProcessGroup processGroup) {
         this.processGroup = (GROUP) processGroup;
     }
 
-    
 }

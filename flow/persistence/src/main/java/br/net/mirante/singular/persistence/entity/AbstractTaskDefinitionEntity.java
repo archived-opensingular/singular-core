@@ -56,6 +56,7 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "taskDefinition")
     private List<TASK_VERSION> versions = new ArrayList<>();
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -64,6 +65,7 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_DEF getProcessDefinition() {
         return processDefinition;
     }
@@ -72,14 +74,17 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
         this.processDefinition = processDefinition;
     }
 
+    @Override
     public String getAbbreviation() {
         return abbreviation;
     }
 
+    @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
 
+    @Override
     public List<TASK_VERSION> getVersions() {
         return versions;
     }

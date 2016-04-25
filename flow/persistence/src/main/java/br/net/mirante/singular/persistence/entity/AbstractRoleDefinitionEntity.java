@@ -50,6 +50,7 @@ public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityPr
     @Column(name = "SG_PAPEL", length = 100, nullable = false)
     private String abbreviation;
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -58,26 +59,32 @@ public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityPr
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_DEF getProcessDefinition() {
         return processDefinition;
     }
 
+    @Override
     public void setProcessDefinition(IEntityProcessDefinition processDefinition) {
         this.processDefinition = (PROCESS_DEF) processDefinition;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getAbbreviation() {
         return abbreviation;
     }
 
+    @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }

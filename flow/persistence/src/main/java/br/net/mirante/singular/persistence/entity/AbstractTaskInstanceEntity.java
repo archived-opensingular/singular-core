@@ -9,7 +9,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
@@ -95,6 +105,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentTask", cascade = CascadeType.REMOVE)
     private List<PROCESS_INSTANCE> childProcesses = new ArrayList<>();
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -103,6 +114,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_INSTANCE getProcessInstance() {
         return processInstance;
     }
@@ -111,30 +123,37 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
         this.processInstance = processInstance;
     }
 
+    @Override
     public Date getBeginDate() {
         return beginDate;
     }
 
+    @Override
     public void setBeginDate(Date beginDate) {
         this.beginDate = beginDate;
     }
 
+    @Override
     public Date getEndDate() {
         return endDate;
     }
 
+    @Override
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
+    @Override
     public Date getTargetEndDate() {
         return targetEndDate;
     }
 
+    @Override
     public void setTargetEndDate(Date targetEndDate) {
         this.targetEndDate = targetEndDate;
     }
 
+    @Override
     public TASK_VERSION getTask() {
         return task;
     }
@@ -143,30 +162,37 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
         this.task = task;
     }
 
+    @Override
     public USER getAllocatedUser() {
         return allocatedUser;
     }
 
+    @Override
     public void setAllocatedUser(MUser allocatedUser) {
         this.allocatedUser = (USER) allocatedUser;
     }
 
+    @Override
     public USER getResponsibleUser() {
         return responsibleUser;
     }
 
+    @Override
     public void setResponsibleUser(MUser responsibleUser) {
         this.responsibleUser = (USER) responsibleUser;
     }
 
+    @Override
     public TASK_TRANSITION_VERSION getExecutedTransition() {
         return executedTransition;
     }
 
+    @Override
     public void setExecutedTransition(IEntityTaskTransitionVersion executedTransition) {
         this.executedTransition = (TASK_TRANSITION_VERSION) executedTransition;
     }
 
+    @Override
     public List<TASK_HISTORY> getTaskHistoric() {
         return taskHistoric;
     }
@@ -175,6 +201,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
         this.taskHistoric = taskHistoric;
     }
 
+    @Override
     public List<EXECUTION_VARIABLE> getInputVariables() {
         return inputVariables;
     }
@@ -183,6 +210,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
         this.inputVariables = inputVariables;
     }
 
+    @Override
     public List<EXECUTION_VARIABLE> getOutputVariables() {
         return outputVariables;
     }
@@ -191,6 +219,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
         this.outputVariables = outputVariables;
     }
 
+    @Override
     public List<PROCESS_INSTANCE> getChildProcesses() {
         return childProcesses;
     }
@@ -199,8 +228,10 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
         this.childProcesses = childProcesses;
     }
 
+    @Override
     public void setVersionStamp(Integer versionStamp) {    this.versionStamp = versionStamp;   }
 
+    @Override
     public Integer getVersionStamp() {   return versionStamp;  }
 
 }

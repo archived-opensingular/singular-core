@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -22,6 +24,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.IEntityTaskType;
+import br.net.mirante.singular.flow.core.entity.AccessStrategyType;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
@@ -67,6 +70,11 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "originTask")
     private List<TASK_TRANSITION_VERSION> transitions = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TP_ESTRATEGIA_SEGURANCA", length = 1)
+    private AccessStrategyType accessStrategyType;
+
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -75,6 +83,7 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_VERSION getProcessVersion() {
         return processVersion;
     }
@@ -83,6 +92,7 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
         this.processVersion = processVersion;
     }
 
+    @Override
     public TASK_DEF getTaskDefinition() {
         return taskDefinition;
     }
@@ -91,14 +101,17 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
         this.taskDefinition = taskDefinition;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public TASK_TYPE getType() {
         return type;
     }
@@ -107,6 +120,7 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
         this.type = type;
     }
 
+    @Override
     public List<TASK_TRANSITION_VERSION> getTransitions() {
         return transitions;
     }
@@ -115,4 +129,12 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
         this.transitions = transitions;
     }
 
+    @Override
+    public AccessStrategyType getAccessStrategyType() {
+        return accessStrategyType;
+    }
+
+    public void setAccessStrategyType(AccessStrategyType accessStrategyType) {
+        this.accessStrategyType = accessStrategyType;
+    }
 }

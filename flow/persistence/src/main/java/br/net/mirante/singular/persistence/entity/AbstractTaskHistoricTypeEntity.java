@@ -37,6 +37,7 @@ public abstract class AbstractTaskHistoricTypeEntity extends BaseEntity<Integer>
     @Column(name = "DS_TIPO_HISTORICO_TAREFA", length = 50)
     private String description;
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -45,10 +46,12 @@ public abstract class AbstractTaskHistoricTypeEntity extends BaseEntity<Integer>
         this.cod = cod;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }

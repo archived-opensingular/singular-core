@@ -40,6 +40,7 @@ public class AbstractVariableTypeEntity extends BaseEntity<Integer> implements I
     @Column(name = "DS_TIPO_VARIAVEL")
     private String description;
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -48,18 +49,22 @@ public class AbstractVariableTypeEntity extends BaseEntity<Integer> implements I
         this.cod = cod;
     }
 
+    @Override
     public String getTypeClassName() {
         return typeClassName;
     }
 
+    @Override
     public void setTypeClassName(String typeClassName) {
         this.typeClassName = typeClassName;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
