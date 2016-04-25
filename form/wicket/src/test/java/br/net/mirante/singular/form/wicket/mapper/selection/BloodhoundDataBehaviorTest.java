@@ -18,6 +18,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class BloodhoundDataBehaviorTest extends SingularFormBaseTest {
 
@@ -62,7 +63,11 @@ public class BloodhoundDataBehaviorTest extends SingularFormBaseTest {
         expected.put(createValue("1", "bruce@gmail.com"));
         expected.put(createValue("2", "bruce@hotmail.com"));
         expected.put(createValue("3", "bruce@yahoo.com"));
-        JSONAssert.assertEquals(expected, new JSONArray(tester.getLastResponseAsString()), false);
+        final JSONArray array = new JSONArray(tester.getLastResponseAsString());
+        assertEquals(3, array.length());
+        assertEquals("bruce@gmail.com", ((JSONObject)array.get(0)).get("value"));
+        assertEquals("bruce@hotmail.com", ((JSONObject)array.get(1)).get("value"));
+        assertEquals("bruce@yahoo.com", ((JSONObject)array.get(2)).get("value"));
     }
 
     private JSONObject createValue(String key, String v) {

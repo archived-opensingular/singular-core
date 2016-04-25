@@ -115,9 +115,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
             setAndCheckValue(input);
         }
 
-        tester.submitForm(form.getForm());
         assertThat(input.getModel().getObject()).isNotNull();
-
     }
 
     private void setAndCheckValue(FormComponent input) {
