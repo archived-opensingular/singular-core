@@ -1,25 +1,14 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
-import br.net.mirante.singular.form.mform.options.SOptionsCompositeProvider;
-import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
-import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -59,8 +48,8 @@ public class STypeStringSelectItemAutoCompleteTest {
             return (TextField) ((List) findTag(form.getForm(), TextField.class)).get(0);
         }
 
-        protected HiddenField valueComponent() {
-            return (HiddenField) ((List) findTag(form.getForm(), HiddenField.class)).get(0);
+        protected TextField valueComponent() {
+            return (TextField) findFirstFormComponentsByType(page.getForm(), base);
         }
 
         protected Component readOnlyComponent() {
@@ -79,7 +68,6 @@ public class STypeStringSelectItemAutoCompleteTest {
 
         @Test public void renderField(){
             assertThat(findTag(form.getForm(), TextField.class)).hasSize(2);
-            assertThat(findTag(form.getForm(), HiddenField.class)).hasSize(1);
         }
 
         @Test public void submitsSelected() {
