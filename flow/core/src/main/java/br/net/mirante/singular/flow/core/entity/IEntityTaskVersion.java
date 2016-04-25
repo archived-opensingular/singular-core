@@ -24,6 +24,8 @@ public interface IEntityTaskVersion extends IEntityByCod<Integer> {
 
     List<? extends IEntityTaskTransitionVersion> getTransitions();
 
+    AccessStrategyType getAccessStrategyType();
+
     default Date getVersionDate(){
         return getProcessVersion().getVersionDate();
     }
