@@ -1,4 +1,8 @@
 .singular-form-required:before {
-    content: "* ";
-    color: red;
+     content: "* ";
+     color: red;
+ }
+
+.form-control:focus {
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 4px rgb(181, 181, 181) !important;
 }

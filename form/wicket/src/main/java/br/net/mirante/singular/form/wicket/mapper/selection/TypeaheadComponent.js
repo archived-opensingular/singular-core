@@ -2,7 +2,7 @@
     "use strict";
     if (window.substringMatcher == undefined) {
         window.substringMatcher = function (value_list) {
-            this.clearText = function (x) {
+            var clearText = function (x) {
                 return S(x).latinise().s;
             };
             return function findMatches(q, cb) {
@@ -18,63 +18,109 @@
         };
     }
 }());
-(function () {
+
+(function ($) {
     "use strict";
-    window.SingularTypeahead = window.SingularTypeahead || {};
+    window.SingularTypeahead = {
+        configure: function (container, valueField) {
 
-    if (!SingularTypeahead.configure) {
+            var clear =
+                    "<a id='" + container + "_clear' style='position:absolute;top:8px;right:10px;'>" +
+                    "   <span class='glyphicon glyphicon-remove tt-clear-icon'></span>" +
+                    "</a>",
+                typeaheadField = '#' + container + ' > span  > input',
+                $typeaheadField = $(typeaheadField),
+                subscriberMetadata = {
+                    jumpToNext: false,
+                    factor: 0
+                };
 
-        SingularTypeahead.configure = function (container, valueField) {
-            
-            var clear = "<a id='" + container + "_clear' style='position:absolute;top:8px;right:10px;'><span class='glyphicon glyphicon-remove tt-clear-icon'></span></a>";
-            var jqInputField = $('#' + container + ' > span  > input');
-            
-            $(jqInputField).on('typeahead:selected', function (event, selection) {
-                var _jqValueField = $('#' + valueField);
-                var _jqInputField = $('#' + container + ' > span  > input');
-                _jqValueField.val(selection.key);
-                _jqValueField.trigger('change');
-                _jqInputField.attr('readonly', true);
-                _jqInputField.after(clear);
-                _jqInputField.blur();
-                $('#' + container + '_clear').on('click', function () {
-                    $(this).remove();
-                    _jqInputField.typeahead('val', '');
-                    _jqInputField.removeAttr('readonly');
-                    _jqValueField.val('');
-                    _jqValueField.trigger('change');
-                });
+            function hasAjaxUpdate() {
+                var events = $('#' + valueField).data('events');
+                if (events && events.hasOwnProperty('change')) {
+                    for (var i = 0; i <= events.change.length; i += 1) {
+                        if (events.change[i].handler.toString().indexOf('Wicket') > 0) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            if (hasAjaxUpdate()) {
+                Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_COMPLETE, function () {
+                    if (subscriberMetadata.jumpToNext) {
+                        var focusables = $(":focusable");
+                        $(focusables[focusables.index($(typeaheadField)) + subscriberMetadata.factor]).focus();
+                        subscriberMetadata.jumpToNext = false;
+                    }
+                })
+            }
+
+            function updateValue(newValue) {
+                var $valueField = $('#' + valueField);
+                $valueField.val(newValue);
+                $valueField.trigger('change');
+            }
+
+            function onClear() {
+                var _$typeaheadField = $(typeaheadField);
+                $(this).remove();
+                _$typeaheadField.typeahead('val', '');
+                _$typeaheadField.removeAttr('readonly');
+                updateValue('');
+            }
+
+            function triggerKeydown(component, keyCode) {
+                var e = $.Event('keydown');
+                e.keyCode = e.which = keyCode;
+                $(component).trigger(e);
+            }
+
+            function focusNextComponent(keydownEvent) {
+                if (hasAjaxUpdate()) {
+                    subscriberMetadata.jumpToNext = true;
+                    subscriberMetadata.factor = keydownEvent.shiftKey ? -1 : 1;
+                } else {
+                    var focusables = $(":focusable");
+                    $(focusables[focusables.index($(typeaheadField)) + (keydownEvent.shiftKey ? -1 : 1)]).focus();
+                }
+            }
+
+            function appendClearButton() {
+                var _$typeaheadField = $(typeaheadField);
+                _$typeaheadField.attr('readonly', true);
+                _$typeaheadField.after(clear);
+                $('#' + container + '_clear').on('click', onClear);
+            }
+
+            $typeaheadField.on('typeahead:selected', function (event, selection) {
+                var _$typeaheadField = $(typeaheadField);
+                updateValue(selection.key);
+                appendClearButton();
+                _$typeaheadField.blur();
             });
 
-            jqInputField.on('keydown', function (e) {
-                var code = e.keyCode || e.which;
+            $typeaheadField.on('keydown', function (keydownEvent) {
+                var code = keydownEvent.keyCode || keydownEvent.which;
+                var _$typeaheadField = $(typeaheadField);
                 if (code === 9) {
-                    if ($(this).val() != '') {
-                        e.preventDefault();
-                        var downKey = jQuery.Event('keydown');
-                        downKey.keyCode = downKey.which = 40;
-                        $(this).trigger(downKey);
-                        var enter = jQuery.Event('keydown');
-                        enter.keyCode = enter.which = 13;
-                        $(this).trigger(enter);
+                    if ($(this).val()) {
+                        keydownEvent.preventDefault();
+                        triggerKeydown(this, 40);
+                        triggerKeydown(this, 13);
+                        focusNextComponent(keydownEvent);
                     }
+                }
+                if ((code === 8 || code === 46) && _$typeaheadField.attr('readonly')) {
+                    keydownEvent.preventDefault();
+                    $('#' + container + '_clear').click();
                 }
             });
 
-            if (jqInputField.val()) {
-                jqInputField.attr('readonly', true);
-                jqInputField.after(clear);
-                $('#' + container + '_clear').on('click', function () {
-                    var _jqValueField = $('#' + valueField);
-                    var _jqInputField = $('#' + container + ' > span  > input');
-                    $(this).remove();
-                    _jqInputField.removeAttr('readonly');
-                    _jqValueField.val('');
-                    _jqValueField.trigger('change');
-                });
+            if ($typeaheadField.val()) {
+                appendClearButton();
             }
-
-        };
-    }
-
-}());
+        }
+    };
+}(jQuery));
