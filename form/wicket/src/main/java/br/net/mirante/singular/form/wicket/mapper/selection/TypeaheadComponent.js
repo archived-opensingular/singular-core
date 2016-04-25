@@ -29,7 +29,33 @@
                     "   <span class='glyphicon glyphicon-remove tt-clear-icon'></span>" +
                     "</a>",
                 typeaheadField = '#' + container + ' > span  > input',
-                $typeaheadField = $(typeaheadField);
+                $typeaheadField = $(typeaheadField),
+                subscriberMetadata = {
+                    jumpToNext: false,
+                    factor: 0
+                };
+
+            function hasAjaxUpdate() {
+                var events = $('#' + valueField).data('events');
+                if (events && events.hasOwnProperty('change')) {
+                    for (var i = 0; i <= events.change.length; i += 1) {
+                        if (events.change[i].handler.toString().indexOf('Wicket') > 0) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            if (hasAjaxUpdate()) {
+                Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_COMPLETE, function () {
+                    if (subscriberMetadata.jumpToNext) {
+                        var focusables = $(":focusable");
+                        $(focusables[focusables.index($(typeaheadField)) + subscriberMetadata.factor]).focus();
+                        subscriberMetadata.jumpToNext = false;
+                    }
+                })
+            }
 
             function updateValue(newValue) {
                 var $valueField = $('#' + valueField);
@@ -52,8 +78,13 @@
             }
 
             function focusNextComponent(keydownEvent) {
-                var focusables = $(":focusable");
-                $(focusables[focusables.index($(typeaheadField)) + (keydownEvent.shiftKey ? -1 : 1)]).focus();
+                if (hasAjaxUpdate()) {
+                    subscriberMetadata.jumpToNext = true;
+                    subscriberMetadata.factor = keydownEvent.shiftKey ? -1 : 1;
+                } else {
+                    var focusables = $(":focusable");
+                    $(focusables[focusables.index($(typeaheadField)) + (keydownEvent.shiftKey ? -1 : 1)]).focus();
+                }
             }
 
             function appendClearButton() {
