@@ -1,5 +1,8 @@
 package br.net.mirante.singular.showcase.view.page.showcase;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static org.junit.Assert.assertNotNull;
+
 import javax.inject.Inject;
 
 import org.apache.wicket.util.tester.FormTester;
@@ -14,12 +17,10 @@ import br.net.mirante.singular.showcase.SpringWicketTester;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreInteger;
 import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import junit.framework.TestCase;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/applicationContext.xml"})
-public class ItemCasePanelTest extends TestCase {
+public class ItemCasePanelTest {
 
     CaseBase cb;
 
