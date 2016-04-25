@@ -2,7 +2,7 @@
     "use strict";
     if (window.substringMatcher == undefined) {
         window.substringMatcher = function (value_list) {
-            this.clearText = function (x) {
+            var clearText = function (x) {
                 return S(x).latinise().s;
             };
             return function findMatches(q, cb) {
@@ -19,69 +19,73 @@
     }
 }());
 
-(function () {
+(function ($) {
     "use strict";
-    window.SingularTypeahead = window.SingularTypeahead || {};
-    if (!SingularTypeahead.configure) {
-
-        SingularTypeahead.configure = function (container, valueField) {
+    window.SingularTypeahead = {
+        configure: function (container, valueField) {
 
             var clear =
                     "<a id='" + container + "_clear' style='position:absolute;top:8px;right:10px;'>" +
                     "   <span class='glyphicon glyphicon-remove tt-clear-icon'></span>" +
                     "</a>",
-                containerSelector = '#' + container + ' > span  > input',
-                jqInputField = $(containerSelector);
+                typeaheadField = '#' + container + ' > span  > input',
+                $typeaheadField = $(typeaheadField);
 
             function updateValue(newValue) {
-                var _jqValueField = $('#' + valueField);
-                _jqValueField.val(newValue);
-                _jqValueField.trigger('change');
+                var $valueField = $('#' + valueField);
+                $valueField.val(newValue);
+                $valueField.trigger('change');
             }
 
             function onClear() {
-                var _jqInputField = $(containerSelector);
+                var _$typeaheadField = $(typeaheadField);
                 $(this).remove();
-                _jqInputField.typeahead('val', '');
-                _jqInputField.removeAttr('readonly');
+                _$typeaheadField.typeahead('val', '');
+                _$typeaheadField.removeAttr('readonly');
                 updateValue('');
             }
 
-            $(jqInputField).on('typeahead:selected', function (event, selection) {
-                var _jqInputField = $(containerSelector);
-                updateValue(selection.key);
-                _jqInputField.attr('readonly', true);
-                _jqInputField.after(clear);
+            function triggerKeydown(component, keyCode) {
+                var e = $.Event('keydown');
+                e.keyCode = e.which = keyCode;
+                $(component).trigger(e);
+            }
+
+            function focusNextComponent(keydownEvent) {
+                var focusables = $(":focusable");
+                $(focusables[focusables.index($(typeaheadField)) + (keydownEvent.shiftKey ? -1 : 1)]).focus();
+            }
+
+            function appendClearButton() {
+                var _$typeaheadField = $(typeaheadField);
+                _$typeaheadField.attr('readonly', true);
+                _$typeaheadField.after(clear);
                 $('#' + container + '_clear').on('click', onClear);
-                _jqInputField.blur();
+                _$typeaheadField.blur();
+            }
+
+            $typeaheadField.on('typeahead:selected', function (event, selection) {
+                var _$typeaheadField = $(typeaheadField);
+                updateValue(selection.key);
+                appendClearButton();
+                _$typeaheadField.blur();
             });
 
-            jqInputField.on('keydown', function (e) {
-                var code = e.keyCode || e.which;
+            $typeaheadField.on('keydown', function (keydownEvent) {
+                var code = keydownEvent.keyCode || keydownEvent.which;
                 if (code === 9) {
                     if ($(this).val()) {
-                        e.preventDefault();
-                        var downKey = jQuery.Event('keydown');
-                        downKey.keyCode = downKey.which = 40;
-                        $(this).trigger(downKey);
-                        var enter = jQuery.Event('keydown');
-                        enter.keyCode = enter.which = 13;
-                        $(this).trigger(enter);
-                        var tab = jQuery.Event('keydown');
-                        tab.keyCode = tab.which = 9;
-                        var focusables = $(":focusable");
-                        $(focusables[focusables.index($(containerSelector)) + (e.shiftKey ? -1 : 1)]).focus();
+                        keydownEvent.preventDefault();
+                        triggerKeydown(this, 40);
+                        triggerKeydown(this, 13);
+                        focusNextComponent(keydownEvent);
                     }
                 }
             });
 
-            if (jqInputField.val()) {
-                jqInputField.attr('readonly', true);
-                jqInputField.after(clear);
-                $('#' + container + '_clear').on('click', onClear);
+            if ($typeaheadField.val()) {
+                appendClearButton();
             }
-
-        };
-    }
-
-}());
+        }
+    };
+}(jQuery));
