@@ -20,7 +20,7 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 
-public class InitListenerTest extends SingularFormBaseTest {
+public class ListenerInitTest extends SingularFormBaseTest {
 
     private STypeString nome;
 

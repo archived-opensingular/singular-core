@@ -4,6 +4,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 import static org.junit.Assert.assertNotNull;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -13,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.showcase.SpringWicketTester;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreInteger;
@@ -23,6 +25,9 @@ import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
 public class ItemCasePanelTest {
 
     CaseBase cb;
+
+    @Inject @Named("formConfigWithDatabase")
+    private SFormConfig<String> singularFormConfig;
 
     @Inject
     private SpringWicketTester springWicketTester;
