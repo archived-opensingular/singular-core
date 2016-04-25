@@ -53,6 +53,7 @@
                 _jqInputField.attr('readonly', true);
                 _jqInputField.after(clear);
                 $('#' + container + '_clear').on('click', onClear);
+                _jqInputField.blur();
             });
 
             jqInputField.on('keydown', function (e) {
