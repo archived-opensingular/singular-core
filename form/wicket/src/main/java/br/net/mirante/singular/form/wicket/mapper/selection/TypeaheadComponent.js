@@ -80,6 +80,12 @@
                         focusNextComponent(keydownEvent);
                     }
                 }
+                if (code === 8 || code === 46) {
+                    if ($(this).val()) {
+                        keydownEvent.preventDefault();
+                        $('#' + container + '_clear').click();
+                    }
+                }
             });
 
             if ($typeaheadField.val()) {
