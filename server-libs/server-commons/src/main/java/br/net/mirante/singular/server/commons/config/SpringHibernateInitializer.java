@@ -1,5 +1,7 @@
 package br.net.mirante.singular.server.commons.config;
 
+import br.net.mirante.singular.server.commons.spring.SingularDefaultBeanFactory;
+import br.net.mirante.singular.server.commons.spring.SingularDefaultPersistenceConfiguration;
 import br.net.mirante.singular.server.commons.spring.SingularServerSpringAppConfig;
 import br.net.mirante.singular.server.commons.spring.SpringFoxSwaggerConfig;
 import org.springframework.web.context.ContextLoaderListener;
@@ -30,7 +32,7 @@ public abstract class SpringHibernateInitializer {
         return applicationContext;
     }
 
-    protected Class<? extends SpringFoxSwaggerConfig> swaggerConfig(){
+    protected Class<? extends SpringFoxSwaggerConfig> swaggerConfig() {
         return SpringFoxSwaggerConfig.class;
     }
 
@@ -64,9 +66,13 @@ public abstract class SpringHibernateInitializer {
     }
 
 
-    protected abstract Class<?> beanFactory();
+    protected Class<? extends SingularDefaultBeanFactory> beanFactory() {
+        return SingularDefaultBeanFactory.class;
+    }
 
-    protected abstract Class<?> persistenceConfiguration();
+    protected Class<? extends SingularDefaultPersistenceConfiguration> persistenceConfiguration() {
+        return SingularDefaultPersistenceConfiguration.class;
+    }
 
     protected String springMVCServletMapping() {
         return "/*";
