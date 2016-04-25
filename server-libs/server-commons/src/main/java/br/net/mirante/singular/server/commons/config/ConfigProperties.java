@@ -16,6 +16,7 @@ public class ConfigProperties {
     public static final String SINGULAR_WS_ENDERECO = "singular.ws.endereco";
     public static final String SINGULAR_SERVIDOR_ENDERECO = "singular.servidor.endereco";
     public static final String SINGULAR_MODULE_FORM_ENDERECO = "singular.module.form.endereco";
+    public static final String SINGULAR_DEV_MODE = "singular.config.dev";
     private static Properties propertiesServer = new Properties();
 
     static {
@@ -24,18 +25,9 @@ public class ConfigProperties {
             propertiesServer.load(ResourceUtils.getURL(server).openStream());
         } catch (IOException e) {
             throw new SingularServerException(
-                    "É necessário que os arquivos server.properties, analise.properties e peticionamento.properties estejam disponíveis na raiz do classpath da aplicação." +
-                            " É possivel alterar o caminho dos arquivos utilizando as respectivas propriedades de sistema:  singular.server.props.server, singular.server.props.analise, singular.server.props.peticionamento : ", e);
+                    "É necessário que os arquivo  singular.properties esteja disponivel na raiz do classpath da aplicação.", e);
         }
     }
-
-
-    static {
-        propertiesServer.put(SINGULAR_WS_ENDERECO, "http://localhost:8080/notificacaosimplificada/SingularWS?wsdl");
-        propertiesServer.put(SINGULAR_SERVIDOR_ENDERECO, "http://localhost:8080/singular/peticionamento");
-        propertiesServer.put(SINGULAR_MODULE_FORM_ENDERECO, "/peticionamento");
-    }
-
 
     private ConfigProperties() {
     }
@@ -47,25 +39,20 @@ public class ConfigProperties {
      * @return
      */
     public static String get(String key) {
-        return propertiesServer.getProperty(key);
+        return lookupProperty(key);
     }
 
     public static String get(IServerContext context, String key) {
-        return propertiesServer.getProperty(context.getPropertiesBaseKey() + "." + key);
+        return lookupProperty(context.getPropertiesBaseKey() + "." + key);
     }
 
-    public static class SelectedProperties {
 
-        private Properties selected;
-
-        protected SelectedProperties(Properties selected) {
-            this.selected = selected;
+    private static String lookupProperty(String key) {
+        if (propertiesServer.containsKey(key)) {
+            Object value = propertiesServer.get(key);
+            return value == null ? null : value.toString();
         }
-
-        public String get(String key) {
-            return selected.getProperty(key);
-        }
+        return System.getProperty(key);
     }
-
 
 }
