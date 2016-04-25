@@ -9,16 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
@@ -68,6 +59,10 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
 
     @Column(name = "DT_ESPERADA_FIM")
     private Date targetEndDate;
+
+    @Version
+    @Column(name = "V_LOCK")
+    private Integer versionStamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_VERSAO_TAREFA", nullable = false, updatable = false)
@@ -203,5 +198,9 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
     public void setChildProcesses(List<PROCESS_INSTANCE> childProcesses) {
         this.childProcesses = childProcesses;
     }
+
+    public void setVersionStamp(Integer versionStamp) {    this.versionStamp = versionStamp;   }
+
+    public Integer getVersionStamp() {   return versionStamp;  }
 
 }
