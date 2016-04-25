@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.commons.config;
 
 import br.net.mirante.singular.server.commons.spring.SingularServerSpringAppConfig;
+import br.net.mirante.singular.server.commons.spring.SpringFoxSwaggerConfig;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -20,10 +21,15 @@ public abstract class SpringHibernateInitializer {
     public AnnotationConfigWebApplicationContext init(ServletContext ctx) {
         AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
         applicationContext.register(springConfigurationClass());
+        applicationContext.register(swaggerConfig());
         addSpringContextListener(ctx, applicationContext);
         addSpringRequestContextListener(ctx, applicationContext);
         addSpringMVCServlet(ctx, applicationContext);
         return applicationContext;
+    }
+
+    protected Class<? extends SpringFoxSwaggerConfig> swaggerConfig(){
+        return SpringFoxSwaggerConfig.class;
     }
 
     protected void addSpringContextListener(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
