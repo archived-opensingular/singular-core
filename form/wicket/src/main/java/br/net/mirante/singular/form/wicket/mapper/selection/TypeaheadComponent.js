@@ -103,6 +103,7 @@
 
             $typeaheadField.on('keydown', function (keydownEvent) {
                 var code = keydownEvent.keyCode || keydownEvent.which;
+                var _$typeaheadField = $(typeaheadField);
                 if (code === 9) {
                     if ($(this).val()) {
                         keydownEvent.preventDefault();
@@ -111,11 +112,9 @@
                         focusNextComponent(keydownEvent);
                     }
                 }
-                if (code === 8 || code === 46) {
-                    if ($(this).val()) {
-                        keydownEvent.preventDefault();
-                        $('#' + container + '_clear').click();
-                    }
+                if ((code === 8 || code === 46) && _$typeaheadField.attr('readonly')) {
+                    keydownEvent.preventDefault();
+                    $('#' + container + '_clear').click();
                 }
             });
 
