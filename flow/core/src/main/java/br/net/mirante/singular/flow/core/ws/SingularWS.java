@@ -55,14 +55,14 @@ public class SingularWS {
     public void relocateTask(@WebParam(name = "processAbbreviation") String processAbbreviation,
                                   @WebParam(name = "codProcessInstance") Long codProcessInstance,
                                   @WebParam(name = "username") String username,
-                                  @WebParam(name = "lastVersion") Integer version) {
+                                  @WebParam(name = "lastVersion") Integer lastVersion) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         MUser user = Flow.getConfigBean().getUserService().saveUserIfNeeded(username);
         if (user == null) {
             throw new WebServiceException("Usuário não encontrado");
         }
-        if(version == null) version = 0;
-        processInstance.getCurrentTask().relocateTask(user, user, false, "", version);
+        if(lastVersion == null) lastVersion = 0;
+        processInstance.getCurrentTask().relocateTask(user, user, false, "", lastVersion);
     }
 
     private ProcessInstance getProcessInstance(String processAbbreviation, Long codProcessInstance) {

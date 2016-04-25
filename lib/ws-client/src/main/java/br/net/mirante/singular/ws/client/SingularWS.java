@@ -88,7 +88,7 @@ public interface SingularWS {
         @WebParam(name = "codProcessInstance", targetNamespace = "")
                 Long codProcessInstance,
         @WebParam(name = "username", targetNamespace = "") String username,
-        @WebParam(name = "lastVersion", targetNamespace = "") Integer version
+        @WebParam(name = "lastVersion", targetNamespace = "") Integer lastVersion
     );
 
     /**
