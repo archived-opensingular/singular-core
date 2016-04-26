@@ -32,10 +32,10 @@ public class EntradaContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO>
         return new BSDataTableBuilder<>(createDataProvider())
                 .appendPropertyColumn(getMessage("label.table.column.in.date"),
                         "processBeginDate", TaskInstanceDTO::getProcessBeginDate)
-                .appendPropertyColumn(getMessage("label.table.column.number"),
-                        "id", TaskInstanceDTO::getNumeroProcesso)
-                .appendPropertyColumn(getMessage("label.table.column.requester"),
-                        "requester", TaskInstanceDTO::getSolicitante)
+//                .appendPropertyColumn(getMessage("label.table.column.number"),
+//                        "id", TaskInstanceDTO::getNumeroProcesso)
+//                .appendPropertyColumn(getMessage("label.table.column.requester"),
+//                        "requester", TaskInstanceDTO::getSolicitante)
                 .appendPropertyColumn(getMessage("label.table.column.description"),
                         "description", TaskInstanceDTO::getDescricao)
                 .appendPropertyColumn(getMessage("label.table.column.situation.date"),
@@ -65,7 +65,7 @@ public class EntradaContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO>
 
             @Override
             public Iterator<TaskInstanceDTO> iterator(int first, int count, String sortProperty, boolean ascending) {
-                return analisePeticaoService.listTasks(first, count, sortProperty, ascending, null, filtroRapido.getModelObject(), false).iterator();
+                return (Iterator<TaskInstanceDTO>) analisePeticaoService.listTasks(first, count, sortProperty, ascending, null, filtroRapido.getModelObject(), false).iterator();
             }
         };
     }

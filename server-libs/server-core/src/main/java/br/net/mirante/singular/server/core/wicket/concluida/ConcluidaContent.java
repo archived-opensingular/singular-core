@@ -36,8 +36,8 @@ public class ConcluidaContent extends AbstractCaixaAnaliseContent<TaskInstanceDT
     protected BSDataTable<TaskInstanceDTO, String> setupDataTable() {
         return new BSDataTableBuilder<>(createDataProvider())
                 .appendPropertyColumn(getMessage("label.table.column.in.date"), "processBeginDate", TaskInstanceDTO::getProcessBeginDate)
-                .appendPropertyColumn(getMessage("label.table.column.number"), "id", TaskInstanceDTO::getNumeroProcesso)
-                .appendPropertyColumn(getMessage("label.table.column.requester"), "requester", TaskInstanceDTO::getSolicitante)
+//                .appendPropertyColumn(getMessage("label.table.column.number"), "id", TaskInstanceDTO::getNumeroProcesso)
+//                .appendPropertyColumn(getMessage("label.table.column.requester"), "requester", TaskInstanceDTO::getSolicitante)
                 .appendPropertyColumn(getMessage("label.table.column.description"), "description", TaskInstanceDTO::getDescricao)
                 .appendPropertyColumn(getMessage("label.table.column.situation.date"), "situationBeginDate", TaskInstanceDTO::getSituationBeginDate)
                 .appendColumn(new MetronicStatusColumn<>(getMessage("label.table.column.state"), "state", TaskInstanceDTO::getTaskName, this::badgeMapper))
@@ -61,7 +61,7 @@ public class ConcluidaContent extends AbstractCaixaAnaliseContent<TaskInstanceDT
 
             @Override
             public Iterator<TaskInstanceDTO> iterator(int first, int count, String sortProperty, boolean ascending) {
-                return analisePeticaoService.listTasks(first, count, sortProperty, ascending, null, filtroRapido.getModelObject(), true).iterator();
+                return (Iterator<TaskInstanceDTO>) analisePeticaoService.listTasks(first, count, sortProperty, ascending, null, filtroRapido.getModelObject(), true).iterator();
             }
         };
     }

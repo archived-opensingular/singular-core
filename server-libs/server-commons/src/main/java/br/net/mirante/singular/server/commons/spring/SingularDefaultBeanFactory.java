@@ -32,8 +32,8 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public TaskInstanceDAO<TaskInstanceDTO> taskInstanceDAO() {
-        return new TaskInstanceDAO<>();
+    public TaskInstanceDAO taskInstanceDAO() {
+        return new TaskInstanceDAO();
     }
 
     @Bean

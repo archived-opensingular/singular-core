@@ -4,19 +4,18 @@ package br.net.mirante.singular.server.commons.persistence.dto;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.TaskType;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class TaskInstanceDTO {
+public class TaskInstanceDTO implements Serializable {
 
     private Integer taskInstanceId;
     private Integer versionStamp;
     private Integer processInstanceId;
     private Integer taskId;
     private String taskName;
-    private String numeroProcesso;
-    private Date dataProtocolo;
+    private Date creationDate;
     private String descricao;
-    private String solicitante;
     private MUser usuarioAlocado;
     private String nomeUsuarioAlocado;
     private String type;
@@ -29,16 +28,15 @@ public class TaskInstanceDTO {
 
 
     public TaskInstanceDTO(Integer processInstanceId, Integer taskInstanceId, Integer taskId, Integer versionStamp,
-                           Date dataProtocolo, String descricao,
+                           Date creationDate, String descricao,
                            MUser usuarioAlocado, String taskName, String type, String processType, Long codPeticao,
                            Date situationBeginDate, Date processBeginDate, TaskType taskType, boolean possuiPermissao) {
         this.processInstanceId = processInstanceId;
         this.taskInstanceId = taskInstanceId;
         this.taskId = taskId;
         this.versionStamp = versionStamp;
-        this.dataProtocolo = dataProtocolo;
+        this.creationDate = creationDate;
         this.descricao = descricao;
-//        this.solicitante = nomePessoaFisica == null ? nomePessoaJuridica : nomePessoaFisica;
         this.usuarioAlocado = usuarioAlocado;
         this.nomeUsuarioAlocado = usuarioAlocado == null ? "" : usuarioAlocado.getSimpleName();
         this.taskName = taskName;
@@ -72,25 +70,13 @@ public class TaskInstanceDTO {
     }
 
 
-    public String getNumeroProcesso() {
-        return numeroProcesso;
+    public Date getCreationDate() {
+        return creationDate;
     }
 
-
-    public void setNumeroProcesso(String numeroProcesso) {
-        this.numeroProcesso = numeroProcesso;
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
-
-
-    public Date getDataProtocolo() {
-        return dataProtocolo;
-    }
-
-
-    public void setDataProtocolo(Date dataProtocolo) {
-        this.dataProtocolo = dataProtocolo;
-    }
-
 
     public String getDescricao() {
         return descricao;
@@ -99,16 +85,6 @@ public class TaskInstanceDTO {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
-    }
-
-
-    public String getSolicitante() {
-        return solicitante;
-    }
-
-
-    public void setSolicitante(String solicitante) {
-        this.solicitante = solicitante;
     }
 
 

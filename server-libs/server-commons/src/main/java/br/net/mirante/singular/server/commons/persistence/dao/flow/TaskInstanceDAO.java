@@ -14,50 +14,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TaskInstanceDAO<T extends TaskInstanceDTO> extends BaseDAO<TaskInstanceEntity, Integer>  {
+public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer>  {
 
-    protected Class<T> tipoTaskInstanceDTO;
-
-    public TaskInstanceDAO() {
-        Type superclass = getClass().getGenericSuperclass();
-        if (superclass instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) superclass;
-            if (parameterizedType.getActualTypeArguments().length > 0) {
-                tipoTaskInstanceDTO = (Class<T>) parameterizedType.getActualTypeArguments()[0];
+    protected Map<String, String> getSortPropertyToAliases(){
+        return  new HashMap<String, String>() {
+            {
+                put("id", "ti.cod");
+                put("protocolDate", "p.creationDate");
+                put("description", "pi.description");
+                put("state", "tv.name");
+                put("user", "au.nome");
+                put("situationBeginDate", "ti.beginDate");
+                put("processBeginDate", "pi.beginDate");
             }
-        }
+        };
     }
 
-    private static Map<String, String> sortPropertyToAliases = new HashMap<String, String>() {
-        {
-            put("id", "ti.cod");
-            put("protocolDate", "p.creationDate");
-            put("requester", "pessoa.nome, pessoa.razaoSocial");
-            put("description", "pi.description");
-            put("state", "tv.name");
-            put("user", "au.nome");
-            put("situationBeginDate", "ti.beginDate");
-            put("processBeginDate", "pi.beginDate");
-        }
-    };
 
 
-
-    public List<T> findTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas) {
+    public List<? extends TaskInstanceDTO> findTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas) {
         return buildQuery(sortProperty, ascending, siglaFluxo, idsPerfis, filtroRapido, concluidas, false).setMaxResults(count).setFirstResult(first).list();
     }
 
-    private Query buildQuery(String sortProperty, boolean ascending, String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas, boolean count) {
+    protected Query buildQuery(String sortProperty, boolean ascending, String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas, boolean count) {
         String selectClause =
                 count ?
                         " count( distinct ti )" :
-                        " new " + tipoTaskInstanceDTO.getName() + " (pi.cod," +
+                        " new " + TaskInstanceDTO.class.getName() + " (pi.cod," +
                                 " ti.cod, td.cod, ti.versionStamp, " +
-//                                " t.numeroProcesso," +
                                 " p.creationDate," +
                                 " pi.description, " +
-//                                " pessoa.nome," +
-//                                " pessoa.razaoSocial, " +
                                 " au , " +
                                 " tv.name, " +
                                 " p.type, " +
@@ -66,7 +52,9 @@ public class TaskInstanceDAO<T extends TaskInstanceDTO> extends BaseDAO<TaskInst
                                 " ti.beginDate,  " +
                                 " pi.beginDate, " +
                                 " tv.type," +
-                                " tr.cod in (" + Joiner.on(",").join(idsPerfis) + ")) ";
+                                " tr.cod in (" + Joiner.on(",").join(idsPerfis) + ")," +
+                                " t.numeroProcesso" +
+                                ") ";
         Query query = getSession().createQuery(
                 " select " +
                         selectClause +
@@ -79,14 +67,10 @@ public class TaskInstanceDAO<T extends TaskInstanceDTO> extends BaseDAO<TaskInst
                         " left join ti.allocatedUser au " +
                         " left join ti.task tv " +
                         " left join tv.taskDefinition td  " +
-//                        " left join p.transacao t " +
-//                        " left join t.entidade pessoa " +
                         " , TaskRight tr " +
                         " left join tr.taskDefinition tdr " +
                         " where 1 = 1" +
                         " and td.cod = tdr.cod " +
-                        //TODO prover solução melhor para todos os contextos de aplicação
-//                        " and pd.key = :siglaFluxo " +
                         (concluidas ? " and tv.type = :tipoEnd " : " and ti.endDate is null ") +
                         addQuickFilter(filtroRapido) +
                         getOrderBy(sortProperty, ascending, count))
@@ -101,20 +85,19 @@ public class TaskInstanceDAO<T extends TaskInstanceDTO> extends BaseDAO<TaskInst
         );
     }
 
-    private Query addFilterParameter(Query query, String filter) {
+    protected Query addFilterParameter(Query query, String filter) {
         return filter == null ? query : query
                 .setParameter("filter", "%" + filter + "%")
                 .setParameter("cleanFilter", "%" + filter.replaceAll("/", "").replaceAll("\\.", "").replaceAll("\\-", "").replaceAll(":", "") + "%");
     }
 
-    private String addQuickFilter(String filtro) {
+    protected String addQuickFilter(String filtro) {
         if (filtro != null) {
             String like = " like upper(:filter) ";
             return " and (  " +
                     "    ( " + JPAQueryUtil.formattDateTimeClause("ti.beginDate", "filter") + " ) " +
                     " or ( " + JPAQueryUtil.formattDateTimeClause("pi.beginDate", "filter") + " ) " +
                     " or ( upper(t.numeroProcesso)  like upper(:cleanFilter) ) " +
-//                    " or ( upper(pessoa.nome) " + like + " or upper(pessoa.razaoSocial) " + like + " ) " +
                     " or ( upper(pi.description)  " + like + " ) " +
                     " or ( upper(tv.name) " + like + " ) " +
                     " or ( upper(au.nome) " + like + " ) " +
@@ -123,7 +106,7 @@ public class TaskInstanceDAO<T extends TaskInstanceDTO> extends BaseDAO<TaskInst
         return "";
     }
 
-    private String getOrderBy(String sortProperty, boolean ascending, boolean count) {
+    protected String getOrderBy(String sortProperty, boolean ascending, boolean count) {
         if (count) {
             return "";
         }
@@ -131,7 +114,7 @@ public class TaskInstanceDAO<T extends TaskInstanceDTO> extends BaseDAO<TaskInst
             sortProperty = "processBeginDate";
             ascending = false;
         }
-        return " order by " + sortPropertyToAliases.get(sortProperty) + (ascending ? " ASC " : " DESC ");
+        return " order by " + getSortPropertyToAliases().get(sortProperty) + (ascending ? " ASC " : " DESC ");
     }
 
 
