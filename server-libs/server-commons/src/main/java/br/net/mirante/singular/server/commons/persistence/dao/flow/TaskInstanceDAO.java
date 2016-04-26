@@ -53,7 +53,9 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer>  {
                                 " pi.beginDate, " +
                                 " tv.type," +
                                 " tr.cod in (" + Joiner.on(",").join(idsPerfis) + ")," +
-                                " t.numeroProcesso" +
+                                " t.numeroProcesso, " +
+                                " pg.cod, " +
+                                " pg.connectionURL " +
                                 ") ";
         Query query = getSession().createQuery(
                 " select " +
@@ -63,6 +65,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer>  {
                         " inner join p.processInstanceEntity pi " +
                         " inner join pi.processVersion pv " +
                         " inner join pv.processDefinition pd " +
+                        " inner join pd.processGroup pg " +
                         " left join pi.tasks ti " +
                         " left join ti.allocatedUser au " +
                         " left join ti.task tv " +

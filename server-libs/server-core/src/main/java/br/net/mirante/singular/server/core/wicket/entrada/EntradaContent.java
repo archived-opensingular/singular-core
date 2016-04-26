@@ -23,11 +23,6 @@ public class EntradaContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO>
     }
 
     @Override
-    protected String getModuleContext() {
-        return  "/notificacaosimplificada";
-    }
-
-    @Override
     protected BSDataTable<TaskInstanceDTO, String> setupDataTable() {
         return new BSDataTableBuilder<>(createDataProvider())
                 .appendPropertyColumn(getMessage("label.table.column.in.date"),

@@ -3,8 +3,10 @@ package br.net.mirante.singular.server.commons.persistence.dto;
 
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.Date;
 
 public class TaskInstanceDTO implements Serializable {
@@ -25,12 +27,14 @@ public class TaskInstanceDTO implements Serializable {
     private Date processBeginDate;
     private TaskType taskType;
     private boolean possuiPermissao = false;
+    private String processGroupCod;
+    private String processGroupContext;
 
 
     public TaskInstanceDTO(Integer processInstanceId, Integer taskInstanceId, Integer taskId, Integer versionStamp,
                            Date creationDate, String descricao,
                            MUser usuarioAlocado, String taskName, String type, String processType, Long codPeticao,
-                           Date situationBeginDate, Date processBeginDate, TaskType taskType, boolean possuiPermissao) {
+                           Date situationBeginDate, Date processBeginDate, TaskType taskType, boolean possuiPermissao, String processGroupCod, String processGroupContext) {
         this.processInstanceId = processInstanceId;
         this.taskInstanceId = taskInstanceId;
         this.taskId = taskId;
@@ -47,6 +51,13 @@ public class TaskInstanceDTO implements Serializable {
         this.processBeginDate = processBeginDate;
         this.taskType = taskType;
         this.possuiPermissao = possuiPermissao;
+        this.processGroupCod = processGroupCod;
+        try {
+            final String path = new URL(processGroupContext).getPath();
+            this.processGroupContext  = path.substring(0, path.indexOf("/", 1));
+        } catch (Exception e) {
+            throw new SingularServerException(String.format("Erro ao tentar fazer o parse da URL: %s", processGroupContext), e);
+        }
     }
 
 
@@ -203,5 +214,21 @@ public class TaskInstanceDTO implements Serializable {
 
     public void setVersionStamp(Integer versionStamp) {
         this.versionStamp = versionStamp;
+    }
+
+    public String getProcessGroupCod() {
+        return processGroupCod;
+    }
+
+    public void setProcessGroupCod(String processGroupCod) {
+        this.processGroupCod = processGroupCod;
+    }
+
+    public String getProcessGroupContext() {
+        return processGroupContext;
+    }
+
+    public void setProcessGroupContext(String processGroupContext) {
+        this.processGroupContext = processGroupContext;
     }
 }
