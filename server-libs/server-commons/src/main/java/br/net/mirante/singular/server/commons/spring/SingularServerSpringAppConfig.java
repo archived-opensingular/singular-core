@@ -38,49 +38,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
                 @ComponentScan.Filter(type = FilterType.ANNOTATION,
                         value = AutoScanDisabled.class)
         })
-@EnableSwagger2
-public class SingularServerSpringAppConfig extends WebMvcConfigurerAdapter {
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-        registry.addResourceHandler("/index.html").addResourceLocations("/WEB-INF/view/");
-
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
-
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
-    }
-
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("forward:/index.html");
-    }
-
-    @Bean
-    public Docket documentation() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(regex("/rest/.*"))
-                .build()
-                .pathMapping("/")
-                .apiInfo(metadata());
-    }
-
-    @Bean
-    public UiConfiguration uiConfig() {
-        return UiConfiguration.DEFAULT;
-    }
-
-    private ApiInfo metadata() {
-        return new ApiInfoBuilder()
-                .title("API Rest do Servidor do Singular")
-                .description("Serviços expostos via REST para integração com o Singular")
-                .version("1.0")
-                .build();
-    }
+public class SingularServerSpringAppConfig  {
 
 
     @Bean

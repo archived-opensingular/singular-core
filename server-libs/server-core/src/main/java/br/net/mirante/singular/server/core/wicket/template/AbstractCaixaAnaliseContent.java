@@ -2,14 +2,14 @@ package br.net.mirante.singular.server.core.wicket.template;
 
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.server.commons.config.ServerContext;
-import br.net.mirante.singular.server.commons.dto.ITaskInstanceDTO;
 import br.net.mirante.singular.server.commons.form.FormActions;
-import br.net.mirante.singular.server.commons.service.IAnalisePeticaoService;
+import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
+import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import br.net.mirante.singular.server.commons.ws.IServiceFactoryUtil;
+import br.net.mirante.singular.server.commons.ws.ServiceFactoryUtil;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
@@ -35,7 +35,7 @@ import java.util.Optional;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
-public abstract class AbstractCaixaAnaliseContent<T extends ITaskInstanceDTO> extends Content {
+public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> extends Content {
 
     private static final long serialVersionUID = 1767745739019654615L;
 
@@ -57,10 +57,10 @@ public abstract class AbstractCaixaAnaliseContent<T extends ITaskInstanceDTO> ex
     protected BSDataTable<T, String> listTable;
 
     @Inject
-    protected IAnalisePeticaoService<T> analisePeticaoService;
+    protected AnalisePeticaoService<T> analisePeticaoService;
 
     @Inject
-    protected IServiceFactoryUtil serviceFactoryUtil;
+    protected ServiceFactoryUtil serviceFactoryUtil;
 
     protected abstract String getModuleContext();
 

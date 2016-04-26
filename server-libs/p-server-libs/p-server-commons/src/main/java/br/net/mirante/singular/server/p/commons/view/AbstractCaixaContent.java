@@ -29,7 +29,7 @@ import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.p.commons.dto.IPetitionDTO;
-import br.net.mirante.singular.server.p.commons.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
