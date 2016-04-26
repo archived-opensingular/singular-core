@@ -161,7 +161,7 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
                 .baseURL(getBaseUrl())
                 .formAction(formActions.getId())
                 .formId(peticao.getCod())
-                .params(getcriarLinkParameters())
+                .params(getLinkParameters())
                 .build();
 
         WebMarkupContainer link = new WebMarkupContainer(id);
@@ -170,7 +170,7 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
         return link;
     }
 
-    protected Map<String, String> getcriarLinkParameters(){
+    protected Map<String, String> getLinkParameters(){
         Map<String, String> params = new HashMap<>();
         params.put(SIGLA_PARAM_NAME, getSiglaProcesso());
         return params;
