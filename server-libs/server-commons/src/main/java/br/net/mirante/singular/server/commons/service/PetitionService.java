@@ -91,4 +91,8 @@ public class PetitionService {
         return grupoProcessoDAO.findByName(name);
     }
 
+    public ProcessGroupEntity findByProcessGroupCod(String cod) {
+        return grupoProcessoDAO.get(cod);
+    }
+
 }

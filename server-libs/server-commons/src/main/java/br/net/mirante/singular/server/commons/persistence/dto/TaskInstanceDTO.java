@@ -9,6 +9,7 @@ import java.util.Date;
 public class TaskInstanceDTO {
 
     private Integer taskInstanceId;
+    private Integer versionStamp;
     private Integer processInstanceId;
     private Integer taskId;
     private String taskName;
@@ -27,13 +28,14 @@ public class TaskInstanceDTO {
     private boolean possuiPermissao = false;
 
 
-    public TaskInstanceDTO(Integer processInstanceId, Integer taskInstanceId, Integer taskId,
+    public TaskInstanceDTO(Integer processInstanceId, Integer taskInstanceId, Integer taskId, Integer versionStamp,
                            Date dataProtocolo, String descricao,
                            MUser usuarioAlocado, String taskName, String type, String processType, Long codPeticao,
                            Date situationBeginDate, Date processBeginDate, TaskType taskType, boolean possuiPermissao) {
         this.processInstanceId = processInstanceId;
         this.taskInstanceId = taskInstanceId;
         this.taskId = taskId;
+        this.versionStamp = versionStamp;
         this.dataProtocolo = dataProtocolo;
         this.descricao = descricao;
 //        this.solicitante = nomePessoaFisica == null ? nomePessoaJuridica : nomePessoaFisica;
@@ -217,5 +219,13 @@ public class TaskInstanceDTO {
 
     public void setProcessType(String processType) {
         this.processType = processType;
+    }
+
+    public Integer getVersionStamp() {
+        return versionStamp;
+    }
+
+    public void setVersionStamp(Integer versionStamp) {
+        this.versionStamp = versionStamp;
     }
 }

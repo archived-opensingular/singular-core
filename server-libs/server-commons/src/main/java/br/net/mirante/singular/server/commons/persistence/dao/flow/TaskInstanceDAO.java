@@ -52,7 +52,7 @@ public class TaskInstanceDAO<T extends TaskInstanceDTO> extends BaseDAO<TaskInst
                 count ?
                         " count( distinct ti )" :
                         " new " + tipoTaskInstanceDTO.getName() + " (pi.cod," +
-                                " ti.cod, td.cod," +
+                                " ti.cod, td.cod, ti.versionStamp, " +
 //                                " t.numeroProcesso," +
                                 " p.creationDate," +
                                 " pi.description, " +
