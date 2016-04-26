@@ -1,0 +1,4 @@
+alter table DBCORPORATIVO.TB_USUARIO_REPRESENTANTE
+   add constraint FK_USUPESSOA_PESSOA foreign key (ID_PESSOA_REPRESENTADA)
+      references DBCORPORATIVO.TB_PESSOA (ID_PESSOA)
+      not deferrable;
