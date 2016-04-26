@@ -1,19 +1,19 @@
 package br.net.mirante.singular.server.commons.wicket.view.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 public class DispatcherPageUtil {
 
     public static final String DISPATCHER_PAGE_PATH = "/";
     public static final String ACTION_ID = "a";
     public static final String FORM_ID = "k";
-    private static final Logger logger = LoggerFactory.getLogger(DispatcherPageUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DispatcherPageUtil.class);
     private static final String ENCODING = "UTF-8";
 
     private String url;
@@ -30,7 +30,7 @@ public class DispatcherPageUtil {
         try {
             return URLEncoder.encode(String.valueOf(param), ENCODING);
         } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return "";
         }
     }

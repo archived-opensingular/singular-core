@@ -5,7 +5,9 @@
 
 package br.net.mirante.singular.server.commons.service.dto;
 
-public class ProcessDTO {
+import java.io.Serializable;
+
+public class ProcessDTO implements Serializable {
 
     private String name;
 

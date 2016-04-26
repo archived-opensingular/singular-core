@@ -1,20 +1,15 @@
 package br.net.mirante.singular.server.p.commons.view;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.server.commons.form.FormActions;
-import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
-import br.net.mirante.singular.server.commons.wicket.SingularSession;
-import br.net.mirante.singular.server.commons.wicket.view.template.Content;
-import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import br.net.mirante.singular.server.p.commons.dto.IPetitionDTO;
-import br.net.mirante.singular.server.p.commons.filter.QuickFilter;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
-import br.net.mirante.singular.util.wicket.metronic.menu.DropdownMenu;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_PARAM_NAME;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -28,14 +23,20 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_PARAM_NAME;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.server.commons.form.FormActions;
+import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
+import br.net.mirante.singular.server.commons.wicket.view.template.Content;
+import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
+import br.net.mirante.singular.server.p.commons.dto.IPetitionDTO;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.metronic.menu.DropdownMenu;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 /**
  * Classe base para construição de caixas do servidor de petições
@@ -46,9 +47,11 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
 
     public static final int DEFAULT_ROWS_PER_PAGE = 15;
 
-    private String moduleContext;
+    private String processGroupCod;
 
-    private String siglaProcesso;
+    private String menu;
+
+    private List<ProcessDTO> processes;
 
     /**
      * Form padrão
@@ -95,21 +98,17 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
      */
     private final BSModalBorder deleteModal = construirModalBorder();
 
-    public AbstractCaixaContent(String id, String moduleContext, String siglaProcesso) {
+    public AbstractCaixaContent(String id, String processGroupCod, String menu) {
         super(id);
-        this.moduleContext = moduleContext;
-        this.siglaProcesso = siglaProcesso;
+        this.processGroupCod = processGroupCod;
+        this.menu = menu;
     }
 
 
     protected abstract String getBaseUrl();
 
-    protected String getSiglaProcesso() {
-        return siglaProcesso;
-    }
-
-    protected String getModuleContext() {
-        return moduleContext;
+    protected String getProcessGroupCod() {
+        return processGroupCod;
     }
 
     protected abstract void appendPropertyColumns(BSDataTableBuilder<T, String, IColumn<T, String>> builder);
@@ -161,7 +160,7 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
                 .baseURL(getBaseUrl())
                 .formAction(formActions.getId())
                 .formId(peticao.getCod())
-                .params(getcriarLinkParameters())
+                .params(getcriarLinkParameters(peticao))
                 .build();
 
         WebMarkupContainer link = new WebMarkupContainer(id);
@@ -170,9 +169,9 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
         return link;
     }
 
-    protected Map<String, String> getcriarLinkParameters(){
+    protected Map<String, String> getcriarLinkParameters(T peticao){
         Map<String, String> params = new HashMap<>();
-        params.put(SIGLA_PARAM_NAME, getSiglaProcesso());
+        params.put(SIGLA_PARAM_NAME, peticao.getProcessType());
         return params;
     }
 
@@ -231,6 +230,9 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
         BaseDataProvider<T, String> dataProvider = new BaseDataProvider<T, String>() {
             @Override
             public long size() {
+                if (getProcessesNames().isEmpty()) {
+                    return 0;
+                }
                 return countQuickSearch(novoFiltro(), getProcessesNames());
             }
 
@@ -247,10 +249,14 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
             }
 
             private List<String> getProcessesNames() {
-                return SingularSession.get().getProcesses()
-                        .stream()
-                        .map(ProcessDTO::getAbbreviation)
-                        .collect(Collectors.toList());
+                if (getProcesses() == null) {
+                    return Collections.emptyList();
+                } else {
+                    return getProcesses()
+                            .stream()
+                            .map(ProcessDTO::getAbbreviation)
+                            .collect(Collectors.toList());
+                }
             }
         };
         Pair<String, SortOrder> sort = getSortProperty();
@@ -270,4 +276,19 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
 
     protected abstract long countQuickSearch(QuickFilter filter, List<String> processesNames);
 
+    public List<ProcessDTO> getProcesses() {
+        return processes;
+    }
+
+    public void setProcesses(List<ProcessDTO> processes) {
+        this.processes = processes;
+    }
+
+    public String getMenu() {
+        return menu;
+    }
+
+    public void setMenu(String menu) {
+        this.menu = menu;
+    }
 }
