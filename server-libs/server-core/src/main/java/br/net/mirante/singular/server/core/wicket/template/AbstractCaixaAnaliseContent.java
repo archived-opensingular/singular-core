@@ -172,10 +172,18 @@ public abstract class AbstractCaixaAnaliseContent<T extends ITaskInstanceDTO> ex
     }
 
     protected void atribuir(AjaxRequestTarget target, IModel<T> model) {
-        T taskInstanceDTO = model.getObject();
         // TODO parametrizar qual o flow
-        serviceFactoryUtil.getSingularWS().relocateTask(taskInstanceDTO.getProcessType(), Long.valueOf(taskInstanceDTO.getProcessInstanceId()), SingularSession.get().getUsername());
-        addToastrSuccessMessage("message.allocate.success");
+        try{
+            T taskInstanceDTO = model.getObject();
+            serviceFactoryUtil.getSingularWS().relocateTask(
+                    taskInstanceDTO.getProcessType(),
+                    Long.valueOf(taskInstanceDTO.getProcessInstanceId()),
+                    SingularSession.get().getUsername(),
+                    taskInstanceDTO.getVersionStamp());
+            addToastrSuccessMessage("message.allocate.success");
+        }catch (Exception e){
+            addToastrErrorMessage("global.analise.atribuir.msg.error");
+        }
         target.add(listTable);
     }
 

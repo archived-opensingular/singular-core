@@ -12,6 +12,10 @@ public interface ITaskInstanceDTO extends Serializable {
 
     void setTaskInstanceId(Integer taskInstanceId);
 
+    void setVersionStamp(Integer v);
+
+    Integer getVersionStamp();
+
     Integer getTaskId();
 
     void setTaskId(Integer taskId);
