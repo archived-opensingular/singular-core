@@ -236,7 +236,8 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
     private boolean isNewVersion(IEntityTaskVersion oldEntityTask, IEntityTaskVersion newEntitytask) {
         if (oldEntityTask == null || !oldEntityTask.getName().equalsIgnoreCase(newEntitytask.getName())
                 || !oldEntityTask.getType().getAbbreviation().equals(newEntitytask.getType().getAbbreviation())
-                || oldEntityTask.getTransitions().size() != newEntitytask.getTransitions().size()) {
+                || oldEntityTask.getTransitions().size() != newEntitytask.getTransitions().size()
+                || oldEntityTask.getAccessStrategyType() != newEntitytask.getAccessStrategyType()) {
             return true;
         }
         for (IEntityTaskTransitionVersion newEntityTaskTransition : newEntitytask.getTransitions()) {

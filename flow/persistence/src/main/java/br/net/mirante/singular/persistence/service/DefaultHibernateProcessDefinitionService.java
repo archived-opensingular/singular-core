@@ -69,6 +69,9 @@ public class DefaultHibernateProcessDefinitionService
         taskEntity.setTaskDefinition(entityTaskDefinition);
         taskEntity.setType((TaskType) task.getEffectiveTaskType());
         taskEntity.setTransitions(new ArrayList<>());
+        if (task.getAccessStrategy() != null) {
+            taskEntity.setAccessStrategyType(task.getAccessStrategy().getType());
+        }
         return taskEntity;
     }
 
