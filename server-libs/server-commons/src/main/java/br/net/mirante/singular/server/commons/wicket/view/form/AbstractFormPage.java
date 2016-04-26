@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
@@ -264,6 +265,10 @@ public abstract class AbstractFormPage extends Template {
     protected abstract String getFormXML(IModel<?> model);
 
     protected abstract void setFormXML(IModel<?> model, String xml);
+
+    protected abstract ProcessInstanceEntity getProcessInstance(IModel<?> model);
+
+    protected abstract void setProcessInstance(IModel<?> model, ProcessInstanceEntity pie);
 
     protected abstract void saveForm(IModel<?> currentInstance);
 
