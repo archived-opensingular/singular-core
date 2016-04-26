@@ -10,10 +10,8 @@ import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
-import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetails;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
 import br.net.mirante.singular.server.commons.ws.ServiceFactoryUtil;
-
 import org.springframework.context.annotation.Bean;
 
 public class SingularDefaultBeanFactory {

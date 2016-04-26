@@ -24,7 +24,7 @@ public class PeticaoDTO implements Serializable {
 
     public PeticaoDTO(Long cod, String description, String situation,
                       String processName, Date creationDate, String type, String processType,
-                      String processNumber, Date situationBeginDate, Date processBeginDate,
+                      Date situationBeginDate, Date processBeginDate,
                       Date editionDate) {
         this.cod = cod;
         this.description = description;
@@ -33,7 +33,6 @@ public class PeticaoDTO implements Serializable {
         this.creationDate = creationDate;
         this.type = type;
         this.processType = processType;
-        this.processNumber = processNumber;
         this.situationBeginDate = situationBeginDate;
         this.processBeginDate = processBeginDate;
         this.editionDate = editionDate;

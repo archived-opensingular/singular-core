@@ -1,5 +1,9 @@
 package br.net.mirante.singular.server.commons.persistence.filter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class QuickFilter {
 
     private String filter;
@@ -10,7 +14,7 @@ public class QuickFilter {
     private int count;
     private String sortProperty;
     private boolean ascending;
-    private String[] tasks;
+    private List<String> tasks;
 
     public String getFilter() {
         return filter;
@@ -91,11 +95,11 @@ public class QuickFilter {
     }
 
     public QuickFilter forTasks(String... tasks){
-        this.tasks = tasks;
+        this.tasks = Arrays.asList(tasks);
         return this;
     }
 
-    public String[] getTasks() {
+    public List<String> getTasks() {
         return tasks;
     }
 }

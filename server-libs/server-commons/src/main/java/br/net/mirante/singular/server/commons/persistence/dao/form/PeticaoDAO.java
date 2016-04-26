@@ -1,14 +1,13 @@
 package br.net.mirante.singular.server.commons.persistence.dao.form;
 
 
-import br.net.mirante.singular.commons.lambda.IBiConsumer;
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.Peticao;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
-
 import br.net.mirante.singular.support.persistence.BaseDAO;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -17,7 +16,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +45,6 @@ public class PeticaoDAO extends BaseDAO<Peticao, Long> {
 
     public Peticao find(Long cod) {
         Criteria crit = session().createCriteria(Peticao.class, "p");
-//        crit.createAlias("p.processInstanceEntity.processVersion", "pv");
-//        crit.setFetchMode("pv", FetchMode.JOIN);
         crit.add(Restrictions.eq("p.cod", cod));
         return (Peticao) crit.uniqueResult();
     }
@@ -67,98 +63,94 @@ public class PeticaoDAO extends BaseDAO<Peticao, Long> {
     }
 
 
-    private Query createQuery(QuickFilter filtro, List<String> siglasProcesso, boolean count) {
-
-        String              hql    = "";
-        Map<String, Object> params = new HashMap<>();
-
+    protected void buildSelectClause(StringBuilder hql, Map<String, Object> params, QuickFilter filtro, List<String> siglasProcesso, boolean count) {
         if (count) {
-            hql = "SELECT count(p) ";
+            hql.append("SELECT count(p) ");
         } else {
-            hql += " SELECT NEW " + PeticaoDTO.class.getName();
-            hql += " ( p.cod, ";
-            hql += " p.description, ";
-            hql += " task.name, ";
-            hql += " p.processName,";
-            hql += " p.creationDate,";
-            hql += " p.type, ";
-            hql += " p.processType, ";
-            hql += " t.numeroProcesso ,";
-            hql += " ta.beginDate ,";
-            hql += " pie.beginDate ,";
-            hql += " p.editionDate )";
+            hql.append(" SELECT NEW " + PeticaoDTO.class.getName());
+            hql.append(" ( p.cod ");
+            hql.append(" , p.description");
+            hql.append(" , task.name");
+            hql.append(" , p.processName");
+            hql.append(" , p.creationDate");
+            hql.append(" , p.type");
+            hql.append(" , p.processType");
+            hql.append(" , ta.beginDate");
+            hql.append(" , pie.beginDate");
+            hql.append(" , p.editionDate");
+            hql.append(")");
         }
+    }
 
-        hql += " FROM " + Peticao.class.getName() + " p ";
-        hql += " INNER JOIN p.pessoaRepresentada pr ";
-        hql += " LEFT JOIN p.processInstanceEntity pie ";
-        hql += " LEFT JOIN p.transacao t ";
-        hql += " LEFT JOIN pie.tasks ta ";
-        hql += " LEFT JOIN ta.task task ";
-        hql += " WHERE 1=1 ";
+    protected void buildFromClause(StringBuilder hql, Map<String, Object> params, QuickFilter filtro, List<String> siglasProcesso, boolean count) {
+        hql.append(" FROM " + Peticao.class.getName() + " p ");
+        hql.append(" LEFT JOIN p.processInstanceEntity pie ");
+        hql.append(" LEFT JOIN pie.tasks ta ");
+        hql.append(" LEFT JOIN ta.task task ");
+    }
+
+    protected void buildWhereClause(StringBuilder hql, Map<String, Object> params, QuickFilter filtro, List<String> siglasProcesso, boolean count) {
+        hql.append(" WHERE 1=1 ");
 
         if (siglasProcesso != null
                 && !siglasProcesso.isEmpty()) {
-            hql += " AND p.processType in (:siglasProcesso) ";
+            hql.append(" AND p.processType in (:siglasProcesso) ");
             params.put("siglasProcesso", siglasProcesso);
         }
-        hql += " AND pr.cod = :codPessoaRepresentada ";
-        params.put("codPessoaRepresentada", filtro.getIdPessoaRepresentada());
 
         if (filtro.hasFilter()) {
-            hql += " AND ( upper(p.description) like upper(:filter) ";
-            hql += " OR upper(p.processName) like upper(:filter) ";
-            hql += " OR upper(task.name) like upper(:filter) ";
+            hql.append(" AND ( upper(p.description) like upper(:filter) ");
+            hql.append(" OR upper(p.processName) like upper(:filter) ");
+            hql.append(" OR upper(task.name) like upper(:filter) ");
             if (filtro.isRascunho()) {
-                hql += " OR " + JPAQueryUtil.formattDateTimeClause("p.creationDate", "filter");
-                hql += " OR " + JPAQueryUtil.formattDateTimeClause("p.editionDate", "filter");
+                hql.append(" OR " + JPAQueryUtil.formattDateTimeClause("p.creationDate", "filter"));
+                hql.append(" OR " + JPAQueryUtil.formattDateTimeClause("p.editionDate", "filter"));
             } else {
-                hql += " OR " + JPAQueryUtil.formattDateTimeClause("ta.beginDate", "filter");
-                hql += " OR " + JPAQueryUtil.formattDateTimeClause("pie.beginDate", "filter");
+                hql.append(" OR " + JPAQueryUtil.formattDateTimeClause("ta.beginDate", "filter"));
+                hql.append(" OR " + JPAQueryUtil.formattDateTimeClause("pie.beginDate", "filter"));
             }
-            hql += " OR p.id like :filter ";
-            hql += " OR t.numeroProcesso like :cleanFilter ) ";
+            hql.append(" OR p.id like :filter ");
             params.put("cleanFilter", "%" + filtro.getFilter().replaceAll("/", "").replaceAll("\\.", "").replaceAll("\\-", "").replaceAll(":", "") + "%");
             params.put("filter", "%" + filtro.getFilter() + "%");
         }
 
-        if (!ArrayUtils.isEmpty(filtro.getTasks())) {
-            hql += " AND task.name in :tasks";
+        if (!CollectionUtils.isEmpty(filtro.getTasks())) {
+            hql.append(" AND task.name in :tasks");
             params.put("tasks", filtro.getTasks());
         }
 
         if (filtro.isRascunho()) {
-            hql += " AND p.processInstanceEntity is null ";
+            hql.append(" AND p.processInstanceEntity is null ");
         } else {
-            hql += " AND p.processInstanceEntity is not null ";
-            hql += " AND (ta.endDate is null OR task.type = :tipoEnd) ";
+            hql.append(" AND p.processInstanceEntity is not null ");
+            hql.append(" AND (ta.endDate is null OR task.type = :tipoEnd) ");
             params.put("tipoEnd", TaskType.End);
         }
 
         if (filtro.getSortProperty() != null) {
-            hql += mountSort(filtro.getSortProperty(), filtro.isAscending());
+            hql.append(mountSort(filtro.getSortProperty(), filtro.isAscending()));
         }
+    }
 
-        Query query = session().createQuery(hql);
 
-        params.forEach(setParameters(query));
+    private Query createQuery(QuickFilter filtro, List<String> siglasProcesso, boolean count) {
+
+        StringBuilder hql = new StringBuilder("");
+        Map<String, Object> params = new HashMap<>();
+
+        buildSelectClause(hql, params, filtro, siglasProcesso, count);
+        buildFromClause(hql, params, filtro, siglasProcesso, count);
+        buildWhereClause(hql, params, filtro, siglasProcesso, count);
+
+        Query query = session().createQuery(hql.toString());
+
+        setParametersQuery(query, params);
 
         return query;
     }
 
-    private IBiConsumer<String, Object> setParameters(Query query) {
-        return (IBiConsumer<String, Object>) (s, o) -> {
-            if (o != null && o.getClass().isArray()) {
-                query.setParameterList(s, (Object[]) o);
-            } else if (o instanceof Collection) {
-                query.setParameterList(s, (Collection) o);
-            } else {
-                query.setParameter(s, o);
-            }
-        };
-    }
 
-    private String mountSort(String sortProperty, boolean ascending) {
+    protected String mountSort(String sortProperty, boolean ascending) {
         return " ORDER BY " + sortProperty + (ascending ? " asc " : " desc ");
     }
 
