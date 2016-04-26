@@ -27,10 +27,7 @@ public class ConcluidaContent extends AbstractCaixaAnaliseContent<TaskInstanceDT
         super(id, withInfoLink, withBreadcrumb);
     }
 
-    @Override
-    protected String getModuleContext() {
-        return "/notificacaosimplificada";
-    }
+
 
     @Override
     protected BSDataTable<TaskInstanceDTO, String> setupDataTable() {

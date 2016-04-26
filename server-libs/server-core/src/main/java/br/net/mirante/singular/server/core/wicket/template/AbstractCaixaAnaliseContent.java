@@ -3,8 +3,9 @@ package br.net.mirante.singular.server.core.wicket.template;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.server.commons.config.ServerContext;
 import br.net.mirante.singular.server.commons.form.FormActions;
-import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
+import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
+import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
@@ -37,6 +38,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> extends Content {
 
+
     private static final long serialVersionUID = 1767745739019654615L;
 
     public static final String ID_QUICK_FILTER = "filtroRapido";
@@ -60,9 +62,10 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
     protected AnalisePeticaoService<T> analisePeticaoService;
 
     @Inject
-    protected ServiceFactoryUtil serviceFactoryUtil;
+    protected PetitionService petitionService;
 
-    protected abstract String getModuleContext();
+    @Inject
+    protected ServiceFactoryUtil serviceFactoryUtil;
 
     protected abstract BSDataTable<T, String> setupDataTable();
 
@@ -98,8 +101,8 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         target.add(listTable);
     }
 
-    protected String getBaseUrl() {
-        return getModuleContext() + ServerContext.WORKLIST.getUrlPath();
+    protected String getBaseUrl(String processGroupContext) {
+        return  processGroupContext+ ServerContext.WORKLIST.getUrlPath();
     }
 
     protected BSActionColumn buildActionColumn() {
@@ -160,7 +163,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
 
     protected WebMarkupContainer criarLink(final T peticao, final String id, FormActions formActions) {
         String href = DispatcherPageUtil
-                .baseURL(getBaseUrl() + DispatcherPageUtil.DISPATCHER_PAGE_PATH)
+                .baseURL(getBaseUrl(peticao.getProcessGroupCod()) + DispatcherPageUtil.DISPATCHER_PAGE_PATH)
                 .formAction(formActions.getId())
                 .formId(peticao.getCodPeticao())
                 .param(Parameters.SIGLA_PARAM_NAME, peticao.getProcessType())
@@ -175,7 +178,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         // TODO parametrizar qual o flow
         try{
             T taskInstanceDTO = model.getObject();
-            serviceFactoryUtil.getSingularWS().relocateTask(
+            serviceFactoryUtil.getSingularWS(taskInstanceDTO.getProcessGroupContext()).relocateTask(
                     taskInstanceDTO.getProcessType(),
                     Long.valueOf(taskInstanceDTO.getProcessInstanceId()),
                     SingularSession.get().getUsername(),

@@ -25,25 +25,24 @@ public class ServiceFactoryUtil {
      *
      * @return uma referência de singular ws
      */
-    public SingularWS getSingularWS() {
+    public SingularWS getSingularWS(String processGroupContext) {
         if (singularService == null) {
             singularService = new SingularWSService().getSingularWSPort();
             BindingProvider bp = (BindingProvider) singularService;
             bp.getRequestContext().put(
                     BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                     getAdressWithoutWsdl(
-                            ConfigProperties.get("singular.ws.endereco")
-                    ));
+                            ConfigProperties.get("singular.ws.endereco"), processGroupContext));
         }
         return singularService;
     }
 
-    private static String getAdressWithoutWsdl(String adress) {
+    private static String getAdressWithoutWsdl(String adress, String processGroupContext) {
         int lastIndex = adress.lastIndexOf("?wsdl");
         if (lastIndex > 0) {
-            return adress.substring(0, lastIndex);
+            adress = adress.substring(0, lastIndex);
         }
-        return adress;
+        return String.format(adress, processGroupContext);
     }
 
 }
