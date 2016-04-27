@@ -14,6 +14,10 @@ import java.util.List;
 
 public class GrupoProcessoDAO extends BaseDAO<ProcessGroupEntity, String> {
 
+    public GrupoProcessoDAO() {
+        super(ProcessGroupEntity.class);
+    }
+
     public List<ProcessGroupEntity> listarTodosGruposProcesso() {
         return getSession().createCriteria(ProcessGroupEntity.class).list();
     }

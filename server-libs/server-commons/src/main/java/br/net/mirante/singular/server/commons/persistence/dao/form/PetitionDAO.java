@@ -3,15 +3,14 @@ package br.net.mirante.singular.server.commons.persistence.dao.form;
 
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Peticao;
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
@@ -21,32 +20,21 @@ import java.util.List;
 import java.util.Map;
 
 
-public class PeticaoDAO extends BaseDAO<Peticao, Long> {
+public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Long> {
 
-    @Inject
-    private SessionFactory sessionFactory;
+    public PetitionDAO() {
+        super((Class<T>) Petition.class);
+    }
 
-    private Session session() {
-        return sessionFactory.getCurrentSession();
+    public PetitionDAO(Class<T> tipo) {
+        super(tipo);
     }
 
     @SuppressWarnings("unchecked")
-    public List<Peticao> list(String type) {
-        Criteria crit = session().createCriteria(Peticao.class);
+    public List<AbstractPetitionEntity> list(String type) {
+        Criteria crit = getSession().createCriteria(tipo);
         crit.add(Restrictions.eq("type", type));
         return crit.list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Peticao> listAll() {
-        Criteria crit = session().createCriteria(Peticao.class);
-        return crit.list();
-    }
-
-    public Peticao find(Long cod) {
-        Criteria crit = session().createCriteria(Peticao.class, "p");
-        crit.add(Restrictions.eq("p.cod", cod));
-        return (Peticao) crit.uniqueResult();
     }
 
     public Long countQuickSearch(QuickFilter filtro, List<String> siglasProcesso) {
@@ -61,7 +49,6 @@ public class PeticaoDAO extends BaseDAO<Peticao, Long> {
         return query.list();
 
     }
-
 
     protected void buildSelectClause(StringBuilder hql, Map<String, Object> params, QuickFilter filtro, List<String> siglasProcesso, boolean count) {
         if (count) {
@@ -83,7 +70,7 @@ public class PeticaoDAO extends BaseDAO<Peticao, Long> {
     }
 
     protected void buildFromClause(StringBuilder hql, Map<String, Object> params, QuickFilter filtro, List<String> siglasProcesso, boolean count) {
-        hql.append(" FROM " + Peticao.class.getName() + " p ");
+        hql.append(" FROM " + tipo.getName() + " p ");
         hql.append(" LEFT JOIN p.processInstanceEntity pie ");
         hql.append(" LEFT JOIN pie.tasks ta ");
         hql.append(" LEFT JOIN ta.task task ");
@@ -115,7 +102,7 @@ public class PeticaoDAO extends BaseDAO<Peticao, Long> {
         }
 
         if (!CollectionUtils.isEmpty(filtro.getTasks())) {
-            hql.append(" AND task.name in :tasks");
+            hql.append(" AND task.name in (:tasks)");
             params.put("tasks", filtro.getTasks());
         }
 
@@ -142,7 +129,7 @@ public class PeticaoDAO extends BaseDAO<Peticao, Long> {
         buildFromClause(hql, params, filtro, siglasProcesso, count);
         buildWhereClause(hql, params, filtro, siglasProcesso, count);
 
-        Query query = session().createQuery(hql.toString());
+        Query query = getSession().createQuery(hql.toString());
 
         setParametersQuery(query, params);
 
@@ -154,9 +141,9 @@ public class PeticaoDAO extends BaseDAO<Peticao, Long> {
         return " ORDER BY " + sortProperty + (ascending ? " asc " : " desc ");
     }
 
-    public Peticao findByProcessCod(Integer cod) {
-        return (Peticao) getSession()
-                .createCriteria(Peticao.class)
+    public T findByProcessCod(Integer cod) {
+        return (T) getSession()
+                .createCriteria(Petition.class)
                 .add(Restrictions.eq("processInstanceEntity.cod", cod))
                 .setMaxResults(1)
                 .uniqueResult();

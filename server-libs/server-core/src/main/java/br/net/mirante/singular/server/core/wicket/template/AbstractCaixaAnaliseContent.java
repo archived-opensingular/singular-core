@@ -163,7 +163,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
 
     protected WebMarkupContainer criarLink(final T peticao, final String id, FormActions formActions) {
         String href = DispatcherPageUtil
-                .baseURL(getBaseUrl(peticao.getProcessGroupCod()) + DispatcherPageUtil.DISPATCHER_PAGE_PATH)
+                .baseURL(getBaseUrl(peticao.getProcessGroupContext()) + DispatcherPageUtil.DISPATCHER_PAGE_PATH)
                 .formAction(formActions.getId())
                 .formId(peticao.getCodPeticao())
                 .param(Parameters.SIGLA_PARAM_NAME, peticao.getProcessType())

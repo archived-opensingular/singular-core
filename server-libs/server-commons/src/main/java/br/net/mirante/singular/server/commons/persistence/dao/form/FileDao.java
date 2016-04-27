@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.IdGenerator;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 
-import br.net.mirante.singular.server.commons.persistence.entity.form.ArquivoPeticao;
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractAttachmentEntity;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import org.hibernate.Criteria;
@@ -31,25 +31,25 @@ public class FileDao implements IAttachmentPersistenceHandler {
     }
 
     @Transactional
-    public ArquivoPeticao insert(ArquivoPeticao o) {
+    public AbstractAttachmentEntity insert(AbstractAttachmentEntity o) {
         session().save(o);
         return o;
     }
 
     @Transactional
-    public void remove(ArquivoPeticao o) {
+    public void remove(AbstractAttachmentEntity o) {
         session().delete(o);
     }
 
     @Transactional @SuppressWarnings("unchecked") 
-    public List<ArquivoPeticao> list() {
-        Criteria crit = session().createCriteria(ArquivoPeticao.class);
+    public List<AbstractAttachmentEntity> list() {
+        Criteria crit = session().createCriteria(AbstractAttachmentEntity.class);
         return crit.list();
     }
     
     @Transactional
-    public ArquivoPeticao find(String hash){
-        return (ArquivoPeticao) session().createCriteria(ArquivoPeticao.class).add(Restrictions.eq("hashSha1", hash)).setMaxResults(1).uniqueResult();
+    public AbstractAttachmentEntity find(String hash){
+        return (AbstractAttachmentEntity) session().createCriteria(AbstractAttachmentEntity.class).add(Restrictions.eq("hashSha1", hash)).setMaxResults(1).uniqueResult();
     }
     
     @Override @Transactional
@@ -68,8 +68,8 @@ public class FileDao implements IAttachmentPersistenceHandler {
         }
     }
 
-    private ArquivoPeticao createFile(byte[] byteArray, String sha1) {
-        ArquivoPeticao file = new ArquivoPeticao();
+    private AbstractAttachmentEntity createFile(byte[] byteArray, String sha1) {
+        AbstractAttachmentEntity file = new AbstractAttachmentEntity();
         file.setId(genereator.generate(byteArray));
         file.setHashSha1(sha1);
         file.setRawContent(byteArray);
@@ -78,7 +78,7 @@ public class FileDao implements IAttachmentPersistenceHandler {
     }
     
     @Override @Transactional
-    public List<ArquivoPeticao> getAttachments() {
+    public List<AbstractAttachmentEntity> getAttachments() {
         return list();
     }
 
@@ -89,7 +89,7 @@ public class FileDao implements IAttachmentPersistenceHandler {
 
     @Override @Transactional
     public void deleteAttachment(String hashId) {
-        remove(new ArquivoPeticao(hashId));
+        remove(new AbstractAttachmentEntity(hashId));
     }
 
 }

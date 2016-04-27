@@ -5,7 +5,6 @@ import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +19,8 @@ import javax.persistence.Version;
 import java.util.Date;
 
 @MappedSuperclass
-public class Peticao extends BaseEntity {
+@Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
+public class AbstractPetitionEntity extends BaseEntity {
 
     @Id
     @Column(name = "CO_PETICAO")
@@ -61,7 +61,7 @@ public class Peticao extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date editionDate;
 
-    public Peticao() {
+    public AbstractPetitionEntity() {
     }
 
     @Override

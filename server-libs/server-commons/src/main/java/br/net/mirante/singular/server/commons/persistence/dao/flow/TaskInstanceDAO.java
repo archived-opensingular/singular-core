@@ -3,21 +3,26 @@ package br.net.mirante.singular.server.commons.persistence.dao.flow;
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import com.google.common.base.Joiner;
 import org.hibernate.Query;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer>  {
+public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
 
-    protected Map<String, String> getSortPropertyToAliases(){
-        return  new HashMap<String, String>() {
+
+    public TaskInstanceDAO() {
+        super(TaskInstanceEntity.class);
+    }
+
+    protected Map<String, String> getSortPropertyToAliases() {
+        return new HashMap<String, String>() {
             {
                 put("id", "ti.cod");
                 put("protocolDate", "p.creationDate");
@@ -30,6 +35,9 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer>  {
         };
     }
 
+    protected Class<? extends AbstractPetitionEntity> getPetitionEntityClass() {
+        return Petition.class;
+    }
 
 
     public List<? extends TaskInstanceDTO> findTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas) {
@@ -53,7 +61,6 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer>  {
                                 " pi.beginDate, " +
                                 " tv.type," +
                                 " tr.cod in (" + Joiner.on(",").join(idsPerfis) + ")," +
-                                " t.numeroProcesso, " +
                                 " pg.cod, " +
                                 " pg.connectionURL " +
                                 ") ";
@@ -61,7 +68,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer>  {
                 " select " +
                         selectClause +
                         " from " +
-                        " Peticao p " +
+                        getPetitionEntityClass().getName() + " p " +
                         " inner join p.processInstanceEntity pi " +
                         " inner join pi.processVersion pv " +
                         " inner join pv.processDefinition pd " +
@@ -76,8 +83,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer>  {
                         " and td.cod = tdr.cod " +
                         (concluidas ? " and tv.type = :tipoEnd " : " and ti.endDate is null ") +
                         addQuickFilter(filtroRapido) +
-                        getOrderBy(sortProperty, ascending, count))
-                ;
+                        getOrderBy(sortProperty, ascending, count));
 
         if (concluidas) {
             query.setParameter("tipoEnd", TaskType.End);
@@ -90,8 +96,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer>  {
 
     protected Query addFilterParameter(Query query, String filter) {
         return filter == null ? query : query
-                .setParameter("filter", "%" + filter + "%")
-                .setParameter("cleanFilter", "%" + filter.replaceAll("/", "").replaceAll("\\.", "").replaceAll("\\-", "").replaceAll(":", "") + "%");
+                .setParameter("filter", "%" + filter + "%");
     }
 
     protected String addQuickFilter(String filtro) {
@@ -100,7 +105,6 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer>  {
             return " and (  " +
                     "    ( " + JPAQueryUtil.formattDateTimeClause("ti.beginDate", "filter") + " ) " +
                     " or ( " + JPAQueryUtil.formattDateTimeClause("pi.beginDate", "filter") + " ) " +
-                    " or ( upper(t.numeroProcesso)  like upper(:cleanFilter) ) " +
                     " or ( upper(pi.description)  " + like + " ) " +
                     " or ( upper(tv.name) " + like + " ) " +
                     " or ( upper(au.nome) " + like + " ) " +

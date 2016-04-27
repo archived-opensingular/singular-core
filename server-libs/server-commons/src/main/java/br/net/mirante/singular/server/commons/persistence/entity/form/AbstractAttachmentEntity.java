@@ -7,13 +7,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-@Entity
+@MappedSuperclass
 @Table(schema = Constants.SCHEMA, name = "TB_ARQUIVO_PETICAO")
-public class ArquivoPeticao implements IAttachmentRef {
+public class AbstractAttachmentEntity implements IAttachmentRef {
 
     @Id
     @Column(name = "CO_ARQUIVO_PETICAO")
@@ -29,9 +30,9 @@ public class ArquivoPeticao implements IAttachmentRef {
     @Column(name = "NU_TAMANHO")
     private int size;
     
-    public ArquivoPeticao() {}
+    public AbstractAttachmentEntity() {}
     
-    public ArquivoPeticao(String id) { this.id = id;   }
+    public AbstractAttachmentEntity(String id) { this.id = id;   }
 
     public String getId() {
         return id;
@@ -90,7 +91,7 @@ public class ArquivoPeticao implements IAttachmentRef {
         if (this == obj)    return true;
         if (obj == null)    return false;
         if (getClass() != obj.getClass())   return false;
-        ArquivoPeticao other = (ArquivoPeticao) obj;
+        AbstractAttachmentEntity other = (AbstractAttachmentEntity) obj;
         if (hashSha1 == null) {
             if (other.hashSha1 != null) return false;
         } else if (!hashSha1.equals(other.hashSha1))    return false;
