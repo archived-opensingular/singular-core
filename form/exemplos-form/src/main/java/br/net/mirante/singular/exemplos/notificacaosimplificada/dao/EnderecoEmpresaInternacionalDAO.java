@@ -18,6 +18,10 @@ import br.net.mirante.singular.support.persistence.BaseDAO;
 @Repository
 public class EnderecoEmpresaInternacionalDAO extends BaseDAO<EnderecoEmpresaInternacional, EnderecoEmpresaInternacionalId> {
 
+    public EnderecoEmpresaInternacionalDAO() {
+        super(EnderecoEmpresaInternacional.class);
+    }
+
     public List<EnderecoEmpresaInternacional> buscarEnderecos(String filtro, Integer maxResults) {
 
         if (filtro == null) {

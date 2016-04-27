@@ -19,6 +19,10 @@ import java.util.Map;
 public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Long> {
 
 
+    public VocabularioControladoDAO() {
+        super(VocabularioControlado.class);
+    }
+
     public <T extends VocabularioControlado> List<T> findByDescricao(Class<T> vocabularioClass, String descricao) {
         final Criteria criteria = getSession().createCriteria(vocabularioClass);
         if (descricao != null) {

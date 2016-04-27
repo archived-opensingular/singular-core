@@ -7,6 +7,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -26,15 +27,8 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> implements L
 
     protected Class<T> tipo;
 
-
-    public BaseDAO() {
-        Type superclass = getClass().getGenericSuperclass();
-        if (superclass instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) superclass;
-            if (parameterizedType.getActualTypeArguments().length > 0) {
-                tipo = (Class<T>) parameterizedType.getActualTypeArguments()[0];
-            }
-        }
+    public BaseDAO(Class<T> tipo) {
+        this.tipo = tipo;
     }
 
     protected Session getSession() {
@@ -54,6 +48,14 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> implements L
             return null;
         } else {
             return (T) getSession().get(tipo, id);
+        }
+    }
+
+    public T find(Long id) {
+        if (id == null) {
+            return null;
+        } else {
+            return (T) getSession().createCriteria(tipo).add(Restrictions.idEq(id)).uniqueResult();
         }
     }
 

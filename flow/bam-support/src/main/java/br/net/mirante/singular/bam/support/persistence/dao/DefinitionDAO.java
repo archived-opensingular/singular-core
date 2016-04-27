@@ -23,6 +23,10 @@ import java.util.stream.Collectors;
 @Repository
 public class DefinitionDAO extends BaseDAO<ProcessDefinitionEntity, Integer> {
 
+    public DefinitionDAO() {
+        super(ProcessDefinitionEntity.class);
+    }
+
     public DefinitionDTO retrieveById(Integer id) {
         Query hql = getSession().createQuery("select pd.cod as cod, pd.name as nome, pd.key as sigla, pd.processGroup.cod as codGrupo from ProcessDefinitionEntity pd where pd.cod = :cod");
         hql.setParameter("cod", id).setCacheable(true);
