@@ -4,6 +4,7 @@ import br.net.mirante.singular.server.commons.wicket.SingularApplication;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.orm.hibernate4.support.OpenSessionInViewFilter;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -29,6 +30,7 @@ public abstract class WebInitializer {
 
     protected void onStartup(ServletContext ctx) throws ServletException {
         addSessionListener(ctx);
+        addOpenSessionInView(ctx);
         for (IServerContext context : serverContexts()) {
             logger.info(String.format(SINGULAR_SECURITY, "Setting up web context: "+context.getContextPath()));
             addWicketFilter(ctx, context);
@@ -48,6 +50,13 @@ public abstract class WebInitializer {
     }
 
     protected abstract Class<? extends SingularApplication> getWicketApplicationClass(IServerContext context);
+
+    private void addOpenSessionInView(ServletContext servletContext) {
+        FilterRegistration.Dynamic opensessioninview = servletContext.addFilter("opensessioninview", OpenSessionInViewFilter.class);
+        opensessioninview.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "/*");
+        opensessioninview.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/SingularWS");
+        opensessioninview.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
+    }
 
 
     /**

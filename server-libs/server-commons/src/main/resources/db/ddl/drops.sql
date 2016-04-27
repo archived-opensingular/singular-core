@@ -1,0 +1,2 @@
+-- CONSTRAINTS
+drop all objects;

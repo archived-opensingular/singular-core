@@ -1,6 +1,9 @@
 package br.net.mirante.singular.server.commons.config;
 
+import br.net.mirante.singular.server.commons.spring.SingularDefaultBeanFactory;
+import br.net.mirante.singular.server.commons.spring.SingularDefaultPersistenceConfiguration;
 import br.net.mirante.singular.server.commons.spring.SingularServerSpringAppConfig;
+import br.net.mirante.singular.server.commons.spring.SpringFoxSwaggerConfig;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -20,10 +23,17 @@ public abstract class SpringHibernateInitializer {
     public AnnotationConfigWebApplicationContext init(ServletContext ctx) {
         AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
         applicationContext.register(springConfigurationClass());
+        applicationContext.register(swaggerConfig());
+        applicationContext.register(beanFactory());
+        applicationContext.register(persistenceConfiguration());
         addSpringContextListener(ctx, applicationContext);
         addSpringRequestContextListener(ctx, applicationContext);
         addSpringMVCServlet(ctx, applicationContext);
         return applicationContext;
+    }
+
+    protected Class<? extends SpringFoxSwaggerConfig> swaggerConfig() {
+        return SpringFoxSwaggerConfig.class;
     }
 
     protected void addSpringContextListener(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
@@ -50,7 +60,19 @@ public abstract class SpringHibernateInitializer {
      *
      * @return Uma classe concreta que herda de {@link SingularServerSpringAppConfig} e anotada com {@link org.springframework.context.annotation.Configuration}
      */
-    protected abstract Class<? extends SingularServerSpringAppConfig> springConfigurationClass();
+
+    protected Class<? extends SingularServerSpringAppConfig> springConfigurationClass() {
+        return SingularServerSpringAppConfig.class;
+    }
+
+
+    protected Class<? extends SingularDefaultBeanFactory> beanFactory() {
+        return SingularDefaultBeanFactory.class;
+    }
+
+    protected Class<? extends SingularDefaultPersistenceConfiguration> persistenceConfiguration() {
+        return SingularDefaultPersistenceConfiguration.class;
+    }
 
     protected String springMVCServletMapping() {
         return "/*";

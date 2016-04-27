@@ -12,8 +12,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.Collection;
 
+@Transactional
 public interface SingularUserDetailsService extends UserDetailsService, UserDetailsContextMapper {
 
 
