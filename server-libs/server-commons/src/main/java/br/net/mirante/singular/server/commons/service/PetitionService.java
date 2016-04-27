@@ -7,10 +7,10 @@ import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
-import br.net.mirante.singular.server.commons.persistence.dao.form.PeticaoDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
 
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Peticao;
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -20,17 +20,17 @@ import java.util.Collections;
 import java.util.List;
 
 @Transactional
-public class PetitionService {
+public class PetitionService<T extends AbstractPetitionEntity> {
 
     @Inject
-    private PeticaoDAO peticaoDAO;
+    private PetitionDAO<T> petitionDAO;
 
     @Inject
     private GrupoProcessoDAO grupoProcessoDAO;
 
 
     public void delete(PeticaoDTO peticao) {
-        peticaoDAO.delete(peticaoDAO.find(peticao.getCod()));
+        petitionDAO.delete(petitionDAO.find(peticao.getCod()));
     }
 
 
@@ -40,7 +40,7 @@ public class PetitionService {
 
 
     public Long countQuickSearch(QuickFilter filtro, List<String> siglasProcesso) {
-        return peticaoDAO.countQuickSearch(filtro, siglasProcesso);
+        return petitionDAO.countQuickSearch(filtro, siglasProcesso);
     }
 
 
@@ -50,20 +50,20 @@ public class PetitionService {
 
 
     public List<? extends PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso) {
-        return peticaoDAO.quickSearch(filtro, siglasProcesso);
+        return petitionDAO.quickSearch(filtro, siglasProcesso);
     }
 
 
-    public void saveOrUpdate(Peticao peticao) {
-        peticaoDAO.saveOrUpdate(peticao);
+    public void saveOrUpdate(T peticao) {
+        petitionDAO.saveOrUpdate(peticao);
     }
 
-    public void send(Peticao peticao) {
+    public void send(T peticao) {
         iniciarProcessoFlow(peticao);
         saveOrUpdate(peticao);
     }
 
-    private void iniciarProcessoFlow(Peticao peticao) {
+    private void iniciarProcessoFlow(T peticao) {
         ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(peticao.getProcessType());
         ProcessInstance processInstance = processDefinition.newInstance();
         processInstance.setDescription(peticao.getDescription());
@@ -72,13 +72,13 @@ public class PetitionService {
     }
 
 
-    public Peticao find(Long cod) {
-        return peticaoDAO.find(cod);
+    public T find(Long cod) {
+        return petitionDAO.find(cod);
     }
 
 
-    public Peticao findByProcessCod(Integer cod) {
-        return peticaoDAO.findByProcessCod(cod);
+    public T findByProcessCod(Integer cod) {
+        return petitionDAO.findByProcessCod(cod);
     }
 
 

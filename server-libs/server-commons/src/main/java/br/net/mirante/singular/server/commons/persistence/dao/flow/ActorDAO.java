@@ -11,7 +11,11 @@ import org.hibernate.criterion.Restrictions;
 import java.sql.PreparedStatement;
 
 
-public class ActorDAO extends BaseDAO {
+public class ActorDAO extends BaseDAO<Actor, Integer> {
+
+    public ActorDAO() {
+        super(Actor.class);
+    }
 
     public Actor buscarPorCodUsuario(String username) {
         if (username == null) {
