@@ -1,5 +1,11 @@
 package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.hibernate.Query;
+
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
@@ -7,12 +13,6 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPe
 import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
-import com.google.common.base.Joiner;
-import org.hibernate.Query;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
 
@@ -40,11 +40,11 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
 
-    public List<? extends TaskInstanceDTO> findTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas) {
+    public List<? extends TaskInstanceDTO> findTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
         return buildQuery(sortProperty, ascending, siglaFluxo, idsPerfis, filtroRapido, concluidas, false).setMaxResults(count).setFirstResult(first).list();
     }
 
-    protected Query buildQuery(String sortProperty, boolean ascending, String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas, boolean count) {
+    protected Query buildQuery(String sortProperty, boolean ascending, String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas, boolean count) {
         String selectClause =
                 count ?
                         " count( distinct ti )" :
@@ -60,7 +60,6 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                                 " ti.beginDate,  " +
                                 " pi.beginDate, " +
                                 " tv.type," +
-                                " tr.cod in (" + Joiner.on(",").join(idsPerfis) + ")," +
                                 " pg.cod, " +
                                 " pg.connectionURL " +
                                 ") ";
@@ -125,7 +124,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
 
-    public Integer countTasks(String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas) {
+    public Integer countTasks(String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
         return ((Number) buildQuery(null, true, siglaFluxo, idsPerfis, filtroRapido, concluidas, true).uniqueResult()).intValue();
     }
 

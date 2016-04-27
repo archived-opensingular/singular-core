@@ -1,13 +1,13 @@
 package br.net.mirante.singular.server.commons.persistence.dto;
 
 
-import br.net.mirante.singular.flow.core.MUser;
-import br.net.mirante.singular.flow.core.TaskType;
-import br.net.mirante.singular.server.commons.exception.SingularServerException;
-
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
+
+import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
 
 public class TaskInstanceDTO implements Serializable {
 
@@ -26,7 +26,7 @@ public class TaskInstanceDTO implements Serializable {
     private Date situationBeginDate;
     private Date processBeginDate;
     private TaskType taskType;
-    private boolean possuiPermissao = false;
+    private boolean possuiPermissao = true;
     private String processGroupCod;
     private String processGroupContext;
 
@@ -34,7 +34,7 @@ public class TaskInstanceDTO implements Serializable {
     public TaskInstanceDTO(Integer processInstanceId, Integer taskInstanceId, Integer taskId, Integer versionStamp,
                            Date creationDate, String descricao,
                            MUser usuarioAlocado, String taskName, String type, String processType, Long codPeticao,
-                           Date situationBeginDate, Date processBeginDate, TaskType taskType, boolean possuiPermissao, String processGroupCod, String processGroupContext) {
+                           Date situationBeginDate, Date processBeginDate, TaskType taskType, String processGroupCod, String processGroupContext) {
         this.processInstanceId = processInstanceId;
         this.taskInstanceId = taskInstanceId;
         this.taskId = taskId;
@@ -50,7 +50,6 @@ public class TaskInstanceDTO implements Serializable {
         this.situationBeginDate = situationBeginDate;
         this.processBeginDate = processBeginDate;
         this.taskType = taskType;
-        this.possuiPermissao = possuiPermissao;
         this.processGroupCod = processGroupCod;
         try {
             final String path = new URL(processGroupContext).getPath();
