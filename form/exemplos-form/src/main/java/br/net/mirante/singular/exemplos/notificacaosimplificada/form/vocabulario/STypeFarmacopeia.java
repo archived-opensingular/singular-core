@@ -1,14 +1,13 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Farmacopeia;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
 
@@ -31,17 +30,26 @@ public class STypeFarmacopeia extends STypeComposite<SIComposite> {
                     .label("Farmacopéia")
                     .asAtrBootstrap()
                     .colPreference(4);
-            this.setView(SViewAutoComplete::new);
 
-            this.withSelectionFromProvider(descricao, (ins, filter) -> {
-                final SIList<?> list = ins.getType().newList();
-                for (Farmacopeia lc : dominioService(ins).listFarmacopeias()) {
-                    final SIComposite c = (SIComposite) list.addNew();
-                    c.setValue(id, lc.getId());
-                    c.setValue(descricao, lc.getDescricao());
-                }
-                return list;
-            });
+            this.autocompleteOf(Farmacopeia.class)
+                    .id(f -> f.getId().toString())
+                    .display(VocabularioControlado::getDescricao)
+                    .converter(new SInstanceConverter<Farmacopeia>() {
+                        @Override
+                        public void fillInstance(SInstance ins, Farmacopeia obj) {
+                            ((SIComposite) ins).setValue(id, obj.getId());
+                            ((SIComposite) ins).setValue(descricao, obj.getDescricao());
+                        }
+
+                        @Override
+                        public Farmacopeia toObject(SInstance ins) {
+                            return dominioService(ins).listFarmacopeias()
+                                    .stream().filter(u -> Integer.valueOf(u.getId().intValue()).equals(Value.of(ins, id)))
+                                    .findFirst()
+                                    .orElse(null);
+                        }
+                    })
+                    .provider((FilteredProvider) (ins, query) -> dominioService(ins).listFarmacopeias());
 
         }
     }

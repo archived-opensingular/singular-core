@@ -5,24 +5,20 @@
 
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
+import br.net.mirante.singular.form.util.xml.MElement;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
-import br.net.mirante.singular.form.mform.options.SOptionsConfig;
-import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
-import br.net.mirante.singular.form.mform.options.SSelectionableType;
-import br.net.mirante.singular.form.util.xml.MElement;
-
-public abstract class SInstance implements SAttributeEnabled, SSelectionableInstance {
+public abstract class SInstance implements SAttributeEnabled {
 
     private SInstance parent;
 
@@ -36,64 +32,15 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
 
     private Integer id;
 
-    /**
-     * Configurador de opções da instancia para o provider de opções do tipo
-     */
-    private SOptionsConfig optionsConfig;
-
     /** Mapa de bits de flags. Veja {@link InstanceFlags} */
     private int flags;
 
-    @Override
     public SType<?> getType() {
         return type;
     }
 
-    @Override
-    public SOptionsConfig getOptionsConfig() {
-        if (optionsConfig == null){
-            optionsConfig = new SOptionsConfig(this);
-        }
-        return optionsConfig;
-    }
-
     public SDocument getDocument() {
         return document;
-    }
-
-    protected String selectLabel;
-
-    @Override
-    public void setSelectLabel(String selectLabel) {
-        this.selectLabel = selectLabel;
-    }
-
-    @Override
-    public String getSelectLabel() {
-        if (selectLabel == null) {
-            if (getType() instanceof SSelectionableType) {
-                SSelectionableType type = (SSelectionableType) getType();
-                String label =  type.getSelectLabel();
-                Object valor = this.getValue();
-                if (valor instanceof Iterable) {
-                    for (SInstance mi : (Iterable<SInstance>)valor) {
-                        if (label != null && label.equals(mi.getName())) {
-                            Object valorCampo = mi.getValue();
-                            return valorCampo == null ? "" : valorCampo.toString();
-                        }
-                    }
-                } else {
-                    final String valorString = String.valueOf(Optional.ofNullable(valor).orElse(""));
-                    final String labelFromKey = getOptionsConfig().getLabelFromKey(valorString);
-                    if(labelFromKey == null){
-                        return valorString;
-                    } else {
-                        return labelFromKey;
-                    }
-                }
-            }
-        }
-        return selectLabel;
     }
 
     /**

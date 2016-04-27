@@ -5,11 +5,7 @@
 
 package br.net.mirante.singular.exemplos.canabidiol;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
@@ -17,6 +13,9 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
@@ -63,16 +62,17 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Nome Comercial");
 
-        nomeComercial
-                .withSelection()
-                .add(1, "Cibdex Hemp CBD Complex 1oz (Gotas) – Fabricante: Cibdex Inc.")
-                .add(2, "Cibdex Hemp CBD Complex 2oz (Gotas) – Fabricante: Cibdex Inc.")
-                .add(3, "Cibdex Hemp CBD Complex (Cápsulas) – Fabricante: Cibdex Inc.")
-                .add(4, "Hemp CBD Oil 2000mg Canabidiol - 240mL - Fabricante: Bluebird Botanicals")
-                .add(5, "Real Scientific Hemp Oil (RSHO) CBD 14-25% - 3g (Pasta) – Fabricante: Hemp Meds Px")
-                .add(6, "Real Scientific Hemp Oil (RSHO) CBD 14-25% - 10g (Pasta) – Fabricante: Hemp Meds Px")
-                .add(7, "Revivid LLC Hemp Tinctute 500mg (22:1 CBD/THC) - 30mL (Gotas) – Fabricante: Revivid")
-                .add(8, "Outro");
+        //TODO DANILO
+//        nomeComercial
+//                .withSelection()
+//                .add(1, "Cibdex Hemp CBD Complex 1oz (Gotas) – Fabricante: Cibdex Inc.")
+//                .add(2, "Cibdex Hemp CBD Complex 2oz (Gotas) – Fabricante: Cibdex Inc.")
+//                .add(3, "Cibdex Hemp CBD Complex (Cápsulas) – Fabricante: Cibdex Inc.")
+//                .add(4, "Hemp CBD Oil 2000mg Canabidiol - 240mL - Fabricante: Bluebird Botanicals")
+//                .add(5, "Real Scientific Hemp Oil (RSHO) CBD 14-25% - 3g (Pasta) – Fabricante: Hemp Meds Px")
+//                .add(6, "Real Scientific Hemp Oil (RSHO) CBD 14-25% - 10g (Pasta) – Fabricante: Hemp Meds Px")
+//                .add(7, "Revivid LLC Hemp Tinctute 500mg (22:1 CBD/THC) - 30mL (Gotas) – Fabricante: Revivid")
+//                .add(8, "Outro");
 
         nomeComercial
                 .withView(new SViewSelectionByRadio().verticalLayout());
@@ -93,16 +93,17 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
         composicao
                 .withView(new SViewSelectionByRadio().verticalLayout());
 
-        composicao.withSelectionFromProvider(
-                (optionsInstance, filter ) -> {
-                    SIList<?> lista = composicao.newList();
-                    String value = composicoes.get(Value.of(optionsInstance, nomeComercial));
-                    if (value != null) {
-                        lista.addValue(value);
-                    }
-                    return lista;
-                }
-        );
+        //TODO DANILO
+//        composicao.withSelectionFromProvider(
+//                (optionsInstance, filter ) -> {
+//                    SIList<?> lista = composicao.newList();
+//                    String value = composicoes.get(Value.of(optionsInstance, nomeComercial));
+//                    if (value != null) {
+//                        lista.addValue(value);
+//                    }
+//                    return lista;
+//                }
+//        );
 
 
         enderecoFabricante = this.addFieldString("enderecoFabricante");
@@ -120,18 +121,18 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         enderecoFabricante
                 .withView(new SViewSelectionByRadio().verticalLayout());
-
-        enderecoFabricante.withSelectionFromProvider(
-                (optionsInstance, filter) -> {
-                    SIList<?> lista = enderecoFabricante.newList();
-                    String value = enderecos.get(Value.of(optionsInstance, nomeComercial));
-                    if (value != null) {
-                        lista.addValue(value);
-                    }
-                    return lista;
-                }
-        );
-
+        //TODO DANILO
+//        enderecoFabricante.withSelectionFromProvider(
+//                (optionsInstance, filter) -> {
+//                    SIList<?> lista = enderecoFabricante.newList();
+//                    String value = enderecos.get(Value.of(optionsInstance, nomeComercial));
+//                    if (value != null) {
+//                        lista.addValue(value);
+//                    }
+//                    return lista;
+//                }
+//        );
+//
 
         STypeComposite<?> outroMedicamento = addFieldComposite("outro");
         outroMedicamento

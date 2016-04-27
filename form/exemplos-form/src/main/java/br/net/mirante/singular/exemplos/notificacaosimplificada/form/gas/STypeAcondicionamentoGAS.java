@@ -2,15 +2,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemPrimaria;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.TypeBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
@@ -29,14 +21,14 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-
+        //TODO DANILO
         embalagemPrimaria = this.addFieldString("embalagemPrimaria");
-        ((STypeSimple) embalagemPrimaria)
-                .withSelectView()
-                .withSelection()
-                .add("Cilindro")
-                .add("Tanque")
-                .add("Caminhão Tanque");
+//        ((STypeSimple) embalagemPrimaria)
+//                .withSelectView()
+//                .withSelection()
+//                .add("Cilindro")
+//                .add("Tanque")
+//                .add("Caminhão Tanque");
         embalagemPrimaria
                 .asAtrBasic()
                 .label("Emabalagem Primária")

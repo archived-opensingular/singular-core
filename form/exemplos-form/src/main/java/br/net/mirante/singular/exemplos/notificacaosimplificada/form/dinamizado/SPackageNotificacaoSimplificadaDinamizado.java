@@ -10,6 +10,8 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondi
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeCategoriaRegulatoria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
+import br.net.mirante.singular.exemplos.util.PairConverter;
+import br.net.mirante.singular.exemplos.util.TripleConverter;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
@@ -21,6 +23,8 @@ import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -92,18 +96,12 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .required()
                 .asAtrBootstrap()
                 .colPreference(6);
-        descricaoDinamizada
-                .withSelectView()
-                .withSelectionFromProvider(descricaoDescricaoDinamizada, (optionsInstance, lb) -> {
-                    for (Triple p : dominioService(optionsInstance).descricoesHomeopaticas(Value.of(optionsInstance, linhaProducao.id))) {
-                        lb
-                                .add()
-                                .set(idDescricaoDinamizada, p.getLeft())
-                                .set(idConfiguracaoLinhaProducaoDescricaoDinamizada, p.getMiddle())
-                                .set(descricaoDescricaoDinamizada, p.getRight());
-                    }
-                });
 
+        descricaoDinamizada.selection()
+                .id("${left}")
+                .display("${right}")
+                .converter(new TripleConverter(idDescricaoDinamizada, idConfiguracaoLinhaProducaoDescricaoDinamizada, descricaoDescricaoDinamizada))
+                .provider((FilteredProvider) (ins, query) -> dominioService(ins).descricoesHomeopaticas(Value.of(ins, linhaProducao.id)));
 
         final STypeInteger potencia = formulaHomeopatica.addFieldInteger("potencia");
         potencia
@@ -165,7 +163,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
             });
             formaFarmaceutica
                     .asAtrProvider()
-                    .provider(new FormaFarmaceuticaProvider() {
+                    .filteredPagedProvider(new FormaFarmaceuticaProvider() {
                         @Override
                         List<Integer> getIds(SInstance root) {
                             final SIList<SIComposite> formulas = root.findNearest(formulasHomeopaticas).orElse(null);
@@ -271,15 +269,11 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .asAtrBootstrap()
                 .colPreference(6);
         indicacaoTerapeutica
-                .withSelectView()
-                .withSelectionFromProvider(descricaoIndicacaoTerapeutica, (optionsInstance, lb) -> {
-                    for (Pair p : dominioService(optionsInstance).indicacoesTerapeuticas()) {
-                        lb
-                                .add()
-                                .set(idIndicacaoTerapeutica, p.getLeft())
-                                .set(descricaoIndicacaoTerapeutica, p.getRight());
-                    }
-                });
+                .selectionOf(Pair.class)
+                .id(p -> String.valueOf(p.getRight()))
+                .display(p -> String.valueOf(p.getLeft()))
+                .converter(new PairConverter(idIndicacaoTerapeutica, descricaoIndicacaoTerapeutica))
+                .provider((SimpleProvider) ins -> dominioService(ins).indicacoesTerapeuticas());
 
         STypeBoolean informarOutraIndicacaoTerapeutica = notificacaoSimplificada.addFieldBoolean("informarOutraIndicacaoTerapeutica");
         informarOutraIndicacaoTerapeutica

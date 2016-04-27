@@ -1,12 +1,6 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
@@ -28,7 +22,7 @@ public class TestViewResolver {
     private static STypeList<?, ?> createSimpleList(PackageBuilder pb, String name, Class<? extends STypeSimple<?, ?>> type, int size,
                                                      Function<Integer, Object> valueProvider) {
         STypeSimple<?, ?> simpleType = pb.createType(name, type);
-        simpleType.withSelectionOf((Collection) repeate(valueProvider, size));
+        simpleType.withSelectionOf(repeate(valueProvider, size).toArray());
         return pb.createListTypeOf("list" + name, simpleType);
     }
 
@@ -74,8 +68,8 @@ public class TestViewResolver {
         PackageBuilder pb = dicionario.createNewPackage("teste");
         STypeSimple<?, ?> tipoInteger = pb.createType("Integer", STypeInteger.class).withSelectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
         STypeSimple<?, ?> tipoDate = pb.createType("Date", STypeDate.class).withSelectionOf(repeate(i -> new Date(new Date().getTime() + 10000 * i), 2).toArray(new Date[]{}));
-        STypeSimple<?, ?> tipoString = pb.createType("String", STypeString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 2).toArray(new String[]{}));
-        STypeSimple<?, ?> tipoStringLarge = pb.createType("StringLarge", STypeString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 5).toArray(new String[]{}));
+        STypeSimple<?, ?> tipoString = pb.createType("String", STypeString.class).withSelectionOf(repeate(textoTeste::substring, 2).toArray(new String[]{}));
+        STypeSimple<?, ?> tipoStringLarge = pb.createType("StringLarge", STypeString.class).withSelectionOf(repeate(textoTeste::substring, 5).toArray(new String[]{}));
 
         assertView(SViewSelectionBySelect.class, tipoInteger);
         assertView(SViewSelectionBySelect.class, tipoDate);
@@ -101,9 +95,9 @@ public class TestViewResolver {
         STypeList<?, ?> listInteger10 = createSimpleList(pb, "Integer10", STypeInteger.class, 10, i -> 100 + i);
         STypeList<?, ?> listInteger20 = createSimpleList(pb, "Integer20", STypeInteger.class, 20, i -> 100 + i);
 
-        STypeList<?, ?> listString3 = createSimpleList(pb, "String3", STypeString.class, 3, i -> textoTeste.substring(i));
-        STypeList<?, ?> listString10 = createSimpleList(pb, "String10", STypeString.class, 10, i -> textoTeste.substring(i));
-        STypeList<?, ?> listString20 = createSimpleList(pb, "String20", STypeString.class, 20, i -> textoTeste.substring(i));
+        STypeList<?, ?> listString3 = createSimpleList(pb, "String3", STypeString.class, 3, textoTeste::substring);
+        STypeList<?, ?> listString10 = createSimpleList(pb, "String10", STypeString.class, 10, textoTeste::substring);
+        STypeList<?, ?> listString20 = createSimpleList(pb, "String20", STypeString.class, 20, textoTeste::substring);
 
         assertView(SMultiSelectionByCheckboxView.class, listInteger3);
         assertView(SMultiSelectionBySelectView.class, listInteger10);

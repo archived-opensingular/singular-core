@@ -1,25 +1,23 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.util.List;
-
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.SIBoolean;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.junit.Test;
-
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+
+import java.util.List;
 
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.extractProperty;
 
 @RunWith(Enclosed.class)
 public class BooleanMapperTest {
@@ -73,10 +71,7 @@ public class BooleanMapperTest {
         @Test public void rendersARadioChoiceIfAsked() {
             List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
             assertThat(inputs).hasSize(1);
-            assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-                    .containsOnly("1", "2");
-            assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
-                    .containsOnly("Sim", "Não");
+            assertThat(inputs.get(0).getChoices()).containsOnly("Sim", "Não");
         }
 
         @Test public void rendersNoChoiceIfNoneIsSelected() {
@@ -115,7 +110,7 @@ public class BooleanMapperTest {
         }
 
         @Test public void rendersFalseChoiceIfFalseIsSelected() {
-            assertThat(radioChoiceAt(0).getValue()).isEqualTo("1");
+            assertThat(radioChoiceAt(0).getValue()).isEqualTo("true");
         }
     }
 
@@ -134,10 +129,7 @@ public class BooleanMapperTest {
 
         @Test public void rendersARadioChoiceWithPersonalizedLabel() {
             List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
-            assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-                    .containsOnly("1", "2");
-            assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
-                    .containsOnly("For Sure", "No Way");
+            assertThat(inputs.get(0).getChoices()).containsOnly("For Sure", "No Way");
         }
     }
 

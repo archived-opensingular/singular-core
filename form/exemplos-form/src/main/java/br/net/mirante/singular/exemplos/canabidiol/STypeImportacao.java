@@ -30,13 +30,13 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .label("Modalidade de Importação")
                 .asAtrBootstrap()
                 .colPreference(12);
-
-        modalidade
-                .withSelection()
-                        .add("58911761", "Aquisição Intermediada (entidade hospitalar; unidade governamental ligada à área de saúde; operadora de plano de saúde ou entidade civil representativa de pacientes, legalmente constituída)")
-                        .add("58911758", "Bagagem acompanhada")
-                        .add("58911759", "Formal - por meio de Licenciamento de Importação (LI) no Sistema Integrado de Comércio Exterior - SISCOMEX IMPORTAÇÃO")
-                        .add("58911760", "Remessa Expressa");
+        //TODO DANILO
+//        modalidade
+//                .withSelection()
+//                        .add("58911761", "Aquisição Intermediada (entidade hospitalar; unidade governamental ligada à área de saúde; operadora de plano de saúde ou entidade civil representativa de pacientes, legalmente constituída)")
+//                        .add("58911758", "Bagagem acompanhada")
+//                        .add("58911759", "Formal - por meio de Licenciamento de Importação (LI) no Sistema Integrado de Comércio Exterior - SISCOMEX IMPORTAÇÃO")
+//                        .add("58911760", "Remessa Expressa");
 
 
         aquisicaoIntermediada(modalidade, "58911761");
@@ -60,13 +60,13 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade);
 
-
-        naturezaIntermediador
-                .withSelection()
-                        .add("57862460", "Entidade civil representativa de pacientes legalmente constituída")
-                        .add("57862461", "Entidade hospitalar")
-                        .add("57862462", "Operadora de plano de saúde")
-                        .add("57862463", "Unidade governamental ligada à área de saúde");
+//TODO DANILO
+//        naturezaIntermediador
+//                .withSelection()
+//                        .add("57862460", "Entidade civil representativa de pacientes legalmente constituída")
+//                        .add("57862461", "Entidade hospitalar")
+//                        .add("57862462", "Operadora de plano de saúde")
+//                        .add("57862463", "Unidade governamental ligada à área de saúde");
 
         naturezaIntermediador
                 .withView(new SViewSelectionByRadio().verticalLayout());

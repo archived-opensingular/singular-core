@@ -5,44 +5,23 @@
 
 package br.net.mirante.singular.form.mform;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import br.net.mirante.singular.form.mform.basic.view.SViewAttachmentList;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.mform.core.STypeDateTime;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeMonetary;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import br.net.mirante.singular.form.mform.options.SSelectionableCompositeType;
+import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 
+import java.util.*;
+
 @SInfoType(name = "STypeComposite", spackage = SPackageCore.class)
-public class STypeComposite<INSTANCE_TYPE extends SIComposite>
-        extends SType<INSTANCE_TYPE>
-        implements ICompositeType, SSelectionableCompositeType {
+public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INSTANCE_TYPE> implements ICompositeType {
 
     private Map<String, SType<?>> fieldsLocal;
 
     private transient FieldMapOfRecordType fieldsConsolidated;
-
-    private SOptionsProvider optionsProvider;
-
-    private String selectLabel;
 
     @SuppressWarnings("unchecked")
     public STypeComposite() {
@@ -250,28 +229,6 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite>
      */
     public STypeComposite<INSTANCE_TYPE> withRadioView() {
         return (STypeComposite<INSTANCE_TYPE>) super.withView(SViewSelectionByRadio::new);
-    }
-
-    @Override
-    public SOptionsProvider getOptionsProvider() {
-        return optionsProvider;
-    }
-
-    //TODO vinicius.nunes: não devia ser visível, usar apenas para uso interno. StypeComposite devia ser uma interface.
-    @Override
-    public void setOptionsProvider(SOptionsProvider p) {
-        optionsProvider = p;
-    }
-
-
-    @Override
-    public String getSelectLabel() {
-        return this.selectLabel;
-    }
-
-    @Override
-    public void setSelectLabel(String selectLabel) {
-        this.selectLabel = selectLabel;
     }
 
     // TODO (from Daniel) MArquei como deprecated pois está estranho esse

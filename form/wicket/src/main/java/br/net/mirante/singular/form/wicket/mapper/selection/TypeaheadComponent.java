@@ -1,8 +1,14 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.options.SOptionsConfig;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.provider.Provider;
+import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
@@ -13,7 +19,6 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -31,10 +36,12 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 
 
 /**
@@ -54,17 +61,17 @@ public class TypeaheadComponent extends Panel {
     private static final String BLOODHOUND_SUGGESTION_KEY_NAME   = "key";
     private static final String BLOODHOUND_SUGGESTION_LABEL_NAME = "value";
 
-    private final SViewAutoComplete.Mode fetch;
-    private final IModel<SelectOption>   model;
-    private       WebMarkupContainer     container;
-    private       AbstractAjaxBehavior   dynamicFetcher;
-    private       TextField              valueField;
-    private       TextField<String>      labelField;
+    private final SViewAutoComplete.Mode      fetch;
+    private final IModel<? extends SInstance> model;
+    private       WebMarkupContainer          container;
+    private       BloodhoundDataBehavior      dynamicFetcher;
+    private       TextField                   valueField;
+    private       TextField<String>           labelField;
 
     @SuppressWarnings("unchecked")
     public TypeaheadComponent(String id, IModel<? extends SInstance> model, SViewAutoComplete.Mode fetch) {
         super(id);
-        this.model = new MSelectionInstanceModel<>(model);
+        this.model = model;
         this.fetch = fetch;
         add(container = buildContainer());
     }
@@ -88,7 +95,14 @@ public class TypeaheadComponent extends Panel {
         c.add(labelField = new TextField("label_field", new Model<String>() {
             @Override
             public String getObject() {
-                return instance().getOptionsConfig().getLabelFromOption(instance());
+                final SInstanceConverter converter = instance().asAtrProvider().getConverter();
+                if (converter != null) {
+                    final Object converted = converter.toObject(instance());
+                    if (converted != null) {
+                        return instance().asAtrProvider().getDisplayFunction().apply(converted);
+                    }
+                }
+                return null;
             }
         }));
         c.add(valueField = new TextField("value_field", new AbstractMInstanceAwareModel<String>() {
@@ -99,7 +113,15 @@ public class TypeaheadComponent extends Panel {
 
             @Override
             public String getObject() {
-                return getMInstancia().getOptionsConfig().getKeyFromOption(getMInstancia());
+                final IFunction<Object, String> idFunction = instance().asAtrProvider().getIdFunction();
+                final SInstanceConverter        converter  = instance().asAtrProvider().getConverter();
+                if (idFunction != null && converter != null) {
+                    final Object converted = converter.toObject(instance());
+                    if (converted != null) {
+                        return idFunction.apply(converted);
+                    }
+                }
+                return null;
             }
 
             @Override
@@ -108,11 +130,29 @@ public class TypeaheadComponent extends Panel {
                     getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, true);
                     getMInstancia().clearInstance();
                 } else {
-                    model.setObject(new SelectOption(getMInstancia().getOptionsConfig().getLabelFromKey(key), key));
+                    final Stream   stream;
+                    final Provider provider = instance().asAtrProvider().getProvider();
+                    if (provider != null) {
+                        if (provider instanceof FilteredProvider) {
+                            stream = instance().asAtrProvider().getFilteredProvider().load(instance(), StringUtils.EMPTY).stream();
+                        } else if (provider instanceof SimpleProvider) {
+                            stream = instance().asAtrProvider().getSimpleProvider().load(instance()).stream();
+                        } else {
+                            throw new SingularFormException("Provider informado não é compativel com typeahead.");
+                        }
+                    } else {
+                        throw new SingularFormException("Nenhum provider foi informado");
+                    }
+                    final Optional val = stream.filter(o -> instance().asAtrProvider().getIdFunction().apply(o).equals(key)).findFirst();
+                    if (val.isPresent()) {
+                        instance().asAtrProvider().getConverter().fillInstance(getMInstancia(), val.get());
+                    } else {
+                        getMInstancia().clearInstance();
+                    }
                 }
             }
         }));
-        add(dynamicFetcher = new BloodhoundDataBehavior((MSelectionInstanceModel) model));
+        add(dynamicFetcher = new BloodhoundDataBehavior(model));
         return c;
     }
 
@@ -195,11 +235,26 @@ public class TypeaheadComponent extends Panel {
     }
 
     private Map<String, String> optionsConfigMap() {
-        return optionsConfig().listSelectOptions();
-    }
-
-    private SOptionsConfig optionsConfig() {
-        return instance().getOptionsConfig();
+        Map<String, String>    map      = newLinkedHashMap();
+        final SInstance        instance = model.getObject();
+        final FilteredProvider provider = instance.asAtrProvider().getFilteredProvider();
+        if (provider != null) {
+            if (provider != null) {
+                provider.load(instance, StringUtils.EMPTY).forEach((IConsumer) o -> map.put(
+                        instance.asAtrProvider().getIdFunction().apply(o),
+                        instance.asAtrProvider().getDisplayFunction().apply(o)
+                ));
+            }
+        } else {
+            final SimpleProvider fallBackProvider = instance.asAtrProvider().getSimpleProvider();
+            if (fallBackProvider != null) {
+                fallBackProvider.load(instance).forEach((IConsumer) o -> map.put(
+                        instance.asAtrProvider().getIdFunction().apply(o),
+                        instance.asAtrProvider().getDisplayFunction().apply(o)
+                ));
+            }
+        }
+        return map;
     }
 
     private SInstance instance() {
@@ -228,19 +283,16 @@ public class TypeaheadComponent extends Panel {
  * @author Fabricio Buzeto
  */
 class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
-    private MSelectionInstanceModel model;
 
-    public BloodhoundDataBehavior(MSelectionInstanceModel model) {
+    private IModel<? extends SInstance> model;
+
+    public BloodhoundDataBehavior(IModel<? extends SInstance> model) {
         this.model = model;
     }
 
     @Override
     public boolean getStatelessHint(Component component) {
         return false;
-    }
-
-    SOptionsConfig options() {
-        return model.getMInstancia().getOptionsConfig();
     }
 
     @Override
@@ -263,12 +315,14 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     private Map<String, String> values(String filter) {
-        Map<String, String> map = null;
-        if (options() != null) {
-            map = options().listSelectOptions(filter);
-        }
-        if (map == null) {
-            map = newHashMap();
+        Map<String, String>    map      = newLinkedHashMap();
+        final SInstance        instance = model.getObject();
+        final FilteredProvider provider = instance.asAtrProvider().getFilteredProvider();
+        if (provider != null) {
+            provider.load(instance, filter).forEach((IConsumer) o -> map.put(
+                    instance.asAtrProvider().getIdFunction().apply(o),
+                    instance.asAtrProvider().getDisplayFunction().apply(o)
+            ));
         }
         return map;
     }
@@ -276,6 +330,5 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     protected RequestCycle requestCycle() {
         return getComponent().getRequestCycle();
     }
-
 
 }

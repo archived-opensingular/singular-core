@@ -5,51 +5,76 @@
 
 package br.net.mirante.singular.showcase.component.input.core.multiselect;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
+
+import java.io.Serializable;
 
 public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
+        STypeComposite<?> root = pb.createCompositeType("testForm");
 
-        /**
-         * Neste caso os campos de chave e valor utilizados serão os padrões "id" e "value".
-         */
-        STypeComposite<SIComposite> tipoIngrediente = pb.createCompositeType("tipoIngrediente");
-        tipoIngrediente.addFieldString("id");
-        tipoIngrediente.addFieldString("label");
-        tipoIngrediente.withSelectionFromProvider("label", (inst, lb) ->
-                        lb
-                                .add().set("id", "h2o").set("label", "Água")
-                                .add().set("id", "h2o2").set("label", "Água Oxigenada")
-                                .add().set("id", "o2").set("label", "Gás Oxigênio")
-                                .add().set("id", "C12H22O11").set("label", "Açúcar")
-        );
-        STypeList<STypeComposite<SIComposite>, SIComposite> ingredienteQuimico =
-                tipoMyForm.addFieldListOf("ingredientes", tipoIngrediente);
-        ingredienteQuimico.asAtrBasic().label("Componentes Químicos");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> componentesQuimicos = root.addFieldListOfComposite("componentesQuimicos", "componenteQuimico");
+        final STypeComposite<SIComposite>                         componenteQuimico   = componentesQuimicos.getElementsType();
 
-        /**
-         * Neste caso os campos de chave e valor utilizados serão os definidos por
-         * "sku" e "nome".
-         */
-        STypeComposite<SIComposite> productType = pb.createCompositeType("product");
-        productType.addFieldString("sku");
-        productType.addFieldString("nome");
-        productType.withSelectionFromProvider("nome", (inst, lb) ->
-                lb
-                        .add().set("sku", "SKU123456").set("nome", "Bola")
-                        .add().set("sku", "SKU654321").set("nome", "Cubo")
-                        .add().set("sku", "SKU987654").set("nome", "Cilindro")
-                        .add().set("sku", "SKU456789").set("nome", "Pirâmide"));
-        STypeList<STypeComposite<SIComposite>, SIComposite> produtos =
-                tipoMyForm.addFieldListOf("products", productType);
-        produtos.asAtrBasic().label("Produtos");
+        final STypeString nome           = componenteQuimico.addFieldString("nome");
+        final STypeString formulaQuimica = componenteQuimico.addFieldString("formulaQuimica");
+
+        componentesQuimicos.selectionOf(ComponenteQuimico.class)
+                .id(ComponenteQuimico::getNome)
+                .display("${formulaQuimica} - ${nome}")
+                .converter(new SInstanceConverter<ComponenteQuimico>() {
+                    @Override
+                    public void fillInstance(SInstance ins, ComponenteQuimico obj) {
+                        ((SIComposite) ins).setValue(nome, obj.getNome());
+                        ((SIComposite) ins).setValue(formulaQuimica, obj.getFormulaQuimica());
+                    }
+
+                    @Override
+                    public ComponenteQuimico toObject(SInstance ins) {
+                        return new ComponenteQuimico(Value.of(ins, formulaQuimica), Value.of(ins, nome));
+                    }
+                })
+                .newSimpleProviderOf(
+                        new ComponenteQuimico("Água", "h2o"),
+                        new ComponenteQuimico("Água Oxigenada", "h2o2"),
+                        new ComponenteQuimico("Gás Oxigênio", "o2"),
+                        new ComponenteQuimico("Açúcar", "C12H22O11")
+                );
+
+    }
+
+    public static class ComponenteQuimico implements Serializable {
+        private String nome;
+        private String formulaQuimica;
+
+        public ComponenteQuimico() {
+        }
+
+        public ComponenteQuimico(String formulaQuimica, String nome) {
+            this.formulaQuimica = formulaQuimica;
+            this.nome = nome;
+        }
+
+        public String getNome() {
+            return nome;
+        }
+
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+
+        public String getFormulaQuimica() {
+            return formulaQuimica;
+        }
+
+        public void setFormulaQuimica(String formulaQuimica) {
+            this.formulaQuimica = formulaQuimica;
+        }
+
     }
 }

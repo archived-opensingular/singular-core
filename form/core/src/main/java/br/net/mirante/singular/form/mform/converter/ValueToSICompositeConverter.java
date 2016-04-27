@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.SingularFormException;
 public interface ValueToSICompositeConverter<T> extends SInstanceConverter<T> {
 
     @Override
-    default void toInstance(SInstance ins, T obj) {
+    default void fillInstance(SInstance ins, T obj) {
         toInstance((SIComposite) ins, obj);
     }
 

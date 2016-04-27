@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 public class SimpleSInstanceConverter<T> implements SInstanceConverter<T> {
 
     @Override
-    public void toInstance(SInstance ins, T obj) {
+    public void fillInstance(SInstance ins, T obj) {
         ins.setValue(obj);
     }
 

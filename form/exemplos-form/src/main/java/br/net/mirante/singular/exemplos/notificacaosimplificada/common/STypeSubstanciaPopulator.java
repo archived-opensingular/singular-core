@@ -6,7 +6,6 @@ import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewReadOnly;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
-import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.List;
 import java.util.function.Function;
@@ -85,18 +84,19 @@ public class STypeSubstanciaPopulator {
                     .dependsOn(substancia)
                     .asAtrBootstrap()
                     .colPreference(6);
-            concentracao
-                    .withSelectView()
-                    .withSelectionFromProvider(substanciaDescricao, (optionsInstance, lb) -> {
-                        Integer id = (Integer) Value.of(optionsInstance, idSubstancia);
-                        for (Triple p : dominioService(optionsInstance).concentracoes(id)) {
-                            lb
-                                    .add()
-                                    .set(idConcentracacao, p.getLeft())
-                                    .set(idSubstanciaConcentracao, p.getMiddle())
-                                    .set(descConcentracao, p.getRight());
-                        }
-                    });
+            //TODO DANILO
+//            concentracao
+//                    .withSelectView()
+//                    .withSelectionFromProvider(substanciaDescricao, (optionsInstance, lb) -> {
+//                        Integer id = (Integer) Value.of(optionsInstance, idSubstancia);
+//                        for (Triple p : dominioService(optionsInstance).concentracoes(id)) {
+//                            lb
+//                                    .add()
+//                                    .set(idConcentracacao, p.getLeft())
+//                                    .set(idSubstanciaConcentracao, p.getMiddle())
+//                                    .set(descConcentracao, p.getRight());
+//                        }
+//                    });
         }
 
         return substancias;

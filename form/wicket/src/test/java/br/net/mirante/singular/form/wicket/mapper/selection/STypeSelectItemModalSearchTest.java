@@ -34,7 +34,7 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
         notebook.addFieldString("sistemaOperacional");
 
         notebook.withView(new SViewSearchModal());
-        notebook.asAtrProvider().provider(new FilteredPagedProvider<Notebook>() {
+        notebook.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<Notebook>() {
             @Override
             public void loadFilterDefinition(STypeComposite<?> filter) {
                 filter.addFieldString("marca");

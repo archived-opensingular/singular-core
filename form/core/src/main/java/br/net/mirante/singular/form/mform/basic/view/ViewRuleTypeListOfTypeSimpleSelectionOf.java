@@ -8,8 +8,7 @@ package br.net.mirante.singular.form.mform.basic.view;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import br.net.mirante.singular.form.mform.options.SSelectionableType;
+import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 
 /**
  * Decide qual a view mas adequada para uma seleção múltipla de tipos simples
@@ -19,24 +18,21 @@ import br.net.mirante.singular.form.mform.options.SSelectionableType;
  */
 class ViewRuleTypeListOfTypeSimpleSelectionOf extends ViewRule {
 
-    @Override @SuppressWarnings("rawtypes")
+    @Override
+    @SuppressWarnings("rawtypes")
     public SView apply(SInstance listInstance) {
         if (listInstance instanceof SIList) {
-            SIList<?> listType = (SIList<?>) listInstance;
-            SType<?> elementType = listType.getElementsType();
-            if (elementType instanceof SSelectionableType) {
-                SSelectionableType type = (SSelectionableType) elementType;
-                if (type.getOptionsProvider() != null) {
-                    SOptionsProvider provider = type.getOptionsProvider();
-                    return decideView(listInstance, provider);
-                }
+            SIList<?> listType    = (SIList<?>) listInstance;
+            SType<?>  elementType = listType.getElementsType();
+            if (elementType != null && elementType.asAtrProvider().getSimpleProvider() != null) {
+                return decideView(listInstance, elementType.asAtrProvider().getSimpleProvider());
             }
         }
         return null;
     }
-    
-    private SView decideView(SInstance instance, SOptionsProvider provider) {
-        int size = provider.listAvailableOptions(instance, null).size();
+
+    private SView decideView(SInstance instance, SimpleProvider provider) {
+        int size = provider.load(instance).size();
         if (size <= 3) {
             return newInstance(SMultiSelectionByCheckboxView.class);
         } else if (size < 20) {

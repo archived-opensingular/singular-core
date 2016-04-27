@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.form.mform;
 
-import java.util.Objects;
-
 import br.net.mirante.singular.form.mform.calculation.CalculationContext;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+
+import java.util.Objects;
 
 public class SISimple<TIPO_NATIVO> extends SInstance {
 
@@ -106,10 +106,6 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
 
     @Override
     public final String toStringDisplayDefault() {
-        if (getType().getOptionsProvider() != null) {
-            String key = getOptionsConfig().getKeyFromOption(this);
-            return getOptionsConfig().getLabelFromKey(key);
-        }
         return getType().toStringDisplayDefault(getValue());
     }
 

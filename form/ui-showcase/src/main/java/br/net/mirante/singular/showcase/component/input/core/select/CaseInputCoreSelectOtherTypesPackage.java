@@ -5,9 +5,9 @@
 
 package br.net.mirante.singular.showcase.component.input.core.select;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeDateTime;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
@@ -39,11 +39,11 @@ public class CaseInputCoreSelectOtherTypesPackage extends SPackage {
         
         //Select with composite Dates
         STypeDate finishField = tipoMyForm.addFieldDate("finish");
-        finishField
-                .withSelection()
-                .add(DateTime.now().toDate(),"Today")
-                .add(DateTime.now().minusDays(1).toDate(),"Yesterday")
-                .add(DateTime.now().minusWeeks(1).toDate(),"Last Week");
+//        finishField
+//                .withSelection()
+//                .add(DateTime.now().toDate(),"Today")
+//                .add(DateTime.now().minusDays(1).toDate(),"Yesterday")
+//                .add(DateTime.now().minusWeeks(1).toDate(),"Last Week");
         finishField.withSelectView();
 
     }

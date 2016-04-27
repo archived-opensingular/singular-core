@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
@@ -26,10 +28,13 @@ public class MultipleSelectMapperTest {
 
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
-            STypeString gadgets = baseType.addFieldString("gadget")
-                                    .withSelectionOf("iPod", "iPhone", "iMac").cast();
-            STypeList<STypeString, SIString> gadgetsChoices = baseType
-                                    .addFieldListOf("gadgets", gadgets);
+            STypeString gadgets = baseType.addFieldString("gadget").withSelectionOf("iPod", "iPhone", "iMac").cast();
+            STypeList<STypeString, SIString> gadgetsChoices = baseType.addFieldListOf("gadgets", gadgets);
+            gadgetsChoices.selection()
+                    .selfId()
+                    .selfDisplay()
+                    .simpleConverter()
+                    .provider((SimpleProvider<String>) ins -> Arrays.asList("iPod", "iPhone"));
             gadgetsChoices.withView(SMultiSelectionBySelectView::new);
         }
 

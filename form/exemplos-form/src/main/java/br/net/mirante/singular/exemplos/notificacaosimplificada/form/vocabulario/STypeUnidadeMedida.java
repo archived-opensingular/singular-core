@@ -1,18 +1,15 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.TypeBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
-import static java.lang.String.format;
 
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeUnidadeMedida extends STypeComposite<SIComposite> {
@@ -36,18 +33,25 @@ public class STypeUnidadeMedida extends STypeComposite<SIComposite> {
                     .colPreference(4);
             this.setView(SViewAutoComplete::new);
 
+            this.autocompleteOf(UnidadeMedida.class)
+                    .id("${id}")
+                    .display("${sigla} - ${descricao}")
+                    .converter(new SInstanceConverter<UnidadeMedida>() {
+                        @Override
+                        public void fillInstance(SInstance ins, UnidadeMedida obj) {
+                            ((SIComposite) ins).setValue(id, obj.getId());
+                            ((SIComposite) ins).setValue(sigla, obj.getSigla());
+                            ((SIComposite) ins).setValue(descricao, obj.getDescricao());
+                        }
 
-            this.withSelectionFromProvider(sigla, (ins, filter) -> {
-                final SIList<?> list = ins.getType().newList();
-                for (UnidadeMedida lc : dominioService(ins).unidadesMedida(filter)) {
-                    final SIComposite c = (SIComposite) list.addNew();
-                    c.setValue(id, lc.getId());
-                    c.setValue(sigla, lc.getSigla() );
-                    c.setValue(descricao, lc.getDescricao());
-                    c.setSelectLabel(format("%s - %s", lc.getSigla(), lc.getDescricao()) );
-                }
-                return list;
-            });
+                        @Override
+                        public UnidadeMedida toObject(SInstance ins) {
+                            return dominioService(ins).unidadesMedida(null)
+                                    .stream().filter(u -> Integer.valueOf(u.getId().intValue()).equals(Value.of(ins, id)))
+                                    .findFirst()
+                                    .orElse(null);
+                        }
+                    }).provider((FilteredProvider) (ins, query) -> dominioService(ins).unidadesMedida(query));
 
         }
     }

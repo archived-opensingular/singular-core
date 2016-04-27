@@ -1,15 +1,6 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
-import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada.dominioService;
-
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.TypeBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -28,18 +19,20 @@ public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
         empresa
                 .asAtrBasic().label("Empresa")
                 .displayString("${razaoSocial} - ${endereco}")
-                .getTipo().withView(SViewAutoComplete::new);
 
-        empresa.withSelectionFromProvider(razaoSocial, (ins, filter) -> {
-            final SIList<?> list = ins.getType().newList();
-            for (PessoaJuridicaNS pj : dominioService(ins).empresaTerceirizada(filter)) {
-                final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(idEmpresa, pj.getCod());
-                c.setValue(razaoSocial, pj.getRazaoSocial());
-                c.setValue(endereco, pj.getEnderecoCompleto());
-            }
-            return list;
-        });
+                .getTipo().withView(SViewAutoComplete::new);
+//
+        //TODO DANILO
+//        empresa.withSelectionFromProvider(razaoSocial, (ins, filter) -> {
+//            final SIList<?> list = ins.getType().newList();
+//            for (PessoaJuridicaNS pj : dominioService(ins).empresaTerceirizada(filter)) {
+//                final SIComposite c = (SIComposite) list.addNew();
+//                c.setValue(idEmpresa, pj.getCod());
+//                c.setValue(razaoSocial, pj.getRazaoSocial());
+//                c.setValue(endereco, pj.getEnderecoCompleto());
+//            }
+//            return list;
+//        });
 
 
         STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao         = addFieldListOfComposite("etapasFabricacao", "etapaFabricacaoWrapper");
@@ -51,15 +44,16 @@ public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
         etapaFabricacao
                 .setView(SViewAutoComplete::new);
 
-        etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (ins, filter) -> {
-            final SIList<?> list = ins.getType().newList();
-            for (EtapaFabricacao ef : dominioService(ins).etapaFabricacao(filter)) {
-                final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(idEtapaFabricacao, ef.getId());
-                c.setValue(descricaoEtapaFabricacao, ef.getDescricao());
-            }
-            return list;
-        });
+        //TODO DANILO
+//        etapaFabricacao.withSelectionFromProvider(descricaoEtapaFabricacao, (ins, filter) -> {
+//            final SIList<?> list = ins.getType().newList();
+//            for (EtapaFabricacao ef : dominioService(ins).etapaFabricacao(filter)) {
+//                final SIComposite c = (SIComposite) list.addNew();
+//                c.setValue(idEtapaFabricacao, ef.getId());
+//                c.setValue(descricaoEtapaFabricacao, ef.getDescricao());
+//            }
+//            return list;
+//        });
 
         etapasFabricacao
                 .withView(SViewListByTable::new);

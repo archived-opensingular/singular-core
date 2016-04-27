@@ -1,10 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.Component;
 import org.apache.wicket.request.Url;
@@ -15,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -50,9 +50,9 @@ public class BloodhoundDataBehaviorTest extends SingularFormBaseTest {
     public void returnOptions() {
         executeBloodhoundDataBehavior();
         JSONArray expected = new JSONArray();
-        expected.put(createValue("1", "@gmail.com"));
-        expected.put(createValue("2", "@hotmail.com"));
-        expected.put(createValue("3", "@yahoo.com"));
+        expected.put(createValue("@gmail.com", "@gmail.com"));
+        expected.put(createValue("@hotmail.com", "@hotmail.com"));
+        expected.put(createValue("@yahoo.com", "@yahoo.com"));
         JSONAssert.assertEquals(expected, new JSONArray(tester.getLastResponseAsString()), false);
     }
 
@@ -84,14 +84,14 @@ public class BloodhoundDataBehaviorTest extends SingularFormBaseTest {
         string.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
     }
 
-    private SOptionsProvider createProvider() {
-        return (SOptionsProvider) (instance, filter) -> {
+    private FilteredProvider createProvider() {
+        return (FilteredProvider) (instance, filter) -> {
             if (filter == null) filter = "";
-            SIList<?> r = instance.getType().newList();
-            r.addNew().setValue(filter + "@gmail.com");
-            r.addNew().setValue(filter + "@hotmail.com");
-            r.addNew().setValue(filter + "@yahoo.com");
-            return r;
+            final List<String> emails = new ArrayList<>();
+            emails.add(filter + "@gmail.com");
+            emails.add(filter + "@hotmail.com");
+            emails.add(filter + "@yahoo.com");
+            return emails;
         };
     }
 }

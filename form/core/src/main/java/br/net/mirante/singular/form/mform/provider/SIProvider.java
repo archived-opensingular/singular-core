@@ -2,7 +2,9 @@ package br.net.mirante.singular.form.mform.provider;
 
 import br.net.mirante.singular.form.mform.SInstance;
 
-public class SIProvider<P extends FilteredPagedProvider<T>, T> extends SInstance {
+import java.io.Serializable;
+
+public class SIProvider<P extends Provider<T>, T extends Serializable> extends SInstance {
 
     private P provider;
 

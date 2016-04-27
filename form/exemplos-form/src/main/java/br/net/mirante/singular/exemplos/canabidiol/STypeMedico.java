@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 
 
 @SInfoType(spackage = SPackagePeticaoCanabidiol.class)
@@ -49,8 +49,12 @@ public class STypeMedico extends STypeComposite<SIComposite> {
                 .colPreference(3);
         estado.addFieldString("sigla");
         STypeString nomeUF = estado.addFieldString("nome");
-        estado
-                .withSelectionFromProvider(nomeUF, (SOptionsProvider) (inst, f) -> SelectBuilder.buildEstados(estado));
+
+        estado.selection()
+                .id("${id}")
+                .display("${nome} - ${sigla}")
+                .autoConverter(SelectBuilder.EstadoDTO.class)
+                .provider((SimpleProvider) ins -> SelectBuilder.buildEstados());
 
         addFieldCPF("cpf")
                 .asAtrBasic()

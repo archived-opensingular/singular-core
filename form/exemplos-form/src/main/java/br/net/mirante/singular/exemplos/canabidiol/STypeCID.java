@@ -5,20 +5,12 @@
 
 package br.net.mirante.singular.exemplos.canabidiol;
 
-import javax.inject.Inject;
-
 import br.net.mirante.singular.exemplos.canabidiol.dao.CIDDAO;
-import br.net.mirante.singular.exemplos.canabidiol.model.CapituloCID;
-import br.net.mirante.singular.exemplos.canabidiol.model.CategoriaCID;
-import br.net.mirante.singular.exemplos.canabidiol.model.GrupoCID;
-import br.net.mirante.singular.exemplos.canabidiol.model.SubCategoriaCID;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.TypeBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+
+import javax.inject.Inject;
 
 @SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeCID extends STypeComposite<SIComposite> {
@@ -45,15 +37,16 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .addFieldString("descricao");
         STypeString descricaoAbreviadaCapitulo = capitulo
                 .addFieldString("descricaoAbreviada");
-        capitulo.withSelectView()
-                .withSelectionFromProvider(descricaoCapitulo, (instancia, listBuilder) -> {
-                    for (CapituloCID cap : ciddao.listCapitulos()) {
-                        listBuilder.add()
-                                .set(idCapitulo, cap.getId())
-                                .set(descricaoCapitulo, cap.getDescricao())
-                                .set(descricaoAbreviadaCapitulo, cap.getDescricaoAbreviada());
-                    }
-                });
+        //TODO DANILO
+//        capitulo.withSelectView()
+//                .withSelectionFromProvider(descricaoCapitulo, (instancia, listBuilder) -> {
+//                    for (CapituloCID cap : ciddao.listCapitulos()) {
+//                        listBuilder.add()
+//                                .set(idCapitulo, cap.getId())
+//                                .set(descricaoCapitulo, cap.getDescricao())
+//                                .set(descricaoAbreviadaCapitulo, cap.getDescricaoAbreviada());
+//                    }
+//                });
 
         STypeComposite<?> grupo = addFieldComposite("grupo");
         grupo
@@ -72,16 +65,17 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .addFieldString("descricao");
         STypeString descricaoAbreviadaGrupo = grupo
                 .addFieldString("descricaoAbreviada");
-        grupo
-                .withSelectView()
-                .withSelectionFromProvider(descricaoGrupo, (instancia, listaBuilder) -> {
-                    for (GrupoCID g : ciddao.listGrupoByIdCapitulo(Value.of(instancia, idCapitulo))) {
-                        listaBuilder.add()
-                                .set(idGrupo, g.getId())
-                                .set(descricaoGrupo, g.getDescricao())
-                                .set(descricaoAbreviadaGrupo, g.getDescricaoAbreviada());
-                    }
-                });
+        //TODO DANILO
+//        grupo
+//                .withSelectView()
+//                .withSelectionFromProvider(descricaoGrupo, (instancia, listaBuilder) -> {
+//                    for (GrupoCID g : ciddao.listGrupoByIdCapitulo(Value.of(instancia, idCapitulo))) {
+//                        listaBuilder.add()
+//                                .set(idGrupo, g.getId())
+//                                .set(descricaoGrupo, g.getDescricao())
+//                                .set(descricaoAbreviadaGrupo, g.getDescricaoAbreviada());
+//                    }
+//                });
 
 
         STypeComposite<?> categoria = addFieldComposite("categoria");
@@ -102,16 +96,17 @@ public class STypeCID extends STypeComposite<SIComposite> {
         STypeString descricaoAbreviadaCategoria = categoria
                 .addFieldString("descricaoAbreviada");
 
-        categoria
-                .withSelectView()
-                .withSelectionFromProvider(descricaoCategoria, (instancia, listaBuilder) -> {
-                    for (CategoriaCID c : ciddao.listCategoriasByIdGrupo(Value.of(instancia, idGrupo))) {
-                        listaBuilder.add()
-                                .set(idCategoria, c.getId())
-                                .set(descricaoCategoria, c.getDescricao())
-                                .set(descricaoAbreviadaCategoria, c.getDescricaoAbreviada());
-                    }
-                });
+        //TODO DANILO
+//        categoria
+//                .withSelectView()
+//                .withSelectionFromProvider(descricaoCategoria, (instancia, listaBuilder) -> {
+//                    for (CategoriaCID c : ciddao.listCategoriasByIdGrupo(Value.of(instancia, idGrupo))) {
+//                        listaBuilder.add()
+//                                .set(idCategoria, c.getId())
+//                                .set(descricaoCategoria, c.getDescricao())
+//                                .set(descricaoAbreviadaCategoria, c.getDescricaoAbreviada());
+//                    }
+//                });
 
         STypeComposite<?> subcategoria = addFieldComposite("subcategoria");
         subcategoria
@@ -132,16 +127,17 @@ public class STypeCID extends STypeComposite<SIComposite> {
         STypeString descricaoSubAbreviadaCategoria = subcategoria
                 .addFieldString("descricaoAbreviada");
 
-        subcategoria
-                .withSelectView()
-                .withSelectionFromProvider(descricaoSubCategoria, (instancia, listaBuilder) -> {
-                    for (SubCategoriaCID c : ciddao.listSubCategoriasByIdCategoria(Value.of(instancia, idCategoria))) {
-                        listaBuilder.add()
-                                .set(idSubCategoria, c.getId())
-                                .set(descricaoSubCategoria, c.getDescricao())
-                                .set(descricaoSubAbreviadaCategoria, c.getDescricaoAbreviada());
-                    }
-                });
+        //TODO DANILO
+//        subcategoria
+//                .withSelectView()
+//                .withSelectionFromProvider(descricaoSubCategoria, (instancia, listaBuilder) -> {
+//                    for (SubCategoriaCID c : ciddao.listSubCategoriasByIdCategoria(Value.of(instancia, idCategoria))) {
+//                        listaBuilder.add()
+//                                .set(idSubCategoria, c.getId())
+//                                .set(descricaoSubCategoria, c.getDescricao())
+//                                .set(descricaoSubAbreviadaCategoria, c.getDescricaoAbreviada());
+//                    }
+//                });
 
     }
 

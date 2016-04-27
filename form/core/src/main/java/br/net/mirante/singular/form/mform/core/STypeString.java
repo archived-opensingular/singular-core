@@ -5,15 +5,12 @@
 
 package br.net.mirante.singular.form.mform.core;
 
-import java.util.function.Consumer;
-
 import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import org.apache.commons.lang3.StringUtils;
-
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
+import org.apache.commons.lang3.StringUtils;
 
 @SInfoType(name = "String", spackage = SPackageCore.class)
 public class STypeString extends STypeSimple<SIString, String> {
@@ -38,29 +35,15 @@ public class STypeString extends STypeSimple<SIString, String> {
         return (STypeString) with(SPackageBasic.ATR_TRIM, valor);
     }
 
-    public <T extends Enum<T>> STypeString withSelectionOf(Class<T> enumType) {
-        T[] ops = enumType.getEnumConstants();
-        String[] nomes = new String[ops.length];
-        for (int i = 0; i < ops.length; i++) {
-            nomes[i] = ops[i].toString();
-        }
-        return (STypeString) super.withSelectionOf(nomes);
-    }
-
-    @Override
-    public String getSelectLabel() {
-        return super.getSelectLabel();
-    }
-
     /**
-     * Configura o tipo para utilizar a view {@link SViewTextArea} e invoca o initializer 
+     * Configura o tipo para utilizar a view {@link SViewTextArea} e invoca o initializer
      */
     @SafeVarargs
-    public final STypeString withTextAreaView(IConsumer<SViewTextArea>...initializers) {
+    public final STypeString withTextAreaView(IConsumer<SViewTextArea>... initializers) {
         withView(new SViewTextArea(), initializers);
         return this;
     }
-    
+
     @Override
     public String convert(Object valor) {
         String s = super.convert(valor);

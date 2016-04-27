@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.mform.SInstance;
  */
 public interface SInstanceConverter<T> {
 
-    void toInstance(SInstance ins, T obj);
+    void fillInstance(SInstance ins, T obj);
 
     T toObject(SInstance ins);
 

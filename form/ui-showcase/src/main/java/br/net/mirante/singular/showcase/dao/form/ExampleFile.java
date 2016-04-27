@@ -5,19 +5,19 @@
 
 package br.net.mirante.singular.showcase.dao.form;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "EXAMPLE_FILE")
-public class ExampleFile implements IAttachmentRef{
+public class ExampleFile implements IAttachmentRef, Serializable{
 
     @Id String id;
     private String hashSha1;
