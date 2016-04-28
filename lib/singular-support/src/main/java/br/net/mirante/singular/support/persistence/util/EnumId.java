@@ -1,4 +1,4 @@
-package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
+package br.net.mirante.singular.support.persistence.util;
 
 /**
  * Interface que deve ser utilizada pelas enumerações {@link Enum} que
@@ -17,12 +17,9 @@ public interface EnumId<E extends Enum<E>, ID> {
     ID getCodigo();
 
     /**
-     * Retorna a instância da própria enumeração.
-     */
-    E getEnum();
-
-    /**
      * @return Retorna o valor da enumeração.
      */
     String getDescricao();
+
+    Enum<E> valueOfEnum(ID codigo);
 }
