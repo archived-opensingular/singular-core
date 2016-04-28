@@ -215,6 +215,9 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         if (taskDefinition == null) {
             taskDefinition = createEntityDefinitionTask(process);
             taskDefinition.setAbbreviation(task.getAbbreviation());
+            if (task.getAccessStrategy() != null) {
+                taskDefinition.setAccessStrategyType(task.getAccessStrategy().getType());
+            }
         }
         return (TASK_DEF) taskDefinition;
     }
@@ -236,8 +239,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
     private boolean isNewVersion(IEntityTaskVersion oldEntityTask, IEntityTaskVersion newEntitytask) {
         if (oldEntityTask == null || !oldEntityTask.getName().equalsIgnoreCase(newEntitytask.getName())
                 || !oldEntityTask.getType().getAbbreviation().equals(newEntitytask.getType().getAbbreviation())
-                || oldEntityTask.getTransitions().size() != newEntitytask.getTransitions().size()
-                || oldEntityTask.getAccessStrategyType() != newEntitytask.getAccessStrategyType()) {
+                || oldEntityTask.getTransitions().size() != newEntitytask.getTransitions().size()) {
             return true;
         }
         for (IEntityTaskTransitionVersion newEntityTaskTransition : newEntitytask.getTransitions()) {

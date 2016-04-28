@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,6 +22,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import br.net.mirante.singular.flow.core.entity.AccessStrategyType;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
@@ -55,6 +58,10 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "taskDefinition")
     private List<TASK_VERSION> versions = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TP_ESTRATEGIA_SEGURANCA", length = 1)
+    private AccessStrategyType accessStrategyType;
 
     @Override
     public Integer getCod() {
@@ -93,4 +100,13 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
         this.versions = versions;
     }
 
+    @Override
+    public AccessStrategyType getAccessStrategyType() {
+        return accessStrategyType;
+    }
+
+    @Override
+    public void setAccessStrategyType(AccessStrategyType accessStrategyType) {
+        this.accessStrategyType = accessStrategyType;
+    }
 }

@@ -10,8 +10,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -24,7 +22,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.IEntityTaskType;
-import br.net.mirante.singular.flow.core.entity.AccessStrategyType;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
@@ -69,10 +66,6 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "originTask")
     private List<TASK_TRANSITION_VERSION> transitions = new ArrayList<>();
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "TP_ESTRATEGIA_SEGURANCA", length = 1)
-    private AccessStrategyType accessStrategyType;
 
     @Override
     public Integer getCod() {
@@ -127,14 +120,5 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
 
     public void setTransitions(List<TASK_TRANSITION_VERSION> transitions) {
         this.transitions = transitions;
-    }
-
-    @Override
-    public AccessStrategyType getAccessStrategyType() {
-        return accessStrategyType;
-    }
-
-    public void setAccessStrategyType(AccessStrategyType accessStrategyType) {
-        this.accessStrategyType = accessStrategyType;
     }
 }
