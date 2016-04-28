@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
+import br.net.mirante.singular.support.persistence.util.EnumId;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
@@ -60,16 +62,12 @@ public enum TipoUnidadeMedida implements EnumId<TipoUnidadeMedida, Character> {
         return this.descricao;
     }
 
-    @Override
-    public TipoUnidadeMedida getEnum() {
-        return this;
-    }
-
     /**
      * @param id
      * @return
      */
-    public static TipoUnidadeMedida valueOfEnum(Character id) {
+    @Override
+    public TipoUnidadeMedida valueOfEnum(Character id) {
         for (TipoUnidadeMedida tipo : values()) {
             if (tipo.getCodigo().equals(id)) {
                 return tipo;

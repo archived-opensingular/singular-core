@@ -17,6 +17,10 @@ import br.net.mirante.singular.support.persistence.BaseDAO;
 @Repository
 public class GenericDAO extends BaseDAO {
 
+    public GenericDAO() {
+        super(null);
+    }
+
     public <T extends Object> List<T> findByProperty(Class<T> classe, String propertyName, String value) {
         return findByProperty(classe, propertyName, value, null, null);
     }

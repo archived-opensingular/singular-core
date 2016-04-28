@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
+import br.net.mirante.singular.support.persistence.util.EnumId;
+
 public enum TipoTarja implements EnumId<TipoTarja, Character> {
 
     SEM_TARJA('1', "Sem tarja"),
@@ -28,11 +30,7 @@ public enum TipoTarja implements EnumId<TipoTarja, Character> {
     }
 
     @Override
-    public TipoTarja getEnum() {
-        return this;
-    }
-
-    public static TipoTarja valueOfEnum(Character codigo) {
+    public TipoTarja valueOfEnum(Character codigo) {
         for (TipoTarja tipo : values()) {
             if (tipo.getCodigo().equals(codigo)) {
                 return tipo;

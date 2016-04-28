@@ -64,10 +64,7 @@ public class FaixaConcentracao extends BaseEntity implements Serializable {
     }
 
     @Column(name = "DS_SINAL_FAIXA", nullable = false)
-    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
-            @Parameter(name = "enumClass", value = TipoControleValor.ENUM_CLASS_NAME),
-            @Parameter(name = "identifierMethod", value = "getDescricao"),
-            @Parameter(name = "valueOfMethod", value = "valueOfDescricao")})
+    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = @Parameter(name = "enumClass", value = TipoControleValor.ENUM_CLASS_NAME))
     public TipoControleValor getSinal() {
         return sinal;
     }
