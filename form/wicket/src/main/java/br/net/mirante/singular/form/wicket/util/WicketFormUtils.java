@@ -5,13 +5,13 @@
 
 package br.net.mirante.singular.form.wicket.util;
 
+import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,8 +25,8 @@ import org.apache.wicket.model.IModel;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -115,7 +115,7 @@ public abstract class WicketFormUtils {
 
     public static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container) {
 
-        final Map<Integer, Set<IValidationError>> instanceErrors = validationContext.getErrorsByInstanceId();
+        final Map<Integer, Collection<IValidationError>> instanceErrors = validationContext.getErrorsByInstanceId();
 
         container.visitChildren((component, visit) -> {
             final IModel<?> model = component.getDefaultModel();
@@ -130,7 +130,7 @@ public abstract class WicketFormUtils {
                 return;
             }
 
-            final Set<IValidationError> errors = instanceErrors.get(instance.getId());
+            final Collection<IValidationError> errors = instanceErrors.get(instance.getId());
             if (errors != null) {
                 for (IValidationError error : errors) {
                     switch (error.getErrorLevel()) {
@@ -194,7 +194,7 @@ public abstract class WicketFormUtils {
                         Iterator<SInstance> iter = lista.iterator();
                         for (int i = 1; iter.hasNext(); i++) {
                             SInstance itemInstance = iter.next();
-                            if (lastInstance == itemInstance || lastInstance.isDescentantOf(itemInstance)) {
+                            if (lastInstance == itemInstance || lastInstance.isDescendantOf(itemInstance)) {
                                 titles.addFirst(baseTitle + " [" + i + "]");
                                 break;
                             }

@@ -5,31 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.util;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.event.ISInstanceListener;
-import br.net.mirante.singular.form.mform.event.SInstanceEvent;
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.wicket.feedback.SFeedbackMessage;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.MetaDataKey;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.feedback.FeedbackMessages;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.Visits;
+import static java.util.stream.Collectors.*;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,7 +17,36 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.stream.Collectors.toSet;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.FeedbackMessages;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.Visits;
+
+import br.net.mirante.singular.form.mform.SFormUtil;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstances;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.event.ISInstanceListener;
+import br.net.mirante.singular.form.mform.event.SInstanceEvent;
+import br.net.mirante.singular.form.validation.IValidationError;
+import br.net.mirante.singular.form.validation.InstanceValidationContext;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import br.net.mirante.singular.form.wicket.feedback.SFeedbackMessage;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,
@@ -48,7 +55,7 @@ import static java.util.stream.Collectors.toSet;
  */
 public class WicketFormProcessing {
 
-    public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>(){};
+    public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {};
 
     public static void onFormError(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance) {
         container.visitChildren((c, v) -> {
@@ -71,20 +78,26 @@ public class WicketFormProcessing {
         if (baseInstanceModel == null)
             return false;
 
+        final SInstance baseInstance = baseInstanceModel.getObject();
+        final SDocument document = baseInstance.getDocument();
+
+        associateErrorsToComponents(
+            document.getValidationErrorsByInstanceId(),
+            container,
+            baseInstanceModel);
+
         // Validação do valor do componente
         if (validate) {
-            InstanceValidationContext validationContext = new InstanceValidationContext(baseInstanceModel.getObject());
-            validationContext.validateAll();
+            InstanceValidationContext validationContext = new InstanceValidationContext();
+            validationContext.validateAll(baseInstance);
             if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-                associateErrorsToComponents(validationContext, container, baseInstanceModel);
+
                 refresh(target, container);
                 return false;
             }
         }
 
         // atualizar documento e recuperar instancias com atributos alterados
-        SInstance baseInstance = baseInstanceModel.getObject();
-        SDocument document     = baseInstance.getDocument();
         document.updateAttributes(baseInstance, null);
 
         // re-renderizar form
@@ -100,11 +113,11 @@ public class WicketFormProcessing {
      */
     protected static String getIndexsKey(String path) {
 
-        final Pattern indexFinder    = Pattern.compile("(\\[\\d\\])");
+        final Pattern indexFinder = Pattern.compile("(\\[\\d\\])");
         final Pattern bracketsFinder = Pattern.compile("[\\[\\]]");
 
-        final Matcher       matcher = indexFinder.matcher(path);
-        final StringBuilder key     = new StringBuilder();
+        final Matcher matcher = indexFinder.matcher(path);
+        final StringBuilder key = new StringBuilder();
 
         while (matcher.find()) {
             key.append(bracketsFinder.matcher(matcher.group()).replaceAll(StringUtils.EMPTY));
@@ -127,10 +140,10 @@ public class WicketFormProcessing {
 
         if (RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST) == null || !RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST)) {
             // Validação do valor do componente
-            final InstanceValidationContext validationContext = new InstanceValidationContext(fieldInstance.getObject());
-            validationContext.validateSingle();
+            final InstanceValidationContext validationContext = new InstanceValidationContext();
+            validationContext.validateSingle(fieldInstance.getObject());
             if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-                associateErrorsToComponents(validationContext, formComponent, fieldInstance);
+                associateErrorsToComponents(validationContext.getErrorsByInstanceId(), formComponent, fieldInstance);
             }
         }
 
@@ -148,46 +161,44 @@ public class WicketFormProcessing {
             sType.getUpdateListener().accept(fieldInstance.getObject());
         }
 
-        final String indexsKey = getIndexsKey(((IMInstanciaAwareModel) fieldInstance).getMInstancia().getPathFull());
+        final String indexsKey = getIndexsKey(((IMInstanciaAwareModel<?>) fieldInstance).getMInstancia().getPathFull());
 
         refresh(target, component);
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
-                    .map(SInstanceEvent::getSource)
-                    .map(SInstance::getId)
-                    .collect(toSet());
+                .map(SInstanceEvent::getSource)
+                .map(SInstance::getId)
+                .collect(toSet());
 
-            final Function<SType, Boolean> depends = (type) -> fieldInstance.getObject().getType().getDependentTypes().contains(type);
+            final Function<SType<?>, Boolean> depends = (type) -> fieldInstance.getObject().getType().getDependentTypes().contains(type);
 
-            final Predicate<SInstance> predicate = ins ->
-            {
+            final Predicate<SInstance> predicate = ins -> {
                 if (ins == null) {
                     return false;
                 }
 
-                final SType<?>            type          = ins.getType();
-                final Optional<SInstance> thisAncestor  = SInstances.findAncestor(ins, STypeList.class);
-                final Optional<SInstance> otherAncestor = SInstances.findAncestor(((IMInstanciaAwareModel) fieldInstance).getMInstancia(), STypeList.class);
+                final SType<?> type = ins.getType();
+                final Optional<SInstance> thisAncestor = SInstances.findAncestor(ins, STypeList.class);
+                final Optional<SInstance> otherAncestor = SInstances.findAncestor(((IMInstanciaAwareModel<?>) fieldInstance).getMInstancia(), STypeList.class);
 
-                boolean wasUpdated             = updatedInstanceIds.contains(ins.getId());
-                boolean dependsOnType          = depends.apply(type);
-                boolean isBothInList           = thisAncestor.map(SInstance::getPathFull).map(path -> path.equals(otherAncestor.map(SInstance::getPathFull).orElse(null))).orElse(false);
+                boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
+                boolean dependsOnType = depends.apply(type);
+                boolean isBothInList = thisAncestor.map(SInstance::getPathFull).map(path -> path.equals(otherAncestor.map(SInstance::getPathFull).orElse(null))).orElse(false);
                 boolean isInTheSameIndexOfList = indexsKey.equals(getIndexsKey(ins.getPathFull()));
-                boolean childrenDepends        = false;
+                boolean childrenDepends = false;
 
                 if (type instanceof STypeList) {
-                    childrenDepends = depends.apply(((STypeList) type).getElementsType());
+                    childrenDepends = depends.apply(((STypeList<?, ?>) type).getElementsType());
                 }
 
                 return wasUpdated
-                        || (childrenDepends || dependsOnType) && !isBothInList
-                        || (childrenDepends || dependsOnType) && isInTheSameIndexOfList;
+                    || (childrenDepends || dependsOnType) && !isBothInList
+                    || (childrenDepends || dependsOnType) && isInTheSameIndexOfList;
             };
 
             component.getPage().visitChildren(Component.class, (c, visit) -> {
-                IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model ->
-                {
+                IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
                     if (predicate.test(model.getMInstancia())) {
                         model.getMInstancia().clearInstance();
                         refreshComponents(c, target, IMInstanciaAwareModel.getInstanceModel(model));
@@ -204,8 +215,7 @@ public class WicketFormProcessing {
         }
     }
 
-    public static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container, IModel<? extends SInstance> baseInstance) {
-        final Map<Integer, Set<IValidationError>> instanceErrors = validationContext.getErrorsByInstanceId();
+    public static void associateErrorsToComponents(Map<Integer, ? extends Collection<IValidationError>> instanceErrors, MarkupContainer container, IModel<? extends SInstance> baseInstance) {
 
         // associate errors to components
         Visits.visitPostOrder(container, (Component component, IVisit<Object> visit) -> {
@@ -213,33 +223,40 @@ public class WicketFormProcessing {
                 visit.dontGoDeeper();
             } else {
                 WicketFormUtils.resolveInstance(component.getDefaultModel())
-                        .map(componentInstance -> instanceErrors.remove(componentInstance.getId()))
-                        .ifPresent(errors -> associateErrorsTo(component, baseInstance, false, errors));
+                    .map(componentInstance -> instanceErrors.remove(componentInstance.getId()))
+                    .ifPresent(errors -> associateErrorsTo(component, baseInstance, false, errors));
             }
         });
 
         // associate remaining errors to container
         instanceErrors.values().stream()
-                .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
+            .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
     }
 
     private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstance,
-                                          boolean prependFullPathLabel, Set<IValidationError> errors) {
+                                          boolean prependFullPathLabel, Collection<IValidationError> errors) {
         for (IValidationError error : errors) {
             String message = error.getMessage();
             if (prependFullPathLabel) {
-                final String labelPath = SFormUtil.generateUserFriendlyPath(error.getInstance(), baseInstance.getObject());
-                if (StringUtils.isNotBlank(labelPath))
-                    message = labelPath + " : " + message;
+                Optional<SInstance> childInstance = SInstances.findDescendantById(baseInstance.getObject(), error.getInstanceId());
+                if (childInstance.isPresent()) {
+                    final String labelPath = SFormUtil.generateUserFriendlyPath(childInstance.get(), baseInstance.getObject());
+                    if (StringUtils.isNotBlank(labelPath))
+                        message = labelPath + " : " + message;
+                }
             }
-            Integer instanceId = error.getInstance().getId();
+            Integer instanceId = error.getInstanceId();
 
             final IModel<? extends SInstance> instanceModel = (IReadOnlyModel<SInstance>) () -> SInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
-                    .filter(it -> Objects.equals(it.getId(), instanceId))
-                    .findFirst()
-                    .orElse(null);
+                .filter(it -> Objects.equals(it.getId(), instanceId))
+                .findFirst()
+                .orElse(null);
 
             final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
+
+            String finalMessage = message;
+            if (feedbackMessages.hasMessage(m -> Objects.equals(m.getMessage(), finalMessage)))
+                continue;
 
             if (error.getErrorLevel() == ValidationErrorLevel.ERROR)
                 feedbackMessages.add(new SFeedbackMessage(component, message, FeedbackMessage.ERROR, instanceModel));
