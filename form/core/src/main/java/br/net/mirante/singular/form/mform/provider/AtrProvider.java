@@ -48,12 +48,12 @@ public class AtrProvider extends STranslatorForAttribute {
         return getAttributeValue(SPackageProvider.DISPLAY_FUNCTION);
     }
 
-    public <T extends Serializable, X extends Serializable> AtrProvider idFunction(IFunction<T, X> valor) {
+    public <T extends Serializable, X > AtrProvider idFunction(IFunction<T, X> valor) {
         setAttributeValue(SPackageProvider.ID_FUNCTION, valor);
         return this;
     }
 
-    public <T> IFunction<T, Serializable> getIdFunction() {
+    public <T> IFunction<T, Object> getIdFunction() {
         return getAttributeValue(SPackageProvider.ID_FUNCTION);
     }
 

@@ -304,7 +304,7 @@ public class DominioService {
         return vocabularioControladoDAO.listCategoriasRegulatoriasMedicamentoDinamizado(filtro);
     }
 
-    public List<Pair> nomenclaturaBotanica(String filtro) {
+    public List<Pair> nomenclaturaBotanica() {
         List<Pair> list = new ArrayList<>();
 
         long i = 1L;

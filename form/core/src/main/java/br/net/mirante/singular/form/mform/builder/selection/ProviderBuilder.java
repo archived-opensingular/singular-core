@@ -10,7 +10,6 @@ import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import java.io.Serializable;
 import java.util.Arrays;
 
-
 public class ProviderBuilder<T extends Serializable, I extends SInstance> extends AbstractBuilder {
 
     public ProviderBuilder(SType type) {

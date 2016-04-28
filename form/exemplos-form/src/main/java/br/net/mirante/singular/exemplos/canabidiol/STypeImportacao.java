@@ -10,11 +10,26 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeImportacao extends STypeComposite<SIComposite> {
+
+    private final static List<Pair> modalidades = new ArrayList<>();
+
+    static {
+        modalidades.add(Pair.of("58911761", "Aquisição Intermediada (entidade hospitalar; unidade governamental ligada à área de saúde; operadora de plano de saúde ou entidade civil representativa de pacientes, legalmente constituída"));
+        modalidades.add(Pair.of("58911758", "Bagagem acompanhad"));
+        modalidades.add(Pair.of("58911759", "Formal - por meio de Licenciamento de Importação (LI) no Sistema Integrado de Comércio Exterior - SISCOMEX IMPORTAÇÃ"));
+        modalidades.add(Pair.of("58911760", "Remessa Expressa"));
+    }
 
 
     @Override
@@ -30,14 +45,21 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .label("Modalidade de Importação")
                 .asAtrBootstrap()
                 .colPreference(12);
-        //TODO DANILO
-//        modalidade
-//                .withSelection()
-//                        .add("58911761", "Aquisição Intermediada (entidade hospitalar; unidade governamental ligada à área de saúde; operadora de plano de saúde ou entidade civil representativa de pacientes, legalmente constituída)")
-//                        .add("58911758", "Bagagem acompanhada")
-//                        .add("58911759", "Formal - por meio de Licenciamento de Importação (LI) no Sistema Integrado de Comércio Exterior - SISCOMEX IMPORTAÇÃO")
-//                        .add("58911760", "Remessa Expressa");
 
+        modalidade.selectionOf(Pair.class)
+                .id("${left}")
+                .display("${right}")
+                .converter(new SInstanceConverter<Pair, SIString>() {
+                    @Override
+                    public void fillInstance(SIString ins, Pair obj) {
+                        ins.setValue(obj.getLeft());
+                    }
+                    @Override
+                    public Pair toObject(SIString ins) {
+                        return modalidades.stream()
+                                .filter(p -> p.getLeft().equals(ins.getValue())).findFirst().orElse(null);
+                    }
+                }).simpleProvider(i -> modalidades);
 
         aquisicaoIntermediada(modalidade, "58911761");
         bagagemAcompanhada(modalidade, "58911758");
@@ -45,6 +67,15 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
         remessaExpressa(modalidade, "58911760");
 
 
+    }
+
+    private final static List<Pair> naturezasIntermediador = new ArrayList<>();
+
+    static {
+        naturezasIntermediador.add(Pair.of("57862460", "Entidade civil representativa de pacientes legalmente constituída"));
+        naturezasIntermediador.add(Pair.of("57862461", "Entidade hospitalar"));
+        naturezasIntermediador.add(Pair.of("57862462", "Operadora de plano de saúde"));
+        naturezasIntermediador.add(Pair.of("57862463", "Unidade governamental ligada à área de saúde"));
     }
 
     private void aquisicaoIntermediada(STypeString modalidade, String aquisicaoIntermediada) {
@@ -60,13 +91,21 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .visible(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
                 .dependsOn(modalidade);
 
-//TODO DANILO
-//        naturezaIntermediador
-//                .withSelection()
-//                        .add("57862460", "Entidade civil representativa de pacientes legalmente constituída")
-//                        .add("57862461", "Entidade hospitalar")
-//                        .add("57862462", "Operadora de plano de saúde")
-//                        .add("57862463", "Unidade governamental ligada à área de saúde");
+
+        naturezaIntermediador.selectionOf(Pair.class, new SViewSelectionByRadio().verticalLayout())
+                .id("${left}")
+                .display("${right}")
+                .converter(new SInstanceConverter<Pair, SIString>() {
+                    @Override
+                    public void fillInstance(SIString ins, Pair obj) {
+                        ins.setValue(obj.getLeft());
+                    }
+                    @Override
+                    public Pair toObject(SIString ins) {
+                        return naturezasIntermediador.stream()
+                                .filter(p -> p.getLeft().equals(ins.getValue())).findFirst().orElse(null);
+                    }
+                }).simpleProvider(i -> naturezasIntermediador);
 
         naturezaIntermediador
                 .withView(new SViewSelectionByRadio().verticalLayout());

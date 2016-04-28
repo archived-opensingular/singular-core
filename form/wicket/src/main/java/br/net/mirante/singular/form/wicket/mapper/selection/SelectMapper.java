@@ -64,7 +64,7 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
 
         private static final long serialVersionUID = -3852358882003412437L;
 
-        private final IModel<? extends SInstance>  model;
+        private final IModel<? extends SInstance> model;
 
         public DefaultOptionsProviderLoadableDetachableModel(IModel<? extends SInstance> model) {
             this.model = model;
@@ -74,10 +74,12 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
         protected List<Serializable> load() {
             final SimpleProvider provider = model.getObject().asAtrProvider().getSimpleProvider();
             if (provider != null) {
-                return provider.load(model.getObject());
-            } else {
-                return Collections.emptyList();
+                final List<Serializable> result = provider.load(model.getObject());
+                if (result != null) {
+                    return result;
+                }
             }
+            return Collections.emptyList();
         }
     }
 

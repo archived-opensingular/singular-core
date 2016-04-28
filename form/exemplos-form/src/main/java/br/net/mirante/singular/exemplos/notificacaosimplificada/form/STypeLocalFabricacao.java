@@ -71,6 +71,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
         empresaInternacional
                 .asAtrBasic()
+                .label("Empresa Internacional")
                 .dependsOn(tipoLocalFabricacao)
                 .visible(i -> LocalFabricacao.EMPRESA_INTERNACIONAL.getId().equals(Value.of(i, tipoLocalFabricacao)));
 

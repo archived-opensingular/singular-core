@@ -8,6 +8,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
+import br.net.mirante.singular.exemplos.util.PairConverter;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
@@ -43,7 +44,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         notificacaoSimplificada.asAtrBasic().displayString("${nomenclaturaBotanica.descricao} - ${nomeComercial}");
         notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Produto Tradicional Fitoterápico");
 
-        final STypeComposite<?> nomenclaturaBotanica     = notificacaoSimplificada.addFieldComposite("nomenclaturaBotanica");
+        final STypeComposite<SIComposite> nomenclaturaBotanica     = notificacaoSimplificada.addFieldComposite("nomenclaturaBotanica");
         STypeInteger            idNomenclaturaBotanica   = nomenclaturaBotanica.addFieldInteger("id");
         STypeString             descNomenclaturaBotanica = nomenclaturaBotanica.addFieldString("descricao");
         nomenclaturaBotanica
@@ -52,18 +53,12 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
                 .label("Nomenclatura botânica")
                 .asAtrBootstrap()
                 .colPreference(4);
-        //TODO DANILO
-//        nomenclaturaBotanica
-//                .withSelectView()
-//                .withSelectionFromProvider(descNomenclaturaBotanica, (ins, filter) -> {
-//                    final SIList<?> list = ins.getType().newList();
-//                    for (Pair p : dominioService(ins).nomenclaturaBotanica(filter)) {
-//                        final SIComposite c = (SIComposite) list.addNew();
-//                        c.setValue(idNomenclaturaBotanica, p.getLeft());
-//                        c.setValue(descNomenclaturaBotanica, p.getRight());
-//                    }
-//                    return list;
-//                });
+
+        nomenclaturaBotanica.selectionOf(Pair.class)
+                .id("${left}")
+                .display("${right}")
+                .converter(new PairConverter(idNomenclaturaBotanica, descNomenclaturaBotanica))
+                .simpleProvider(ins -> dominioService(ins).nomenclaturaBotanica());
 
         STypeList<STypeComposite<SIComposite>, SIComposite> concentracoes = notificacaoSimplificada.addFieldListOfComposite("concentracoes", "concentracao");
         STypeComposite<SIComposite> concentracao = concentracoes.getElementsType();

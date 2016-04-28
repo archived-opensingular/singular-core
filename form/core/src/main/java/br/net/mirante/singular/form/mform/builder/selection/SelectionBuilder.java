@@ -28,7 +28,7 @@ public class SelectionBuilder<T extends Serializable, I extends SInstance> exten
         return next();
     }
 
-    public SelectionDisplayBuilder<T, I> id(IFunction<T, Serializable> valor) {
+    public SelectionDisplayBuilder<T, I> id(IFunction<T, Object> valor) {
         type.asAtrProvider().asAtrProvider().idFunction(valor);
         return next();
     }

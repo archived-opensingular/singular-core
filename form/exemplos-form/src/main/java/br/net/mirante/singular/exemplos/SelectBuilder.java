@@ -5,9 +5,6 @@
 
 package br.net.mirante.singular.exemplos;
 
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,7 +59,7 @@ public class SelectBuilder {
     }
 
 
-    public static Collection<CidadeDTO> buildMunicipiosFiltrado(String uf) {
+    public static List<CidadeDTO> buildMunicipiosFiltrado(String uf) {
         if (uf == null) {
             return new ArrayList<>();
         }
@@ -72,10 +69,6 @@ public class SelectBuilder {
                 .collect(Collectors.toList());
     }
 
-    public static SIList<? extends SInstance> buildMunicipiosFiltrado(String uf, SIList<? extends SInstance> lista) {
-        buildMunicipiosFiltrado(uf).forEach(si -> lista.addElement(si));
-        return lista;
-    }
 
     private static void cidades1(List<CidadeDTO> cidades) {
 
@@ -5674,6 +5667,9 @@ public class SelectBuilder {
         private String sigla;
         private String nome;
 
+        public EstadoDTO() {
+        }
+
         public EstadoDTO(String sigla, String nome) {
             this.sigla = sigla;
             this.nome = nome;
@@ -5701,6 +5697,9 @@ public class SelectBuilder {
         private Integer id;
         private String  nome;
         private String  UF;
+
+        public CidadeDTO() {
+        }
 
         public CidadeDTO(Integer id, String nome, String UF) {
             this.id = id;

@@ -6,12 +6,12 @@
 package br.net.mirante.singular.exemplos.canabidiol;
 
 import br.net.mirante.singular.exemplos.SelectBuilder;
+import br.net.mirante.singular.exemplos.SelectBuilder.EstadoDTO;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 
 
 @SInfoType(spackage = SPackagePeticaoCanabidiol.class)
@@ -50,18 +50,17 @@ public class STypeMedico extends STypeComposite<SIComposite> {
         estado.addFieldString("sigla");
         STypeString nomeUF = estado.addFieldString("nome");
 
-        estado.selection()
-                .id("${id}")
+        estado.selectionOf(EstadoDTO.class)
+                .id(EstadoDTO::getSigla)
                 .display("${nome} - ${sigla}")
-                .autoConverter(SelectBuilder.EstadoDTO.class)
-                .provider((SimpleProvider) ins -> SelectBuilder.buildEstados());
+                .autoConverter(EstadoDTO.class)
+                .simpleProvider(ins -> SelectBuilder.buildEstados());
 
         addFieldCPF("cpf")
                 .asAtrBasic()
                 .label("CPF")
                 .asAtrBootstrap()
                 .colPreference(3);
-
 
         this.addField("endereco", STypeEndereco.class)
                 .asAtrBasic()

@@ -148,12 +148,13 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
         return new RuntimeException(msg);
     }
 
-    public STypeSimple<I, VALUE> withSelectionOf(Serializable... os) {
+    public STypeSimple<I, VALUE> withSelectionOf(VALUE... os) {
         new SelectionBuilder<>(this)
                 .selfIdAndDisplay()
-                .newSimpleProviderOf(os);
+                .newSimpleProviderOf((Serializable[]) os);
         return this;
     }
+
 
     public <T extends Enum<T>> SType withSelectionOf(Class<T> enumType) {
         this.selectionOf(Enum.class)

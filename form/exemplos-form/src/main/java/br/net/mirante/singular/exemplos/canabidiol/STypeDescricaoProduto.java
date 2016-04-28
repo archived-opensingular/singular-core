@@ -10,19 +10,24 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.core.SIInteger;
+import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
 
-    private static Map<Integer, String> composicoes = new HashMap<>();
-    private static Map<Integer, String> enderecos = new HashMap<>();
+    private static Map<Integer, String>        composicoes     = new LinkedHashMap<>();
+    private static Map<Integer, String>        enderecos       = new LinkedHashMap<>();
+    private static List<Pair> nomesComerciais = new ArrayList<>();
 
     static {
         composicoes.put(1, "Aguardando informação");
@@ -44,11 +49,22 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
         enderecos.put(7, "2560, Paragon Dr. Colorado Springs, CO 80918 (EUA)");
     }
 
+    static {
+        nomesComerciais.add(Pair.of(1, "Cibdex Hemp CBD Complex 1oz (Gotas) – Fabricante: Cibdex Inc."));
+        nomesComerciais.add(Pair.of(2, "Cibdex Hemp CBD Complex 2oz (Gotas) – Fabricante: Cibdex Inc."));
+        nomesComerciais.add(Pair.of(3, "Cibdex Hemp CBD Complex (Cápsulas) – Fabricante: Cibdex Inc."));
+        nomesComerciais.add(Pair.of(4, "Hemp CBD Oil 2000mg Canabidiol - 240mL - Fabricante: Bluebird Botanicals"));
+        nomesComerciais.add(Pair.of(5, "Real Scientific Hemp Oil (RSHO) CBD 14-25% - 3g (Pasta) – Fabricante: Hemp Meds Px"));
+        nomesComerciais.add(Pair.of(6, "Real Scientific Hemp Oil (RSHO) CBD 14-25% - 10g (Pasta) – Fabricante: Hemp Meds Px"));
+        nomesComerciais.add(Pair.of(7, "Revivid LLC Hemp Tinctute 500mg (22:1 CBD/THC) - 30mL (Gotas) – Fabricante: Revivid"));
+        nomesComerciais.add(Pair.of(8, "Outro"));
+    }
+
     private STypeInteger nomeComercial;
-    private STypeString composicao;
-    private STypeString enderecoFabricante;
-    private STypeString descricaoQuantidade;
-    private STypeString outroComposicao;
+    private STypeString  composicao;
+    private STypeString  enderecoFabricante;
+    private STypeString  descricaoQuantidade;
+    private STypeString  outroComposicao;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -62,21 +78,23 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .asAtrBasic()
                 .label("Nome Comercial");
 
-        //TODO DANILO
-//        nomeComercial
-//                .withSelection()
-//                .add(1, "Cibdex Hemp CBD Complex 1oz (Gotas) – Fabricante: Cibdex Inc.")
-//                .add(2, "Cibdex Hemp CBD Complex 2oz (Gotas) – Fabricante: Cibdex Inc.")
-//                .add(3, "Cibdex Hemp CBD Complex (Cápsulas) – Fabricante: Cibdex Inc.")
-//                .add(4, "Hemp CBD Oil 2000mg Canabidiol - 240mL - Fabricante: Bluebird Botanicals")
-//                .add(5, "Real Scientific Hemp Oil (RSHO) CBD 14-25% - 3g (Pasta) – Fabricante: Hemp Meds Px")
-//                .add(6, "Real Scientific Hemp Oil (RSHO) CBD 14-25% - 10g (Pasta) – Fabricante: Hemp Meds Px")
-//                .add(7, "Revivid LLC Hemp Tinctute 500mg (22:1 CBD/THC) - 30mL (Gotas) – Fabricante: Revivid")
-//                .add(8, "Outro");
+        nomeComercial.selectionOf(Pair.class)
+                .id("${left}")
+                .display("${right}")
+                .converter(new SInstanceConverter<Pair, SIInteger>() {
+                    @Override
+                    public void fillInstance(SIInteger ins, Pair obj) {
+                        ins.setValue(obj.getLeft());
+                    }
+
+                    @Override
+                    public Pair toObject(SIInteger ins) {
+                        return nomesComerciais.get(ins.getValue() - 1);
+                    }
+                }).simpleProvider(i -> nomesComerciais);
 
         nomeComercial
                 .withView(new SViewSelectionByRadio().verticalLayout());
-
 
         composicao = this.addFieldString("composicao");
 
@@ -93,18 +111,15 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
         composicao
                 .withView(new SViewSelectionByRadio().verticalLayout());
 
-        //TODO DANILO
-//        composicao.withSelectionFromProvider(
-//                (optionsInstance, filter ) -> {
-//                    SIList<?> lista = composicao.newList();
-//                    String value = composicoes.get(Value.of(optionsInstance, nomeComercial));
-//                    if (value != null) {
-//                        lista.addValue(value);
-//                    }
-//                    return lista;
-//                }
-//        );
-
+        composicao.selectionOf(String.class, new SViewSelectionByRadio().verticalLayout())
+                .selfIdAndDisplay()
+                .simpleProvider((SimpleProvider<String, SIString>) ins -> {
+                    Optional<Integer> nm = ins.findNearestValue(nomeComercial);
+                    if(nm.isPresent()) {
+                        return Collections.singletonList(composicoes.get(nm.get()));
+                    }
+                    return null;
+                });
 
         enderecoFabricante = this.addFieldString("enderecoFabricante");
 
@@ -119,21 +134,16 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .asAtrBootstrap()
                 .colPreference(6);
 
-        enderecoFabricante
-                .withView(new SViewSelectionByRadio().verticalLayout());
-        //TODO DANILO
-//        enderecoFabricante.withSelectionFromProvider(
-//                (optionsInstance, filter) -> {
-//                    SIList<?> lista = enderecoFabricante.newList();
-//                    String value = enderecos.get(Value.of(optionsInstance, nomeComercial));
-//                    if (value != null) {
-//                        lista.addValue(value);
-//                    }
-//                    return lista;
-//                }
-//        );
-//
-
+        enderecoFabricante.withView(new SViewSelectionByRadio().verticalLayout());
+        enderecoFabricante.selectionOf(String.class, new SViewSelectionByRadio().verticalLayout())
+                .selfIdAndDisplay()
+                .simpleProvider((SimpleProvider<String, SIString>) ins -> {
+                    Optional<Integer> nm = ins.findNearestValue(nomeComercial);
+                    if(nm.isPresent()) {
+                        return Collections.singletonList(enderecos.get(nm.get()));
+                    }
+                    return null;
+                });
         STypeComposite<?> outroMedicamento = addFieldComposite("outro");
         outroMedicamento
                 .asAtrBasic()

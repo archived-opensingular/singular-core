@@ -137,7 +137,7 @@ public class TypeaheadComponent extends Panel {
                 }
                 if (!Value.dehydrate(instance()).equals(lastValue)) {
                     lastValue = Value.dehydrate(instance());
-                    final IFunction<Object, Serializable> idFunction = instance().asAtrProvider().getIdFunction();
+                    final IFunction<Object, Object> idFunction = instance().asAtrProvider().getIdFunction();
                     final SInstanceConverter              converter  = instance().asAtrProvider().getConverter();
                     if (idFunction != null && converter != null && !instance().isEmptyOfData()) {
                         final Serializable converted = converter.toObject(instance());

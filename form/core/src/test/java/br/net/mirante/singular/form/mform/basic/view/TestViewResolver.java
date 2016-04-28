@@ -1,15 +1,13 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.*;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -19,10 +17,12 @@ public class TestViewResolver {
     private static final String textoTeste = "stringzonamuitolocabemgrandeparaevitarproblemascomarrayoutofboundsnessestestesunitariosaqui";
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static STypeList<?, ?> createSimpleList(PackageBuilder pb, String name, Class<? extends STypeSimple<?, ?>> type, int size,
-                                                     Function<Integer, Object> valueProvider) {
-        STypeSimple<?, ?> simpleType = pb.createType(name, type);
-        simpleType.withSelectionOf(repeate(valueProvider, size).toArray());
+    private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V> STypeList<T, X> createSimpleList(
+            PackageBuilder pb, String name, Class<T> type, int size, Function<Integer, Object> valueProvider) {
+        T simpleType = pb.createType(name, type);
+        simpleType.selection()
+                .selfIdAndDisplay()
+                .simpleProvider(ins -> (List<V>) repeate(valueProvider, size));
         return pb.createListTypeOf("list" + name, simpleType);
     }
 
@@ -64,11 +64,11 @@ public class TestViewResolver {
 
     @Test
     public void testTipoSimplesSelectOf() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
-        STypeSimple<?, ?> tipoInteger = pb.createType("Integer", STypeInteger.class).withSelectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
-        STypeSimple<?, ?> tipoDate = pb.createType("Date", STypeDate.class).withSelectionOf(repeate(i -> new Date(new Date().getTime() + 10000 * i), 2).toArray(new Date[]{}));
-        STypeSimple<?, ?> tipoString = pb.createType("String", STypeString.class).withSelectionOf(repeate(textoTeste::substring, 2).toArray(new String[]{}));
+        SDictionary       dicionario      = SDictionary.create();
+        PackageBuilder    pb              = dicionario.createNewPackage("teste");
+        STypeSimple<?, ?> tipoInteger     = pb.createType("Integer", STypeInteger.class).withSelectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
+        STypeSimple<?, ?> tipoDate        = pb.createType("Date", STypeDate.class).withSelectionOf(repeate(i -> new Date(new Date().getTime() + 10000 * i), 2).toArray(new Date[]{}));
+        STypeSimple<?, ?> tipoString      = pb.createType("String", STypeString.class).withSelectionOf(repeate(textoTeste::substring, 2).toArray(new String[]{}));
         STypeSimple<?, ?> tipoStringLarge = pb.createType("StringLarge", STypeString.class).withSelectionOf(repeate(textoTeste::substring, 5).toArray(new String[]{}));
 
         assertView(SViewSelectionBySelect.class, tipoInteger);
@@ -89,13 +89,13 @@ public class TestViewResolver {
 
     @Test
     public void testListTipoSimplesSelectOf() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
-        STypeList<?, ?> listInteger3 = createSimpleList(pb, "Integer3", STypeInteger.class, 3, i -> 100 + i);
-        STypeList<?, ?> listInteger10 = createSimpleList(pb, "Integer10", STypeInteger.class, 10, i -> 100 + i);
-        STypeList<?, ?> listInteger20 = createSimpleList(pb, "Integer20", STypeInteger.class, 20, i -> 100 + i);
+        SDictionary                        dicionario    = SDictionary.create();
+        PackageBuilder                     pb            = dicionario.createNewPackage("teste");
+        STypeList<STypeInteger, SIInteger> listInteger3  = createSimpleList(pb, "Integer3", STypeInteger.class, 3, i -> 100 + i);
+        STypeList<STypeInteger, SIInteger> listInteger10 = createSimpleList(pb, "Integer10", STypeInteger.class, 10, i -> 100 + i);
+        STypeList<STypeInteger, SIInteger> listInteger20 = createSimpleList(pb, "Integer20", STypeInteger.class, 20, i -> 100 + i);
 
-        STypeList<?, ?> listString3 = createSimpleList(pb, "String3", STypeString.class, 3, textoTeste::substring);
+        STypeList<?, ?> listString3  = createSimpleList(pb, "String3", STypeString.class, 3, textoTeste::substring);
         STypeList<?, ?> listString10 = createSimpleList(pb, "String10", STypeString.class, 10, textoTeste::substring);
         STypeList<?, ?> listString20 = createSimpleList(pb, "String20", STypeString.class, 20, textoTeste::substring);
 
