@@ -24,18 +24,18 @@ public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
         final STypeString nome           = componenteQuimico.addFieldString("nome");
         final STypeString formulaQuimica = componenteQuimico.addFieldString("formulaQuimica");
 
-        componentesQuimicos.selectionOf(ComponenteQuimico.class)
+        componentesQuimicos.multiselectionOf(ComponenteQuimico.class)
                 .id(ComponenteQuimico::getNome)
                 .display("${formulaQuimica} - ${nome}")
-                .converter(new SInstanceConverter<ComponenteQuimico>() {
+                .converter(new SInstanceConverter<ComponenteQuimico, SIComposite>() {
                     @Override
-                    public void fillInstance(SInstance ins, ComponenteQuimico obj) {
-                        ((SIComposite) ins).setValue(nome, obj.getNome());
-                        ((SIComposite) ins).setValue(formulaQuimica, obj.getFormulaQuimica());
+                    public void fillInstance(SIComposite ins, ComponenteQuimico obj) {
+                        ins.setValue(nome, obj.getNome());
+                        ins.setValue(formulaQuimica, obj.getFormulaQuimica());
                     }
 
                     @Override
-                    public ComponenteQuimico toObject(SInstance ins) {
+                    public ComponenteQuimico toObject(SIComposite ins) {
                         return new ComponenteQuimico(Value.of(ins, formulaQuimica), Value.of(ins, nome));
                     }
                 })

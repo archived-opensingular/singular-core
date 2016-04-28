@@ -4,8 +4,10 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SingularFormException;
 
+import java.io.Serializable;
+
 @FunctionalInterface
-public interface ValueToSICompositeConverter<T> extends SInstanceConverter<T> {
+public interface ValueToSICompositeConverter<T extends Serializable> extends SInstanceConverter<T, SInstance> {
 
     @Override
     default void fillInstance(SInstance ins, T obj) {

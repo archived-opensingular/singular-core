@@ -160,7 +160,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
                 .id(Enum::name)
                 .display(Enum::toString)
                 .enumConverter(enumType)
-                .provider((SimpleProvider<Enum>) ins -> Arrays.asList(enumType.getEnumConstants()));
+                .provider((SimpleProvider<Enum, I>) ins -> Arrays.asList(enumType.getEnumConstants()));
         return this;
     }
 

@@ -12,7 +12,7 @@ import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 
 /**
  * Decide qual a view mas adequada para uma seleção múltipla de tipos simples
- * (Lista de Tipo Simple, sendo o tipo simples um selectionOf).
+ * (Lista de Tipo Simple, sendo o tipo simples um multiselectionOf).
  *
  * @author Daniel C. Bordin
  */

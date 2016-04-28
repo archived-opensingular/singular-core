@@ -1,7 +1,9 @@
 package br.net.mirante.singular.form.mform.builder.selection;
 
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.options.LookupOptionsProvider;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.provider.Provider;
 import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 
@@ -9,19 +11,27 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 
-public class ProviderBuilder<T extends Serializable> extends AbstractBuilder {
+public class ProviderBuilder<T extends Serializable, I extends SInstance> extends AbstractBuilder {
 
     public ProviderBuilder(SType type) {
         super(type);
     }
 
-    public void provider(Provider<T> provider) {
+    public void provider(Provider<T, I> provider) {
+        type.asAtrProvider().provider(provider);
+    }
+
+    public void simpleProvider(SimpleProvider<T, I> provider) {
+        type.asAtrProvider().provider(provider);
+    }
+
+    public void filteredProvider(FilteredProvider<T, I> provider) {
         type.asAtrProvider().provider(provider);
     }
 
     @SafeVarargs
     public final void newSimpleProviderOf(T... values) {
-        type.asAtrProvider().provider((SimpleProvider<T>) ins -> Arrays.asList(values));
+        type.asAtrProvider().provider((SimpleProvider<T, I>) ins -> Arrays.asList(values));
     }
 
     public void provider(String provider) {

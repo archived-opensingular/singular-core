@@ -26,6 +26,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
@@ -123,7 +124,7 @@ class SearchModalBodyPanel extends Panel {
                                 converter = new SimpleSInstanceConverter<>();
                             }
                             if (converter != null) {
-                                converter.fillInstance(getInstance(), model.getObject());
+                                converter.fillInstance(getInstance(), (Serializable) model.getObject());
                             }
                             selectCallback.accept(target);
                         })

@@ -28,7 +28,7 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
     public Component appendInput() {
         final DropDownChoice<Serializable> dropDownChoice = new DropDownChoice<Serializable>(ctx.getCurrentInstance().getName(),
                 new SelectMInstanceAwareModel(model),
-                new DefaultOptionsProviderLoadableDetachableModel(model, ctx.getCurrentInstance().asAtrProvider().getSimpleProvider()),
+                new DefaultOptionsProviderLoadableDetachableModel(model),
                 new SingularChoiceRenderer(model)) {
             @Override
             protected String getNullValidDisplayValue() {
@@ -53,7 +53,7 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
         final SInstance mi = model.getObject();
         if (mi != null && mi.getValue() != null) {
             return mi.getType().asAtrProvider().getDisplayFunction().apply(
-                    mi.getType().asAtrProvider().getConverter().toObject(mi)
+                    (Serializable) mi.getType().asAtrProvider().getConverter().toObject(mi)
             );
         }
         return StringUtils.EMPTY;
@@ -65,19 +65,17 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
         private static final long serialVersionUID = -3852358882003412437L;
 
         private final IModel<? extends SInstance>  model;
-        private final SimpleProvider<Serializable> provider;
 
-        public DefaultOptionsProviderLoadableDetachableModel(IModel<? extends SInstance> model, SimpleProvider<Serializable> provider) {
+        public DefaultOptionsProviderLoadableDetachableModel(IModel<? extends SInstance> model) {
             this.model = model;
-            this.provider = provider;
         }
 
         @Override
         protected List<Serializable> load() {
+            final SimpleProvider provider = model.getObject().asAtrProvider().getSimpleProvider();
             if (provider != null) {
                 return provider.load(model.getObject());
             } else {
-                //TODO jogar exception de provider não informado
                 return Collections.emptyList();
             }
         }

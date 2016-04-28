@@ -25,7 +25,7 @@ public class RadioMapper extends SelectMapper {
 
         RadioChoice rc = new RadioChoice<Serializable>(id,
                 new SelectMInstanceAwareModel(model),
-                new DefaultOptionsProviderLoadableDetachableModel(model, ctx.getCurrentInstance().asAtrProvider().getSimpleProvider()),
+                new DefaultOptionsProviderLoadableDetachableModel(model),
                 new SingularChoiceRenderer(model)) {
 
             @Override

@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 
 import java.io.Serializable;
 
-public class SIProvider<P extends Provider<T>, T extends Serializable> extends SInstance {
+public class SIProvider<P extends Provider<T, SInstance>, T extends Serializable> extends SInstance {
 
     private P provider;
 

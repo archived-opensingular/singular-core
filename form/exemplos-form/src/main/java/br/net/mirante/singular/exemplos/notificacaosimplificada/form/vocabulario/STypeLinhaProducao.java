@@ -1,8 +1,10 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInfoType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
@@ -18,24 +20,24 @@ public class STypeLinhaProducao extends STypeComposite<SIComposite> {
     public STypeString  descricao;
     public STypeInteger id;
 
-    protected FilteredProvider getProvider() {
+    protected FilteredProvider<LinhaCbpf, SIComposite> getProvider() {
         return (ins, filter) -> dominioService(ins).linhasProducao(filter);
     }
 
-    protected SInstanceConverter<LinhaCbpf> getConverter() {
-        return new SInstanceConverter<LinhaCbpf>() {
+    protected SInstanceConverter<LinhaCbpf, SIComposite> getConverter() {
+        return new SInstanceConverter<LinhaCbpf, SIComposite>() {
             @Override
-            public void fillInstance(SInstance ins, LinhaCbpf obj) {
-                ((SIComposite) ins).setValue(id, obj.getId());
-                ((SIComposite) ins).setValue(descricao, obj.getDescricao());
+            public void fillInstance(SIComposite ins, LinhaCbpf obj) {
+                ins.setValue(id, obj.getId());
+                ins.setValue(descricao, obj.getDescricao());
             }
 
             @Override
-            public LinhaCbpf toObject(SInstance ins) {
-                return dominioService(ins)
-                        .linhasProducao(null)
-                        .stream().filter(l -> (Value.of(ins, id).equals(l.getId().intValue())))
-                        .findFirst().orElse(null);
+            public LinhaCbpf toObject(SIComposite ins) {
+                final LinhaCbpf linhaCbpf = new LinhaCbpf();
+                linhaCbpf.setId(Long.valueOf(Value.of(ins, id)));
+                linhaCbpf.setDescricao(Value.of(ins, descricao));
+                return linhaCbpf;
             }
         };
     }
@@ -54,8 +56,8 @@ public class STypeLinhaProducao extends STypeComposite<SIComposite> {
                     .colPreference(4);
             this.setView(SViewAutoComplete::new);
 
-            this.selection()
-                    .id((IFunction<LinhaCbpf, String>) l -> l.getId().toString())
+            this.autocompleteOf(LinhaCbpf.class)
+                    .id(l -> l.getId().toString())
                     .display("${descricao}")
                     .converter(getConverter())
                     .provider(getProvider());

@@ -1,10 +1,14 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.TypeBuilder;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
+
+import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
@@ -13,26 +17,50 @@ public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        final STypeString id = addFieldString("id");
+        final STypeComposite<SIComposite> id = addFieldComposite("id");
+
+        final STypeInteger idEmpresaInternacional = id.addFieldInteger("idEmpresaInternacional");
+        final STypeInteger sequencialEndereco     = id.addFieldInteger("sequencialEndereco");
+
         final STypeString razaoSocial = addFieldString("razaoSocial");
-        final STypeString endereco = addFieldString("endereco");
+        final STypeString endereco    = addFieldString("endereco");
 
         razaoSocial.
                 asAtrBasic()
                 .required()
                 .label("Razão Social");
 
-        //TODO DANILO
-//        withSelectionFromProvider(razaoSocial, (ins, filter) -> {
-//            final SIList<?> list = ins.getType().newList();
-//            for (EnderecoEmpresaInternacional eei : dominioService(ins).empresaInternacional(filter)) {
-//                final SIComposite c = (SIComposite) list.addNew();
-//                c.setValue(id, eei.getId());
-//                c.setValue(razaoSocial, eei.getEmpresaInternacional().getRazaoSocial());
-//                c.setValue(endereco, eei.getEnderecoCompleto());
-//            }
-//            return list;
-//        }).asAtrBasic().label("Empresa internacional").getTipo().setView(SViewAutoComplete::new);
+        autocompleteOf(EnderecoEmpresaInternacional.class)
+                .id(e -> String.format("%d-%d", e.getId().getEmpresaInternacional().getId(), e.getId().getSequencialEndereco()))
+                .display(e -> e.getEmpresaInternacional().getRazaoSocial())
+                .converter(new SInstanceConverter<EnderecoEmpresaInternacional, SIComposite>() {
+                    @Override
+                    public void fillInstance(SIComposite ins, EnderecoEmpresaInternacional obj) {
+                        final SIComposite compositeId;
+                        if (ins.getField(id.getNameSimple()) != null) {
+                            compositeId = (SIComposite) ins.getField(id.getNameSimple());
+                        } else {
+                            compositeId = id.newInstance();
+                            ins.setValue(id, compositeId);
+                        }
+                        compositeId.setValue(idEmpresaInternacional, obj.getId().getEmpresaInternacional().getId());
+                        compositeId.setValue(sequencialEndereco, obj.getId().getSequencialEndereco());
+                        ins.setValue(razaoSocial, obj.getEmpresaInternacional().getRazaoSocial());
+                        ins.setValue(endereco, obj.getEnderecoCompleto());
+                    }
+
+                    @Override
+                    public EnderecoEmpresaInternacional toObject(SIComposite ins) {
+                        final SInstance value = (SInstance) ins.getField(id.getNameSimple());
+                        if (!value.isEmptyOfData()) {
+                            final Integer idEmpresa  = Value.of(value, idEmpresaInternacional);
+                            final Integer sequencial = Value.of(value, sequencialEndereco);
+                            return dominioService(ins).buscarEmpresaInternacional(idEmpresa.longValue(), sequencial.shortValue());
+                        }
+                        return null;
+                    }
+                })
+                .filteredProvider((FilteredProvider<EnderecoEmpresaInternacional, SIComposite>) (ins, query) -> dominioService(ins).empresaInternacional(query));
 
     }
 

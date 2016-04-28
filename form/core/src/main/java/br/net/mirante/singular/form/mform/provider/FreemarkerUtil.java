@@ -20,6 +20,7 @@ public class FreemarkerUtil {
 
     static {
         final DefaultObjectWrapperBuilder builder = new DefaultObjectWrapperBuilder(VERSION);
+        builder.setSimpleMapWrapper(true);
         cfg.setObjectWrapper(builder.build());
     }
 

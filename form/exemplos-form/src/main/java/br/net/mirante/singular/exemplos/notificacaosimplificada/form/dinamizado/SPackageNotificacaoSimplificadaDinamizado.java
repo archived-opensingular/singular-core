@@ -24,7 +24,6 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.mform.provider.FilteredProvider;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -259,7 +258,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     }
 
     private void addIndicacaoTerapeutica(STypeComposite<?> notificacaoSimplificada) {
-        final STypeComposite<?> indicacaoTerapeutica          = notificacaoSimplificada.addFieldComposite("indicacaoTerapeutica");
+        final STypeComposite<SIComposite> indicacaoTerapeutica          = notificacaoSimplificada.addFieldComposite("indicacaoTerapeutica");
         final STypeInteger      idIndicacaoTerapeutica        = indicacaoTerapeutica.addFieldInteger("id");
         final STypeSimple       descricaoIndicacaoTerapeutica = indicacaoTerapeutica.addFieldString("descricao");
         indicacaoTerapeutica
@@ -273,7 +272,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .id(p -> String.valueOf(p.getRight()))
                 .display(p -> String.valueOf(p.getLeft()))
                 .converter(new PairConverter(idIndicacaoTerapeutica, descricaoIndicacaoTerapeutica))
-                .provider((SimpleProvider) ins -> dominioService(ins).indicacoesTerapeuticas());
+                .simpleProvider( ins -> dominioService(ins).indicacoesTerapeuticas());
 
         STypeBoolean informarOutraIndicacaoTerapeutica = notificacaoSimplificada.addFieldBoolean("informarOutraIndicacaoTerapeutica");
         informarOutraIndicacaoTerapeutica

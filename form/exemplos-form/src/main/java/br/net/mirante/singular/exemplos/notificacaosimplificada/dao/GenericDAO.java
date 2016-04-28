@@ -5,14 +5,13 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
-import java.util.List;
-
+import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import br.net.mirante.singular.support.persistence.BaseDAO;
+import java.util.List;
 
 @Repository
 public class GenericDAO extends BaseDAO {
@@ -29,6 +28,10 @@ public class GenericDAO extends BaseDAO {
         return findByProperty(classe, propertyName, value, null, maxResults);
     }
 
+    public <T> T findByUniqueProperty(Class<T> clazz, String propertyName, Object value){
+        return (T) getSession().createCriteria(clazz).add(Restrictions.eq(propertyName, value)).setMaxResults(1).uniqueResult();
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends Object> List<T> findByProperty(Class<T> classe, String propertyName, String value, MatchMode matchMode, Integer maxResults) {
         Criteria criteria = getSession().createCriteria(classe);
@@ -37,7 +40,7 @@ public class GenericDAO extends BaseDAO {
             matchMode = MatchMode.EXACT;
         }
 
-        if (value != null) {
+        if (value != null && !value.isEmpty()) {
             criteria.add(Restrictions.ilike(propertyName, value, matchMode));
         }
 

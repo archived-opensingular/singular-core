@@ -8,12 +8,14 @@ import net.vidageek.mirror.get.dsl.GetterHandler;
 import net.vidageek.mirror.set.dsl.FieldSetter;
 import net.vidageek.mirror.set.dsl.SetterHandler;
 
+import java.io.Serializable;
+
 /**
  * Conversor que monta os objetos e instancias a partir de reflection.
  *
  * @param <T>
  */
-public class AutoSICompositeConverter<T> implements SInstanceConverter<T> {
+public class AutoSICompositeConverter<T extends Serializable> implements SInstanceConverter<T, SInstance> {
 
     private final Class<T> resultClass;
 
@@ -21,7 +23,7 @@ public class AutoSICompositeConverter<T> implements SInstanceConverter<T> {
         this.resultClass = resultClass;
     }
 
-    public static <T> AutoSICompositeConverter<T> of(Class<T> resultClass) {
+    public static <X extends Serializable> AutoSICompositeConverter<X> of(Class<X> resultClass) {
         return new AutoSICompositeConverter<>(resultClass);
     }
 

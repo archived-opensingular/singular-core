@@ -6,6 +6,7 @@
 package br.net.mirante.singular.showcase.component.input.core.select;
 
 import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.provider.FilteredProvider;
@@ -20,7 +21,7 @@ public class CaseInputCoreSelectCompositePackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        final STypeComposite<?> ingredienteQuimico = tipoMyForm.addFieldComposite("ingredienteQuimico");
+        final STypeComposite<SIComposite> ingredienteQuimico = tipoMyForm.addFieldComposite("ingredienteQuimico");
         ingredienteQuimico.asAtrBasic().label("Ingrediente Quimico");
 
         ingredienteQuimico.addFieldString("formulaQuimica");
@@ -30,7 +31,7 @@ public class CaseInputCoreSelectCompositePackage extends SPackage {
                 .id(iq -> iq.nome)
                 .display("${nome} - ${formulaQuimica}")
                 .autoConverter(IngredienteQuimico.class)
-                .provider((FilteredProvider<IngredienteQuimico>) (ins, filter) -> Arrays.asList(
+                .provider((FilteredProvider<IngredienteQuimico, SIComposite>) (ins, filter) -> Arrays.asList(
                         new IngredienteQuimico("Água", "H2O"),
                         new IngredienteQuimico("Água Oxigenada", "H2O2"),
                         new IngredienteQuimico("Gás Oxigênio", "O2"),

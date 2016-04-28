@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -34,7 +35,7 @@ public class STypeStringSelectionFromProviderFieldTest {
         }
 
         protected SimpleProvider createProviderWithOptions(final List<String> options) {
-            return (SimpleProvider<String>) ins -> options;
+            return (SimpleProvider<String, SInstance>) ins -> options;
         }
 
         protected Object getSelectKeyFromValue(String value) {

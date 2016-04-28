@@ -33,6 +33,9 @@ public class SelectMInstanceAwareModel extends AbstractMInstanceAwareModel<Seria
 
     @Override
     public Serializable getObject() {
+        if (model.getObject().isEmptyOfData()) {
+            return null;
+        }
         if (getProviderMInstancia().asAtrProvider().getConverter() != null) {
             return (Serializable) getProviderMInstancia().asAtrProvider().getConverter().toObject(model.getObject());
         } else {
@@ -46,13 +49,17 @@ public class SelectMInstanceAwareModel extends AbstractMInstanceAwareModel<Seria
 
     @Override
     public void setObject(Serializable object) {
-        if (getProviderMInstancia().asAtrProvider().getConverter() != null) {
-            getProviderMInstancia().asAtrProvider().getConverter().fillInstance(getMInstancia(), object);
+        if (object == null) {
+            getMInstancia().clearInstance();
         } else {
-            if (getProviderMInstancia() instanceof SIComposite) {
-                throw new SingularFormException("Nenhum converter foi informado para o tipo " + getMInstancia().getName());
+            if (getProviderMInstancia().asAtrProvider().getConverter() != null) {
+                getProviderMInstancia().asAtrProvider().getConverter().fillInstance(getMInstancia(), object);
             } else {
-                new SimpleSInstanceConverter<>().fillInstance(getMInstancia(), object);
+                if (getProviderMInstancia() instanceof SIComposite) {
+                    throw new SingularFormException("Nenhum converter foi informado para o tipo " + getMInstancia().getName());
+                } else {
+                    new SimpleSInstanceConverter<>().fillInstance(getMInstancia(), object);
+                }
             }
         }
     }

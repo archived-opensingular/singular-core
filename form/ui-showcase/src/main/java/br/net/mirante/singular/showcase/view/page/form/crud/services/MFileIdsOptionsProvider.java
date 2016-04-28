@@ -16,7 +16,7 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 @Component("filesChoiceProvider")
-public class MFileIdsOptionsProvider implements SimpleProvider<ExampleFile> {
+public class MFileIdsOptionsProvider implements SimpleProvider<ExampleFile, SInstance> {
 
     @Inject
     private FileDao filePersistence;

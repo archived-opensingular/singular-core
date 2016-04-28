@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform.provider;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.mform.SAttributeEnabled;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STranslatorForAttribute;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 
@@ -20,15 +21,15 @@ public class AtrProvider extends STranslatorForAttribute {
         return provider(valor);
     }
 
-    public <T extends Serializable> AtrProvider fixedOptionsProvider(SimpleProvider<T> valor) {
+    public <T extends Serializable, I extends SInstance> AtrProvider fixedOptionsProvider(SimpleProvider<T, I> valor) {
         return provider(valor);
     }
 
-    public <T extends Serializable> AtrProvider filteredOptionsProvider(FilteredProvider<T> valor) {
+    public <T extends Serializable, I extends SInstance> AtrProvider filteredOptionsProvider(FilteredProvider<T, I> valor) {
         return provider(valor);
     }
 
-    public <T extends Serializable> AtrProvider provider(Provider<T> valor) {
+    public <T extends Serializable, I extends SInstance> AtrProvider provider(Provider<T, I> valor) {
         setAttributeValue(SPackageProvider.PROVIDER, valor);
         return this;
     }
@@ -43,23 +44,23 @@ public class AtrProvider extends STranslatorForAttribute {
         return this;
     }
 
-    public <T> IFunction<T, String> getDisplayFunction() {
+    public <T extends Serializable> IFunction<T, String> getDisplayFunction() {
         return getAttributeValue(SPackageProvider.DISPLAY_FUNCTION);
     }
 
-    public AtrProvider idFunction(IFunction valor) {
+    public <T extends Serializable, X extends Serializable> AtrProvider idFunction(IFunction<T, X> valor) {
         setAttributeValue(SPackageProvider.ID_FUNCTION, valor);
         return this;
     }
 
-    public <T> IFunction<T, String> getIdFunction() {
+    public <T> IFunction<T, Serializable> getIdFunction() {
         return getAttributeValue(SPackageProvider.ID_FUNCTION);
     }
 
-    public SimpleProvider getSimpleProvider() {
+    public SimpleProvider<Serializable, SInstance> getSimpleProvider() {
         final Provider provider = getProvider();
         if (provider instanceof SimpleProvider) {
-            return (SimpleProvider) provider;
+            return (SimpleProvider<Serializable, SInstance>) provider;
         }
         return null;
     }
@@ -68,10 +69,10 @@ public class AtrProvider extends STranslatorForAttribute {
         return (FilteredPagedProvider) getProvider();
     }
 
-    public FilteredProvider getFilteredProvider() {
+    public FilteredProvider<Serializable, SInstance> getFilteredProvider() {
         final Provider provider = getProvider();
         if (provider instanceof FilteredProvider) {
-            return (FilteredProvider) provider;
+            return (FilteredProvider<Serializable, SInstance>) provider;
         }
         return null;
     }

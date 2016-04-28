@@ -5,7 +5,9 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.GenericDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EmpresaInternacional;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacionalId;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
@@ -270,12 +272,24 @@ public class DominioService {
         return enderecoEmpresaInternacionalDAO.buscarEnderecos(filtro, 5);
     }
 
+    public EnderecoEmpresaInternacional buscarEmpresaInternacional(Long idEmpresa, Short sequencial) {
+        final EmpresaInternacional emp = genericDAO.findByUniqueProperty(EmpresaInternacional.class, "id", idEmpresa);
+        EnderecoEmpresaInternacionalId id = new EnderecoEmpresaInternacionalId();
+        id.setEmpresaInternacional(emp);
+        id.setSequencialEndereco(sequencial);
+        return enderecoEmpresaInternacionalDAO.get(id);
+    }
     public List<PessoaJuridicaNS> empresaTerceirizada(String filtro) {
         return genericDAO.findByProperty(PessoaJuridicaNS.class, "razaoSocial", filtro, 5);
     }
 
     public List<PessoaJuridicaNS> outroLocalFabricacao(String filtro) {
         return genericDAO.findByProperty(PessoaJuridicaNS.class, "razaoSocial", filtro, 5);
+    }
+
+
+    public PessoaJuridicaNS buscarLocalFabricacao(String cod) {
+        return genericDAO.findByUniqueProperty(PessoaJuridicaNS.class, "cod", cod);
     }
 
     public List<EtapaFabricacao> etapaFabricacao(String filtro) {

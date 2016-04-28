@@ -149,14 +149,18 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
     }
 
     @Override
-    public <T extends Serializable> SelectionBuilder<T> selectionOf(Class<T> selectionClass) {
-       return selectionOf(selectionClass, SMultiSelectionBySelectView::new);
+    @Deprecated
+    public <T extends Serializable> SelectionBuilder<T, SIList<I>> selectionOf(Class<T> clazz) {
+        throw new SingularFormException("Tipo lista não compativel com selectionOf");
     }
 
-    public <T extends Serializable> SelectionBuilder<T> selectionOf(Class<T> selectionClass, Supplier<SView> viewSupplier) {
+    public <T extends Serializable> SelectionBuilder<T, I> multiselectionOf(Class<T> clazz) {
+        return multiselectionOf(clazz, SMultiSelectionBySelectView::new);
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, I> multiselectionOf(Class<T> clazz, Supplier<SView> viewSupplier) {
         this.setView(viewSupplier);
         return new SelectionBuilder<>(this);
     }
-
 
 }

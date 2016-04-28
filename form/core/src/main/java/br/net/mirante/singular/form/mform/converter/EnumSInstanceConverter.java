@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.converter;
 
 import br.net.mirante.singular.form.mform.SInstance;
 
-public class EnumSInstanceConverter<T extends Enum<T>> implements SInstanceConverter<T> {
+public class EnumSInstanceConverter<T extends Enum<T>> implements SInstanceConverter<T, SInstance> {
 
     private final Class<T> enumClass;
 

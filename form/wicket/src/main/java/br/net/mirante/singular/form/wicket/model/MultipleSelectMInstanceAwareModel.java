@@ -48,7 +48,7 @@ public class MultipleSelectMInstanceAwareModel extends AbstractMInstanceAwareMod
             list.clear();
             selects.clear();
             for (int i = 0; i <= objects.size(); i += 1) {
-                final Object o = objects.get(i);
+                final Serializable o = objects.get(i);
                 final SInstance newElement = list.addNew();
                 model.getObject().asAtrProvider().getConverter().fillInstance(newElement, o);
                 selects.add(new SelectMInstanceAwareModel(new SInstanceItemListaModel<>(model, i)));

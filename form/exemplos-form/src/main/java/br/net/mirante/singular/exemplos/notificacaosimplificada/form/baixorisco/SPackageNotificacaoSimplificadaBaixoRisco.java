@@ -15,8 +15,8 @@ import br.net.mirante.singular.exemplos.util.TripleConverter;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+import org.apache.commons.lang3.tuple.Triple;
 
 public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
@@ -45,7 +45,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         final STypeLinhaProducao linhaProducao = baixoRisco.addField("linhaProducao", STypeLinhaProducao.class);
 
-        final STypeComposite<?> configuracaoLinhaProducao     = baixoRisco.addFieldComposite("configuracaoLinhaProducao");
+        final STypeComposite<SIComposite> configuracaoLinhaProducao     = baixoRisco.addFieldComposite("configuracaoLinhaProducao");
         final STypeSimple       idConfiguracaoLinhaProducao   = configuracaoLinhaProducao.addFieldInteger("id");
         final STypeSimple       idLinhaProducaoConfiguracao   = configuracaoLinhaProducao.addFieldInteger("idLinhaProducao");
         final STypeSimple       descConfiguracaoLinhaProducao = configuracaoLinhaProducao.addFieldString("descricao");
@@ -57,11 +57,11 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .asAtrBootstrap()
                     .colPreference(8);
             configuracaoLinhaProducao
-                    .selection()
+                    .autocompleteOf(Triple.class)
                     .id("${left}")
                     .display("${right}")
                     .converter(new TripleConverter(idConfiguracaoLinhaProducao, idLinhaProducaoConfiguracao, descConfiguracaoLinhaProducao))
-                    .provider((SimpleProvider) ins -> dominioService(ins).configuracoesLinhaProducao(Value.of(ins, linhaProducao.id)));
+                    .simpleProvider(ins -> dominioService(ins).configuracoesLinhaProducao(Value.of(ins, linhaProducao.id)));
         }
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> substancia = new STypeSubstanciaPopulator(baixoRisco, configuracaoLinhaProducao, idConfiguracaoLinhaProducao,

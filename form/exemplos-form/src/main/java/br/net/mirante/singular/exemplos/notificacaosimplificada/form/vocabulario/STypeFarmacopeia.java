@@ -2,7 +2,10 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulari
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Farmacopeia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInfoType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -34,15 +37,15 @@ public class STypeFarmacopeia extends STypeComposite<SIComposite> {
             this.autocompleteOf(Farmacopeia.class)
                     .id(f -> f.getId().toString())
                     .display(VocabularioControlado::getDescricao)
-                    .converter(new SInstanceConverter<Farmacopeia>() {
+                    .converter(new SInstanceConverter<Farmacopeia, SIComposite>() {
                         @Override
-                        public void fillInstance(SInstance ins, Farmacopeia obj) {
-                            ((SIComposite) ins).setValue(id, obj.getId());
-                            ((SIComposite) ins).setValue(descricao, obj.getDescricao());
+                        public void fillInstance(SIComposite ins, Farmacopeia obj) {
+                            ins.setValue(id, obj.getId());
+                            ins.setValue(descricao, obj.getDescricao());
                         }
 
                         @Override
-                        public Farmacopeia toObject(SInstance ins) {
+                        public Farmacopeia toObject(SIComposite ins) {
                             return dominioService(ins).listFarmacopeias()
                                     .stream().filter(u -> Integer.valueOf(u.getId().intValue()).equals(Value.of(ins, id)))
                                     .findFirst()

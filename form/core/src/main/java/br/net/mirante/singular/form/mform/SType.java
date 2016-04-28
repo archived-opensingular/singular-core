@@ -699,24 +699,27 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return new SelectionBuilder(this);
     }
 
-    public <T extends Serializable> SelectionBuilder<T> selectionOf(Class<T> clasz) {
-        this.setView(SViewSelectionBySelect::new);
-        return new SelectionBuilder<T>(this);
+    public <T extends Serializable> SelectionBuilder<T, I> selectionOf(Class<T> clazz, SView view) {
+        this.setView(view);
+        return new SelectionBuilder<>(this);
     }
 
-    public <T extends Serializable> SelectionBuilder<T> autocompleteOf(Class<T> clasz) {
-        this.setView(SViewAutoComplete::new);
-        return new SelectionBuilder<T>(this);
+    public <T extends Serializable> SelectionBuilder<T, I> selectionOf(Class<T> clazz) {
+        return selectionOf(clazz, new SViewSelectionBySelect());
     }
 
-    public <T extends Serializable> SelectionBuilder<T> lazyAutocompleteOf(Class<T> clasz) {
+    public <T extends Serializable> SelectionBuilder<T, I> autocompleteOf(Class<T> clazz) {
+        return selectionOf(clazz, new SViewAutoComplete());
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, I> lazyAutocompleteOf(Class<T> clasz) {
         this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
-        return new SelectionBuilder<T>(this);
+        return new SelectionBuilder<>(this);
     }
 
-    public SelectionBuilder autocomplete() {
+    public <T extends Serializable> SelectionBuilder<T, I> autocomplete() {
         this.setView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
-        return new SelectionBuilder(this);
+        return new SelectionBuilder<>(this);
     }
 
     public void withSelectionFromProvider(Class<SimpleProvider> providerClass) {
@@ -731,7 +734,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
                 .provider(providerName);
     }
 
-    public <T extends Serializable> void withSelectionFromProvider(Provider<T> provider) {
+    public <T extends Serializable> void withSelectionFromProvider(Provider<T, SInstance> provider) {
         this.selection()
                 .selfIdAndDisplay()
                 .provider(provider);

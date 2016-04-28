@@ -1,9 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -34,7 +31,7 @@ public class MultipleSelectMapperTest {
                     .selfId()
                     .selfDisplay()
                     .simpleConverter()
-                    .provider((SimpleProvider<String>) ins -> Arrays.asList("iPod", "iPhone"));
+                    .provider((SimpleProvider<String, SInstance>) ins -> Arrays.asList("iPod", "iPhone"));
             gadgetsChoices.withView(SMultiSelectionBySelectView::new);
         }
 

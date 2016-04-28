@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
+import java.io.Serializable;
+
 /**
  * Mapper responsible for rendering the SViewAutoComplete withing wicket.
  *
@@ -40,7 +42,7 @@ public class AutocompleteMapper extends ControlsFieldComponentAbstractMapper {
         if ((mi != null) && (mi.getValue() != null)) {
             final SInstanceConverter converter = mi.asAtrProvider().getConverter();
             if (converter != null) {
-                final Object converted = converter.toObject(mi);
+                final Serializable converted = converter.toObject(mi);
                 if (converted != null) {
                     return mi.asAtrProvider().getDisplayFunction().apply(converted);
                 }

@@ -34,7 +34,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
         tipoEnsaio.selection()
                 .id("${id}")
                 .display("${descricao}")
-                .converter(new SInstanceConverter<TipoEnsaioControleQualidade>() {
+                .converter(new SInstanceConverter<TipoEnsaioControleQualidade, SInstance>() {
                     @Override
                     public void fillInstance(SInstance ins, TipoEnsaioControleQualidade obj) {
                         ((SIComposite) ins).setValue(idTipoEnsaio, obj.getId());

@@ -30,7 +30,7 @@ public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
     @Override
     @SuppressWarnings("rawtypes")
     public Component appendInput() {
-        final List<?>   opcoesValue;
+        final List<?> opcoesValue;
         if (model.getObject().getType() instanceof STypeList) {
             opcoesValue = model.getObject().asAtrProvider().getSimpleProvider().load(ctx.getCurrentInstance());
         } else {
@@ -67,9 +67,9 @@ public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
             final Iterator   iterator = children.iterator();
             boolean          first    = true;
             while (iterator.hasNext()) {
-                final SInstance val       = (SInstance) iterator.next();
-                final Object    converted = mi.asAtrProvider().getConverter().toObject(val);
-                final String    label     = mi.asAtrProvider().getDisplayFunction().apply(converted);
+                final SInstance    val       = (SInstance) iterator.next();
+                final Serializable converted = mi.asAtrProvider().getConverter().toObject(val);
+                final String       label     = mi.asAtrProvider().getDisplayFunction().apply(converted);
                 if (first) {
                     output.append(label);
                     first = false;
