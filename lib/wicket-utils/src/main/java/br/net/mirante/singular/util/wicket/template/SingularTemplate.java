@@ -110,8 +110,8 @@ public abstract class SingularTemplate extends WebPage {
         final Consumer<String> add = s -> scriptHeaderItens.add(JavaScriptHeaderItem.forUrl(s));
         final Consumer<String> addOnlyIfLtIE9 = s -> scriptHeaderItens.add(JavaScriptHeaderItem.forUrl(s, null, false, "UTF-8", "lt IE 9"));
 
-        addOnlyIfLtIE9.accept("/singular-static/resourcesmetronic/global/plugins/respond.min.js");
-        addOnlyIfLtIE9.accept("/singular-static/resourcesmetronic/global/plugins/excanvas.min.js");
+        addOnlyIfLtIE9.accept("/singular-static/resources/metronic/global/plugins/respond.min.js");
+        addOnlyIfLtIE9.accept("/singular-static/resources/metronic/global/plugins/excanvas.min.js");
 
         add.accept("/singular-static/resources/metronic/global/plugins/jquery-migrate.min.js");
         add.accept("/singular-static/resources/metronic/global/plugins/jquery-ui/jquery-ui.min.js");
