@@ -1,20 +1,21 @@
 package br.net.mirante.singular.server.commons.persistence.entity.form;
 
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.persistence.util.Constants;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.persistence.entity.BaseEntity;
+import br.net.mirante.singular.persistence.util.Constants;
 
 @MappedSuperclass
 @Table(schema = Constants.SCHEMA, name = "TB_ARQUIVO_PETICAO")
-public class AbstractAttachmentEntity implements IAttachmentRef {
+public class AbstractAttachmentEntity extends BaseEntity<String> implements IAttachmentRef {
 
     @Id
     @Column(name = "CO_ARQUIVO_PETICAO")
@@ -101,6 +102,10 @@ public class AbstractAttachmentEntity implements IAttachmentRef {
         if (size != other.size) return false;
         return true;
     }
-    
-    
+
+
+    @Override
+    public String getCod() {
+        return getId();
+    }
 }
