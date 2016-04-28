@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
+import br.net.mirante.singular.support.persistence.util.EnumId;
+
 public enum TipoControleValor implements EnumId<TipoControleValor, Character> {
 
     MAIOR('1', ">"),
@@ -28,11 +30,7 @@ public enum TipoControleValor implements EnumId<TipoControleValor, Character> {
     }
 
     @Override
-    public TipoControleValor getEnum() {
-        return this;
-    }
-
-    public static TipoControleValor valueOfEnum(Character codigo) {
+    public TipoControleValor valueOfEnum(Character codigo) {
         for (TipoControleValor tipo : values()) {
             if (tipo.getCodigo().equals(codigo)) {
                 return tipo;

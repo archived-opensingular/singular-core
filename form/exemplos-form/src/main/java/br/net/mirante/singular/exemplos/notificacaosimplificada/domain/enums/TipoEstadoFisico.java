@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
+import br.net.mirante.singular.support.persistence.util.EnumId;
+
 public enum TipoEstadoFisico implements EnumId<TipoEstadoFisico, Character> {
 
     NAO_INFORMADO('4', ""),
@@ -23,10 +25,6 @@ public enum TipoEstadoFisico implements EnumId<TipoEstadoFisico, Character> {
 
     private String descricao;
 
-    @Override
-    public TipoEstadoFisico getEnum() {
-        return this;
-    }
 
     @Override
     public Character getCodigo() {
@@ -38,7 +36,8 @@ public enum TipoEstadoFisico implements EnumId<TipoEstadoFisico, Character> {
         return descricao;
     }
 
-    public static TipoEstadoFisico valueOfEnum(Character id) {
+    @Override
+    public TipoEstadoFisico valueOfEnum(Character id) {
         for (TipoEstadoFisico tipo : values()) {
             if (tipo.getCodigo().equals(id)) {
                 return tipo;

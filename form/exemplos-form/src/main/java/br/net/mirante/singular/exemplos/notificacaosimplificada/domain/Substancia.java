@@ -3,15 +3,13 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.domain;
 // Generated 16/03/2010 08:00:26 by Mirante 3.2.2.GA
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.FormaFisica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import java.math.BigDecimal;
 
 @Entity
