@@ -1,6 +1,5 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
-import br.net.mirante.singular.exemplos.canabidiol.STypeImportacao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
