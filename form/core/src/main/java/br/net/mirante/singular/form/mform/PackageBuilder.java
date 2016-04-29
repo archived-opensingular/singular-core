@@ -24,7 +24,7 @@ public class PackageBuilder {
         return sPackage.extendType(name, parentClass);
     }
 
-    final <T extends SType<?>> T creatType(String simpleNameNewType, T parentType) {
+    public <T extends SType<?>> T createType(String simpleNameNewType, T parentType) {
         return sPackage.extendType(simpleNameNewType, parentType);
     }
 

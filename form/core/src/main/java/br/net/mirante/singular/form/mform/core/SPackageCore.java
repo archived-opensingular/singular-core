@@ -47,7 +47,8 @@ public class SPackageCore extends SPackage {
         pb.createType(STypeAnnotationList.class);
         pb.createType(STypeFormula.class);
         pb.createType(STypeAttachment.class);
-        pb.createType(STypeLatitudeLongitude.class);
+        pb.createType(STypeLatitudeLongitude.class); // TODO Mover esse tipo
+                                                     // para o pacote basico
         pb.createType(STypeAttachmentList.class);
 
         pb.createAttributeIntoType(STypeAttachment.class, STypeAttachment.ATR_ORIGINAL_ID);
