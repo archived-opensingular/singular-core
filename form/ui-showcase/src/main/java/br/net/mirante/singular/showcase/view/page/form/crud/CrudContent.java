@@ -5,30 +5,21 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.util.xml.MParser;
-import br.net.mirante.singular.form.wicket.component.BFModalBorder;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
-import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
-import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.page.form.FormVO;
-import br.net.mirante.singular.showcase.view.template.Content;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder.ButtonStyle;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder.Size;
-import br.net.mirante.singular.util.wicket.output.BOutputPanel;
-import br.net.mirante.singular.util.wicket.resource.Icone;
-import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -48,19 +39,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.util.xml.MParser;
+import br.net.mirante.singular.form.wicket.component.BFModalBorder;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
+import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.showcase.view.page.form.FormVO;
+import br.net.mirante.singular.showcase.view.template.Content;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder.ButtonStyle;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder.Size;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import br.net.mirante.singular.util.wicket.resource.Icone;
+import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
 public class CrudContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
@@ -99,8 +102,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
         super.onInitialize();
 
-        add(new Form<>("optionsForm").add(setUpTemplatesOptions()));
-        add(new Form<>("delete-form").add(deleteModal));
+        add(new SingularForm<>("optionsForm").add(setUpTemplatesOptions()));
+        add(new SingularForm<>("delete-form").add(deleteModal));
         add(setUpInsertButton());
         add(listTable = setupDataTable());
         add(viewXmlModal);
@@ -140,7 +143,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     }
 
     private MarkupContainer setUpInsertButton() {
-        return new Form<>("form").add(new AjaxButton("insert") {
+        return new SingularForm<>("form").add(new AjaxButton("insert") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 PageParameters params = new PageParameters().add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName());

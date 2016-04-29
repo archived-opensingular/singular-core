@@ -43,7 +43,7 @@ public class STypeEmbalagemSecundaria extends STypeComposite<SIComposite> {
                     @Override
                     public EmbalagemSecundaria toObject(SIComposite ins) {
                         final EmbalagemSecundaria es = new EmbalagemSecundaria();
-                        es.setId(Long.valueOf(Value.of(ins, id)));
+                        es.setId(Value.of(ins, id).longValue());
                         es.setDescricao(Value.of(ins, descricao));
                         return es;
                     }
