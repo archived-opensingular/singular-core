@@ -6,12 +6,19 @@
 package br.net.mirante.singular.bam.form;
 
 import br.net.mirante.singular.bamclient.portlet.FilterConfig;
+import br.net.mirante.singular.bamclient.portlet.filter.AggregationPeriod;
 import br.net.mirante.singular.bamclient.portlet.filter.FieldType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 public enum FilterFieldType {
 
@@ -51,40 +58,56 @@ public enum FilterFieldType {
         @Override
         protected STypeSimple addFieldImpl(String groupConnectionURL, FilterConfig fc,
                                            STypeComposite root) {
-//            final STypeSimple simpleType = root.addFieldString(fc.getIdentifier());
-//            if (!isEmpty(fc.getRestEndpoint()) && !isEmpty(groupConnectionURL)) {
-//                final String connectionURL = groupConnectionURL + fc.getRestEndpoint();
-//                switch (fc.getRestReturnType()) {
-//                    case VALUE:
-//                        fillValueOptions(selectionProvider, connectionURL);
-//                        break;
-//                    case KEY_VALUE:
-//                        fillKeyValueOptions(selectionProvider, connectionURL);
-//                        break;
-//                }
-//            } else if (fc.getOptions() != null && fc.getOptions().length > 0) {
-//                Arrays.asList(fc.getOptions()).forEach(selectionProvider::add);
-//            }
-//            return simpleType;
-            return null;
+            final STypeString simpleType = root.addFieldString(fc.getIdentifier());
+            if (!isEmpty(fc.getRestEndpoint()) && !isEmpty(groupConnectionURL)) {
+                final String connectionURL = groupConnectionURL + fc.getRestEndpoint();
+                switch (fc.getRestReturnType()) {
+                    case VALUE:
+                        simpleType.selectionOf(String.class)
+                                .selfIdAndDisplay()
+                                .simpleProvider(ins -> {
+                                    final RestTemplate restTemplate = new RestTemplate();
+                                    return restTemplate.getForObject(connectionURL, List.class);
+                                });
+                        break;
+                    case KEY_VALUE:
+                        simpleType.selectionOf(Pair.class)
+                                .id("${left}")
+                                .display("${right}")
+                                .converter(new SInstanceConverter<Pair, SIString>() {
+                                    @Override
+                                    public void fillInstance(SIString ins, Pair obj) {
+                                        ins.setValue(obj.getLeft());
+                                    }
+
+                                    @Override
+                                    public Pair toObject(SIString ins) {
+                                        final RestTemplate        restTemplate = new RestTemplate();
+                                        final Map<String, String> map          = restTemplate.getForObject(connectionURL, Map.class);
+                                        for (Map.Entry<String, String> entry : map.entrySet()) {
+                                            if (entry.getKey().equals(ins.getValue())) {
+                                                return Pair.of(entry.getKey(), entry.getValue());
+                                            }
+                                        }
+                                        return null;
+                                    }
+                                })
+                                .simpleProvider(ins -> {
+                                    final RestTemplate        restTemplate = new RestTemplate();
+                                    final Map<String, String> map          = restTemplate.getForObject(connectionURL, Map.class);
+                                    final List<Pair>          pairs        = new ArrayList<>();
+                                    map.forEach((k, v) -> pairs.add(Pair.of(k, v)));
+                                    return pairs;
+                                });
+                        break;
+                }
+            } else if (fc.getOptions() != null && fc.getOptions().length > 0) {
+                simpleType.selectionOf(String.class)
+                        .selfIdAndDisplay()
+                        .simpleProviderOf(fc.getOptions());
+            }
+            return simpleType;
         }
-
-//        private void fillValueOptions(SFixedOptionsSimpleProvider provider, String endpoint) {
-//            final RestTemplate restTemplate = new RestTemplate();
-//            final List<String> list = restTemplate.getForObject(endpoint, List.class);
-//            if (list != null) {
-//                list.forEach(provider::add);
-//            }
-//        }
-//
-//        private void fillKeyValueOptions(SFixedOptionsSimpleProvider provider, String endpoint) {
-//            final RestTemplate restTemplate = new RestTemplate();
-//            final Map<String, String> map = restTemplate.getForObject(endpoint, Map.class);
-//            if (map != null) {
-//                map.forEach(provider::add);
-//            }
-//        }
-
     },
 
     DATE(FieldType.DATE) {
@@ -99,9 +122,24 @@ public enum FilterFieldType {
         @Override
         protected STypeSimple addFieldImpl(String groupConnectionURL, FilterConfig fc,
                                            STypeComposite root) {
-            final STypeSimple typeSimple = root.addFieldString(fc.getIdentifier());
-//            final SFixedOptionsSimpleProvider provider = typeSimple.withSelection();
-//            Arrays.asList(AggregationPeriod.values()).forEach(ap -> provider.add(ap, ap.getDescription()));
+            final STypeString typeSimple = root.addFieldString(fc.getIdentifier());
+            typeSimple.selectionOf(AggregationPeriod.class)
+                    .id(AggregationPeriod::getDescription)
+                    .display(AggregationPeriod::getDescription)
+                    .converter(new SInstanceConverter<AggregationPeriod, SIString>() {
+                        @Override
+                        public void fillInstance(SIString ins, AggregationPeriod obj) {
+                            ins.setValue(obj.getDescription());
+                        }
+
+                        @Override
+                        public AggregationPeriod toObject(SIString ins) {
+                            return Arrays.stream(AggregationPeriod.values())
+                                    .filter(ap -> ap.getDescription().equals(ins.getValue()))
+                                    .findFirst().orElse(null);
+                        }
+                    })
+                    .simpleProviderOf(AggregationPeriod.values());
             return typeSimple;
         }
     };
