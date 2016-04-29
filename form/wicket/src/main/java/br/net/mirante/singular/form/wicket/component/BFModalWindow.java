@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.component;
 
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
@@ -34,5 +35,10 @@ public class BFModalWindow extends BSModalWindow {
     @Override
     protected BSModalBorder newModalBorder(String id) {
         return new BFModalBorder(id);
+    }
+    
+    @Override
+    protected Form<?> newForm(String id) {
+        return new SingularForm<>(id);
     }
 }

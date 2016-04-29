@@ -5,8 +5,7 @@
 
 package br.net.mirante.singular.showcase.view.page;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -18,8 +17,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -31,14 +28,17 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.lang.Bytes;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.component.CaseBase;
@@ -46,7 +46,6 @@ import br.net.mirante.singular.showcase.component.ResourceRef;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
-import org.apache.wicket.util.lang.Bytes;
 
 
 public class ItemCasePanel extends Panel implements SingularWicketContainer<ItemCasePanel, Void> {
@@ -76,7 +75,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         super.onInitialize();
         add(buildHeaderText());
 
-        Form<Void> form = new Form<>("form");
+        SingularForm<Void> form = new SingularForm<>("form");
         form.setMultiPart(true);
         form.setFileMaxSize(Bytes.MAX);
         form.setMaxSize(Bytes.MAX);

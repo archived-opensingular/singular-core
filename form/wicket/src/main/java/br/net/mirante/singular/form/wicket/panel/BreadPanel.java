@@ -8,15 +8,15 @@ package br.net.mirante.singular.form.wicket.panel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.metronic.breadcrumb.MetronicBreadcrumbBar;
 
 public class BreadPanel extends Panel {
 
-    private Form<?> form = new Form<>("panel-form");
+    private SingularForm<?> form = new SingularForm<>("panel-form");
     private BSGrid container = new BSGrid("grid");
     protected List<String> breads = new ArrayList<>();
 

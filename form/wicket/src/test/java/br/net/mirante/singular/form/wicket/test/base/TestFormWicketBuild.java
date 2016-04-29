@@ -1,13 +1,11 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import java.util.function.Supplier;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.FormTester;
@@ -17,19 +15,25 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.panel.FormPanel;
-
-import java.util.function.Supplier;
 
 public class TestFormWicketBuild  {
 
@@ -110,7 +114,7 @@ public class TestFormWicketBuild  {
     }
 
     private TestPanel buildTestPanel(BSGrid rootContainer){
-        Form<Object> form = new Form<>("form");
+        SingularForm<Object> form = new SingularForm<>("form");
 
         TestPanel testPanel = new TestPanel("body-child"){
             @Override
