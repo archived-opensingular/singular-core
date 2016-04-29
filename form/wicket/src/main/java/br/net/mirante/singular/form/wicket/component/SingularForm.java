@@ -19,10 +19,10 @@ public class SingularForm<T> extends Form<T> {
     }
 
     protected boolean isIgnoreValidation() {
-        return true;
+        return false;
     }
     protected boolean isIgnoreErrors() {
-        return true;
+        return false;
     }
 
     //@formatter:off

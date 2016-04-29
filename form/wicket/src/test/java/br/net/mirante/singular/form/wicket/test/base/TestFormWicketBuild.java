@@ -84,13 +84,13 @@ public class TestFormWicketBuild  {
         singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
 
         tester.startComponentInPage(testPanel);
-        Assertions.assertThat("Brasilia").isEqualTo(mCidade.getObject().getValue());
+        Assertions.assertThat(mCidade.getObject().getValue()).isEqualTo("Brasilia");
 
         FormTester formTester = tester.newFormTester("body-child:container:form");
         formTester.setValue(findContainerRelativePath(formTester.getForm(), "cidade").get(), "Guará");
         formTester.submit();
 
-        Assertions.assertThat("Guará").isEqualTo(mCidade.getObject().getValue());
+        Assertions.assertThat(mCidade.getObject().getValue()).isEqualTo("Guará");
     }
 
     @Test
