@@ -11,6 +11,7 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondi
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeFormaFarmaceutica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeLinhaProducao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
+import br.net.mirante.singular.exemplos.util.TripleConverter;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -44,7 +45,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         final STypeLinhaProducao linhaProducao = baixoRisco.addField("linhaProducao", STypeLinhaProducao.class);
 
-        final STypeComposite<?> configuracaoLinhaProducao     = baixoRisco.addFieldComposite("configuracaoLinhaProducao");
+        final STypeComposite<SIComposite> configuracaoLinhaProducao     = baixoRisco.addFieldComposite("configuracaoLinhaProducao");
         final STypeSimple       idConfiguracaoLinhaProducao   = configuracaoLinhaProducao.addFieldInteger("id");
         final STypeSimple       idLinhaProducaoConfiguracao   = configuracaoLinhaProducao.addFieldInteger("idLinhaProducao");
         final STypeSimple       descConfiguracaoLinhaProducao = configuracaoLinhaProducao.addFieldString("descricao");
@@ -56,21 +57,15 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                     .asAtrBootstrap()
                     .colPreference(8);
             configuracaoLinhaProducao
-                    .withSelectView()
-                    .withSelectionFromProvider(descConfiguracaoLinhaProducao, (optionsInstance, lb) -> {
-                        final Integer id = Value.of(optionsInstance, linhaProducao.id);
-                        for (Triple p : dominioService(optionsInstance).configuracoesLinhaProducao(id)) {
-                            lb
-                                    .add()
-                                    .set(idConfiguracaoLinhaProducao, p.getLeft())
-                                    .set(idLinhaProducaoConfiguracao, p.getMiddle())
-                                    .set(descConfiguracaoLinhaProducao, p.getRight());
-                        }
-                    });
+                    .autocompleteOf(Triple.class)
+                    .id("${left}")
+                    .display("${right}")
+                    .converter(new TripleConverter(idConfiguracaoLinhaProducao, idLinhaProducaoConfiguracao, descConfiguracaoLinhaProducao))
+                    .simpleProvider(ins -> dominioService(ins).configuracoesLinhaProducao(Value.of(ins, linhaProducao.id)));
         }
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> substancia = new STypeSubstanciaPopulator(baixoRisco, configuracaoLinhaProducao, idConfiguracaoLinhaProducao,
-                ins-> dominioService(ins).findSubstanciasByIdConfiguracaoLinhaProducao((Integer) Value.of(ins, idConfiguracaoLinhaProducao))
+                ins -> dominioService(ins).findSubstanciasByIdConfiguracaoLinhaProducao((Integer) Value.of(ins, idConfiguracaoLinhaProducao))
         ).populate();
 
         final STypeString nomeComercial = baixoRisco.addFieldString("nomeComercial");

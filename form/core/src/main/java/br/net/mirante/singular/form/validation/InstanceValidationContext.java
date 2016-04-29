@@ -5,48 +5,63 @@
 
 package br.net.mirante.singular.form.validation;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import static java.lang.Boolean.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
-import static java.lang.Boolean.TRUE;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+
+import br.net.mirante.singular.form.mform.ICompositeInstance;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstanceViewState;
+import br.net.mirante.singular.form.mform.SInstances;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 
 public class InstanceValidationContext {
 
-    private SInstance rootInstance;
-    private List<IValidationError> errors = new ArrayList<>();
+    private ListMultimap<Integer, IValidationError> contextErrors = ArrayListMultimap.create();
 
-    public InstanceValidationContext(SInstance instance) {
-        this.rootInstance = instance;
-    }
+    public InstanceValidationContext() {}
 
-    public List<IValidationError> getErrors() {
-        return errors;
+    private ListMultimap<Integer, IValidationError> getContextErrors() {
+        return contextErrors;
     }
-    public Map<Integer, Set<IValidationError>> getErrorsByInstanceId() {
-        return getErrors().stream()
-            .collect(Collectors.groupingBy(
-                it -> it.getInstance().getId(),
-                LinkedHashMap::new,
-                Collectors.toCollection(LinkedHashSet::new)));
+    public Map<Integer, Collection<IValidationError>> getErrorsByInstanceId() {
+        ArrayListMultimap<Integer, IValidationError> copy = ArrayListMultimap.create();
+        copy.putAll(getContextErrors());
+        return copy.asMap();
     }
 
-    public void validateAll() {
-        SInstances.visitAllChildrenIncludingEmpty(rootInstance, inst -> validateInstance(new InstanceValidatable<>(inst, errors::add)));
+    public void validateAll(SInstance rootInstance) {
+        SInstances.visitAllChildrenIncludingEmpty(
+            rootInstance,
+            inst -> validateInstance(new InstanceValidatable<>(inst, this::onError)));
+        updateDocumentErrors(rootInstance);
     }
-    public void validateSingle() {
-        validateInstance(new InstanceValidatable<>(rootInstance, errors::add));
+    public void validateSingle(SInstance rootInstance) {
+        validateInstance(new InstanceValidatable<>(rootInstance, this::onError));
+        updateDocumentErrors(rootInstance);
+    }
+    private void onError(IValidationError error) {
+        getContextErrors().put(error.getInstanceId(), error);
+    }
+    protected void updateDocumentErrors(SInstance rootInstance) {
+        SInstances.streamDescendants(rootInstance, true)
+            .map(instance -> instance.getId())
+            .forEach(instanceId -> rootInstance.getDocument()
+                .setValidationErrors(instanceId, contextErrors.get(instanceId)));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public <I extends SInstance> void validateInstance(IInstanceValidatable<I> validatable) {
         final I instance = validatable.getInstance();
         if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance)) {
-            if (!checkIfIsRequiredAndIfIsFilled(instance)) {
-                validatable.error(new ValidationError(instance, ValidationErrorLevel.ERROR, "Campo obrigatório"));
+            if (!isFilledIfRequired(instance)) {
+                validatable.error(new ValidationError(instance.getId(), ValidationErrorLevel.ERROR, "Campo obrigatório"));
                 return;
             }
             final SType<I> tipo = (SType<I>) instance.getType();
@@ -62,7 +77,7 @@ public class InstanceValidationContext {
      * @param instance
      * @return true se estiver OK
      */
-    protected boolean checkIfIsRequiredAndIfIsFilled(SInstance instance) {
+    protected boolean isFilledIfRequired(SInstance instance) {
         if (!TRUE.equals(instance.getAttributeValue(SPackageBasic.ATR_REQUIRED))) {
             return true;
         }
@@ -76,34 +91,34 @@ public class InstanceValidationContext {
 
     protected boolean isEnabledInHierarchy(SInstance instance) {
         return !SInstances.listAscendants(instance, true).stream()
-                .map(it -> SInstanceViewState.get(it).isEnabled())
-                .anyMatch(Boolean.FALSE::equals);
+            .map(it -> SInstanceViewState.get(it).isEnabled())
+            .anyMatch(Boolean.FALSE::equals);
     }
 
     protected boolean isVisibleInHierarchy(SInstance instance) {
         return !SInstances.listAscendants(instance, true).stream()
-                .map(it -> SInstanceViewState.get(it).isVisible())
-                .anyMatch(Boolean.FALSE::equals);
+            .map(it -> SInstanceViewState.get(it).isVisible())
+            .anyMatch(Boolean.FALSE::equals);
     }
 
     public boolean hasErrorsAboveLevel(ValidationErrorLevel minErrorLevel) {
-        return getErrors().stream()
+        return getContextErrors().values().stream()
             .filter(it -> it.getErrorLevel().compareTo(minErrorLevel) >= 0)
             .findAny()
             .isPresent();
     }
 
     private static class InstanceValidatable<I extends SInstance> implements IInstanceValidatable<I> {
-        private ValidationErrorLevel            defaultLevel = ValidationErrorLevel.ERROR;
-        private final I                         instance;
-        private final Consumer<ValidationError> onError;
-        public InstanceValidatable(I instance, Consumer<ValidationError> onError) {
+        private ValidationErrorLevel             defaultLevel = ValidationErrorLevel.ERROR;
+        private final I                          instance;
+        private final Consumer<IValidationError> onError;
+        public InstanceValidatable(I instance, Consumer<IValidationError> onError) {
             this.instance = instance;
             this.onError = onError;
         }
 
         private IValidationError errorInternal(ValidationErrorLevel level, String msg) {
-            ValidationError error = new ValidationError(instance, level, msg);
+            ValidationError error = new ValidationError(instance.getId(), level, msg);
             onError.accept(error);
             return error;
         }

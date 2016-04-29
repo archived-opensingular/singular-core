@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form.mform.core;
 
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
@@ -36,7 +35,7 @@ public class STypeDateTest {
 
         DateTime reference = DateTime.parse("2016-01-01");
         d.setValue(reference.toDate());
-        assertThat(d.getSelectLabel()).isEqualTo("01/01/2016");
+        assertThat(d.toStringDisplayDefault()).isEqualTo("01/01/2016");
     }
 
     @Test public void convertsFromISOForrmat(){

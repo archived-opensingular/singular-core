@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
+import br.net.mirante.singular.support.persistence.util.EnumId;
+
 public enum TipoParametro implements EnumId<TipoParametro, Character> {
 
     MAIOR_DEZ_PORCENTO('0', "> 10%"),
@@ -24,11 +26,6 @@ public enum TipoParametro implements EnumId<TipoParametro, Character> {
     private String descricao;
 
     @Override
-    public TipoParametro getEnum() {
-        return this;
-    }
-
-    @Override
     public Character getCodigo() {
         return codigo;
     }
@@ -38,7 +35,8 @@ public enum TipoParametro implements EnumId<TipoParametro, Character> {
         return descricao;
     }
 
-    public static TipoParametro valueOfEnum(Character id) {
+    @Override
+    public TipoParametro valueOfEnum(Character id) {
         for (TipoParametro tipo : values()) {
             if (tipo.getCodigo().equals(id)) {
                 return tipo;

@@ -35,8 +35,7 @@ import br.net.mirante.singular.form.util.xml.MElement;
  */
 public class FormSerializationUtil {
 
-    private FormSerializationUtil() {
-    }
+    private FormSerializationUtil() {}
 
     /**
      * <p>
@@ -74,14 +73,15 @@ public class FormSerializationUtil {
         SInstance root = document.getRoot();
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root);
         MElement annotations = null;
-        if(!root.asAtrAnnotation().allAnnotations().isEmpty()){
+        if (!root.asAtrAnnotation().allAnnotations().isEmpty()) {
             annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root.asAtrAnnotation().persistentAnnotations());
         }
 
         checkIfSerializable(root);
         FormSerialized fs = new FormSerialized(document.getRootRefType().get(), root.getType().getName(), xml, annotations,
-                document.getDocumentFactoryRef());
+            document.getDocumentFactoryRef());
         serializeServices(document, fs);
+        fs.setValidationErrors(document.getValidationErrors());
         return fs;
     }
 
@@ -97,22 +97,22 @@ public class FormSerializationUtil {
         SDocument document = instance.getDocument();
         if (!document.getRootRefType().isPresent()) {
             throw new SingularFormException("Não foi configurado o rootRefType no Document da instância, o que impedirá a "
-                    + "serialização/deserialização do mesmo. " + "A instância deve ser criada usando " + SDocumentFactory.class.getName(),
-                    instance);
+                + "serialização/deserialização do mesmo. " + "A instância deve ser criada usando " + SDocumentFactory.class.getName(),
+                instance);
         }
-        if(document.getDocumentFactoryRef() == null) {
+        if (document.getDocumentFactoryRef() == null) {
             throw new SingularFormException("Não foi configurado o DocumentFactory no Document da instância, o que impedirá a "
-                    + "serialização/deserialização do mesmo. " + "A instância deve ser criada usando " + SDocumentFactory.class.getName(),
-                    instance);
+                + "serialização/deserialização do mesmo. " + "A instância deve ser criada usando " + SDocumentFactory.class.getName(),
+                instance);
         }
         if (document.annotations() != null) {
             if (!document.annotations().getDocument().getRootRefType().isPresent()) {
                 throw new SingularFormException("Não foi configurado o rootRefType nas anotações da instância, o que impedirá a "
-                        + "serialização/deserialização do mesmo. ", instance);
+                    + "serialização/deserialização do mesmo. ", instance);
             }
             if (document.annotations().getDocument().getDocumentFactoryRef() == null) {
                 throw new SingularFormException("Não foi configurado o DocumentFactory nas anotações da instância, o que impedirá a "
-                        + "serialização/deserialização do mesmo. ", instance);
+                    + "serialização/deserialização do mesmo. ", instance);
             }
         }
     }
@@ -144,6 +144,7 @@ public class FormSerializationUtil {
             SInstance root = MformPersistenciaXML.fromXML(fs.getRefRootType(), fs.getXml(), fs.getSDocumentFactoryRef().get());
             deserializeServices(fs.getServices(), root.getDocument());
             MformPersistenciaXML.annotationLoadFromXml(root, fs.getAnnotations());
+            root.getDocument().setValidationErrors(fs.getValidationErrors());
             return defineRoot(fs, root);
         } catch (Exception e) {
             throw deserializingError(fs, e);
@@ -162,7 +163,9 @@ public class FormSerializationUtil {
     }
 
     private static SInstance defineRoot(FormSerialized fs, SInstance root) {
-        if (StringUtils.isBlank(fs.getFocusFieldPath())) { return root; }
+        if (StringUtils.isBlank(fs.getFocusFieldPath())) {
+            return root;
+        }
         return ((ICompositeInstance) root).getField(fs.getFocusFieldPath());
     }
 
@@ -173,6 +176,4 @@ public class FormSerializationUtil {
         }
         return new SingularFormException(msg, e);
     }
-
 }
-

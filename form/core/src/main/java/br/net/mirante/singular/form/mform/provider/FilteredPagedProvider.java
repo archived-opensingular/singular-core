@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import java.io.Serializable;
 import java.util.List;
 
-public interface FilteredPagedProvider<R> extends Serializable {
+public interface FilteredPagedProvider<R> extends Provider {
 
     void loadFilterDefinition(STypeComposite<?> filter);
 
@@ -41,8 +41,7 @@ public interface FilteredPagedProvider<R> extends Serializable {
         public String getLabel() {
             return label;
         }
+
     }
-
-
 }
 

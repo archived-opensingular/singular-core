@@ -1,28 +1,26 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
-import static br.net.mirante.singular.form.mform.util.SQuery.*;
-
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.SPackageNotificacaoSimplificadaGasMedicinal;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+
+import java.util.Arrays;
+
+import static br.net.mirante.singular.form.mform.util.SQuery.$;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
-    public STypeSimple tipoLocalFabricacao;
-    public STypeEmpresaPropria empresaPropria;
-    public STypeEmpresaTerceirizada empresaTerceirizada;
-    public STypeComposite<SIComposite> outroLocalFabricacao;
+    public  STypeSimple                 tipoLocalFabricacao;
+    public  STypeEmpresaPropria         empresaPropria;
+    public  STypeEmpresaTerceirizada    empresaTerceirizada;
+    public  STypeComposite<SIComposite> outroLocalFabricacao;
     private STypeComposite<SIComposite> envasadora;
 
     static DominioService dominioService(SInstance ins) {
@@ -39,26 +37,31 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
         tipoLocalFabricacao
                 .asAtrBasic()
                 .label("Tipo de local");
-        tipoLocalFabricacao
-                .withRadioView()
-                .withSelectionFromProvider((ins, filter) -> {
-                    final SIList<?> list = ins.getType().newList();
-                    for (LocalFabricacao local : LocalFabricacao.getValues(isGas(ins))) {
-                        SInstance instancia = list.addNew();
-                        instancia.setValue(local.getId());
-                        instancia.setSelectLabel(local.getDescricao());
-                    }
-                    return list;
-                });
 
+        tipoLocalFabricacao
+                .selectionOf(LocalFabricacao.class, new SViewSelectionByRadio())
+                .id((i) -> ((LocalFabricacao) i).getId().toString())
+                .display((i) -> ((LocalFabricacao) i).getDescricao())
+                .converter(new SInstanceConverter<LocalFabricacao, SInstance>() {
+                    @Override
+                    public void fillInstance(SInstance ins, LocalFabricacao obj) {
+                        ins.setValue(obj.getId());
+                    }
+
+                    @Override
+                    public LocalFabricacao toObject(SInstance ins) {
+                        return Arrays.asList(LocalFabricacao.values()).stream().filter(l -> l.getId().equals(ins.getValue())).findFirst().orElse(null);
+                    }
+                })
+                .simpleProviderOf(LocalFabricacao.values());
 
         empresaPropria = this.addField("empresaPropria", STypeEmpresaPropria.class);
 
         empresaPropria.withUpdateListener((i) ->
                 $(i)
-                    .find(empresaPropria.razaoSocialPropria).val("Empresa de teste").end()
-                    .find(empresaPropria.cnpj).val("11111111000191").end()
-                    .find(empresaPropria.endereco).val("SCLN 211 BLOCO B SUBSOLO").end());
+                        .find(empresaPropria.razaoSocialPropria).val("Empresa de teste").end()
+                        .find(empresaPropria.cnpj).val("11111111000191").end()
+                        .find(empresaPropria.endereco).val("SCLN 211 BLOCO B SUBSOLO").end());
 
         empresaPropria.asAtrBasic()
                 .dependsOn(tipoLocalFabricacao)
@@ -68,6 +71,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
         empresaInternacional
                 .asAtrBasic()
+                .label("Empresa Internacional")
                 .dependsOn(tipoLocalFabricacao)
                 .visible(i -> LocalFabricacao.EMPRESA_INTERNACIONAL.getId().equals(Value.of(i, tipoLocalFabricacao)));
 
@@ -81,7 +85,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
         outroLocalFabricacao = this.addFieldComposite("outroLocalFabricacao");
 
-        STypeString idOutroLocalFabricacao = outroLocalFabricacao.addFieldString("id");
+        STypeString idOutroLocalFabricacao          = outroLocalFabricacao.addFieldString("id");
         STypeString razaoSocialOutroLocalFabricacao = outroLocalFabricacao.addFieldString("razaoSocial");
         razaoSocialOutroLocalFabricacao.asAtrBasic().label("Razão Social");
         STypeString enderecoOutroLocalFabricacao = outroLocalFabricacao.addFieldString("endereco");
@@ -90,22 +94,16 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .dependsOn(tipoLocalFabricacao)
                 .visible(i -> LocalFabricacao.OUTRO_LOCAL_FABRICACAO.getId().equals(Value.of(i, tipoLocalFabricacao)));
 
-        outroLocalFabricacao
-                .withSelectionFromProvider(razaoSocialOutroLocalFabricacao, (ins, filter) -> {
-                    final SIList<?> list = ins.getType().newList();
-                    for (PessoaJuridicaNS pj : dominioService(ins).outroLocalFabricacao(filter)) {
-                        final SIComposite c = (SIComposite) list.addNew();
-                        c.setValue(idOutroLocalFabricacao, pj.getCod());
-                        c.setValue(razaoSocialOutroLocalFabricacao, pj.getRazaoSocial());
-                        c.setValue(enderecoOutroLocalFabricacao, pj.getEnderecoCompleto());
-                    }
-                    return list;
-                })
-                .setView(SViewAutoComplete::new);
+        outroLocalFabricacao.autocompleteOf(PessoaJuridicaNS.class)
+                .id(PessoaJuridicaNS::getCod)
+                .display(PessoaJuridicaNS::getRazaoSocial)
+                .converter(new PessoaJuridicaConverter(idOutroLocalFabricacao, razaoSocialOutroLocalFabricacao, enderecoOutroLocalFabricacao))
+                .filteredProvider((FilteredProvider<PessoaJuridicaNS, SIComposite>) (ins, query) -> dominioService(ins).outroLocalFabricacao(query));
+
 
         envasadora = this.addFieldComposite("envasadora");
 
-        STypeString idEnvasadora = envasadora.addFieldString("id");
+        STypeString idEnvasadora          = envasadora.addFieldString("id");
         STypeString razaoSocialEnvasadora = envasadora.addFieldString("razaoSocial");
         razaoSocialEnvasadora.asAtrBasic().label("Razão Social");
         STypeString enderecoEnvasadora = envasadora.addFieldString("endereco");
@@ -115,17 +113,12 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .visible(i -> LocalFabricacao.ENVASADORA.getId().equals(Value.of(i, tipoLocalFabricacao)));
 
         envasadora
-                .withSelectionFromProvider(razaoSocialEnvasadora, (ins, filter) -> {
-                    final SIList<?> list = ins.getType().newList();
-                    for (PessoaJuridicaNS pj : dominioService(ins).outroLocalFabricacao(filter)) {
-                        final SIComposite c = (SIComposite) list.addNew();
-                        c.setValue(idEnvasadora, pj.getCod());
-                        c.setValue(razaoSocialEnvasadora, pj.getRazaoSocial());
-                        c.setValue(enderecoEnvasadora, pj.getEnderecoCompleto());
-                    }
-                    return list;
-                })
-                .setView(SViewAutoComplete::new);
+                .autocompleteOf(PessoaJuridicaNS.class)
+                .id(PessoaJuridicaNS::getCod)
+                .display(PessoaJuridicaNS::getRazaoSocial)
+                .converter(new PessoaJuridicaConverter(idEnvasadora, razaoSocialEnvasadora, enderecoEnvasadora))
+                .filteredProvider((FilteredProvider<PessoaJuridicaNS, SIComposite>) (ins, query) -> dominioService(ins).outroLocalFabricacao(query));
+
     }
 
     private boolean isGas(SInstance ins) {
@@ -133,7 +126,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
     }
 
     private SInstance getRoot(SInstance instance) {
-        while(instance.getParent() != null) {
+        while (instance.getParent() != null) {
             instance = instance.getParent();
         }
         return instance;
@@ -147,7 +140,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
         ENVASADORA(5, "Envasadora");
 
         private Integer id;
-        private String descricao;
+        private String  descricao;
 
         LocalFabricacao(Integer id, String descricao) {
             this.id = id;
@@ -170,6 +163,33 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                         EMPRESA_TERCEIRIZADA, OUTRO_LOCAL_FABRICACAO};
             }
         }
+    }
+
+    public static class PessoaJuridicaConverter implements SInstanceConverter<PessoaJuridicaNS, SIComposite> {
+
+        private final String idOutroLocalFabricacao;
+        private final String razaoSocialOutroLocalFabricacao;
+        private final String enderecoOutroLocalFabricacao;
+
+        public PessoaJuridicaConverter(SType idOutroLocalFabricacao, SType razaoSocialOutroLocalFabricacao, SType enderecoOutroLocalFabricacao) {
+            this.idOutroLocalFabricacao = idOutroLocalFabricacao.getNameSimple();
+            this.razaoSocialOutroLocalFabricacao = razaoSocialOutroLocalFabricacao.getNameSimple();
+            this.enderecoOutroLocalFabricacao = enderecoOutroLocalFabricacao.getNameSimple();
+        }
+
+        @Override
+        public void fillInstance(SIComposite ins, PessoaJuridicaNS obj) {
+            ins.setValue(idOutroLocalFabricacao, obj.getCod());
+            ins.setValue(razaoSocialOutroLocalFabricacao, obj.getRazaoSocial());
+            ins.setValue(enderecoOutroLocalFabricacao, obj.getEnderecoCompleto());
+        }
+
+        @Override
+        public PessoaJuridicaNS toObject(SIComposite ins) {
+            return dominioService(ins)
+                    .buscarLocalFabricacao(Value.of(ins, idOutroLocalFabricacao));
+        }
+
     }
 
 }

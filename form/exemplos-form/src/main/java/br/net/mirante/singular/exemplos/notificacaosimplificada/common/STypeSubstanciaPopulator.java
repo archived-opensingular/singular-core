@@ -2,6 +2,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.common;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
+import br.net.mirante.singular.exemplos.util.TripleConverter;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewReadOnly;
@@ -73,7 +74,7 @@ public class STypeSubstanciaPopulator {
                     .colPreference(6);
         }
 
-        final STypeComposite<?> concentracao             = concentracaoSubstancia.addFieldComposite("concentracao");
+        final STypeComposite<SIComposite> concentracao             = concentracaoSubstancia.addFieldComposite("concentracao");
         final SType<?>          idConcentracacao         = concentracao.addFieldInteger("id");
         final STypeSimple       idSubstanciaConcentracao = concentracao.addFieldInteger("idSubstancia");
         final STypeSimple       descConcentracao         = concentracao.addFieldString("descricao");
@@ -82,20 +83,16 @@ public class STypeSubstanciaPopulator {
                     .asAtrBasic()
                     .required()
                     .label("Concentração")
-                    .dependsOn(substancia)
                     .asAtrBootstrap()
                     .colPreference(6);
-            concentracao
-                    .withSelectView()
-                    .withSelectionFromProvider(substanciaDescricao, (optionsInstance, lb) -> {
-                        Integer id = (Integer) Value.of(optionsInstance, idSubstancia);
-                        for (Triple p : dominioService(optionsInstance).concentracoes(id)) {
-                            lb
-                                    .add()
-                                    .set(idConcentracacao, p.getLeft())
-                                    .set(idSubstanciaConcentracao, p.getMiddle())
-                                    .set(descConcentracao, p.getRight());
-                        }
+
+            concentracao.selectionOf(Triple.class)
+                    .id(t -> String.valueOf(t.getLeft()))
+                    .display("${right}")
+                    .converter(new TripleConverter(idConcentracacao, idSubstanciaConcentracao, descConcentracao))
+                    .simpleProvider((ins) -> {
+                        Integer id = (Integer) Value.of(ins, idSubstancia);
+                        return dominioService(ins).concentracoes(id);
                     });
         }
 

@@ -53,7 +53,7 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
         carro.withView(new SViewSearchModal(), (Consumer<SViewSearchModal>) view -> {
             view.withPageSize(PAGE_SIZE);
         });
-        carro.asAtrProvider().provider(new FilteredPagedProvider<Triple>() {
+        carro.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<Triple>() {
 
             private List<Triple> filterByInstance(SInstance filter) {
                 String  marca         = Value.of(filter, "marca");

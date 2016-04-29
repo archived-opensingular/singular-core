@@ -7,7 +7,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
 import java.util.List;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
