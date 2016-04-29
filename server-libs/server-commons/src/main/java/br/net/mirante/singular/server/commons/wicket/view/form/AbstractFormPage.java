@@ -82,13 +82,23 @@ public abstract class AbstractFormPage extends Template {
             }
 
             @Override
-            protected String getFormXML(IModel<?> model) {
-                return AbstractFormPage.this.getFormXML(model);
+            protected String getFormXML() {
+                return AbstractFormPage.this.getFormXML();
             }
 
             @Override
-            protected void setFormXML(IModel<?> model, String xml) {
-                AbstractFormPage.this.setFormXML(model, xml);
+            protected void setFormXML(String xml) {
+                AbstractFormPage.this.setFormXML(xml);
+            }
+
+            @Override
+            protected ProcessInstanceEntity getProcessInstance() {
+                return AbstractFormPage.this.getProcessInstance();
+            }
+
+            @Override
+            protected void setProcessInstance(ProcessInstanceEntity pie) {
+                AbstractFormPage.this.setProcessInstance(pie);
             }
 
             @Override
@@ -182,7 +192,7 @@ public abstract class AbstractFormPage extends Template {
             @Override
             protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                 try{
-                    setFormXML(getFormModel(), xml.toStringExato());
+                    setFormXML(xml.toStringExato());
                     if (AbstractFormPage.this.config.annotationMode.editable()) {
                         Optional<String> xmlAnnotation = MformPersistenciaXML.annotationToXmlString(getCurrentInstance().getObject());
                         setAnnotationsXML(getFormModel(), xmlAnnotation.orElse(null));
@@ -231,7 +241,7 @@ public abstract class AbstractFormPage extends Template {
 
                     @Override
                     protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                        setFormXML(getFormModel(), xml.toStringExato());
+                        setFormXML(xml.toStringExato());
                         getCurrentInstance().getObject().getDocument().persistFiles();
                         AbstractFormPage.this.send(getCurrentInstance(), xml);
                         atualizarContentWorklist(target);
@@ -262,13 +272,13 @@ public abstract class AbstractFormPage extends Template {
 
     protected abstract IModel<?> getContentSubtitleModel();
 
-    protected abstract String getFormXML(IModel<?> model);
+    protected abstract String getFormXML();
 
-    protected abstract void setFormXML(IModel<?> model, String xml);
+    protected abstract void setFormXML(String xml);
 
-    protected abstract ProcessInstanceEntity getProcessInstance(IModel<?> model);
+    protected abstract ProcessInstanceEntity getProcessInstance();
 
-    protected abstract void setProcessInstance(IModel<?> model, ProcessInstanceEntity pie);
+    protected abstract void setProcessInstance(ProcessInstanceEntity pie);
 
     protected abstract void saveForm(IModel<?> currentInstance);
 
