@@ -80,7 +80,7 @@ public class BloodhoundDataBehaviorTest extends SingularFormBaseTest {
     @Override
     protected void buildBaseType(STypeComposite<?> baseType) {
         string = baseType.addFieldString("string");
-        string.withSelectionFromProvider(createProvider());
+        string.selectionOf(String.class).selfIdAndDisplay().filteredProvider(createProvider());
         string.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
     }
 

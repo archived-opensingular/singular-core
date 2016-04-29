@@ -19,7 +19,7 @@ public class CaseInputCoreMultiSelectPickListPackage extends SPackage {
         tipoMyForm.asAtrBasic().label("Salada de Frutas");
         tipoMyForm.addFieldListOf("frutas", STypeString.class).multiselectionOf(String.class, SMultiSelectionByPicklistView::new)
                 .selfIdAndDisplay()
-                .newSimpleProviderOf("Amora", "Banana", "Maçã", "Laranja", "Manga", "Melão", "Morango");
+                .simpleProviderOf("Amora", "Banana", "Maçã", "Laranja", "Manga", "Melão", "Morango");
     }
 
 }

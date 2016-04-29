@@ -1,5 +1,9 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.converter.VocabularioControladoDTOSInstanceConverter;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.provider.VocabularioControladoFilteredProvider;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -29,16 +33,12 @@ public class STypeFormaFarmaceutica extends STypeComposite<SIComposite> {
                     .colPreference(4);
             this.setView(SViewAutoComplete::new);
 
-            //TODO DANILO
-//            this.withSelectionFromProvider(descricao, (ins, filter) -> {
-//                final SIList<?> list = ins.getType().newList();
-//                for (FormaFarmaceuticaBasica lc : dominioService(ins).formasFarmaceuticas(filter)) {
-//                    final SIComposite c = (SIComposite) list.addNew();
-//                    c.setValue(id, lc.getId());
-//                    c.setValue(descricao, lc.getDescricao());
-//                }
-//                return list;
-//            });
+            this.autocompleteOf(VocabularioControladoDTO.class)
+                    .id(VocabularioControladoDTO::getId)
+                    .display(VocabularioControladoDTO::getDescricao)
+                    .converter(new VocabularioControladoDTOSInstanceConverter(id, descricao))
+                    .filteredProvider(new VocabularioControladoFilteredProvider<>(FormaFarmaceuticaBasica.class));
+
 
         }
     }

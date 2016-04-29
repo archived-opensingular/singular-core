@@ -10,7 +10,6 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
 import br.net.mirante.singular.form.mform.core.AtrFormula;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 
@@ -151,7 +150,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
     public STypeSimple<I, VALUE> withSelectionOf(VALUE... os) {
         new SelectionBuilder<>(this)
                 .selfIdAndDisplay()
-                .newSimpleProviderOf((Serializable[]) os);
+                .simpleProviderOf((Serializable[]) os);
         return this;
     }
 
@@ -161,7 +160,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
                 .id(Enum::name)
                 .display(Enum::toString)
                 .enumConverter(enumType)
-                .provider((SimpleProvider<Enum, I>) ins -> Arrays.asList(enumType.getEnumConstants()));
+                .simpleProvider(ins -> Arrays.asList(enumType.getEnumConstants()));
         return this;
     }
 

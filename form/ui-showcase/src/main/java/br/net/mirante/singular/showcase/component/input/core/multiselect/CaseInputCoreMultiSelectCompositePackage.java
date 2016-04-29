@@ -39,7 +39,7 @@ public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
                         return new ComponenteQuimico(Value.of(ins, formulaQuimica), Value.of(ins, nome));
                     }
                 })
-                .newSimpleProviderOf(
+                .simpleProviderOf(
                         new ComponenteQuimico("Água", "h2o"),
                         new ComponenteQuimico("Água Oxigenada", "h2o2"),
                         new ComponenteQuimico("Gás Oxigênio", "o2"),

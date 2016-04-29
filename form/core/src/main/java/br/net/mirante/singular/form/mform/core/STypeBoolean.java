@@ -10,7 +10,6 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
 import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -72,7 +71,7 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
                 .id((IFunction<Object, String>) String::valueOf)
                 .display((IFunction<Object, String>) String::valueOf)
                 .simpleConverter()
-                .provider((SimpleProvider) ins -> Arrays.asList(labelTrue, labelFalse));
+                .simpleProvider(ins -> Arrays.asList(labelTrue, labelFalse));
         return this;
     }
 

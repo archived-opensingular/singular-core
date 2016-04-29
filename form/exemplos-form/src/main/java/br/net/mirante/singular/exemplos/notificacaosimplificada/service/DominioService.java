@@ -5,6 +5,8 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.GenericDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EmpresaInternacional;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacionalId;
@@ -381,4 +383,9 @@ public class DominioService {
         Integer idNomenclaturaFake = idNomenclatura % 9 + 1;
         return mapa.get(idNomenclaturaFake);
     }
+
+    public <T extends VocabularioControlado> List<VocabularioControladoDTO> buscarVocabulario(Class<T> vocabularioClass, String query){
+        return vocabularioControladoDAO.buscarVocabulario(vocabularioClass, query);
+    }
+
 }

@@ -13,8 +13,8 @@ public class PairConverter implements SInstanceConverter<Pair, SIComposite> {
     private final String right;
 
     public PairConverter(SType left, SType right) {
-        this.left = left.getName();
-        this.right = right.getName();
+        this.left = left.getNameSimple();
+        this.right = right.getNameSimple();
     }
 
     @Override

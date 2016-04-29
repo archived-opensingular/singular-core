@@ -1,9 +1,11 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -155,5 +157,21 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
         int maxResults = ObjectUtils.defaultIfNull(idConfig, 5) % 6;
 
         return setParametersQuery(getSession().createQuery(hql.toString()), params).setMaxResults(maxResults).list();
+    }
+
+    public <T extends VocabularioControlado> List<VocabularioControladoDTO> buscarVocabulario(Class<T> vocabularioClass, String query) {
+
+        String              hql    = "";
+        Map<String, Object> params = new HashMap<>();
+
+        hql += " select new " + VocabularioControladoDTO.class.getName() + " (v.id, v.descricao) ";
+        hql += " from " + vocabularioClass.getName() + " v ";
+
+        if (!StringUtils.isEmpty(query)) {
+            hql += " where UPPER (v.descricao) like UPPER(:descricao) ";
+            params.put("descricao", query);
+        }
+
+        return setParametersQuery(getSession().createQuery(hql), params).list();
     }
 }

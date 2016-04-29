@@ -37,10 +37,10 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
         final STypeString myHero = tipoMyForm.addFieldString("myHero");
         myHero.lazyAutocompleteOf(String.class)
                 .selfIdAndDisplay()
-                .provider((FilteredProvider<String, SIString>) (ins, query) -> Arrays.asList(HEROES)
+                .filteredProvider(((FilteredProvider<String, SIString>) (ins, query) -> Arrays.asList(HEROES)
                         .stream()
                         .filter(s -> s.contains(query))
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList())));
         myHero.asAtrBasic().label("Herói Favorito");
 
         // Auto Complete padrão com opções pré-definidas para tipos compostos.
@@ -55,7 +55,7 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
                 .id(t -> t.getLeft().toString())
                 .display("Nome: ${left}, Posição: ${middle}, Diametro: ${right}")
                 .converter(new TripleConverter(name, position, diameter))
-                .newSimpleProviderOf(
+                .simpleProviderOf(
                         Triple.of("Mercury", 1, 4879),
                         Triple.of("Venus", 2, 12104),
                         Triple.of("Earth", 3, 12756),
@@ -78,7 +78,7 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
         email.lazyAutocompleteOf(String.class)
                 //@destacar:fim
                 .selfIdAndDisplay()
-                .provider((FilteredProvider<String, SIString>) (ins, query) -> {
+                .filteredProvider((FilteredProvider<String, SIString>) (ins, query) -> {
                     List<String> list = new ArrayList<>();
                     for (String domain : DOMAINS) {
                         if (query != null) {

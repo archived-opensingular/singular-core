@@ -6,8 +6,6 @@
 package br.net.mirante.singular.form.mform;
 
 import br.net.mirante.singular.form.mform.basic.view.SViewAttachmentList;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
@@ -217,19 +215,6 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return addField(fieldSimpleName, STypeMonetary.class);
     }
 
-    /**
-     * Configura o tipo para utilizar a view {@link SViewSelectionBySelect}
-     */
-    public STypeComposite<INSTANCE_TYPE> withSelectView() {
-        return (STypeComposite<INSTANCE_TYPE>) super.withView(SViewSelectionBySelect::new);
-    }
-
-    /**
-     * Configura o tipo para utilizar a view {@link SViewSelectionByRadio}
-     */
-    public STypeComposite<INSTANCE_TYPE> withRadioView() {
-        return (STypeComposite<INSTANCE_TYPE>) super.withView(SViewSelectionByRadio::new);
-    }
 
     // TODO (from Daniel) MArquei como deprecated pois está estranho esse
     // método. Verificar se há uma solução melhor e refatorar

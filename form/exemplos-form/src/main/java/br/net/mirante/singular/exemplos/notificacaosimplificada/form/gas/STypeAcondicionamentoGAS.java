@@ -4,6 +4,7 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNot
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
@@ -12,8 +13,8 @@ import java.util.Optional;
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
 
-    public SType embalagemPrimaria;
-    public STypeAttachmentList layoutsRotulagem;
+    public STypeString                                  embalagemPrimaria;
+    public STypeAttachmentList                          layoutsRotulagem;
     public STypeList<STypeLocalFabricacao, SIComposite> locaisFabricacao;
 
 
@@ -21,14 +22,8 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        //TODO DANILO
         embalagemPrimaria = this.addFieldString("embalagemPrimaria");
-//        ((STypeSimple) embalagemPrimaria)
-//                .withSelectView()
-//                .withSelection()
-//                .add("Cilindro")
-//                .add("Tanque")
-//                .add("Caminhão Tanque");
+        embalagemPrimaria.withSelectionOf("Cilindro", "Tanque", "Caminhão Tanque");
         embalagemPrimaria
                 .asAtrBasic()
                 .label("Emabalagem Primária")

@@ -23,7 +23,6 @@ import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -84,7 +83,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .label("Insumo ativo");
 
         final STypeComposite<?> formulaHomeopatica                             = formulasHomeopaticas.getElementsType();
-        final STypeComposite<?> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
+        final STypeComposite<SIComposite> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
         final STypeInteger      idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
         final STypeSimple       idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
         final STypeString       descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
@@ -96,11 +95,11 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .asAtrBootstrap()
                 .colPreference(6);
 
-        descricaoDinamizada.selection()
+        descricaoDinamizada.autocompleteOf(Triple.class)
                 .id("${left}")
                 .display("${right}")
                 .converter(new TripleConverter(idDescricaoDinamizada, idConfiguracaoLinhaProducaoDescricaoDinamizada, descricaoDescricaoDinamizada))
-                .provider((FilteredProvider) (ins, query) -> dominioService(ins).descricoesHomeopaticas(Value.of(ins, linhaProducao.id)));
+                .filteredProvider((ins, query) -> dominioService(ins).descricoesHomeopaticas(Value.of(ins, linhaProducao.id)));
 
         final STypeInteger potencia = formulaHomeopatica.addFieldInteger("potencia");
         potencia
@@ -269,8 +268,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .colPreference(6);
         indicacaoTerapeutica
                 .selectionOf(Pair.class)
-                .id(p -> String.valueOf(p.getRight()))
-                .display(p -> String.valueOf(p.getLeft()))
+                .id(p -> String.valueOf(p.getLeft()))
+                .display(p -> String.valueOf(p.getRight()))
                 .converter(new PairConverter(idIndicacaoTerapeutica, descricaoIndicacaoTerapeutica))
                 .simpleProvider( ins -> dominioService(ins).indicacoesTerapeuticas());
 

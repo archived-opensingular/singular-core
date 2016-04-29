@@ -53,7 +53,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                         return Arrays.asList(LocalFabricacao.values()).stream().filter(l -> l.getId().equals(ins.getValue())).findFirst().orElse(null);
                     }
                 })
-                .newSimpleProviderOf(LocalFabricacao.values());
+                .simpleProviderOf(LocalFabricacao.values());
 
         empresaPropria = this.addField("empresaPropria", STypeEmpresaPropria.class);
 
@@ -165,13 +165,13 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
         }
     }
 
-    private class PessoaJuridicaConverter implements SInstanceConverter<PessoaJuridicaNS, SIComposite> {
+    public static class PessoaJuridicaConverter implements SInstanceConverter<PessoaJuridicaNS, SIComposite> {
 
         private final String idOutroLocalFabricacao;
         private final String razaoSocialOutroLocalFabricacao;
         private final String enderecoOutroLocalFabricacao;
 
-        private PessoaJuridicaConverter(SType idOutroLocalFabricacao, SType razaoSocialOutroLocalFabricacao, SType enderecoOutroLocalFabricacao) {
+        public PessoaJuridicaConverter(SType idOutroLocalFabricacao, SType razaoSocialOutroLocalFabricacao, SType enderecoOutroLocalFabricacao) {
             this.idOutroLocalFabricacao = idOutroLocalFabricacao.getNameSimple();
             this.razaoSocialOutroLocalFabricacao = razaoSocialOutroLocalFabricacao.getNameSimple();
             this.enderecoOutroLocalFabricacao = enderecoOutroLocalFabricacao.getNameSimple();

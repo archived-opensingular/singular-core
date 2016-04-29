@@ -15,7 +15,6 @@ import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
-import br.net.mirante.singular.form.mform.provider.Provider;
 import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
@@ -732,11 +731,5 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         this.selection()
                 .selfIdAndDisplay()
                 .provider(providerName);
-    }
-
-    public <T extends Serializable> void withSelectionFromProvider(Provider<T, SInstance> provider) {
-        this.selection()
-                .selfIdAndDisplay()
-                .provider(provider);
     }
 }

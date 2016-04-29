@@ -60,7 +60,7 @@ public class STypeLinhaProducao extends STypeComposite<SIComposite> {
                     .id(l -> l.getId().toString())
                     .display("${descricao}")
                     .converter(getConverter())
-                    .provider(getProvider());
+                    .filteredProvider(getProvider());
         }
     }
 

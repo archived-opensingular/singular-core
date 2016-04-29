@@ -16,12 +16,12 @@ public class ProviderBuilder<T extends Serializable, I extends SInstance> extend
         super(type);
     }
 
-    public void provider(Provider<T, I> provider) {
+    protected void provider(Provider<T, I> provider) {
         type.asAtrProvider().provider(provider);
     }
 
     public void simpleProvider(SimpleProvider<T, I> provider) {
-        type.asAtrProvider().provider(provider);
+        provider(provider);
     }
 
     public void filteredProvider(FilteredProvider<T, I> provider) {
@@ -29,7 +29,7 @@ public class ProviderBuilder<T extends Serializable, I extends SInstance> extend
     }
 
     @SafeVarargs
-    public final void newSimpleProviderOf(T... values) {
+    public final void simpleProviderOf(T... values) {
         type.asAtrProvider().provider((SimpleProvider<T, I>) ins -> Arrays.asList(values));
     }
 

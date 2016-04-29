@@ -31,7 +31,7 @@ public class CaseInputCoreSelectCompositePackage extends SPackage {
                 .id(iq -> iq.nome)
                 .display("${nome} - ${formulaQuimica}")
                 .autoConverter(IngredienteQuimico.class)
-                .provider((FilteredProvider<IngredienteQuimico, SIComposite>) (ins, filter) -> Arrays.asList(
+                .filteredProvider((FilteredProvider<IngredienteQuimico, SIComposite>) (ins, filter) -> Arrays.asList(
                         new IngredienteQuimico("Água", "H2O"),
                         new IngredienteQuimico("Água Oxigenada", "H2O2"),
                         new IngredienteQuimico("Gás Oxigênio", "O2"),
