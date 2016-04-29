@@ -5,23 +5,21 @@
 
 package br.net.mirante.singular.form.validation;
 
-import br.net.mirante.singular.form.mform.SInstance;
-
 public class ValidationError implements IValidationError {
 
-    private final SInstance instance;
+    private final Integer              instanceId;
     private final ValidationErrorLevel errorLevel;
     private final String               message;
 
-    public ValidationError(SInstance instance, ValidationErrorLevel level, String message) {
-        this.instance = instance;
+    public ValidationError(Integer instanceId, ValidationErrorLevel level, String message) {
+        this.instanceId = instanceId;
         this.message = message;
         this.errorLevel = level;
     }
 
     @Override
-    public SInstance getInstance() {
-        return instance;
+    public Integer getInstanceId() {
+        return instanceId;
     }
 
     @Override
@@ -35,11 +33,17 @@ public class ValidationError implements IValidationError {
     }
 
     @Override
+    public String toString() {
+        return String.format("(%s %d '%s')",
+            getErrorLevel(), getInstanceId(), getMessage());
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((errorLevel == null) ? 0 : errorLevel.hashCode());
-        result = prime * result + ((instance == null) ? 0 : instance.getId());
+        result = prime * result + ((instanceId == null) ? 0 : instanceId);
         result = prime * result + ((message == null) ? 0 : message.hashCode());
         return result;
     }
@@ -55,10 +59,10 @@ public class ValidationError implements IValidationError {
         ValidationError other = (ValidationError) obj;
         if (errorLevel != other.errorLevel)
             return false;
-        if (instance == null) {
-            if (other.instance != null)
+        if (instanceId == null) {
+            if (other.instanceId != null)
                 return false;
-        } else if (!instance.equals(other.instance))
+        } else if (!instanceId.equals(other.instanceId))
             return false;
         if (message == null) {
             if (other.message != null)

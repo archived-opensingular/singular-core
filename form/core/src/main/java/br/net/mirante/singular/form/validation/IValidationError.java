@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.form.validation;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import java.io.Serializable;
 
-public interface IValidationError {
+public interface IValidationError extends Serializable {
     String getMessage();
     ValidationErrorLevel getErrorLevel();
-    SInstance getInstance();
+    Integer getInstanceId();
 }

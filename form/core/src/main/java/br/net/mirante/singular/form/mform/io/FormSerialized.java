@@ -6,12 +6,16 @@
 package br.net.mirante.singular.form.mform.io;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.validation.IValidationError;
 
 /**
  * Objeto transitório para guardar uma versão serializável de MInstance ou
@@ -21,15 +25,16 @@ import br.net.mirante.singular.form.util.xml.MElement;
  */
 public final class FormSerialized implements Serializable {
 
-    private final RefSDocumentFactory sDocumentFactoryRef;
-    private final RefType refRootType;
-    private final String rootTypeName;
-    private final MElement xml, annotations;
-    private String focusFieldPath;
+    private final RefSDocumentFactory         sDocumentFactoryRef;
+    private final RefType                     refRootType;
+    private final String                      rootTypeName;
+    private final MElement                    xml, annotations;
+    private String                            focusFieldPath;
     private Map<String, ServiceRegistry.Pair> services;
+    private List<IValidationError>            validationErrors;
 
     public FormSerialized(RefType refRootType, String rootTypeName, MElement xml, MElement annotations,
-            RefSDocumentFactory sDocumentFactoryRef) {
+        RefSDocumentFactory sDocumentFactoryRef) {
         this.refRootType = refRootType;
         this.rootTypeName = rootTypeName;
         this.sDocumentFactoryRef = sDocumentFactoryRef;
@@ -49,7 +54,9 @@ public final class FormSerialized implements Serializable {
         return focusFieldPath;
     }
 
-    public MElement getAnnotations() {return annotations;}
+    public MElement getAnnotations() {
+        return annotations;
+    }
 
     public MElement getXml() {
         return xml;
@@ -69,5 +76,12 @@ public final class FormSerialized implements Serializable {
 
     public RefSDocumentFactory getSDocumentFactoryRef() {
         return sDocumentFactoryRef;
+    }
+
+    public List<IValidationError> getValidationErrors() {
+        return validationErrors;
+    }
+    public void setValidationErrors(Collection<IValidationError> validationErrors) {
+        this.validationErrors = (validationErrors == null) ? null : new ArrayList<>(validationErrors);
     }
 }

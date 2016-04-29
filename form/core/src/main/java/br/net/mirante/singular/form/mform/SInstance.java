@@ -14,7 +14,6 @@ import java.util.function.Function;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.mform.options.SOptionsConfig;
@@ -388,7 +387,7 @@ public abstract class SInstance implements SAttributeEnabled, SSelectionableInst
         return nearest.map(it -> classeValor.cast(it.getValueWithDefault(classeValor)));
     }
 
-    public boolean isDescentantOf(SInstance ancestor) {
+    public boolean isDescendantOf(SInstance ancestor) {
         SInstance node = this;
         for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent())
             if (parent == ancestor)

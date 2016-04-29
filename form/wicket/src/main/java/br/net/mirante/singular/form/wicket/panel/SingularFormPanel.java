@@ -25,6 +25,7 @@ import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 
@@ -79,6 +80,12 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
         container = new BSGrid("generated");
         addOrReplace(container);
         buildContainer();
+    }
+    
+    @Override
+    protected void onConfigure() {
+        super.onConfigure();
+        WicketFormProcessing.onFormPrepare(this, getRootInstance(), false);
     }
 
     /**

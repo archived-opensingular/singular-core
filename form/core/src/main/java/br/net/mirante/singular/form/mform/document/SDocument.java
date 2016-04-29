@@ -10,16 +10,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.SetMultimap;
+
 import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.SInstances;
-import br.net.mirante.singular.form.mform.STypes;
 import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstances;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypes;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
@@ -32,6 +37,7 @@ import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.mform.event.ISInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceEventType;
 import br.net.mirante.singular.form.mform.event.SInstanceListeners;
+import br.net.mirante.singular.form.validation.IValidationError;
 
 /**
  * <p>
@@ -63,6 +69,8 @@ public class SDocument {
     private SDocumentFactory documentFactory;
 
     private SIList annotations;
+
+    private SetMultimap<Integer, IValidationError> validationErrors;
 
     public SDocument() {}
 
@@ -135,7 +143,7 @@ public class SDocument {
         IAttachmentPersistenceHandler h = lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
         if (h == null) {
             throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
-                    + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
+                + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
         }
         return h;
     }
@@ -160,7 +168,7 @@ public class SDocument {
             final Supplier<Collection<SType<?>>> func = tipo.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
                 for (SType<?> dependency : func.get()) {
-                    if(!dependency.getDependentTypes().contains(tipo)) {
+                    if (!dependency.getDependentTypes().contains(tipo)) {
                         dependency.getDependentTypes().add(tipo);
                     }
                 }
@@ -184,7 +192,7 @@ public class SDocument {
         documentFactory = context;
         if (context.getDocumentFactoryRef() == null) {
             throw new SingularFormException(
-                    context.getClass().getName() + ".getDocumentContextRef() retorna null. Isso provocará erro de serialização.");
+                context.getClass().getName() + ".getDocumentContextRef() retorna null. Isso provocará erro de serialização.");
         }
         ServiceRegistry sr = documentFactory.getServiceRegistry();
         if (sr != null) {
@@ -310,9 +318,10 @@ public class SDocument {
     }
 
     public SIAnnotation annotation(Integer id) {
-        if(annotations == null) return null;
-        for(SIAnnotation a : (List<SIAnnotation>)annotations.getValues()){
-            if(id.equals(a.getTargetId())){
+        if (annotations == null)
+            return null;
+        for (SIAnnotation a : (List<SIAnnotation>) annotations.getValues()) {
+            if (id.equals(a.getTargetId())) {
                 return a;
             }
         }
@@ -344,10 +353,39 @@ public class SDocument {
     }
 
     private void createAnnotationsIfNeeded() {
-        if(annotations == null) setAnnotations(newAnnotationList());
+        if (annotations == null)
+            setAnnotations(newAnnotationList());
     }
 
-    public SIList annotations() { return annotations; }
+    public SIList annotations() {
+        return annotations;
+    }
+
+    public Collection<IValidationError> getValidationErrors() {
+        return validationErrors().values();
+    }
+    public Map<Integer, Collection<IValidationError>> getValidationErrorsByInstanceId() {
+        ArrayListMultimap<Integer, IValidationError> copy = ArrayListMultimap.create();
+        copy.putAll(validationErrors());
+        return copy.asMap();
+    }
+    public Set<IValidationError> getValidationErrors(Integer instanceId) {
+        return validationErrors().get(instanceId);
+    }
+    public void setValidationErrors(Integer instanceId, Iterable<IValidationError> errors) {
+        validationErrors().removeAll(instanceId);
+        validationErrors().putAll(instanceId, errors);
+    }
+    public void setValidationErrors(Iterable<IValidationError> errors) {
+        validationErrors().clear();
+        for (IValidationError error : errors)
+            validationErrors().put(error.getInstanceId(), error);
+    }
+    private SetMultimap<Integer, IValidationError> validationErrors() {
+        if (validationErrors == null)
+            validationErrors = LinkedHashMultimap.create();
+        return validationErrors;
+    }
 }
 
 /**
