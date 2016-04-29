@@ -35,7 +35,7 @@ public class STypeLinhaProducao extends STypeComposite<SIComposite> {
             @Override
             public LinhaCbpf toObject(SIComposite ins) {
                 final LinhaCbpf linhaCbpf = new LinhaCbpf();
-                linhaCbpf.setId(Long.valueOf(Value.of(ins, id)));
+                linhaCbpf.setId(Value.of(ins, id).longValue());
                 linhaCbpf.setDescricao(Value.of(ins, descricao));
                 return linhaCbpf;
             }
