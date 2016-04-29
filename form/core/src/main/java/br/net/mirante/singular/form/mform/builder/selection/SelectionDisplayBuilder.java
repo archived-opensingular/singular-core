@@ -7,28 +7,28 @@ import br.net.mirante.singular.form.mform.provider.FreemarkerUtil;
 
 import java.io.Serializable;
 
-public class SelectionDisplayBuilder<T extends Serializable, I extends SInstance> extends AbstractBuilder {
+public class SelectionDisplayBuilder<TYPE extends Serializable, ROOT_TYPE extends SInstance, ELEMENT_TYPE extends SInstance> extends AbstractBuilder {
 
     public SelectionDisplayBuilder(SType type) {
         super(type);
     }
 
-    public ConverterBuilder<T, I> selfDisplay() {
+    public ConverterBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> selfDisplay() {
         type.asAtrProvider().asAtrProvider().displayFunction((o) -> o);
         return next();
     }
 
-    public ConverterBuilder<T, I> display(String freemarkerTemplate) {
+    public ConverterBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> display(String freemarkerTemplate) {
         type.asAtrProvider().asAtrProvider().displayFunction((o) -> FreemarkerUtil.mergeWithFreemarker(freemarkerTemplate, o));
         return next();
     }
 
-    public ConverterBuilder<T, I> display(IFunction<T, String> valor) {
+    public ConverterBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> display(IFunction<TYPE, String> valor) {
         type.asAtrProvider().asAtrProvider().displayFunction(valor);
         return next();
     }
 
-    private ConverterBuilder<T, I> next() {
+    private ConverterBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> next() {
         return new ConverterBuilder<>(type);
     }
 }

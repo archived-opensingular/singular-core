@@ -10,27 +10,27 @@ import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class ProviderBuilder<T extends Serializable, I extends SInstance> extends AbstractBuilder {
+public class ProviderBuilder<TYPE extends Serializable, ROOT_TYPE extends SInstance> extends AbstractBuilder {
 
     public ProviderBuilder(SType type) {
         super(type);
     }
 
-    protected void provider(Provider<T, I> provider) {
+    protected void provider(Provider<TYPE, ROOT_TYPE> provider) {
         type.asAtrProvider().provider(provider);
     }
 
-    public void simpleProvider(SimpleProvider<T, I> provider) {
+    public void simpleProvider(SimpleProvider<TYPE, ROOT_TYPE> provider) {
         provider(provider);
     }
 
-    public void filteredProvider(FilteredProvider<T, I> provider) {
+    public void filteredProvider(FilteredProvider<TYPE, ROOT_TYPE> provider) {
         type.asAtrProvider().provider(provider);
     }
 
     @SafeVarargs
-    public final void simpleProviderOf(T... values) {
-        type.asAtrProvider().provider((SimpleProvider<T, I>) ins -> Arrays.asList(values));
+    public final void simpleProviderOf(TYPE... values) {
+        type.asAtrProvider().provider((SimpleProvider<TYPE, ROOT_TYPE>) ins -> Arrays.asList(values));
     }
 
     public void provider(String provider) {

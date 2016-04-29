@@ -16,7 +16,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * Representa um tipo lista, o qual deve ter um tipo definido para todos os seus
@@ -148,19 +147,13 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return maximumSize;
     }
 
-    @Override
-    @Deprecated
-    public <T extends Serializable> SelectionBuilder<T, SIList<I>> selectionOf(Class<T> clazz) {
-        throw new SingularFormException("Tipo lista não compativel com selectionOf");
-    }
-
-    public <T extends Serializable> SelectionBuilder<T, I> multiselectionOf(Class<T> clazz) {
-        return multiselectionOf(clazz, SMultiSelectionBySelectView::new);
-    }
-
-    public <T extends Serializable> SelectionBuilder<T, I> multiselectionOf(Class<T> clazz, Supplier<SView> viewSupplier) {
-        this.setView(viewSupplier);
+    public <T extends Serializable> SelectionBuilder<T, SIList<I>, I> selectionOf(Class<T> clazz, SView view) {
+        this.setView(() -> view);
         return new SelectionBuilder<>(this);
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, SIList<I>, I> selectionOf(Class<T> clazz) {
+        return selectionOf(clazz, new SMultiSelectionBySelectView());
     }
 
 }

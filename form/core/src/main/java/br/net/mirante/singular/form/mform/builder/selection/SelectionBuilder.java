@@ -8,32 +8,32 @@ import br.net.mirante.singular.form.mform.provider.FreemarkerUtil;
 import java.io.Serializable;
 
 
-public class SelectionBuilder<T extends Serializable, I extends SInstance> extends AbstractBuilder {
+public class SelectionBuilder<TYPE extends Serializable, ROOT_TYPE extends SInstance, ELEMENT_TYPE extends SInstance> extends AbstractBuilder {
 
     public SelectionBuilder(SType type) {
         super(type);
     }
 
-    public ProviderBuilder<T, I> selfIdAndDisplay(){
+    public ProviderBuilder<TYPE, ROOT_TYPE> selfIdAndDisplay(){
         return selfId().selfDisplay().simpleConverter();
     }
 
-    public SelectionDisplayBuilder<T, I> selfId() {
+    public SelectionDisplayBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> selfId() {
         type.asAtrProvider().asAtrProvider().idFunction((o) -> o);
         return next();
     }
 
-    public SelectionDisplayBuilder<T, I> id(String freemarkerTemplate) {
+    public SelectionDisplayBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> id(String freemarkerTemplate) {
         type.asAtrProvider().asAtrProvider().idFunction((o) -> FreemarkerUtil.mergeWithFreemarker(freemarkerTemplate, o));
         return next();
     }
 
-    public SelectionDisplayBuilder<T, I> id(IFunction<T, Object> valor) {
+    public SelectionDisplayBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> id(IFunction<TYPE, Object> valor) {
         type.asAtrProvider().asAtrProvider().idFunction(valor);
         return next();
     }
 
-    private SelectionDisplayBuilder<T, I> next() {
+    private SelectionDisplayBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> next() {
         return new SelectionDisplayBuilder<>(type);
     }
 

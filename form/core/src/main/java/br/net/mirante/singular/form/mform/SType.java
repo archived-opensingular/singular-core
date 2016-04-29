@@ -7,7 +7,6 @@ package br.net.mirante.singular.form.mform;
 
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
@@ -22,7 +21,6 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -696,29 +694,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     public SelectionBuilder selection() {
         this.setView(SViewSelectionBySelect::new);
         return new SelectionBuilder(this);
-    }
-
-    public <T extends Serializable> SelectionBuilder<T, I> selectionOf(Class<T> clazz, SView view) {
-        this.setView(view);
-        return new SelectionBuilder<>(this);
-    }
-
-    public <T extends Serializable> SelectionBuilder<T, I> selectionOf(Class<T> clazz) {
-        return selectionOf(clazz, new SViewSelectionBySelect());
-    }
-
-    public <T extends Serializable> SelectionBuilder<T, I> autocompleteOf(Class<T> clazz) {
-        return selectionOf(clazz, new SViewAutoComplete());
-    }
-
-    public <T extends Serializable> SelectionBuilder<T, I> lazyAutocompleteOf(Class<T> clasz) {
-        this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
-        return new SelectionBuilder<>(this);
-    }
-
-    public <T extends Serializable> SelectionBuilder<T, I> autocomplete() {
-        this.setView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
-        return new SelectionBuilder<>(this);
     }
 
     public void withSelectionFromProvider(Class<SimpleProvider> providerClass) {
