@@ -34,7 +34,7 @@ public class STypeDateTimeTest {
 
         DateTime reference = DateTime.parse("2016-01-01T05:21:33.000");
         d.setValue(reference.toDate());
-        assertThat(d.getSelectLabel()).isEqualTo("01/01/2016 05:21");
+        assertThat(d.toStringDisplayDefault()).isEqualTo("01/01/2016 05:21");
     }
 
     @Test public void convertsFromISOForrmat(){

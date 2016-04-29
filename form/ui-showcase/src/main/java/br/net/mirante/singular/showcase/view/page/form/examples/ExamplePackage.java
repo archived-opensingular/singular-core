@@ -76,14 +76,14 @@ public class ExamplePackage extends SPackage {
         STypeString name = country.addFieldString("name");
         name.asAtrBasic().label("Nome");
         country.addFieldInteger("population").asAtrBasic().label("População");
-        country.withSelectionFromProvider(name,(instance, lb) -> {
-            lb.add().set(name,"Brazil")
-                    .add().set(name,"USA")
-                    .add().set(name,"Canada")
-                    .add().set(name,"Bosnia")
-                    .add().set(name,"Argentina")
-                    .add().set(name,"Chile");
-        });
+//        country.withSelectionFromProvider(name,(instance, lb) -> {
+//            lb.add().set(name,"Brazil")
+//                    .add().set(name,"USA")
+//                    .add().set(name,"Canada")
+//                    .add().set(name,"Bosnia")
+//                    .add().set(name,"Argentina")
+//                    .add().set(name,"Chile");
+//        });
         country.withView(SViewSelectionBySelect::new);
     }
 

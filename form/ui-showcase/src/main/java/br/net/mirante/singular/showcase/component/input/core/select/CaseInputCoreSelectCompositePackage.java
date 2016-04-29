@@ -5,10 +5,15 @@
 
 package br.net.mirante.singular.showcase.component.input.core.select;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class CaseInputCoreSelectCompositePackage extends SPackage {
 
@@ -16,59 +21,56 @@ public class CaseInputCoreSelectCompositePackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        /**
-         * Neste caso os campos de chave e valor utilizados serão os padrões "id" e "value".
-         */
-        STypeComposite<?> ingredienteQuimico = tipoMyForm.addFieldComposite("ingredienteQuimico");
-        STypeString formulaQuimica = ingredienteQuimico.addFieldString("formulaQuimica");
-        STypeString nome = ingredienteQuimico.addFieldString("nome");
+        final STypeComposite<SIComposite> ingredienteQuimico = tipoMyForm.addFieldComposite("ingredienteQuimico");
+        ingredienteQuimico.asAtrBasic().label("Ingrediente Quimico");
 
-        ingredienteQuimico.withSelectionFromProvider(nome, (instancia, lb) -> {
-            lb
-                    .add()
-                    .set(formulaQuimica, "h2o")
-                    .set(nome, "Água")
-                    .add()
-                    .set(formulaQuimica, "h2o2")
-                    .set(nome, "Água Oxigenada")
-                    .add()
-                    .set(formulaQuimica, "o2")
-                    .set(nome, "Gás Oxigênio")
-                    .add()
-                    .set(formulaQuimica, "C12H22O11")
-                    .set(nome, "Açúcar");
-        });
+        ingredienteQuimico.addFieldString("formulaQuimica");
+        ingredienteQuimico.addFieldString("nome");
 
-        ingredienteQuimico.asAtrBasic().label("Seleção de Componentes Químicos");
-
-
-
-        STypeComposite ingredienteQuimicoComplexo = tipoMyForm.addFieldComposite("ingredienteQuimicoComplexo");
-        STypeString formulaQuimicaComplexa = ingredienteQuimicoComplexo.addFieldString("formulaQuimica");
-        STypeString inventor = ingredienteQuimicoComplexo.addFieldString("inventorFormulaQuimica");
-        STypeString nomeComplexo = ingredienteQuimicoComplexo.addFieldString("nome");
-
-        ingredienteQuimicoComplexo.withSelectionFromProvider(nomeComplexo, (instancia, lb) -> {
-            lb
-                    .add()
-                    .set(formulaQuimicaComplexa, "h2o")
-                    .set(nomeComplexo, "Água")
-                    .set(inventor, "Alan Touring")
-                    .add()
-                    .set(formulaQuimicaComplexa, "h2o2")
-                    .set(nomeComplexo, "Água Oxigenada")
-                    .set(inventor, "Santos Dumont")
-                    .add()
-                    .set(formulaQuimicaComplexa, "o2")
-                    .set(nomeComplexo, "Gás Oxigênio")
-                    .set(inventor, "Thomas Edinson")
-                    .add()
-                    .set(formulaQuimicaComplexa, "C12H22O11")
-                    .set(nomeComplexo, "Açúcar")
-                    .set(inventor, "Rogério Skylab");
-        });
-
-        ingredienteQuimicoComplexo.asAtrBasic().label("Seleção de Componentes Químicos Detalhados");
+        ingredienteQuimico.autocompleteOf(IngredienteQuimico.class)
+                .id(iq -> iq.nome)
+                .display("${nome} - ${formulaQuimica}")
+                .autoConverter(IngredienteQuimico.class)
+                .filteredProvider((FilteredProvider<IngredienteQuimico, SIComposite>) (ins, filter) -> Arrays.asList(
+                        new IngredienteQuimico("Água", "H2O"),
+                        new IngredienteQuimico("Água Oxigenada", "H2O2"),
+                        new IngredienteQuimico("Gás Oxigênio", "O2"),
+                        new IngredienteQuimico("Açúcar", "C12H22O11")
+                ).stream().filter(iq -> filter == null
+                        || iq.formulaQuimica.toUpperCase().contains(filter.toUpperCase())
+                        || iq.nome.toUpperCase().contains(filter.toUpperCase())).collect(Collectors.toList()));
 
     }
+
+    public static class IngredienteQuimico implements Serializable {
+
+        private String nome;
+        private String formulaQuimica;
+
+        public IngredienteQuimico() {
+        }
+
+        public IngredienteQuimico(String nome, String formulaQuimica) {
+            this.nome = nome;
+            this.formulaQuimica = formulaQuimica;
+        }
+
+        public String getNome() {
+            return nome;
+        }
+
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+
+        public String getFormulaQuimica() {
+            return formulaQuimica;
+        }
+
+        public void setFormulaQuimica(String formulaQuimica) {
+            this.formulaQuimica = formulaQuimica;
+        }
+
+    }
+
 }

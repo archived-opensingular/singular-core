@@ -5,36 +5,34 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import java.util.List;
-
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.wicket.model.MultipleSelectMInstanceAwareModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.AbstractChoice;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class MultipleCheckMapper extends MultipleSelectMapper {
 
-    
-    @Override @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected CheckBoxMultipleChoice<SelectOption> retrieveChoices
-        (IModel<? extends SInstance> model, List<SelectOption> opcoesValue) {
-        return new CheckBoxMultipleChoice<>(
-            model.getObject().getName(), 
-            (IModel) new MSelectionInstanceModel<List<SelectOption>>(model), 
-                                        opcoesValue, renderer())
-            .setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
+    @Override
+    protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, List<?> opcoesValue) {
+        return new CheckBoxMultipleChoice(
+                model.getObject().getName(),
+                new MultipleSelectMInstanceAwareModel(model),
+                opcoesValue, renderer())
+                .setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
     }
 
-    @Override @SuppressWarnings("rawtypes")
-    protected Component formGroupAppender(BSControls formGroup,
-                                          IModel<? extends SInstance> model, final List<SelectOption> opcoesValue) {
-        final CheckBoxMultipleChoice<SelectOption> choices = 
-                                            retrieveChoices(model, opcoesValue);
-        formGroup.appendCheckboxChoice(choices);
+    @Override
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, List<?> opcoesValue) {
+        final ListMultipleChoice choices = retrieveChoices(model, opcoesValue);
+        formGroup.appendCheckboxChoice( retrieveChoices(model, opcoesValue));
         return choices;
     }
+
 }

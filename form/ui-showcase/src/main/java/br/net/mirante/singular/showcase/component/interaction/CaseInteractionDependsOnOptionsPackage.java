@@ -5,14 +5,11 @@
 
 package br.net.mirante.singular.showcase.component.interaction;
 
-import java.util.stream.Stream;
-
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import static java.util.stream.Collectors.toList;
 
 public class CaseInteractionDependsOnOptionsPackage extends SPackage {
 
@@ -64,14 +61,15 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
         word.as(SPackageBasic.aspect())
             .label("Word")
             .dependsOn(letter);
-        word.withSelectionFromProvider((ins,f) -> {
-            String prefix = ins.findNearest(letter).get().getValue();
-            return (prefix == null)
-                ? ins.getType().newList()
-                : ins.getType().newList()
-                    .addValues(Stream.of(WORDS)
-                        .filter(s -> s.startsWith(prefix))
-                        .collect(toList()));
-        });
+
+//        word.withSelectionFromProvider((ins,f) -> {
+//            String prefix = ins.findNearest(letter).get().getValue();
+//            return (prefix == null)
+//                ? ins.getType().newList()
+//                : ins.getType().newList()
+//                    .addValues(Stream.of(WORDS)
+//                        .filter(s -> s.startsWith(prefix))
+//                        .collect(toList()));
+//        });
     }
 }

@@ -2,10 +2,12 @@ package br.net.mirante.singular.form.mform.converter;
 
 import br.net.mirante.singular.form.mform.SInstance;
 
-public class SimpleSInstanceConverter<T> implements SInstanceConverter<T> {
+import java.io.Serializable;
+
+public class SimpleSInstanceConverter<T extends Serializable> implements SInstanceConverter<T, SInstance> {
 
     @Override
-    public void toInstance(SInstance ins, T obj) {
+    public void fillInstance(SInstance ins, T obj) {
         ins.setValue(obj);
     }
 
