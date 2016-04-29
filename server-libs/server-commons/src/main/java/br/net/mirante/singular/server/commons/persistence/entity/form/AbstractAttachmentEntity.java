@@ -35,6 +35,11 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
     
     public AbstractAttachmentEntity(String id) { this.id = id;   }
 
+    @Override
+    public String getCod() {
+        return getId();
+    }
+
     public String getId() {
         return id;
     }
@@ -102,10 +107,6 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
         if (size != other.size) return false;
         return true;
     }
+    
 
-
-    @Override
-    public String getCod() {
-        return getId();
-    }
 }
