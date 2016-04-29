@@ -691,19 +691,19 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         this.initListener = initListener;
     }
 
-    public SelectionBuilder selection() {
+    public SelectionBuilder typelessSelection() {
         this.setView(SViewSelectionBySelect::new);
         return new SelectionBuilder(this);
     }
 
     public void withSelectionFromProvider(Class<SimpleProvider> providerClass) {
-        this.selection()
+        this.typelessSelection()
                 .selfIdAndDisplay()
                 .provider(providerClass);
     }
 
     public void withSelectionFromProvider(String providerName) {
-        this.selection()
+        this.typelessSelection()
                 .selfIdAndDisplay()
                 .provider(providerName);
     }

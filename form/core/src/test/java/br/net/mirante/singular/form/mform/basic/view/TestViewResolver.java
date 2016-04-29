@@ -20,7 +20,7 @@ public class TestViewResolver {
     private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V> STypeList<T, X> createSimpleList(
             PackageBuilder pb, String name, Class<T> type, int size, Function<Integer, Object> valueProvider) {
         T simpleType = pb.createType(name, type);
-        simpleType.selection()
+        simpleType.typelessSelection()
                 .selfIdAndDisplay()
                 .simpleProvider(ins -> (List<V>) repeate(valueProvider, size));
         return pb.createListTypeOf("list" + name, simpleType);
