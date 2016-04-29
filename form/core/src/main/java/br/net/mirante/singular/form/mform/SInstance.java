@@ -335,7 +335,7 @@ public abstract class SInstance implements SAttributeEnabled {
         return nearest.map(it -> classeValor.cast(it.getValueWithDefault(classeValor)));
     }
 
-    public boolean isDescentantOf(SInstance ancestor) {
+    public boolean isDescendantOf(SInstance ancestor) {
         SInstance node = this;
         for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent())
             if (parent == ancestor)

@@ -126,7 +126,7 @@ public abstract class SInstances {
         return findAncestor(node, ancestorType).get();
     }
 
-    public static <A extends SType> Optional<SInstance> findAncestor(SInstance node, Class<A> ancestorType) {
+    public static <A extends SType<?>> Optional<SInstance> findAncestor(SInstance node, Class<A> ancestorType) {
         for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent()) {
             if (parent.getType().getClass().equals(ancestorType)) {
                 return Optional.of(parent);
@@ -230,6 +230,43 @@ public abstract class SInstances {
      */
     public static <D extends SInstance> D getDescendant(SInstance node, SType<D> descendantType) {
         return findDescendant(node, descendantType).get();
+    }
+    
+    /**
+     * Busca descendente de <code>node</code> do tipo especificado, por id.
+     * @param node instância inicial da busca
+     * @param descendantId id do descendente
+     * @param descendantType tipo do descendente
+     * @return instância especificada
+     * @throws NoSuchElementException se não encontrar a instancia especificada
+     */
+    public static <D extends SInstance> D getDescendantById(SInstance node, Integer descendantId, SType<D> descendantType) {
+        return findDescendantById(node, descendantId, descendantType).get();
+    }
+
+    /**
+     * Busca descendente de <code>node</code> do tipo especificado, por id.
+     * @param node instância inicial da busca
+     * @param descendantId id do descendente
+     * @param descendantType tipo do descendente
+     * @return Optional da instância especificada
+     */
+    public static <D extends SInstance> Optional<D> findDescendantById(SInstance node, Integer descendantId, SType<D> descendantType) {
+        return streamDescendants(node, true, descendantType)
+            .filter(it -> descendantId.equals(it.getId()))
+            .findAny();
+    }
+    
+    /**
+     * Busca descendente de <code>node</code> do tipo especificado, por id.
+     * @param node instância inicial da busca
+     * @param descendantId id do descendente
+     * @return Optional da instância especificada
+     */
+    public static Optional<SInstance> findDescendantById(SInstance node, Integer descendantId) {
+        return streamDescendants(node, true)
+            .filter(it -> descendantId.equals(it.getId()))
+            .findAny();
     }
 
     /**
