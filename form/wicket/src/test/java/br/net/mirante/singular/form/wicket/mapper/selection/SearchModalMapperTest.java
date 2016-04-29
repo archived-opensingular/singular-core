@@ -31,7 +31,7 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
         mandatoryField = baseType.addFieldString("mandatoryField", true);
 
         mandatoryField.withView(new SViewSearchModal());
-        mandatoryField.asAtrProvider().provider(new FilteredPagedProvider<String>() {
+        mandatoryField.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<String>() {
             @Override
             public void loadFilterDefinition(STypeComposite<?> filter) {
                 filter.addFieldString("search");

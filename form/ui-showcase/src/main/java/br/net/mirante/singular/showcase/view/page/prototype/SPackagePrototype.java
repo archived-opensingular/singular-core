@@ -5,36 +5,17 @@
 
 package br.net.mirante.singular.showcase.view.page.prototype;
 
-import static com.google.common.collect.Lists.newArrayList;
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
+import br.net.mirante.singular.form.mform.core.STypeDecimal;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.mform.core.STypeDateTime;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
-import br.net.mirante.singular.form.mform.core.STypeMonetary;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
-import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
-import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
-import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
-import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
-import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
-import br.net.mirante.singular.form.mform.util.comuns.STypePersonName;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
+import static com.google.common.collect.Lists.newArrayList;
 
 public class SPackagePrototype extends SPackage {
 
@@ -82,7 +63,8 @@ public class SPackagePrototype extends SPackage {
         type.asAtrBasic().label("Tipo")
                 .asAtrBasic().required()
                 .asAtrBootstrap().colPreference(2);
-        populateOptions(pb, type.withSelection());
+        //TODO DANILO
+//        populateOptions(pb, type.withSelection());
 
         fieldType.addFieldBoolean(IS_LIST)
                 .withRadioView()
@@ -102,25 +84,25 @@ public class SPackagePrototype extends SPackage {
 
     }
 
-    private void populateOptions(PackageBuilder pb, SFixedOptionsSimpleProvider provider) {
-        provider.add(typeName(pb, STypeAttachment.class), "Anexo");
-        provider.add(typeName(pb, STypeYearMonth.class), "Ano/Mês");
-        provider.add(typeName(pb, STypeBoolean.class), "Booleano");
-        provider.add(typeName(pb, STypeComposite.class), "Composto");
-        provider.add(typeName(pb, STypeCEP.class), "CEP");
-        provider.add(typeName(pb, STypeCPF.class), "CPF");
-        provider.add(typeName(pb, STypeCNPJ.class), "CNPJ");
-        provider.add(typeName(pb, STypeDate.class), "Data");
-        provider.add(typeName(pb, STypeDateTime.class), "Data/Hora");
-        provider.add(typeName(pb, STypeEMail.class), "Email");
-        provider.add(typeName(pb, STypeLatitudeLongitude.class), "Latitude/Longitude");
-        provider.add(typeName(pb, STypeMonetary.class), "Monetário");
-        provider.add(typeName(pb, STypePersonName.class), "Nome Pessoa");
-        provider.add(typeName(pb, STypeInteger.class), "Número");
-        provider.add(typeName(pb, STypeDecimal.class), "Número Decimal");
-        provider.add(typeName(pb, STypeString.class), "Texto");
-        provider.add(typeName(pb, STypeTelefoneNacional.class), "Telefone Nacional");
-    }
+//    private void populateOptions(PackageBuilder pb, SFixedOptionsSimpleProvider provider) {
+//        provider.add(typeName(pb, STypeAttachment.class), "Anexo");
+//        provider.add(typeName(pb, STypeYearMonth.class), "Ano/Mês");
+//        provider.add(typeName(pb, STypeBoolean.class), "Booleano");
+//        provider.add(typeName(pb, STypeComposite.class), "Composto");
+//        provider.add(typeName(pb, STypeCEP.class), "CEP");
+//        provider.add(typeName(pb, STypeCPF.class), "CPF");
+//        provider.add(typeName(pb, STypeCNPJ.class), "CNPJ");
+//        provider.add(typeName(pb, STypeDate.class), "Data");
+//        provider.add(typeName(pb, STypeDateTime.class), "Data/Hora");
+//        provider.add(typeName(pb, STypeEMail.class), "Email");
+//        provider.add(typeName(pb, STypeLatitudeLongitude.class), "Latitude/Longitude");
+//        provider.add(typeName(pb, STypeMonetary.class), "Monetário");
+//        provider.add(typeName(pb, STypePersonName.class), "Nome Pessoa");
+//        provider.add(typeName(pb, STypeInteger.class), "Número");
+//        provider.add(typeName(pb, STypeDecimal.class), "Número Decimal");
+//        provider.add(typeName(pb, STypeString.class), "Texto");
+//        provider.add(typeName(pb, STypeTelefoneNacional.class), "Telefone Nacional");
+//    }
 
     private String typeName(PackageBuilder pb, Class<? extends SType> typeClass) {
         return pb.getDictionary().getType(typeClass).getName();

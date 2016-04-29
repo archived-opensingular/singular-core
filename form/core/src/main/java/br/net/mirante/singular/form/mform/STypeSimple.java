@@ -5,29 +5,24 @@
 
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
+import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
+import br.net.mirante.singular.form.mform.core.AtrFormula;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.mform.core.AtrFormula;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import br.net.mirante.singular.form.mform.options.SSelectionableSimpleType;
+import java.io.Serializable;
+import java.util.Arrays;
 
 @SuppressWarnings("rawtypes")
 @SInfoType(name = "STypeSimple", spackage = SPackageCore.class)
-public class STypeSimple<I extends SISimple<VALUE>, VALUE>
-        extends SType<I>
-        implements SSelectionableSimpleType<STypeSimple<I, VALUE>, VALUE> {
+public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
 
     private final Class<VALUE> valueClass;
 
     private transient Converter converter;
-
-    protected SOptionsProvider optionsProvider;
-
-    private String selectLabel;
 
     public STypeSimple() {
         this.valueClass = null;
@@ -37,31 +32,6 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE>
         super(instanceClass);
         this.valueClass = valueClass;
     }
-
-    // SELECTION OF BEGIN
-
-    @Override
-    public String getSelectLabel() {
-        return selectLabel;
-    }
-
-    @Override
-    public void setSelectLabel(String selectLabel) {
-        this.selectLabel = selectLabel;
-    }
-
-
-
-    @Override
-    public SOptionsProvider getOptionsProvider() {
-        return optionsProvider;
-    }
-
-    @Override
-    public void setOptionsProvider(SOptionsProvider p) {
-        optionsProvider = p;
-    }
-
 
     /**
      * Configura o tipo para utilizar a view {@link SViewSelectionBySelect}
@@ -78,7 +48,6 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE>
     public STypeSimple<I, VALUE> withRadioView() {
         return (STypeSimple<I, VALUE>) super.withView(SViewSelectionByRadio::new);
     }
-
 
     public AtrFormula asFormula() {
         return STranslatorForAttribute.of(this, new AtrFormula());
@@ -177,4 +146,22 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE>
         }
         return new RuntimeException(msg);
     }
+
+    public STypeSimple<I, VALUE> withSelectionOf(VALUE... os) {
+        new SelectionBuilder<>(this)
+                .selfIdAndDisplay()
+                .simpleProviderOf((Serializable[]) os);
+        return this;
+    }
+
+
+    public <T extends Enum<T>> SType withSelectionOf(Class<T> enumType) {
+        this.selectionOf(Enum.class)
+                .id(Enum::name)
+                .display(Enum::toString)
+                .enumConverter(enumType)
+                .simpleProvider(ins -> Arrays.asList(enumType.getEnumConstants()));
+        return this;
+    }
+
 }

@@ -6,13 +6,10 @@
 package br.net.mirante.singular.exemplos.canabidiol;
 
 import br.net.mirante.singular.exemplos.SelectBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.TypeBuilder;
+import br.net.mirante.singular.exemplos.SelectBuilder.CidadeDTO;
+import br.net.mirante.singular.exemplos.SelectBuilder.EstadoDTO;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 
@@ -67,10 +64,12 @@ public class STypeEndereco extends STypeComposite<SIComposite> {
                 .colPreference(3);
         STypeString siglaUF = estado.addFieldString("sigla");
         STypeString nomeUF = estado.addFieldString("nome");
-        estado
-                .withSelectionFromProvider(nomeUF,
-                        (SOptionsProvider) (optionsInstance, f) -> SelectBuilder.buildEstados(estado)
-                );
+
+        estado.selectionOf(EstadoDTO.class)
+                .id(EstadoDTO::getSigla)
+                .display("${nome} - ${sigla}")
+                .autoConverter(EstadoDTO.class)
+                .simpleProvider(ins ->  SelectBuilder.buildEstados());
 
         STypeComposite<?> cidade = addFieldComposite("cidade");
         cidade
@@ -82,15 +81,15 @@ public class STypeEndereco extends STypeComposite<SIComposite> {
                 .dependsOn(estado)
                 .asAtrBootstrap()
                 .colPreference(3);
-        cidade.addFieldString("id");
+        cidade.addFieldInteger("id");
         STypeString nomeCidade = cidade.addFieldString("nome");
         cidade.addFieldString("UF");
-        cidade.
-                withSelectionFromProvider(nomeCidade, (SOptionsProvider) (inst, f) ->
-                        SelectBuilder
-                                .buildMunicipiosFiltrado(
-                                        cidade,
-                                        (String) Value.of(inst, (STypeSimple) estado.getField(siglaUF)),
-                                        inst.getType().newList()));
+
+        cidade.selectionOf(CidadeDTO.class)
+                .id(CidadeDTO::getId)
+                .display(CidadeDTO::getNome)
+                .autoConverter(CidadeDTO.class)
+                .simpleProvider(i -> SelectBuilder.buildMunicipiosFiltrado((String) Value.of(i, (STypeSimple) estado.getField(siglaUF.getNameSimple()))));
+
     }
 }

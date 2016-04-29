@@ -5,11 +5,10 @@
 
 package br.net.mirante.singular.showcase.component.input.core.select;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 
 public class CaseInputCoreSelectProviderPackage extends SPackage {
 
@@ -28,24 +27,26 @@ public class CaseInputCoreSelectProviderPackage extends SPackage {
 
         STypeString tipoDeMedia = tipoMyForm.addFieldString("tipoDeMedia");
         tipoDeMedia.withRadioView();
-        tipoDeMedia.withSelectionFromProvider(new SOptionsProvider() {
-            @Override
-            public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
-                STypeString type = (STypeString) optionsInstance.getType();
-                SIList<?> r = type.newList();
-                r.addElement(newElement(type, "IMG", "Imagem"));
-                r.addElement(newElement(type, "TXT", "Texto"));
-                r.addElement(newElement(type, "BIN", "Binário"));
-                return r;
-            }
 
-            private SIString newElement(STypeString type, String id, String label) {
-                SIString e = type.newInstance();
-                e.setValue(id);
-                e.setSelectLabel(label);
-                return e;
-            }
-        });
+        //TODO DANILO
+//        tipoDeMedia.withSelectionFromProvider(new SOptionsProvider() {
+//            @Override
+//            public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
+//                STypeString type = (STypeString) optionsInstance.getType();
+//                SIList<?> r = type.newList();
+//                r.addElement(newElement(type, "IMG", "Imagem"));
+//                r.addElement(newElement(type, "TXT", "Texto"));
+//                r.addElement(newElement(type, "BIN", "Binário"));
+//                return r;
+//            }
+//
+//            private SIString newElement(STypeString type, String id, String label) {
+//                SIString e = type.newInstance();
+//                e.setValue(id);
+//                e.setSelectLabel(label);
+//                return e;
+//            }
+//        });
         tipoDeMedia.asAtrBasic().label("Tipo do Arquivo");
 
     }

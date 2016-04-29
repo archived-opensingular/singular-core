@@ -5,20 +5,17 @@
 
 package br.net.mirante.singular.exemplos.canabidiol;
 
-import javax.inject.Inject;
-
 import br.net.mirante.singular.exemplos.canabidiol.dao.CIDDAO;
 import br.net.mirante.singular.exemplos.canabidiol.model.CapituloCID;
 import br.net.mirante.singular.exemplos.canabidiol.model.CategoriaCID;
 import br.net.mirante.singular.exemplos.canabidiol.model.GrupoCID;
 import br.net.mirante.singular.exemplos.canabidiol.model.SubCategoriaCID;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.TypeBuilder;
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+
+import javax.inject.Inject;
 
 @SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeCID extends STypeComposite<SIComposite> {
@@ -30,7 +27,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        STypeComposite<?> capitulo = addFieldComposite("capitulo");
+        STypeComposite<SIComposite> capitulo = addFieldComposite("capitulo");
         capitulo
                 .asAtrBasic()
                 .required()
@@ -45,17 +42,29 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .addFieldString("descricao");
         STypeString descricaoAbreviadaCapitulo = capitulo
                 .addFieldString("descricaoAbreviada");
-        capitulo.withSelectView()
-                .withSelectionFromProvider(descricaoCapitulo, (instancia, listBuilder) -> {
-                    for (CapituloCID cap : ciddao.listCapitulos()) {
-                        listBuilder.add()
-                                .set(idCapitulo, cap.getId())
-                                .set(descricaoCapitulo, cap.getDescricao())
-                                .set(descricaoAbreviadaCapitulo, cap.getDescricaoAbreviada());
-                    }
-                });
 
-        STypeComposite<?> grupo = addFieldComposite("grupo");
+        capitulo.selectionOf(CapituloCID.class)
+                .id(CapituloCID::getId)
+                .display(CapituloCID::getDescricao)
+                .converter(new SInstanceConverter<CapituloCID, SIComposite>() {
+                    @Override
+                    public void fillInstance(SIComposite ins, CapituloCID obj) {
+                        ins.setValue(idCapitulo, obj.getId());
+                        ins.setValue(descricaoCapitulo, obj.getDescricao());
+                        ins.setValue(descricaoAbreviadaCapitulo, obj.getDescricaoAbreviada());
+                    }
+
+                    @Override
+                    public CapituloCID toObject(SIComposite ins) {
+                        final String id = (String) ins.getValue(idCapitulo);
+                        return ciddao.listCapitulos().stream()
+                                .filter(c -> c.getId().equals(id))
+                                .findFirst()
+                                .orElse(null);
+                    }
+                }).simpleProvider(i -> ciddao.listCapitulos());
+
+        STypeComposite<SIComposite> grupo = addFieldComposite("grupo");
         grupo
                 .asAtrBasic()
                 .required()
@@ -72,19 +81,30 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .addFieldString("descricao");
         STypeString descricaoAbreviadaGrupo = grupo
                 .addFieldString("descricaoAbreviada");
-        grupo
-                .withSelectView()
-                .withSelectionFromProvider(descricaoGrupo, (instancia, listaBuilder) -> {
-                    for (GrupoCID g : ciddao.listGrupoByIdCapitulo(Value.of(instancia, idCapitulo))) {
-                        listaBuilder.add()
-                                .set(idGrupo, g.getId())
-                                .set(descricaoGrupo, g.getDescricao())
-                                .set(descricaoAbreviadaGrupo, g.getDescricaoAbreviada());
+
+        grupo.selectionOf(GrupoCID.class)
+                .id(GrupoCID::getId)
+                .display(GrupoCID::getDescricao)
+                .converter(new SInstanceConverter<GrupoCID, SIComposite>() {
+                    @Override
+                    public void fillInstance(SIComposite ins, GrupoCID obj) {
+                        ins.setValue(idGrupo, obj.getId());
+                        ins.setValue(descricaoGrupo, obj.getDescricao());
+                        ins.setValue(descricaoAbreviadaGrupo, obj.getDescricaoAbreviada());
                     }
-                });
 
+                    @Override
+                    public GrupoCID toObject(SIComposite ins) {
+                        final String _idCapitulo = (String) ins.findNearestValue(idCapitulo).orElse(null);
+                        final String _idGrupo = (String) ins.findNearestValue(idGrupo).orElse(null);
+                        return ciddao.listGrupoByIdCapitulo(_idCapitulo).stream()
+                                .filter(c -> c.getId().equals(_idGrupo))
+                                .findFirst()
+                                .orElse(null);
+                    }
+                }).simpleProvider(i -> ciddao.listGrupoByIdCapitulo((String)i.findNearestValue(idCapitulo).orElse(null)));
 
-        STypeComposite<?> categoria = addFieldComposite("categoria");
+        STypeComposite<SIComposite> categoria = addFieldComposite("categoria");
         categoria
                 .asAtrBasic()
                 .required()
@@ -102,18 +122,29 @@ public class STypeCID extends STypeComposite<SIComposite> {
         STypeString descricaoAbreviadaCategoria = categoria
                 .addFieldString("descricaoAbreviada");
 
-        categoria
-                .withSelectView()
-                .withSelectionFromProvider(descricaoCategoria, (instancia, listaBuilder) -> {
-                    for (CategoriaCID c : ciddao.listCategoriasByIdGrupo(Value.of(instancia, idGrupo))) {
-                        listaBuilder.add()
-                                .set(idCategoria, c.getId())
-                                .set(descricaoCategoria, c.getDescricao())
-                                .set(descricaoAbreviadaCategoria, c.getDescricaoAbreviada());
+        categoria.selectionOf(CategoriaCID.class)
+                .id(CategoriaCID::getId)
+                .display(CategoriaCID::getDescricao)
+                .converter(new SInstanceConverter<CategoriaCID, SIComposite>() {
+                    @Override
+                    public void fillInstance(SIComposite ins, CategoriaCID obj) {
+                        ins.setValue(idCategoria, obj.getId());
+                        ins.setValue(descricaoCategoria, obj.getDescricao());
+                        ins.setValue(descricaoAbreviadaCategoria, obj.getDescricaoAbreviada());
                     }
-                });
 
-        STypeComposite<?> subcategoria = addFieldComposite("subcategoria");
+                    @Override
+                    public CategoriaCID toObject(SIComposite ins) {
+                        final String _idGrupo = (String) ins.findNearestValue(idGrupo).orElse(null);
+                        final String _idCategoria = (String) ins.findNearestValue(idCategoria).orElse(null);
+                        return ciddao.listCategoriasByIdGrupo(_idGrupo).stream()
+                                .filter(c -> c.getId().equals(_idCategoria))
+                                .findFirst()
+                                .orElse(null);
+                    }
+                }).simpleProvider(i -> ciddao.listCategoriasByIdGrupo((String)i.findNearestValue(idGrupo).orElse(null)));
+
+        STypeComposite<SIComposite> subcategoria = addFieldComposite("subcategoria");
         subcategoria
                 .asAtrBasic()
                 .required(inst -> ciddao.listSubCategoriasByIdCategoria(Value.of(inst, idCategoria)).size() > 0)
@@ -132,16 +163,27 @@ public class STypeCID extends STypeComposite<SIComposite> {
         STypeString descricaoSubAbreviadaCategoria = subcategoria
                 .addFieldString("descricaoAbreviada");
 
-        subcategoria
-                .withSelectView()
-                .withSelectionFromProvider(descricaoSubCategoria, (instancia, listaBuilder) -> {
-                    for (SubCategoriaCID c : ciddao.listSubCategoriasByIdCategoria(Value.of(instancia, idCategoria))) {
-                        listaBuilder.add()
-                                .set(idSubCategoria, c.getId())
-                                .set(descricaoSubCategoria, c.getDescricao())
-                                .set(descricaoSubAbreviadaCategoria, c.getDescricaoAbreviada());
+        subcategoria.selectionOf(SubCategoriaCID.class)
+                .id(SubCategoriaCID::getId)
+                .display(SubCategoriaCID::getDescricao)
+                .converter(new SInstanceConverter<SubCategoriaCID, SIComposite>() {
+                    @Override
+                    public void fillInstance(SIComposite ins, SubCategoriaCID obj) {
+                        ins.setValue(idSubCategoria, obj.getId());
+                        ins.setValue(descricaoSubCategoria, obj.getDescricao());
+                        ins.setValue(descricaoSubAbreviadaCategoria, obj.getDescricaoAbreviada());
                     }
-                });
+
+                    @Override
+                    public SubCategoriaCID toObject(SIComposite ins) {
+                        final String _idCategoria = (String) ins.findNearestValue(idCategoria).orElse(null);
+                        final String _idSubCategoria = (String) ins.findNearestValue(idSubCategoria).orElse(null);
+                        return ciddao.listSubCategoriasByIdCategoria(_idCategoria).stream()
+                                .filter(c -> c.getId().equals(_idSubCategoria))
+                                .findFirst()
+                                .orElse(null);
+                    }
+                }).simpleProvider(i -> ciddao.listSubCategoriasByIdCategoria((String)i.findNearestValue(idCategoria).orElse(null)));
 
     }
 

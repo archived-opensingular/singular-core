@@ -8,12 +8,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.habilitaca
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -46,9 +41,7 @@ public class SPackageHabilitacaoEmpresa extends SPackage {
                 .label("Habilitar por");
         habilitarPor
                 .withRadioView()
-                .withSelection()
-                .add("RE")
-                .add("Petição de CBPF");
+                .withSelectionOf("RE", "Petição de CBPF");
 
         STypeComposite<SIComposite> dadosRE = habilitacaoEmpresa.addFieldComposite("dadosRE");
         dadosRE

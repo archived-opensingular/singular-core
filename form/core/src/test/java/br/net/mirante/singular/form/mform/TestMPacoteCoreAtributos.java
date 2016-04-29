@@ -1,19 +1,15 @@
 package br.net.mirante.singular.form.mform;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
 import br.net.mirante.singular.form.mform.SCorePackageTest.TestPacoteB;
 import br.net.mirante.singular.form.mform.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno1;
 import br.net.mirante.singular.form.mform.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno2;
-import br.net.mirante.singular.form.mform.core.SIInteger;
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class TestMPacoteCoreAtributos extends TestCaseForm {
 
@@ -363,13 +359,13 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         testInicialEDefault(STypeBoolean.class, true, false);
     }
 
-    private static <T extends SType<?>> void testInicialEDefault(Class<T> tipo, Object valorInicial, Object valorIfNull) {
+    private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V>  void testInicialEDefault(Class<T> tipo, Object valorInicial, Object valorIfNull) {
         assertTrue(!valorInicial.equals(valorIfNull));
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
-        SType<?> tx = pb.createType("x", tipo).withInitialValue(valorInicial);
-        SType<?> ty = pb.createType("y", tipo).withDefaultValueIfNull(valorIfNull);
-        SType<?> tz = pb.createType("z", tipo).withInitialValue(valorInicial).withDefaultValueIfNull(valorIfNull);
+        T tx = (T) pb.createType("x", tipo).withInitialValue(valorInicial);
+        T ty = (T) pb.createType("y", tipo).withDefaultValueIfNull(valorIfNull);
+        T tz = (T) pb.createType("z", tipo).withInitialValue(valorInicial).withDefaultValueIfNull(valorIfNull);
 
         SInstance instX = tx.newInstance();
         assertEquals(valorInicial, instX.getValue());

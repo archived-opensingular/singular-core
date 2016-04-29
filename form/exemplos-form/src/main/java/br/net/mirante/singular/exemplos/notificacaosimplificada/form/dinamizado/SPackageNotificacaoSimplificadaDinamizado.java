@@ -10,6 +10,8 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondi
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeCategoriaRegulatoria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
+import br.net.mirante.singular.exemplos.util.PairConverter;
+import br.net.mirante.singular.exemplos.util.TripleConverter;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
@@ -81,7 +83,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .label("Insumo ativo");
 
         final STypeComposite<?> formulaHomeopatica                             = formulasHomeopaticas.getElementsType();
-        final STypeComposite<?> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
+        final STypeComposite<SIComposite> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
         final STypeInteger      idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
         final STypeSimple       idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
         final STypeString       descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
@@ -92,18 +94,12 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .required()
                 .asAtrBootstrap()
                 .colPreference(6);
-        descricaoDinamizada
-                .withSelectView()
-                .withSelectionFromProvider(descricaoDescricaoDinamizada, (optionsInstance, lb) -> {
-                    for (Triple p : dominioService(optionsInstance).descricoesHomeopaticas(Value.of(optionsInstance, linhaProducao.id))) {
-                        lb
-                                .add()
-                                .set(idDescricaoDinamizada, p.getLeft())
-                                .set(idConfiguracaoLinhaProducaoDescricaoDinamizada, p.getMiddle())
-                                .set(descricaoDescricaoDinamizada, p.getRight());
-                    }
-                });
 
+        descricaoDinamizada.autocompleteOf(Triple.class)
+                .id("${left}")
+                .display("${right}")
+                .converter(new TripleConverter(idDescricaoDinamizada, idConfiguracaoLinhaProducaoDescricaoDinamizada, descricaoDescricaoDinamizada))
+                .filteredProvider((ins, query) -> dominioService(ins).descricoesHomeopaticas(Value.of(ins, linhaProducao.id)));
 
         final STypeInteger potencia = formulaHomeopatica.addFieldInteger("potencia");
         potencia
@@ -165,7 +161,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
             });
             formaFarmaceutica
                     .asAtrProvider()
-                    .provider(new FormaFarmaceuticaProvider() {
+                    .filteredPagedProvider(new FormaFarmaceuticaProvider() {
                         @Override
                         List<Integer> getIds(SInstance root) {
                             final SIList<SIComposite> formulas = root.findNearest(formulasHomeopaticas).orElse(null);
@@ -261,7 +257,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     }
 
     private void addIndicacaoTerapeutica(STypeComposite<?> notificacaoSimplificada) {
-        final STypeComposite<?> indicacaoTerapeutica          = notificacaoSimplificada.addFieldComposite("indicacaoTerapeutica");
+        final STypeComposite<SIComposite> indicacaoTerapeutica          = notificacaoSimplificada.addFieldComposite("indicacaoTerapeutica");
         final STypeInteger      idIndicacaoTerapeutica        = indicacaoTerapeutica.addFieldInteger("id");
         final STypeSimple       descricaoIndicacaoTerapeutica = indicacaoTerapeutica.addFieldString("descricao");
         indicacaoTerapeutica
@@ -271,15 +267,11 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .asAtrBootstrap()
                 .colPreference(6);
         indicacaoTerapeutica
-                .withSelectView()
-                .withSelectionFromProvider(descricaoIndicacaoTerapeutica, (optionsInstance, lb) -> {
-                    for (Pair p : dominioService(optionsInstance).indicacoesTerapeuticas()) {
-                        lb
-                                .add()
-                                .set(idIndicacaoTerapeutica, p.getLeft())
-                                .set(descricaoIndicacaoTerapeutica, p.getRight());
-                    }
-                });
+                .selectionOf(Pair.class)
+                .id(p -> String.valueOf(p.getLeft()))
+                .display(p -> String.valueOf(p.getRight()))
+                .converter(new PairConverter(idIndicacaoTerapeutica, descricaoIndicacaoTerapeutica))
+                .simpleProvider( ins -> dominioService(ins).indicacoesTerapeuticas());
 
         STypeBoolean informarOutraIndicacaoTerapeutica = notificacaoSimplificada.addFieldBoolean("informarOutraIndicacaoTerapeutica");
         informarOutraIndicacaoTerapeutica

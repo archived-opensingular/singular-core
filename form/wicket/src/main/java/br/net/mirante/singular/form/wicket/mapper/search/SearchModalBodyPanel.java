@@ -26,6 +26,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
@@ -52,7 +53,7 @@ class SearchModalBodyPanel extends Panel {
     }
 
     private void validate() {
-        if (getInstance().asAtrProvider().getProvider() == null) {
+        if (getInstance().asAtrProvider().getFilteredPagedProvider() == null) {
             throw new SingularFormException("O provider não foi informado");
         }
         if (getInstance().asAtrProvider().getConverter() == null
@@ -84,20 +85,20 @@ class SearchModalBodyPanel extends Panel {
         final BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
             @Override
             public long size() {
-                return getInstance().asAtrProvider().getProvider()
+                return getInstance().asAtrProvider().getFilteredPagedProvider()
                         .getSize(ctx.getRootContext().getCurrentInstance(), (SInstance) innerSingularFormPanel.getRootInstance().getObject());
             }
 
             @Override
             public Iterator iterator(int first, int count, Object sortProperty, boolean ascending) {
-                return getInstance().asAtrProvider().getProvider()
+                return getInstance().asAtrProvider().getFilteredPagedProvider()
                         .load(ctx.getRootContext().getCurrentInstance(), (SInstance) innerSingularFormPanel.getRootInstance().getObject(), first, count).iterator();
             }
         });
 
         builder.setRowsPerPage(view.getPageSize());
 
-        for (Object o : getInstance().asAtrProvider().getProvider().getColumns()) {
+        for (Object o : getInstance().asAtrProvider().getFilteredPagedProvider().getColumns()) {
             final Column column = (Column) o;
             builder.appendPropertyColumn(Model.of(column.getLabel()), object -> {
                 try {
@@ -123,7 +124,7 @@ class SearchModalBodyPanel extends Panel {
                                 converter = new SimpleSInstanceConverter<>();
                             }
                             if (converter != null) {
-                                converter.toInstance(getInstance(), model.getObject());
+                                converter.fillInstance(getInstance(), (Serializable) model.getObject());
                             }
                             selectCallback.accept(target);
                         })
@@ -150,7 +151,7 @@ class SearchModalBodyPanel extends Panel {
                         final STypeComposite<SIComposite> filter = SDictionary.create()
                                 .createNewPackage("filterPackage")
                                 .createCompositeType("filter");
-                        getInstance().asAtrProvider().getProvider().loadFilterDefinition(filter);
+                        getInstance().asAtrProvider().getFilteredPagedProvider().loadFilterDefinition(filter);
                         return filter;
                     }
                 };

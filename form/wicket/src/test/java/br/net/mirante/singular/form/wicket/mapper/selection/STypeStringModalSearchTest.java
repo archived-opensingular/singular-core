@@ -35,7 +35,7 @@ public class STypeStringModalSearchTest {
         protected void buildBaseType(STypeComposite<?> baseType) {
             selectType = baseType.addFieldString("favoriteFruit");
             selectType.withView(SViewSearchModal::new);
-            selectType.asAtrProvider().provider(new FilteredPagedProvider<String>() {
+            selectType.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<String>() {
                 @Override
                 public void loadFilterDefinition(STypeComposite<?> filter) {
                     filter.addFieldString("string");

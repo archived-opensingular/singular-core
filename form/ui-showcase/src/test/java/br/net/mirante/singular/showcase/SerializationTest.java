@@ -1,16 +1,15 @@
 package br.net.mirante.singular.showcase;
 
-import org.junit.Test;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
+import org.junit.Test;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
 //@RunWith(value = Parameterized.class)
 public class SerializationTest {
@@ -33,7 +32,7 @@ public class SerializationTest {
 //
 //    @Test public void serializeAndDeserialize(){
 //        MInstancia instance = entry.getType().novaInstancia();
-//        FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(instance));
+//        FormSerializationUtil.fillInstance(FormSerializationUtil.toSerializedObject(instance));
 //    }
 
     @Test public void serializeAndDeserialize(){
