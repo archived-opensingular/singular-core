@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import br.net.mirante.singular.exemplos.canabidiol.SPackagePeticaoCanabidiol;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado.SPackageNotificacaoSimplificadaDinamizado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.SPackageNotificacaoSimplificadaGasMedicinal;
@@ -40,7 +39,6 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO);
         add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
         add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO);
-        add(SPackagePeticaoCanabidiol.class, SPackagePeticaoCanabidiol.NOME_COMPLETO);
         add(SPackageNotificacaoSimplificadaBaixoRisco.class, SPackageNotificacaoSimplificadaBaixoRisco.NOME_COMPLETO);
         add(SPackageNotificacaoSimplificadaDinamizado.class, SPackageNotificacaoSimplificadaDinamizado.NOME_COMPLETO);
         add(SPackageNotificacaoSimplificadaGasMedicinal.class, SPackageNotificacaoSimplificadaGasMedicinal.NOME_COMPLETO);
