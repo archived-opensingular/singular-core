@@ -261,7 +261,7 @@ public abstract class SingularFlowConfigurationBean {
 
     protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
 
-    protected abstract IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?> getProcessEntityService();
+    protected abstract IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> getProcessEntityService();
 
     protected IScheduleService getScheduleService() {
         return new QuartzScheduleService();

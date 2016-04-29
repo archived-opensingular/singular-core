@@ -24,6 +24,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.entity.AccessStrategyType;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 
@@ -40,7 +41,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
  */
 @MappedSuperclass
 @Table(name = "TB_DEFINICAO_TAREFA")
-public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition, TASK_VERSION extends IEntityTaskVersion> extends BaseEntity<Integer> implements IEntityTaskDefinition {
+public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition, TASK_VERSION extends IEntityTaskVersion, ROLE_TASK extends IEntityRoleTask> extends BaseEntity<Integer> implements IEntityTaskDefinition {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_DEFINICAO_TAREFA";
 
@@ -62,6 +63,9 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
     @Enumerated(EnumType.STRING)
     @Column(name = "TP_ESTRATEGIA_SEGURANCA", length = 1)
     private AccessStrategyType accessStrategyType;
+
+    @OneToMany(mappedBy = "taskDefinition", fetch = FetchType.LAZY)
+    private List<ROLE_TASK> rolesTask;
 
     @Override
     public Integer getCod() {
@@ -108,5 +112,14 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
     @Override
     public void setAccessStrategyType(AccessStrategyType accessStrategyType) {
         this.accessStrategyType = accessStrategyType;
+    }
+
+    @Override
+    public List<ROLE_TASK> getRolesTask() {
+        return rolesTask;
+    }
+
+    public void setRolesTask(List<ROLE_TASK> rolesTask) {
+        this.rolesTask = rolesTask;
     }
 }

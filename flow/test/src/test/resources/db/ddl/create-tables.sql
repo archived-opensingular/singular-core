@@ -33,12 +33,11 @@ CREATE TABLE DBSINGULAR.RL_PERMISSAO_PROCESSO (
 /* Table: RL_PERMISSAO_TAREFA                                   */
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.RL_PERMISSAO_TAREFA (
-   CO_PERMISSAO_TAREFA  BIGINT               NOT NULL,
+   CO_PERMISSAO_TAREFA  BIGINT               IDENTITY,
    CO_DEFINICAO_TAREFA  BIGINT               NOT NULL,
    NO_PERFIL            VARCHAR(200)         NOT NULL,
    CONSTRAINT PK_PERMISSAO_TAREFA PRIMARY KEY (CO_PERMISSAO_TAREFA)
-)
-go
+);
 
 /*==============================================================*/
 /* Table: TB_ATOR                                               */
@@ -260,9 +259,8 @@ CREATE TABLE DBSINGULAR.TB_GRUPO_PROCESSO (
 /* Table: RL_PAPEL_TAREFA                                       */
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.RL_PAPEL_TAREFA (
-   CO_PAPEL_TAREFA      BIGINT               NOT NULL,
+   CO_PAPEL_TAREFA      BIGINT               IDENTITY,
    CO_DEFINICAO_PAPEL   BIGINT               NOT NULL,
    CO_DEFINICAO_TAREFA  BIGINT               NOT NULL,
    CONSTRAINT PK_RL_PAPEL_TAREFA PRIMARY KEY (CO_PAPEL_TAREFA)
-)
-go
+);

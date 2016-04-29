@@ -30,6 +30,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcessGroup;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
@@ -38,9 +39,9 @@ import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
 
-public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE_DEF extends IEntityRoleDefinition, PROCESS_ROLE extends IEntityRoleInstance>
+public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE_DEF extends IEntityRoleDefinition, PROCESS_ROLE extends IEntityRoleInstance, ROLE_TASK extends IEntityRoleTask>
         extends AbstractHibernateService
-        implements IProcessDefinitionEntityService<CATEGORY, PROCESS_DEF, PROCESS_VERSION, TASK_DEF, TASK_VERSION, TRANSITION, PROCESS_ROLE_DEF> {
+        implements IProcessDefinitionEntityService<CATEGORY, PROCESS_DEF, PROCESS_VERSION, TASK_DEF, TASK_VERSION, TRANSITION, PROCESS_ROLE_DEF, ROLE_TASK> {
 
     public AbstractHibernateProcessDefinitionService(SessionLocator sessionLocator) {
         super(sessionLocator);
@@ -211,16 +212,34 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
     protected abstract TASK_DEF createEntityDefinitionTask(PROCESS_DEF process);
 
     private final TASK_DEF retrieveOrCreateEntityDefinitionTask(PROCESS_DEF process, MTask<?> task) {
-        IEntityTaskDefinition taskDefinition = process.getTaskDefinition(task.getAbbreviation());
+        TASK_DEF taskDefinition = (TASK_DEF) process.getTaskDefinition(task.getAbbreviation());
         if (taskDefinition == null) {
             taskDefinition = createEntityDefinitionTask(process);
             taskDefinition.setAbbreviation(task.getAbbreviation());
             if (task.getAccessStrategy() != null) {
                 taskDefinition.setAccessStrategyType(task.getAccessStrategy().getType());
             }
+
+            if (task.getAccessStrategy() != null) {
+                final List<String> roles = task.getAccessStrategy().getVisualizeRoleNames(task.getFlowMap().getProcessDefinition(), task);
+                for (String roleName : roles) {
+
+                    PROCESS_ROLE_DEF roleDefinition = null;
+                    for (IEntityRoleDefinition rd : new ArrayList<>(process.getRoles())) {
+                        if (roleName.toUpperCase().endsWith(rd.getName().toUpperCase())) {
+                            roleDefinition = (PROCESS_ROLE_DEF) rd;
+                            break;
+                        }
+                    }
+
+                    addRoleToTask(roleDefinition, taskDefinition);
+                }
+            }
         }
-        return (TASK_DEF) taskDefinition;
+        return taskDefinition;
     }
+
+    protected abstract ROLE_TASK addRoleToTask(PROCESS_ROLE_DEF roleDefinition, TASK_DEF taskDefinition);
 
     @Override
     public boolean isDifferentVersion(IEntityProcessVersion oldEntity, IEntityProcessVersion newEntity) {
