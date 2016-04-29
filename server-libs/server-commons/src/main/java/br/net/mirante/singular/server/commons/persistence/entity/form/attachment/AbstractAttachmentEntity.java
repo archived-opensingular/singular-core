@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.commons.persistence.entity.form;
+package br.net.mirante.singular.server.commons.persistence.entity.form.attachment;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

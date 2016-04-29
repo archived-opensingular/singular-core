@@ -143,7 +143,7 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
 
     public T findByProcessCod(Integer cod) {
         return (T) getSession()
-                .createCriteria(Petition.class)
+                .createCriteria(tipo)
                 .add(Restrictions.eq("processInstanceEntity.cod", cod))
                 .setMaxResults(1)
                 .uniqueResult();
