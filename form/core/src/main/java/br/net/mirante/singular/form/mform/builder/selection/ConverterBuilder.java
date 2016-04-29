@@ -26,7 +26,7 @@ public class ConverterBuilder<TYPE extends Serializable, ROOT_TYPE extends SInst
         return next();
     }
 
-    public ProviderBuilder<TYPE, ROOT_TYPE> autoConverter(Class resultClass) {
+    public ProviderBuilder<TYPE, ROOT_TYPE> autoConverterOf(Class resultClass) {
         type.asAtrProvider().asAtrProvider().converter(AutoSICompositeConverter.of(resultClass));
         return next();
     }
