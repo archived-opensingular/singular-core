@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface MapFilteredProvider extends FilteredProvider<Value.Content, SIComposite> {
+public interface SFilteredProvider extends FilteredProvider<Value.Content, SIComposite> {
 
     @Override
     default public List<Value.Content> load(SIComposite ins, String query) {

@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.util.transformer.Value.Content;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface MapSimpleProvider extends SimpleProvider<Content, SIComposite> {
+public interface SSimpleProvider extends SimpleProvider<Content, SIComposite> {
 
     @Override
     default public List<Content> load(SIComposite ins) {

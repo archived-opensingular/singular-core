@@ -8,21 +8,21 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import static br.net.mirante.singular.form.mform.util.transformer.Value.Content;
 
-public class MapSelectionBuilder extends AbstractBuilder {
+public class SSelectionBuilder extends AbstractBuilder {
 
-    public MapSelectionBuilder(SType type) {
+    public SSelectionBuilder(SType type) {
         super(type);
     }
 
-    public MapSelectionDisplayBuilder selfId() {
+    public SSelectionDisplayBuilder selfId() {
         return id(type);
     }
 
-    public MapProviderBuilder selfIdAndDisplay() {
+    public SProviderBuilder selfIdAndDisplay() {
         return selfId().selfDisplay();
     }
 
-    public MapSelectionDisplayBuilder id(SType id) {
+    public SSelectionDisplayBuilder id(SType id) {
         type.asAtrProvider().asAtrProvider().idFunction(new IFunction<Value.Content, String>() {
             @Override
             public String apply(Content content) {
@@ -34,7 +34,7 @@ public class MapSelectionBuilder extends AbstractBuilder {
                 return String.valueOf(ins.getValue());
             }
         });
-        return new MapSelectionDisplayBuilder(super.type);
+        return new SSelectionDisplayBuilder(super.type);
     }
 
 }
