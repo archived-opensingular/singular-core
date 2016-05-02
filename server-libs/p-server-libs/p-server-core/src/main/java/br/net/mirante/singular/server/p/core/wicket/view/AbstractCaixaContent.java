@@ -1,8 +1,9 @@
-package br.net.mirante.singular.server.p.commons.view;
+package br.net.mirante.singular.server.p.core.wicket.view;
 
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_PARAM_NAME;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
+import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,7 +33,6 @@ import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import br.net.mirante.singular.server.p.commons.dto.IPetitionDTO;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
@@ -39,10 +42,12 @@ import br.net.mirante.singular.util.wicket.metronic.menu.DropdownMenu;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
+import javax.inject.Inject;
+
 /**
  * Classe base para construição de caixas do servidor de petições
  */
-public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Content {
+public abstract class AbstractCaixaContent<T extends PeticaoDTO> extends Content {
 
     private static final long serialVersionUID = -3611649597709058163L;
 
@@ -53,6 +58,9 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
     private String menu;
 
     private List<ProcessDTO> processes;
+
+    @Inject
+    private PetitionService petitionService;
 
     /**
      * Form padrão
@@ -268,6 +276,17 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
             dataProvider.setSort(sort.getLeft(), sort.getRight());
         }
         return dataProvider;
+    }
+
+
+    public String getModuleContext() {
+        final String groupConnectionURL = petitionService.findByProcessGroupCod(getProcessGroupCod()).getConnectionURL();
+        try {
+            final String path = new URL(groupConnectionURL).getPath();
+            return path.substring(0, path.indexOf("/", 1));
+        } catch (Exception e) {
+            throw new SingularServerException(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
+        }
     }
 
     protected QuickFilter novoFiltro() {
