@@ -39,8 +39,8 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         final STypeComposite<?> baixoRisco = pb.createCompositeType(TIPO);
         {
-            baixoRisco.asAtrBasic().displayString("${nomeComercial} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
-            baixoRisco.asAtrBasic().label("Notificação Simplificada - Medicamento de Baixo Risco");
+            baixoRisco.asAtr().displayString("${nomeComercial} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
+            baixoRisco.asAtr().label("Notificação Simplificada - Medicamento de Baixo Risco");
         }
 
         final STypeLinhaProducao linhaProducao = baixoRisco.addField("linhaProducao", STypeLinhaProducao.class);
@@ -52,7 +52,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
         {
             configuracaoLinhaProducao
-                    .asAtrBasic()
+                    .asAtr()
                     .label("Descrição").required().dependsOn(linhaProducao).visible(i -> Value.notNull(i, linhaProducao.id))
                     .asAtrBootstrap()
                     .colPreference(8);
@@ -71,7 +71,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         final STypeString nomeComercial = baixoRisco.addFieldString("nomeComercial");
         {
             nomeComercial
-                    .asAtrBasic()
+                    .asAtr()
                     .required().label("Nome do medicamento")
                     .asAtrBootstrap()
                     .colPreference(8);
@@ -91,7 +91,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
                             .col(acondicionamentos.getElementsType().unidadeMedida.sigla, "Unidade de medida")
                             .col(acondicionamentos.getElementsType().estudosEstabilidade, "Estudo de estabilidade")
                             .col(acondicionamentos.getElementsType().prazoValidade))
-                    .asAtrBasic().label("Acondicionamento");
+                    .asAtr().label("Acondicionamento");
         }
 
     }

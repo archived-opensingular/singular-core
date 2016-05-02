@@ -51,11 +51,11 @@ public class SPackagePeticaoGGTOX extends SPackage {
         dadosResponsavel = new DadosResponsavel(pb, peticionamento);
         componentes = new Componente(pb, peticionamento);
         STypeString choice = peticionamento.addFieldString("choice");
-        choice.asAtrBasic().label("Escolha um número");
+        choice.asAtr().label("Escolha um número");
         choice.withView(SViewAutoComplete::new);
         choice.selectionOf("One", "Two", "Three", "Four", "Five", "Six", "Seven");
 
-        SType<?> forshow = peticionamento.addFieldString("forshow").asAtrBasic().label("Just here").getTipo();
+        SType<?> forshow = peticionamento.addFieldString("forshow").asAtr().label("Just here").getTipo();
 
         SViewTab tabbed = new SViewTab();
         tabbed.addTab("tudo", "Tudo").add(dadosResponsavel.root).add(componentes.root)
@@ -75,7 +75,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
         DadosResponsavel(PackageBuilder pb, STypeComposite<?> peticionamento) {
             root = peticionamento.addFieldComposite("dadosResponsavel");
 
-            root.asAtrBasic().label("Dados do Responsável");
+            root.asAtr().label("Dados do Responsável");
             //TODO Como fazer a seleção para um objeto composto/enum ?
             //TODO a recuperação de valores deve ser dinamica
 
@@ -88,7 +88,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             STypeString f = root.addFieldString(fieldname, true);
             f.selectionOf(responsaveis)
                     .withView(SViewSelectionBySelect::new)
-                    .asAtrBasic().label(label)
+                    .asAtr().label(label)
                     .asAtrBootstrap().colPreference(colPreference);
             return f;
         }
@@ -120,9 +120,9 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
         Componente(PackageBuilder pb, STypeComposite<?> peticionamento) {
             root = peticionamento.addFieldListOfComposite("componentes", "componente");
-            root.asAtrBasic().label("Componente");
+            root.asAtr().label("Componente");
             rootType = root.getElementsType();
-            rootType.asAtrBasic().label("Registro de Componente");
+            rootType.asAtr().label("Registro de Componente");
 
             identificacao = new Identificacao(pb);
             restricao = new Restricao(pb);
@@ -148,13 +148,13 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             Identificacao(PackageBuilder pb) {
                 root = rootType.addFieldComposite("identificacaoComponente");
-                root.asAtrBasic().label("Identificação de Componente")
+                root.asAtr().label("Identificação de Componente")
                         .asAtrBootstrap().colPreference(4);
 
                 tipoComponente = root.addFieldString("tipoComponente", true);
                 tipoComponente.selectionOf("Substância", "Mistura")
                         .withView(SViewSelectionByRadio::new)
-                        .asAtrBasic().label("Tipo componente");
+                        .asAtr().label("Tipo componente");
             }
         }
 
@@ -163,7 +163,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             Restricao(PackageBuilder pb) {
                 root = rootType.addFieldComposite("restricoesComponente");
-                root.asAtrBasic().label("Restrições")
+                root.asAtr().label("Restrições")
                         .asAtrBootstrap().colPreference(4);
 
                 //TODO caso eu marque sem restrições os outros campos devem ser desabilitados
@@ -177,7 +177,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                         "Restrição de uso em alimentos",
                         "Sem restrições")
                         .withView(SMultiSelectionByCheckboxView::new)
-                        .asAtrBasic().label("Restrições");
+                        .asAtr().label("Restrições");
 
             }
         }
@@ -189,7 +189,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             Sinonimia(PackageBuilder pb) {
                 root = rootType.addFieldComposite("sinonimiaComponente");
-                root.asAtrBasic().label("Sinonímia").asAtrBootstrap().colPreference(4);
+                root.asAtr().label("Sinonímia").asAtrBootstrap().colPreference(4);
 
                 lista = createListaField(pb);
                 sugerida = createSugeridaField();
@@ -201,7 +201,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 STypeList<STypeString, SIString> field     = root.addFieldListOf("sinonimiaAssociada", sinonimia);
                 field.selectionOf("Sinonímia teste", "Sinonímia teste 2", "Sinonímia teste 3");
                 field.withView(SMultiSelectionBySelectView::new)
-                        .asAtrBasic()
+                        .asAtr()
                         .label("Sinonímias já associadas a esta substância/mistura")
                         .enabled(false);
                 return field;
@@ -212,12 +212,12 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 final STypeComposite<?>                                   sinonimia  = sinonimias.getElementsType();
 
                 sinonimias.withView(SViewListByTable::new);
-                sinonimias.asAtrBasic()
+                sinonimias.asAtr()
                         .label("Lista de sinonímias sugeridas para esta substância/mistura");
 
                 STypeString field = sinonimia.addFieldString("nomeSinonimia", true);
 
-                field.asAtrBasic().label("Sinonímia sugerida").tamanhoMaximo(100);
+                field.asAtr().label("Sinonímia sugerida").tamanhoMaximo(100);
 
                 return field;
             }
@@ -229,7 +229,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             Finalidade(PackageBuilder pb) {
                 root = rootType.addFieldComposite("finalidadesComponente");
 
-                root.asAtrBasic().label("Finalidades")
+                root.asAtr().label("Finalidades")
                         .asAtrBootstrap().colPreference(4);
 
                 STypeString finalidade = pb.createType("finalidade", STypeString.class);
@@ -246,13 +246,13 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 //TODO falta criar modal para cadastrar novo uso pretendido
                 root = rootType.addFieldComposite("usosPretendidosComponente");
 
-                root.asAtrBasic().label("Uso pretendido").asAtrBootstrap().colPreference(4);
+                root.asAtr().label("Uso pretendido").asAtrBootstrap().colPreference(4);
 
                 final STypeString                      usoPretendido   = pb.createType("usoPretendido", STypeString.class);
                 final STypeList<STypeString, SIString> usosPretendidos = root.addFieldListOf("usosPretendidos", usoPretendido);
                 usosPretendidos.selectionOf("Uso 1", "Uso 2", "Uso 3");
                 usosPretendidos.withView(SMultiSelectionByPicklistView::new)
-                        .asAtrBasic().label("Lista de uso pretendido/mistura");
+                        .asAtr().label("Lista de uso pretendido/mistura");
             }
         }
 
@@ -264,11 +264,11 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             NomeComercial(PackageBuilder pb) {
                 root = rootType.addFieldListOfComposite("nomesComerciais", "nomeComercial");
-                root.withView(SViewListByForm::new).asAtrBasic().label("Nome comercial");
+                root.withView(SViewListByForm::new).asAtr().label("Nome comercial");
                 type = root.getElementsType();
 
                 nome = type.addFieldString("nome", true);
-                nome.asAtrBasic().label("Nome comercial").tamanhoMaximo(80);
+                nome.asAtr().label("Nome comercial").tamanhoMaximo(80);
 
                 fabricante = new Fabricante(pb);
             }
@@ -281,13 +281,13 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 Fabricante(PackageBuilder pb) {
                     root = NomeComercial.this.type.addFieldListOfComposite("fabricantes", "fabricante");
-                    root.withView(SViewListByMasterDetail::new).asAtrBasic().label("Fabricante(s)");
+                    root.withView(SViewListByMasterDetail::new).asAtr().label("Fabricante(s)");
 
                     //TODO Fabricante deve ser uma pesquisa
                     type = root.getElementsType();
                     //TODO como usar o tipo cnpj
                     cnpj = type.addField("cnpj", STypeCNPJ.class);
-                    cnpj.asAtrBasic().label("CNPJ").asAtrBootstrap().colPreference(4);
+                    cnpj.asAtr().label("CNPJ").asAtrBootstrap().colPreference(4);
                     razaoSocial = createStringField(type, "razaoSocial", "Razão social", 4);
                     cidade = createStringField(type, "cidade", "Cidade", 2);
                     pais = createStringField(type, "pais", "País", 2);
@@ -296,7 +296,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 private STypeString createStringField(STypeComposite<SIComposite> fabricante, String fieldname, String label, int colPreference) {
                     STypeString f = fabricante.addFieldString(fieldname);
-                    f.asAtrBasic().label(label).asAtrBootstrap().colPreference(colPreference);
+                    f.asAtr().label(label).asAtrBootstrap().colPreference(colPreference);
                     return f;
                 }
             }
@@ -320,7 +320,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             Embalagem(PackageBuilder pb) {
                 root = rootType.addFieldListOfComposite("embalagens", "embalagem");
-                root.withView(SViewListByTable::new).asAtrBasic().label("Embalagem");
+                root.withView(SViewListByTable::new).asAtr().label("Embalagem");
                 type = root.getElementsType();
                 produtoExterior = createFieldProdutoExterior();
                 tipo = createFieldTipo();
@@ -334,7 +334,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 STypeString field = type.addFieldString("produtoExterior", true);
                 field.selectionOf("Sim", "Não")
                         .withView(SViewSelectionByRadio::new)
-                        .asAtrBasic().label("Produto formulado no exterior?")
+                        .asAtr().label("Produto formulado no exterior?")
                         .asAtrBootstrap().colPreference(12);
                 return field;
             }
@@ -343,7 +343,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 STypeString field = type.addFieldString("tipo", true);
                 field.selectionOf(tiposDisponiveis)
                         .withView(SViewSelectionBySelect::new)
-                        .asAtrBasic().label("Tipo")
+                        .asAtr().label("Tipo")
                         .asAtrBootstrap().colPreference(4);
                 return field;
             }
@@ -352,14 +352,14 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 STypeString field = type.addFieldString("material", true);
                 field.selectionOf(materiaisDisponiveis)
                         .withView(SViewSelectionBySelect::new)
-                        .asAtrBasic().label("Material")
+                        .asAtr().label("Material")
                         .asAtrBootstrap().colPreference(4);
                 return field;
             }
 
             private STypeInteger createFieldCapacidade() {
                 STypeInteger field = type.addFieldInteger("capacidade", true);
-                field.asAtrBasic().label("Capacidade")
+                field.asAtr().label("Capacidade")
                         .tamanhoMaximo(15)
                         .asAtrBootstrap().colPreference(4);
                 return field;
@@ -369,7 +369,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 //TODO caso o array tenha uma string vazia, ocorre um NPE
                 STypeString field = type.addFieldString("unidadeMedida", true);
                 field.selectionOf(new String[]{"cm"}).withView(SViewSelectionBySelect::new)
-                        .asAtrBasic().label("Unidade medida")
+                        .asAtr().label("Unidade medida")
                         .asAtrBootstrap().colPreference(1);
                 return field;
             }
@@ -384,14 +384,14 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             Anexo(PackageBuilder pb) {
                 root = rootType.addFieldListOfComposite("anexos", "anexo");
-                root.asAtrBasic().label("Anexos");
+                root.asAtr().label("Anexos");
                 type = root.getElementsType();
 
                 arquivo = createArquivoField();
                 tipo = createTipoField();
 
                 SType<?> nomeArquivo = (STypeSimple) arquivo.getField(arquivo.FIELD_NAME);
-                nomeArquivo.asAtrBasic().label("Nome do Arquivo");
+                nomeArquivo.asAtr().label("Nome do Arquivo");
                 root.withView(new SViewListByMasterDetail()
                         .col((STypeSimple) nomeArquivo)
                         .col(tipo)
@@ -409,7 +409,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 STypeString t = type.addFieldString("tipoArquivo");
                 t.selectionOf("Ficha de emergência", "Ficha de segurança", "Outros")
                         .withView(SViewSelectionBySelect::new)
-                        .asAtrBasic().label("Tipo do arquivo a ser anexado")
+                        .asAtr().label("Tipo do arquivo a ser anexado")
                         .asAtrBootstrap().colPreference(3);
                 return t;
             }
@@ -427,9 +427,9 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private TesteCaracteristicasFisicoQuimicas(PackageBuilder pb) {
                 root = rootType.addFieldListOfComposite("testesCaracteristicasFisicoQuimicas", "caracteristicasFisicoQuimicas");
-                root.asAtrBasic().label("Testes Características fisíco-químicas");
+                root.asAtr().label("Testes Características fisíco-químicas");
                 type = root.getElementsType();
-                type.asAtrBasic().label("Características fisíco-químicas");
+                type.asAtr().label("Características fisíco-químicas");
 
                 estadoFisico = createEstadoFísicoField();
                 aspecto = createAspectoField();
@@ -458,12 +458,12 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 densidade = createDecimalField("densidade", "Densidade", "g/cm³ a 20ºC", 4);
 
                 observacoes = type.addFieldString("observacoes");
-                observacoes.withTextAreaView().asAtrBasic().label("Observações");
+                observacoes.withTextAreaView().asAtr().label("Observações");
             }
 
             private STypeDecimal createDecimalField(String fieldname, String label, String subtitle, int colPreference) {
                 STypeDecimal f = type.addFieldDecimal(fieldname);
-                f.asAtrBasic().label(label).subtitle(subtitle)
+                f.asAtr().label(label).subtitle(subtitle)
                         .asAtrBootstrap().colPreference(colPreference);
                 return f;
             }
@@ -472,14 +472,14 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 STypeString f = type.addFieldString("estadoFisico", true);
                 f.selectionOf("Líquido", "Sólido", "Gasoso")
                         .withView(SViewSelectionBySelect::new)
-                        .asAtrBasic().label("Estado físico")
+                        .asAtr().label("Estado físico")
                         .asAtrBootstrap().colPreference(2);
                 return f;
             }
 
             private STypeString createAspectoField() {
                 STypeString f = type.addFieldString("aspecto", true);
-                f.asAtrBasic().label("Aspecto")
+                f.asAtr().label("Aspecto")
                         .tamanhoMaximo(50)
                         .asAtrBootstrap().colPreference(4);
                 return f;
@@ -487,7 +487,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private STypeString createCorField() {
                 STypeString f = type.addFieldString("cor", true);
-                f.asAtrBasic().label("Cor")
+                f.asAtr().label("Cor")
                         .tamanhoMaximo(40)
                         .asAtrBootstrap().colPreference(3);
                 return f;
@@ -495,7 +495,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private STypeString createOdorField() {
                 STypeString f = type.addFieldString("odor");
-                f.asAtrBasic().label("Odor")
+                f.asAtr().label("Odor")
                         .tamanhoMaximo(40)
                         .asAtrBootstrap().colPreference(3);
                 return f;
@@ -503,14 +503,14 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private STypeString createHidroliseField() {
                 STypeString f = type.addFieldString("hidrolise");
-                f.asAtrBasic().label("Hidrólise")
+                f.asAtr().label("Hidrólise")
                         .asAtrBootstrap().colPreference(6);
                 return f;
             }
 
             private STypeString createEstabilidadeField() {
                 STypeString f = type.addFieldString("estabilidade");
-                f.asAtrBasic().label("Estabilidade às temperaturas normal e elevada")
+                f.asAtr().label("Estabilidade às temperaturas normal e elevada")
                         .asAtrBootstrap().colPreference(6);
                 return f;
             }
@@ -522,7 +522,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private STypeDecimal createConstanteDissociacaoField() {
                 STypeDecimal f = type.addFieldDecimal("constanteDissociacao");
-                f.asAtrBasic().label("Constante de dissociação")
+                f.asAtr().label("Constante de dissociação")
                         .asAtrBootstrap().colPreference(3);
                 return f;
             }
@@ -533,7 +533,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 Faixa(PackageBuilder pb, String prefix, String nome) {
                     root = type.addFieldComposite("faixa" + prefix);
-                    root.asAtrBootstrap().colPreference(6).asAtrBasic().label(nome);
+                    root.asAtrBootstrap().colPreference(6).asAtr().label(nome);
 
                     pontoFusao = createDecimalField("ponto" + prefix, "Ponto de " + nome, "ºC");
                     //TODO o campo faixa de fusao precisa de um tipo intervalo
@@ -544,7 +544,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 private STypeDecimal createDecimalField(String fieldname, String label, String subtitle) {
                     SType<?> f = root.addFieldDecimal(fieldname);
-                    f.asAtrBasic().label(label).subtitle(subtitle)
+                    f.asAtr().label(label).subtitle(subtitle)
                             .asAtrBootstrap().colPreference(4);
                     return (STypeDecimal) f;
                 }
@@ -557,7 +557,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 PressaoDeValor(PackageBuilder pb) {
                     root = type.addFieldComposite("pressaoVapor");
-                    root.asAtrBasic().label("Pressão do vapor")
+                    root.asAtr().label("Pressão do vapor")
                             .asAtrBootstrap().colPreference(6);
 
                     valor = createValorField();
@@ -567,7 +567,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 private STypeDecimal createValorField() {
                     STypeDecimal f = root.addFieldDecimal("valor");
-                    f.asAtrBasic().label("Valor")
+                    f.asAtr().label("Valor")
                             .asAtrBootstrap().colPreference(6);
                     return f;
                 }
@@ -576,7 +576,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                     STypeString f = root.addFieldString("unidade");
                     f.selectionOf("mmHg", "Pa", "mPa")
                             .withView(SViewSelectionBySelect::new)
-                            .asAtrBasic().label("Unidade")
+                            .asAtr().label("Unidade")
                             .asAtrBootstrap().colPreference(6);
                     return f;
                 }
@@ -588,7 +588,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 Solubilidade(PackageBuilder pb) {
                     root = type.addFieldComposite("solubilidade");
-                    root.asAtrBasic().label("Solubilidade")
+                    root.asAtr().label("Solubilidade")
                             .asAtrBootstrap().colPreference(6);
 
                     agua = createDecimalField("solubilidadeAgua", "em água", "mg/L a 20 ou 25 ºC");
@@ -598,7 +598,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 private STypeDecimal createDecimalField(String fieldName, String label, String subtitle) {
                     STypeDecimal f = root.addFieldDecimal(fieldName);
-                    f.asAtrBasic().label(label).subtitle(subtitle)
+                    f.asAtr().label(label).subtitle(subtitle)
                             .asAtrBootstrap().colPreference(6);
                     return f;
                 }
@@ -611,7 +611,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 PotenciaDeHidrogenio(PackageBuilder pb) {
                     root = TesteCaracteristicasFisicoQuimicas.this.type.addFieldListOfComposite("phs", "ph");
-                    root.withView(SViewListByForm::new).asAtrBasic().label("Lista de pH");
+                    root.withView(SViewListByForm::new).asAtr().label("Lista de pH");
                     type = root.getElementsType();
 
                     valorPh = createDecimalField("valorPh", "pH", ".");
@@ -621,7 +621,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 private STypeDecimal createDecimalField(String fieldname, String label, String subtitle) {
                     STypeDecimal valorPh = type.addFieldDecimal(fieldname, true);
-                    valorPh.asAtrBasic().label(label).subtitle(subtitle)
+                    valorPh.asAtr().label(label).subtitle(subtitle)
                             .asAtrBootstrap().colPreference(4);
                     return valorPh;
                 }
@@ -643,7 +643,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 Alteracao(PackageBuilder pb) {
                     root = type.addFieldComposite("alteracoes");
-                    root.asAtrBasic().label("Alterações");
+                    root.asAtr().label("Alterações");
 
                     cornea = createStringField("cornea", "Córnea", 6);
                     cornea.selectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...");
@@ -665,7 +665,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 private STypeString createStringField(String fieldname, String label,
                                                       int colPreference) {
                     STypeString f = root.addFieldString(fieldname);
-                    f.asAtrBasic().label(label)
+                    f.asAtr().label(label)
                             .asAtrBootstrap().colPreference(colPreference);
                     return f;
                 }
@@ -674,9 +674,9 @@ public class SPackagePeticaoGGTOX extends SPackage {
             private TesteIrritacaoOcular(PackageBuilder pb) {
                 //TODO criar regra para pelo menos um campo preenchido
                 root = rootType.addFieldListOfComposite("testesIrritacaoOcular", "irritacaoOcular");
-                root.asAtrBasic().label("Testes Irritação / Corrosão ocular");
+                root.asAtr().label("Testes Irritação / Corrosão ocular");
                 type = root.getElementsType();
-                type.asAtrBasic().label("Irritação / Corrosão ocular")
+                type.asAtr().label("Irritação / Corrosão ocular")
                         .asAtrBootstrap().colPreference(4);
 
                 laboratorio = createStringField("laboratorio", "Laboratório", 50, 12);
@@ -703,7 +703,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 linhagem = createStringField("linhagem", "Linhagem", null, 6);
 
                 type.addFieldDecimal("numeroAnimais")
-                        .asAtrBasic().label("Número de animais")
+                        .asAtr().label("Número de animais")
                         .asAtrBootstrap().colPreference(3);
 
                 veiculo = createStringField("veiculo", "Veículo", null, 3);
@@ -719,19 +719,19 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 type.addFieldString("observacoes")
                         .withTextAreaView()
-                        .asAtrBasic().label("Observações");
+                        .asAtr().label("Observações");
             }
 
             private STypeString createStringField(String fieldname, String label, Integer maxSize, Integer colPreference) {
                 STypeString f = type.addFieldString(fieldname);
-                f.asAtrBasic().label(label).tamanhoMaximo(maxSize)
+                f.asAtr().label(label).tamanhoMaximo(maxSize)
                         .asAtrBootstrap().colPreference(colPreference);
                 return f;
             }
 
             private STypeDate createDateField(String fieldName, String label, int colPreference) {
                 STypeDate f = type.addFieldDate(fieldName);
-                f.asAtrBasic().label(label).asAtrBootstrap().colPreference(colPreference);
+                f.asAtr().label(label).asAtrBootstrap().colPreference(colPreference);
                 return f;
             }
         }

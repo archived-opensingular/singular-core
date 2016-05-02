@@ -22,7 +22,7 @@ public class CaseInputCoreSelectProviderPackage extends SPackage {
          * cadastrado através do Document.bindLocalService
          */
         STypeString tipoArquivo = tipoMyForm.addFieldString("opcoesDeArquivo");
-        tipoArquivo.asAtrBasic().label("Seleção de Arquivos Persistidos");
+        tipoArquivo.asAtr().label("Seleção de Arquivos Persistidos");
         tipoArquivo.selectionOf(ExampleFile.class)
                 .id(ExampleFile::getId)
                 .display(ExampleFile::getId)

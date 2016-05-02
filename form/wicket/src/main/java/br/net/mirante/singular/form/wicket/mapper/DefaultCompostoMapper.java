@@ -5,17 +5,6 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-
-import java.util.HashMap;
-import java.util.Optional;
-
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
@@ -32,6 +21,16 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+
+import java.util.HashMap;
+import java.util.Optional;
+
+import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @SuppressWarnings("serial")
 public class DefaultCompostoMapper implements IWicketComponentMapper {
@@ -104,7 +103,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
-            IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtrBasic().getLabel()));
+            IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtr().getLabel()));
             if (isNotBlank(label.getObject())) {
                 BSCol column = grid.newColInRow();
                 column.appendTag("h3", new Label("_title", label));

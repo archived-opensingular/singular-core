@@ -1,21 +1,15 @@
 package br.net.mirante.singular.form.mform.freemarker;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import java.util.Date;
-
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import org.fest.assertions.api.AbstractAssert;
 import org.fest.assertions.api.StringAssert;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import java.util.Date;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class FormFreemarkerUtilTest {
 
@@ -110,7 +104,7 @@ public class FormFreemarkerUtilTest {
         assertMerge(instance, "value", "${_inst}").isEqualTo("B");
         assertMerge(instance, "toStringDisplayDefault", "${_inst}").isEqualTo("C");
 
-        nameType.asAtrBasic().displayString("#${_inst.value()}#");
+        nameType.asAtr().displayString("#${_inst.value()}#");
 
         assertMerge(instance, null, "${name}").isEqualTo("A");
         assertThat(instance.getField("name").toStringDisplay()).isEqualTo("#A#");

@@ -153,9 +153,9 @@ public enum FilterFieldType {
     public void addField(String groupConnectionURL, FilterConfig fc, STypeComposite root) {
         final STypeSimple sType = addFieldImpl(groupConnectionURL, fc, root);
         if (sType != null) {
-            sType.asAtrBasic().label(fc.getLabel());
+            sType.asAtr().label(fc.getLabel());
             sType.asAtrBootstrap().colPreference(fc.getSize());
-            sType.asAtrBasic().required(fc.getRequired());
+            sType.asAtr().required(fc.getRequired());
         }
     }
 

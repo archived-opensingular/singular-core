@@ -54,7 +54,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
                     return null;
                 });
 
-        pessoa.asAtrBasic()
+        pessoa.asAtr()
                 .dependsOn(genero)
                 .visible(ins -> ins.findNearestValue(genero, String.class).isPresent());
     }

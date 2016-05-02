@@ -44,24 +44,24 @@ public class SPackagePrototype extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         final STypeComposite<?> meta = pb.createCompositeType(META_FORM);
-        meta.addFieldString(NAME_FIELD).asAtrBasic().label("Nome")
-                .asAtrBasic().required();
+        meta.addFieldString(NAME_FIELD).asAtr().label("Nome")
+                .asAtr().required();
 
         STypeList<STypeComposite<SIComposite>, SIComposite> childFields =
                 meta.addFieldListOfComposite(CHILDREN, "field");
 
-        childFields.asAtrBasic().label("Campos");
+        childFields.asAtr().label("Campos");
 
         STypeComposite<SIComposite> fieldType = childFields.getElementsType();
 
         STypeString nome = fieldType.addFieldString(NAME);
-        nome.asAtrBasic().label("Nome")
-                .asAtrBasic().required()
+        nome.asAtr().label("Nome")
+                .asAtr().required()
                 .asAtrBootstrap().colPreference(3);
 
         STypeString type = fieldType.addFieldString(TYPE);
-        type.asAtrBasic().label("Tipo")
-                .asAtrBasic().required()
+        type.asAtr().label("Tipo")
+                .asAtr().required()
                 .asAtrBootstrap().colPreference(2);
         //TODO DANILO
 //        populateOptions(pb, type.withSelection());
@@ -69,7 +69,7 @@ public class SPackagePrototype extends SPackage {
         fieldType.addFieldBoolean(IS_LIST)
                 .withRadioView()
                 .withDefaultValueIfNull(false)
-                .asAtrBasic().label("Múltiplo").getTipo().asAtrBootstrap().colPreference(2);
+                .asAtr().label("Múltiplo").getTipo().asAtrBootstrap().colPreference(2);
 
         addAttributeFields(pb, fieldType, type);
 
@@ -110,15 +110,15 @@ public class SPackagePrototype extends SPackage {
 
     private void addAttributeFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {
         tamanhoCampo = fieldType.addFieldInteger(TAMANHO_CAMPO);
-        tamanhoCampo.asAtrBasic().label("Colunas").tamanhoMaximo(12)
+        tamanhoCampo.asAtr().label("Colunas").tamanhoMaximo(12)
                 .getTipo().asAtrBootstrap().colPreference(2);
 
         obrigatorio = fieldType.addFieldBoolean(OBRIGATORIO);
-        obrigatorio.withRadioView().asAtrBasic().label("Obrigatório").getTipo().asAtrBootstrap().colPreference(2);
+        obrigatorio.withRadioView().asAtr().label("Obrigatório").getTipo().asAtrBootstrap().colPreference(2);
 
         fieldType.addFieldInteger(TAMANHO_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
-                .getTipo().asAtrBasic().label("Tamanho Máximo")
+                .getTipo().asAtr().label("Tamanho Máximo")
                 .visible(
                         (instance) -> {
                             Optional<String> optType = instance.findNearestValue(type, String.class);
@@ -135,13 +135,13 @@ public class SPackagePrototype extends SPackage {
 
         fieldType.addFieldInteger(TAMANHO_INTEIRO_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
-                .getTipo().asAtrBasic()
+                .getTipo().asAtr()
                 .label("Tamanho Inteiro")
                 .visible(ifDecimalPredicate);
 
         fieldType.addFieldInteger(TAMANHO_DECIMAL_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
-                .getTipo().asAtrBasic()
+                .getTipo().asAtr()
                 .label("Tamanho Decimal")
                 .visible(ifDecimalPredicate);
     }
@@ -149,7 +149,7 @@ public class SPackagePrototype extends SPackage {
     private void addFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {
         STypeList<STypeComposite<SIComposite>, SIComposite> fields =
                 fieldType.addFieldListOf(FIELDS, fieldType);
-        fields.asAtrBasic().label("Campos")
+        fields.asAtr().label("Campos")
                 .getTipo().withView(SViewListByMasterDetail::new)
                 .withExists(
                         (instance) -> {
@@ -157,7 +157,7 @@ public class SPackagePrototype extends SPackage {
                             if (!optType.isPresent()) return false;
                             return optType.get().equals(typeName(pb, STypeComposite.class));
                         })
-                .asAtrBasic().dependsOn(() -> {
+                .asAtr().dependsOn(() -> {
             return newArrayList(type);
         })
         ;

@@ -45,7 +45,7 @@ public class SearchModalPanel extends Panel {
                 final SInstance mi = getMInstancia();
                 if (mi != null && mi.getValue() != null) {
                     if (!mi.isEmptyOfData()) {
-                        if (mi.asAtrBasic().getDisplayString() != null) {
+                        if (mi.asAtr().getDisplayString() != null) {
                             return mi.toStringDisplay();
                         }
                         if (!(mi instanceof SIComposite)) {

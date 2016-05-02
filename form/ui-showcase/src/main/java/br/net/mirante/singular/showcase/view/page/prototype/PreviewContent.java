@@ -5,27 +5,8 @@
 
 package br.net.mirante.singular.showcase.view.page.prototype;
 
-import java.util.List;
-import java.util.function.Consumer;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.util.lang.Bytes;
-
 import br.net.mirante.singular.commons.base.SingularUtil;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
@@ -33,6 +14,16 @@ import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.view.template.Content;
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.util.lang.Bytes;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class PreviewContent extends Content {
 
@@ -108,7 +99,7 @@ class TypeBuilder {
     public STypeComposite<? extends SIComposite> createRootType() {
         STypeComposite<?> root = pkg.createCompositeType("root");
         SIList children = (SIList) metaInformation.getField(SPackagePrototype.CHILDREN);
-        root.asAtrBasic().label(metaInformation.getValueString(SPackagePrototype.NAME));
+        root.asAtr().label(metaInformation.getValueString(SPackagePrototype.NAME));
         addChildFieldsIfAny(root, children);
         return root;
     }
@@ -142,7 +133,7 @@ class TypeBuilder {
 
     private SType<?> addListFieldType(STypeComposite<? extends SIComposite> root, SType<?> typeOfField, String name, String genName) {
         STypeList fieldType = addAppropriateListFieldType(root, typeOfField, genName);
-        fieldType.asAtrBasic().label(name);
+        fieldType.asAtr().label(name);
         return fieldType.getElementsType();
     }
 
@@ -156,7 +147,7 @@ class TypeBuilder {
 
     private SType<?> addSimpleOrCompositeFieldType(STypeComposite<? extends SIComposite> root, SType<?> typeOfField, String name, String genName) {
         return root.addField(genName, typeOfField)
-                .asAtrBasic().label(name).getTipo();
+                .asAtr().label(name).getTipo();
     }
 
     private String generateJavaIdentifier(String name) {
@@ -170,10 +161,10 @@ class TypeBuilder {
 
     private void addAttributesIfAny(SIComposite descriptor, SType<?> fieldType) {
         addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_CAMPO), fieldType.asAtrBootstrap()::colPreference);
-        addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_MAXIMO), fieldType.asAtrBasic()::tamanhoMaximo);
-        addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_INTEIRO_MAXIMO), fieldType.asAtrBasic()::tamanhoInteiroMaximo);
-        addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_DECIMAL_MAXIMO), fieldType.asAtrBasic()::tamanhoDecimalMaximo);
-        addAttributeIfExists(descriptor.getValueBoolean(SPackagePrototype.OBRIGATORIO), fieldType.asAtrBasic()::required);
+        addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_MAXIMO), fieldType.asAtr()::tamanhoMaximo);
+        addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_INTEIRO_MAXIMO), fieldType.asAtr()::tamanhoInteiroMaximo);
+        addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_DECIMAL_MAXIMO), fieldType.asAtr()::tamanhoDecimalMaximo);
+        addAttributeIfExists(descriptor.getValueBoolean(SPackagePrototype.OBRIGATORIO), fieldType.asAtr()::required);
 
     }
 

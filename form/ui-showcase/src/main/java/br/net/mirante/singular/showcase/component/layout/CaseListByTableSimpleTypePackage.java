@@ -24,9 +24,9 @@ public class CaseListByTableSimpleTypePackage extends SPackage {
         nomes.withView(SViewListByTable::new);
         nomes.withMiniumSizeOf(2);
         nomes.asAtrBootstrap().colPreference(6);
-        nomes.asAtrBasic().label("Nomes");
+        nomes.asAtr().label("Nomes");
 
-        nomes.getElementsType().asAtrBasic().required();
+        nomes.getElementsType().asAtr().required();
     }
 
 }

@@ -5,19 +5,13 @@
 
 package br.net.mirante.singular.showcase.component.interaction;
 
-import java.util.Arrays;
-import java.util.Optional;
-
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 public class CaseInitListenerPackage extends SPackage {
 
@@ -30,18 +24,18 @@ public class CaseInitListenerPackage extends SPackage {
 
         final STypeComposite<SIComposite> testForm = pb.createCompositeType("testForm");
         itens = testForm.addFieldListOfComposite("itens", "itenm");
-        itens.asAtrBasic().label("Itens");
+        itens.asAtr().label("Itens");
         itens.withView(new SViewListByForm().disableDelete().disableNew());
 
         final STypeComposite<SIComposite> item = itens.getElementsType();
         nome = item.addFieldString("nome");
         nome
-                .asAtrBasic().label("Nome").enabled(false)
+                .asAtr().label("Nome").enabled(false)
                 .asAtrBootstrap().colPreference(3);
 
         final STypeInteger quantidade = item.addFieldInteger("quantidade");
         quantidade
-                .asAtrBasic().label("Quantidade")
+                .asAtr().label("Quantidade")
                 .asAtrBootstrap().colPreference(2);
 
         //@destacar

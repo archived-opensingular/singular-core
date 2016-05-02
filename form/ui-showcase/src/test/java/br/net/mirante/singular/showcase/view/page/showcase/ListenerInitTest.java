@@ -1,16 +1,5 @@
 package br.net.mirante.singular.showcase.view.page.showcase;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Test;
-
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -19,6 +8,16 @@ import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertThat;
 
 public class ListenerInitTest extends SingularFormBaseTest {
 
@@ -28,18 +27,18 @@ public class ListenerInitTest extends SingularFormBaseTest {
     protected void buildBaseType(STypeComposite<?> baseType) {
 
         STypeList<STypeComposite<SIComposite>, SIComposite> itens = baseType.addFieldListOfComposite("itens", "itenm");
-        itens.asAtrBasic().label("Itens");
+        itens.asAtr().label("Itens");
         itens.withView(new SViewListByForm().disableDelete().disableNew());
 
         final STypeComposite<SIComposite> item = itens.getElementsType();
         nome = item.addFieldString("nome");
         nome
-                .asAtrBasic().label("Nome").enabled(false)
+                .asAtr().label("Nome").enabled(false)
                 .asAtrBootstrap().colPreference(3);
 
         final STypeInteger quantidade = item.addFieldInteger("quantidade");
         quantidade
-                .asAtrBasic().label("Quantidade")
+                .asAtr().label("Quantidade")
                 .asAtrBootstrap().colPreference(2);
 
         baseType.withInitListener(i -> {

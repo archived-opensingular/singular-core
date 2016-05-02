@@ -65,7 +65,7 @@ public class TableListMapper extends AbstractListaMapper {
     private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
                              WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
 
-        final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtrBasic().getLabel());
+        final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtr().getLabel());
         final Label          title = new Label("_title", label);
 
         ctx.configureContainer(label);

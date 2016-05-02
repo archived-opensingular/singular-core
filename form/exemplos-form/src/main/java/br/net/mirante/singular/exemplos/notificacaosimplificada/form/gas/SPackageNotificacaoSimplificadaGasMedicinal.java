@@ -30,8 +30,8 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
-        notificacaoSimplificada.asAtrBasic().displayString(" ${nomeComercial} - ${descricao} ");
-        notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Gás Medicinal");
+        notificacaoSimplificada.asAtr().displayString(" ${nomeComercial} - ${descricao} ");
+        notificacaoSimplificada.asAtr().label("Notificação Simplificada - Gás Medicinal");
 
         addDescricao(notificacaoSimplificada);
         addNomeComercial(notificacaoSimplificada);
@@ -42,7 +42,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
     private void addDescricao(STypeComposite<?> notificacaoSimplificada) {
         descricao = notificacaoSimplificada.addFieldString("descricao");
-        descricao.asAtrBasic().label("Descrição").required();
+        descricao.asAtr().label("Descrição").required();
         descricao.withSelectView();
         descricao.asAtrBootstrap().colPreference(6);
         descricao.selectionOf("Ciclopropano  99,5%", "Óxido nitroso (NO2) 70%", "Ar comprimido medicinal 79% N2 + 21% O2 ");
@@ -51,7 +51,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
     private void addNomeComercial(STypeComposite<?> notificacaoSimplificada) {
         nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
         nomeComercial
-                .asAtrBasic()
+                .asAtr()
                 .label("Nome do gás")
                 .asAtrBootstrap()
                 .newRow().colPreference(4);
@@ -60,7 +60,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
     private void addInformacoesFarmacopeicas(STypeComposite<?> notificacaoSimplificada) {
         informacoesFarmacopeicas = notificacaoSimplificada.addFieldComposite("informacoesFarmacopeicas");
-        informacoesFarmacopeicas.asAtrBasic().label("Informações farmacopeicas");
+        informacoesFarmacopeicas.asAtr().label("Informações farmacopeicas");
 
         STypeFarmacopeiaReferencia farmacopeia = informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
     }
@@ -71,7 +71,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
         acondicionamentos
                 .withView(new SViewListByMasterDetail()
                         .col(acondicionamentos.getElementsType().embalagemPrimaria, "Embalagem primária"))
-                .asAtrBasic().label("Acondicionamento");
+                .asAtr().label("Acondicionamento");
     }
 
 }

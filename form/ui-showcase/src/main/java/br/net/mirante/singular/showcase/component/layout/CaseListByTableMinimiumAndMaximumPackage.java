@@ -5,11 +5,7 @@
 
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -23,7 +19,7 @@ public class CaseListByTableMinimiumAndMaximumPackage extends SPackage {
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         STypeList<STypeComposite<SIComposite>, SIComposite> certificacoes = testForm.addFieldListOfComposite("certificacoes", "certificacao");
-        certificacoes.asAtrBasic().label("Certificações");
+        certificacoes.asAtr().label("Certificações");
         STypeComposite<?> certificacao = certificacoes.getElementsType();
         STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
         STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
@@ -36,20 +32,20 @@ public class CaseListByTableMinimiumAndMaximumPackage extends SPackage {
                     .withMaximumSizeOf(3)
                      //@destacar:fim
                     .withView(SViewListByTable::new)
-                    .asAtrBasic().label("Certificações");
+                    .asAtr().label("Certificações");
             certificacao
-                    .asAtrBasic().label("Certificação");
+                    .asAtr().label("Certificação");
             dataCertificacao
-                    .asAtrBasic().label("Data")
+                    .asAtr().label("Data")
                     .asAtrBootstrap().colPreference(2);
             entidadeCertificacao
-                    .asAtrBasic().label("Entidade")
+                    .asAtr().label("Entidade")
                     .asAtrBootstrap().colPreference(4);
             validadeCertificacao
-                    .asAtrBasic().label("Validade")
+                    .asAtr().label("Validade")
                     .asAtrBootstrap().colPreference(2);
             nomeCertificacao
-                    .asAtrBasic().label("Nome")
+                    .asAtr().label("Nome")
                     .asAtrBootstrap().colPreference(4);
         }
     }

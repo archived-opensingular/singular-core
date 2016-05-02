@@ -26,7 +26,7 @@ public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
         final STypeString endereco    = addFieldString("endereco");
 
         razaoSocial.
-                asAtrBasic()
+                asAtr()
                 .required()
                 .label("Razão Social");
 
