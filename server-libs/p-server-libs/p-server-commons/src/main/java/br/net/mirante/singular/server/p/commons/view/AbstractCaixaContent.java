@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -224,6 +225,9 @@ public abstract class AbstractCaixaContent<T extends IPetitionDTO> extends Conte
         add(form.add(filtroRapido, pesquisarButton, botoes, dropdownMenu));
         add(tabela);
         add(deleteForm.add(deleteModal));
+        if (getMenu() != null) {
+            setProcesses(SingularSession.get().getMenuPorLabel(getMenu()).getProcesses());
+        }
     }
 
     protected BaseDataProvider<T, String> criarDataProvider() {

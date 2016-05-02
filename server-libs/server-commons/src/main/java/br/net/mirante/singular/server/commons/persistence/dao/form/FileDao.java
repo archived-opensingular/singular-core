@@ -19,8 +19,8 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistence
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.IdGenerator;
 import br.net.mirante.singular.form.mform.io.HashUtil;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractAttachmentEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Attachment;
+import br.net.mirante.singular.server.commons.persistence.entity.form.attachment.AbstractAttachmentEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.attachment.Attachment;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 
 @SuppressWarnings("serial")

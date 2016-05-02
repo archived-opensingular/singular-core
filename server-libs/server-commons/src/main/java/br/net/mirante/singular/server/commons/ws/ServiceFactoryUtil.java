@@ -7,6 +7,8 @@ import br.net.mirante.singular.ws.client.SingularWSService;
 import org.apache.log4j.Logger;
 
 import javax.xml.ws.BindingProvider;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServiceFactoryUtil {
 
@@ -18,24 +20,7 @@ public class ServiceFactoryUtil {
     /**
      * Campo singular service.
      */
-    private SingularWS singularService = null;
-
-    /**
-     * Obtém uma referência de singular ws.
-     *
-     * @return uma referência de singular ws
-     */
-    public SingularWS getSingularWS(String processGroupContext) {
-        if (singularService == null) {
-            singularService = new SingularWSService().getSingularWSPort();
-            BindingProvider bp = (BindingProvider) singularService;
-            bp.getRequestContext().put(
-                    BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                    getAdressWithoutWsdl(
-                            ConfigProperties.get("singular.ws.endereco"), processGroupContext));
-        }
-        return singularService;
-    }
+    private Map<String, SingularWS> singularServiceMap = new HashMap<>();
 
     private static String getAdressWithoutWsdl(String adress, String processGroupContext) {
         int lastIndex = adress.lastIndexOf("?wsdl");
@@ -43,6 +28,24 @@ public class ServiceFactoryUtil {
             adress = adress.substring(0, lastIndex);
         }
         return String.format(adress, processGroupContext);
+    }
+
+    /**
+     * Obtém uma referência de singular ws.
+     *
+     * @return uma referência de singular ws
+     */
+    public SingularWS getSingularWS(String processGroupContext) {
+        if (!singularServiceMap.containsKey(processGroupContext)) {
+            SingularWS singularService = new SingularWSService().getSingularWSPort();
+            BindingProvider bp = (BindingProvider) singularService;
+            bp.getRequestContext().put(
+                    BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                    getAdressWithoutWsdl(
+                            ConfigProperties.get("singular.ws.endereco"), processGroupContext));
+            singularServiceMap.put(processGroupContext, singularService);
+        }
+        return singularServiceMap.get(processGroupContext);
     }
 
 }

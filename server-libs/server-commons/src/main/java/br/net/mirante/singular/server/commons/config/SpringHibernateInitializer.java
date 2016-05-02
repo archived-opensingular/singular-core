@@ -11,6 +11,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import java.util.Optional;
 
 public abstract class SpringHibernateInitializer {
 
@@ -23,9 +24,9 @@ public abstract class SpringHibernateInitializer {
     public AnnotationConfigWebApplicationContext init(ServletContext ctx) {
         AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
         applicationContext.register(springConfigurationClass());
-        applicationContext.register(swaggerConfig());
+        Optional.ofNullable(swaggerConfig()).ifPresent(applicationContext::register);
         applicationContext.register(beanFactory());
-        applicationContext.register(persistenceConfiguration());
+        Optional.ofNullable(persistenceConfiguration()).ifPresent(applicationContext::register);
         addSpringContextListener(ctx, applicationContext);
         addSpringRequestContextListener(ctx, applicationContext);
         addSpringMVCServlet(ctx, applicationContext);

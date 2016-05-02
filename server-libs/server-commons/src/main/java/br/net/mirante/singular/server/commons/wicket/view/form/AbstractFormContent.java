@@ -1,5 +1,7 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
+import br.net.mirante.singular.form.mform.RefService;
+import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.flow.metadata.PetServerContextMetaData;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -33,6 +35,7 @@ import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureExcep
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,13 +126,31 @@ public abstract class AbstractFormContent extends Content {
     protected abstract List<MTransition> currentTaskTransitions(String formId);
 
 
+    public interface ProcessFormService extends Serializable {
+        ProcessInstanceEntity getProcessInstance();
+    }
+
     private SingularFormPanel buildSingularBasePanel() {
         singularFormPanel = new SingularFormPanel<String>("singular-panel", singularFormConfig) {
 
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
-                String xml = getFormXML(getFormModel());
+                String xml = getFormXML();
+                SInstance instance = createInstance(singularFormConfig, refType, xml);
+                //TODO: Fabs this does not work for init instance
+                instance.getDocument().bindLocalService("processService",ProcessFormService.class, RefService.of(
+                        new ProcessFormService(){
+                            ProcessInstanceEntity pInstance = AbstractFormContent.this.getProcessInstance();
+                            @Override public ProcessInstanceEntity getProcessInstance() {
+                                return pInstance;
+                            }
+                        })
+                );
+                return instance;
+            }
+
+            private SInstance createInstance(SFormConfig<String> singularFormConfig, RefType refType, String xml) {
                 if (StringUtils.isBlank(xml)) {
                     return singularFormConfig.getDocumentFactory().createInstance(refType);
                 } else {
@@ -182,7 +203,7 @@ public abstract class AbstractFormContent extends Content {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
                 MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
-                setFormXML(getFormModel(), Optional.ofNullable(rootXml).map(MElement::toStringExato).orElse(null));
+                setFormXML(Optional.ofNullable(rootXml).map(MElement::toStringExato).orElse(null));
                 processAnnotations(getCurrentInstance().getObject());
                 getCurrentInstance().getObject().getDocument().persistFiles();
                 try{
@@ -345,9 +366,13 @@ public abstract class AbstractFormContent extends Content {
         };
     }
 
-    protected abstract String getFormXML(IModel<?> model);
+    protected abstract String getFormXML();
 
-    protected abstract void setFormXML(IModel<?> model, String xml);
+    protected abstract void setFormXML(String xml);
+
+    protected abstract ProcessInstanceEntity getProcessInstance();
+
+    protected abstract void setProcessInstance(ProcessInstanceEntity pie);
 
     protected abstract void saveForm(IModel<?> currentInstance);
 
