@@ -50,7 +50,7 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
      * instancia informado. Se o tipo do conteudo não for compatível dispara
      * exception.
      * <p>
-     *
+     * <p>
      * <pre>
      * MTipoLista&lt;MTipoString> tipoLista = ...
      *
@@ -154,6 +154,13 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
 
     public <T extends Serializable> SelectionBuilder<T, SIList<I>, I> selectionOf(Class<T> clazz) {
         return selectionOf(clazz, new SMultiSelectionBySelectView());
+    }
+
+    public STypeList<E, I> selectionOf(Serializable... os) {
+        new SelectionBuilder<>(this)
+                .selfIdAndDisplay()
+                .simpleProviderOf((Serializable[]) os);
+        return this;
     }
 
 }

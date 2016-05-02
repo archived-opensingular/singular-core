@@ -31,7 +31,7 @@ public class PanelListWithSimpleSelectionTest extends SingularFormBaseTest {
         final STypeComposite mockTypeCompostite = mockList.getElementsType();
 
         simpleSelecion = mockTypeCompostite.addFieldString("simpleSelecion");
-        simpleSelecion.withSelectionOf("a", "b", "c");
+        simpleSelecion.selectionOf("a", "b", "c");
     }
 
     @Test

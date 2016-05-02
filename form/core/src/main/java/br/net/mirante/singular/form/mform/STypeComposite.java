@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewAttachmentList;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.mform.builder.selection.MapSelectionBuilder;
+import br.net.mirante.singular.form.mform.builder.selection.SSelectionBuilder;
 import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
 import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
@@ -221,14 +221,14 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return addField(fieldSimpleName, STypeMonetary.class);
     }
 
-    public MapSelectionBuilder selection() {
+    public SSelectionBuilder selection() {
         this.setView(SViewSelectionBySelect::new);
-        return new MapSelectionBuilder(this);
+        return new SSelectionBuilder(this);
     }
 
-    public MapSelectionBuilder autocomplete() {
+    public SSelectionBuilder autocomplete() {
         this.setView(SViewAutoComplete::new);
-        return new MapSelectionBuilder(this);
+        return new SSelectionBuilder(this);
     }
 
     public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> selectionOf(Class<T> clazz, SView view) {

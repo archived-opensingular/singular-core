@@ -5,16 +5,12 @@
 
 package br.net.mirante.singular.form.mform.util.transformer;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SISimple;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.*;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -145,30 +141,34 @@ public class Value {
      * dehydrate.
      *
      * @param instancia
-     * @param value
+     * @param content
      */
-    public static void hydrate(SInstance instancia, Object value) {
+    public static void hydrate(SInstance instancia, Content content) {
         if (instancia != null) {
             if (instancia instanceof SIComposite) {
-                fromMap((Map<String, Object>) value, (SIComposite) instancia);
+                fromMap((Map<String, Content>) content.getRawContent(), (SIComposite) instancia);
             } else if (instancia instanceof SISimple) {
-                ((SISimple) instancia).setValue(value);
+                if (content.getRawContent() == null) {
+                    instancia.clearInstance();
+                } else {
+                    instancia.setValue(content.getRawContent());
+                }
             } else if (instancia instanceof SIList) {
-                fromList((List<Object>) value, (SIList) instancia);
+                fromList((List<Content>) content.getRawContent(), (SIList) instancia);
             } else {
                 throw new SingularFormException("Tipo de instancia não suportado: " + instancia.getClass().getName());
             }
         }
     }
 
-    private static void fromMap(Map<String, Object> map, SIComposite instancia) {
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
+    private static void fromMap(Map<String, Content> map, SIComposite instancia) {
+        for (Map.Entry<String, Content> entry : map.entrySet()) {
             hydrate(instancia.getField(entry.getKey()), entry.getValue());
         }
     }
 
-    private static void fromList(List<Object> list, SIList sList) {
-        for (Object o : list) {
+    private static void fromList(List<Content> list, SIList sList) {
+        for (Content o : list) {
             SInstance novo = sList.addNew();
             hydrate(novo, o);
         }
@@ -181,18 +181,18 @@ public class Value {
      * @param value MIinstancia a partir da qual se deseja extrair os dados
      * @return Objetos serializáveis representando os dados da MInstancia
      */
-    public static Object dehydrate(SInstance value) {
+    public static Content dehydrate(SInstance value) {
         if (value != null) {
             if (value instanceof SIComposite) {
-                Map<String, Object> map = new LinkedHashMap<>();
-                toMap(map, (SInstance) value);
-                return map;
+                LinkedHashMap<String, Content> map = new LinkedHashMap<>();
+                toMap(map, value);
+                return new Content(map, value.getType().getName());
             } else if (value instanceof SISimple) {
-                return ((SISimple) value).getValue();
+                return new Content((Serializable) value.getValue(), value.getType().getName());
             } else if (value instanceof SIList) {
-                List<Object> list = new ArrayList<>();
-                toList(list, (SInstance) value);
-                return list;
+                List<Content> list = new ArrayList<>();
+                toList(list, value);
+                return new Content((Serializable) list, value.getType().getName());
             } else {
                 throw new SingularFormException("Tipo de instancia não suportado", value);
             }
@@ -200,7 +200,7 @@ public class Value {
         return null;
     }
 
-    private static void toMap(Map<String, Object> value, SInstance instancia) {
+    private static void toMap(Map<String, Content> value, SInstance instancia) {
         if (instancia instanceof SIComposite) {
             SIComposite item = (SIComposite) instancia;
             for (SInstance i : item.getAllChildren()) {
@@ -209,7 +209,7 @@ public class Value {
         }
     }
 
-    private static void toList(List<Object> value, SInstance instancia) {
+    private static void toList(List<Content> value, SInstance instancia) {
         if (instancia instanceof SIList<?>) {
             for (SInstance i : ((SIList<?>) instancia).getValues()) {
                 value.add(dehydrate(i));
@@ -223,6 +223,52 @@ public class Value {
 
     public <T> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.notNull(instancia, tipo);
+    }
+
+    public static class Content implements Serializable {
+
+        private final Serializable rawContent;
+        private final String       typeName;
+
+        public Content(Serializable rawContent, String typeName) {
+            this.rawContent = rawContent;
+            this.typeName = typeName;
+        }
+
+        public Serializable getRawContent() {
+            return rawContent;
+        }
+
+        public String getTypeName() {
+            return typeName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Content content = (Content) o;
+
+            return new EqualsBuilder()
+                    .append(rawContent, content.rawContent)
+                    .append(typeName, content.typeName)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(rawContent)
+                    .append(typeName)
+                    .toHashCode();
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Tipo: %s, Objeto: %s ", typeName, ObjectUtils.defaultIfNull(rawContent, "").toString());
+        }
     }
 
 }

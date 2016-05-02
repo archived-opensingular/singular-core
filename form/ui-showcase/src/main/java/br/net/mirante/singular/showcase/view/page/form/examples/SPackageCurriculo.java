@@ -5,20 +5,12 @@
 
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
@@ -47,10 +39,10 @@ public class SPackageCurriculo extends SPackage {
         STypeCPF cpf = informacoesPessoais.addField("cpf", STypeCPF.class, true);
         STypeDate dtNasc = informacoesPessoais.addFieldDate("dataNascimento", true);
         STypeString estadoCivil = informacoesPessoais.addFieldString("estadoCivil", true);
-        estadoCivil.withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
+        estadoCivil.selectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
 
         STypeString tipoContato = pb.createType("tipoContato", STypeString.class)
-                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax").cast();
+                .selectionOf("Endereço", "Email", "Telefone", "Celular", "Fax").cast();
         final STypeList<STypeString, SIString> infoPub = informacoesPessoais.addFieldListOf("infoPub",
                 tipoContato);
         {
@@ -120,7 +112,7 @@ public class SPackageCurriculo extends SPackage {
         final STypeList<STypeComposite<SIComposite>, SIComposite> formacao = curriculo.addFieldListOfComposite("formacaoAcademica", "cursoAcademico");
         final STypeComposite<?> cursoAcademico = formacao.getElementsType();
         final STypeString academicoTipo = cursoAcademico.addFieldString("tipo", true)
-            .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado").cast();
+            .selectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado").cast();
         final STypeString academicoNomeCurso = cursoAcademico.addFieldString("nomeCurso", true);
         final STypeString academicoInstituicao = cursoAcademico.addFieldString("instituicao", true);
         final STypeCNPJ academicoCNPJ = cursoAcademico.addField("cnpj", STypeCNPJ.class, false);

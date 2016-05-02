@@ -15,26 +15,22 @@ public class CaseInputCoreSelectDefaultPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         STypeComposite<?> root = pb.createCompositeType("testForm");
-//
-//        addSelection(root, 3, true);
-//        addSelection(root, 3, false);
-//        addSelection(root, 10, false);
-//
-//        final STypeString favoriteFruit = root.addFieldString("favoriteFruit");
-//        favoriteFruit.withSelectView();
-//        favoriteFruit.asAtrBasic().label("Fruta Favorita");
-//        favoriteFruit.asAtrProvider().fixedOptionsProvider((SimpleSimpleProvider<String>) i -> {
-//            return Arrays.asList("Maçã", "Laranja", "Banana", "Goiaba");
-//        });
+
+        addSelection(root, 3, true);
+        addSelection(root, 3, false);
+        addSelection(root, 10, false);
+
+        final STypeString favoriteFruit = root.addFieldString("favoriteFruit");
+        favoriteFruit.withSelectView();
+        favoriteFruit.asAtrBasic().label("Fruta Favorita");
+        favoriteFruit.selectionOf("Maçã", "Laranja", "Banana", "Goiaba");
 
     }
 
     private static void addSelection(STypeComposite<?> tipoMyForm, int sizeOptions, boolean required) {
         STypeString tipoSelection = tipoMyForm.addFieldString("opcoes" + sizeOptions + required);
-
-        tipoSelection.withSelectionOf(createOptions(sizeOptions));
+        tipoSelection.selectionOf(createOptions(sizeOptions));
         tipoSelection.withRequired(required);
-
         tipoSelection.asAtrBasic().label("Seleção de " + sizeOptions);
     }
 

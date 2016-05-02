@@ -23,7 +23,7 @@ public class STypeFormula extends STypeComposite<SIFormula> {
     protected void onLoadType(TypeBuilder tb) {
         addFieldString(CAMPO_SCRIPT);
         STypeString tipo = addFieldString(CAMPO_TIPO_SCRIPT);
-        tipo.withSelectionOf(TipoScript.class);
+        tipo.selectionOfEnum(TipoScript.class);
     }
 
     public static enum TipoScript {

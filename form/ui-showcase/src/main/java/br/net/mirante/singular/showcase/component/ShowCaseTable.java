@@ -41,6 +41,7 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreSelectComboRadio.class)
             .addCase(CaseInputCoreSelectDefault.class)
             .addCase(CaseInputCoreSelectComposite.class)
+            .addCase(CaseInputCoreSelectCompositePojo.class)
             .addCase(CaseInputCoreSelectProvider.class)
             .addCase(CaseInputCoreSelectComboAutoComplete.class)
             .addCase(CaseInputCoreMultiSelectDefault.class)

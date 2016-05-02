@@ -31,7 +31,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
     protected void buildBaseType(STypeComposite<?> baseType) {
 
         genero = baseType.addFieldString("genero");
-        genero.withSelectionOf("Feminino", "Masculino");
+        genero.selectionOf("Feminino", "Masculino");
 
         pessoa = baseType.addFieldComposite("pessoa");
 

@@ -110,7 +110,7 @@ public class BooleanMapperTest {
         }
 
         @Test public void rendersFalseChoiceIfFalseIsSelected() {
-            assertThat(radioChoiceAt(0).getValue()).isEqualTo("true");
+            assertThat(radioChoiceAt(0).getValue()).isEqualTo("Sim");
         }
     }
 
