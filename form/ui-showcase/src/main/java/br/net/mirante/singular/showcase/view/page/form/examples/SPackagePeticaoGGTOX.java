@@ -171,7 +171,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 final STypeList<STypeString, SIString> restricoes = root.addFieldListOf("restricoes", restricao);
 
-                restricoes.withSelectionOf("Impureza relevante presente",
+                restricoes.selectionOf("Impureza relevante presente",
                         "Controle de impureza determinado",
                         "Restrição de uso em algum país",
                         "Restrição de uso em alimentos",
@@ -199,7 +199,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             private STypeList<STypeString, SIString> createListaField(PackageBuilder pb) {
                 STypeString                      sinonimia = pb.createType("sinonimia", STypeString.class);
                 STypeList<STypeString, SIString> field     = root.addFieldListOf("sinonimiaAssociada", sinonimia);
-                field.withSelectionOf("Sinonímia teste", "Sinonímia teste 2", "Sinonímia teste 3");
+                field.selectionOf("Sinonímia teste", "Sinonímia teste 2", "Sinonímia teste 3");
                 field.withView(SMultiSelectionBySelectView::new)
                         .asAtrBasic()
                         .label("Sinonímias já associadas a esta substância/mistura")
@@ -234,7 +234,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 STypeString finalidade = pb.createType("finalidade", STypeString.class);
                 final STypeList<STypeString, SIString> finalidades = root.addFieldListOf("finalidades", finalidade);
-                finalidades.withSelectionOf("Produção", "Importação", "Exportação", "Comercialização", "Utilização").cast();
+                finalidades.selectionOf("Produção", "Importação", "Exportação", "Comercialização", "Utilização").cast();
                 finalidades.withView(SMultiSelectionByCheckboxView::new);
             }
         }
@@ -250,7 +250,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 final STypeString                      usoPretendido   = pb.createType("usoPretendido", STypeString.class);
                 final STypeList<STypeString, SIString> usosPretendidos = root.addFieldListOf("usosPretendidos", usoPretendido);
-                usosPretendidos.withSelectionOf("Uso 1", "Uso 2", "Uso 3");
+                usosPretendidos.selectionOf("Uso 1", "Uso 2", "Uso 3");
                 usosPretendidos.withView(SMultiSelectionByPicklistView::new)
                         .asAtrBasic().label("Lista de uso pretendido/mistura");
             }
