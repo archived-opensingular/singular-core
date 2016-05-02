@@ -6,6 +6,7 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
 import br.net.mirante.singular.form.wicket.model.SelectMInstanceAwareModel;
@@ -17,7 +18,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectMapper extends ControlsFieldComponentAbstractMapper {
@@ -72,14 +73,24 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
 
         @Override
         protected List<Serializable> load() {
-            final SimpleProvider provider = model.getObject().asAtrProvider().getSimpleProvider();
+            final SimpleProvider     provider = model.getObject().asAtrProvider().getSimpleProvider();
+            final List<Serializable> values   = new ArrayList<>();
             if (provider != null) {
                 final List<Serializable> result = provider.load(model.getObject());
                 if (result != null) {
-                    return result;
+                    values.addAll(result);
                 }
             }
-            return Collections.emptyList();
+
+            if (!model.getObject().isEmptyOfData()) {
+                final SInstanceConverter converter = model.getObject().asAtrProvider().getConverter();
+                final Serializable       converted = converter.toObject(model.getObject());
+                if (!values.contains(converted)) {
+                    values.add(0, converted);
+                }
+            }
+
+            return values;
         }
     }
 

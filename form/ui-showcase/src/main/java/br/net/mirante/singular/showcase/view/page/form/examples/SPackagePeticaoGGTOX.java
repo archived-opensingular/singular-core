@@ -53,7 +53,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
         STypeString choice = peticionamento.addFieldString("choice");
         choice.asAtrBasic().label("Escolha um número");
         choice.withView(SViewAutoComplete::new);
-        choice.withSelectionOf("One", "Two", "Three", "Four", "Five", "Six", "Seven");
+        choice.selectionOf("One", "Two", "Three", "Four", "Five", "Six", "Seven");
 
         SType<?> forshow = peticionamento.addFieldString("forshow").asAtrBasic().label("Just here").getTipo();
 
@@ -86,7 +86,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
         private STypeString addPersonField(String fieldname, String label, int colPreference) {
             STypeString f = root.addFieldString(fieldname, true);
-            f.withSelectionOf(responsaveis)
+            f.selectionOf(responsaveis)
                     .withView(SViewSelectionBySelect::new)
                     .asAtrBasic().label(label)
                     .asAtrBootstrap().colPreference(colPreference);
@@ -97,7 +97,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             // TODO preciso de um campo boolean mas as labels devem ser as descritas abaixo
             //TODO deve ser possivel alinhar o texto: text-left text-right text-justify text-nowrap
             STypeString field = root.addFieldString("concordo", true);
-            field.withSelectionOf("Concordo", "Não Concordo").withView(SViewSelectionByRadio::new);
+            field.selectionOf("Concordo", "Não Concordo").withView(SViewSelectionByRadio::new);
             return field;
         }
 
@@ -152,7 +152,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                         .asAtrBootstrap().colPreference(4);
 
                 tipoComponente = root.addFieldString("tipoComponente", true);
-                tipoComponente.withSelectionOf("Substância", "Mistura")
+                tipoComponente.selectionOf("Substância", "Mistura")
                         .withView(SViewSelectionByRadio::new)
                         .asAtrBasic().label("Tipo componente");
             }
@@ -171,7 +171,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 final STypeList<STypeString, SIString> restricoes = root.addFieldListOf("restricoes", restricao);
 
-                restricoes.withSelectionOf("Impureza relevante presente",
+                restricoes.selectionOf("Impureza relevante presente",
                         "Controle de impureza determinado",
                         "Restrição de uso em algum país",
                         "Restrição de uso em alimentos",
@@ -199,7 +199,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             private STypeList<STypeString, SIString> createListaField(PackageBuilder pb) {
                 STypeString                      sinonimia = pb.createType("sinonimia", STypeString.class);
                 STypeList<STypeString, SIString> field     = root.addFieldListOf("sinonimiaAssociada", sinonimia);
-                field.withSelectionOf("Sinonímia teste", "Sinonímia teste 2", "Sinonímia teste 3");
+                field.selectionOf("Sinonímia teste", "Sinonímia teste 2", "Sinonímia teste 3");
                 field.withView(SMultiSelectionBySelectView::new)
                         .asAtrBasic()
                         .label("Sinonímias já associadas a esta substância/mistura")
@@ -234,7 +234,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 STypeString finalidade = pb.createType("finalidade", STypeString.class);
                 final STypeList<STypeString, SIString> finalidades = root.addFieldListOf("finalidades", finalidade);
-                finalidades.withSelectionOf("Produção", "Importação", "Exportação", "Comercialização", "Utilização").cast();
+                finalidades.selectionOf("Produção", "Importação", "Exportação", "Comercialização", "Utilização").cast();
                 finalidades.withView(SMultiSelectionByCheckboxView::new);
             }
         }
@@ -250,7 +250,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 final STypeString                      usoPretendido   = pb.createType("usoPretendido", STypeString.class);
                 final STypeList<STypeString, SIString> usosPretendidos = root.addFieldListOf("usosPretendidos", usoPretendido);
-                usosPretendidos.withSelectionOf("Uso 1", "Uso 2", "Uso 3");
+                usosPretendidos.selectionOf("Uso 1", "Uso 2", "Uso 3");
                 usosPretendidos.withView(SMultiSelectionByPicklistView::new)
                         .asAtrBasic().label("Lista de uso pretendido/mistura");
             }
@@ -332,7 +332,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             private STypeString createFieldProdutoExterior() {
                 //TODO converter sim nao para true false
                 STypeString field = type.addFieldString("produtoExterior", true);
-                field.withSelectionOf("Sim", "Não")
+                field.selectionOf("Sim", "Não")
                         .withView(SViewSelectionByRadio::new)
                         .asAtrBasic().label("Produto formulado no exterior?")
                         .asAtrBootstrap().colPreference(12);
@@ -341,7 +341,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private STypeString createFieldTipo() {
                 STypeString field = type.addFieldString("tipo", true);
-                field.withSelectionOf(tiposDisponiveis)
+                field.selectionOf(tiposDisponiveis)
                         .withView(SViewSelectionBySelect::new)
                         .asAtrBasic().label("Tipo")
                         .asAtrBootstrap().colPreference(4);
@@ -350,7 +350,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private STypeString createFieldMaterial() {
                 STypeString field = type.addFieldString("material", true);
-                field.withSelectionOf(materiaisDisponiveis)
+                field.selectionOf(materiaisDisponiveis)
                         .withView(SViewSelectionBySelect::new)
                         .asAtrBasic().label("Material")
                         .asAtrBootstrap().colPreference(4);
@@ -368,7 +368,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             private STypeString createFieldUnidadeDeMedida() {
                 //TODO caso o array tenha uma string vazia, ocorre um NPE
                 STypeString field = type.addFieldString("unidadeMedida", true);
-                field.withSelectionOf(new String[]{"cm"}).withView(SViewSelectionBySelect::new)
+                field.selectionOf(new String[]{"cm"}).withView(SViewSelectionBySelect::new)
                         .asAtrBasic().label("Unidade medida")
                         .asAtrBootstrap().colPreference(1);
                 return field;
@@ -407,7 +407,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private STypeString createTipoField() {
                 STypeString t = type.addFieldString("tipoArquivo");
-                t.withSelectionOf("Ficha de emergência", "Ficha de segurança", "Outros")
+                t.selectionOf("Ficha de emergência", "Ficha de segurança", "Outros")
                         .withView(SViewSelectionBySelect::new)
                         .asAtrBasic().label("Tipo do arquivo a ser anexado")
                         .asAtrBootstrap().colPreference(3);
@@ -470,7 +470,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private STypeString createEstadoFísicoField() {
                 STypeString f = type.addFieldString("estadoFisico", true);
-                f.withSelectionOf("Líquido", "Sólido", "Gasoso")
+                f.selectionOf("Líquido", "Sólido", "Gasoso")
                         .withView(SViewSelectionBySelect::new)
                         .asAtrBasic().label("Estado físico")
                         .asAtrBootstrap().colPreference(2);
@@ -574,7 +574,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 private STypeString createUnidadeField() {
                     STypeString f = root.addFieldString("unidade");
-                    f.withSelectionOf("mmHg", "Pa", "mPa")
+                    f.selectionOf("mmHg", "Pa", "mPa")
                             .withView(SViewSelectionBySelect::new)
                             .asAtrBasic().label("Unidade")
                             .asAtrBootstrap().colPreference(6);
@@ -646,18 +646,18 @@ public class SPackagePeticaoGGTOX extends SPackage {
                     root.asAtrBasic().label("Alterações");
 
                     cornea = createStringField("cornea", "Córnea", 6);
-                    cornea.withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...");
+                    cornea.selectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...");
 
                     tempoReversibilidadeCornea = createStringField("tempoReversibilidadeCornea", "Tempo de reversibilidade", 6);
 
                     conjuntiva = createStringField("conjuntiva", "Conjuntiva", 6);
-                    conjuntiva.withSelectionOf("Sem alterações", "Opacidade persistente",
+                    conjuntiva.selectionOf("Sem alterações", "Opacidade persistente",
                             "Opacidade reversível em...");
 
                     tempoReversibilidadeConjuntiva = createStringField("tempoReversibilidadeConjuntiva", "Tempo de reversibilidade", 6);
 
                     iris = createStringField("iris", "Íris", 6);
-                    iris.withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...");
+                    iris.selectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...");
 
                     tempoReversibilidadeIris = createStringField("tempoReversibilidadeIris", "Tempo de reversibilidade", 6);
                 }
@@ -694,10 +694,10 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 purezaProdutoTestado = createStringField("purezaProdutoTestado", "Pureza do produto testado", null, 6);
 
                 unidadeMedida = createStringField("unidadeMedida", "Unidade de medida", null, 2);
-                unidadeMedida.withSelectionOf("g/Kg", "g/L");
+                unidadeMedida.selectionOf("g/Kg", "g/L");
 
                 especies = createStringField("especies", "Espécies", null, 4);
-                especies.withSelectionOf("Càes", "Camundongos", "Cobaia", "Coelho", "Galinha",
+                especies.selectionOf("Càes", "Camundongos", "Cobaia", "Coelho", "Galinha",
                         "Informação não disponível", "Peixe", "Primatas", "Rato");
 
                 linhagem = createStringField("linhagem", "Linhagem", null, 6);
@@ -710,10 +710,10 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 fluoresceina = createStringField("fluoresceina", "Fluoresceína", null, 3);
                 fluoresceina.withView(new SViewSelectionByRadio());
-                fluoresceina.withSelectionOf("Sim", "Não");
+                fluoresceina.selectionOf("Sim", "Não");
 
                 testeRealizado = createStringField("testeRealizado", "Teste realizado", null, 3);
-                testeRealizado.withSelectionOf("Com lavagem", "Sem lavagem");
+                testeRealizado.selectionOf("Com lavagem", "Sem lavagem");
 
                 alteracao = new Alteracao(pb);
 

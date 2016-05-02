@@ -56,7 +56,7 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
 
         letter.as(SPackageBasic.aspect())
             .label("Letter");
-        letter.withSelectionOf("a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z".split(","));
+        letter.selectionOf("a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z".split(","));
 
         word.as(SPackageBasic.aspect())
             .label("Word")

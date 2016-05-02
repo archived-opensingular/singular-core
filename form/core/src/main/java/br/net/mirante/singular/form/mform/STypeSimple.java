@@ -149,15 +149,24 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
         return new RuntimeException(msg);
     }
 
-    public STypeSimple<I, VALUE> withSelectionOf(VALUE... os) {
+    @SafeVarargs
+    public final STypeSimple<I, VALUE> selectionOf(VALUE... os) {
         new SelectionBuilder<>(this)
                 .selfIdAndDisplay()
                 .simpleProviderOf((Serializable[]) os);
         return this;
     }
 
+    @SafeVarargs
+    public final STypeSimple<I, VALUE> autocompleteOf(VALUE... os) {
+        this.setView(SViewAutoComplete::new);
+        new SelectionBuilder<>(this)
+                .selfIdAndDisplay()
+                .simpleProviderOf((Serializable[]) os);
+        return this;
+    }
 
-    public <T extends Enum<T>> SType withSelectionOf(Class<T> enumType) {
+    public <T extends Enum<T>> SType selectionOfEnum(Class<T> enumType) {
         this.selectionOf(Enum.class)
                 .id(Enum::name)
                 .display(Enum::toString)
@@ -179,9 +188,9 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
         return selectionOf(clazz, new SViewAutoComplete());
     }
 
-    public <T extends Serializable> SelectionBuilder<T, I, I> lazyAutocompleteOf(Class<T> clasz) {
-        this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
-        return new SelectionBuilder<>(this);
+    public <T extends Serializable> SelectionBuilder<T, I, I> lazyAutocompleteOf(Class<T> clazz) {
+        return selectionOf(clazz, new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
     }
+
 
 }

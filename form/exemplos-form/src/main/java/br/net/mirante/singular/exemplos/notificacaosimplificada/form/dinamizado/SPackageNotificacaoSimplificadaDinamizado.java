@@ -130,7 +130,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         escala
                 .withSelectView()
-                .withSelectionOf("CH", "DH");
+                .selectionOf("CH", "DH");
 
         final STypeComposite formaFarmaceutica = caracteristicas.addFieldComposite("formaFarmaceutica");
 

@@ -12,13 +12,17 @@ import br.net.mirante.singular.form.mform.util.transformer.Value.Content;
 import static br.net.mirante.singular.form.mform.util.transformer.Value.hydrate;
 
 
-public class MapSelectionDisplayBuilder extends AbstractBuilder {
+public class SSelectionDisplayBuilder extends AbstractBuilder {
 
-    public MapSelectionDisplayBuilder(SType type) {
+    public SSelectionDisplayBuilder(SType type) {
         super(type);
     }
 
-    public MapProviderBuilder display(final SType display) {
+    public SProviderBuilder selfDisplay() {
+        return display(type);
+    }
+
+    public SProviderBuilder display(final SType display) {
         type.asAtrProvider().asAtrProvider().displayFunction(new IFunction<Content, String>() {
             @Override
             public String apply(Content content) {
@@ -31,10 +35,10 @@ public class MapSelectionDisplayBuilder extends AbstractBuilder {
             }
         });
         addConverter();
-        return new MapProviderBuilder(super.type);
+        return new SProviderBuilder(super.type);
     }
 
-    public MapProviderBuilder display(String freemakerTemplate) {
+    public SProviderBuilder display(String freemakerTemplate) {
         type.asAtrProvider().asAtrProvider().displayFunction(new IFunction<Content, String>() {
             @Override
             public String apply(Content content) {
@@ -45,7 +49,7 @@ public class MapSelectionDisplayBuilder extends AbstractBuilder {
             }
         });
         addConverter();
-        return new MapProviderBuilder(super.type);
+        return new SProviderBuilder(super.type);
     }
 
     private void addConverter() {

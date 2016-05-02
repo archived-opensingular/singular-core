@@ -156,7 +156,7 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return selectionOf(clazz, new SMultiSelectionBySelectView());
     }
 
-    public STypeList<E, I> withSelectionOf(Serializable... os) {
+    public STypeList<E, I> selectionOf(Serializable... os) {
         new SelectionBuilder<>(this)
                 .selfIdAndDisplay()
                 .simpleProviderOf((Serializable[]) os);

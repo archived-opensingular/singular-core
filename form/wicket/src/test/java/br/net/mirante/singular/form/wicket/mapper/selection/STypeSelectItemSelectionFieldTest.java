@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.AtrProvider;
-import br.net.mirante.singular.form.mform.provider.MapSimpleProvider;
+import br.net.mirante.singular.form.mform.provider.SSimpleProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -39,7 +39,7 @@ public class STypeSelectItemSelectionFieldTest {
             return Pair.of(id, descricao);
         }
 
-        protected MapSimpleProvider newProviderFrom(Pair... pairs) {
+        protected SSimpleProvider newProviderFrom(Pair... pairs) {
             return builder -> {
                 for (Pair p : pairs) {
                     builder.add().set(idUF, p.getKey()).set(nomeUF, p.getValue());

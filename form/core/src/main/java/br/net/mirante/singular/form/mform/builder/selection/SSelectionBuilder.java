@@ -8,25 +8,33 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import static br.net.mirante.singular.form.mform.util.transformer.Value.Content;
 
-public class MapSelectionBuilder extends AbstractBuilder {
+public class SSelectionBuilder extends AbstractBuilder {
 
-    public MapSelectionBuilder(SType type) {
+    public SSelectionBuilder(SType type) {
         super(type);
     }
 
-    public MapSelectionDisplayBuilder id(SType id) {
+    public SSelectionDisplayBuilder selfId() {
+        return id(type);
+    }
+
+    public SProviderBuilder selfIdAndDisplay() {
+        return selfId().selfDisplay();
+    }
+
+    public SSelectionDisplayBuilder id(SType id) {
         type.asAtrProvider().asAtrProvider().idFunction(new IFunction<Value.Content, String>() {
             @Override
             public String apply(Content content) {
                 final SInstance ins = type.newInstance();
                 Value.hydrate(ins, content);
-                if(ins instanceof SIComposite){
-                    return String.valueOf(((SIComposite)ins).getValue(id));
+                if (ins instanceof SIComposite) {
+                    return String.valueOf(((SIComposite) ins).getValue(id));
                 }
                 return String.valueOf(ins.getValue());
             }
         });
-        return new MapSelectionDisplayBuilder(super.type);
+        return new SSelectionDisplayBuilder(super.type);
     }
 
 }

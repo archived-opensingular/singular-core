@@ -1,10 +1,6 @@
 package br.net.mirante.singular.form.curriculo.mform;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
@@ -97,7 +93,7 @@ public class SPackageCurriculo extends SPackage {
         final STypeList<STypeComposite<SIComposite>, SIComposite> formacao = curriculo.addFieldListOfComposite("formacaoAcademica", "cursoAcademico");
         final STypeComposite<?> cursoAcademico = formacao.getElementsType();
         final STypeString academicoTipo = cursoAcademico.addFieldString("tipo", true)
-            .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado").cast();
+            .selectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado").cast();
         final STypeString academicoNomeCurso = cursoAcademico.addFieldString("nomeCurso", true);
         final STypeString academicoInstituicao = cursoAcademico.addFieldString("instituicao", true);
         final STypeCNPJ academicoCNPJ = cursoAcademico.addField("cnpj", STypeCNPJ.class, false);
