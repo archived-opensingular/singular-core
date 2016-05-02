@@ -23,7 +23,7 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
         super.onLoadType(tb);
 
         embalagemPrimaria = this.addFieldString("embalagemPrimaria");
-        embalagemPrimaria.withSelectionOf("Cilindro", "Tanque", "Caminhão Tanque");
+        embalagemPrimaria.selectionOf("Cilindro", "Tanque", "Caminhão Tanque");
         embalagemPrimaria
                 .asAtrBasic()
                 .label("Emabalagem Primária")

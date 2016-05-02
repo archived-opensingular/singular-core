@@ -18,6 +18,10 @@ public class MapSelectionDisplayBuilder extends AbstractBuilder {
         super(type);
     }
 
+    public MapProviderBuilder selfDisplay() {
+        return display(type);
+    }
+
     public MapProviderBuilder display(final SType display) {
         type.asAtrProvider().asAtrProvider().displayFunction(new IFunction<Content, String>() {
             @Override

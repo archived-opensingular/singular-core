@@ -41,7 +41,7 @@ public class SPackageHabilitacaoEmpresa extends SPackage {
                 .label("Habilitar por");
         habilitarPor
                 .withRadioView()
-                .withSelectionOf("RE", "Petição de CBPF");
+                .selectionOf("RE", "Petição de CBPF");
 
         STypeComposite<SIComposite> dadosRE = habilitacaoEmpresa.addFieldComposite("dadosRE");
         dadosRE

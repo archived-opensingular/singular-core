@@ -14,14 +14,22 @@ public class MapSelectionBuilder extends AbstractBuilder {
         super(type);
     }
 
+    public MapSelectionDisplayBuilder selfId() {
+        return id(type);
+    }
+
+    public MapProviderBuilder selfIdAndDisplay() {
+        return selfId().selfDisplay();
+    }
+
     public MapSelectionDisplayBuilder id(SType id) {
         type.asAtrProvider().asAtrProvider().idFunction(new IFunction<Value.Content, String>() {
             @Override
             public String apply(Content content) {
                 final SInstance ins = type.newInstance();
                 Value.hydrate(ins, content);
-                if(ins instanceof SIComposite){
-                    return String.valueOf(((SIComposite)ins).getValue(id));
+                if (ins instanceof SIComposite) {
+                    return String.valueOf(((SIComposite) ins).getValue(id));
                 }
                 return String.valueOf(ins.getValue());
             }

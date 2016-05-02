@@ -5,11 +5,7 @@
 
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -40,7 +36,7 @@ public class CaseListByMasterDetailNestedPackage extends SPackage {
         STypeComposite<?> pet = pets.getElementsType();
         STypeString nomeDoPet = pet.addFieldString("nome", true);
         STypeString tipoDoPet = pet.addFieldString("tipo", true);
-        tipoDoPet.withSelectionOf("Gatinho", "Cachorrinho", "Papagaio");
+        tipoDoPet.selectionOf("Gatinho", "Cachorrinho", "Papagaio");
         STypeInteger idadePet = pet.addFieldInteger("idade");
 
         {
