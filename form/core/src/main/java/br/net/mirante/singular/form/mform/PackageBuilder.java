@@ -20,11 +20,11 @@ public class PackageBuilder {
         return sPackage;
     }
 
-    public <T extends SType<?>> T createType(String name, Class<T> parentClass) {
+    public <T extends SType<X>, X extends SInstance> T createType(String name, Class<T> parentClass) {
         return sPackage.extendType(name, parentClass);
     }
 
-    final <T extends SType<?>> T creatType(String simpleNameNewType, T parentType) {
+    public <T extends SType<?>> T createType(String simpleNameNewType, T parentType) {
         return sPackage.extendType(simpleNameNewType, parentType);
     }
 

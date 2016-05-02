@@ -5,20 +5,20 @@
 
 package br.net.mirante.singular.form.mform.core;
 
-import org.apache.commons.lang3.StringUtils;
-
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
 
 @SInfoType(name = "Boolean", spackage = SPackageCore.class)
 public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
 
     public static final String YES_LABEL = "Sim";
-    public static final String NO_LABEL = "Não";
+    public static final String NO_LABEL  = "Não";
 
     public STypeBoolean() {
         super(SIBoolean.class, Boolean.class);
@@ -46,9 +46,9 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
         valor = StringUtils.trimToNull(valor);
         if (valor == null) {
             return null;
-        } else if (valor.equalsIgnoreCase("true") || valor.equals("1")) {
+        } else if (valor.equalsIgnoreCase("true") || valor.equals("1") || valor.equals("Sim")) {
             return Boolean.TRUE;
-        } else if (valor.equalsIgnoreCase("false") || valor.equals("0")) {
+        } else if (valor.equalsIgnoreCase("false") || valor.equals("0") || valor.equals("Não")) {
             return Boolean.FALSE;
         }
         throw createConversionError(valor, Boolean.class);
@@ -59,39 +59,20 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
      */
     @Override
     public STypeBoolean withRadioView() {
-        withSelectionFromProvider(newBooleanProvider(YES_LABEL, NO_LABEL));
-        return (STypeBoolean) super.withView(SViewBooleanByRadio::new);
-    }
-
-    private SOptionsProvider newBooleanProvider(final String yesLabel, final String noLabel) {
-        return new SOptionsProvider() {
-            @Override
-            public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
-                STypeBoolean type = (STypeBoolean) optionsInstance.getType();
-                SIList<?> r = type.newList();
-                r.addElement(SIBoolean(type, true, yesLabel));
-                r.addElement(SIBoolean(type, false, noLabel));
-                return r;
-            }
-
-            private SIBoolean SIBoolean(STypeBoolean type, boolean value, String label) {
-                SIBoolean e = type.newInstance();
-                e.setValue(value);
-                e.setSelectLabel(label);
-                return e;
-            }
-        };
+        return withRadioView(YES_LABEL, NO_LABEL);
     }
 
     /**
      * Configura o tipo para utilizar a view {@link SViewBooleanByRadio}
      */
     public STypeBoolean withRadioView(String labelTrue, String labelFalse) {
-        withSelectionFromProvider(newBooleanProvider(labelTrue, labelFalse));
-        SViewBooleanByRadio v = new SViewBooleanByRadio();
-        v.labelFalse(labelFalse);
-        v.labelTrue(labelTrue);
-        return (STypeBoolean) super.withView(v);
+        this.withView(SViewBooleanByRadio::new);
+        new SelectionBuilder(this)
+                .id((IFunction<Object, String>) String::valueOf)
+                .display((IFunction<Object, String>) String::valueOf)
+                .simpleConverter()
+                .simpleProvider(ins -> Arrays.asList(labelTrue, labelFalse));
+        return this;
     }
 
     @Override

@@ -6,6 +6,8 @@
 package br.net.mirante.singular.form.mform;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +21,17 @@ public abstract class SScopeBase implements SScope {
     private Map<String, SType<?>> localTypes;
 
     private static final Logger LOGGER = Logger.getLogger(SScopeBase.class.getName());
+
+    /**
+     * Retorna os tipos criados localmente. Se for um pacote, retorna o tipos do
+     * pacote. Se for um tipo, então retorna o tipo criados no escopo local do
+     * tipo (tipo dentro de tipo).
+     * 
+     * @return Nunca null
+     */
+    public Collection<SType<?>> getLocalTypes() {
+        return localTypes != null ? localTypes.values() : Collections.emptyList();
+    }
 
     @Override
     public Optional<SType<?>> getLocalTypeOptional(String path) {

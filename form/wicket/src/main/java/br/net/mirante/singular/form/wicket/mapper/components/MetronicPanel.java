@@ -5,16 +5,18 @@
 
 package br.net.mirante.singular.form.wicket.mapper.components;
 
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import br.net.mirante.singular.commons.lambda.IBiConsumer;
-import br.net.mirante.singular.commons.lambda.IFunction;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 
+import br.net.mirante.singular.commons.lambda.IBiConsumer;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+
 public abstract class MetronicPanel extends TemplatePanel {
 
-    private Form<?> form = null;
+    private SingularForm<?> form = null;
     private boolean withForm;
 
     public MetronicPanel(String id) {
@@ -38,7 +40,7 @@ public abstract class MetronicPanel extends TemplatePanel {
         BSContainer<?> content = new BSContainer<>("_co");
         WebMarkupContainer container = this;
         if (withForm) {
-            form = new Form<>("_fo");
+            form = new SingularForm<>("_fo");
             add(form);
             container = form;
         }

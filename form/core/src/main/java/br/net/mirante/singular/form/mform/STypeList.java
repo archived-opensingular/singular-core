@@ -5,13 +5,17 @@
 
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
+import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
+import br.net.mirante.singular.form.mform.document.SDocument;
+
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
-import br.net.mirante.singular.form.mform.document.SDocument;
 
 /**
  * Representa um tipo lista, o qual deve ter um tipo definido para todos os seus
@@ -142,4 +146,14 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
     public Integer getMaximumSize() {
         return maximumSize;
     }
+
+    public <T extends Serializable> SelectionBuilder<T, SIList<I>, I> selectionOf(Class<T> clazz, SView view) {
+        this.setView(() -> view);
+        return new SelectionBuilder<>(this);
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, SIList<I>, I> selectionOf(Class<T> clazz) {
+        return selectionOf(clazz, new SMultiSelectionBySelectView());
+    }
+
 }

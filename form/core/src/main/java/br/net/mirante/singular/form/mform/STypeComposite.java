@@ -5,44 +5,27 @@
 
 package br.net.mirante.singular.form.mform;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewAttachmentList;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.mform.core.STypeDateTime;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeMonetary;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import br.net.mirante.singular.form.mform.options.SSelectionableCompositeType;
+import br.net.mirante.singular.form.mform.builder.selection.MapSelectionBuilder;
+import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
+import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 
+import java.io.Serializable;
+import java.util.*;
+
 @SInfoType(name = "STypeComposite", spackage = SPackageCore.class)
-public class STypeComposite<INSTANCE_TYPE extends SIComposite>
-        extends SType<INSTANCE_TYPE>
-        implements ICompositeType, SSelectionableCompositeType {
+public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INSTANCE_TYPE> implements ICompositeType {
 
     private Map<String, SType<?>> fieldsLocal;
 
     private transient FieldMapOfRecordType fieldsConsolidated;
-
-    private SOptionsProvider optionsProvider;
-
-    private String selectLabel;
 
     @SuppressWarnings("unchecked")
     public STypeComposite() {
@@ -238,40 +221,32 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite>
         return addField(fieldSimpleName, STypeMonetary.class);
     }
 
-    /**
-     * Configura o tipo para utilizar a view {@link SViewSelectionBySelect}
-     */
-    public STypeComposite<INSTANCE_TYPE> withSelectView() {
-        return (STypeComposite<INSTANCE_TYPE>) super.withView(SViewSelectionBySelect::new);
+    public MapSelectionBuilder selection() {
+        this.setView(SViewSelectionBySelect::new);
+        return new MapSelectionBuilder(this);
     }
 
-    /**
-     * Configura o tipo para utilizar a view {@link SViewSelectionByRadio}
-     */
-    public STypeComposite<INSTANCE_TYPE> withRadioView() {
-        return (STypeComposite<INSTANCE_TYPE>) super.withView(SViewSelectionByRadio::new);
+    public MapSelectionBuilder autocomplete() {
+        this.setView(SViewAutoComplete::new);
+        return new MapSelectionBuilder(this);
     }
 
-    @Override
-    public SOptionsProvider getOptionsProvider() {
-        return optionsProvider;
+    public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> selectionOf(Class<T> clazz, SView view) {
+        this.setView(() -> view);
+        return new SelectionBuilder<>(this);
     }
 
-    //TODO vinicius.nunes: não devia ser visível, usar apenas para uso interno. StypeComposite devia ser uma interface.
-    @Override
-    public void setOptionsProvider(SOptionsProvider p) {
-        optionsProvider = p;
+    public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> selectionOf(Class<T> clazz) {
+        return selectionOf(clazz, new SViewSelectionBySelect());
     }
 
-
-    @Override
-    public String getSelectLabel() {
-        return this.selectLabel;
+    public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> autocompleteOf(Class<T> clazz) {
+        return selectionOf(clazz, new SViewAutoComplete());
     }
 
-    @Override
-    public void setSelectLabel(String selectLabel) {
-        this.selectLabel = selectLabel;
+    public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> lazyAutocompleteOf(Class<T> clasz) {
+        this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
+        return new SelectionBuilder<>(this);
     }
 
     // TODO (from Daniel) MArquei como deprecated pois está estranho esse
@@ -383,4 +358,6 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite>
             return field;
         }
     }
+
+
 }

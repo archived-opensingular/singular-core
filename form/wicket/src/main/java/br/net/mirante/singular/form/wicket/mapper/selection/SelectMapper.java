@@ -6,68 +6,81 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import br.net.mirante.singular.form.wicket.model.SelectMInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings({"rawtypes", "serial"})
 public class SelectMapper extends ControlsFieldComponentAbstractMapper {
+
+    private static final long serialVersionUID = 3837032981059048504L;
 
     @Override
     public Component appendInput() {
-        return formGroupAppender(formGroup, model, getOpcoesValue(model), view);
-    }
+        final DropDownChoice<Serializable> dropDownChoice = new DropDownChoice<Serializable>(ctx.getCurrentInstance().getName(),
+                new SelectMInstanceAwareModel(model),
+                new DefaultOptionsProviderLoadableDetachableModel(model),
+                new SingularChoiceRenderer(model)) {
+            @Override
+            protected String getNullValidDisplayValue() {
+                return "Selecione";
+            }
 
-    public IReadOnlyModel<List<SelectOption>> getOpcoesValue(IModel<? extends SInstance> model) {
-        return () -> {
-            SType<?> type = model.getObject().getType();
-            return WicketSelectionUtils.createOptions(model, type);
+            @Override
+            protected String getNullKeyDisplayValue() {
+                return null;
+            }
+
+            @Override
+            public boolean isNullValid() {
+                return true;
+            }
         };
-    }
-
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model,
-                                          final IModel<? extends List<SelectOption>> opcoesValue, SView view) {
-        final AbstractSingleSelectChoice<SelectOption> choices = retrieveChoices(model, opcoesValue, view);
-        formGroup.appendSelect(choices.setNullValid(true), isMultiple(), isBSSelect(model));
-        return choices;
-    }
-
-
-    protected boolean isBSSelect(IModel<? extends SInstance> model) {
-        return false;
+        formGroup.appendSelect(dropDownChoice);
+        return dropDownChoice;
     }
 
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
         if (mi != null && mi.getValue() != null) {
-            return mi.getOptionsConfig().getLabelFromOption(mi);
+            return mi.getType().asAtrProvider().getDisplayFunction().apply(
+                    (Serializable) mi.getType().asAtrProvider().getConverter().toObject(mi)
+            );
         }
         return StringUtils.EMPTY;
     }
 
-    protected boolean isMultiple() {
-        return false;
+
+    public static class DefaultOptionsProviderLoadableDetachableModel extends LoadableDetachableModel<List<Serializable>> {
+
+        private static final long serialVersionUID = -3852358882003412437L;
+
+        private final IModel<? extends SInstance> model;
+
+        public DefaultOptionsProviderLoadableDetachableModel(IModel<? extends SInstance> model) {
+            this.model = model;
+        }
+
+        @Override
+        protected List<Serializable> load() {
+            final SimpleProvider provider = model.getObject().asAtrProvider().getSimpleProvider();
+            if (provider != null) {
+                final List<Serializable> result = provider.load(model.getObject());
+                if (result != null) {
+                    return result;
+                }
+            }
+            return Collections.emptyList();
+        }
     }
 
-    @SuppressWarnings({"unchecked"})
-    protected AbstractSingleSelectChoice<SelectOption> retrieveChoices(
-            IModel<? extends SInstance> model,
-            final IModel<? extends List<SelectOption>> opcoesValue, SView view) {
-        String id = model.getObject().getName();
-        return new DropDownChoice<>(id, new MSelectionInstanceModel<>(model), opcoesValue, rendererer());
-    }
-
-    protected ChoiceRenderer rendererer() {
-        return new ChoiceRenderer("selectLabel", "value");
-    }
 }

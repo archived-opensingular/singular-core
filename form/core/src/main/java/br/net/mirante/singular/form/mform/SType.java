@@ -5,35 +5,29 @@
 
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
+import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
+import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+import br.net.mirante.singular.form.mform.context.UIComponentMapper;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.function.IBehavior;
+import br.net.mirante.singular.form.mform.provider.SimpleProvider;
+import br.net.mirante.singular.form.validation.IInstanceValidator;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import br.net.mirante.singular.commons.lambda.IConsumer;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
-
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
-import br.net.mirante.singular.form.mform.context.UIComponentMapper;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.function.IBehavior;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import br.net.mirante.singular.form.validation.IInstanceValidator;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
 public class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled {
@@ -249,7 +243,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     public <MI extends SInstance> MI getAttributeInstance(AtrRef<?, MI, ?> atr) {
         Class<MI> instanceClass = atr.isSelfReference() ? (Class<MI>) getInstanceClassResolved() : atr.getInstanceClass();
-        SInstance instancia = getAttributeInstanceInternal(atr.getNameFull());
+        SInstance instancia     = getAttributeInstanceInternal(atr.getNameFull());
         return instanceClass.cast(instancia);
     }
 
@@ -500,8 +494,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     public final I newInstance() {
-        SDocument owner = new SDocument();
-        I instance = newInstance(this, owner);
+        SDocument owner    = new SDocument();
+        I         instance = newInstance(this, owner);
         owner.setRoot(instance);
         return instance;
     }
@@ -587,8 +581,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             debugAttributes(appendable, level);
             appendable.append("\n");
 
-            if (this instanceof STypeSimple && ((STypeSimple<?, ?>) this).getOptionsProvider() != null) {
-                pad(appendable, level + 2).append("selection of ").append(((STypeSimple<?, ?>) this).getOptionsProvider().toDebug())
+            if (this instanceof STypeSimple && this.asAtrProvider().getSimpleProvider() != null) {
+                pad(appendable, level + 2).append("selection of ").append(this.asAtrProvider().getSimpleProvider().toString())
                         .append("\n");
             }
 
@@ -675,10 +669,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return isRequired() || !instanceValidators.isEmpty();
     }
 
-    public SOptionsProvider getOptionsProvider() {
-        throw new UnsupportedOperationException();
-    }
-
     public <T extends UIComponentMapper> SType<I> withCustomMapper(Supplier<T> factory) {
         this.customMapper = factory.get();
         return this;
@@ -701,4 +691,20 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         this.initListener = initListener;
     }
 
+    public SelectionBuilder typelessSelection() {
+        this.setView(SViewSelectionBySelect::new);
+        return new SelectionBuilder(this);
+    }
+
+    public void withSelectionFromProvider(Class<SimpleProvider> providerClass) {
+        this.typelessSelection()
+                .selfIdAndDisplay()
+                .provider(providerClass);
+    }
+
+    public void withSelectionFromProvider(String providerName) {
+        this.typelessSelection()
+                .selfIdAndDisplay()
+                .provider(providerName);
+    }
 }
