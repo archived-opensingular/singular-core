@@ -39,7 +39,7 @@ public class PanelListWithCompositeSelectionTest extends SingularFormBaseTest {
         compositeSelection.selection()
                 .id(id)
                 .display(description)
-                .provider(builder -> {
+                .simpleProvider(builder -> {
                     builder.add().set(id, "a");
                     builder.add().set(description, "v_1");
                     builder.add().set(id, "b");

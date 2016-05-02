@@ -6,8 +6,10 @@
 package br.net.mirante.singular.form.mform;
 
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByPicklistView;
 import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
 import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.builder.selection.SSelectionBuilder;
 import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -161,6 +163,16 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
                 .selfIdAndDisplay()
                 .simpleProviderOf((Serializable[]) os);
         return this;
+    }
+
+    public SSelectionBuilder selection() {
+        this.setView(SMultiSelectionBySelectView::new);
+        return new SSelectionBuilder(this);
+    }
+
+    public SSelectionBuilder autocomplete() {
+        this.setView(SMultiSelectionByPicklistView::new);
+        return new SSelectionBuilder(this);
     }
 
 }

@@ -27,7 +27,7 @@ public class CaseInputCoreSelectCompositePackage extends SPackage {
         ingredienteQuimico.selection()
                 .id(formulaQuimica)
                 .display("${nome} - ${formulaQuimica}")
-                .provider(listaBuilder -> {
+                .simpleProvider(listaBuilder -> {
                     listaBuilder.add().set(formulaQuimica, "H20").set(nome, "Água");
                     listaBuilder.add().set(formulaQuimica, "H2O2").set(nome, "Água Oxigenada");
                     listaBuilder.add().set(formulaQuimica, "O2").set(nome, "Gás Oxigênio");
