@@ -1,12 +1,15 @@
 package br.net.mirante.singular.form.mform.builder.selection;
 
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
-import br.net.mirante.singular.form.mform.provider.FreemarkerUtil;
+import br.net.mirante.singular.form.mform.freemarker.FormFreemarkerUtil;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.mform.util.transformer.Value.Content;
 
-import java.util.HashMap;
+import static br.net.mirante.singular.form.mform.util.transformer.Value.hydrate;
 
 
 public class MapSelectionDisplayBuilder extends AbstractBuilder {
@@ -15,29 +18,45 @@ public class MapSelectionDisplayBuilder extends AbstractBuilder {
         super(type);
     }
 
-    public MapProviderBuilder display(SType id) {
-        String simpleName = id.getNameSimple();
-        type.asAtrProvider().asAtrProvider().displayFunction((map) -> ((HashMap) map).get(simpleName));
+    public MapProviderBuilder display(final SType display) {
+        type.asAtrProvider().asAtrProvider().displayFunction(new IFunction<Content, String>() {
+            @Override
+            public String apply(Content content) {
+                final SInstance ins = type.newInstance();
+                Value.hydrate(ins, content);
+                if(ins instanceof SIComposite){
+                    return String.valueOf(((SIComposite)ins).getValue(display));
+                }
+                return String.valueOf(ins.getValue());
+            }
+        });
         addConverter();
         return new MapProviderBuilder(super.type);
     }
 
     public MapProviderBuilder display(String freemakerTemplate) {
-        type.asAtrProvider().asAtrProvider().displayFunction((map) -> FreemarkerUtil.mergeWithFreemarker(freemakerTemplate, map));
+        type.asAtrProvider().asAtrProvider().displayFunction(new IFunction<Content, String>() {
+            @Override
+            public String apply(Content content) {
+                final SInstance dummy = type.newInstance();
+                Value.hydrate(dummy, content);
+                hydrate(dummy, content);
+                return FormFreemarkerUtil.merge(dummy, freemakerTemplate);
+            }
+        });
         addConverter();
         return new MapProviderBuilder(super.type);
     }
 
-    private void addConverter(){
-        type.asAtrProvider().asAtrProvider().converter(new SInstanceConverter<HashMap, SIComposite>() {
+    private void addConverter() {
+        type.asAtrProvider().asAtrProvider().converter(new SInstanceConverter<Content, SIComposite>() {
             @Override
-            public void fillInstance(SIComposite ins, HashMap obj) {
-                Value.hydrate(ins, obj);
+            public void fillInstance(SIComposite ins, Content obj) {
+                hydrate(ins, obj);
             }
-
             @Override
-            public HashMap toObject(SIComposite ins) {
-                return (HashMap) Value.dehydrate(ins);
+            public Content toObject(SIComposite ins) {
+                return Value.dehydrate(ins);
             }
         });
     }
