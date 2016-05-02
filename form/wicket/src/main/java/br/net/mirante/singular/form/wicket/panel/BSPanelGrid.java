@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.panel;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+import static com.google.common.collect.Lists.*;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -13,7 +16,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.mform.SInstance;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -23,16 +25,15 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import org.apache.wicket.model.IModel;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static com.google.common.collect.Lists.newArrayList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 
 public abstract class BSPanelGrid extends Panel {
 
-    private Form<?> form = new Form<>("panel-form");
+    private SingularForm<?> form = new SingularForm<>("panel-form");
     private BSGrid container = new BSGrid("grid");
     private Map<String, BSTab> tabMap = new LinkedHashMap<>();
     private BSTab activeTab = null;

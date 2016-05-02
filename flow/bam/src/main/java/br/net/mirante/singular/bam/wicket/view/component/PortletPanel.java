@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.bam.wicket.view.component;
 
-import static br.net.mirante.singular.bam.form.FilterPackageFactory.ROOT;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.bam.form.FilterPackageFactory.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -30,22 +30,23 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.json.JSONObject;
 
+import br.net.mirante.singular.bam.form.FilterPackageFactory;
+import br.net.mirante.singular.bam.service.FlowMetadataFacade;
+import br.net.mirante.singular.bam.wicket.UIAdminSession;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
-import br.net.mirante.singular.bam.form.FilterPackageFactory;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.bam.service.FlowMetadataFacade;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import br.net.mirante.singular.bam.wicket.UIAdminSession;
 
 public class PortletPanel<C extends PortletConfig> extends Panel {
 
@@ -60,7 +61,7 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
     private final IModel<PortletContext> context;
     private final IModel<String> footerLabel;
     private final BSModalBorder modalBorder = new BSModalBorder("filter");
-    private final Form portletForm = new Form("porletForm");
+    private final SingularForm<?> portletForm = new SingularForm<>("porletForm");
 
     public PortletPanel(String id, C config, String processDefinitionCode, int portletIndex) {
         this(id, config, processDefinitionCode, portletIndex, null);

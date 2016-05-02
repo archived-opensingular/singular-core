@@ -5,6 +5,18 @@
 
 package br.net.mirante.singular.showcase.view.page.prototype;
 
+import java.util.List;
+import java.util.function.Consumer;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.util.lang.Bytes;
+
 import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
@@ -17,20 +29,10 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.view.template.Content;
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.util.lang.Bytes;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class PreviewContent extends Content {
 
@@ -51,7 +53,7 @@ public class PreviewContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        Form enclosing = new Form("just-a-form");
+        SingularForm<?> enclosing = new SingularForm<>("just-a-form");
         enclosing.setMultiPart(true);
         enclosing.setFileMaxSize(Bytes.MAX);
         enclosing.setMaxSize(Bytes.MAX);

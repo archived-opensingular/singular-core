@@ -24,7 +24,7 @@ public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
         final STypeString nome           = componenteQuimico.addFieldString("nome");
         final STypeString formulaQuimica = componenteQuimico.addFieldString("formulaQuimica");
 
-        componentesQuimicos.multiselectionOf(ComponenteQuimico.class)
+        componentesQuimicos.selectionOf(ComponenteQuimico.class)
                 .id(ComponenteQuimico::getNome)
                 .display("${formulaQuimica} - ${nome}")
                 .converter(new SInstanceConverter<ComponenteQuimico, SIComposite>() {

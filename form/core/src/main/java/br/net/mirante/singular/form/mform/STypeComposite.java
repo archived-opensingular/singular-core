@@ -5,13 +5,19 @@
 
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewAttachmentList;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
+import br.net.mirante.singular.form.mform.builder.selection.MapSelectionBuilder;
+import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
 import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 
+import java.io.Serializable;
 import java.util.*;
 
 @SInfoType(name = "STypeComposite", spackage = SPackageCore.class)
@@ -215,6 +221,33 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return addField(fieldSimpleName, STypeMonetary.class);
     }
 
+    public MapSelectionBuilder selection() {
+        this.setView(SViewSelectionBySelect::new);
+        return new MapSelectionBuilder(this);
+    }
+
+    public MapSelectionBuilder autocomplete() {
+        this.setView(SViewAutoComplete::new);
+        return new MapSelectionBuilder(this);
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> selectionOf(Class<T> clazz, SView view) {
+        this.setView(() -> view);
+        return new SelectionBuilder<>(this);
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> selectionOf(Class<T> clazz) {
+        return selectionOf(clazz, new SViewSelectionBySelect());
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> autocompleteOf(Class<T> clazz) {
+        return selectionOf(clazz, new SViewAutoComplete());
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> lazyAutocompleteOf(Class<T> clasz) {
+        this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
+        return new SelectionBuilder<>(this);
+    }
 
     // TODO (from Daniel) MArquei como deprecated pois está estranho esse
     // método. Verificar se há uma solução melhor e refatorar
@@ -325,4 +358,6 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
             return field;
         }
     }
+
+
 }

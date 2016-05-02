@@ -2,7 +2,12 @@ package br.net.mirante.singular.form.mform.provider;
 
 
 import br.net.mirante.singular.form.mform.SingularFormException;
-import freemarker.template.*;
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.ext.beans.BeansWrapperBuilder;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +24,8 @@ public class FreemarkerUtil {
     private static final Logger        LOGGER           = LoggerFactory.getLogger(FreemarkerUtil.class);
 
     static {
-        final DefaultObjectWrapperBuilder builder = new DefaultObjectWrapperBuilder(VERSION);
-        builder.setSimpleMapWrapper(true);
-        cfg.setObjectWrapper(builder.build());
+        final BeansWrapper wrapper = new BeansWrapperBuilder(VERSION).build();
+        cfg.setObjectWrapper(wrapper);
     }
 
     public static String mergeWithFreemarker(String template, Object obj) {

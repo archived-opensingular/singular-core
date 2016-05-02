@@ -5,6 +5,8 @@
 
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
@@ -162,6 +164,24 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
                 .enumConverter(enumType)
                 .simpleProvider(ins -> Arrays.asList(enumType.getEnumConstants()));
         return this;
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, I, I> selectionOf(Class<T> clazz, SView view) {
+        this.setView(() -> view);
+        return new SelectionBuilder<>(this);
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, I, I> selectionOf(Class<T> clazz) {
+        return selectionOf(clazz, new SViewSelectionBySelect());
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, I, I> autocompleteOf(Class<T> clazz) {
+        return selectionOf(clazz, new SViewAutoComplete());
+    }
+
+    public <T extends Serializable> SelectionBuilder<T, I, I> lazyAutocompleteOf(Class<T> clasz) {
+        this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
+        return new SelectionBuilder<>(this);
     }
 
 }

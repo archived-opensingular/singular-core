@@ -5,14 +5,17 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
+import br.net.mirante.singular.form.mform.RefService;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.DefaultServiceRegistry;
 import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
@@ -23,7 +26,10 @@ import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.mform.document.TypeLoader;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 
 public class DummyPage extends WebPage {
@@ -35,7 +41,7 @@ public class DummyPage extends WebPage {
     protected Consumer<STypeComposite> typeBuilder;
     protected Function<SType, SIComposite> instanceCreator;
 
-    private Form<?> form = new Form("form");
+    private SingularForm<?> form = new SingularForm<>("form");
 
     private SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
         @Override

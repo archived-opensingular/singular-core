@@ -16,7 +16,7 @@ public class CaseInputCoreMultiSelectDefaultPackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         tipoMyForm.asAtrBasic().label("Salada de Frutas");
-        tipoMyForm.addFieldListOf("frutas", STypeString.class).multiselectionOf(String.class)
+        tipoMyForm.addFieldListOf("frutas", STypeString.class).selectionOf(String.class)
                 .selfIdAndDisplay()
                 .simpleProviderOf("Amora", "Banana", "Maçã", "Laranja", "Manga", "Melão", "Morango");
     }

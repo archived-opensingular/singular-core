@@ -6,7 +6,6 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,13 +24,12 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.Prototype;
 import br.net.mirante.singular.showcase.dao.form.PrototypeDAO;
 import br.net.mirante.singular.showcase.view.template.Content;
@@ -68,7 +66,7 @@ public class PrototypeContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
 
-        Form newItemForm = new Form("prototype_form");
+        SingularForm<?> newItemForm = new SingularForm<>("prototype_form");
         newItemForm.setMultiPart(true);
         newItemForm.setFileMaxSize(Bytes.MAX);
         newItemForm.setMaxSize(Bytes.MAX);
