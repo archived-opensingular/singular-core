@@ -86,7 +86,7 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
                 final SInstanceConverter converter = model.getObject().asAtrProvider().getConverter();
                 final Serializable       converted = converter.toObject(model.getObject());
                 if (!values.contains(converted)) {
-                    values.add(converted);
+                    values.add(0, converted);
                 }
             }
 
