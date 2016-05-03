@@ -6,7 +6,12 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import java.io.Serializable;
 import java.util.List;
 
-public interface FilteredPagedProvider<R> extends Provider {
+public interface FilteredPagedProvider<R extends Serializable> extends Provider<R, SInstance> {
+
+    @Override
+    default List<R> load(ProviderContext<SInstance> context) {
+        return load(context.getInstance(), context.getFilterInstance(), context.getFirst(), context.getCount());
+    }
 
     void loadFilterDefinition(STypeComposite<?> filter);
 
