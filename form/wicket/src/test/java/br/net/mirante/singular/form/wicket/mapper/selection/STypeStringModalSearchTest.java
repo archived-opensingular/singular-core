@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.filter.FilterDefinitionBuilder;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
@@ -18,7 +19,6 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
@@ -37,8 +37,9 @@ public class STypeStringModalSearchTest {
             selectType.withView(SViewSearchModal::new);
             selectType.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<String>() {
                 @Override
-                public void loadFilterDefinition(STypeComposite<?> filter) {
-                    filter.addFieldString("string");
+                public void defineFilter(FilterDefinitionBuilder builder) {
+                    builder.configureType(f -> f.addFieldString("string"));
+                    builder.addColumn("Fruta");
                 }
 
                 @Override
@@ -49,11 +50,6 @@ public class STypeStringModalSearchTest {
                 @Override
                 public List<String> load(SInstance rootInstance, SInstance filter, long first, long count) {
                     return Arrays.asList("strawberry", "apple", "orange", "banana");
-                }
-
-                @Override
-                public List<Column> getColumns() {
-                    return  Collections.singletonList(Column.of("Fruta"));
                 }
             });
         }

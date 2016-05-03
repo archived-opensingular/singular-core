@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.filter.FilterDefinitionBuilder;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
@@ -16,7 +17,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -75,10 +75,16 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
             }
 
             @Override
-            public void loadFilterDefinition(STypeComposite<?> filter) {
-                filter.addFieldString("marca");
-                filter.addFieldString("modelo");
-                filter.addFieldBoolean("conectividade");
+            public void defineFilter(FilterDefinitionBuilder builder) {
+                builder.configureType(filter -> {
+                    filter.addFieldString("marca");
+                    filter.addFieldString("modelo");
+                    filter.addFieldBoolean("conectividade");
+                });
+
+                builder.addColumn("left", "Marca");
+                builder.addColumn("middle", "Modelo");
+                builder.addColumn("right", "Conectividade");
             }
 
             @Override
@@ -91,14 +97,6 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
                 return filterByInstance(filter).subList((int) first, (int) (first + count));
             }
 
-            @Override
-            public List<Column> getColumns() {
-                return Arrays.asList(
-                        Column.of("left", "Marca"),
-                        Column.of("middle", "Modelo"),
-                        Column.of("right", "Conectividade")
-                );
-            }
         });
         carro.asAtrProvider().converter((ValueToSICompositeConverter<Triple<String, String, Boolean>>) (ins, triple) -> {
             ins.setValue(marca, triple.getLeft());
@@ -125,7 +123,7 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
                 (c) -> true
         ).findFirst().orElse(null);
         Assert.assertEquals(table.getRowsPerPage(), PAGE_SIZE);
-        Assert.assertEquals(table.getPageCount(), Math.ceil((double) carros.size()/ 5), 0);
+        Assert.assertEquals(table.getPageCount(), Math.ceil((double) carros.size() / 5), 0);
     }
 
 }

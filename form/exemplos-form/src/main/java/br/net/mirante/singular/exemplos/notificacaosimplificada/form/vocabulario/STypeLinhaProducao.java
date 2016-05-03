@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.provider.TextQueryProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
@@ -20,7 +20,7 @@ public class STypeLinhaProducao extends STypeComposite<SIComposite> {
     public STypeString  descricao;
     public STypeInteger id;
 
-    protected FilteredProvider<LinhaCbpf, SIComposite> getProvider() {
+    protected TextQueryProvider<LinhaCbpf, SIComposite> getProvider() {
         return (ins, filter) -> dominioService(ins).linhasProducao(filter);
     }
 

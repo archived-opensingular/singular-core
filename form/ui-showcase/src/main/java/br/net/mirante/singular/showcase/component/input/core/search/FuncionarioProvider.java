@@ -2,16 +2,17 @@ package br.net.mirante.singular.showcase.component.input.core.search;
 
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.filter.FilterDefinitionBuilder;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FuncionarioProvider implements FilteredPagedProvider<Funcionario> {
+
+    private static final long serialVersionUID = 5385665582164936063L;
 
     private static final List<Funcionario> FUNCIONARIOS;
 
@@ -36,13 +37,6 @@ public class FuncionarioProvider implements FilteredPagedProvider<Funcionario> {
         FUNCIONARIOS.add(new Funcionario("Joao Vitor Da Silva Mattos", "Analista de Requisitos", 25));
     }
 
-    @Override
-    public void loadFilterDefinition(STypeComposite<?> filter) {
-        filter.addFieldString("nome").asAtr().label("Nome").asAtrBootstrap().colPreference(6);
-        filter.addFieldString("funcao").asAtr().label("Função").asAtrBootstrap().colPreference(6);
-        filter.addFieldInteger("idade").asAtr().label("Idade").asAtrBootstrap().colPreference(2);
-    }
-
     private List<Funcionario> filtrarFuncionarios(SInstance filter) {
         String  nome   = Value.of(filter, "nome");
         String  funcao = Value.of(filter, "funcao");
@@ -64,6 +58,19 @@ public class FuncionarioProvider implements FilteredPagedProvider<Funcionario> {
     }
 
     @Override
+    public void defineFilter(FilterDefinitionBuilder builder) {
+        builder
+                .configureType(f -> {
+                    f.addFieldString("nome").asAtr().label("Nome").asAtrBootstrap().colPreference(6);
+                    f.addFieldString("funcao").asAtr().label("Função").asAtrBootstrap().colPreference(6);
+                    f.addFieldInteger("idade").asAtr().label("Idade").asAtrBootstrap().colPreference(2);
+                })
+                .addColumn("nome", "Nome")
+                .addColumn("funcao", "Função")
+                .addColumn("idade", "Idade");
+    }
+
+    @Override
     public Long getSize(SInstance rootInstance, SInstance filter) {
         return (long) filtrarFuncionarios(filter).size();
     }
@@ -73,8 +80,4 @@ public class FuncionarioProvider implements FilteredPagedProvider<Funcionario> {
         return filtrarFuncionarios(filter).subList((int) first, (int) (first + count));
     }
 
-    @Override
-    public List<Column> getColumns() {
-        return Arrays.asList(Column.of("nome", "Nome"), Column.of("funcao", "Função"), Column.of("idade", "Idade"));
-    }
 }

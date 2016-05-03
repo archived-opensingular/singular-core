@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.filter.FilterDefinitionBuilder;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
@@ -15,7 +16,6 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +33,9 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
         mandatoryField.withView(new SViewSearchModal());
         mandatoryField.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<String>() {
             @Override
-            public void loadFilterDefinition(STypeComposite<?> filter) {
-                filter.addFieldString("search");
+            public void defineFilter(FilterDefinitionBuilder builder) {
+                builder.configureType(filter -> filter.addFieldString("search"));
+                builder.addColumn("String");
             }
 
             @Override
@@ -45,11 +46,6 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
             @Override
             public List<String> load(SInstance rootInstance, SInstance filter, long first, long count) {
                 return Arrays.asList("1", "2");
-            }
-
-            @Override
-            public List<Column> getColumns() {
-                return Collections.singletonList(Column.of("String"));
             }
         });
         dependentField = baseType.addFieldString("dependentField");

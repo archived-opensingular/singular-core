@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.filter.FilterDefinitionBuilder;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
@@ -36,9 +37,15 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
         notebook.withView(new SViewSearchModal());
         notebook.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<Notebook>() {
             @Override
-            public void loadFilterDefinition(STypeComposite<?> filter) {
-                filter.addFieldString("marca");
-                filter.addFieldString("sistemaOperacional");
+            public void defineFilter(FilterDefinitionBuilder builder) {
+                builder.configureType((filter) -> {
+                    filter.addFieldString("marca");
+                    filter.addFieldString("sistemaOperacional");
+                });
+                builder.addColumn("marca", "Marca");
+                builder.addColumn("memoria", "Memoria");
+                builder.addColumn("disco", "Disco");
+                builder.addColumn("sistemaOperacional", "Sistema Operacional");
             }
 
             @Override
@@ -50,17 +57,8 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
             public List<Notebook> load(SInstance rootInstance, SInstance filter, long first, long count) {
                 return Arrays.asList(new Notebook("Apple", "4GB", "1T", "OSX"), new Notebook("Samsug", "8GB", "1TB", "ArchLinux"));
             }
-
-            @Override
-            public List<Column> getColumns() {
-                return Arrays.asList(
-                        Column.of("marca", "Marca"),
-                        Column.of("memoria", "Memoria"),
-                        Column.of("disco", "Disco"),
-                        Column.of("sistemaOperacional", "Sistema Operacional")
-                );
-            }
         });
+
         notebook.asAtrProvider().converter((ValueToSICompositeConverter<Notebook>) (ins, note) -> {
             ins.setValue("marca", note.marca);
             ins.setValue("memoria", note.memoria);
@@ -101,7 +99,7 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
     }
 
     @Test
-    public void testSelection(){
+    public void testSelection() {
 
         Button link = findOnForm(Button.class, form.getForm(), al -> al.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID))
                 .findFirst()
@@ -116,7 +114,7 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
         tester.executeAjaxEvent(links.get(0), "click");
 
         final SIComposite currentInstance = page.getCurrentInstance();
-        final SIComposite notebok = (SIComposite) currentInstance.getField(notebook.getNameSimple());
+        final SIComposite notebok         = (SIComposite) currentInstance.getField(notebook.getNameSimple());
 
         Assert.assertEquals(notebok.getField("marca").getValue(), "Apple");
         Assert.assertEquals(notebok.getField("memoria").getValue(), "4GB");

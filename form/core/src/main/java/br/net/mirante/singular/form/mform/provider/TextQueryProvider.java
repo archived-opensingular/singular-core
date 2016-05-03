@@ -5,8 +5,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 import java.io.Serializable;
 import java.util.List;
 
-public interface FilteredProvider<E extends Serializable, S extends SInstance> extends Provider<E, S> {
-
+public interface TextQueryProvider<E extends Serializable, S extends SInstance> extends Provider<E, S> {
 
     @Override
     default List<E> load(ProviderContext<S> context) {
