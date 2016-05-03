@@ -5,10 +5,9 @@
 
 package br.net.mirante.singular.showcase.component.input.core;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 
 public class CaseInputCoreStringPackage extends SPackage {
 
@@ -18,10 +17,10 @@ public class CaseInputCoreStringPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         tipoMyForm.addFieldString("nomeCompleto")
-                .asAtrBasic().label("Nome Completo").tamanhoMaximo(100);
+                .asAtr().label("Nome Completo").tamanhoMaximo(100);
 
         tipoMyForm.addFieldString("endereco")
-                .asAtrBasic().label("Endereço").tamanhoMaximo(250);
+                .asAtr().label("Endereço").tamanhoMaximo(250);
 
     }
 }

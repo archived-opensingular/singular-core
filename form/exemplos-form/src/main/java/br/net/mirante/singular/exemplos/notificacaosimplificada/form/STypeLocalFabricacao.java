@@ -31,11 +31,11 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        this.asAtrBasic().label("Local de Fabricação");
+        this.asAtr().label("Local de Fabricação");
 
         tipoLocalFabricacao = this.addFieldInteger("tipoLocalFabricacao");
         tipoLocalFabricacao
-                .asAtrBasic()
+                .asAtr()
                 .label("Tipo de local");
 
         tipoLocalFabricacao
@@ -63,14 +63,14 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                         .find(empresaPropria.cnpj).val("11111111000191").end()
                         .find(empresaPropria.endereco).val("SCLN 211 BLOCO B SUBSOLO").end());
 
-        empresaPropria.asAtrBasic()
+        empresaPropria.asAtr()
                 .dependsOn(tipoLocalFabricacao)
                 .visible(i -> LocalFabricacao.PRODUCAO_PROPRIA.getId().equals(Value.of(i, tipoLocalFabricacao)));
 
         final STypeEmpresaInternacional empresaInternacional = this.addField("empresaInternacional", STypeEmpresaInternacional.class);
 
         empresaInternacional
-                .asAtrBasic()
+                .asAtr()
                 .label("Empresa Internacional")
                 .dependsOn(tipoLocalFabricacao)
                 .visible(i -> LocalFabricacao.EMPRESA_INTERNACIONAL.getId().equals(Value.of(i, tipoLocalFabricacao)));
@@ -78,7 +78,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
         empresaTerceirizada = this.addField("empresaTerceirizada", STypeEmpresaTerceirizada.class);
 
         empresaTerceirizada
-                .asAtrBasic()
+                .asAtr()
                 .dependsOn(tipoLocalFabricacao)
                 .visible(i -> LocalFabricacao.EMPRESA_TERCEIRIZADA.getId().equals(Value.of(i, tipoLocalFabricacao)));
 
@@ -87,10 +87,10 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
         STypeString idOutroLocalFabricacao          = outroLocalFabricacao.addFieldString("id");
         STypeString razaoSocialOutroLocalFabricacao = outroLocalFabricacao.addFieldString("razaoSocial");
-        razaoSocialOutroLocalFabricacao.asAtrBasic().label("Razão Social");
+        razaoSocialOutroLocalFabricacao.asAtr().label("Razão Social");
         STypeString enderecoOutroLocalFabricacao = outroLocalFabricacao.addFieldString("endereco");
         outroLocalFabricacao
-                .asAtrBasic().label("Outro local de fabricação")
+                .asAtr().label("Outro local de fabricação")
                 .dependsOn(tipoLocalFabricacao)
                 .visible(i -> LocalFabricacao.OUTRO_LOCAL_FABRICACAO.getId().equals(Value.of(i, tipoLocalFabricacao)));
 
@@ -105,10 +105,10 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
         STypeString idEnvasadora          = envasadora.addFieldString("id");
         STypeString razaoSocialEnvasadora = envasadora.addFieldString("razaoSocial");
-        razaoSocialEnvasadora.asAtrBasic().label("Razão Social");
+        razaoSocialEnvasadora.asAtr().label("Razão Social");
         STypeString enderecoEnvasadora = envasadora.addFieldString("endereco");
         envasadora
-                .asAtrBasic().label("Envasadora")
+                .asAtr().label("Envasadora")
                 .dependsOn(tipoLocalFabricacao)
                 .visible(i -> LocalFabricacao.ENVASADORA.getId().equals(Value.of(i, tipoLocalFabricacao)));
 

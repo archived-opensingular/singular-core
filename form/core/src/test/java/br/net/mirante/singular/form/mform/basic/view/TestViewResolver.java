@@ -20,7 +20,7 @@ public class TestViewResolver {
     private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V> STypeList<T, X> createSimpleList(
             PackageBuilder pb, String name, Class<T> type, int size, Function<Integer, Object> valueProvider) {
         T simpleType = pb.createType(name, type);
-        simpleType.selection()
+        simpleType.typelessSelection()
                 .selfIdAndDisplay()
                 .simpleProvider(ins -> (List<V>) repeate(valueProvider, size));
         return pb.createListTypeOf("list" + name, simpleType);
@@ -66,10 +66,10 @@ public class TestViewResolver {
     public void testTipoSimplesSelectOf() {
         SDictionary       dicionario      = SDictionary.create();
         PackageBuilder    pb              = dicionario.createNewPackage("teste");
-        STypeSimple<?, ?> tipoInteger     = pb.createType("Integer", STypeInteger.class).withSelectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
-        STypeSimple<?, ?> tipoDate        = pb.createType("Date", STypeDate.class).withSelectionOf(repeate(i -> new Date(new Date().getTime() + 10000 * i), 2).toArray(new Date[]{}));
-        STypeSimple<?, ?> tipoString      = pb.createType("String", STypeString.class).withSelectionOf(repeate(textoTeste::substring, 2).toArray(new String[]{}));
-        STypeSimple<?, ?> tipoStringLarge = pb.createType("StringLarge", STypeString.class).withSelectionOf(repeate(textoTeste::substring, 5).toArray(new String[]{}));
+        STypeSimple<?, ?> tipoInteger     = pb.createType("Integer", STypeInteger.class).selectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
+        STypeSimple<?, ?> tipoDate        = pb.createType("Date", STypeDate.class).selectionOf(repeate(i -> new Date(new Date().getTime() + 10000 * i), 2).toArray(new Date[]{}));
+        STypeSimple<?, ?> tipoString      = pb.createType("String", STypeString.class).selectionOf(repeate(textoTeste::substring, 2).toArray(new String[]{}));
+        STypeSimple<?, ?> tipoStringLarge = pb.createType("StringLarge", STypeString.class).selectionOf(repeate(textoTeste::substring, 5).toArray(new String[]{}));
 
         assertView(SViewSelectionBySelect.class, tipoInteger);
         assertView(SViewSelectionBySelect.class, tipoDate);

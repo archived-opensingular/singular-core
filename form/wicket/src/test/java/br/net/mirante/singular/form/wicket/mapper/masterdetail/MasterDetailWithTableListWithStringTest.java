@@ -1,18 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.masterdetail;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.AbstractLink;
-import org.junit.Assert;
-import org.junit.Test;
-
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
@@ -20,6 +7,18 @@ import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.AbstractLink;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTest {
 
@@ -34,7 +33,7 @@ public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTes
         final STypeComposite<SIComposite> mockTypeMasterDetailComposite = mockMasterDetail.getElementsType();
 
         mockMasterDetail.withView(SViewListByMasterDetail::new);
-        mockMasterDetail.asAtrBasic()
+        mockMasterDetail.asAtr()
                 .label("Mock Type Master Detail ");
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> mockList
@@ -43,7 +42,7 @@ public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTes
         final STypeComposite<?> mockTypeComposite = mockList.getElementsType();
 
         mockList.withView(SViewListByTable::new);
-        mockList.asAtrBasic()
+        mockList.asAtr()
                 .label("Mock Type Composite");
 
         simpleString = mockTypeComposite.addFieldString("mockTypeComposite");

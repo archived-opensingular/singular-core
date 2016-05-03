@@ -52,7 +52,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                     }
                 }).simpleProviderOf(TipoEnsaioControleQualidade.values());
 
-        tipoEnsaio.asAtrBasic().label("Ensaio de Controle de Qualidade").enabled(false);
+        tipoEnsaio.asAtr().label("Ensaio de Controle de Qualidade").enabled(false);
 
         STypeComposite<SIComposite> tipoReferencia   = this.addFieldComposite("tipoReferencia");
         STypeInteger                idTipoReferencia = tipoReferencia.addFieldInteger("id");
@@ -78,7 +78,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
         {
             STypeComposite<SIComposite> informacoesFarmacopeicas = this.addFieldComposite("informacoesFarmacopeicas");
             informacoesFarmacopeicas
-                    .asAtrBasic()
+                    .asAtr()
                     .dependsOn(tipoReferencia)
                     .visible(i -> TipoReferencia.FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
 
@@ -88,24 +88,24 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
         {
             STypeAttachmentList resultadosLote = this.addFieldListOfAttachment("resultadosLote", "resuladoLote");
-            resultadosLote.asAtrBasic().label("Metodologia/Especificação/Resultado para um lote")
+            resultadosLote.asAtr().label("Metodologia/Especificação/Resultado para um lote")
                     .dependsOn(tipoReferencia)
                     .visible(i -> TipoReferencia.NAO_FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
 
             STypeAttachment f           = resultadosLote.getElementsType();
             SType<?>        nomeArquivo = (STypeSimple) f.getField(STypeAttachment.FIELD_NAME);
-            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
+            nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 
         STypeString justificativa = this.addFieldString("justificativa");
         justificativa
-                .asAtrBasic().dependsOn(tipoReferencia)
+                .asAtr().dependsOn(tipoReferencia)
                 .label("Justificativa").visible(i -> TipoReferencia.NAO_SE_APLICA.getId().equals(Value.of(i, idTipoReferencia)))
                 .tamanhoMaximo(600)
                 .getTipo().withView(SViewTextArea::new);
 
         this.addFieldListOfAttachment("resultadosControleQualidade", "resultado")
-                .asAtrBasic()
+                .asAtr()
                 .label("Resultados do controle da qualidade")
                 .visible(i -> TipoEnsaioControleQualidade.RESULTADOS.getId().equals(Value.of(i, idTipoEnsaio)))
                 .required();

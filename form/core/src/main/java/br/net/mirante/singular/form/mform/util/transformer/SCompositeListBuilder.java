@@ -6,26 +6,28 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe utilitária para montar um MILista de MIComposto
  */
-public class SListBuilder {
+public class SCompositeListBuilder {
 
-    private SIList<?> sList;
-    private STypeComposite<?> mTipo;
+    private List<SIComposite>           list;
+    private STypeComposite<SIComposite> type;
 
     /**
      * Instancia do tipo dos elementos da lista
      *
-     * @param mtipo
+     * @param type
      */
-    public SListBuilder(STypeComposite<?> mtipo) {
-        this.mTipo = mtipo;
-        this.sList = mtipo.newList();
+    public SCompositeListBuilder(STypeComposite<SIComposite> type) {
+        this.type = type;
+        this.list = new ArrayList<>();
     }
 
     /**
@@ -34,20 +36,21 @@ public class SListBuilder {
      * @return
      */
     public SCompositeValueSetter add() {
-        SIComposite novaInstancia = (SIComposite) mTipo.newInstance();
-        sList.addElement(novaInstancia);
-        return new SCompositeValueSetter(novaInstancia, this);
+        SIComposite newInstance = type.newInstance();
+        list.add(newInstance);
+        return new SCompositeValueSetter(newInstance, this);
     }
 
-    public SIList<?> getList() {
-        return sList;
+    public List<SIComposite> getList() {
+        return list;
     }
 
     public static class SCompositeValueSetter {
-        private SListBuilder _lb;
-        private SIComposite instancia;
 
-        SCompositeValueSetter(SIComposite instancia, SListBuilder lb) {
+        private SCompositeListBuilder _lb;
+        private SIComposite           instancia;
+
+        SCompositeValueSetter(SIComposite instancia, SCompositeListBuilder lb) {
             this._lb = lb;
             this.instancia = instancia;
         }
@@ -66,7 +69,7 @@ public class SListBuilder {
             return _lb.add();
         }
 
-        public SIList<?> getList() {
+        public List<SIComposite> getList() {
             return _lb.getList();
         }
     }

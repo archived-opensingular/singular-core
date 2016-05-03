@@ -27,7 +27,7 @@ public class STypeCategoriaRegulatoria extends STypeComposite<SIComposite> {
             this
                     .asAtrBootstrap()
                     .colPreference(4)
-                    .asAtrBasic()
+                    .asAtr()
                     .label("Classe")
                     .required();
             this.setView(SViewAutoComplete::new);

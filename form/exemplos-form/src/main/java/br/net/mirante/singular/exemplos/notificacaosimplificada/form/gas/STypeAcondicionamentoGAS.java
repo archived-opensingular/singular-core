@@ -23,9 +23,9 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
         super.onLoadType(tb);
 
         embalagemPrimaria = this.addFieldString("embalagemPrimaria");
-        embalagemPrimaria.withSelectionOf("Cilindro", "Tanque", "Caminhão Tanque");
+        embalagemPrimaria.selectionOf("Cilindro", "Tanque", "Caminhão Tanque");
         embalagemPrimaria
-                .asAtrBasic()
+                .asAtr()
                 .label("Emabalagem Primária")
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -33,11 +33,11 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
 
         {
             layoutsRotulagem = this.addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
-            layoutsRotulagem.asAtrBasic().label("Layout da rotulagem");
+            layoutsRotulagem.asAtr().label("Layout da rotulagem");
 
             STypeAttachment f = layoutsRotulagem.getElementsType();
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
+            nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 
 
@@ -53,7 +53,7 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
                             label += String.valueOf(Optional.ofNullable(Value.of(i, "envasadora.razaoSocial")).orElse(""));
                             return label;
                         }).col(locaisFabricacao.getElementsType().empresaTerceirizada.etapasFabricacao()))
-                .asAtrBasic().label("Local de fabricação");
+                .asAtr().label("Local de fabricação");
 
 
     }

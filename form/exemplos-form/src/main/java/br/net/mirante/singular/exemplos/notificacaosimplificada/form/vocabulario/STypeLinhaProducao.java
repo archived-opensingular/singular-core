@@ -49,7 +49,7 @@ public class STypeLinhaProducao extends STypeComposite<SIComposite> {
         descricao = this.addFieldString("descricao");
         {
             this
-                    .asAtrBasic()
+                    .asAtr()
                     .required()
                     .label("Linha de produção")
                     .asAtrBootstrap()

@@ -8,6 +8,8 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
 import br.net.mirante.singular.form.wicket.model.MultipleSelectMInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
@@ -18,11 +20,10 @@ import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import static org.apache.wicket.util.lang.Generics.newArrayList;
 
 @SuppressWarnings("serial")
 public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
@@ -30,13 +31,29 @@ public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
     @Override
     @SuppressWarnings("rawtypes")
     public Component appendInput() {
-        final List<?> opcoesValue;
+        final List<Serializable> opcoesValue = new ArrayList<>();
+
         if (model.getObject().getType() instanceof STypeList) {
-            opcoesValue = model.getObject().asAtrProvider().getSimpleProvider().load(ctx.getCurrentInstance());
-        } else {
-            opcoesValue = newArrayList();
+            opcoesValue.addAll(model.getObject().asAtrProvider().getProvider().load(ProviderContext.of(ctx.getCurrentInstance())));
         }
+
+        /**
+         * Dangling values
+         */
+        if (!model.getObject().isEmptyOfData()) {
+            final SIList list = (SIList) model.getObject();
+            for (int i = 0; i < list.size(); i += 1) {
+                SInstance                ins          = list.get(i);
+                final SInstanceConverter converter    = list.asAtrProvider().getConverter();
+                final Serializable       converterted = converter.toObject(ins);
+                if (!opcoesValue.contains(converterted)) {
+                    opcoesValue.add(i, converterted);
+                }
+            }
+        }
+
         return formGroupAppender(formGroup, model, opcoesValue);
+
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

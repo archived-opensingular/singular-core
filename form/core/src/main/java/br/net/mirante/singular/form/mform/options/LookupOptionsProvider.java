@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.provider.Provider;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
 import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 
 import java.util.List;
@@ -33,6 +34,11 @@ public class LookupOptionsProvider implements SimpleProvider, FilteredProvider {
 
     public LookupOptionsProvider(Class<? extends Provider> providerClass) {
         this.providerClass = providerClass;
+    }
+
+    @Override
+    public List load(ProviderContext context) {
+        return load(context.getInstance());
     }
 
     @Override

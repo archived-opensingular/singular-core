@@ -5,14 +5,11 @@
 
 package br.net.mirante.singular.form.mform.core;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
-import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
 
 @SInfoType(name = "Boolean", spackage = SPackageCore.class)
 public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
@@ -66,12 +63,24 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
      * Configura o tipo para utilizar a view {@link SViewBooleanByRadio}
      */
     public STypeBoolean withRadioView(String labelTrue, String labelFalse) {
-        this.withView(SViewBooleanByRadio::new);
-        new SelectionBuilder(this)
-                .id((IFunction<Object, String>) String::valueOf)
-                .display((IFunction<Object, String>) String::valueOf)
-                .simpleConverter()
-                .simpleProvider(ins -> Arrays.asList(labelTrue, labelFalse));
+        selectionOf(String.class, new SViewBooleanByRadio())
+                .id(String::valueOf)
+                .display(String::valueOf)
+                .converter(new SInstanceConverter<String, SIBoolean>() {
+                    @Override
+                    public void fillInstance(SIBoolean ins, String obj) {
+                        ins.setValue(obj.equals(labelTrue));
+                    }
+
+                    @Override
+                    public String toObject(SIBoolean ins) {
+                        if (ins.getValue()) {
+                            return labelTrue;
+                        } else {
+                            return labelFalse;
+                        }
+                    }
+                }).simpleProviderOf(labelTrue, labelFalse);
         return this;
     }
 

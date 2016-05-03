@@ -16,7 +16,7 @@ public class CaseInputCoreMultiSelectCheckboxPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
-        tipoMyForm.asAtrBasic().label("Salada de Frutas");
+        tipoMyForm.asAtr().label("Salada de Frutas");
         tipoMyForm.addFieldListOf("frutas", STypeString.class).selectionOf(String.class, new SMultiSelectionByCheckboxView())
                 .selfIdAndDisplay()
                 .simpleProviderOf("Amora", "Banana", "Maçã", "Laranja", "Manga", "Melão", "Morango");

@@ -37,67 +37,67 @@ public class SPackageHabilitacaoEmpresa extends SPackage {
 
         STypeString habilitarPor = habilitacaoEmpresa.addFieldString("habilitarPor");
         habilitarPor
-                .asAtrBasic().required()
+                .asAtr().required()
                 .label("Habilitar por");
         habilitarPor
                 .withRadioView()
-                .withSelectionOf("RE", "Petição de CBPF");
+                .selectionOf("RE", "Petição de CBPF");
 
         STypeComposite<SIComposite> dadosRE = habilitacaoEmpresa.addFieldComposite("dadosRE");
         dadosRE
-                .asAtrBasic().label("Dados da RE")
+                .asAtr().label("Dados da RE")
                 .dependsOn(habilitarPor)
                 .visible(ins -> "RE".equalsIgnoreCase(Value.of(ins, habilitarPor)));
         STypeInteger numero = dadosRE.addFieldInteger("numero");
         numero
                 .asAtrBootstrap().colPreference(4)
-                .asAtrBasic().label("Número da RE de CBPF (boas práticas de fabricação)")
+                .asAtr().label("Número da RE de CBPF (boas práticas de fabricação)")
                 .required();
 
         STypeDate dataPublicacao = dadosRE.addFieldDate("dataPublicacao");
         dataPublicacao
                 .asAtrBootstrap().colPreference(4)
-                .asAtrBasic().label("Data de publicação")
+                .asAtr().label("Data de publicação")
                 .required();
 
         STypeString link = dadosRE.addFieldString("link");
         link
                 .asAtrBootstrap().newRow().colPreference(8)
-                .asAtrBasic().label("Link da RE de CBPF publicada no D.O.U")
+                .asAtr().label("Link da RE de CBPF publicada no D.O.U")
                 .required();
 
         STypeComposite<SIComposite> dadosPeticaoCBPF = habilitacaoEmpresa.addFieldComposite("dadosPeticaoCBPF");
         dadosPeticaoCBPF
-                .asAtrBasic().label("Dados da Petição de CBPF")
+                .asAtr().label("Dados da Petição de CBPF")
                 .dependsOn(habilitarPor)
                 .visible(ins -> "Petição de CBPF".equalsIgnoreCase(Value.of(ins, habilitarPor)));
         STypeString numeroExpediente = dadosPeticaoCBPF.addFieldString("numeroExpediente");
         numeroExpediente
                 .asAtrBootstrap().colPreference(4)
-                .asAtrBasic().label("Número do Expediente")
+                .asAtr().label("Número do Expediente")
                 .required();
 
         STypeString numeroProtocolo = dadosPeticaoCBPF.addFieldString("numeroProtocolo");
         numeroProtocolo
                 .asAtrBootstrap().newRow().colPreference(4)
-                .asAtrBasic().label("Número do Expediente")
+                .asAtr().label("Número do Expediente")
                 .enabled(false);
 
         STypeDate data = dadosPeticaoCBPF.addFieldDate("data");
         data
                 .asAtrBootstrap().colPreference(4)
-                .asAtrBasic().label("Data")
+                .asAtr().label("Data")
                 .enabled(false);
 
         STypeString assunto = dadosPeticaoCBPF.addFieldString("assunto");
         assunto
                 .asAtrBootstrap().newRow().colPreference(8)
-                .asAtrBasic().label("Assunto da Petição")
+                .asAtr().label("Assunto da Petição")
                 .enabled(false);
 
         STypeLocalFabricacao tipoProducao = habilitacaoEmpresa.addField("tipoProducao", STypeLocalFabricacao.class);
-        tipoProducao.tipoLocalFabricacao.asAtrBasic().label("Tipo de Produção");
-        tipoProducao.asAtrBasic().label("");
+        tipoProducao.tipoLocalFabricacao.asAtr().label("Tipo de Produção");
+        tipoProducao.asAtr().label("");
 
     }
 

@@ -26,7 +26,7 @@ public class AttachmentListMapperTest extends SingularFormBaseTest {
         typeAttachmentList = baseType
                 .addFieldListOfAttachment("attachments", "attachment");
         typeAttachmentList
-                .asAtrBasic()
+                .asAtr()
                 .label("Attachments");
     }
 

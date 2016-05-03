@@ -581,8 +581,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             debugAttributes(appendable, level);
             appendable.append("\n");
 
-            if (this instanceof STypeSimple && this.asAtrProvider().getSimpleProvider() != null) {
-                pad(appendable, level + 2).append("selection of ").append(this.asAtrProvider().getSimpleProvider().toString())
+            if (this instanceof STypeSimple && this.asAtrProvider().getProvider() != null) {
+                pad(appendable, level + 2).append("selection of ").append(this.asAtrProvider().getProvider().toString())
                         .append("\n");
             }
 
@@ -691,19 +691,19 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         this.initListener = initListener;
     }
 
-    public SelectionBuilder selection() {
+    public SelectionBuilder typelessSelection() {
         this.setView(SViewSelectionBySelect::new);
         return new SelectionBuilder(this);
     }
 
     public void withSelectionFromProvider(Class<SimpleProvider> providerClass) {
-        this.selection()
+        this.typelessSelection()
                 .selfIdAndDisplay()
                 .provider(providerClass);
     }
 
     public void withSelectionFromProvider(String providerName) {
-        this.selection()
+        this.typelessSelection()
                 .selfIdAndDisplay()
                 .provider(providerName);
     }

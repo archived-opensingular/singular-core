@@ -28,7 +28,7 @@ public class STypeEmbalagemPrimaria extends STypeComposite<SIComposite> {
             this
                     .asAtrBootstrap()
                     .colPreference(6)
-                    .asAtrBasic()
+                    .asAtr()
                     .label("Embalagem primária")
                     .required();
             this.autocompleteOf(EmbalagemPrimariaBasica.class)

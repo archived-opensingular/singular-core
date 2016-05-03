@@ -20,7 +20,7 @@ public class CaseInputModalSearchPackage extends SPackage {
         final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         final STypeComposite funcionario = tipoMyForm.addFieldComposite("funcionario");
-        funcionario.asAtrBasic().label("Funcionario").displayString("${nome} - ${funcao}");
+        funcionario.asAtr().label("Funcionario").displayString("${nome} - ${funcao}");
 
         final STypeString nome  = funcionario.addFieldString("nome");
         final STypeString funcao = funcionario.addFieldString("funcao");

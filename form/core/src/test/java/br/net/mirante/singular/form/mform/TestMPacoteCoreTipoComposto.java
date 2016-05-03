@@ -87,7 +87,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertOrdemCampos(tipoBloco.getFields(), "nome", "endereco");
         assertOrdemCampos(tipoBloco.getFieldsLocal(), "nome", "endereco");
 
-        STypeComposite<?> tipoSubBloco = pb.creatType("subBloco", tipoBloco);
+        STypeComposite<?> tipoSubBloco = pb.createType("subBloco", tipoBloco);
         tipoSubBloco.addFieldInteger("idade");
         tipoSubBloco.addFieldString("area");
 

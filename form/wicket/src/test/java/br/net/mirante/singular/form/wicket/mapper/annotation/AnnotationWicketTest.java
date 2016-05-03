@@ -1,19 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import java.util.List;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
@@ -24,6 +10,19 @@ import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.mform.io.FormSerialized;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.TextArea;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import java.util.List;
+
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class AnnotationWicketTest {
@@ -70,7 +69,7 @@ public class AnnotationWicketTest {
         @Override
         protected void buildBaseType(STypeComposite<?> mockType) {
             super.buildBaseType(mockType);
-            annotated1.asAtrBasic().label("The Group");
+            annotated1.asAtr().label("The Group");
         }
 
         @Test public void rendersTheTitleWithTheFieldLabel(){

@@ -1,15 +1,14 @@
 package br.net.mirante.singular.form.mform.basic.ui;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import java.util.GregorianCalendar;
-
-import org.junit.Test;
-
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
+import org.junit.Test;
+
+import java.util.GregorianCalendar;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class DisplayStringCalculationTest {
 
@@ -50,8 +49,8 @@ public class DisplayStringCalculationTest {
     @Test
     public void testDisplayStringTypeSimpleCustomStatic() {
         SIComposite pedido = createPedido();
-        pedido.getType().getField("cod").asAtrBasic().displayString("xxxx");
-        pedido.getType().asAtrBasic().displayString("yyyy");
+        pedido.getType().getField("cod").asAtr().displayString("xxxx");
+        pedido.getType().asAtr().displayString("yyyy");
 
         assertThat(pedido.toStringDisplay()).isEqualTo("yyyy");
         assertThat(pedido.getField("peso").toStringDisplay()).isNull();
@@ -61,13 +60,13 @@ public class DisplayStringCalculationTest {
     @Test
     public void testDisplayStringWithCondition() {
         SIComposite pedido = createPedido();
-        pedido.getType().asAtrBasic().displayString("${cod}-${nome}<#if detalhes.fragil>-CUIDADO</#if>");
+        pedido.getType().asAtr().displayString("${cod}-${nome}<#if detalhes.fragil>-CUIDADO</#if>");
         assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB-CUIDADO");
 
         pedido.setValue("detalhes.fragil", false);
         assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB");
 
-        pedido.getType().asAtrBasic().displayString("${cod}-${nome}<#if qtd <= 2>-POUCO</#if>");
+        pedido.getType().asAtr().displayString("${cod}-${nome}<#if qtd <= 2>-POUCO</#if>");
         assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB");
         pedido.setValue("qtd", 2);
         assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB-POUCO");
@@ -77,7 +76,7 @@ public class DisplayStringCalculationTest {
     public void testDisplayStringLambdaDinamicCalculation() {
         SIComposite pedido = createPedido();
 
-        pedido.getType().asAtrBasic().displayString(ctx -> {
+        pedido.getType().asAtr().displayString(ctx -> {
             SIComposite p = (SIComposite) ctx.instance();
             return p.getField("cod").toStringDisplay() + "-" + p.getField("nome").toStringDisplay();
         });
@@ -88,28 +87,28 @@ public class DisplayStringCalculationTest {
     @Test
     public void testDisplayStringTypeSimpleCustomDinamicCalculation() {
         SIComposite pedido = createPedido();
-        pedido.getType().asAtrBasic().displayString("${cod}-${nome} (${qtd})");
+        pedido.getType().asAtr().displayString("${cod}-${nome} (${qtd})");
         assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB (4)");
 
-        pedido.getType().getField("detalhes").asAtrBasic().displayString("(${fragil})");
-        pedido.getType().asAtrBasic().displayString("${cod}-${detalhes}");
+        pedido.getType().getField("detalhes").asAtr().displayString("(${fragil})");
+        pedido.getType().asAtr().displayString("${cod}-${detalhes}");
         assertThat(pedido.toStringDisplay()).isEqualTo("10-(Sim)");
 
-        pedido.getType().asAtrBasic().displayString("${cod}-${detalhes.toStringDisplayDefault()!\"x\"}");
+        pedido.getType().asAtr().displayString("${cod}-${detalhes.toStringDisplayDefault()!\"x\"}");
         assertThat(pedido.toStringDisplay()).isEqualTo("10-x");
 
-        pedido.getType().getField("cod").asAtrBasic().displayString("xxxx");
-        pedido.getType().getField("qtd").asAtrBasic().displayString("x${toStringDisplayDefault()}");
+        pedido.getType().getField("cod").asAtr().displayString("xxxx");
+        pedido.getType().getField("qtd").asAtr().displayString("x${toStringDisplayDefault()}");
         // pedido.getType().getField("peso").asAtrBasic().displayString("${peso}");
 
         assertThat(pedido.getField("cod").toStringDisplay()).isEqualTo("xxxx");
         assertThat(pedido.getField("qtd").toStringDisplay()).isEqualTo("x4");
         assertThat(pedido.getField("peso").toStringDisplay()).isNull();
 
-        pedido.getType().asAtrBasic().displayString("${cod}-${nome} (${qtd})");
+        pedido.getType().asAtr().displayString("${cod}-${nome} (${qtd})");
         assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB (4)");
 
-        pedido.getType().asAtrBasic().displayString("${cod}-${nome}-${entrega}");
+        pedido.getType().asAtr().displayString("${cod}-${nome}-${entrega}");
         assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB-01/07/2000");
     }
 
@@ -117,13 +116,13 @@ public class DisplayStringCalculationTest {
     public void testDisplayStringDinamicCalculationWithDate() {
         SIComposite pedido = createPedido();
 
-        pedido.getType().asAtrBasic().displayString("${cod}-${nome}-${entrega}");
+        pedido.getType().asAtr().displayString("${cod}-${nome}-${entrega}");
         assertThat(pedido.toStringDisplay()).isEqualTo("10-Teclado USB-01/07/2000");
 
-        pedido.getType().asAtrBasic().displayString("${qtd?string.percent}-${nome}");
+        pedido.getType().asAtr().displayString("${qtd?string.percent}-${nome}");
         assertThat(pedido.toStringDisplay()).isEqualTo("400%-Teclado USB");
 
-        pedido.getType().asAtrBasic().displayString("${cod} ${nome} ${entrega?string.iso}");
+        pedido.getType().asAtr().displayString("${cod} ${nome} ${entrega?string.iso}");
         assertThat(pedido.toStringDisplay()).isEqualTo("10 Teclado USB 2000-07-01");
     }
 }

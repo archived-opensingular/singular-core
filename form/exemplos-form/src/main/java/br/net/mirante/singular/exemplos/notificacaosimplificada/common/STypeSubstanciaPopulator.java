@@ -57,7 +57,7 @@ public class STypeSubstanciaPopulator {
                             si.setValue(substanciaDescricao, s.getDescricao());
                         }
                     })
-                    .asAtrBasic()
+                    .asAtr()
                     .label("Substância")
                     .dependsOn(dependentType)
                     .visible(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
@@ -67,7 +67,7 @@ public class STypeSubstanciaPopulator {
         {
             substancia
                     .withView(SViewReadOnly::new)
-                    .asAtrBasic()
+                    .asAtr()
                     .displayString("${descricao}")
                     .label("Nome")
                     .asAtrBootstrap()
@@ -80,7 +80,7 @@ public class STypeSubstanciaPopulator {
         final STypeSimple       descConcentracao         = concentracao.addFieldString("descricao");
         {
             concentracao
-                    .asAtrBasic()
+                    .asAtr()
                     .required()
                     .label("Concentração")
                     .asAtrBootstrap()

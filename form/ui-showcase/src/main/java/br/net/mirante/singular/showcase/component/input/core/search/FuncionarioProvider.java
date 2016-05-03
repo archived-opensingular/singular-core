@@ -1,15 +1,15 @@
 package br.net.mirante.singular.showcase.component.input.core.search;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FuncionarioProvider implements FilteredPagedProvider<Funcionario> {
 
@@ -38,9 +38,9 @@ public class FuncionarioProvider implements FilteredPagedProvider<Funcionario> {
 
     @Override
     public void loadFilterDefinition(STypeComposite<?> filter) {
-        filter.addFieldString("nome").asAtrBasic().label("Nome").asAtrBootstrap().colPreference(6);
-        filter.addFieldString("funcao").asAtrBasic().label("Função").asAtrBootstrap().colPreference(6);
-        filter.addFieldInteger("idade").asAtrBasic().label("Idade").asAtrBootstrap().colPreference(2);
+        filter.addFieldString("nome").asAtr().label("Nome").asAtrBootstrap().colPreference(6);
+        filter.addFieldString("funcao").asAtr().label("Função").asAtrBootstrap().colPreference(6);
+        filter.addFieldInteger("idade").asAtr().label("Idade").asAtrBootstrap().colPreference(2);
     }
 
     private List<Funcionario> filtrarFuncionarios(SInstance filter) {
