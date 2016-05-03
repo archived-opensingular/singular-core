@@ -1,12 +1,12 @@
 package br.net.mirante.singular.server.commons.wicket.view.template;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
-import br.net.mirante.singular.server.commons.wicket.view.SingularToastrHelper;
-import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -22,24 +22,14 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-
+import br.net.mirante.singular.server.commons.wicket.view.SingularToastrHelper;
 import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 
 public abstract class Template extends SingularTemplate {
 
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
-
-    @Override
-    public List<CssHeaderItem> getDefaultCSSUrls() {
-        final List<CssHeaderItem> defaultCSSUrls = super.getDefaultCSSUrls();
-        defaultCSSUrls.add(CssHeaderItem.forUrl("/singular-static/resources/singular/fonts/google/open-sans.css"));
-        defaultCSSUrls.add(CssHeaderItem.forUrl("resources/custom/css/custom.css"));
-        return defaultCSSUrls;
-    }
 
     @Override
     protected void onInitialize() {
@@ -75,6 +65,7 @@ public abstract class Template extends SingularTemplate {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
+        response.render(CssHeaderItem.forUrl("/singular-static/resources/singular/fonts/google/open-sans.css"));
         response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(Template.class, "singular.js")));
         response.render(CssHeaderItem.forReference(new PackageResourceReference(Template.class, "Template.css")));
         if (withSideBar()) {
