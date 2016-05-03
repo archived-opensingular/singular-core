@@ -361,6 +361,9 @@ public class SDocument {
         return annotations;
     }
 
+    public Optional<SInstance> findInstanceById(Integer instanceId) {
+        return SInstances.findDescendantById(getRoot(), instanceId);
+    }
     public Collection<IValidationError> getValidationErrors() {
         return validationErrors().values();
     }
