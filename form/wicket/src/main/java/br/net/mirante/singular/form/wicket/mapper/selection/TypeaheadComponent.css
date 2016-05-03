@@ -5,3 +5,8 @@
 .tt-hint, .tt-input {
     color: #555555 !important;
 }
+
+.tt-menu {
+  max-height: 150px;
+  overflow-y: auto;
+}
