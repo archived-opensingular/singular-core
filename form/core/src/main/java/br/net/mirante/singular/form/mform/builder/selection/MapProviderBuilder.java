@@ -10,6 +10,6 @@ public class MapProviderBuilder extends AbstractBuilder {
     }
 
     public void provider(MapSimpleProvider mapSimpleProvider){
-        type.asAtrProvider().asAtrProvider().provider(mapSimpleProvider);
+        type.asAtrProvider().provider(mapSimpleProvider);
     }
 }
