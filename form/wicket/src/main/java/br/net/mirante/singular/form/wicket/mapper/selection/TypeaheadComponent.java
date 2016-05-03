@@ -1,17 +1,16 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
-import br.net.mirante.singular.form.mform.provider.Provider;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
-import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
+import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -20,6 +19,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -35,15 +35,19 @@ import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
-
-import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static com.google.common.collect.Maps.newLinkedHashMap;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.provider.Provider;
+import br.net.mirante.singular.form.mform.provider.SimpleProvider;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 
 
 /**
@@ -57,6 +61,13 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
  * @author Fabricio Buzeto
  */
 public class TypeaheadComponent extends Panel {
+
+    public static final CssReferenceHeaderItem CSS_REFERENCE = CssReferenceHeaderItem.forReference(new PackageResourceReference(TypeaheadComponent.class, "TypeaheadComponent.css"){
+        @Override
+        public List<HeaderItem> getDependencies() {
+            return SingularTemplate.getDefaultCSSUrls();
+        }
+    });
 
     private static final long serialVersionUID = -3639240121493651170L;
 
@@ -199,7 +210,7 @@ public class TypeaheadComponent extends Panel {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("TypeaheadComponent.js")));
         response.render(OnDomReadyHeaderItem.forScript(createJSFetcher()));
-        response.render(CssReferenceHeaderItem.forReference(resourceRef("TypeaheadComponent.css")));
+        response.render(CSS_REFERENCE);
     }
 
     private String createJSFetcher() {
@@ -224,6 +235,7 @@ public class TypeaheadComponent extends Panel {
         js += "        name : 's-select-typeahead', ";
         js += "        display: 'value', ";
         js += "        typeaheadAppendToBody: 'true',";
+        js += "        limit: -1,";// não limita os resultados exibidos
         js += "        source: window.substringMatcher(" + jsOptionArray() + ") ";
         js += "     }";
         js += " );";
@@ -242,6 +254,7 @@ public class TypeaheadComponent extends Panel {
         js += "     {";
         js += "        name : 's-select-typeahead', ";
         js += "        display: 'value', ";
+        js += "        limit: -1,";// não limita os resultados exibidos
         js += "        source: " + createJSBloodhoundOpbject();
         js += "     }";
         js += " );";
@@ -302,7 +315,13 @@ public class TypeaheadComponent extends Panel {
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
-        return new PackageResourceReference(getClass(), resourceName);
+        return new PackageResourceReference(getClass(), resourceName){
+            @Override
+            public List<HeaderItem> getDependencies() {
+                // TODO Auto-generated method stub
+                return super.getDependencies();
+            }
+        };
     }
 
     @Override
