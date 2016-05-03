@@ -1,6 +1,5 @@
 package br.net.mirante.singular.showcase.component.input.core.search;
 
-
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.mform.provider.ProviderContext;
@@ -8,9 +7,9 @@ import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
 
 import java.util.List;
 
-public class FuncionarioProvider implements FilteredPagedProvider<Funcionario> {
+public class LazyFuncionarioProvider implements FilteredPagedProvider<Funcionario> {
 
-    private static final FuncionarioRepository repository       = new FuncionarioRepository();
+    private static final FuncionarioRepository repository = new FuncionarioRepository();
 
     @Override
     public void configureFilter(FilterConfigBuilder fcb) {
@@ -24,15 +23,19 @@ public class FuncionarioProvider implements FilteredPagedProvider<Funcionario> {
                 .addColumn("funcao", "Função")
                 .addColumn("idade", "Idade")
                 //@destacar
-                .cached(true)
-                //@destacar
-                .lazy(false);
+                .lazy(true);
+    }
+
+    @Override
+    public long getSize(ProviderContext<SInstance> context) {
+        //@destacar
+        return repository.get(context.getFilterInstance()).size();
     }
 
     @Override
     public List<Funcionario> load(ProviderContext<SInstance> context) {
         //@destacar
-        return repository.get(context.getFilterInstance());
+        return repository.get(context.getFilterInstance()).subList((int) context.getFirst(), (int) (context.getFirst() + context.getCount()));
     }
 
 }

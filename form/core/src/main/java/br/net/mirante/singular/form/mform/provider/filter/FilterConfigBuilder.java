@@ -36,7 +36,7 @@ public class FilterConfigBuilder {
     }
 
     public FilterConfigBuilder lazy(boolean lazy) {
-        filterConfig.setCache(lazy);
+        filterConfig.setLazy(lazy);
         return this;
     }
 
