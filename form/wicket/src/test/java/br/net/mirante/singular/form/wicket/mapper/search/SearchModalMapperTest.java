@@ -96,6 +96,7 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
                 builder.addColumn("left", "Marca");
                 builder.addColumn("middle", "Modelo");
                 builder.addColumn("right", "Conectividade");
+                builder.lazy(true);
             }
 
         });
