@@ -76,7 +76,7 @@ public class DataSubmissionTest {
         @Override
         protected void populateInstance(SIComposite instance) {
             super.populateInstance(instance);
-            data2.asAtrBasic().enabled(false);
+            data2.asAtr().enabled(false);
             page.setAsEditView();
         }
 
@@ -104,16 +104,15 @@ public class DataSubmissionTest {
         protected void populateInstance(SIComposite instance) {
             super.populateInstance(instance);
 
-            System.out.println(FormSerializationUtil.toSerializedObject(instance).getXml());
-            data2.asAtrBasic().visible(false);
+            data2.asAtr().visible((x)->{
+                return false;
+            });
             page.setAsEditView();
         }
 
         @Test public void submissionUpdatesInstance() {
             List<TextField> tags = (List) findTag(form.getForm(), TextField.class);
             TextField text1 = tags.get(0);
-
-            System.out.println(FormSerializationUtil.toSerializedObject(page.getCurrentInstance()).getXml());
 
             Assertions.assertThat(page.getCurrentInstance().getValue(data1))
                     .isEqualTo("value1");
