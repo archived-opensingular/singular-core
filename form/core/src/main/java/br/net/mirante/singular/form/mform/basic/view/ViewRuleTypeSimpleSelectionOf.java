@@ -6,7 +6,8 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
+import br.net.mirante.singular.form.mform.provider.Provider;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
 
 /**
  * Decide a melhor view para um tipo simples que seja um selection of.
@@ -17,15 +18,15 @@ public class ViewRuleTypeSimpleSelectionOf extends ViewRule {
 
     @Override
     public SView apply(SInstance instance) {
-        if (instance != null && instance.asAtrProvider().getSimpleProvider() != null) {
-            return decideView(instance, instance, instance.asAtrProvider().getSimpleProvider());
+        if (instance != null && instance.asAtrProvider().getProvider() != null) {
+            return decideView(instance, instance, instance.asAtrProvider().getProvider());
         }
         return null;
     }
 
     //TODO: [Fabs] this decision is strange to apply when the value is dynamic
-    private SView decideView(SInstance instance, SInstance simple, SimpleProvider provider) {
-        int size = provider.load(instance).size();
+    private SView decideView(SInstance instance, SInstance simple, Provider provider) {
+        int size = provider.load(ProviderContext.of(instance)).size();
         /*
          * Tamanho zero indica uma possivel carga condicional e/ou dinamica.
          * Nesse caso é mais produtente escolher combo: MSelecaoPorSelectView

@@ -4,6 +4,7 @@ import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.freemarker.FormFreemarkerUtil;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
@@ -26,10 +27,16 @@ public class SSelectionDisplayBuilder extends AbstractBuilder {
         type.asAtrProvider().asAtrProvider().displayFunction(new IFunction<Content, String>() {
             @Override
             public String apply(Content content) {
-                final SInstance ins = type.newInstance();
+                final SType elementsType;
+                if (type instanceof STypeList) {
+                    elementsType = ((STypeList) type).getElementsType();
+                } else {
+                    elementsType = type;
+                }
+                final SInstance ins = elementsType.newInstance();
                 Value.hydrate(ins, content);
-                if(ins instanceof SIComposite){
-                    return String.valueOf(((SIComposite)ins).getValue(display));
+                if (ins instanceof SIComposite) {
+                    return String.valueOf(((SIComposite) ins).getValue(display));
                 }
                 return String.valueOf(ins.getValue());
             }
@@ -42,7 +49,13 @@ public class SSelectionDisplayBuilder extends AbstractBuilder {
         type.asAtrProvider().asAtrProvider().displayFunction(new IFunction<Content, String>() {
             @Override
             public String apply(Content content) {
-                final SInstance dummy = type.newInstance();
+                final SType elementsType;
+                if (type instanceof STypeList) {
+                    elementsType = ((STypeList) type).getElementsType();
+                } else {
+                    elementsType = type;
+                }
+                final SInstance dummy = elementsType.newInstance();
                 Value.hydrate(dummy, content);
                 hydrate(dummy, content);
                 return FormFreemarkerUtil.merge(dummy, freemakerTemplate);
@@ -58,6 +71,7 @@ public class SSelectionDisplayBuilder extends AbstractBuilder {
             public void fillInstance(SIComposite ins, Content obj) {
                 hydrate(ins, obj);
             }
+
             @Override
             public Content toObject(SIComposite ins) {
                 return Value.dehydrate(ins);

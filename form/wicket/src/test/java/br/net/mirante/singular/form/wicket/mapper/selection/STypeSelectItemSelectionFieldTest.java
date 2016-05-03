@@ -73,7 +73,7 @@ public class STypeSelectItemSelectionFieldTest {
             selectType.selection()
                     .id(idUF)
                     .display(nomeUF)
-                    .provider(newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
+                    .simpleProvider(newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
         }
 
         @Test
@@ -139,7 +139,7 @@ public class STypeSelectItemSelectionFieldTest {
             selectType.selection()
                     .id(idUF)
                     .display(nomeUF)
-                    .provider(newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
+                    .simpleProvider(newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
             selectType.withRequired(true);
         }
 
@@ -159,7 +159,7 @@ public class STypeSelectItemSelectionFieldTest {
             selectType.selection()
                     .id(idUF)
                     .display(nomeUF)
-                    .provider(newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
+                    .simpleProvider(newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
         }
 
         @Test

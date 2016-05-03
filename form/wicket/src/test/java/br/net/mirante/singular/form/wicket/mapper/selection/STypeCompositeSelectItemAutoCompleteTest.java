@@ -34,7 +34,7 @@ public class STypeCompositeSelectItemAutoCompleteTest {
             base.autocomplete()
                     .id(name)
                     .display("Planeta: ${name}, Posição: ${position}, Diametro(Km): ${diameterInKm}")
-                    .provider(builder -> {
+                    .simpleProvider(builder -> {
                         builder.add().set(name, "Mercury").set(position, 1).set(diameter, 4879);
                         builder.add().set(name, "Venus").set(position, 2).set(diameter, 12104);
                         builder.add().set(name, "Earth").set(position, 3).set(diameter, 12756);

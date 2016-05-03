@@ -5,10 +5,9 @@
 
 package br.net.mirante.singular.showcase.component.input.core;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 
 public class CaseInputCoreTextAreaPackage extends SPackage {
 
@@ -20,17 +19,17 @@ public class CaseInputCoreTextAreaPackage extends SPackage {
 
         tipoMyForm.addFieldString("observacao1")
                 .withTextAreaView()
-                .asAtrBasic().label("Observação (default)");
+                .asAtr().label("Observação (default)");
 
         tipoMyForm.addFieldString("observacao2")
             .withTextAreaView(view->view.setLines(2))
-            .asAtrBasic()
+            .asAtr()
             .label("Observação (2 linhas e 500 de limite)")
             .tamanhoMaximo(500);
 
         tipoMyForm.addFieldString("observacao3")
                 .withTextAreaView(view->view.setLines(10))
-                .asAtrBasic()
+                .asAtr()
                 .label("Observação (10 linhas e 5000 de limite)")
                 .tamanhoMaximo(5000);
     }

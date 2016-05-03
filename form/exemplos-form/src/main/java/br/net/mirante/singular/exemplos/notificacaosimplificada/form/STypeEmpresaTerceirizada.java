@@ -21,10 +21,10 @@ public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
         STypeComposite<SIComposite> empresa     = addFieldComposite("empresa");
         STypeString                 idEmpresa   = empresa.addFieldString("id");
         STypeString                 razaoSocial = empresa.addFieldString("razaoSocial");
-        razaoSocial.asAtrBasic().label("Razão Social");
+        razaoSocial.asAtr().label("Razão Social");
         STypeString endereco = empresa.addFieldString("endereco");
         empresa
-                .asAtrBasic().label("Empresa")
+                .asAtr().label("Empresa")
                 .displayString("${razaoSocial} - ${endereco}")
 
                 .getTipo().withView(SViewAutoComplete::new);
@@ -53,7 +53,7 @@ public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
         etapasFabricacao
                 .withView(SViewListByTable::new);
         etapasFabricacao
-                .asAtrBasic()
+                .asAtr()
                 .label("Etapa de fabricação")
                 .displayString("<#list _inst as c>${c.etapaFabricacao.descricao}<#sep>, </#sep></#list>");
     }

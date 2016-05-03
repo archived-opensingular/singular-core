@@ -1,12 +1,11 @@
 package br.net.mirante.singular.form.wicket.validation;
 
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Assert;
-import org.junit.Test;
-
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
 
@@ -17,13 +16,13 @@ public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
     @Override
     protected void buildBaseType(STypeComposite<?> mockType) {
         fieldOne = mockType.addFieldString("fieldOne");
-        fieldOne.asAtrBasic().required(true);
+        fieldOne.asAtr().required(true);
         fieldTwo = mockType.addFieldString("fieldTwo");
 
-        fieldTwo.asAtrBasic().dependsOn(fieldOne);
-        fieldTwo.asAtrBasic()
+        fieldTwo.asAtr().dependsOn(fieldOne);
+        fieldTwo.asAtr()
                 .visible(instance -> instance.findNearestValue(fieldOne, String.class).orElse("").equals(testValue));
-        fieldTwo.asAtrBasic().required(true);
+        fieldTwo.asAtr().required(true);
     }
 
     @Test

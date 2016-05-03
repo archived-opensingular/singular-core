@@ -18,10 +18,10 @@ public class STypeFarmacopeiaReferencia extends STypeComposite<SIComposite> {
         this.addField("farmacopeia", STypeFarmacopeia.class);
 
         this.addFieldString("edicao")
-                .asAtrBasic().label("Edição")
+                .asAtr().label("Edição")
                 .asAtrBootstrap().colPreference(2);
         this.addFieldString("pagina")
-                .asAtrBasic().label("Página")
+                .asAtr().label("Página")
                 .asAtrBootstrap().colPreference(2);
     }
 }

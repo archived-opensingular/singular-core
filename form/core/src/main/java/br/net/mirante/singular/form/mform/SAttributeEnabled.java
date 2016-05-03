@@ -68,7 +68,7 @@ public interface SAttributeEnabled {
     public <TR> TR as(Function<SAttributeEnabled, TR> wrapper);
 
     /** Retorna o leitor de atributos básicos para o tipo ou instância atual. */
-    public default AtrBasic asAtrBasic() {
+    public default AtrBasic asAtr() {
         return as(AtrBasic::new);
     }
 

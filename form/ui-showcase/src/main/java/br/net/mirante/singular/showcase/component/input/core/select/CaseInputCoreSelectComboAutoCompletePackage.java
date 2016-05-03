@@ -25,11 +25,11 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
 
         final STypeString myAuthor = tipoMyForm.addFieldString("myAuthor");
         myAuthor.autocompleteOf(AUTHORS)
-                .asAtrBasic().label("Autor Favorito");
+                .asAtr().label("Autor Favorito");
 
         final STypeString myHero = tipoMyForm.addFieldString("myHero");
         myHero.autocompleteOf(HEROES)
-                .asAtrBasic().label("Herói Favorito");
+                .asAtr().label("Herói Favorito");
 
         // Auto Complete padrão com opções pré-definidas para tipos compostos.
         final STypeComposite<SIComposite> myPlanet = tipoMyForm.addFieldComposite("myPlanet");
@@ -42,7 +42,7 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
         myPlanet.autocomplete()
                 .id(name)
                 .display("Nome: ${name}, Posição: ${position}, Diametro: ${diameterInKm}")
-                .provider(builder -> {
+                .simpleProvider(builder -> {
                     builder.add().set(name, "Mercury").set(position, 1).set(diameter, 4879);
                     builder.add().set(name, "Venus").set(position, 2).set(diameter, 12104);
                     builder.add().set(name, "Earth").set(position, 3).set(diameter, 12756);
@@ -55,11 +55,11 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
         //@destacar:fim
 
         myPlanet.withView(SViewAutoComplete::new)
-                .asAtrBasic().label("Planeta de Origem");
+                .asAtr().label("Planeta de Origem");
 
         // Auto Complete com opções dinâmicas baseadas nos valores informados.
         final STypeString email = tipoMyForm.addFieldString("email");
-        email.asAtrBasic().label("Email");
+        email.asAtr().label("Email");
 
         //@destacar:bloco
         email.lazyAutocompleteOf(String.class)

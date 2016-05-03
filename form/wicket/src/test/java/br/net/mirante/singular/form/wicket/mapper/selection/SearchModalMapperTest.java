@@ -53,8 +53,8 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
             }
         });
         dependentField = baseType.addFieldString("dependentField");
-        dependentField.asAtrBasic().dependsOn(mandatoryField);
-        dependentField.asAtrBasic().visible(ins -> StringUtils.isNotEmpty(ins.findNearestValue(mandatoryField, String.class).orElse(null)));
+        dependentField.asAtr().dependsOn(mandatoryField);
+        dependentField.asAtr().visible(ins -> StringUtils.isNotEmpty(ins.findNearestValue(mandatoryField, String.class).orElse(null)));
 
     }
 

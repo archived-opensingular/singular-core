@@ -26,7 +26,7 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
         tipoContato1
                 .withSelectView()
-                .asAtrBasic().label("Tipo Contato (Combo)");
+                .asAtr().label("Tipo Contato (Combo)");
 
         //@destacar:bloco
         //View por Radio
@@ -36,7 +36,7 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
         tipoContato2
                 .withRadioView()
-                .asAtrBasic().label("Tipo Contato (Radio) - Horizontal");
+                .asAtr().label("Tipo Contato (Radio) - Horizontal");
 
 
 
@@ -45,7 +45,7 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
 
         tipoContato3
-                .asAtrBasic()
+                .asAtr()
                 .label("Tipo Contato (Radio) - Vertical");
 
         //@destacar:bloco
