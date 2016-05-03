@@ -3,10 +3,13 @@ package br.net.mirante.singular.form.wicket.component;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.ClassVisitFilter;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
+import org.apache.wicket.util.visit.Visits;
 
 public class SingularForm<T> extends Form<T> {
 
@@ -19,10 +22,10 @@ public class SingularForm<T> extends Form<T> {
     }
 
     protected boolean isIgnoreValidation() {
-        return false;
+        return true;
     }
     protected boolean isIgnoreErrors() {
-        return false;
+        return true;
     }
 
     //@formatter:off
@@ -48,8 +51,13 @@ public class SingularForm<T> extends Form<T> {
         final boolean ignoreErrors = isIgnoreErrors();
 
         // run validation
-        if (!ignoreValidation)
+        if (!ignoreValidation) {
             validate();
+        } else {
+            convertWithoutValidateNestedForms();
+            convertWithoutValidateComponents();
+            onValidate();
+        }
 
         // If a validation error occurred
         if (!ignoreErrors && hasError())
@@ -81,6 +89,48 @@ public class SingularForm<T> extends Form<T> {
 
             // Form has no error
             delegateSubmit(submittingComponent);
+        }
+    }
+
+    private void convertWithoutValidateNestedForms()
+    {
+        Visits.visitPostOrder(this, new IVisitor<SingularForm<?>, Void>()
+        {
+            @Override
+            public void component(final SingularForm<?> form, final IVisit<Void> visit)
+            {
+                if (form == SingularForm.this)
+                {
+                    // skip self, only process children
+                    visit.stop();
+                    return;
+                }
+
+                if (form.isSubmitted())
+                {
+                    form.convertWithoutValidateComponents();
+                    form.onValidate();
+                }
+            }
+        }, new ClassVisitFilter(SingularForm.class));
+    }
+
+    protected void convertWithoutValidateComponents() {
+        if (isEnabledInHierarchy() && isVisibleInHierarchy())
+        {
+            visitFormComponentsPostOrder(new ValidationVisitor()
+            {
+                @Override
+                public void validate(final FormComponent<?> formComponent)
+                {
+                    final Form<?> form = formComponent.getForm();
+                    if ((!(form instanceof SingularForm<?>) || (form == SingularForm.this))
+                        && form.isEnabledInHierarchy() && form.isVisibleInHierarchy())
+                    {
+                        formComponent.convertInput();
+                    }
+                }
+            });
         }
     }
     
