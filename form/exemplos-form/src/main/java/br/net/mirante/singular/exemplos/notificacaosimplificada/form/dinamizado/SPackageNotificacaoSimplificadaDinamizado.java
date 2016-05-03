@@ -23,7 +23,8 @@ import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.mform.provider.filter.FilterDefinitionBuilder;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
+import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -303,7 +304,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         abstract List<Integer> getIds(SInstance root);
 
         @Override
-        public void defineFilter(FilterDefinitionBuilder builder) {
+        public void configureFilter(FilterConfigBuilder builder) {
             builder.configureType(f -> {
                 f.addFieldString("descricao").asAtr().label("Descrição");
                 STypeString conceito = f.addFieldString("conceito");
@@ -316,18 +317,19 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         }
 
         @Override
-        public Long getSize(SInstance root, SInstance filter) {
-            return dominioService(root)
-                    .countFormasFarmaceuticasDinamizadas(getIds(root),
-                            Value.of(filter, "descricao"), Value.of(filter, "conceito"));
+        public long getSize(ProviderContext<SInstance> context) {
+            return dominioService(context.getInstance())
+                    .countFormasFarmaceuticasDinamizadas(getIds(context.getInstance()),
+                            Value.of(context.getFilterInstance(), "descricao"), Value.of(context.getFilterInstance(), "conceito"));
         }
 
         @Override
-        public List<FormaFarmaceuticaBasica> load(SInstance root, SInstance filter, long first, long count) {
-            return dominioService(root)
-                    .formasFarmaceuticasDinamizadas(getIds(root),
-                            Value.of(filter, "descricao"), Value.of(filter, "conceito"),
-                            first, count);
+        public List<FormaFarmaceuticaBasica> load(ProviderContext<SInstance> context) {
+            return dominioService(context.getInstance())
+                    .formasFarmaceuticasDinamizadas(getIds(context.getInstance()),
+                            Value.of(context.getFilterInstance(), "descricao"),
+                            Value.of(context.getFilterInstance(), "conceito"),
+                            context.getFirst(), context.getCount());
         }
 
     }

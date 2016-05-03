@@ -5,7 +5,8 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.mform.provider.filter.FilterDefinitionBuilder;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
+import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
@@ -33,19 +34,15 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
         mandatoryField.withView(new SViewSearchModal());
         mandatoryField.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<String>() {
             @Override
-            public void defineFilter(FilterDefinitionBuilder builder) {
+            public List<String> load(ProviderContext<SInstance> context) {
+                return Arrays.asList("1", "2");
+            }
+
+            @Override
+            public void configureFilter(FilterConfigBuilder builder) {
                 builder.configureType(filter -> filter.addFieldString("search"));
                 builder.addColumn("String");
-            }
-
-            @Override
-            public Long getSize(SInstance rootInstance, SInstance filter) {
-                return 2L;
-            }
-
-            @Override
-            public List<String> load(SInstance rootInstance, SInstance filter, long first, long count) {
-                return Arrays.asList("1", "2");
+                builder.lazy(false);
             }
         });
         dependentField = baseType.addFieldString("dependentField");

@@ -8,10 +8,12 @@ import java.io.Serializable;
 import java.util.List;
 
 
-public class FilterDefinition implements Serializable {
+public class FilterConfig implements Serializable {
 
     private List<Column>                           columns;
     private IConsumer<STypeComposite<SIComposite>> filterBuilder;
+    private boolean                                cache;
+    private boolean                                lazy;
 
     public List<Column> getColumns() {
         return columns;
@@ -27,6 +29,22 @@ public class FilterDefinition implements Serializable {
 
     public void setFilterBuilder(IConsumer<STypeComposite<SIComposite>> filterBuilder) {
         this.filterBuilder = filterBuilder;
+    }
+
+    public boolean isCache() {
+        return cache;
+    }
+
+    public void setCache(boolean cache) {
+        this.cache = cache;
+    }
+
+    public boolean isLazy() {
+        return lazy;
+    }
+
+    public void setLazy(boolean lazy) {
+        this.lazy = lazy;
     }
 
     public static class Column implements Serializable {

@@ -7,7 +7,8 @@ import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.mform.provider.filter.FilterDefinitionBuilder;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
+import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
@@ -55,6 +56,16 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
         });
         carro.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<Triple>() {
 
+            @Override
+            public List<Triple> load(ProviderContext<SInstance> context) {
+                return filterByInstance(context.getFilterInstance()).subList((int) context.getFirst(), (int) (context.getFirst() + context.getCount()));
+            }
+
+            @Override
+            public long getSize(ProviderContext<SInstance> context) {
+                return (long) filterByInstance(context.getFilterInstance()).size();
+            }
+
             private List<Triple> filterByInstance(SInstance filter) {
                 String  marca         = Value.of(filter, "marca");
                 String  modelo        = Value.of(filter, "modelo");
@@ -75,7 +86,7 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
             }
 
             @Override
-            public void defineFilter(FilterDefinitionBuilder builder) {
+            public void configureFilter(FilterConfigBuilder builder) {
                 builder.configureType(filter -> {
                     filter.addFieldString("marca");
                     filter.addFieldString("modelo");
@@ -85,16 +96,6 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
                 builder.addColumn("left", "Marca");
                 builder.addColumn("middle", "Modelo");
                 builder.addColumn("right", "Conectividade");
-            }
-
-            @Override
-            public Long getSize(SInstance rootInstance, SInstance filter) {
-                return (long) filterByInstance(filter).size();
-            }
-
-            @Override
-            public List<Triple> load(SInstance rootInstance, SInstance filter, long first, long count) {
-                return filterByInstance(filter).subList((int) first, (int) (first + count));
             }
 
         });

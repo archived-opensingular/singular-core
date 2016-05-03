@@ -3,7 +3,8 @@ package br.net.mirante.singular.showcase.component.input.core.search;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.mform.provider.filter.FilterDefinitionBuilder;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
+import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class FuncionarioProvider implements FilteredPagedProvider<Funcionario> {
     }
 
     @Override
-    public void defineFilter(FilterDefinitionBuilder builder) {
+    public void configureFilter(FilterConfigBuilder builder) {
         builder
                 .configureType(f -> {
                     f.addFieldString("nome").asAtr().label("Nome").asAtrBootstrap().colPreference(6);
@@ -67,17 +68,14 @@ public class FuncionarioProvider implements FilteredPagedProvider<Funcionario> {
                 })
                 .addColumn("nome", "Nome")
                 .addColumn("funcao", "Função")
-                .addColumn("idade", "Idade");
+                .addColumn("idade", "Idade")
+                .cached(true)
+                .lazy(false);
     }
 
     @Override
-    public Long getSize(SInstance rootInstance, SInstance filter) {
-        return (long) filtrarFuncionarios(filter).size();
-    }
-
-    @Override
-    public List<Funcionario> load(SInstance rootInstance, SInstance filter, long first, long count) {
-        return filtrarFuncionarios(filter).subList((int) first, (int) (first + count));
+    public List<Funcionario> load(ProviderContext<SInstance> context) {
+        return filtrarFuncionarios(context.getFilterInstance());
     }
 
 }
