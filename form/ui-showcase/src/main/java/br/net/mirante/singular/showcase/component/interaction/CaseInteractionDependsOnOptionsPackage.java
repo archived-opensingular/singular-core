@@ -5,11 +5,20 @@
 
 package br.net.mirante.singular.showcase.component.interaction;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.Provider;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public class CaseInteractionDependsOnOptionsPackage extends SPackage {
 
@@ -62,14 +71,19 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
             .label("Word")
             .dependsOn(letter);
 
-//        word.withSelectionFromProvider((ins,f) -> {
-//            String prefix = ins.findNearest(letter).get().getValue();
-//            return (prefix == null)
-//                ? ins.getType().newList()
-//                : ins.getType().newList()
-//                    .addValues(Stream.of(WORDS)
-//                        .filter(s -> s.startsWith(prefix))
-//                        .collect(toList()));
-//        });
+        word.asAtrProvider().provider(new Provider<Serializable, SInstance>() {
+            @Override
+            public List<Serializable> load(ProviderContext<SInstance> ctx) {
+                SInstance ins = ctx.getInstance();
+                String prefix = ins.findNearest(letter).get().getValue();
+                SIList<SIString> list = (SIList) ins.getType().newList();
+                return (prefix == null)
+                        ? new ArrayList()
+                        : Stream.of(WORDS)
+                        .filter((s) -> s.startsWith(prefix))
+                        .collect(toList());
+            }
+        });
+
     }
 }

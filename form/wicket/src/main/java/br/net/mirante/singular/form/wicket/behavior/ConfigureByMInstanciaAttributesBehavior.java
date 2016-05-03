@@ -49,7 +49,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
                 if (IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
                     final SInstance instancia = ((IMInstanciaAwareModel) model).getMInstancia();
                     if (instancia != null) {
-//                        instancia.clearInstance();
+//                        instancia.clearInstance(); //TODO: Fabs here < ---
                     }
                 }
             }
