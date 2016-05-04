@@ -1,0 +1,89 @@
+package br.net.mirante.singular.server.p.core.wicket.acompanhamento;
+
+
+import br.net.mirante.singular.server.commons.config.ConfigProperties;
+import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.model.IModel;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+public class AcompanhamentoContent extends AbstractCaixaContent<PeticaoDTO> {
+
+    @Inject
+    protected PetitionService peticaoService;
+
+
+    public AcompanhamentoContent(String id, String moduleContext, String siglaProcesso) {
+        super(id, moduleContext, siglaProcesso);
+    }
+
+    @Override
+    public QuickFilter montarFiltroBasico() {
+        return new QuickFilter()
+                .withFilter(getFiltroRapido())
+                .withRascunho(false);
+    }
+
+
+    @Override
+    protected long countQuickSearch(QuickFilter filter, List<String> processesNames) {
+        return peticaoService.countQuickSearch(filter, processesNames);
+    }
+
+    @Override
+    protected List<PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso) {
+        return peticaoService.quickSearch(filtro, siglasProcesso);
+    }
+
+    @Override
+    protected String getBaseUrl() {
+        return getModuleContext() + ConfigProperties.get(ConfigProperties.SINGULAR_MODULE_FORM_ENDERECO);
+    }
+
+    @Override
+    protected void appendPropertyColumns(BSDataTableBuilder<PeticaoDTO, String, IColumn<PeticaoDTO, String>> builder) {
+//        builder.appendPropertyColumn(getMessage("label.table.column.process.number"), "t.numeroProcesso", PeticaoDTO::getProcessNumber);
+        builder.appendPropertyColumn(getMessage("label.table.column.process"), "p.processName", PeticaoDTO::getProcessName);
+        builder.appendPropertyColumn(getMessage("label.table.column.in.date"), "pie.beginDate", PeticaoDTO::getProcessBeginDate);
+        builder.appendPropertyColumn(getMessage("label.table.column.situation"), "task.name", PeticaoDTO::getSituation);
+        builder.appendPropertyColumn(getMessage("label.table.column.situation.date"), "ta.beginDate", PeticaoDTO::getSituationBeginDate);
+    }
+
+    @Override
+    protected Pair<String, SortOrder> getSortProperty() {
+        return Pair.of("pie.beginDate", SortOrder.DESCENDING);
+    }
+
+    @Override
+    protected void onDelete(PeticaoDTO peticao) {
+
+    }
+
+    @Override
+    protected IModel<?> getContentTitleModel() {
+        return $m.ofValue("Acompanhamento");
+    }
+
+    @Override
+    protected IModel<?> getContentSubtitleModel() {
+        return $m.ofValue("Petições em andamento");
+    }
+
+    @Override
+    protected void appendActionColumns(BSDataTableBuilder<PeticaoDTO, String, IColumn<PeticaoDTO, String>> builder) {
+        BSActionColumn<PeticaoDTO, String> actionColumn = new BSActionColumn<>(getMessage("label.table.column.actions"));
+        appendViewAction(actionColumn);
+        builder.appendColumn(actionColumn);
+    }
+}
