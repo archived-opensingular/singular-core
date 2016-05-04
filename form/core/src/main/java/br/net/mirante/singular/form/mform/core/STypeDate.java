@@ -5,19 +5,18 @@
 
 package br.net.mirante.singular.form.mform.core;
 
+import br.net.mirante.singular.form.mform.SInfoType;
+import br.net.mirante.singular.form.mform.STypeSimple;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 @SInfoType(name = "Date", spackage = SPackageCore.class)
 public class STypeDate extends STypeSimple<SIDate, Date> {
@@ -61,7 +60,11 @@ public class STypeDate extends STypeSimple<SIDate, Date> {
 
     @Override
     public String toStringDisplayDefault(Date date) {
-        return latinFormatter().format(date);
+        if(date != null) {
+            return latinFormatter().format(date);
+        } else {
+            return null;
+        }
     }
 
     private static DateTimeFormatter isoFormarter() {

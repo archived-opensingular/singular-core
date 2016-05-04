@@ -21,7 +21,7 @@ public class AtrProvider extends STranslatorForAttribute {
         return provider(valor);
     }
 
-    public <T extends Serializable, I extends SInstance> AtrProvider filteredOptionsProvider(FilteredProvider<T, I> valor) {
+    public <T extends Serializable, I extends SInstance> AtrProvider filteredOptionsProvider(TextQueryProvider<T, I> valor) {
         return provider(valor);
     }
 

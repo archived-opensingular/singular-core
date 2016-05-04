@@ -7,6 +7,8 @@ import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
+import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
@@ -16,7 +18,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -55,6 +56,16 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
         });
         carro.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<Triple>() {
 
+            @Override
+            public List<Triple> load(ProviderContext<SInstance> context) {
+                return filterByInstance(context.getFilterInstance()).subList((int) context.getFirst(), (int) (context.getFirst() + context.getCount()));
+            }
+
+            @Override
+            public long getSize(ProviderContext<SInstance> context) {
+                return (long) filterByInstance(context.getFilterInstance()).size();
+            }
+
             private List<Triple> filterByInstance(SInstance filter) {
                 String  marca         = Value.of(filter, "marca");
                 String  modelo        = Value.of(filter, "modelo");
@@ -75,30 +86,19 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
             }
 
             @Override
-            public void loadFilterDefinition(STypeComposite<?> filter) {
-                filter.addFieldString("marca");
-                filter.addFieldString("modelo");
-                filter.addFieldBoolean("conectividade");
+            public void configureFilter(FilterConfigBuilder builder) {
+                builder.configureType(filter -> {
+                    filter.addFieldString("marca");
+                    filter.addFieldString("modelo");
+                    filter.addFieldBoolean("conectividade");
+                });
+
+                builder.addColumn("left", "Marca");
+                builder.addColumn("middle", "Modelo");
+                builder.addColumn("right", "Conectividade");
+                builder.lazy(true);
             }
 
-            @Override
-            public Long getSize(SInstance rootInstance, SInstance filter) {
-                return (long) filterByInstance(filter).size();
-            }
-
-            @Override
-            public List<Triple> load(SInstance rootInstance, SInstance filter, long first, long count) {
-                return filterByInstance(filter).subList((int) first, (int) (first + count));
-            }
-
-            @Override
-            public List<Column> getColumns() {
-                return Arrays.asList(
-                        Column.of("left", "Marca"),
-                        Column.of("middle", "Modelo"),
-                        Column.of("right", "Conectividade")
-                );
-            }
         });
         carro.asAtrProvider().converter((ValueToSICompositeConverter<Triple<String, String, Boolean>>) (ins, triple) -> {
             ins.setValue(marca, triple.getLeft());
@@ -125,7 +125,7 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
                 (c) -> true
         ).findFirst().orElse(null);
         Assert.assertEquals(table.getRowsPerPage(), PAGE_SIZE);
-        Assert.assertEquals(table.getPageCount(), Math.ceil((double) carros.size()/ 5), 0);
+        Assert.assertEquals(table.getPageCount(), Math.ceil((double) carros.size() / 5), 0);
     }
 
 }

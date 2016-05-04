@@ -23,13 +23,18 @@ import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
+import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -82,11 +87,11 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .visible(i -> Value.notNull(i, linhaProducao.id))
                 .label("Insumo ativo");
 
-        final STypeComposite<?> formulaHomeopatica                             = formulasHomeopaticas.getElementsType();
+        final STypeComposite<?>           formulaHomeopatica                             = formulasHomeopaticas.getElementsType();
         final STypeComposite<SIComposite> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
-        final STypeInteger      idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
-        final STypeSimple       idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
-        final STypeString       descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
+        final STypeInteger                idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
+        final STypeSimple                 idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
+        final STypeString                 descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
 
         descricaoDinamizada
                 .asAtr()
@@ -258,8 +263,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
     private void addIndicacaoTerapeutica(STypeComposite<?> notificacaoSimplificada) {
         final STypeComposite<SIComposite> indicacaoTerapeutica          = notificacaoSimplificada.addFieldComposite("indicacaoTerapeutica");
-        final STypeInteger      idIndicacaoTerapeutica        = indicacaoTerapeutica.addFieldInteger("id");
-        final STypeSimple       descricaoIndicacaoTerapeutica = indicacaoTerapeutica.addFieldString("descricao");
+        final STypeInteger                idIndicacaoTerapeutica        = indicacaoTerapeutica.addFieldInteger("id");
+        final STypeSimple                 descricaoIndicacaoTerapeutica = indicacaoTerapeutica.addFieldString("descricao");
         indicacaoTerapeutica
                 .asAtr()
                 .label("Indicação terapêutica")
@@ -271,7 +276,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .id(p -> String.valueOf(p.getLeft()))
                 .display(p -> String.valueOf(p.getRight()))
                 .converter(new PairConverter(idIndicacaoTerapeutica, descricaoIndicacaoTerapeutica))
-                .simpleProvider( ins -> dominioService(ins).indicacoesTerapeuticas());
+                .simpleProvider(ins -> dominioService(ins).indicacoesTerapeuticas());
 
         STypeBoolean informarOutraIndicacaoTerapeutica = notificacaoSimplificada.addFieldBoolean("informarOutraIndicacaoTerapeutica");
         informarOutraIndicacaoTerapeutica
@@ -299,31 +304,32 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         abstract List<Integer> getIds(SInstance root);
 
         @Override
-        public void loadFilterDefinition(STypeComposite<?> filter) {
-            filter.addFieldString("descricao").asAtr().label("Descrição");
-            final STypeString conceito = filter.addFieldString("conceito");
-            conceito.withTextAreaView();
-            conceito.asAtr().label("Conceito");
+        public void configureFilter(FilterConfigBuilder builder) {
+            builder.configureType(f -> {
+                f.addFieldString("descricao").asAtr().label("Descrição");
+                STypeString conceito = f.addFieldString("conceito");
+                conceito.withTextAreaView();
+                conceito.asAtr().label("Conceito");
+            });
+
+            builder.addColumn("conceito", "Conceito");
+            builder.addColumn("descricao", "Descrição");
         }
 
         @Override
-        public Long getSize(SInstance root, SInstance filter) {
-            return dominioService(root)
-                    .countFormasFarmaceuticasDinamizadas(getIds(root),
-                            Value.of(filter, "descricao"), Value.of(filter, "conceito"));
+        public long getSize(ProviderContext<SInstance> context) {
+            return dominioService(context.getInstance())
+                    .countFormasFarmaceuticasDinamizadas(getIds(context.getInstance()),
+                            Value.of(context.getFilterInstance(), "descricao"), Value.of(context.getFilterInstance(), "conceito"));
         }
 
         @Override
-        public List<FormaFarmaceuticaBasica> load(SInstance root, SInstance filter, long first, long count) {
-            return dominioService(root)
-                    .formasFarmaceuticasDinamizadas(getIds(root),
-                            Value.of(filter, "descricao"), Value.of(filter, "conceito"),
-                            first, count);
-        }
-
-        @Override
-        public List<Column> getColumns() {
-            return Arrays.asList(Column.of("conceito", "Conceito"), Column.of("descricao", "Descrição"));
+        public List<FormaFarmaceuticaBasica> load(ProviderContext<SInstance> context) {
+            return dominioService(context.getInstance())
+                    .formasFarmaceuticasDinamizadas(getIds(context.getInstance()),
+                            Value.of(context.getFilterInstance(), "descricao"),
+                            Value.of(context.getFilterInstance(), "conceito"),
+                            context.getFirst(), context.getCount());
         }
 
     }

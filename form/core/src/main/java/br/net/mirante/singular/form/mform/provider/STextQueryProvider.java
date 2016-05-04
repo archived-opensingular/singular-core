@@ -8,10 +8,10 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface SFilteredProvider extends FilteredProvider<Value.Content, SIComposite> {
+public interface STextQueryProvider extends TextQueryProvider<Value.Content, SIComposite> {
 
     @Override
-    default public List<Value.Content> load(SIComposite ins, String query) {
+    default List<Value.Content> load(SIComposite ins, String query) {
         final SCompositeListBuilder builder = new SCompositeListBuilder((STypeComposite<SIComposite>) ins.getType());
         fill(builder, query);
         final List<Value.Content> listMap = new ArrayList<>();

@@ -10,6 +10,8 @@ public class ProviderContext<S extends SInstance> {
     private String    query;
     private long      first;
     private long      count;
+    private Object    sortProperty;
+    private boolean   ascending;
 
     public static <SI extends SInstance> ProviderContext<SI> of(SI instance) {
         final ProviderContext<SI> context = new ProviderContext<>();
@@ -61,5 +63,21 @@ public class ProviderContext<S extends SInstance> {
 
     public void setCount(long count) {
         this.count = count;
+    }
+
+    public Object getSortProperty() {
+        return sortProperty;
+    }
+
+    public void setSortProperty(Object sortProperty) {
+        this.sortProperty = sortProperty;
+    }
+
+    public boolean isAscending() {
+        return ascending;
+    }
+
+    public void setAscending(boolean ascending) {
+        this.ascending = ascending;
     }
 }

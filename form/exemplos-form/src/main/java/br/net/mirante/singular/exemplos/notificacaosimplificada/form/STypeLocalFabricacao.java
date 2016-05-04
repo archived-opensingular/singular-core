@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.provider.TextQueryProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import java.util.Arrays;
@@ -98,7 +98,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .id(PessoaJuridicaNS::getCod)
                 .display(PessoaJuridicaNS::getRazaoSocial)
                 .converter(new PessoaJuridicaConverter(idOutroLocalFabricacao, razaoSocialOutroLocalFabricacao, enderecoOutroLocalFabricacao))
-                .filteredProvider((FilteredProvider<PessoaJuridicaNS, SIComposite>) (ins, query) -> dominioService(ins).outroLocalFabricacao(query));
+                .filteredProvider((TextQueryProvider<PessoaJuridicaNS, SIComposite>) (ins, query) -> dominioService(ins).outroLocalFabricacao(query));
 
 
         envasadora = this.addFieldComposite("envasadora");
@@ -117,7 +117,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .id(PessoaJuridicaNS::getCod)
                 .display(PessoaJuridicaNS::getRazaoSocial)
                 .converter(new PessoaJuridicaConverter(idEnvasadora, razaoSocialEnvasadora, enderecoEnvasadora))
-                .filteredProvider((FilteredProvider<PessoaJuridicaNS, SIComposite>) (ins, query) -> dominioService(ins).outroLocalFabricacao(query));
+                .filteredProvider((TextQueryProvider<PessoaJuridicaNS, SIComposite>) (ins, query) -> dominioService(ins).outroLocalFabricacao(query));
 
     }
 

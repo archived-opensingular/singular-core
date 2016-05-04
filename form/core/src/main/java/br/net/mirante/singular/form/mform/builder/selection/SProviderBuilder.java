@@ -2,8 +2,8 @@ package br.net.mirante.singular.form.mform.builder.selection;
 
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.options.LookupOptionsProvider;
-import br.net.mirante.singular.form.mform.provider.SFilteredProvider;
 import br.net.mirante.singular.form.mform.provider.SSimpleProvider;
+import br.net.mirante.singular.form.mform.provider.STextQueryProvider;
 
 public class SProviderBuilder extends AbstractBuilder {
 
@@ -15,7 +15,7 @@ public class SProviderBuilder extends AbstractBuilder {
         type.asAtrProvider().asAtrProvider().provider(new LookupOptionsProvider(provider));
     }
 
-    public <T extends SFilteredProvider> void filteredProvider(Class<T> provider) {
+    public <T extends STextQueryProvider> void filteredProvider(Class<T> provider) {
         type.asAtrProvider().asAtrProvider().provider(new LookupOptionsProvider(provider));
     }
 
@@ -23,7 +23,7 @@ public class SProviderBuilder extends AbstractBuilder {
         type.asAtrProvider().asAtrProvider().provider(new LookupOptionsProvider(providerName));
     }
 
-    public <T extends SFilteredProvider> void filteredProvider(String providerName) {
+    public <T extends STextQueryProvider> void filteredProvider(String providerName) {
         type.asAtrProvider().asAtrProvider().provider(new LookupOptionsProvider(providerName));
     }
 
@@ -31,7 +31,7 @@ public class SProviderBuilder extends AbstractBuilder {
         type.asAtrProvider().asAtrProvider().provider(sSimpleProvider);
     }
 
-    public void filteredProvider(SFilteredProvider mapSimpleProvider) {
+    public void filteredProvider(STextQueryProvider mapSimpleProvider) {
         type.asAtrProvider().asAtrProvider().provider(mapSimpleProvider);
     }
 
