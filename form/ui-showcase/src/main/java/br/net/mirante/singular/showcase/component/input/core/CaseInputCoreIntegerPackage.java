@@ -5,10 +5,9 @@
 
 package br.net.mirante.singular.showcase.component.input.core;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 
 public class CaseInputCoreIntegerPackage extends SPackage {
@@ -18,7 +17,7 @@ public class CaseInputCoreIntegerPackage extends SPackage {
 
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         STypeInteger mTipoInteger = tipoMyForm.addFieldInteger("qtd");
-        mTipoInteger.asAtrBasic().label("Quantidade");
+        mTipoInteger.asAtr().label("Quantidade");
 
     }
 }

@@ -4,7 +4,7 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabr
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.converter.VocabularioControladoDTOSInstanceConverter;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.provider.VocabularioControladoFilteredProvider;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.provider.VocabularioControladoTextQueryProvider;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
@@ -21,10 +21,10 @@ public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
         STypeComposite<SIComposite> empresa     = addFieldComposite("empresa");
         STypeString                 idEmpresa   = empresa.addFieldString("id");
         STypeString                 razaoSocial = empresa.addFieldString("razaoSocial");
-        razaoSocial.asAtrBasic().label("Razão Social");
+        razaoSocial.asAtr().label("Razão Social");
         STypeString endereco = empresa.addFieldString("endereco");
         empresa
-                .asAtrBasic().label("Empresa")
+                .asAtr().label("Empresa")
                 .displayString("${razaoSocial} - ${endereco}")
 
                 .getTipo().withView(SViewAutoComplete::new);
@@ -48,12 +48,12 @@ public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
                 .id(VocabularioControladoDTO::getId)
                 .display(VocabularioControladoDTO::getDescricao)
                 .converter(new VocabularioControladoDTOSInstanceConverter(idEtapaFabricacao, descricaoEtapaFabricacao))
-                .filteredProvider(new VocabularioControladoFilteredProvider<>(EtapaFabricacao.class));
+                .filteredProvider(new VocabularioControladoTextQueryProvider<>(EtapaFabricacao.class));
 
         etapasFabricacao
                 .withView(SViewListByTable::new);
         etapasFabricacao
-                .asAtrBasic()
+                .asAtr()
                 .label("Etapa de fabricação")
                 .displayString("<#list _inst as c>${c.etapaFabricacao.descricao}<#sep>, </#sep></#list>");
     }

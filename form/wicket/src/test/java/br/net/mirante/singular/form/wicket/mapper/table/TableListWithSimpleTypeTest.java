@@ -28,7 +28,7 @@ public class TableListWithSimpleTypeTest extends SingularFormBaseTest {
         elementsType = nomes.getElementsType();
 
         nomes.withView(SViewListByTable::new);
-        nomes.asAtrBasic().label("Nomes");
+        nomes.asAtr().label("Nomes");
     }
 
     @Test

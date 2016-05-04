@@ -16,10 +16,10 @@ public class CaseFileMultipleAttachmentsPackage extends SPackage {
         layoutsRotulagem
                 .withMaximumSizeOf(4);
         layoutsRotulagem
-                .asAtrBasic()
+                .asAtr()
                 .label("Layouts Rotulagem");
 
-        tipoMyForm.asAtrBasic().displayString(cc -> cc.instance()
+        tipoMyForm.asAtr().displayString(cc -> cc.instance()
                 .findNearest(layoutsRotulagem)
                 .map(SInstance::toStringDisplay)
                 .orElse(StringUtils.EMPTY));

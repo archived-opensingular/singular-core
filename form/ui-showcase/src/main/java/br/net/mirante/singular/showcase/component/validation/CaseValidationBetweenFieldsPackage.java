@@ -5,13 +5,13 @@
 
 package br.net.mirante.singular.showcase.component.validation;
 
-import java.util.Optional;
-
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
+
+import java.util.Optional;
 
 public class CaseValidationBetweenFieldsPackage extends SPackage {
 
@@ -21,12 +21,12 @@ public class CaseValidationBetweenFieldsPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         STypeInteger valorInicial = tipoMyForm.addFieldInteger("valorInicial");
-        valorInicial.asAtrBasic().label("Valor Inicial");
-        valorInicial.asAtrBasic().required();
+        valorInicial.asAtr().label("Valor Inicial");
+        valorInicial.asAtr().required();
 
         STypeInteger valorFinal = tipoMyForm.addFieldInteger("valorFinal");
-        valorFinal.asAtrBasic().label("Valor Final");
-        valorFinal.asAtrBasic().required();
+        valorFinal.asAtr().label("Valor Final");
+        valorFinal.asAtr().required();
 
         valorFinal.addInstanceValidator(validatable -> {
 

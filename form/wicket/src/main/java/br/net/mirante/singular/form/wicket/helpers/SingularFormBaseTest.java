@@ -1,34 +1,38 @@
 package br.net.mirante.singular.form.wicket.helpers;
 
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.AbstractChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.*;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 
 
 public abstract class SingularFormBaseTest {
 
-    protected DummyPage page;
+    protected DummyPage    page;
     protected WicketTester tester;
-    protected FormTester form;
+    protected FormTester   form;
 
     protected abstract void buildBaseType(STypeComposite<?> baseType);
-    protected void populateInstance(SIComposite instance){}
+
+    protected void populateInstance(SIComposite instance) {
+    }
 
     @Before
     public void setUp() {
@@ -52,16 +56,16 @@ public abstract class SingularFormBaseTest {
         return findFormComponentsByType(form.getForm(), type);
     }
 
-    protected static Stream<FormComponent> findFormComponentsByType(Form form, SType type){
+    protected static Stream<FormComponent> findFormComponentsByType(Form form, SType type) {
         return TestFinders.findFormComponentsByType(form, type);
     }
 
-    protected static FormComponent findFirstFormComponentsByType(Form form, SType type){
+    protected static FormComponent findFirstFormComponentsByType(Form form, SType type) {
         return TestFinders.findFormComponentsByType(form, type).findFirst().orElseThrow(() -> new SingularFormException("Não foi possivel encontrar"));
     }
 
     protected static <T extends Component> Stream<T> findOnForm(Class<T> classOfQuery, Form form, Predicate<T> predicate) {
-        return  TestFinders.findOnForm(classOfQuery, form, predicate);
+        return TestFinders.findOnForm(classOfQuery, form, predicate);
     }
 
     protected static String formField(FormTester form, String leafName) {
@@ -70,7 +74,11 @@ public abstract class SingularFormBaseTest {
 
     protected SIComposite createInstance(final SType x) {
         SDocumentFactory factory = page.mockFormConfig.getDocumentFactory();
-        RefType refType = new RefType() { protected SType<?> retrieve() { return x; } };
+        RefType          refType = new RefType() {
+            protected SType<?> retrieve() {
+                return x;
+            }
+        };
         return (SIComposite) factory.createInstance(refType);
     }
 
@@ -82,5 +90,21 @@ public abstract class SingularFormBaseTest {
 
     protected void ajaxClick(Component target) {
         tester.executeAjaxEvent(target, "click");
+    }
+
+    public List<String> getkeysFromSelection(AbstractChoice choice) {
+        final List<String> list = new ArrayList<>();
+        for (Object c : choice.getChoices()) {
+            list.add(choice.getChoiceRenderer().getIdValue(c, choice.getChoices().indexOf(c)));
+        }
+        return list;
+    }
+
+    public List<String> getDisplaysFromSelection(AbstractChoice choice) {
+        final List<String> list = new ArrayList<>();
+        for (Object c : choice.getChoices()) {
+            list.add(String.valueOf(choice.getChoiceRenderer().getDisplayValue(c)));
+        }
+        return list;
     }
 }

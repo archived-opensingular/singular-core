@@ -28,7 +28,7 @@ public class STypeUnidadeMedida extends STypeComposite<SIComposite> {
         {
 
             this
-                    .asAtrBasic()
+                    .asAtr()
                     .required()
                     .label("Unidade de medida")
                     .asAtrBootstrap()

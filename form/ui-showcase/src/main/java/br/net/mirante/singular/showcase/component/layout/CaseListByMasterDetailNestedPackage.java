@@ -5,11 +5,7 @@
 
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -40,57 +36,57 @@ public class CaseListByMasterDetailNestedPackage extends SPackage {
         STypeComposite<?> pet = pets.getElementsType();
         STypeString nomeDoPet = pet.addFieldString("nome", true);
         STypeString tipoDoPet = pet.addFieldString("tipo", true);
-        tipoDoPet.withSelectionOf("Gatinho", "Cachorrinho", "Papagaio");
+        tipoDoPet.selectionOf("Gatinho", "Cachorrinho", "Papagaio");
         STypeInteger idadePet = pet.addFieldInteger("idade");
 
         {
             //@destacar:bloco
             experiencias
                     .withView(SViewListByMasterDetail::new)
-                    .asAtrBasic().label("Experiências profissionais");
+                    .asAtr().label("Experiências profissionais");
             //@destacar:fim
             dtInicioExperiencia
-                    .asAtrBasic().label("Data inicial")
+                    .asAtr().label("Data inicial")
                     .asAtrBootstrap().colPreference(2);
             dtFimExperiencia
-                    .asAtrBasic().label("Data final")
+                    .asAtr().label("Data final")
                     .asAtrBootstrap().colPreference(2);
             empresa
-                    .asAtrBasic().label("Empresa")
+                    .asAtr().label("Empresa")
                     .asAtrBootstrap().colPreference(8);
             //@destacar:bloco
             cargos
                     .withView(SViewListByMasterDetail::new)
-                    .asAtrBasic().label("Cargos na empresa");
+                    .asAtr().label("Cargos na empresa");
             dtInicioCargo
-                    .asAtrBasic().label("Data inicial")
+                    .asAtr().label("Data inicial")
                     .asAtrBootstrap().colPreference(4);
             dtFimCargo
-                    .asAtrBasic().label("Data final")
+                    .asAtr().label("Data final")
                     .asAtrBootstrap().colPreference(4);
             nome
-                    .asAtrBasic().label("Nome")
+                    .asAtr().label("Nome")
                     .asAtrBootstrap().colPreference(4);
             pets
                     .withView(new SViewListByMasterDetail()
                             .col(nomeDoPet)
                             .col(tipoDoPet))
-                    .asAtrBasic()
+                    .asAtr()
                     .label("Animais de estimação no trabalho");
             nomeDoPet
-                    .asAtrBasic().label("Nome")
+                    .asAtr().label("Nome")
                     .asAtrBootstrap().colPreference(4);
             tipoDoPet
                     .withSelectView()
-                    .asAtrBasic().label("Tipo")
+                    .asAtr().label("Tipo")
                     .asAtrBootstrap().colPreference(4);
             idadePet
-                    .asAtrBasic().label("Idade")
+                    .asAtr().label("Idade")
                     .asAtrBootstrap().colPreference(4);
             //@destacar:fim
             atividades
                     .withTextAreaView()
-                    .asAtrBasic().label("Atividades Desenvolvidas");
+                    .asAtr().label("Atividades Desenvolvidas");
         }
 
     }

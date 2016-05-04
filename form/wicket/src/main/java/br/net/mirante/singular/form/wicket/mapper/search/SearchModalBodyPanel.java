@@ -7,7 +7,12 @@ import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.converter.SimpleSInstanceConverter;
 import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider.Column;
+import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.InMemoryFilteredPagedProviderProxy;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
+import br.net.mirante.singular.form.mform.provider.filter.FilterConfig;
+import br.net.mirante.singular.form.mform.provider.filter.FilterConfig.Column;
+import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
@@ -65,9 +70,20 @@ class SearchModalBodyPanel extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(innerSingularFormPanel = buildInnerSingularFormPanel());
+
+        final FilterConfigBuilder definitionBuilder = new FilterConfigBuilder();
+        getInstance().asAtrProvider().getFilteredPagedProvider().configureFilter(definitionBuilder);
+        final FilterConfig filterConfig = definitionBuilder.build();
+
+        FilteredPagedProvider provider = getInstance().asAtrProvider().getFilteredPagedProvider();
+
+        if (!filterConfig.isLazy()) {
+            provider = new InMemoryFilteredPagedProviderProxy<>(provider);
+        }
+
+        add(innerSingularFormPanel = buildInnerSingularFormPanel(filterConfig));
         add(buildFilterButton());
-        add(resultTable = buildResultTable());
+        add(resultTable = buildResultTable(filterConfig, provider));
     }
 
     private AjaxButton buildFilterButton() {
@@ -80,25 +96,33 @@ class SearchModalBodyPanel extends Panel {
         };
     }
 
-    private WebMarkupContainer buildResultTable() {
+    private WebMarkupContainer buildResultTable(FilterConfig filterConfig, FilteredPagedProvider provider) {
 
         final BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
             @Override
             public long size() {
-                return getInstance().asAtrProvider().getFilteredPagedProvider()
-                        .getSize(ctx.getRootContext().getCurrentInstance(), (SInstance) innerSingularFormPanel.getRootInstance().getObject());
+                ProviderContext providerContext = new ProviderContext();
+                providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
+                providerContext.setFilterInstance((SInstance) innerSingularFormPanel.getRootInstance().getObject());
+                return provider.getSize(providerContext);
             }
 
             @Override
             public Iterator iterator(int first, int count, Object sortProperty, boolean ascending) {
-                return getInstance().asAtrProvider().getFilteredPagedProvider()
-                        .load(ctx.getRootContext().getCurrentInstance(), (SInstance) innerSingularFormPanel.getRootInstance().getObject(), first, count).iterator();
+                ProviderContext providerContext = new ProviderContext();
+                providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
+                providerContext.setFilterInstance((SInstance) innerSingularFormPanel.getRootInstance().getObject());
+                providerContext.setFirst(first);
+                providerContext.setCount(count);
+                providerContext.setSortProperty(sortProperty);
+                providerContext.setAscending(ascending);
+                return provider.load(providerContext).iterator();
             }
         });
 
         builder.setRowsPerPage(view.getPageSize());
 
-        for (Object o : getInstance().asAtrProvider().getFilteredPagedProvider().getColumns()) {
+        for (Object o : filterConfig.getColumns()) {
             final Column column = (Column) o;
             builder.appendPropertyColumn(Model.of(column.getLabel()), object -> {
                 try {
@@ -133,7 +157,7 @@ class SearchModalBodyPanel extends Panel {
         return builder.build(RESULT_TABLE_ID);
     }
 
-    private SingularFormPanel buildInnerSingularFormPanel() {
+    private SingularFormPanel buildInnerSingularFormPanel(FilterConfig filterConfig) {
 
         final SingularFormPanel parentSingularFormPanel = this.visitParents(SingularFormPanel.class, new IVisitor<SingularFormPanel, SingularFormPanel>() {
             @Override
@@ -151,7 +175,7 @@ class SearchModalBodyPanel extends Panel {
                         final STypeComposite<SIComposite> filter = SDictionary.create()
                                 .createNewPackage("filterPackage")
                                 .createCompositeType("filter");
-                        getInstance().asAtrProvider().getFilteredPagedProvider().loadFilterDefinition(filter);
+                        filterConfig.getFilterBuilder().accept(filter);
                         return filter;
                     }
                 };

@@ -2,7 +2,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeLinhaProducao;
 import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.provider.TextQueryProvider;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
 
@@ -10,7 +10,7 @@ import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.voca
 public class STypeLinhaProducaoDinamizado extends STypeLinhaProducao {
 
     @Override
-    protected FilteredProvider getProvider() {
+    protected TextQueryProvider getProvider() {
         return (ins, filter) -> dominioService(ins).listarLinhasProducaoDinamizado(filter);
     }
 }

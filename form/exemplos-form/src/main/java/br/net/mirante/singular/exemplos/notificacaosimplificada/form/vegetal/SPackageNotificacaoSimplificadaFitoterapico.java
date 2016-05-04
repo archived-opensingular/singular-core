@@ -41,14 +41,14 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
-        notificacaoSimplificada.asAtrBasic().displayString("${nomenclaturaBotanica.descricao} - ${nomeComercial}");
-        notificacaoSimplificada.asAtrBasic().label("Notificação Simplificada - Produto Tradicional Fitoterápico");
+        notificacaoSimplificada.asAtr().displayString("${nomenclaturaBotanica.descricao} - ${nomeComercial}");
+        notificacaoSimplificada.asAtr().label("Notificação Simplificada - Produto Tradicional Fitoterápico");
 
         final STypeComposite<SIComposite> nomenclaturaBotanica     = notificacaoSimplificada.addFieldComposite("nomenclaturaBotanica");
         STypeInteger            idNomenclaturaBotanica   = nomenclaturaBotanica.addFieldInteger("id");
         STypeString             descNomenclaturaBotanica = nomenclaturaBotanica.addFieldString("descricao");
         nomenclaturaBotanica
-                .asAtrBasic()
+                .asAtr()
                 .required()
                 .label("Nomenclatura botânica")
                 .asAtrBootstrap()
@@ -66,14 +66,14 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         STypeDecimal            valorConcentracao = concentracao.addFieldDecimal("concentracao");
         STypeSimple             unidade = concentracao.addFieldString("unidade");
         planta
-                .asAtrBasic().enabled(false).label("Nomenclatura botânica").asAtrBootstrap().colPreference(4);
+                .asAtr().enabled(false).label("Nomenclatura botânica").asAtrBootstrap().colPreference(4);
         valorConcentracao
-                .asAtrBasic().label("Concentração").asAtrBootstrap().colPreference(4);
+                .asAtr().label("Concentração").asAtrBootstrap().colPreference(4);
         unidade
-                .asAtrBasic().enabled(false).label("Unidade de medida").asAtrBootstrap().colPreference(4);
+                .asAtr().enabled(false).label("Unidade de medida").asAtrBootstrap().colPreference(4);
 
         concentracoes
-                .asAtrBasic()
+                .asAtr()
                 .visible( i -> Value.notNull(i, idNomenclaturaBotanica))
                 .label("Concentração")
                 .dependsOn(nomenclaturaBotanica);
@@ -111,14 +111,14 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
         });
 
         notificacaoSimplificada.addFieldListOfAttachment("formulas", "formula")
-        .asAtrBasic()
+        .asAtr()
         .label("Fórmula do produto");
 
 
         STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
 
         nomeComercial
-                .asAtrBasic()
+                .asAtr()
                 .required()
                 .label("Nome do medicamento");
 
@@ -131,11 +131,11 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
                         .col(acondicionamento.embalagemSecundaria.descricao, "Embalagem secundária")
                         .col(acondicionamento.estudosEstabilidade, "Estudo de estabilidade")
                         .col(acondicionamento.prazoValidade))
-                .asAtrBasic().label("Acondicionamento");
-        acondicionamento.quantidade.asAtrBasic().visible(false);
-        acondicionamento.unidadeMedida.asAtrBasic().visible(false);
-        acondicionamento.layoutsRotulagem.asAtrBasic().visible(false);
-        acondicionamento.locaisFabricacao.asAtrBasic().visible(false);
+                .asAtr().label("Acondicionamento");
+        acondicionamento.quantidade.asAtr().visible(false);
+        acondicionamento.unidadeMedida.asAtr().visible(false);
+        acondicionamento.layoutsRotulagem.asAtr().visible(false);
+        acondicionamento.locaisFabricacao.asAtr().visible(false);
 
         final STypeList<STypeEnsaioControleQualidade, SIComposite> ensaios = notificacaoSimplificada.addFieldListOf("ensaiosControleQualidade", STypeEnsaioControleQualidade.class);
         final STypeEnsaioControleQualidade ensaio = ensaios.getElementsType();
@@ -144,7 +144,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
                         .col(ensaio.descricaoTipoEnsaio, "Ensaio")
                         .col(ensaio.descricaoTipoReferencia, "Tipo de referência")
                         .disableNew().disableDelete())
-                .asAtrBasic().label("Ensaio de Controle de Qualidade");
+                .asAtr().label("Ensaio de Controle de Qualidade");
 
 
         notificacaoSimplificada.withInitListener(ins -> {

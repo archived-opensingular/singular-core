@@ -17,15 +17,11 @@ public class AtrProvider extends STranslatorForAttribute {
         super(alvo);
     }
 
-    public <T> AtrProvider filteredPagedProvider(FilteredPagedProvider<T> valor) {
+    public <T extends Serializable> AtrProvider filteredPagedProvider(FilteredPagedProvider<T> valor) {
         return provider(valor);
     }
 
-    public <T extends Serializable, I extends SInstance> AtrProvider fixedOptionsProvider(SimpleProvider<T, I> valor) {
-        return provider(valor);
-    }
-
-    public <T extends Serializable, I extends SInstance> AtrProvider filteredOptionsProvider(FilteredProvider<T, I> valor) {
+    public <T extends Serializable, I extends SInstance> AtrProvider filteredOptionsProvider(TextQueryProvider<T, I> valor) {
         return provider(valor);
     }
 
@@ -57,24 +53,8 @@ public class AtrProvider extends STranslatorForAttribute {
         return getAttributeValue(SPackageProvider.ID_FUNCTION);
     }
 
-    public SimpleProvider<Serializable, SInstance> getSimpleProvider() {
-        final Provider provider = getProvider();
-        if (provider instanceof SimpleProvider) {
-            return (SimpleProvider<Serializable, SInstance>) provider;
-        }
-        return null;
-    }
-
     public FilteredPagedProvider getFilteredPagedProvider() {
         return (FilteredPagedProvider) getProvider();
-    }
-
-    public FilteredProvider<Serializable, SInstance> getFilteredProvider() {
-        final Provider provider = getProvider();
-        if (provider instanceof FilteredProvider) {
-            return (FilteredProvider<Serializable, SInstance>) provider;
-        }
-        return null;
     }
 
     public Provider getProvider() {

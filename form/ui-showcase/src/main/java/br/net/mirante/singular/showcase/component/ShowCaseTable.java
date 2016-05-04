@@ -13,6 +13,7 @@ import br.net.mirante.singular.showcase.component.file.CaseFileMultipleAttachmen
 import br.net.mirante.singular.showcase.component.input.core.*;
 import br.net.mirante.singular.showcase.component.input.core.multiselect.*;
 import br.net.mirante.singular.showcase.component.input.core.search.CaseInputModalSearch;
+import br.net.mirante.singular.showcase.component.input.core.search.CaseLazyInputModalSearch;
 import br.net.mirante.singular.showcase.component.input.core.select.*;
 import br.net.mirante.singular.showcase.component.interaction.*;
 import br.net.mirante.singular.showcase.component.layout.*;
@@ -41,6 +42,7 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreSelectComboRadio.class)
             .addCase(CaseInputCoreSelectDefault.class)
             .addCase(CaseInputCoreSelectComposite.class)
+            .addCase(CaseInputCoreSelectCompositePojo.class)
             .addCase(CaseInputCoreSelectProvider.class)
             .addCase(CaseInputCoreSelectComboAutoComplete.class)
             .addCase(CaseInputCoreMultiSelectDefault.class)
@@ -50,6 +52,7 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreMultiSelectComposite.class)
             .addCase(CaseInputCoreMultiSelectProvider.class)
             .addCase(CaseInputModalSearch.class)
+            .addCase(CaseLazyInputModalSearch.class)
             .addCase(CaseInputCoreBasic.class)
             .addCase(CaseInputCoreBoolean.class)
             .addCase(CaseInputCoreString.class)

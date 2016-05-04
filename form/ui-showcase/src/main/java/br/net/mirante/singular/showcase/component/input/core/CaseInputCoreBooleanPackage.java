@@ -5,9 +5,9 @@
 
 package br.net.mirante.singular.showcase.component.input.core;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 
 //@formatter:off
 public class CaseInputCoreBooleanPackage extends SPackage {
@@ -17,16 +17,16 @@ public class CaseInputCoreBooleanPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         tipoMyForm.addFieldBoolean("aceitaTermos")
-            .asAtrBasic().label("Aceito os termos e condições");
+            .asAtr().label("Aceito os termos e condições");
 
         tipoMyForm.addFieldBoolean("receberNotificacoes")
             //@destacar
             .withRadioView()
-            .asAtrBasic().label("Receber notificações");
+            .asAtr().label("Receber notificações");
 
         tipoMyForm.addFieldBoolean("aceitaTermos2")
             //@destacar
             .withRadioView("Aceito", "Rejeito")
-            .asAtrBasic().label("Aceito os termos e condições");
+            .asAtr().label("Aceito os termos e condições");
     }
 }

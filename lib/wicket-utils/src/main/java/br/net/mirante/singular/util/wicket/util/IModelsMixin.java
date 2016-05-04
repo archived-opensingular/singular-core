@@ -73,7 +73,8 @@ public interface IModelsMixin extends Serializable {
         return new IReadOnlyModel<U>() {
             @Override
             public U getObject() {
-                return function.apply(rootModel.getObject());
+                T root = rootModel.getObject();
+                return (root == null) ? null : function.apply(root);
             }
             @Override
             public void detach() {

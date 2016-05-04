@@ -20,32 +20,32 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
         //View por Select
         STypeString tipoContato1 = tipoMyForm.addFieldString("tipoContato1");
-        tipoContato1.withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        tipoContato1.selectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
         //@destacar:bloco
         //@destacar:fim
 
         tipoContato1
                 .withSelectView()
-                .asAtrBasic().label("Tipo Contato (Combo)");
+                .asAtr().label("Tipo Contato (Combo)");
 
         //@destacar:bloco
         //View por Radio
         STypeString tipoContato2 = tipoMyForm.addFieldString("tipoContato2");
-        tipoContato2.withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        tipoContato2.selectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
         //@destacar:fim
 
         tipoContato2
                 .withRadioView()
-                .asAtrBasic().label("Tipo Contato (Radio) - Horizontal");
+                .asAtr().label("Tipo Contato (Radio) - Horizontal");
 
 
 
         STypeString tipoContato3 = tipoMyForm.addFieldString("tipoContato3");
-        tipoContato3.withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        tipoContato3.selectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
 
         tipoContato3
-                .asAtrBasic()
+                .asAtr()
                 .label("Tipo Contato (Radio) - Vertical");
 
         //@destacar:bloco

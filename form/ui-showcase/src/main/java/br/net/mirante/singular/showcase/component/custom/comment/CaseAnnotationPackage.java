@@ -22,16 +22,16 @@ public class CaseAnnotationPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         pedido = pb.createCompositeType("testForm");
-        pedido.asAtrBasic().label("Pedido");
+        pedido.asAtr().label("Pedido");
 
 
         id = pedido.addFieldComposite("id");
-        id.asAtrBasic().label("Identificador");
+        id.asAtr().label("Identificador");
         id.addFieldInteger("numero");
         id.asAtrAnnotation().setAnnotated();
 
         cliente = pedido.addFieldComposite("Cliente");
-        cliente.asAtrBasic().label("Dados do Cliente");
+        cliente.asAtr().label("Dados do Cliente");
         cliente.addFieldCPF("cpf").as(AtrBasic.class).label("CPF");
         cliente.addFieldEmail("email").as(AtrBasic.class).label("E-Mail");
         //@destacar
@@ -39,15 +39,15 @@ public class CaseAnnotationPackage extends SPackage {
         cliente.asAtrBootstrap().colPreference(6);
 
         endereco = pedido.addFieldComposite("Endereco");
-        endereco.asAtrBasic().label("Endereco do Cliente");
+        endereco.asAtr().label("Endereco do Cliente");
         endereco.addFieldCEP("cep").as(AtrBasic.class).label("CEP");
         endereco.addFieldCEP("Logradouro").as(AtrBasic.class).label("Logradouro");
         endereco.asAtrBootstrap().colPreference(6);
 
         request = pedido.addFieldComposite("request");
-        request.asAtrBasic().label("Pedido");
-        request.addFieldString("itens").asAtrBasic().label("Itens");
-        request.addFieldString("obs").asAtrBasic().label("Observações");
+        request.asAtr().label("Pedido");
+        request.addFieldString("itens").asAtr().label("Itens");
+        request.addFieldString("obs").asAtr().label("Observações");
 
         //@destacar
         request.asAtrAnnotation().setAnnotated().label("Observações Finais"); //Permite definir seu pŕoprio rótulo

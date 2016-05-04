@@ -3,9 +3,9 @@ package br.net.mirante.singular.form.mform.builder.selection;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.options.LookupOptionsProvider;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.provider.Provider;
 import br.net.mirante.singular.form.mform.provider.SimpleProvider;
+import br.net.mirante.singular.form.mform.provider.TextQueryProvider;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -24,7 +24,7 @@ public class ProviderBuilder<TYPE extends Serializable, ROOT_TYPE extends SInsta
         provider(provider);
     }
 
-    public void filteredProvider(FilteredProvider<TYPE, ROOT_TYPE> provider) {
+    public void filteredProvider(TextQueryProvider<TYPE, ROOT_TYPE> provider) {
         type.asAtrProvider().provider(provider);
     }
 

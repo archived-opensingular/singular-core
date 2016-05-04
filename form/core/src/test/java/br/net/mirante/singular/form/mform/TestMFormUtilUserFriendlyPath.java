@@ -1,11 +1,10 @@
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.core.STypeDate;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class TestMFormUtilUserFriendlyPath {
 
@@ -38,14 +37,14 @@ public class TestMFormUtilUserFriendlyPath {
         _alerta = _alertas.getElementsType();
         _alerta_data = _alerta.addField("data", STypeDate.class);
 
-        _evento.asAtrBasic().label("Evento");
-        _descricao.asAtrBasic().label("Descrição");
+        _evento.asAtr().label("Evento");
+        _descricao.asAtr().label("Descrição");
         // *** período não possui label
-        _dataInicial.asAtrBasic().label("Data inicial");
-        _dataFinal.asAtrBasic().label("Data final");
-        _alertas.asAtrBasic().label("Alertas");
-        _alerta.asAtrBasic().label("Alerta");
-        _alerta_data.asAtrBasic().label("Data");
+        _dataInicial.asAtr().label("Data inicial");
+        _dataFinal.asAtr().label("Data final");
+        _alertas.asAtr().label("Alertas");
+        _alerta.asAtr().label("Alerta");
+        _alerta_data.asAtr().label("Data");
 
         evento = _evento.newInstance();
         alertas = evento.findNearest(_alertas).get();

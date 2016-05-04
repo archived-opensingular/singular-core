@@ -28,7 +28,7 @@ public class SearchModalMapper extends ControlsFieldComponentAbstractMapper {
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
         if (mi != null && mi.getValue() != null) {
-            if (mi.asAtrBasic().getDisplayString() != null) {
+            if (mi.asAtr().getDisplayString() != null) {
                 return mi.toStringDisplay();
             }
             if (!(mi instanceof SIComposite)) {

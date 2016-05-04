@@ -57,7 +57,7 @@ public class ExamplePackage extends SPackage {
 
     private void buildOrderType(PackageBuilder pb) {
         this.order = pb.createCompositeType("Order");
-        this.order.asAtrBasic().label("Pedido");
+        this.order.asAtr().label("Pedido");
 
         this.orderNumber = addField(order,
             "OrderNumber", "Número do Pedido", STypeInteger.class);
@@ -71,11 +71,11 @@ public class ExamplePackage extends SPackage {
         STypeComposite<SIComposite> country = originCountry.getElementsType();
         originCountry.withView(SViewListByForm::new);
 
-        originCountry.asAtrBasic().label("Países");
+        originCountry.asAtr().label("Países");
 
         STypeString name = country.addFieldString("name");
-        name.asAtrBasic().label("Nome");
-        country.addFieldInteger("population").asAtrBasic().label("População");
+        name.asAtr().label("Nome");
+        country.addFieldInteger("population").asAtr().label("População");
 //        country.withSelectionFromProvider(name,(instance, lb) -> {
 //            lb.add().set(name,"Brazil")
 //                    .add().set(name,"USA")
@@ -89,7 +89,7 @@ public class ExamplePackage extends SPackage {
 
     private void buildBuyerField() {
         this.buyer = order.addFieldComposite("Buyer");
-        this.buyer.asAtrBasic().label("Comprador");
+        this.buyer.asAtr().label("Comprador");
         this.buyerNome = addField(buyer, "Name", "Nome", STypePersonName.class);
         this.buyerCpf = addField(buyer, "CPF", "CPF", STypeCPF.class);
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", STypeTelefoneNacional.class);
@@ -105,7 +105,7 @@ public class ExamplePackage extends SPackage {
 
     private void buildAddressField() {
         this.address = order.addFieldComposite("Address");
-        this.address.asAtrBasic().label("Endereço");
+        this.address.asAtr().label("Endereço");
         this.addressStreet = addField(address, "street", "Logradouro", STypeString.class);
         this.addressCity = addField(address, "city", "Cidade", STypeString.class);
         this.addressState = addField(address, "state", "Estado", STypeString.class);
@@ -117,7 +117,7 @@ public class ExamplePackage extends SPackage {
     private <I extends SInstance, T extends SType<I>> T addField(STypeComposite<?> root, String name, String label,
                                                                  Class<T> type) {
         T campo = root.addField(name, type);
-        campo.asAtrBasic().label(label);
+        campo.asAtr().label(label);
         return campo;
     }
 }

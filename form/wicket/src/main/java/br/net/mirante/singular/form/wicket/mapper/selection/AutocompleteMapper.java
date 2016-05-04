@@ -47,7 +47,6 @@ public class AutocompleteMapper extends ControlsFieldComponentAbstractMapper {
                     return mi.asAtrProvider().getDisplayFunction().apply(converted);
                 }
             }
-
         }
         return StringUtils.EMPTY;
     }

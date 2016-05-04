@@ -110,7 +110,7 @@ public class BooleanMapperTest {
         }
 
         @Test public void rendersFalseChoiceIfFalseIsSelected() {
-            assertThat(radioChoiceAt(0).getValue()).isEqualTo("true");
+            assertThat(radioChoiceAt(0).getValue()).isEqualTo("Sim");
         }
     }
 
@@ -143,7 +143,7 @@ class Base extends SingularFormBaseTest {
 
     protected void buildBaseType(STypeComposite<?> mockType) {
         field1 = mockType.addFieldBoolean("aceitaTermos");
-        field1.asAtrBasic().label("Aceito os termos e condições");
+        field1.asAtr().label("Aceito os termos e condições");
     }
 
     protected CheckBox getCheckboxAt(int index) {

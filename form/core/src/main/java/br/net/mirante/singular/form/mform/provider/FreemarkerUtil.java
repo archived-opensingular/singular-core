@@ -8,6 +8,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +20,9 @@ import static freemarker.template.Configuration.VERSION_2_3_22;
 
 public class FreemarkerUtil {
 
-    private static final Version       VERSION          = VERSION_2_3_22;
-    private static final Configuration cfg              = new Configuration(VERSION);
-    private static final Logger        LOGGER           = LoggerFactory.getLogger(FreemarkerUtil.class);
+    private static final Version       VERSION = VERSION_2_3_22;
+    private static final Configuration cfg     = new Configuration(VERSION);
+    private static final Logger        LOGGER  = LoggerFactory.getLogger(FreemarkerUtil.class);
 
     static {
         final BeansWrapper wrapper = new BeansWrapperBuilder(VERSION).build();
@@ -29,6 +30,9 @@ public class FreemarkerUtil {
     }
 
     public static String mergeWithFreemarker(String template, Object obj) {
+        if (obj == null) {
+            return StringUtils.EMPTY;
+        }
         final StringWriter sw = new StringWriter();
         try {
             new Template(String.valueOf(template.hashCode()), new StringReader(template), cfg).process(obj, sw);

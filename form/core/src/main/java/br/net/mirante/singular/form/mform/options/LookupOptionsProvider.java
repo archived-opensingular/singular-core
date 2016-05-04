@@ -6,12 +6,10 @@
 package br.net.mirante.singular.form.mform.options;
 
 import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.provider.Provider;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
 
 import java.util.List;
 
@@ -22,7 +20,7 @@ import java.util.List;
  * @author Fabricio Buzeto
  */
 @SuppressWarnings("serial")
-public class LookupOptionsProvider implements SimpleProvider, FilteredProvider {
+public class LookupOptionsProvider implements Provider {
 
     private String                    providerName;
     private Class<? extends Provider> providerClass;
@@ -36,17 +34,8 @@ public class LookupOptionsProvider implements SimpleProvider, FilteredProvider {
     }
 
     @Override
-    public List load(SInstance ins) {
-        final SDocument      document = ins.getDocument();
-        final SimpleProvider provider = (SimpleProvider) whichProvider(document);
-        return provider.load(ins);
-    }
-
-    @Override
-    public List load(SInstance ins, String query) {
-        final SDocument        document = ins.getDocument();
-        final FilteredProvider provider = (FilteredProvider) whichProvider(document);
-        return provider.load(ins, query);
+    public List load(ProviderContext context) {
+        return whichProvider(context.getInstance().getDocument()).load(context);
     }
 
     private Provider whichProvider(SDocument document) {

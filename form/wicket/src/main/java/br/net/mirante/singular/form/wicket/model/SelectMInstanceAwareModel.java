@@ -37,12 +37,12 @@ public class SelectMInstanceAwareModel extends AbstractMInstanceAwareModel<Seria
             return null;
         }
         if (getProviderMInstancia().asAtrProvider().getConverter() != null) {
-            return (Serializable) getProviderMInstancia().asAtrProvider().getConverter().toObject(model.getObject());
+            return getProviderMInstancia().asAtrProvider().getConverter().toObject(model.getObject());
         } else {
             if (getProviderMInstancia() instanceof SIComposite) {
                 throw new SingularFormException("Nenhum converter foi informado para o tipo " + getMInstancia().getName());
             } else {
-                return (Serializable) new SimpleSInstanceConverter<>().toObject(getMInstancia());
+                return new SimpleSInstanceConverter<>().toObject(getMInstancia());
             }
         }
     }

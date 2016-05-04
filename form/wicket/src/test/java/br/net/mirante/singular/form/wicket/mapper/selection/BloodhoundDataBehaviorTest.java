@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.provider.TextQueryProvider;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.Component;
 import org.apache.wicket.request.Url;
@@ -84,8 +84,8 @@ public class BloodhoundDataBehaviorTest extends SingularFormBaseTest {
         string.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
     }
 
-    private FilteredProvider createProvider() {
-        return (FilteredProvider) (instance, filter) -> {
+    private TextQueryProvider createProvider() {
+        return (TextQueryProvider) (instance, filter) -> {
             if (filter == null) filter = "";
             final List<String> emails = new ArrayList<>();
             emails.add(filter + "@gmail.com");

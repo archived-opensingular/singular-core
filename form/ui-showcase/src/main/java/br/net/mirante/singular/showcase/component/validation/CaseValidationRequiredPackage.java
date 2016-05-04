@@ -17,8 +17,8 @@ public class CaseValidationRequiredPackage extends SPackage {
 
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         STypeInteger mTipoInteger = tipoMyForm.addFieldInteger("qtd");
-        mTipoInteger.asAtrBasic().label("Quantidade");
-        mTipoInteger.asAtrBasic().required();
+        mTipoInteger.asAtr().label("Quantidade");
+        mTipoInteger.asAtr().required();
 
     }
 }

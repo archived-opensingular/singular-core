@@ -7,11 +7,20 @@ package br.net.mirante.singular.showcase.view.page.prototype;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.core.*;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
+import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
+import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
+import br.net.mirante.singular.form.mform.util.comuns.STypePersonName;
+import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -44,32 +53,52 @@ public class SPackagePrototype extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         final STypeComposite<?> meta = pb.createCompositeType(META_FORM);
-        meta.addFieldString(NAME_FIELD).asAtrBasic().label("Nome")
-                .asAtrBasic().required();
+        meta.addFieldString(NAME_FIELD).asAtr().label("Nome")
+                .asAtr().required();
 
         STypeList<STypeComposite<SIComposite>, SIComposite> childFields =
                 meta.addFieldListOfComposite(CHILDREN, "field");
 
-        childFields.asAtrBasic().label("Campos");
+        childFields.asAtr().label("Campos");
 
         STypeComposite<SIComposite> fieldType = childFields.getElementsType();
 
         STypeString nome = fieldType.addFieldString(NAME);
-        nome.asAtrBasic().label("Nome")
-                .asAtrBasic().required()
+        nome.asAtr().label("Nome")
+                .asAtr().required()
                 .asAtrBootstrap().colPreference(3);
 
         STypeString type = fieldType.addFieldString(TYPE);
-        type.asAtrBasic().label("Tipo")
-                .asAtrBasic().required()
+        type.asAtr().label("Tipo")
+                .asAtr().required()
                 .asAtrBootstrap().colPreference(2);
-        //TODO DANILO
-//        populateOptions(pb, type.withSelection());
+
+        List<Pair> typesList = new ArrayList<>();
+        populateOptions(pb, typesList);
+
+        type.selectionOf(Pair.class)
+                .id("${left}")
+                .display("${right}")
+                .converter(new SInstanceConverter<Pair, SIString>() {
+                    @Override
+                    public void fillInstance(SIString ins, Pair obj) {
+                        ins.setValue(obj.getLeft());
+                    }
+
+                    @Override
+                    public Pair toObject(SIString ins) {
+                        return typesList
+                                .stream()
+                                .filter(p -> p.getLeft().equals(ins.getValue()))
+                                .findFirst().orElse(null);
+                    }
+                })
+                .simpleProviderOf(typesList.toArray(new Pair[]{}));
 
         fieldType.addFieldBoolean(IS_LIST)
                 .withRadioView()
                 .withDefaultValueIfNull(false)
-                .asAtrBasic().label("Múltiplo").getTipo().asAtrBootstrap().colPreference(2);
+                .asAtr().label("Múltiplo").getTipo().asAtrBootstrap().colPreference(2);
 
         addAttributeFields(pb, fieldType, type);
 
@@ -84,25 +113,25 @@ public class SPackagePrototype extends SPackage {
 
     }
 
-//    private void populateOptions(PackageBuilder pb, SFixedOptionsSimpleProvider provider) {
-//        provider.add(typeName(pb, STypeAttachment.class), "Anexo");
-//        provider.add(typeName(pb, STypeYearMonth.class), "Ano/Mês");
-//        provider.add(typeName(pb, STypeBoolean.class), "Booleano");
-//        provider.add(typeName(pb, STypeComposite.class), "Composto");
-//        provider.add(typeName(pb, STypeCEP.class), "CEP");
-//        provider.add(typeName(pb, STypeCPF.class), "CPF");
-//        provider.add(typeName(pb, STypeCNPJ.class), "CNPJ");
-//        provider.add(typeName(pb, STypeDate.class), "Data");
-//        provider.add(typeName(pb, STypeDateTime.class), "Data/Hora");
-//        provider.add(typeName(pb, STypeEMail.class), "Email");
-//        provider.add(typeName(pb, STypeLatitudeLongitude.class), "Latitude/Longitude");
-//        provider.add(typeName(pb, STypeMonetary.class), "Monetário");
-//        provider.add(typeName(pb, STypePersonName.class), "Nome Pessoa");
-//        provider.add(typeName(pb, STypeInteger.class), "Número");
-//        provider.add(typeName(pb, STypeDecimal.class), "Número Decimal");
-//        provider.add(typeName(pb, STypeString.class), "Texto");
-//        provider.add(typeName(pb, STypeTelefoneNacional.class), "Telefone Nacional");
-//    }
+    private void populateOptions(PackageBuilder pb, List<Pair> list) {
+        list.add(Pair.of(typeName(pb, STypeAttachment.class), "Anexo"));
+        list.add(Pair.of(typeName(pb, STypeYearMonth.class), "Ano/Mês"));
+        list.add(Pair.of(typeName(pb, STypeBoolean.class), "Booleano"));
+        list.add(Pair.of(typeName(pb, STypeComposite.class), "Composto"));
+        list.add(Pair.of(typeName(pb, STypeCEP.class), "CEP"));
+        list.add(Pair.of(typeName(pb, STypeCPF.class), "CPF"));
+        list.add(Pair.of(typeName(pb, STypeCNPJ.class), "CNPJ"));
+        list.add(Pair.of(typeName(pb, STypeDate.class), "Data"));
+        list.add(Pair.of(typeName(pb, STypeDateTime.class), "Data/Hora"));
+        list.add(Pair.of(typeName(pb, STypeEMail.class), "Email"));
+        list.add(Pair.of(typeName(pb, STypeLatitudeLongitude.class), "Latitude/Longitude"));
+        list.add(Pair.of(typeName(pb, STypeMonetary.class), "Monetário"));
+        list.add(Pair.of(typeName(pb, STypePersonName.class), "Nome Pessoa"));
+        list.add(Pair.of(typeName(pb, STypeInteger.class), "Número"));
+        list.add(Pair.of(typeName(pb, STypeDecimal.class), "Número Decimal"));
+        list.add(Pair.of(typeName(pb, STypeString.class), "Texto"));
+        list.add(Pair.of(typeName(pb, STypeTelefoneNacional.class), "Telefone Nacional"));
+    }
 
     private String typeName(PackageBuilder pb, Class<? extends SType> typeClass) {
         return pb.getDictionary().getType(typeClass).getName();
@@ -110,15 +139,15 @@ public class SPackagePrototype extends SPackage {
 
     private void addAttributeFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {
         tamanhoCampo = fieldType.addFieldInteger(TAMANHO_CAMPO);
-        tamanhoCampo.asAtrBasic().label("Colunas").tamanhoMaximo(12)
+        tamanhoCampo.asAtr().label("Colunas").tamanhoMaximo(12)
                 .getTipo().asAtrBootstrap().colPreference(2);
 
         obrigatorio = fieldType.addFieldBoolean(OBRIGATORIO);
-        obrigatorio.withRadioView().asAtrBasic().label("Obrigatório").getTipo().asAtrBootstrap().colPreference(2);
+        obrigatorio.withRadioView().asAtr().label("Obrigatório").getTipo().asAtrBootstrap().colPreference(2);
 
         fieldType.addFieldInteger(TAMANHO_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
-                .getTipo().asAtrBasic().label("Tamanho Máximo")
+                .getTipo().asAtr().label("Tamanho Máximo")
                 .visible(
                         (instance) -> {
                             Optional<String> optType = instance.findNearestValue(type, String.class);
@@ -135,13 +164,13 @@ public class SPackagePrototype extends SPackage {
 
         fieldType.addFieldInteger(TAMANHO_INTEIRO_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
-                .getTipo().asAtrBasic()
+                .getTipo().asAtr()
                 .label("Tamanho Inteiro")
                 .visible(ifDecimalPredicate);
 
         fieldType.addFieldInteger(TAMANHO_DECIMAL_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
-                .getTipo().asAtrBasic()
+                .getTipo().asAtr()
                 .label("Tamanho Decimal")
                 .visible(ifDecimalPredicate);
     }
@@ -149,7 +178,7 @@ public class SPackagePrototype extends SPackage {
     private void addFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {
         STypeList<STypeComposite<SIComposite>, SIComposite> fields =
                 fieldType.addFieldListOf(FIELDS, fieldType);
-        fields.asAtrBasic().label("Campos")
+        fields.asAtr().label("Campos")
                 .getTipo().withView(SViewListByMasterDetail::new)
                 .withExists(
                         (instance) -> {
@@ -157,7 +186,7 @@ public class SPackagePrototype extends SPackage {
                             if (!optType.isPresent()) return false;
                             return optType.get().equals(typeName(pb, STypeComposite.class));
                         })
-                .asAtrBasic().dependsOn(() -> {
+                .asAtr().dependsOn(() -> {
             return newArrayList(type);
         })
         ;
