@@ -28,7 +28,7 @@ public class CaseInputModalSearchPackage extends SPackage {
         funcionario.withView(new SViewSearchModal().title("Buscar Profissionais"))
                 .asAtrProvider()
                 //@destacar
-                .filteredPagedProvider(new FuncionarioProvider())
+                .filteredProvider(new FuncionarioProvider())
                 .converter((ValueToSICompositeConverter<Funcionario>) (newFunc, func) -> {
                     newFunc.setValue(nome, func.getNome());
                     newFunc.setValue(funcao, func.getFuncao());

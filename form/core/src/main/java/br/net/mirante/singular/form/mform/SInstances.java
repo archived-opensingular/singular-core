@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.mform;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +13,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -28,91 +28,140 @@ import br.net.mirante.singular.form.mform.core.STypeBoolean;
  */
 public abstract class SInstances {
 
+    public static interface IVisit<R> extends Serializable {
+        void stop();
+        void stop(R result);
+        void dontGoDeeper();
+    }
+
+    public interface IVisitor<I extends SInstance, R> {
+        public void onInstance(I object, IVisit<R> visit);
+    }
+
+    public interface IVisitFilter extends Serializable {
+        boolean visitObject(Object object);
+        default boolean visitChildren(Object object) {
+            return true;
+        }
+        public static IVisitFilter ANY = o -> true;
+    }
+
     private SInstances() {}
 
     /**
-     * Percorre todos as instâncias filha da instancia informada chamando o
-     * consumidor, incluindo os filhos dos filhos. Ou seja, faz um pecorrimento em
-     * profundidade. Não chama o consumidor para a instância raiz.
+     * Faz um pecorrimento em profundidade de parent e seus filhos.
      */
-    public static void visitAllChildren(SInstance parent, Consumer<SInstance> consumer) {
-        visitAllChildren(parent, false, consumer);
+    public static <I extends SInstance, R> Optional<R> visit(SInstance instance, IVisitor<I, R> visitor) {
+        return visit(instance, IVisitFilter.ANY, visitor);
     }
 
     /**
-     * Percorre todos as instâncias filha da instancia informada chamando o
-     * consumidor, incluindo os filhos dos filhos. Ou seja, faz um pecorrimento em
-     * profundidade. Não chama o consumidor para a instância raiz.
-     * @param childrenFirst se true o percorrimento é bottom-up
+     * Faz um pecorrimento em profundidade dos filhos de parent.
      */
-    public static void visitAllChildren(SInstance parent, boolean childrenFirst, Consumer<SInstance> consumer) {
-        if (parent instanceof ICompositeInstance) {
-            for (SInstance child : ((ICompositeInstance) parent).getChildren()) {
-                if (childrenFirst) {
-                    visitAllChildren(child, childrenFirst, consumer);
-                    consumer.accept(child);
-                } else {
-                    consumer.accept(child);
-                    visitAllChildren(child, childrenFirst, consumer);
+    public static <R> Optional<R> visitChildren(SInstance parent, IVisitor<SInstance, R> visitor) {
+        return visitChildren(parent, IVisitFilter.ANY, visitor);
+    }
+
+    /**
+     * Faz um pecorrimento em profundidade da instância e seus filhos, em ordem pós-fixada (primeiro filhos, depois pais).
+     */
+    public static <R> Optional<R> visitPostOrder(SInstance parent, IVisitor<SInstance, R> visitor) {
+        return visitPostOrder(parent, IVisitFilter.ANY, visitor);
+    }
+
+    /**
+     * Faz um pecorrimento em profundidade de parent e seus filhos.
+     */
+    @SuppressWarnings("unchecked")
+    public static <I extends SInstance, R> Optional<R> visit(SInstance rootInstance, IVisitFilter filter, IVisitor<I, R> visitor) {
+        final Visit<R> visit = new Visit<>();
+        visitor.onInstance((I) rootInstance, visit);
+        if (visit.dontGoDeeper || visit.stopped)
+            return Optional.ofNullable(visit.result);
+
+        internalVisitChildren(rootInstance, visitor, filter, visit);
+        return Optional.ofNullable(visit.result);
+    }
+
+    /**
+     * Faz um pecorrimento em profundidade dos filhos de parent.
+     */
+    public static <R> Optional<R> visitChildren(SInstance rootInstance, IVisitFilter filter, IVisitor<SInstance, R> visitor) {
+        Visit<R> visit = new Visit<>();
+        internalVisitChildren(rootInstance, visitor, filter, visit);
+        return Optional.ofNullable(visit.result);
+    }
+
+    /**
+     * Faz um pecorrimento em profundidade da instância e seus filhos, em ordem pós-fixada (primeiro filhos, depois pais).
+     */
+    public static <R> Optional<R> visitPostOrder(SInstance rootInstance, IVisitFilter filter, IVisitor<SInstance, R> visitor) {
+        Visit<R> visit = new Visit<>();
+        internalVisitPostOrder(rootInstance, visitor, filter, visit);
+        return Optional.ofNullable(visit.result);
+    }
+
+    /**
+     * Implements the prefixed traversal logic.
+     * @param rootInstance
+     * @param visitor
+     * @param filter
+     * @param visit
+     */
+    @SuppressWarnings("unchecked")
+    private static <I extends SInstance, R> void internalVisitChildren(SInstance rootInstance, IVisitor<I, R> visitor, IVisitFilter filter, Visit<R> visit) {
+        if (rootInstance instanceof ICompositeInstance) {
+            for (SInstance object : ((ICompositeInstance) rootInstance).getAllChildren()) {
+                if (filter.visitObject(object)) {
+                    I child = (I) object;
+                    final Visit<R> childVisit = new Visit<>();
+                    visitor.onInstance(child, childVisit);
+
+                    if (childVisit.stopped) {
+                        visit.stop(childVisit.result);
+                        return;
+                    }
+                    if (childVisit.dontGoDeeper)
+                        continue;
+                }
+
+                if (!visit.dontGoDeeper && (object instanceof ICompositeInstance) && filter.visitChildren(object)) {
+                    internalVisitChildren(object, visitor, filter, visit);
+                    if (visit.stopped)
+                        return;
                 }
             }
         }
     }
 
     /**
-     * Percorre todos as instâncias filha da instancia informada chamando o
-     * consumidor, incundo os filhos dos filhos. Ou seja, faz um pecorrimento em
-     * profundidade. Não chama o consumidor para a instância raiz.
-     * @param instance a instância a ser visitada
-     */
-    public static void visitAllChildrenIncludingEmpty(SInstance instance, Consumer<SInstance> consumer) {
-        visitAllChildrenIncludingEmpty(instance, false, consumer);
-    }
-
     /**
-     * Percorre todos as instâncias filha da instancia informada chamando o
-     * consumidor, incundo os filhos dos filhos. Ou seja, faz um pecorrimento em
-     * profundidade. Não chama o consumidor para a instância raiz.
-     * @param instance a instância a ser visitada
-     * @param childrenFirst se true o percorrimento é bottom-up
+     * Implements the postfixed traversal logic.
+     * @param rootInstance
+     * @param visitor
+     * @param filter
+     * @param visit
      */
-    public static void visitAllChildrenIncludingEmpty(SInstance instance, boolean childrenFirst, Consumer<SInstance> consumer) {
-        if (instance instanceof ICompositeInstance) {
-            for (SInstance child : ((ICompositeInstance) instance).getAllChildren()) {
-                if (childrenFirst) {
-                    visitAllChildrenIncludingEmpty(child, childrenFirst, consumer);
-                    consumer.accept(child);
-                } else {
-                    consumer.accept(child);
-                    visitAllChildrenIncludingEmpty(child, childrenFirst, consumer);
+    @SuppressWarnings("unchecked")
+    private static <I extends SInstance, R> void internalVisitPostOrder(SInstance rootInstance, IVisitor<I, R> visitor, IVisitFilter filter, Visit<R> visit) {
+        if (rootInstance instanceof ICompositeInstance) {
+            final ICompositeInstance parent = (ICompositeInstance) rootInstance;
+            if (filter.visitChildren(rootInstance)) {
+                final Visit<R> childVisit = new Visit<>();
+                for (SInstance child : parent.getAllChildren()) {
+                    if (filter.visitObject(child)) {
+                        internalVisitPostOrder(child, visitor, filter, childVisit);
+                        if (childVisit.stopped) {
+                            visit.stop(childVisit.result);
+                            return;
+                        }
+                    }
                 }
             }
         }
-    }
 
-    /**
-     * Percorre a instância informada e todos as instâncias filha da instancia
-     * informada chamando o consumidor, incundo os filhos dos filhos. Ou seja,
-     * faz um pecorrimento em profundidade.
-     */
-    public static void visitAll(SInstance instance, Consumer<SInstance> consumer) {
-        visitAll(instance, false, consumer);
-    }
-
-    /**
-     * Percorre a instância informada e todos as instâncias filha da instancia
-     * informada chamando o consumidor, incundo os filhos dos filhos. Ou seja,
-     * faz um pecorrimento em profundidade.
-     * @param childrenFirst se true o percorrimento é bottom-up
-     */
-    public static void visitAll(SInstance instance, boolean childrenFirst, Consumer<SInstance> consumer) {
-        if (childrenFirst) {
-            visitAllChildren(instance, childrenFirst, consumer);
-            consumer.accept(instance);
-        } else {
-            consumer.accept(instance);
-            visitAllChildren(instance, childrenFirst, consumer);
-        }
+        if (filter.visitObject(rootInstance))
+            visitor.onInstance((I) rootInstance, visit);
     }
 
     /**
@@ -220,7 +269,7 @@ public abstract class SInstances {
         }
         return list;
     }
-    
+
     /**
      * Busca pelo primeiro descendente de <code>node</code> do tipo especificado.
      * @param node instância inicial da busca
@@ -231,7 +280,7 @@ public abstract class SInstances {
     public static <D extends SInstance> D getDescendant(SInstance node, SType<D> descendantType) {
         return findDescendant(node, descendantType).get();
     }
-    
+
     /**
      * Busca descendente de <code>node</code> do tipo especificado, por id.
      * @param node instância inicial da busca
@@ -256,7 +305,7 @@ public abstract class SInstances {
             .filter(it -> descendantId.equals(it.getId()))
             .findAny();
     }
-    
+
     /**
      * Busca descendente de <code>node</code> do tipo especificado, por id.
      * @param node instância inicial da busca
@@ -356,9 +405,9 @@ public abstract class SInstances {
     }
 
     public static void updateBooleanAttribute(
-        SInstance instance,
-        AtrRef<STypeBoolean, SIBoolean, Boolean> valueAttribute,
-        AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> predicateAttribute) {
+                                              SInstance instance,
+                                              AtrRef<STypeBoolean, SIBoolean, Boolean> valueAttribute,
+                                              AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> predicateAttribute) {
 
         Predicate<SInstance> pred = instance.getAttributeValue(predicateAttribute);
         if (pred != null)
@@ -372,5 +421,24 @@ public abstract class SInstances {
     public static <V> boolean hasAttributeValue(SInstance instance, AtrRef<?, ?, V> attribute) {
         V value = instance.getAttributeValue(attribute);
         return (value != null);
+    }
+
+    private static class Visit<R> implements IVisit<R> {
+        boolean dontGoDeeper;
+        boolean stopped;
+        R       result;
+        @Override
+        public void dontGoDeeper() {
+            this.dontGoDeeper = true;
+        }
+        @Override
+        public void stop() {
+            this.stopped = true;
+        }
+        @Override
+        public void stop(R result) {
+            this.result = result;
+            stop();
+        }
     }
 }
