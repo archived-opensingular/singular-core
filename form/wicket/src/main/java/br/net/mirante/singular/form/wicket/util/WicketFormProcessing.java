@@ -228,36 +228,25 @@ public class WicketFormProcessing {
         });
 
         // associate remaining errors to container
+        System.out.println(">>> " + container.getPageRelativePath());
         instanceErrors.values().stream()
             .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
     }
 
     private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstanceModel,
                                           boolean prependFullPathLabel, Collection<IValidationError> errors) {
-        SInstance instance = baseInstanceModel.getObject();
-        final SDocument document = instance.getDocument();
+        final SInstance instance = baseInstanceModel.getObject();
         for (IValidationError error : errors) {
             final Integer instanceId = error.getInstanceId();
-            String message = error.getMessage();
-            if (prependFullPathLabel) {
-                Optional<SInstance> childInstance = document.findInstanceById(instanceId);
-                if (childInstance.isPresent()) {
-                    final String labelPath = SFormUtil.generateUserFriendlyPath(childInstance.get(), instance);
-                    if (StringUtils.isNotBlank(labelPath))
-                        message = labelPath + " : " + message;
-                }
-            }
-
+            final String message = (prependFullPathLabel)
+                ? prependFullPathToMessage(instance, error)
+                : error.getMessage();
             final IModel<? extends SInstance> instanceModel = $m.map(baseInstanceModel,
-                inst -> SInstances.streamDescendants(inst.getDocument().getRoot(), true)
-                    .filter(desc -> Objects.equals(desc.getId(), instanceId))
-                    .findFirst()
-                    .orElse(null));
+                inst -> inst.getDocument().findInstanceById(instanceId).orElse(null));
 
             final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
 
-            String finalMessage = message;
-            if (feedbackMessages.hasMessage(m -> Objects.equals(m.getMessage(), finalMessage)))
+            if (feedbackMessages.hasMessage(m -> Objects.equals(m.getMessage(), message)))
                 continue;
 
             if (error.getErrorLevel() == ValidationErrorLevel.ERROR)
@@ -269,5 +258,18 @@ public class WicketFormProcessing {
             else
                 throw new IllegalStateException("Invalid error level: " + error.getErrorLevel());
         }
+    }
+
+    protected static String prependFullPathToMessage(SInstance instance, IValidationError error) {
+        String message;
+        StringBuilder sb = new StringBuilder();
+        Optional<SInstance> childInstance = instance.getDocument().findInstanceById(error.getInstanceId());
+        if (childInstance.isPresent()) {
+            final String labelPath = SFormUtil.generateUserFriendlyPath(childInstance.get(), instance);
+            if (StringUtils.isNotBlank(labelPath))
+                sb.insert(0, labelPath);
+        }
+        message = sb.append(error.getMessage()).toString();
+        return message;
     }
 }

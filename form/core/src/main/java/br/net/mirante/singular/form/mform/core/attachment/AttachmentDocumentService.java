@@ -34,7 +34,7 @@ class AttachmentDocumentService {
 
     private AttachmentDocumentService(SDocument document) {
         this.document = document;
-        SInstances.visitAll(document.getRoot(), i -> {
+        SInstances.visit(document.getRoot(), (i, v) -> {
             if (i instanceof SIAttachment) {
                 addReference((SIAttachment) i);
             }
@@ -64,7 +64,7 @@ class AttachmentDocumentService {
         AttachmentDocumentService service = document.lookupLocalService(ATTACHMENT_DOCUMENT_SERVICE, AttachmentDocumentService.class);
         if (service == null) {
             service = new AttachmentDocumentService(document);
-            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE,AttachmentDocumentService.class, RefService.ofToBeDescartedIfSerialized(service));
+            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE, AttachmentDocumentService.class, RefService.ofToBeDescartedIfSerialized(service));
         }
         return service;
     }
