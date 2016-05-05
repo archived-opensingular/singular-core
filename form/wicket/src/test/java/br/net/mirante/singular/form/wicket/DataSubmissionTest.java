@@ -24,9 +24,6 @@ import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by nuk on 02/05/16.
- */
 @RunWith(Enclosed.class)
 public class DataSubmissionTest {
 
