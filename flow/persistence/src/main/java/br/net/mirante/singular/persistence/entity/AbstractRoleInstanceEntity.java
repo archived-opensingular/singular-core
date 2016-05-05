@@ -68,6 +68,7 @@ public abstract class AbstractRoleInstanceEntity<USER extends MUser, PROCESS_INS
     @JoinColumn(name = "CO_ATOR_ALOCADOR")
     private USER allocatorUser;
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -76,6 +77,7 @@ public abstract class AbstractRoleInstanceEntity<USER extends MUser, PROCESS_INS
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_INSTANCE getProcessInstance() {
         return processInstance;
     }
@@ -84,6 +86,7 @@ public abstract class AbstractRoleInstanceEntity<USER extends MUser, PROCESS_INS
         this.processInstance = processInstance;
     }
 
+    @Override
     public ROLE_DEF getRole() {
         return role;
     }
@@ -92,6 +95,7 @@ public abstract class AbstractRoleInstanceEntity<USER extends MUser, PROCESS_INS
         this.role = role;
     }
 
+    @Override
     public USER getUser() {
         return user;
     }
@@ -100,6 +104,7 @@ public abstract class AbstractRoleInstanceEntity<USER extends MUser, PROCESS_INS
         this.user = user;
     }
 
+    @Override
     public Date getCreateDate() {
         return createDate;
     }
@@ -108,6 +113,7 @@ public abstract class AbstractRoleInstanceEntity<USER extends MUser, PROCESS_INS
         this.createDate = createDate;
     }
 
+    @Override
     public USER getAllocatorUser() {
         return allocatorUser;
     }

@@ -61,6 +61,7 @@ public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends I
     @Column(name = "TP_TRANSICAO", nullable = false)
     private TransitionType type;
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -69,6 +70,7 @@ public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends I
         this.cod = cod;
     }
 
+    @Override
     public TASK_VERSION getOriginTask() {
         return originTask;
     }
@@ -77,6 +79,7 @@ public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends I
         this.originTask = originTask;
     }
 
+    @Override
     public TASK_VERSION getDestinationTask() {
         return destinationTask;
     }
@@ -85,26 +88,32 @@ public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends I
         this.destinationTask = destinationTask;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getAbbreviation() {
         return abbreviation;
     }
 
+    @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
 
+    @Override
     public TransitionType getType() {
         return type;
     }
 
+    @Override
     public void setType(TransitionType type) {
         this.type = type;
     }

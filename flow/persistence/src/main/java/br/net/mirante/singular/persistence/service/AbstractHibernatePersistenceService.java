@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
@@ -247,6 +248,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         sw.saveOrUpdate(processVersion.getProcessDefinition());
         sw.saveOrUpdate(processVersion);
         sw.saveOrUpdate(processVersion.getVersionTasks().stream().map(tv -> tv.getTaskDefinition()));
+        sw.saveOrUpdate(processVersion.getVersionTasks().stream().flatMap(tv -> tv.getTaskDefinition().getRolesTask() != null ? tv.getTaskDefinition().getRolesTask().stream() : Stream.empty()));
         sw.saveOrUpdate(processVersion.getVersionTasks());
         sw.saveOrUpdate(processVersion.getVersionTasks().stream().flatMap(tv -> tv.getTransitions().stream()));
         

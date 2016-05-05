@@ -8,8 +8,8 @@ public class ProviderContext<S extends SInstance> {
     private S         instance;
     private SInstance filterInstance;
     private String    query;
-    private long      first;
-    private long      count;
+    private int       first;
+    private int       count;
     private Object    sortProperty;
     private boolean   ascending;
 
@@ -49,19 +49,19 @@ public class ProviderContext<S extends SInstance> {
         this.query = query;
     }
 
-    public long getFirst() {
+    public int getFirst() {
         return first;
     }
 
-    public void setFirst(long first) {
+    public void setFirst(int first) {
         this.first = first;
     }
 
-    public long getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(long count) {
+    public void setCount(int count) {
         this.count = count;
     }
 

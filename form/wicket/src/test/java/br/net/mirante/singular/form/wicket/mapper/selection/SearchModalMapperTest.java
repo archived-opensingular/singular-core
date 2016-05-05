@@ -4,9 +4,9 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.provider.ProviderContext;
-import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
+import br.net.mirante.singular.form.mform.provider.filter.Config;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
@@ -32,17 +32,16 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
         mandatoryField = baseType.addFieldString("mandatoryField", true);
 
         mandatoryField.withView(new SViewSearchModal());
-        mandatoryField.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<String>() {
+        mandatoryField.asAtrProvider().filteredProvider(new FilteredProvider<String>() {
             @Override
-            public List<String> load(ProviderContext<SInstance> context) {
-                return Arrays.asList("1", "2");
+            public void configureProvider(Config cfg) {
+                cfg.getFilter().addFieldString("search");
+                cfg.result().addColumn("String");
             }
 
             @Override
-            public void configureFilter(FilterConfigBuilder builder) {
-                builder.configureType(filter -> filter.addFieldString("search"));
-                builder.addColumn("String");
-                builder.lazy(false);
+            public List<String> load(ProviderContext<SInstance> context) {
+                return Arrays.asList("1", "2");
             }
         });
         dependentField = baseType.addFieldString("dependentField");

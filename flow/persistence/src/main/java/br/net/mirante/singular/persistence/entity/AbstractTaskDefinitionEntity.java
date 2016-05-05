@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,7 +22,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import br.net.mirante.singular.flow.core.entity.AccessStrategyType;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 
@@ -37,7 +41,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
  */
 @MappedSuperclass
 @Table(name = "TB_DEFINICAO_TAREFA")
-public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition, TASK_VERSION extends IEntityTaskVersion> extends BaseEntity<Integer> implements IEntityTaskDefinition {
+public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition, TASK_VERSION extends IEntityTaskVersion, ROLE_TASK extends IEntityRoleTask> extends BaseEntity<Integer> implements IEntityTaskDefinition {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_DEFINICAO_TAREFA";
 
@@ -56,6 +60,14 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "taskDefinition")
     private List<TASK_VERSION> versions = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TP_ESTRATEGIA_SEGURANCA", length = 1)
+    private AccessStrategyType accessStrategyType;
+
+    @OneToMany(mappedBy = "taskDefinition", fetch = FetchType.LAZY)
+    private List<ROLE_TASK> rolesTask;
+
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -64,6 +76,7 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_DEF getProcessDefinition() {
         return processDefinition;
     }
@@ -72,14 +85,17 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
         this.processDefinition = processDefinition;
     }
 
+    @Override
     public String getAbbreviation() {
         return abbreviation;
     }
 
+    @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
 
+    @Override
     public List<TASK_VERSION> getVersions() {
         return versions;
     }
@@ -88,4 +104,22 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
         this.versions = versions;
     }
 
+    @Override
+    public AccessStrategyType getAccessStrategyType() {
+        return accessStrategyType;
+    }
+
+    @Override
+    public void setAccessStrategyType(AccessStrategyType accessStrategyType) {
+        this.accessStrategyType = accessStrategyType;
+    }
+
+    @Override
+    public List<ROLE_TASK> getRolesTask() {
+        return rolesTask;
+    }
+
+    public void setRolesTask(List<ROLE_TASK> rolesTask) {
+        this.rolesTask = rolesTask;
+    }
 }

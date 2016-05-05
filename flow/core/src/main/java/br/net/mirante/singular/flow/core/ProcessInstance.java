@@ -97,7 +97,7 @@ public class ProcessInstance implements Serializable {
      */
     @Deprecated
     public TaskInstance start(VarInstanceMap<?> varInstanceMap) {
-        getPersistedDescription(); // Força a geração da descricação
+        getPersistedDescription(); // Força a geração da descrição
         return FlowEngine.start(this, varInstanceMap);
     }
 

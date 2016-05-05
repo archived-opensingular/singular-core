@@ -37,9 +37,9 @@ public class InstanceValidationContext {
     }
 
     public void validateAll(SInstance rootInstance) {
-        SInstances.visitAllChildrenIncludingEmpty(
+        SInstances.visitChildren(
             rootInstance,
-            inst -> validateInstance(new InstanceValidatable<>(inst, this::onError)));
+            (inst, v) -> validateInstance(new InstanceValidatable<>(inst, this::onError)));
         updateDocumentErrors(rootInstance);
     }
     public void validateSingle(SInstance rootInstance) {
