@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.flow.core.entity.AccessStrategyType;
+
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class TaskAccessStrategy<K extends ProcessInstance> {
 
@@ -57,6 +59,10 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
 
     public TaskAccessStrategy<K> or(TaskAccessStrategy<?> e2) {
         return or(this, e2);
+    }
+
+    public AccessStrategyType getType() {
+        return AccessStrategyType.E;
     }
 
     public static <T extends ProcessInstance> TaskAccessStrategy<T> or(TaskAccessStrategy<T> e1, TaskAccessStrategy<?> e2) {

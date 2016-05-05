@@ -99,7 +99,7 @@ public class SingularForm<T> extends Form<T> {
             @Override
             public void component(final SingularForm<?> form, final IVisit<Void> visit)
             {
-                if (form == SingularForm.this)
+                if (SingularForm.this.equals(form))
                 {
                     // skip self, only process children
                     visit.stop();
@@ -124,7 +124,7 @@ public class SingularForm<T> extends Form<T> {
                 public void validate(final FormComponent<?> formComponent)
                 {
                     final Form<?> form = formComponent.getForm();
-                    if ((!(form instanceof SingularForm<?>) || (form == SingularForm.this))
+                    if ((!(form instanceof SingularForm<?>) || (SingularForm.this.equals(form)))
                         && form.isEnabledInHierarchy() && form.isVisibleInHierarchy())
                     {
                         formComponent.convertInput();
