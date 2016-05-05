@@ -34,25 +34,6 @@ public class AnalisePeticaoService<T extends TaskInstanceDTO> {
 
     public TaskInstance findCurrentTaskByPetitionId(String petitionId) {
         List<TaskInstance> taskInstances = taskInstanceDAO.findCurrentTasksByPetitionId(petitionId);
-//        TaskInstance ti = null;
-//        if(StringUtils.isNotEmpty(formID)){
-//            Petition p = petitionDAO.find(Long.valueOf(formID));
-//            Integer codProcessInstance = Optional
-//                    .ofNullable(p.getProcessInstanceEntity())
-//                    .map(ProcessInstanceEntity::getCod)
-//                    .orElse(null);
-//            if (codProcessInstance != null) {
-//                ProcessInstance pi = Flow.getProcessInstance(CanabidiolDefinicao.class, codProcessInstance);
-//                //        TODO: bug - vinicius nunes - O código comentado abaixo não funciona mas deveria :(
-//                //        TaskInstance ti = Flow.getTaskInstance(p.getProcessInstanceEntity().getCurrentTask());
-//                //        ti.getFlowTask();
-//                ti = Optional
-//                        .ofNullable(pi)
-//                        .map(ProcessInstance::getCurrentTask)
-//                        .orElse(null);
-//                ti.getFlowTask();
-//            }
-//        }
         return taskInstances.get(0);
     }
 }
