@@ -8,6 +8,7 @@ package br.net.mirante.singular.form.wicket.panel;
 import java.io.Serializable;
 import java.util.Objects;
 
+import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
