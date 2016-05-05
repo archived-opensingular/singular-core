@@ -24,7 +24,7 @@ public class CaseLazyInputModalSearchPackage extends SPackage {
         funcionario.withView(new SViewSearchModal().title("Buscar Profissionais"))
                 .asAtrProvider()
                 //@destacar
-                .filteredPagedProvider(new LazyFuncionarioProvider())
+                .filteredProvider(new LazyFuncionarioProvider())
                 .converter((ValueToSICompositeConverter<Funcionario>) (newFunc, func) -> {
                     newFunc.setValue(nome, func.getNome());
                     newFunc.setValue(funcao, func.getFuncao());
