@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.mform.provider.ProviderContext;
-import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
+import br.net.mirante.singular.form.mform.provider.filter.Config;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
@@ -57,6 +57,16 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
         carro.asAtrProvider().filteredProvider(new FilteredPagedProvider<Triple>() {
 
             @Override
+            public void configureProvider(Config cfg) {
+                cfg.getFilter().addFieldString("marca");
+                cfg.getFilter().addFieldString("modelo");
+                cfg.getFilter().addFieldBoolean("conectividade");
+                cfg.result().addColumn("left", "Marca")
+                        .addColumn("middle", "Modelo")
+                        .addColumn("right", "Conectividade");
+            }
+
+            @Override
             public List<Triple> load(ProviderContext<SInstance> context) {
                 return filterByInstance(context.getFilterInstance()).subList((int) context.getFirst(), (int) (context.getFirst() + context.getCount()));
             }
@@ -85,18 +95,6 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
                 }).collect(Collectors.toList());
             }
 
-            @Override
-            public void configureFilter(FilterConfigBuilder builder) {
-                builder.configureType(filter -> {
-                    filter.addFieldString("marca");
-                    filter.addFieldString("modelo");
-                    filter.addFieldBoolean("conectividade");
-                });
-
-                builder.addColumn("left", "Marca");
-                builder.addColumn("middle", "Modelo");
-                builder.addColumn("right", "Conectividade");
-            }
 
         });
         carro.asAtrProvider().converter((ValueToSICompositeConverter<Triple<String, String, Boolean>>) (ins, triple) -> {

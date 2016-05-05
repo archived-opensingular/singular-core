@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.provider;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
+import br.net.mirante.singular.form.mform.provider.filter.Config;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,19 +11,19 @@ import static br.net.mirante.singular.form.mform.util.transformer.Value.dehydrat
 
 public class InMemoryFilteredPagedProviderDecorator<R extends Serializable> implements FilteredPagedProvider<R> {
 
-    private final FilteredProvider FilteredProvider;
+    private final FilteredProvider filteredProvider;
     private       boolean          cached;
     private       List<R>          values;
     private       Content          lastContent;
 
-    public InMemoryFilteredPagedProviderDecorator(FilteredProvider FilteredProvider) {
-        this.FilteredProvider = FilteredProvider;
+    public InMemoryFilteredPagedProviderDecorator(FilteredProvider filteredProvider) {
+        this.filteredProvider = filteredProvider;
     }
 
     @Override
-    public void configureFilter(FilterConfigBuilder fcb) {
-        FilteredProvider.configureFilter(fcb);
-        cached = fcb.build().isCache();
+    public void configureProvider(Config cfg) {
+        filteredProvider.configureProvider(cfg);
+        cached = cfg.isCache();
     }
 
     @Override
@@ -31,12 +31,12 @@ public class InMemoryFilteredPagedProviderDecorator<R extends Serializable> impl
         if (cached) {
             final Content content = dehydrate(context.getFilterInstance());
             if (values == null || !content.equals(lastContent)) {
-                values = FilteredProvider.load(context);
+                values = filteredProvider.load(context);
                 lastContent = content;
             }
             return values.size();
         } else {
-            return FilteredProvider.load(context).size();
+            return filteredProvider.load(context).size();
         }
     }
 
@@ -45,12 +45,12 @@ public class InMemoryFilteredPagedProviderDecorator<R extends Serializable> impl
         if (cached) {
             final Content content = dehydrate(context.getFilterInstance());
             if (values == null || !content.equals(lastContent)) {
-                values = FilteredProvider.load(context);
+                values = filteredProvider.load(context);
                 lastContent = content;
             }
             return values;
         } else {
-            return FilteredProvider.load(context).subList((int) context.getFirst(), (int) (context.getFirst() + context.getCount()));
+            return filteredProvider.load(context).subList(context.getFirst(), context.getFirst() + context.getCount());
         }
     }
 

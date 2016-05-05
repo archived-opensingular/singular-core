@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.provider.ProviderContext;
-import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
+import br.net.mirante.singular.form.mform.provider.filter.Config;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
@@ -38,20 +38,18 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
         notebook.withView(new SViewSearchModal());
         notebook.asAtrProvider().filteredProvider(new FilteredProvider<Notebook>() {
             @Override
-            public List<Notebook> load(ProviderContext<SInstance> context) {
-                return Arrays.asList(new Notebook("Apple", "4GB", "1T", "OSX"), new Notebook("Samsug", "8GB", "1TB", "ArchLinux"));
+            public void configureProvider(Config cfg) {
+                cfg.getFilter().addFieldString("marca");
+                cfg.getFilter().addFieldString("sistemaOperacional");
+                cfg.result().addColumn("marca", "Marca")
+                        .addColumn("memoria", "Memoria")
+                        .addColumn("disco", "Disco")
+                        .addColumn("sistemaOperacional", "Sistema Operacional");
             }
 
             @Override
-            public void configureFilter(FilterConfigBuilder builder) {
-                builder.configureType((filter) -> {
-                    filter.addFieldString("marca");
-                    filter.addFieldString("sistemaOperacional");
-                });
-                builder.addColumn("marca", "Marca");
-                builder.addColumn("memoria", "Memoria");
-                builder.addColumn("disco", "Disco");
-                builder.addColumn("sistemaOperacional", "Sistema Operacional");
+            public List<Notebook> load(ProviderContext<SInstance> context) {
+                return Arrays.asList(new Notebook("Apple", "4GB", "1T", "OSX"), new Notebook("Samsug", "8GB", "1TB", "ArchLinux"));
             }
         });
 
