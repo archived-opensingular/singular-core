@@ -1,16 +1,15 @@
 package br.net.mirante.singular.showcase.view.page.showcase;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Optional;
-
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Test;
-
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.junit.Test;
+
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
 
 public class UpdateListenerTest extends SingularFormBaseTest {
 
@@ -20,12 +19,12 @@ public class UpdateListenerTest extends SingularFormBaseTest {
     @Override
     protected void buildBaseType(STypeComposite<?> baseType) {
 
-        baseType.asAtrBasic().label("Endereço");
+        baseType.asAtr().label("Endereço");
         cep = baseType.addFieldString("cep");
-        cep.asAtrBasic().tamanhoMaximo(8).label("CEP (Use os valores 70863520 ou 70070120)");
+        cep.asAtr().tamanhoMaximo(8).label("CEP (Use os valores 70863520 ou 70070120)");
         logradouro = baseType.addFieldString("logradouro");
         logradouro
-                .asAtrBasic().enabled(false)
+                .asAtr().enabled(false)
                 .label("Logradouro")
                 .dependsOn(cep);
 

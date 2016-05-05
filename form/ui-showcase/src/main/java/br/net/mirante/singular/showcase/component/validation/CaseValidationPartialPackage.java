@@ -18,14 +18,14 @@ public class CaseValidationPartialPackage extends SPackage {
 
         //@destacar
         testForm.addFieldString("obrigatorio_1")
-                .asAtrBasic().label("Obrigatorio 1")
-                .asAtrBasic().required();
+                .asAtr().label("Obrigatorio 1")
+                .asAtr().required();
         testForm.addFieldInteger("obrigatorio_2")
-                .asAtrBasic().label("Obrigatorio 2")
-                .asAtrBasic().required();
+                .asAtr().label("Obrigatorio 2")
+                .asAtr().required();
         testForm.addFieldString("obrigatorio_3")
-                .asAtrBasic().label("Obrigatorio 3")
-                .asAtrBasic().required();
+                .asAtr().label("Obrigatorio 3")
+                .asAtr().required();
 
     }
 }

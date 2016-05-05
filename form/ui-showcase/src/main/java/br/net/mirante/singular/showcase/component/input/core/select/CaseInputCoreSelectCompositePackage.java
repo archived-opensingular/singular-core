@@ -19,7 +19,7 @@ public class CaseInputCoreSelectCompositePackage extends SPackage {
         final STypeComposite<SIComposite> tipoMyForm         = pb.createCompositeType("testForm");
         final STypeComposite<SIComposite> ingredienteQuimico = tipoMyForm.addFieldComposite("ingredienteQuimico");
 
-        ingredienteQuimico.asAtrBasic().label("Ingrediente Quimico");
+        ingredienteQuimico.asAtr().label("Ingrediente Quimico");
 
         final STypeString formulaQuimica = ingredienteQuimico.addFieldString("formulaQuimica");
         final STypeString nome           = ingredienteQuimico.addFieldString("nome");
@@ -27,7 +27,7 @@ public class CaseInputCoreSelectCompositePackage extends SPackage {
         ingredienteQuimico.selection()
                 .id(formulaQuimica)
                 .display("${nome} - ${formulaQuimica}")
-                .provider(listaBuilder -> {
+                .simpleProvider(listaBuilder -> {
                     listaBuilder.add().set(formulaQuimica, "H20").set(nome, "Água");
                     listaBuilder.add().set(formulaQuimica, "H2O2").set(nome, "Água Oxigenada");
                     listaBuilder.add().set(formulaQuimica, "O2").set(nome, "Gás Oxigênio");

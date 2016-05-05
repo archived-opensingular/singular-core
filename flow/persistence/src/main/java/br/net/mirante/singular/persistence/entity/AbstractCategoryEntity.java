@@ -47,6 +47,7 @@ public abstract class AbstractCategoryEntity<PROCESS_DEF extends IEntityProcessD
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
     private List<PROCESS_DEF> processDefinitions;
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -55,10 +56,12 @@ public abstract class AbstractCategoryEntity<PROCESS_DEF extends IEntityProcessD
         this.cod = cod;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }

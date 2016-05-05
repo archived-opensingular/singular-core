@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.provider.TextQueryProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
@@ -26,7 +26,7 @@ public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
         final STypeString endereco    = addFieldString("endereco");
 
         razaoSocial.
-                asAtrBasic()
+                asAtr()
                 .required()
                 .label("Razão Social");
 
@@ -60,7 +60,7 @@ public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
                         return null;
                     }
                 })
-                .filteredProvider((FilteredProvider<EnderecoEmpresaInternacional, SIComposite>) (ins, query) -> dominioService(ins).empresaInternacional(query));
+                .filteredProvider((TextQueryProvider<EnderecoEmpresaInternacional, SIComposite>) (ins, query) -> dominioService(ins).empresaInternacional(query));
 
     }
 

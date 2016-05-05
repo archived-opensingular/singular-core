@@ -20,13 +20,14 @@ public class CaseInputModalSearchPackage extends SPackage {
         final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         final STypeComposite funcionario = tipoMyForm.addFieldComposite("funcionario");
-        funcionario.asAtrBasic().label("Funcionario").displayString("${nome} - ${funcao}");
+        funcionario.asAtr().label("Funcionario").displayString("${nome} - ${funcao}");
 
         final STypeString nome  = funcionario.addFieldString("nome");
         final STypeString funcao = funcionario.addFieldString("funcao");
 
         funcionario.withView(new SViewSearchModal().title("Buscar Profissionais"))
                 .asAtrProvider()
+                //@destacar
                 .filteredPagedProvider(new FuncionarioProvider())
                 .converter((ValueToSICompositeConverter<Funcionario>) (newFunc, func) -> {
                     newFunc.setValue(nome, func.getNome());

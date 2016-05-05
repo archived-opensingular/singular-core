@@ -3,7 +3,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulari
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.converter.VocabularioControladoDTOSInstanceConverter;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.provider.VocabularioControladoFilteredProvider;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.provider.VocabularioControladoTextQueryProvider;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -26,7 +26,7 @@ public class STypeFormaFarmaceutica extends STypeComposite<SIComposite> {
         {
 
             this
-                    .asAtrBasic()
+                    .asAtr()
                     .required()
                     .label("Forma farmacêutica")
                     .asAtrBootstrap()
@@ -37,7 +37,7 @@ public class STypeFormaFarmaceutica extends STypeComposite<SIComposite> {
                     .id(VocabularioControladoDTO::getId)
                     .display(VocabularioControladoDTO::getDescricao)
                     .converter(new VocabularioControladoDTOSInstanceConverter(id, descricao))
-                    .filteredProvider(new VocabularioControladoFilteredProvider<>(FormaFarmaceuticaBasica.class));
+                    .filteredProvider(new VocabularioControladoTextQueryProvider<>(FormaFarmaceuticaBasica.class));
 
 
         }

@@ -13,7 +13,7 @@ public class CaseInputCoreSelectCompositePojoPackage extends SPackage {
         final STypeComposite<?>           tipoMyForm         = pb.createCompositeType("testForm");
         final STypeComposite<SIComposite> ingredienteQuimico = tipoMyForm.addFieldComposite("ingredienteQuimico");
 
-        ingredienteQuimico.asAtrBasic().label("Ingrediente Quimico");
+        ingredienteQuimico.asAtr().label("Ingrediente Quimico");
 
         ingredienteQuimico.addFieldString("formulaQuimica");
         ingredienteQuimico.addFieldString("nome");

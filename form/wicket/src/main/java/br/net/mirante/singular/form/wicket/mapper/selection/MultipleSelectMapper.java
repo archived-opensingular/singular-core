@@ -9,6 +9,7 @@ import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
 import br.net.mirante.singular.form.wicket.model.MultipleSelectMInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
@@ -33,7 +34,7 @@ public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
         final List<Serializable> opcoesValue = new ArrayList<>();
 
         if (model.getObject().getType() instanceof STypeList) {
-            opcoesValue.addAll(model.getObject().asAtrProvider().getSimpleProvider().load(ctx.getCurrentInstance()));
+            opcoesValue.addAll(model.getObject().asAtrProvider().getProvider().load(ProviderContext.of(ctx.getCurrentInstance())));
         }
 
         /**

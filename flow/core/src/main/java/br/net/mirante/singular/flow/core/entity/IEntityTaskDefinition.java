@@ -19,6 +19,12 @@ public interface IEntityTaskDefinition extends IEntityByCod<Integer> {
 
     List<? extends IEntityTaskVersion> getVersions();
 
+    AccessStrategyType getAccessStrategyType();
+
+    void setAccessStrategyType(AccessStrategyType accessStrategyType);
+
+    List<? extends IEntityRoleTask> getRolesTask();
+
     default String getName(){
         return getLastVersion().getName();
     }

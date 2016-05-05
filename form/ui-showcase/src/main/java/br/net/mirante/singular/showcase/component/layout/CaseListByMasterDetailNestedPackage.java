@@ -43,50 +43,50 @@ public class CaseListByMasterDetailNestedPackage extends SPackage {
             //@destacar:bloco
             experiencias
                     .withView(SViewListByMasterDetail::new)
-                    .asAtrBasic().label("Experiências profissionais");
+                    .asAtr().label("Experiências profissionais");
             //@destacar:fim
             dtInicioExperiencia
-                    .asAtrBasic().label("Data inicial")
+                    .asAtr().label("Data inicial")
                     .asAtrBootstrap().colPreference(2);
             dtFimExperiencia
-                    .asAtrBasic().label("Data final")
+                    .asAtr().label("Data final")
                     .asAtrBootstrap().colPreference(2);
             empresa
-                    .asAtrBasic().label("Empresa")
+                    .asAtr().label("Empresa")
                     .asAtrBootstrap().colPreference(8);
             //@destacar:bloco
             cargos
                     .withView(SViewListByMasterDetail::new)
-                    .asAtrBasic().label("Cargos na empresa");
+                    .asAtr().label("Cargos na empresa");
             dtInicioCargo
-                    .asAtrBasic().label("Data inicial")
+                    .asAtr().label("Data inicial")
                     .asAtrBootstrap().colPreference(4);
             dtFimCargo
-                    .asAtrBasic().label("Data final")
+                    .asAtr().label("Data final")
                     .asAtrBootstrap().colPreference(4);
             nome
-                    .asAtrBasic().label("Nome")
+                    .asAtr().label("Nome")
                     .asAtrBootstrap().colPreference(4);
             pets
                     .withView(new SViewListByMasterDetail()
                             .col(nomeDoPet)
                             .col(tipoDoPet))
-                    .asAtrBasic()
+                    .asAtr()
                     .label("Animais de estimação no trabalho");
             nomeDoPet
-                    .asAtrBasic().label("Nome")
+                    .asAtr().label("Nome")
                     .asAtrBootstrap().colPreference(4);
             tipoDoPet
                     .withSelectView()
-                    .asAtrBasic().label("Tipo")
+                    .asAtr().label("Tipo")
                     .asAtrBootstrap().colPreference(4);
             idadePet
-                    .asAtrBasic().label("Idade")
+                    .asAtr().label("Idade")
                     .asAtrBootstrap().colPreference(4);
             //@destacar:fim
             atividades
                     .withTextAreaView()
-                    .asAtrBasic().label("Atividades Desenvolvidas");
+                    .asAtr().label("Atividades Desenvolvidas");
         }
 
     }

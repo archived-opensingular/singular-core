@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.util;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Collection;
@@ -25,7 +26,6 @@ import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.FeedbackMessages;
-import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
@@ -46,7 +46,6 @@ import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackMessage;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,
@@ -233,24 +232,27 @@ public class WicketFormProcessing {
             .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
     }
 
-    private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstance,
+    private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstanceModel,
                                           boolean prependFullPathLabel, Collection<IValidationError> errors) {
+        SInstance instance = baseInstanceModel.getObject();
+        final SDocument document = instance.getDocument();
         for (IValidationError error : errors) {
+            final Integer instanceId = error.getInstanceId();
             String message = error.getMessage();
             if (prependFullPathLabel) {
-                Optional<SInstance> childInstance = SInstances.findDescendantById(baseInstance.getObject(), error.getInstanceId());
+                Optional<SInstance> childInstance = document.findInstanceById(instanceId);
                 if (childInstance.isPresent()) {
-                    final String labelPath = SFormUtil.generateUserFriendlyPath(childInstance.get(), baseInstance.getObject());
+                    final String labelPath = SFormUtil.generateUserFriendlyPath(childInstance.get(), instance);
                     if (StringUtils.isNotBlank(labelPath))
                         message = labelPath + " : " + message;
                 }
             }
-            Integer instanceId = error.getInstanceId();
 
-            final IModel<? extends SInstance> instanceModel = (IReadOnlyModel<SInstance>) () -> SInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
-                .filter(it -> Objects.equals(it.getId(), instanceId))
-                .findFirst()
-                .orElse(null);
+            final IModel<? extends SInstance> instanceModel = $m.map(baseInstanceModel,
+                inst -> SInstances.streamDescendants(inst.getDocument().getRoot(), true)
+                    .filter(desc -> Objects.equals(desc.getId(), instanceId))
+                    .findFirst()
+                    .orElse(null));
 
             final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
 

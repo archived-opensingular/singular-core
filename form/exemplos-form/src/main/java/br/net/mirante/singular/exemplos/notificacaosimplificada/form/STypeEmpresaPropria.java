@@ -4,7 +4,6 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
 
@@ -19,14 +18,14 @@ public class STypeEmpresaPropria extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         razaoSocialPropria = addFieldString("razaoSocial");
         razaoSocialPropria
-                .asAtrBasic()
+                .asAtr()
                 .label("Razão Social")
                 .enabled(false);
         (cnpj = addFieldCNPJ("cnpj"))
-                .asAtrBasic().label("CNPJ")
+                .asAtr().label("CNPJ")
                 .enabled(false);
         (endereco = addFieldString("endereco"))
-                .asAtrBasic().label("Endereço")
+                .asAtr().label("Endereço")
                 .enabled(false);
     }
 

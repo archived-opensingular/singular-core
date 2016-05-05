@@ -27,7 +27,7 @@ public class STypeFarmacopeia extends STypeComposite<SIComposite> {
         {
 
             this
-                    .asAtrBasic()
+                    .asAtr()
                     .required()
                     .label("Farmacopéia")
                     .asAtrBootstrap()

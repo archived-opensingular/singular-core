@@ -5,14 +5,14 @@
 
 package br.net.mirante.singular.showcase.component.interaction;
 
-import java.util.Optional;
-
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
+
+import java.util.Optional;
 
 public class CaseUpdateListenerPackage extends SPackage {
 
@@ -23,12 +23,12 @@ public class CaseUpdateListenerPackage extends SPackage {
         super.carregarDefinicoes(pb);
 
         final STypeComposite<SIComposite> testForm = pb.createCompositeType("testForm");
-        testForm.asAtrBasic().label("Endereço");
+        testForm.asAtr().label("Endereço");
         cep = testForm.addFieldString("cep");
-        cep.asAtrBasic().tamanhoMaximo(8).label("CEP (Use os valores 70863520 ou 70070120)");
+        cep.asAtr().tamanhoMaximo(8).label("CEP (Use os valores 70863520 ou 70070120)");
         final STypeString logradouro = testForm.addFieldString("logradouro");
         logradouro
-                .asAtrBasic().enabled(false)
+                .asAtr().enabled(false)
                 .label("Logradouro")
                 .dependsOn(cep);
         //@destacar

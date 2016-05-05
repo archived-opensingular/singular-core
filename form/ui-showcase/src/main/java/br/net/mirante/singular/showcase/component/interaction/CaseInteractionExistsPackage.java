@@ -38,12 +38,12 @@ public class CaseInteractionExistsPackage extends SPackage {
 
         record
                 .withExists(ins -> ins.findNearestValue(exists, Boolean.class).orElse(false))
-                .asAtrBasic().dependsOn(exists);
+                .asAtr().dependsOn(exists);
 
-        recordText.asAtrBasic().label("Text")
+        recordText.asAtr().label("Text")
                 .asAtrBootstrap().colPreference(3);
 
-        recordDate.asAtrBasic().label("Date")
+        recordDate.asAtr().label("Date")
                 .asAtrBootstrap().colPreference(2);
     }
 }

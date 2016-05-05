@@ -27,7 +27,7 @@ public class STypeEmbalagemSecundaria extends STypeComposite<SIComposite> {
 
         asAtrBootstrap()
                 .colPreference(6)
-                .asAtrBasic()
+                .asAtr()
                 .label("Embalagem secundária");
         this.setView(SViewAutoComplete::new);
 

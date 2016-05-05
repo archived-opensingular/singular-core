@@ -5,25 +5,27 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud.services;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
-import br.net.mirante.singular.showcase.dao.form.ExampleFile;
+import br.net.mirante.singular.form.mform.provider.SSimpleProvider;
+import br.net.mirante.singular.form.mform.util.transformer.SCompositeListBuilder;
 import br.net.mirante.singular.showcase.dao.form.FileDao;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.List;
 
 @SuppressWarnings("serial")
 @Component("filesChoiceProvider")
-public class MFileIdsOptionsProvider implements SimpleProvider<ExampleFile, SInstance> {
+public class MFileIdsOptionsProvider implements SSimpleProvider {
 
     @Inject
     private FileDao filePersistence;
 
     @Override
-    public List<ExampleFile> load(SInstance ins) {
-        return filePersistence.list();
+    public void fill(SCompositeListBuilder builder) {
+        filePersistence.list().forEach(file -> {
+            builder.add()
+                    .set("id", file.getId())
+                    .set("hashSha1", file.getHashSha1());
+        });
     }
 
 }

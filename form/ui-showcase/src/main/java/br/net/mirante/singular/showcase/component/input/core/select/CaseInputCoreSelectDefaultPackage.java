@@ -22,7 +22,7 @@ public class CaseInputCoreSelectDefaultPackage extends SPackage {
 
         final STypeString favoriteFruit = root.addFieldString("favoriteFruit");
         favoriteFruit.withSelectView();
-        favoriteFruit.asAtrBasic().label("Fruta Favorita");
+        favoriteFruit.asAtr().label("Fruta Favorita");
         favoriteFruit.selectionOf("Maçã", "Laranja", "Banana", "Goiaba");
 
     }
@@ -31,7 +31,7 @@ public class CaseInputCoreSelectDefaultPackage extends SPackage {
         STypeString tipoSelection = tipoMyForm.addFieldString("opcoes" + sizeOptions + required);
         tipoSelection.selectionOf(createOptions(sizeOptions));
         tipoSelection.withRequired(required);
-        tipoSelection.asAtrBasic().label("Seleção de " + sizeOptions);
+        tipoSelection.asAtr().label("Seleção de " + sizeOptions);
     }
 
     private static String[] createOptions(int sizeOptions) {

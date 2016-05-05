@@ -13,10 +13,11 @@ import java.io.Serializable;
 public class CaseInputModalSearch extends CaseBase implements Serializable {
 
     public CaseInputModalSearch() {
-        super("Search Select", "Search");
-        setDescriptionHtml("Permite a seleção simples a partir de uma busca filtrada.");
+        super("Search Select", "In Memory Pagination");
+        setDescriptionHtml("Permite a seleção a partir de uma busca filtrada, fazendo o controle de paginação de forma automatica.");
         getAditionalSources().add(ResourceRef.forSource(Funcionario.class).orElse(null));
         getAditionalSources().add(ResourceRef.forSource(FuncionarioProvider.class).orElse(null));
+        getAditionalSources().add(ResourceRef.forSource(FuncionarioRepository.class).orElse(null));
     }
 
 }

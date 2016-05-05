@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -168,10 +169,10 @@ public class DependsOnTest {
         STypeString       category, element;
 
         static final Map<String, List<String>> OPTIONS = new ImmutableMap.Builder()
-                .put("fruits", Lists.newArrayList("avocado", "apple", "pineaple"))
-                .put("vegetables", Lists.newArrayList("cucumber", "radish"))
-                .put("condiments", Lists.newArrayList("mustard", "rosemary", "coriander"))
-                .build();
+            .put("fruits", Lists.newArrayList("avocado", "apple", "pineaple"))
+            .put("vegetables", Lists.newArrayList("cucumber", "radish"))
+            .put("condiments", Lists.newArrayList("mustard", "rosemary", "coriander"))
+            .build();
 
         protected void buildBaseType(STypeComposite<?> baseCompositeField) {
             this.baseCompositeField = baseCompositeField;

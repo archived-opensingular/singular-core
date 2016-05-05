@@ -8,7 +8,8 @@ package br.net.mirante.singular.form.mform.basic.view;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
+import br.net.mirante.singular.form.mform.provider.Provider;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
 
 /**
  * Decide qual a view mas adequada para uma seleção múltipla de tipos simples
@@ -24,15 +25,15 @@ class ViewRuleTypeListOfTypeSimpleSelectionOf extends ViewRule {
         if (listInstance instanceof SIList) {
             SIList<?> listType    = (SIList<?>) listInstance;
             SType<?>  elementType = listType.getElementsType();
-            if (elementType != null && elementType.asAtrProvider().getSimpleProvider() != null) {
-                return decideView(listInstance, elementType.asAtrProvider().getSimpleProvider());
+            if (elementType != null && elementType.asAtrProvider().getProvider() != null) {
+                return decideView(listInstance, elementType.asAtrProvider().getProvider());
             }
         }
         return null;
     }
 
-    private SView decideView(SInstance instance, SimpleProvider provider) {
-        int size = provider.load(instance).size();
+    private SView decideView(SInstance instance, Provider provider) {
+        int size = provider.load(ProviderContext.of(instance)).size();
         if (size <= 3) {
             return newInstance(SMultiSelectionByCheckboxView.class);
         } else if (size < 20) {

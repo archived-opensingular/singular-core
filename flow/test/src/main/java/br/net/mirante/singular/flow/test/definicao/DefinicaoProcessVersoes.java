@@ -5,7 +5,6 @@
 
 package br.net.mirante.singular.flow.test.definicao;
 
-
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.builder.BProcessRole;

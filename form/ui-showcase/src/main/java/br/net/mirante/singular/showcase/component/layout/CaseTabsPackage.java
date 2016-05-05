@@ -5,11 +5,7 @@
 
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
@@ -44,21 +40,21 @@ public class CaseTabsPackage extends SPackage {
 
         {
             experiencias.withView(SViewListByMasterDetail::new)
-                    .asAtrBasic().label("Experiências profissionais");
+                    .asAtr().label("Experiências profissionais");
             dtInicioExperiencia
-                    .asAtrBasic().label("Data inicial")
+                    .asAtr().label("Data inicial")
                     .asAtrBootstrap().colPreference(2);
             dtFimExperiencia
-                    .asAtrBasic().label("Data final")
+                    .asAtr().label("Data final")
                     .asAtrBootstrap().colPreference(2);
             empresa
-                    .asAtrBasic().label("Empresa")
+                    .asAtr().label("Empresa")
                     .asAtrBootstrap().colPreference(8);
             cargo
-                    .asAtrBasic().label("Cargo");
+                    .asAtr().label("Cargo");
             atividades
                     .withTextAreaView()
-                    .asAtrBasic().label("Atividades Desenvolvidas");
+                    .asAtr().label("Atividades Desenvolvidas");
         }
 
         //@destacar:bloco

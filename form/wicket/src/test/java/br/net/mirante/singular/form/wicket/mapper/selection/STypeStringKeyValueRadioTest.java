@@ -42,7 +42,7 @@ public class STypeStringKeyValueRadioTest {
                     .simpleConverter()
                     .simpleProviderOf("IMG", "TXT", "BIN");
             tipoDeMedia.withRadioView();
-            tipoDeMedia.asAtrBasic().label("Tipo do Arquivo");
+            tipoDeMedia.asAtr().label("Tipo do Arquivo");
         }
     }
 

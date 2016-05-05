@@ -340,7 +340,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         synchronized (this) {
             if (entityVersionCod == null) {
                 try {
-                    IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?> processEntityService = Flow.getConfigBean().getProcessEntityService();
+                    IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> processEntityService = Flow.getConfigBean().getProcessEntityService();
                     IEntityProcessVersion newVersion = processEntityService.generateEntityFor(this);
 
                     IEntityProcessVersion oldVersion = newVersion.getProcessDefinition().getLastVersion();

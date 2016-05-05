@@ -16,7 +16,7 @@ public class CaseInputCoreMultiSelectPickListPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
-        tipoMyForm.asAtrBasic().label("Salada de Frutas");
+        tipoMyForm.asAtr().label("Salada de Frutas");
         tipoMyForm.addFieldListOf("frutas", STypeString.class).selectionOf(String.class, new SMultiSelectionByPicklistView())
                 .selfIdAndDisplay()
                 .simpleProviderOf("Amora", "Banana", "Maçã", "Laranja", "Manga", "Melão", "Morango");

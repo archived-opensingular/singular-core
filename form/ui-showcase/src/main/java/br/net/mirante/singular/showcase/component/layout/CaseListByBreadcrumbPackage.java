@@ -5,13 +5,7 @@
 
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
@@ -24,9 +18,9 @@ public class CaseListByBreadcrumbPackage extends SPackage {
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         testForm.addFieldString("nome", true)
-                .asAtrBasic().label("Nome");
+                .asAtr().label("Nome");
         testForm.addFieldInteger("idade", true)
-                .asAtrBasic().label("Idade");
+                .asAtr().label("Idade");
         STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
         STypeComposite<?> experiencia = experiencias.getElementsType();
         STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
@@ -40,21 +34,21 @@ public class CaseListByBreadcrumbPackage extends SPackage {
             experiencias
                     .withView(SViewBreadcrumb::new)
             //@destacar:fim
-                    .asAtrBasic().label("Experiências profissionais");
+                    .asAtr().label("Experiências profissionais");
             dtInicioExperiencia
-                    .asAtrBasic().label("Data inicial")
+                    .asAtr().label("Data inicial")
                     .asAtrBootstrap().colPreference(2);
             dtFimExperiencia
-                    .asAtrBasic().label("Data final")
+                    .asAtr().label("Data final")
                     .asAtrBootstrap().colPreference(2);
             empresa
-                    .asAtrBasic().label("Empresa")
+                    .asAtr().label("Empresa")
                     .asAtrBootstrap().colPreference(8);
             cargo
-                    .asAtrBasic().label("Cargo");
+                    .asAtr().label("Cargo");
             atividades
                     .withTextAreaView()
-                    .asAtrBasic().label("Atividades Desenvolvidas");
+                    .asAtr().label("Atividades Desenvolvidas");
         }
 
     }

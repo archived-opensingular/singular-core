@@ -26,7 +26,7 @@ public class PanelListWithCompositeSelectionTest extends SingularFormBaseTest {
     protected void buildBaseType(STypeComposite<?> mockType) {
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> mockList = mockType.addFieldListOfComposite("mockList", "mockTypeComposite");
-        mockList.asAtrBasic().label("Mock Type Composite");
+        mockList.asAtr().label("Mock Type Composite");
         mockList.withView(SViewListByForm::new);
 
         final STypeComposite mockTypeCompostite = mockList.getElementsType();
@@ -39,7 +39,7 @@ public class PanelListWithCompositeSelectionTest extends SingularFormBaseTest {
         compositeSelection.selection()
                 .id(id)
                 .display(description)
-                .provider(builder -> {
+                .simpleProvider(builder -> {
                     builder.add().set(id, "a");
                     builder.add().set(description, "v_1");
                     builder.add().set(id, "b");

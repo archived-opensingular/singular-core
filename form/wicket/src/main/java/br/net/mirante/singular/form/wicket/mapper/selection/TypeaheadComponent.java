@@ -5,13 +5,13 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.provider.Provider;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -19,10 +19,7 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.markup.head.CssReferenceHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.head.*;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -37,6 +34,7 @@ import org.apache.wicket.util.string.StringValue;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -57,6 +55,13 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
  * @author Fabricio Buzeto
  */
 public class TypeaheadComponent extends Panel {
+
+    public static final CssReferenceHeaderItem CSS_REFERENCE = CssReferenceHeaderItem.forReference(new PackageResourceReference(TypeaheadComponent.class, "TypeaheadComponent.css"){
+        @Override
+        public List<HeaderItem> getDependencies() {
+            return SingularTemplate.getDefaultCSSUrls();
+        }
+    });
 
     private static final long serialVersionUID = -3639240121493651170L;
 
@@ -138,7 +143,7 @@ public class TypeaheadComponent extends Panel {
                 if (!Value.dehydrate(instance()).equals(lastValue)) {
                     lastValue = Value.dehydrate(instance());
                     final IFunction<Object, Object> idFunction = instance().asAtrProvider().getIdFunction();
-                    final SInstanceConverter              converter  = instance().asAtrProvider().getConverter();
+                    final SInstanceConverter        converter  = instance().asAtrProvider().getConverter();
                     if (idFunction != null && converter != null && !instance().isEmptyOfData()) {
                         final Serializable converted = converter.toObject(instance());
                         if (converted != null) {
@@ -174,23 +179,25 @@ public class TypeaheadComponent extends Panel {
     }
 
     private Optional<Serializable> getValueFromProvider(String key) {
+
         final Stream<Serializable> stream;
-        final Provider             provider = instance().asAtrProvider().getProvider();
+        final Provider             provider        = instance().asAtrProvider().getProvider();
+        final ProviderContext      providerContext = new ProviderContext();
+
+        providerContext.setInstance(instance());
+
+        if (dynamicFetcher != null) {
+            providerContext.setQuery(dynamicFetcher.getFilterModel().getObject());
+        } else {
+            providerContext.setQuery(StringUtils.EMPTY);
+        }
+
         if (provider != null) {
-            if (provider instanceof FilteredProvider) {
-                String filter = StringUtils.EMPTY;
-                if (dynamicFetcher != null) {
-                    filter = dynamicFetcher.getFilterModel().getObject();
-                }
-                stream = instance().asAtrProvider().getFilteredProvider().load(instance(), filter).stream();
-            } else if (provider instanceof SimpleProvider) {
-                stream = instance().asAtrProvider().getSimpleProvider().load(instance()).stream();
-            } else {
-                throw new SingularFormException("Provider informado não é compativel com typeahead.");
-            }
+            stream = provider.load(providerContext).stream();
         } else {
             throw new SingularFormException("Nenhum provider foi informado");
         }
+
         return stream.filter(o -> instance().asAtrProvider().getIdFunction().apply(o).equals(key)).findFirst();
     }
 
@@ -224,6 +231,7 @@ public class TypeaheadComponent extends Panel {
         js += "        name : 's-select-typeahead', ";
         js += "        display: 'value', ";
         js += "        typeaheadAppendToBody: 'true',";
+        js += "        limit: -1,";// não limita os resultados exibidos
         js += "        source: window.substringMatcher(" + jsOptionArray() + ") ";
         js += "     }";
         js += " );";
@@ -242,6 +250,7 @@ public class TypeaheadComponent extends Panel {
         js += "     {";
         js += "        name : 's-select-typeahead', ";
         js += "        display: 'value', ";
+        js += "        limit: -1,";// não limita os resultados exibidos
         js += "        source: " + createJSBloodhoundOpbject();
         js += "     }";
         js += " );";
@@ -273,27 +282,24 @@ public class TypeaheadComponent extends Panel {
     }
 
     private Map<String, String> optionsConfigMap() {
-        Map<String, String>                             map      = newLinkedHashMap();
-        final SInstance                                 instance = model.getObject();
-        final FilteredProvider<Serializable, SInstance> provider = instance.asAtrProvider().getFilteredProvider();
+
+        final Map<String, String> map             = newLinkedHashMap();
+        final SInstance           instance        = model.getObject();
+        final Provider            provider        = instance.asAtrProvider().getProvider();
+        final ProviderContext     providerContext = new ProviderContext();
+
+        providerContext.setInstance(instance);
+        providerContext.setQuery(StringUtils.EMPTY);
+
         if (provider != null) {
-            for (Serializable o : provider.load(instance, StringUtils.EMPTY)) {
+            for (Object o : provider.load(providerContext)) {
                 final String key     = String.valueOf(instance.asAtrProvider().getIdFunction().apply(o));
-                final String display = instance.asAtrProvider().getDisplayFunction().apply(o);
+                final String display = instance.asAtrProvider().getDisplayFunction().apply((Serializable) o);
                 map.put(key, display);
-                cache.put(key, new TypeaheadCache(o, display));
-            }
-        } else {
-            final SimpleProvider<Serializable, SInstance> fallBackProvider = instance.asAtrProvider().getSimpleProvider();
-            if (fallBackProvider != null) {
-                for (Serializable o : fallBackProvider.load(instance)) {
-                    final String key     = String.valueOf(instance.asAtrProvider().getIdFunction().apply(o));
-                    final String display = instance.asAtrProvider().getDisplayFunction().apply(o);
-                    map.put(key, display);
-                    cache.put(key, new TypeaheadCache(o, display));
-                }
+                cache.put(key, new TypeaheadCache((Serializable) o, display));
             }
         }
+
         return map;
     }
 
@@ -302,7 +308,13 @@ public class TypeaheadComponent extends Panel {
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
-        return new PackageResourceReference(getClass(), resourceName);
+        return new PackageResourceReference(getClass(), resourceName){
+            @Override
+            public List<HeaderItem> getDependencies() {
+                // TODO Auto-generated method stub
+                return super.getDependencies();
+            }
+        };
     }
 
     @Override
@@ -360,11 +372,11 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
 
     private Map<String, String> values(String filter) {
         filterModel.setObject(filter);
-        Map<String, String>                             map      = newLinkedHashMap();
-        final SInstance                                 instance = model.getObject();
-        final FilteredProvider<Serializable, SInstance> provider = instance.asAtrProvider().getFilteredProvider();
+        Map<String, String>                     map      = newLinkedHashMap();
+        final SInstance                         instance = model.getObject();
+        final Provider<Serializable, SInstance> provider = instance.asAtrProvider().getProvider();
         if (provider != null) {
-            for (Serializable s : provider.load(instance, filter)) {
+            for (Serializable s : provider.load(ProviderContext.of(instance, filter))) {
                 String key     = String.valueOf(instance.asAtrProvider().getIdFunction().apply(s));
                 String display = instance.asAtrProvider().getDisplayFunction().apply(s);
                 map.put(key, display);
