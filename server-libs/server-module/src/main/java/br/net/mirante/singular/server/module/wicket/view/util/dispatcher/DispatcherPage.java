@@ -1,5 +1,28 @@
 package br.net.mirante.singular.server.module.wicket.view.util.dispatcher;
 
+import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
+import java.lang.reflect.Constructor;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.string.StringValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wicketstuff.annotation.mount.MountPath;
+
 import br.net.mirante.singular.flow.core.ITaskPageStrategy;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskUserExecutable;
@@ -16,25 +39,6 @@ import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBeh
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
-import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.request.Request;
-import org.apache.wicket.request.flow.RedirectToUrlException;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.string.StringValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.wicketstuff.annotation.mount.MountPath;
-
-import javax.inject.Inject;
-import java.lang.reflect.Constructor;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 @SuppressWarnings("serial")
 @MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
@@ -67,7 +71,12 @@ public class DispatcherPage extends WebPage {
     }
 
     protected AbstractFormPage.FormPageConfig parseParameters(Request request) {
+        AbstractFormPage.FormPageConfig config = buildConfig(request);
+        return parseParameters(request, config);
+    }
 
+    protected AbstractFormPage.FormPageConfig parseParameters(Request request, AbstractFormPage.FormPageConfig config) {
+        return null;
     }
 
     protected void dispatch(AbstractFormPage.FormPageConfig config) {
@@ -127,8 +136,9 @@ public class DispatcherPage extends WebPage {
 
         StringValue action = request.getRequestParameters().getParameterValue("a");
         StringValue formId = request.getRequestParameters().getParameterValue("k");
+        StringValue formName = request.getRequestParameters().getParameterValue(SIGLA_FORM_NAME);
 
-        if(action.isEmpty()){
+        if (action.isEmpty()) {
             throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + "/singular");
         }
 
@@ -138,13 +148,17 @@ public class DispatcherPage extends WebPage {
         formPageConfig.formId = formId.toString("");
         formPageConfig.annotationMode = formActions.getAnnotationMode() == null? AnnotationMode.NONE : formActions.getAnnotationMode();
         formPageConfig.viewMode = formActions.getViewMode();
-        formPageConfig.type = SPackagePeticaoCanabidiol.NOME_COMPLETO;
+        formPageConfig.type = formName.toString();
 
         return formPageConfig;
     }
 
     protected TaskInstance findCurrentTaskByPetitionId(String petitionId) {
-        return analisePeticaoService.findCurrentTaskByPetitionId(petitionId);
+        if (StringUtils.isBlank(petitionId)) {
+            return null;
+        } else {
+            return analisePeticaoService.findCurrentTaskByPetitionId(petitionId);
+        }
     }
 
     protected Class<? extends AbstractFormPage> getDefaultFormPageClass() {

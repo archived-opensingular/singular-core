@@ -1,5 +1,13 @@
 package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.hibernate.Query;
+
+import com.google.common.base.Joiner;
+
 import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
@@ -8,12 +16,6 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPe
 import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
-import com.google.common.base.Joiner;
-import org.hibernate.Query;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
 
@@ -140,6 +142,6 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                 .append(" inner join pi.tasks ti ")
                 .append(" where ti.endDate is null and pet.cod = :petitionId  ");
 
-        return getSession().createQuery(sb.toString()).setParameter("petitionId", petitionId).list();
+        return getSession().createQuery(sb.toString()).setParameter("petitionId", Long.valueOf(petitionId)).list();
     }
 }

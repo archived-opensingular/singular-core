@@ -13,12 +13,15 @@ public class ProcessDTO implements Serializable {
 
     private String abbreviation;
 
+    private String formName;
+
     public ProcessDTO() {
     }
 
-    public ProcessDTO(String abbreviation, String name) {
+    public ProcessDTO(String abbreviation, String name, String formName) {
         this.abbreviation = abbreviation;
         this.name = name;
+        this.formName = formName;
     }
 
     public String getName() {
@@ -35,5 +38,9 @@ public class ProcessDTO implements Serializable {
 
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
+    }
+
+    public String getFormName() {
+        return formName;
     }
 }

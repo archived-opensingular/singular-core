@@ -5,6 +5,8 @@ public class Parameters {
 
     public static final String SIGLA_PARAM_NAME = "sgp";
 
+    public static final String SIGLA_FORM_NAME = "f";
+
     public static final String INSTANCE_ID = "instanceId";
 
     public static final String PROCESS_GROUP_PARAM_NAME = "ctx";
