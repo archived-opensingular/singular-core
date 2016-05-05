@@ -12,7 +12,6 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import java.util.Arrays;
 
-import static br.net.mirante.singular.form.mform.util.SQuery.$;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
@@ -57,11 +56,12 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
         empresaPropria = this.addField("empresaPropria", STypeEmpresaPropria.class);
 
-        empresaPropria.withUpdateListener((i) ->
-                $(i)
-                        .find(empresaPropria.razaoSocialPropria).val("Empresa de teste").end()
-                        .find(empresaPropria.cnpj).val("11111111000191").end()
-                        .find(empresaPropria.endereco).val("SCLN 211 BLOCO B SUBSOLO").end());
+        empresaPropria.withUpdateListener((ins) -> {
+                    ins.findNearest(empresaPropria.razaoSocialPropria).ifPresent(_ins -> _ins.setValue("Empresa de teste"));
+                    ins.findNearest(empresaPropria.cnpj).ifPresent(_ins -> _ins.setValue("11111111000191"));
+                    ins.findNearest(empresaPropria.endereco).ifPresent(_ins -> _ins.setValue("SCLN 211 BLOCO B SUBSOLO"));
+                }
+        );
 
         empresaPropria.asAtr()
                 .dependsOn(tipoLocalFabricacao)

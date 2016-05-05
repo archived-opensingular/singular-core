@@ -14,13 +14,14 @@ import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessVersionEntity;
 import br.net.mirante.singular.persistence.entity.RoleDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.RoleInstanceEntity;
+import br.net.mirante.singular.persistence.entity.RoleTaskEntity;
 import br.net.mirante.singular.persistence.entity.TaskDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.TaskTransitionVersionEntity;
 import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 
 public class DefaultHibernateProcessDefinitionService
-        extends AbstractHibernateProcessDefinitionService<CategoryEntity, ProcessDefinitionEntity, ProcessVersionEntity, TaskDefinitionEntity, TaskVersionEntity, TaskTransitionVersionEntity, RoleDefinitionEntity, RoleInstanceEntity> {
+        extends AbstractHibernateProcessDefinitionService<CategoryEntity, ProcessDefinitionEntity, ProcessVersionEntity, TaskDefinitionEntity, TaskVersionEntity, TaskTransitionVersionEntity, RoleDefinitionEntity, RoleInstanceEntity, RoleTaskEntity> {
 
     public DefaultHibernateProcessDefinitionService(SessionLocator sessionLocator) {
         super(sessionLocator);
@@ -78,5 +79,17 @@ public class DefaultHibernateProcessDefinitionService
         TaskDefinitionEntity taskDefinition = new TaskDefinitionEntity();
         taskDefinition.setProcessDefinition(process);
         return taskDefinition;
+    }
+
+    @Override
+    protected RoleTaskEntity addRoleToTask(RoleDefinitionEntity roleDefinition, TaskDefinitionEntity taskDefinition) {
+        RoleTaskEntity roleTask = new RoleTaskEntity();
+        roleTask.setRoleDefinition(roleDefinition);
+        roleTask.setTaskDefinition(taskDefinition);
+        if (taskDefinition.getRolesTask() == null) {
+            taskDefinition.setRolesTask(new ArrayList<>());
+        }
+        taskDefinition.getRolesTask().add(roleTask);
+        return roleTask;
     }
 }

@@ -14,12 +14,12 @@ import br.net.mirante.singular.persistence.util.Constants;
 import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
 
 /**
- * The persistent class for the TB_PAPEL database table.
+ * The persistent class for the TaskPermissionEntity database table.
  */
 @Entity
-@GenericGenerator(name = AbstractRoleDefinitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
-@Table(name = "TB_DEFINICAO_PAPEL", schema = Constants.SCHEMA)
-public class RoleDefinitionEntity extends AbstractRoleDefinitionEntity<ProcessDefinitionEntity, RoleTaskEntity> {
+@GenericGenerator(name = AbstractTaskPermissionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@Table(name = "RL_PERMISSAO_TAREFA", schema = Constants.SCHEMA)
+public class TaskPermissionEntity extends AbstractTaskPermissionEntity<TaskDefinitionEntity> {
     private static final long serialVersionUID = 1L;
 
 }

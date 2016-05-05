@@ -8,7 +8,8 @@ import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
 import br.net.mirante.singular.form.mform.converter.SimpleSInstanceConverter;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.mform.provider.InMemoryFilteredPagedProviderProxy;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
+import br.net.mirante.singular.form.mform.provider.InMemoryFilteredPagedProviderDecorator;
 import br.net.mirante.singular.form.mform.provider.ProviderContext;
 import br.net.mirante.singular.form.mform.provider.filter.FilterConfig;
 import br.net.mirante.singular.form.mform.provider.filter.FilterConfig.Column;
@@ -58,7 +59,7 @@ class SearchModalBodyPanel extends Panel {
     }
 
     private void validate() {
-        if (getInstance().asAtrProvider().getFilteredPagedProvider() == null) {
+        if (getInstance().asAtrProvider().getFilteredProvider() == null) {
             throw new SingularFormException("O provider não foi informado");
         }
         if (getInstance().asAtrProvider().getConverter() == null
@@ -72,18 +73,18 @@ class SearchModalBodyPanel extends Panel {
         super.onInitialize();
 
         final FilterConfigBuilder definitionBuilder = new FilterConfigBuilder();
-        getInstance().asAtrProvider().getFilteredPagedProvider().configureFilter(definitionBuilder);
+        getInstance().asAtrProvider().getFilteredProvider().configureFilter(definitionBuilder);
         final FilterConfig filterConfig = definitionBuilder.build();
 
-        FilteredPagedProvider provider = getInstance().asAtrProvider().getFilteredPagedProvider();
+        FilteredProvider provider = getInstance().asAtrProvider().getFilteredProvider();
 
-        if (!filterConfig.isLazy()) {
-            provider = new InMemoryFilteredPagedProviderProxy<>(provider);
+        if (!(provider instanceof FilteredPagedProvider)) {
+            provider = new InMemoryFilteredPagedProviderDecorator<>(provider);
         }
 
         add(innerSingularFormPanel = buildInnerSingularFormPanel(filterConfig));
         add(buildFilterButton());
-        add(resultTable = buildResultTable(filterConfig, provider));
+        add(resultTable = buildResultTable(filterConfig, (FilteredPagedProvider) provider));
     }
 
     private AjaxButton buildFilterButton() {

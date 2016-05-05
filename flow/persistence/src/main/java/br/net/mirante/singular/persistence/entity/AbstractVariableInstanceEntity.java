@@ -56,6 +56,7 @@ public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IE
     @JoinColumn(name = "CO_TIPO_VARIAVEL")
     private VAR_TYPE type;
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -64,6 +65,7 @@ public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IE
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_INSTANCE getProcessInstance() {
         return processInstance;
     }
@@ -72,6 +74,7 @@ public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IE
         this.processInstance = processInstance;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -80,18 +83,22 @@ public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IE
         this.name = name;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
 
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
 
+    @Override
     public VAR_TYPE getType() {
         return type;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void setType(IEntityVariableType type) {
         this.type = (VAR_TYPE) type;

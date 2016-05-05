@@ -166,7 +166,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
             });
             formaFarmaceutica
                     .asAtrProvider()
-                    .filteredPagedProvider(new FormaFarmaceuticaProvider() {
+                    .filteredProvider(new FormaFarmaceuticaProvider() {
                         @Override
                         List<Integer> getIds(SInstance root) {
                             final SIList<SIComposite> formulas = root.findNearest(formulasHomeopaticas).orElse(null);

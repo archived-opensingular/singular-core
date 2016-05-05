@@ -17,7 +17,7 @@ public class AtrProvider extends STranslatorForAttribute {
         super(alvo);
     }
 
-    public <T extends Serializable> AtrProvider filteredPagedProvider(FilteredPagedProvider<T> valor) {
+    public <T extends Serializable> AtrProvider filteredProvider(FilteredProvider<T> valor) {
         return provider(valor);
     }
 
@@ -53,8 +53,8 @@ public class AtrProvider extends STranslatorForAttribute {
         return getAttributeValue(SPackageProvider.ID_FUNCTION);
     }
 
-    public FilteredPagedProvider getFilteredPagedProvider() {
-        return (FilteredPagedProvider) getProvider();
+    public FilteredProvider getFilteredProvider() {
+        return (FilteredProvider) getProvider();
     }
 
     public Provider getProvider() {

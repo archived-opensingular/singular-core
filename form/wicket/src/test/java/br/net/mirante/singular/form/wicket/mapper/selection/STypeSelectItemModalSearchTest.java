@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
-import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.provider.ProviderContext;
 import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
@@ -36,7 +36,7 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
         notebook.addFieldString("sistemaOperacional");
 
         notebook.withView(new SViewSearchModal());
-        notebook.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<Notebook>() {
+        notebook.asAtrProvider().filteredProvider(new FilteredProvider<Notebook>() {
             @Override
             public List<Notebook> load(ProviderContext<SInstance> context) {
                 return Arrays.asList(new Notebook("Apple", "4GB", "1T", "OSX"), new Notebook("Samsug", "8GB", "1TB", "ArchLinux"));
@@ -52,7 +52,6 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
                 builder.addColumn("memoria", "Memoria");
                 builder.addColumn("disco", "Disco");
                 builder.addColumn("sistemaOperacional", "Sistema Operacional");
-                builder.lazy(false);
             }
         });
 

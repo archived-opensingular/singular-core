@@ -21,9 +21,7 @@ public class LazyFuncionarioProvider implements FilteredPagedProvider<Funcionari
                 })
                 .addColumn("nome", "Nome")
                 .addColumn("funcao", "Função")
-                .addColumn("idade", "Idade")
-                //@destacar
-                .lazy(true);
+                .addColumn("idade", "Idade");
     }
 
     @Override
@@ -35,7 +33,7 @@ public class LazyFuncionarioProvider implements FilteredPagedProvider<Funcionari
     @Override
     public List<Funcionario> load(ProviderContext<SInstance> context) {
         //@destacar
-        return repository.get(context.getFilterInstance()).subList((int) context.getFirst(), (int) (context.getFirst() + context.getCount()));
+        return repository.get(context.getFilterInstance()).subList(context.getFirst(), context.getFirst() + context.getCount());
     }
 
 }

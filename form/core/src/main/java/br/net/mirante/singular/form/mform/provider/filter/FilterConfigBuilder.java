@@ -35,11 +35,6 @@ public class FilterConfigBuilder {
         return this;
     }
 
-    public FilterConfigBuilder lazy(boolean lazy) {
-        filterConfig.setLazy(lazy);
-        return this;
-    }
-
     public FilterConfig build() {
         return filterConfig;
     }

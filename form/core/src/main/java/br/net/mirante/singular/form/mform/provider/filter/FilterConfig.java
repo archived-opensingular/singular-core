@@ -13,7 +13,6 @@ public class FilterConfig implements Serializable {
     private List<Column>                           columns;
     private IConsumer<STypeComposite<SIComposite>> filterBuilder;
     private boolean                                cache;
-    private boolean                                lazy;
 
     public List<Column> getColumns() {
         return columns;
@@ -37,14 +36,6 @@ public class FilterConfig implements Serializable {
 
     public void setCache(boolean cache) {
         this.cache = cache;
-    }
-
-    public boolean isLazy() {
-        return lazy;
-    }
-
-    public void setLazy(boolean lazy) {
-        this.lazy = lazy;
     }
 
     public static class Column implements Serializable {

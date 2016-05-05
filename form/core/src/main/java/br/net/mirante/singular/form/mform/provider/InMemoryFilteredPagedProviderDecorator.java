@@ -9,20 +9,20 @@ import java.util.List;
 import static br.net.mirante.singular.form.mform.util.transformer.Value.Content;
 import static br.net.mirante.singular.form.mform.util.transformer.Value.dehydrate;
 
-public class InMemoryFilteredPagedProviderProxy<R extends Serializable> implements FilteredPagedProvider<R> {
+public class InMemoryFilteredPagedProviderDecorator<R extends Serializable> implements FilteredPagedProvider<R> {
 
-    private final FilteredPagedProvider filteredPagedProvider;
-    private       boolean               cached;
-    private       List<R>               values;
-    private       Content               lastContent;
+    private final FilteredProvider FilteredProvider;
+    private       boolean          cached;
+    private       List<R>          values;
+    private       Content          lastContent;
 
-    public InMemoryFilteredPagedProviderProxy(FilteredPagedProvider filteredPagedProvider) {
-        this.filteredPagedProvider = filteredPagedProvider;
+    public InMemoryFilteredPagedProviderDecorator(FilteredProvider FilteredProvider) {
+        this.FilteredProvider = FilteredProvider;
     }
 
     @Override
     public void configureFilter(FilterConfigBuilder fcb) {
-        filteredPagedProvider.configureFilter(fcb);
+        FilteredProvider.configureFilter(fcb);
         cached = fcb.build().isCache();
     }
 
@@ -31,12 +31,12 @@ public class InMemoryFilteredPagedProviderProxy<R extends Serializable> implemen
         if (cached) {
             final Content content = dehydrate(context.getFilterInstance());
             if (values == null || !content.equals(lastContent)) {
-                values = filteredPagedProvider.load(context);
+                values = FilteredProvider.load(context);
                 lastContent = content;
             }
             return values.size();
         } else {
-            return filteredPagedProvider.load(context).size();
+            return FilteredProvider.load(context).size();
         }
     }
 
@@ -45,12 +45,12 @@ public class InMemoryFilteredPagedProviderProxy<R extends Serializable> implemen
         if (cached) {
             final Content content = dehydrate(context.getFilterInstance());
             if (values == null || !content.equals(lastContent)) {
-                values = filteredPagedProvider.load(context);
+                values = FilteredProvider.load(context);
                 lastContent = content;
             }
             return values;
         } else {
-            return filteredPagedProvider.load(context).subList((int) context.getFirst(), (int) (context.getFirst() + context.getCount()));
+            return FilteredProvider.load(context).subList((int) context.getFirst(), (int) (context.getFirst() + context.getCount()));
         }
     }
 
