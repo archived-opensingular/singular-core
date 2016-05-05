@@ -5,18 +5,18 @@
 
 package br.net.mirante.singular.form.mform;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.util.xml.MElement;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
 
 public abstract class SInstance implements SAttributeEnabled {
 
@@ -109,10 +109,10 @@ public abstract class SInstance implements SAttributeEnabled {
          * outra hierarquia deveria haver uma chamada para 'destacar' a
          * minstancia da sua hierarquia atual
          */
-        if (this.parent != null && pai != null){
+        if (this.parent != null && pai != null) {
             throw new SingularFormException(String.format(" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
-                    + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
-                    + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()));
+                + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
+                + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()));
         }
         this.parent = pai;
         if (pai != null && pai.isAttribute()) {
@@ -272,7 +272,7 @@ public abstract class SInstance implements SAttributeEnabled {
         }
         if (!(instance instanceof SISimple)) {
             throw new SingularFormException("O atributo " + instance.getPathFull() + " não é do tipo " + SISimple.class.getName(),
-                    instance);
+                instance);
         }
         ((SISimple) instance).setValueCalculation(valueCalculation);
     }
@@ -349,7 +349,7 @@ public abstract class SInstance implements SAttributeEnabled {
             return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) classeAlvo);
         }
         throw new RuntimeException(
-                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
+            "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
     }
     @Override
     public <T> T as(Function<SAttributeEnabled, T> aspectFactory) {
@@ -374,7 +374,7 @@ public abstract class SInstance implements SAttributeEnabled {
     public void updateExists() {
         SInstances.updateBooleanAttribute(this, SPackageBasic.ATR_EXISTS, SPackageBasic.ATR_EXISTS_FUNCTION);
         if (!exists())
-            SInstances.visitAll(this, true, SInstance::resetValue);
+            SInstances.visitPostOrder(this, (i, v) -> i.resetValue());
     }
 
     protected void resetValue() {}
@@ -453,7 +453,7 @@ public abstract class SInstance implements SAttributeEnabled {
         onRemove();
         if (getFlag(InstanceFlags.RemovendoInstancia)) {
             throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
-                    + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
+                + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
         }
         setParent(null);
         removeChildren();
