@@ -14,13 +14,18 @@ import java.util.function.Predicate;
  */
 public class CurrentTaskPredicate implements Predicate<SInstance>{
     private final ITaskDefinition[] referenceTasks;
+    private final boolean negate;
     private TaskInstanceEntity currentTask;
 
     public static CurrentTaskPredicate in(ITaskDefinition ... referenceTask){
-        return new CurrentTaskPredicate(referenceTask);
+        return new CurrentTaskPredicate(false, referenceTask);
+    }
+    public static CurrentTaskPredicate notIn(ITaskDefinition ... referenceTask){
+        return new CurrentTaskPredicate(true , referenceTask);
     }
 
-    public CurrentTaskPredicate(ITaskDefinition ... referenceTasks) {
+    public CurrentTaskPredicate(boolean negate, ITaskDefinition ... referenceTasks) {
+        this.negate = negate;
         this.referenceTasks = referenceTasks;
 
     }
@@ -28,8 +33,10 @@ public class CurrentTaskPredicate implements Predicate<SInstance>{
     @Override
     public boolean test(SInstance x) {
         updateCurrentTask(x);
-        return Optional.ofNullable(currentTask).map(this::matchesReferenceTask
-        ).orElse(false);
+        Boolean result = Optional.ofNullable(currentTask)
+                .map(this::matchesReferenceTask).orElse(false);
+        if (negate) return !result;
+        return result ;
     }
 
     private boolean matchesReferenceTask(TaskInstanceEntity t) {

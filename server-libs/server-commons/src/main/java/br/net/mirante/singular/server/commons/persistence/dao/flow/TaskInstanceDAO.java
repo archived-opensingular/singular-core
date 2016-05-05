@@ -43,11 +43,11 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
 
-    public List<? extends TaskInstanceDTO> findTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas) {
+    public List<? extends TaskInstanceDTO> findTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
         return buildQuery(sortProperty, ascending, siglaFluxo, idsPerfis, filtroRapido, concluidas, false).setMaxResults(count).setFirstResult(first).list();
     }
 
-    protected Query buildQuery(String sortProperty, boolean ascending, String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas, boolean count) {
+    protected Query buildQuery(String sortProperty, boolean ascending, String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas, boolean count) {
         String selectClause =
                 count ?
                         " count( distinct ti )" :
@@ -63,7 +63,6 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                                 " ti.beginDate,  " +
                                 " pi.beginDate, " +
                                 " tv.type," +
-                                " tr.cod in (" + Joiner.on(",").join(idsPerfis) + ")," +
                                 " pg.cod, " +
                                 " pg.connectionURL " +
                                 ") ";
@@ -128,7 +127,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
 
-    public Integer countTasks(String siglaFluxo, List<Long> idsPerfis, String filtroRapido, boolean concluidas) {
+    public Integer countTasks(String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
         return ((Number) buildQuery(null, true, siglaFluxo, idsPerfis, filtroRapido, concluidas, true).uniqueResult()).intValue();
     }
 

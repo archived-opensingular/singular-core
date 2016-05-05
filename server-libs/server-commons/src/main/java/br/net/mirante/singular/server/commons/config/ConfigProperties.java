@@ -1,10 +1,8 @@
 package br.net.mirante.singular.server.commons.config;
 
 
-import br.net.mirante.singular.server.commons.exception.SingularServerException;
-import org.springframework.util.ResourceUtils;
+import br.net.mirante.singular.commons.base.SingularProperties;
 
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -13,24 +11,11 @@ import java.util.Properties;
  */
 public class ConfigProperties {
 
-    public static final String SINGULAR_WS_ENDERECO = "singular.ws.endereco";
-    public static final String SINGULAR_SERVIDOR_ENDERECO = "singular.servidor.endereco";
-    public static final String SINGULAR_MODULE_FORM_ENDERECO = "singular.module.form.endereco";
-    public static final String SINGULAR_DEV_MODE = "singular.config.dev";
-    private static Properties propertiesServer = new Properties();
-
-    static {
-        try {
-            String server = System.getProperty("singular.server.props.server", "classpath:singular.properties");
-            propertiesServer.load(ResourceUtils.getURL(server).openStream());
-        } catch (IOException e) {
-            throw new SingularServerException(
-                    "É necessário que os arquivo  singular.properties esteja disponivel na raiz do classpath da aplicação.", e);
-        }
-    }
-
-    private ConfigProperties() {
-    }
+    public static final  String     SINGULAR_WS_ENDERECO          = "singular.ws.endereco";
+    public static final  String     SINGULAR_SERVIDOR_ENDERECO    = "singular.servidor.endereco";
+    public static final  String     SINGULAR_MODULE_FORM_ENDERECO = "singular.module.form.endereco";
+    public static final  String     SINGULAR_DEV_MODE             = "singular.config.dev";
+    private static final Properties PROPERTIES_SERVER             = SingularProperties.INSTANCE.getProperties();
 
     /**
      * Permite acesso as propriedades configuradas para servidor de peticionamento como um todo:
@@ -46,10 +31,9 @@ public class ConfigProperties {
         return lookupProperty(context.getPropertiesBaseKey() + "." + key);
     }
 
-
     private static String lookupProperty(String key) {
-        if (propertiesServer.containsKey(key)) {
-            Object value = propertiesServer.get(key);
+        if (PROPERTIES_SERVER.containsKey(key)) {
+            Object value = PROPERTIES_SERVER.get(key);
             return value == null ? null : value.toString();
         }
         return System.getProperty(key);

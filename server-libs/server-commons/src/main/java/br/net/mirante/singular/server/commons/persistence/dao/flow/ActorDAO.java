@@ -1,14 +1,16 @@
 package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
+import java.sql.PreparedStatement;
+
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+
 import br.net.mirante.singular.commons.base.SingularProperties;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.support.persistence.BaseDAO;
-import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
-
-import java.sql.PreparedStatement;
 
 
 public class ActorDAO extends BaseDAO<Actor, Integer> {
@@ -64,7 +66,7 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
         }
 
         if (result == null && codUsuario != null ){
-            result =  (MUser) getSession().createCriteria(Actor.class).add(Restrictions.eq("codUsuario", codUsuario)).uniqueResult();
+            result =  (MUser) getSession().createCriteria(Actor.class).add(Restrictions.ilike("codUsuario", codUsuario)).uniqueResult();
         }
 
         if (result == null && cod == null) {
@@ -83,6 +85,10 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
             }
             getSession().flush();
             result =  (MUser) getSession().createCriteria(Actor.class).add(Restrictions.eq("codUsuario", codUsuario)).uniqueResult();
+
+            if (result == null) {
+                throw new SingularServerException("Usuário que deveria ter sido criado não pode ser recuperado.");
+            }
         }
         return result;
     }

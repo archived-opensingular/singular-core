@@ -1,15 +1,15 @@
 package br.net.mirante.singular.server.commons.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
-import org.apache.commons.lang3.math.NumberUtils;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 public class AnalisePeticaoService<T extends TaskInstanceDTO> {
@@ -17,8 +17,8 @@ public class AnalisePeticaoService<T extends TaskInstanceDTO> {
     @Inject
     private TaskInstanceDAO taskInstanceDAO;
 
-    private List<Long> getIdsPerfis() {
-        return SingularSession.get().getRoles().stream().map(s -> NumberUtils.toLong(s, 0)).filter(i -> i != 0).collect(Collectors.toList());
+    private List<String> getIdsPerfis() {
+        return SingularSession.get().getRoles().stream().collect(Collectors.toList());
     }
 
 
