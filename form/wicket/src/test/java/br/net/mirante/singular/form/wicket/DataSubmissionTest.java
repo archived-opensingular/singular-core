@@ -1,7 +1,10 @@
 package br.net.mirante.singular.form.wicket;
 
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
@@ -18,6 +21,7 @@ import java.util.Optional;
 
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -52,8 +56,8 @@ public class DataSubmissionTest {
 
         @Test public void testEditRendering() {
             List<TextField> tags = (List) findTag(form.getForm(), TextField.class);
-            Assertions.assertThat(tags.get(0).getValue()).isEqualTo("value1");
-            Assertions.assertThat(tags.get(1).getValue()).isEqualTo("value2");
+            assertThat(tags.get(0).getValue()).isEqualTo("value1");
+            assertThat(tags.get(1).getValue()).isEqualTo("value2");
         }
 
         @Test public void submissionUpdatesInstance() {
@@ -65,9 +69,9 @@ public class DataSubmissionTest {
 
             form.submit();
 
-            Assertions.assertThat(page.getCurrentInstance().getValue(data1))
+            assertThat(page.getCurrentInstance().getValue(data1))
                     .isEqualTo("nvalue1");
-            Assertions.assertThat(page.getCurrentInstance().getValue(data2))
+            assertThat(page.getCurrentInstance().getValue(data2))
                     .isEqualTo("nvalue2");
         }
     }
@@ -82,8 +86,8 @@ public class DataSubmissionTest {
 
         @Test public void testEditRendering() {
             List<TextField> tags = (List) findTag(form.getForm(), TextField.class);
-            Assertions.assertThat(tags.get(0).getValue()).isEqualTo("value1");
-            Assertions.assertThat(tags.get(1).getValue()).isEqualTo("value2");
+            assertThat(tags.get(0).getValue()).isEqualTo("value1");
+            assertThat(tags.get(1).getValue()).isEqualTo("value2");
         }
 
         @Test public void submissionUpdatesInstance() {
@@ -92,9 +96,9 @@ public class DataSubmissionTest {
 
             form.submit();
 
-            Assertions.assertThat(page.getCurrentInstance().getValue(data1))
+            assertThat(page.getCurrentInstance().getValue(data1))
                     .isEqualTo("value1");
-            Assertions.assertThat(page.getCurrentInstance().getValue(data2))
+            assertThat(page.getCurrentInstance().getValue(data2))
                     .isEqualTo("value2");
         }
     }
@@ -114,17 +118,65 @@ public class DataSubmissionTest {
             List<TextField> tags = (List) findTag(form.getForm(), TextField.class);
             TextField text1 = tags.get(0);
 
-            Assertions.assertThat(page.getCurrentInstance().getValue(data1))
+            assertThat(page.getCurrentInstance().getValue(data1))
                     .isEqualTo("value1");
-            Assertions.assertThat(page.getCurrentInstance().getValue(data2))
+            assertThat(page.getCurrentInstance().getValue(data2))
                     .isEqualTo("value2");
 
             form.submit();
 
-            Assertions.assertThat(page.getCurrentInstance().getValue(data1))
+            assertThat(page.getCurrentInstance().getValue(data1))
                     .isEqualTo("value1");
-            Assertions.assertThat(page.getCurrentInstance().getValue(data2))
+            assertThat(page.getCurrentInstance().getValue(data2))
                     .isEqualTo("value2");
+        }
+    }
+
+    public static class EreaseDependsOnData extends Base {
+
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseType) {
+            super.buildBaseType(baseType);
+            data2.asAtr().dependsOn(data1);
+            data2.asAtr().visible((x)->{
+                SIComposite parent = (SIComposite) x.getParent();
+                SInstance d1 =  parent.getField(data1.getNameSimple());
+                if(d1 == null || d1.getValue() == null) return false;
+                return !d1.getValue().equals("clear");
+            });
+        }
+
+        @Override
+        protected void populateInstance(SIComposite instance) {
+            super.populateInstance(instance);
+
+
+            page.setAsEditView();
+        }
+
+        @Test public void stopsDisplayingIt() {
+            List<TextField> tags = (List) findTag(tester.getLastRenderedPage(), TextField.class);
+            TextField text1 = tags.get(0), text2 = tags.get(1);
+
+            assertThat(page.getCurrentInstance().getValue(data1))
+                    .isEqualTo("value1");
+            assertThat(page.getCurrentInstance().getValue(data2))
+                    .isEqualTo("value2");
+
+            assertThat(tester.getTagById(text1.getMarkupId())).isNotNull();
+            assertThat(tester.getTagById(text2.getMarkupId())).isNotNull();
+
+            form.setValue(text1, "clear");
+            tester.executeAjaxEvent(text1, "onchange");
+
+            assertThat(tester.getTagById(text1.getMarkupId())).isNotNull();
+            assertThat(tester.getTagById(text2.getMarkupId())).isNull();
+
+
+            assertThat(page.getCurrentInstance().getValue(data1))
+                    .isEqualTo("clear");
+            assertThat(page.getCurrentInstance().getValue(data2))
+                    .isNull();
         }
     }
 }
