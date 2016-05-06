@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.core.*;
+import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.wicket.mapper.*;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
 import org.apache.wicket.Component;
@@ -54,7 +55,6 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     }
 
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
-
         if (ctx.getParent() == null || ctx.isShowBreadcrumb()) {
             ctx.init(this, viewMode);
             BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs()) {

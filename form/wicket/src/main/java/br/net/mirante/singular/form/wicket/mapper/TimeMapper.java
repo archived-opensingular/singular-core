@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by nuk on 04/04/16.
+ * Mapper for data type responsible for storing time (hour and minutes).
  */
 public class TimeMapper extends ControlsFieldComponentAbstractMapper {
 

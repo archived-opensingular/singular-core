@@ -74,10 +74,9 @@ public class TypeaheadComponent extends Panel {
     private final IModel<? extends SInstance> model;
     private       WebMarkupContainer          container;
     private       BloodhoundDataBehavior      dynamicFetcher;
-    private       TextField                   valueField;
+    private       TextField<String>           valueField;
     private       TextField<String>           labelField;
 
-    @SuppressWarnings("unchecked")
     public TypeaheadComponent(String id, IModel<? extends SInstance> model, SViewAutoComplete.Mode fetch) {
         super(id);
         this.model = model;
@@ -101,7 +100,7 @@ public class TypeaheadComponent extends Panel {
     @SuppressWarnings("unchecked")
     private WebMarkupContainer buildContainer() {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
-        c.add(labelField = new TextField("label_field", new Model<String>() {
+        c.add(labelField = new TextField<>("label_field", new Model<String>() {
 
             private String lastDisplay;
             private Object lastValue;
@@ -113,7 +112,7 @@ public class TypeaheadComponent extends Panel {
                 } else {
                     if (!Value.dehydrate(instance()).equals(lastValue)) {
                         lastValue = Value.dehydrate(instance());
-                        final SInstanceConverter converter = instance().asAtrProvider().getConverter();
+                        final SInstanceConverter<Serializable, SInstance> converter = instance().asAtrProvider().getConverter();
                         if (converter != null) {
                             final Serializable converted = converter.toObject(instance());
                             if (converted != null) {
@@ -125,7 +124,7 @@ public class TypeaheadComponent extends Panel {
                 }
             }
         }));
-        c.add(valueField = new TextField("value_field", new AbstractMInstanceAwareModel<String>() {
+        c.add(valueField = new TextField<>("value_field", new AbstractMInstanceAwareModel<String>() {
 
             private String lastId;
             private Object lastValue;
@@ -143,7 +142,7 @@ public class TypeaheadComponent extends Panel {
                 if (!Value.dehydrate(instance()).equals(lastValue)) {
                     lastValue = Value.dehydrate(instance());
                     final IFunction<Object, Object> idFunction = instance().asAtrProvider().getIdFunction();
-                    final SInstanceConverter        converter  = instance().asAtrProvider().getConverter();
+                    final SInstanceConverter<Serializable, SInstance>        converter  = instance().asAtrProvider().getConverter();
                     if (idFunction != null && converter != null && !instance().isEmptyOfData()) {
                         final Serializable converted = converter.toObject(instance());
                         if (converted != null) {
@@ -181,8 +180,8 @@ public class TypeaheadComponent extends Panel {
     private Optional<Serializable> getValueFromProvider(String key) {
 
         final Stream<Serializable> stream;
-        final Provider             provider        = instance().asAtrProvider().getProvider();
-        final ProviderContext      providerContext = new ProviderContext();
+        final Provider<Serializable, SInstance> provider = instance().asAtrProvider().getProvider();
+        final ProviderContext<SInstance> providerContext = new ProviderContext<>();
 
         providerContext.setInstance(instance());
 
@@ -231,7 +230,7 @@ public class TypeaheadComponent extends Panel {
         js += "        name : 's-select-typeahead', ";
         js += "        display: 'value', ";
         js += "        typeaheadAppendToBody: 'true',";
-        js += "        limit: -1,";// não limita os resultados exibidos
+        js += "        limit: Infinity,";// não limita os resultados exibidos
         js += "        source: window.substringMatcher(" + jsOptionArray() + ") ";
         js += "     }";
         js += " );";
@@ -250,7 +249,7 @@ public class TypeaheadComponent extends Panel {
         js += "     {";
         js += "        name : 's-select-typeahead', ";
         js += "        display: 'value', ";
-        js += "        limit: -1,";// não limita os resultados exibidos
+        js += "        limit: Infinity,";// não limita os resultados exibidos
         js += "        source: " + createJSBloodhoundOpbject();
         js += "     }";
         js += " );";
@@ -283,17 +282,17 @@ public class TypeaheadComponent extends Panel {
 
     private Map<String, String> optionsConfigMap() {
 
-        final Map<String, String> map             = newLinkedHashMap();
-        final SInstance           instance        = model.getObject();
-        final Provider            provider        = instance.asAtrProvider().getProvider();
-        final ProviderContext     providerContext = new ProviderContext();
+        final Map<String, String> map = newLinkedHashMap();
+        final SInstance instance = model.getObject();
+        final Provider<Serializable, SInstance> provider = instance.asAtrProvider().getProvider();
+        final ProviderContext<SInstance> providerContext = new ProviderContext<>();
 
         providerContext.setInstance(instance);
         providerContext.setQuery(StringUtils.EMPTY);
 
         if (provider != null) {
             for (Object o : provider.load(providerContext)) {
-                final String key     = String.valueOf(instance.asAtrProvider().getIdFunction().apply(o));
+                final String key = String.valueOf(instance.asAtrProvider().getIdFunction().apply(o));
                 final String display = instance.asAtrProvider().getDisplayFunction().apply((Serializable) o);
                 map.put(key, display);
                 cache.put(key, new TypeaheadCache((Serializable) o, display));
@@ -323,7 +322,7 @@ public class TypeaheadComponent extends Panel {
         valueField.add($b.attr("style", "display:none;"));
     }
 
-    public TextField getValueField() {
+    public TextField<String> getValueField() {
         return valueField;
     }
 }

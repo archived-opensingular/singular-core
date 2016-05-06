@@ -5,11 +5,26 @@
 
 package br.net.mirante.singular.showcase.component.interaction;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.Provider;
+import br.net.mirante.singular.form.mform.provider.ProviderContext;
+import br.net.mirante.singular.form.mform.provider.SSimpleProvider;
+import br.net.mirante.singular.form.mform.provider.SimpleProvider;
+import br.net.mirante.singular.form.mform.util.transformer.SCompositeListBuilder;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.stream.Collectors.toList;
 
 public class CaseInteractionDependsOnOptionsPackage extends SPackage {
 
@@ -62,14 +77,17 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
             .label("Word")
             .dependsOn(letter);
 
-//        word.withSelectionFromProvider((ins,f) -> {
-//            String prefix = ins.findNearest(letter).get().getValue();
-//            return (prefix == null)
-//                ? ins.getType().newList()
-//                : ins.getType().newList()
-//                    .addValues(Stream.of(WORDS)
-//                        .filter(s -> s.startsWith(prefix))
-//                        .collect(toList()));
-//        });
+        word.selectionOf(String.class).selfIdAndDisplay()
+                .simpleProvider((ins)-> {
+                    Optional<String> filter = ins.findNearestValue(letter);
+                    return filter.map((f) -> {
+                        return Stream.of(WORDS)
+                                .filter((x) -> x.startsWith(f))
+                                .collect(Collectors.toList());
+                    }).orElse(newArrayList());
+
+                });
+
+        ;
     }
 }
