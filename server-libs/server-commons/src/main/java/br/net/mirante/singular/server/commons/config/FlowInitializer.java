@@ -1,6 +1,5 @@
 package br.net.mirante.singular.server.commons.config;
 
-import br.net.mirante.singular.flow.core.SingularFlowConfigurationBean;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataREST;
 import br.net.mirante.singular.server.commons.flow.SingularServerFlowConfigurationBean;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -26,6 +25,5 @@ public abstract class FlowInitializer {
         Optional
                 .ofNullable(flowMetadataProvider())
                 .ifPresent(f -> applicationContext.register(f));
-        ;
     }
 }
