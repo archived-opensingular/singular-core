@@ -23,7 +23,7 @@ import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 @AutoScanDisabled
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
-@ComponentScan("br.net.mirante.singular.exemplos.notificacaosimplificada")
+@ComponentScan("br.net.mirante.singular.exemplos")
 public class NotificaoSimplificadaSpringConfiguration {
 
     @Value("classpath:data/notificacaosimplificada/drops.sql")

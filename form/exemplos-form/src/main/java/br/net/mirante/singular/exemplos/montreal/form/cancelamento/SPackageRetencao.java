@@ -5,19 +5,26 @@
 
 package br.net.mirante.singular.exemplos.montreal.form.cancelamento;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
+import br.net.mirante.singular.exemplos.montreal.domain.Titulo;
+import br.net.mirante.singular.exemplos.montreal.service.DominioMontrealService;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
 import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeDateTime;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.provider.SSimpleProvider;
 
 public class SPackageRetencao extends SPackage {
 
@@ -40,11 +47,18 @@ public class SPackageRetencao extends SPackage {
         associado.asAtr().label("Associado");
 
         {
+            final STypeInteger id = associado.addFieldInteger("id");
+            id.asAtr().visible(false);
+
             final STypeString nome = associado.addFieldString("nome");
-            nome.asAtr().label("Associado").enabled(false);
+            nome
+                    .asAtr().label("Associado").enabled(false)
+                    .asAtrBootstrap().colPreference(2);
 
             final STypeDate dataInclusao = associado.addFieldDate("dataInclusao");
-            dataInclusao.asAtr().label("Data de inclusão").enabled(false);
+            dataInclusao
+                    .asAtr().label("Data de inclusão").enabled(false)
+                    .asAtrBootstrap().colPreference(2);
 
             retencao.withInitListener(i -> {
                 i.findNearest(nome).ifPresent(n -> n.setValue("Juracy Abrantes Júnior"));
@@ -60,21 +74,48 @@ public class SPackageRetencao extends SPackage {
         {
             final STypeComposite<SIComposite> titulo = cancelamento.addFieldComposite("titulo");
             titulo.asAtr().label("Dados do Título");
+
+            final STypeString id = titulo.addFieldString("id");
             final STypeString numero = titulo.addFieldString("numero");
-            numero.asAtr().label("Número");
             final STypeString situacao = titulo.addFieldString("situacao");
-            situacao.asAtr().label("Situção");
+//            numero.asAtr().label("Número")
+//                    .asAtrBootstrap().colPreference(2);
+
+            titulo.setView(SViewAutoComplete::new);
+            titulo.selection()
+                    .id(id)
+                    .display("${numero} - ${situacao}")
+                    .simpleProvider((SSimpleProvider) builder -> {
+                        for (Titulo t : dominioService(builder.getCurrentInstance()).titulos()) {
+                            builder.add()
+                                    .set(id, t.getId())
+                                    .set(numero, t.getNumero())
+                                    .set(situacao, t.getSituacao())
+                            ;
+                        }
+                    });
 
             final STypeComposite<SIComposite> dadosCancelamento = cancelamento.addFieldComposite("dadosCancelamento");
-            dadosCancelamento.asAtr().label("Dados do Cancelamento");
+            final STypeString centralReservas = dadosCancelamento.addFieldString("centralReservas");
+            centralReservas
+                    .withSelectView()
+                    .selectionOf(getOpcoesCentralReserva())
+                    .asAtr().label("Central de Reservas")
+                    .asAtrBootstrap().colPreference(4);
+
             final STypeString observacoes = dadosCancelamento.addFieldString("observacoes");
-            observacoes.asAtr().label("Obsevações");
+            observacoes
+                    .asAtr().label("Obsevações").tamanhoMaximo(1000)
+                    .getTipo().withView(SViewTextArea::new);
             final STypeString formaContato = dadosCancelamento.addFieldString("formaContato");
-            formaContato.asAtr().label("Forma de contato");
+            formaContato.asAtr().label("Forma de contato")
+                    .asAtrBootstrap().colPreference(2);
             final STypeDateTime dataInclusao = dadosCancelamento.addFieldDateTime("dataInclusao");
-            dataInclusao.asAtr().label("Data de inclusão");
+            dataInclusao.asAtr().label("Data de inclusão")
+                    .asAtrBootstrap().colPreference(2);
             final STypeString atendente = dadosCancelamento.addFieldString("atendente");
-            atendente.asAtr().label("Atendente");
+            atendente.asAtr().label("Atendente")
+                    .asAtrBootstrap().colPreference(4);
 
             cancelamentos
                     .withView(new SViewListByMasterDetail()
@@ -84,11 +125,32 @@ public class SPackageRetencao extends SPackage {
                     );
         }
 
-
-
     }
 
-    public static DominioService dominioService(SInstance ins) {
-        return ins.getDocument().lookupService(DominioService.class);
+    public static DominioMontrealService dominioService(SInstance ins) {
+        return ins.getDocument().lookupService(DominioMontrealService.class);
+    }
+
+    public List<Titulo> titulos() {
+        return Arrays.asList(
+                new Titulo(1L, "167.981"),
+                new Titulo(2L, "167.982"),
+                new Titulo(3L, "167.983"),
+                new Titulo(4L, "167.984"),
+                new Titulo(5L, "167.985")
+        );
+    }
+
+    public String[] getOpcoesCentralReserva() {
+        return new String[] {
+                "01. Não conseguiu vaga no hotel desejado",
+                "02. Não conseguiu vaga nos hotéis conveniados",
+                "03. Hotéis lotados no primeiro dia de marcação",
+                "04. Sistema Telefônico deficiente",
+                "05. Cobrança de no-show por perda de prazo",
+                "06. Cobrança d eno-show por falha funcional",
+                "07. Dificuldade recorrente na marcação de reserva",
+                "08. Erro na marcação de reserva: falha funcional"
+        };
     }
 }

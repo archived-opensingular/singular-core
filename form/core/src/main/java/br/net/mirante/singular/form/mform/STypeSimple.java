@@ -5,6 +5,12 @@
 
 package br.net.mirante.singular.form.mform;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.Converter;
+
 import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
@@ -12,11 +18,6 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.builder.selection.SelectionBuilder;
 import br.net.mirante.singular.form.mform.core.AtrFormula;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.Converter;
-
-import java.io.Serializable;
-import java.util.Arrays;
 
 @SuppressWarnings("rawtypes")
 @SInfoType(name = "STypeSimple", spackage = SPackageCore.class)
