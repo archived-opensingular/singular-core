@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.p.core.wicket.view;
 
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_PARAM_NAME;
+import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 import java.net.URL;
@@ -11,10 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.server.commons.exception.SingularServerException;
-import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
-import br.net.mirante.singular.server.commons.service.PetitionService;
-import br.net.mirante.singular.server.commons.wicket.SingularSession;
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -29,11 +27,15 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.form.FormActions;
+import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -41,8 +43,6 @@ import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.metronic.menu.DropdownMenu;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-
-import javax.inject.Inject;
 
 /**
  * Classe base para construição de caixas do servidor de petições
@@ -180,7 +180,7 @@ public abstract class AbstractCaixaContent<T extends PeticaoDTO> extends Content
 
     protected Map<String, String> getcriarLinkParameters(T peticao){
         Map<String, String> params = new HashMap<>();
-        params.put(SIGLA_PARAM_NAME, peticao.getProcessType());
+        params.put(SIGLA_FORM_NAME, peticao.getType());
         return params;
     }
 

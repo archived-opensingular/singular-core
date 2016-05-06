@@ -1,7 +1,7 @@
 package br.net.mirante.singular.server.p.core.wicket.entrada;
 
 
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_PARAM_NAME;
+import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -107,7 +107,7 @@ public class EntradaContent extends AbstractCaixaContent<PeticaoDTO> {
                 baseURL(getBaseUrl())
                 .formAction(FormActions.FORM_FILL_WITH_ANALYSIS.getId())
                 .formId(peticao.getCod())
-                .param(SIGLA_PARAM_NAME, peticao.getProcessType())
+                .param(SIGLA_FORM_NAME, peticao.getType())
                 .build();
         WebMarkupContainer link = new WebMarkupContainer(id);
         link.add($b.attr("target", "blank"));

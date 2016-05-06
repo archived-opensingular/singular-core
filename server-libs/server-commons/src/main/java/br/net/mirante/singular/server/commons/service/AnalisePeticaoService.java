@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import br.net.mirante.singular.flow.core.TaskInstance;
+import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
@@ -32,8 +32,12 @@ public class AnalisePeticaoService<T extends TaskInstanceDTO> {
     }
 
 
-    public TaskInstance findCurrentTaskByPetitionId(String petitionId) {
-        List<TaskInstance> taskInstances = taskInstanceDAO.findCurrentTasksByPetitionId(petitionId);
-        return taskInstances.get(0);
+    public TaskInstanceEntity findCurrentTaskByPetitionId(String petitionId) {
+        List<TaskInstanceEntity> taskInstances = taskInstanceDAO.findCurrentTasksByPetitionId(petitionId);
+        if (taskInstances.isEmpty()) {
+            return null;
+        } else {
+            return taskInstances.get(0);
+        }
     }
 }

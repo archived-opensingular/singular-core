@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.annotation.mount.MountPath;
 
+import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ITaskPageStrategy;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskUserExecutable;
@@ -157,7 +158,7 @@ public class DispatcherPage extends WebPage {
         if (StringUtils.isBlank(petitionId)) {
             return null;
         } else {
-            return analisePeticaoService.findCurrentTaskByPetitionId(petitionId);
+            return Flow.getTaskInstance(analisePeticaoService.findCurrentTaskByPetitionId(petitionId));
         }
     }
 

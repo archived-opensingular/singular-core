@@ -6,9 +6,6 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.google.common.base.Joiner;
-
-import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
@@ -131,7 +128,8 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         return ((Number) buildQuery(null, true, siglaFluxo, idsPerfis, filtroRapido, concluidas, true).uniqueResult()).intValue();
     }
 
-    public List<TaskInstance> findCurrentTasksByPetitionId(String petitionId) {
+    @SuppressWarnings("unchecked")
+    public List<TaskInstanceEntity> findCurrentTasksByPetitionId(String petitionId) {
         StringBuilder sb = new StringBuilder();
 
         sb
@@ -139,8 +137,13 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                 .append(" from " + getPetitionEntityClass().getName() + " pet ")
                 .append(" inner join pet.processInstanceEntity pi ")
                 .append(" inner join pi.tasks ti ")
-                .append(" where ti.endDate is null and pet.cod = :petitionId  ");
+                .append(" inner join ti.task task ")
+                .append(" where pet.cod = :petitionId  ")
+                .append("   and (ti.endDate is null OR task.type = :tipoEnd)  ");
 
-        return getSession().createQuery(sb.toString()).setParameter("petitionId", Long.valueOf(petitionId)).list();
+        final Query query = getSession().createQuery(sb.toString());
+        query.setParameter("petitionId", Long.valueOf(petitionId));
+        query.setParameter("tipoEnd", TaskType.End);
+        return query.list();
     }
 }
