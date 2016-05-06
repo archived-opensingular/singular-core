@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
 import br.net.mirante.singular.form.mform.RefService;
+import br.net.mirante.singular.form.mform.document.*;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.flow.metadata.PetServerContextMetaData;
 import br.net.mirante.singular.flow.core.MTransition;
@@ -8,7 +9,6 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
-import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
@@ -16,6 +16,7 @@ import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.server.commons.form.SingularServerDocumentFactory;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -53,7 +54,7 @@ public abstract class AbstractFormContent extends Content {
     protected SingularFormPanel<String> singularFormPanel;
     @Inject
     @Named("formConfigWithDatabase")
-    private SFormConfig<String> singularFormConfig;
+    protected SFormConfig<String> singularFormConfig;
 
     public AbstractFormContent(String idWicket, String type, String formId, ViewMode viewMode, AnnotationMode annotationMode) {
         super(idWicket, false, false);
@@ -138,23 +139,16 @@ public abstract class AbstractFormContent extends Content {
                 RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
                 String xml = getFormXML();
                 SInstance instance = createInstance(singularFormConfig, refType, xml);
-                //TODO: Fabs this does not work for init instance
-                instance.getDocument().bindLocalService("processService",ProcessFormService.class, RefService.of(
-                        new ProcessFormService(){
-                            ProcessInstanceEntity pInstance = AbstractFormContent.this.getProcessInstance();
-                            @Override public ProcessInstanceEntity getProcessInstance() {
-                                return pInstance;
-                            }
-                        })
-                );
                 return instance;
             }
 
             private SInstance createInstance(SFormConfig<String> singularFormConfig, RefType refType, String xml) {
+//                SDocumentFactory documentFactory = singularFormConfig.getDocumentFactory();
+                SDocumentFactory documentFactory = new TaskAwareDocumentFactory(AbstractFormContent.this);
                 if (StringUtils.isBlank(xml)) {
-                    return singularFormConfig.getDocumentFactory().createInstance(refType);
+                    return documentFactory.createInstance(refType);
                 } else {
-                    SInstance instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+                    SInstance instance = MformPersistenciaXML.fromXML(refType, xml, documentFactory);
                     MformPersistenciaXML.annotationLoadFromXml(instance, getAnnotationsXML(getFormModel()));
                     return instance;
                 }
@@ -389,4 +383,45 @@ public abstract class AbstractFormContent extends Content {
     protected abstract boolean hasProcess();
 
     protected abstract String getIdentifier();
+}
+
+/**
+ * This DocumentFactory is just a delagate which sets a Aware Service for
+ * accessing the current ProcessInstance.
+ */
+class TaskAwareDocumentFactory extends SingularServerDocumentFactory
+        implements Serializable {
+
+    AbstractFormContent content;
+
+    public TaskAwareDocumentFactory( AbstractFormContent content){
+        this.content = content;
+    }
+
+    SDocumentFactory target() { return content.singularFormConfig.getDocumentFactory();}
+
+    ProcessInstanceEntity instance() { return content.getProcessInstance();}
+
+    @Override
+    public RefSDocumentFactory getDocumentFactoryRef() {
+        return target().getDocumentFactoryRef();
+    }
+
+    @Override
+    public ServiceRegistry getServiceRegistry() {
+        return target().getServiceRegistry();
+    }
+
+    @Override
+    protected void setupDocument(SDocument document) {
+        super.setupDocument(document);
+        //TODO: Fabs this does not work for init instance
+        document.bindLocalService("processService",AbstractFormContent.ProcessFormService.class, RefService.of(
+                new AbstractFormContent.ProcessFormService(){
+                    @Override public ProcessInstanceEntity getProcessInstance() {
+                        return instance();
+                    }
+                })
+        );
+    }
 }
