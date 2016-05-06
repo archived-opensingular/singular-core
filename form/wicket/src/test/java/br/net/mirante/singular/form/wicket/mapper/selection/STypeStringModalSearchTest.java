@@ -6,9 +6,9 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.mform.provider.FilteredProvider;
 import br.net.mirante.singular.form.mform.provider.ProviderContext;
-import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
+import br.net.mirante.singular.form.mform.provider.filter.Config;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
@@ -36,18 +36,17 @@ public class STypeStringModalSearchTest {
         protected void buildBaseType(STypeComposite<?> baseType) {
             selectType = baseType.addFieldString("favoriteFruit");
             selectType.withView(SViewSearchModal::new);
-            selectType.asAtrProvider().filteredPagedProvider(new FilteredPagedProvider<String>() {
+            selectType.asAtrProvider().filteredProvider(new FilteredProvider<String>() {
                 @Override
-                public List<String> load(ProviderContext<SInstance> context) {
-                    return Arrays.asList("strawberry", "apple", "orange", "banana");
+                public void configureProvider(Config cfg) {
+                    cfg.getFilter().addFieldString("string");
+                    cfg.result().addColumn("Fruta");
+                    cfg.setCache(true);
                 }
 
                 @Override
-                public void configureFilter(FilterConfigBuilder builder) {
-                    builder.configureType(f -> f.addFieldString("string"));
-                    builder.addColumn("Fruta");
-                    builder.lazy(false);
-                    builder.cached(true);
+                public List<String> load(ProviderContext<SInstance> context) {
+                    return Arrays.asList("strawberry", "apple", "orange", "banana");
                 }
             });
         }

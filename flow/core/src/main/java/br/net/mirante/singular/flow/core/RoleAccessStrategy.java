@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
+import br.net.mirante.singular.flow.core.entity.AccessStrategyType;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 
 public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
@@ -101,5 +102,10 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
             return getExecuteRoleNames(definicao, task);
         }
         return Lists.newArrayList("Papel " + visualizeRole.getName());
+    }
+
+    @Override
+    public AccessStrategyType getType() {
+        return AccessStrategyType.E;
     }
 }

@@ -67,6 +67,7 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "originTask")
     private List<TASK_TRANSITION_VERSION> transitions = new ArrayList<>();
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -75,6 +76,7 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_VERSION getProcessVersion() {
         return processVersion;
     }
@@ -83,6 +85,7 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
         this.processVersion = processVersion;
     }
 
+    @Override
     public TASK_DEF getTaskDefinition() {
         return taskDefinition;
     }
@@ -91,14 +94,17 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
         this.taskDefinition = taskDefinition;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public TASK_TYPE getType() {
         return type;
     }
@@ -107,6 +113,7 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
         this.type = type;
     }
 
+    @Override
     public List<TASK_TRANSITION_VERSION> getTransitions() {
         return transitions;
     }
@@ -114,5 +121,4 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
     public void setTransitions(List<TASK_TRANSITION_VERSION> transitions) {
         this.transitions = transitions;
     }
-
 }

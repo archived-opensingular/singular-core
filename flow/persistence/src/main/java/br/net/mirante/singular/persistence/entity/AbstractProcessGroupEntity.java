@@ -32,6 +32,7 @@ public abstract class AbstractProcessGroupEntity extends BaseEntity<String> impl
     @Column(name = "URL_CONEXAO", length = 300, nullable = false)
     private String connectionURL;
 
+    @Override
     public String getCod() {
         return cod;
     }
@@ -40,6 +41,7 @@ public abstract class AbstractProcessGroupEntity extends BaseEntity<String> impl
         this.cod = cod;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -48,6 +50,7 @@ public abstract class AbstractProcessGroupEntity extends BaseEntity<String> impl
         this.name = name;
     }
 
+    @Override
     public String getConnectionURL() {
         return connectionURL;
     }

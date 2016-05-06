@@ -1,29 +1,29 @@
 package br.net.mirante.singular.support.persistence;
 
 
-import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.persistence.entity.BaseEntity;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import br.net.mirante.singular.commons.util.Loggable;
+import br.net.mirante.singular.persistence.entity.BaseEntity;
 
 @Transactional(Transactional.TxType.MANDATORY)
-public class BaseDAO<T extends BaseEntity, ID extends Serializable> implements Loggable {
+public class BaseDAO<T extends BaseEntity, ID extends Serializable> implements Loggable, Serializable {
 
     @Inject
-    protected SessionFactory sessionFactory;
+    protected transient SessionFactory sessionFactory;
 
     protected Class<T> tipo;
 

@@ -280,7 +280,7 @@ public class SDocument {
             getInstanceListeners().add(SInstanceEventType.ATTRIBUTE_CHANGED, listener);
 
         try {
-            SInstances.visitAll(root, true, instance -> {
+            SInstances.visitPostOrder(root, (instance, v) -> {
                 instance.updateExists();
                 instance.updateRequired();
                 SInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_ENABLED, SPackageBasic.ATR_ENABLED_FUNCTION);

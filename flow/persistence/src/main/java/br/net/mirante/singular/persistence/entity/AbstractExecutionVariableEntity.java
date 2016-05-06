@@ -81,6 +81,7 @@ public abstract class AbstractExecutionVariableEntity<PROCESS_INSTANCE extends I
     @JoinColumn(name = "CO_TIPO_VARIAVEL", nullable = false)
     private VAR_TYPE type;
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -89,6 +90,7 @@ public abstract class AbstractExecutionVariableEntity<PROCESS_INSTANCE extends I
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_INSTANCE getProcessInstance() {
         return processInstance;
     }
@@ -105,14 +107,17 @@ public abstract class AbstractExecutionVariableEntity<PROCESS_INSTANCE extends I
         this.variable = variable;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public TASK_INSTANCE getOriginTask() {
         return originTask;
     }
@@ -121,6 +126,7 @@ public abstract class AbstractExecutionVariableEntity<PROCESS_INSTANCE extends I
         this.originTask = originTask;
     }
 
+    @Override
     public TASK_INSTANCE getDestinationTask() {
         return destinationTask;
     }
@@ -129,18 +135,22 @@ public abstract class AbstractExecutionVariableEntity<PROCESS_INSTANCE extends I
         this.destinationTask = destinationTask;
     }
 
+    @Override
     public Date getDate() {
         return date;
     }
 
+    @Override
     public void setDate(Date date) {
         this.date = date;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
 
+    @Override
     public void setValue(String value) {
         this.value = value;
     }

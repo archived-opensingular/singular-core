@@ -26,9 +26,6 @@ import java.util.Date;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-/**
- * Created by nuk on 15/04/16.
- */
 @ActiveProfiles("mssql")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")

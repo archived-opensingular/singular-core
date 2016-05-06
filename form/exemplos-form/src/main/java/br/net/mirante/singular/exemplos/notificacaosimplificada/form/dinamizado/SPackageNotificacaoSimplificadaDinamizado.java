@@ -24,7 +24,7 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.mform.provider.ProviderContext;
-import br.net.mirante.singular.form.mform.provider.filter.FilterConfigBuilder;
+import br.net.mirante.singular.form.mform.provider.filter.Config;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -166,7 +166,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
             });
             formaFarmaceutica
                     .asAtrProvider()
-                    .filteredPagedProvider(new FormaFarmaceuticaProvider() {
+                    .filteredProvider(new FormaFarmaceuticaProvider() {
                         @Override
                         List<Integer> getIds(SInstance root) {
                             final SIList<SIComposite> formulas = root.findNearest(formulasHomeopaticas).orElse(null);
@@ -304,16 +304,17 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         abstract List<Integer> getIds(SInstance root);
 
         @Override
-        public void configureFilter(FilterConfigBuilder builder) {
-            builder.configureType(f -> {
-                f.addFieldString("descricao").asAtr().label("Descrição");
-                STypeString conceito = f.addFieldString("conceito");
-                conceito.withTextAreaView();
-                conceito.asAtr().label("Conceito");
-            });
+        public void configureProvider(Config cfg) {
 
-            builder.addColumn("conceito", "Conceito");
-            builder.addColumn("descricao", "Descrição");
+            cfg.getFilter().addFieldString("descricao").asAtr().label("Descrição");
+
+            final STypeString conceito = cfg.getFilter().addFieldString("conceito");
+            conceito.withTextAreaView();
+            conceito.asAtr().label("Conceito");
+
+            cfg.result()
+                    .addColumn("conceito", "Conceito")
+                    .addColumn("descricao", "Descrição");
         }
 
         @Override

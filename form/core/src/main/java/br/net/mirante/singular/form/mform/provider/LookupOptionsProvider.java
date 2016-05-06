@@ -3,13 +3,11 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.form.mform.options;
+package br.net.mirante.singular.form.mform.provider;
 
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.provider.Provider;
-import br.net.mirante.singular.form.mform.provider.ProviderContext;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.builder.selection;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.options.LookupOptionsProvider;
+import br.net.mirante.singular.form.mform.provider.LookupOptionsProvider;
 import br.net.mirante.singular.form.mform.provider.Provider;
 import br.net.mirante.singular.form.mform.provider.SimpleProvider;
 import br.net.mirante.singular.form.mform.provider.TextQueryProvider;

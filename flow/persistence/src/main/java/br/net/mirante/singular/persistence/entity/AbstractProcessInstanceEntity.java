@@ -119,6 +119,7 @@ public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_VERSION getProcessVersion() {
         return processVersion;
     }
