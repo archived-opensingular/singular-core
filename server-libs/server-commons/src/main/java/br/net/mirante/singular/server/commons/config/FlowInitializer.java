@@ -36,5 +36,8 @@ public abstract class FlowInitializer {
         Optional
                 .ofNullable(flowMetadataProvider())
                 .ifPresent(f -> applicationContext.register(f));
+        Optional
+                .ofNullable(serverMetadataProvider())
+                .ifPresent(f -> applicationContext.register(f));
     }
 }
