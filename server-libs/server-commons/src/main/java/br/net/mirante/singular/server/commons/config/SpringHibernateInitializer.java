@@ -13,7 +13,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.util.Optional;
 
-public abstract class SpringHibernateInitializer {
+public class SpringHibernateInitializer {
 
     protected static final String SPRING_MVC_DISPATCHER_SERVLET = "Spring MVC Dispatcher Servlet";
 

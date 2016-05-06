@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.commons.config;
 
 
+import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.mform.SPackage;
 import org.springframework.web.context.ServletContextAware;
 
@@ -22,6 +23,7 @@ public class SingularServerConfiguration implements ServletContextAware {
     private Map<Class<? extends SPackage>, String> formPackagesTypeMap;
     private String processGroupCod;
     private String definitionsBasePackage;
+    private Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap = new HashMap<>(0);
 
     public IServerContext[] getContexts() {
         return contexts;
@@ -51,6 +53,10 @@ public class SingularServerConfiguration implements ServletContextAware {
         return definitionsBasePackage;
     }
 
+    public Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap() {
+        return processDefinitionFormNameMap;
+    }
+
     @Override
     public void setServletContext(ServletContext servletContext) {
         WebInitializer webInitializer = (WebInitializer) servletContext.getAttribute(SingularInitializer.SERVLET_ATTRIBUTE_WEB_CONFIGURATION);
@@ -65,6 +71,9 @@ public class SingularServerConfiguration implements ServletContextAware {
         Optional.ofNullable(flowInitializer)
                 .ifPresent(fi ->
                         this.processGroupCod = fi.processGroupCod());
+        Optional.ofNullable(flowInitializer)
+                .ifPresent(fi ->
+                        this.processDefinitionFormNameMap = fi.processDefinitionFormNameMap());
         Optional.ofNullable(flowInitializer)
                 .ifPresent(fi ->
                         this.definitionsBasePackage = fi.definitionsBasePackage());
