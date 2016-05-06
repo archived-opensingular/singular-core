@@ -3,12 +3,14 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.exemplos.notificacaosimplificada.form.cancelamento;
+package br.net.mirante.singular.exemplos.montreal.form.cancelamento;
 
 import java.util.Date;
 
+import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
@@ -84,5 +86,9 @@ public class SPackageRetencao extends SPackage {
 
 
 
+    }
+
+    public static DominioService dominioService(SInstance ins) {
+        return ins.getDocument().lookupService(DominioService.class);
     }
 }

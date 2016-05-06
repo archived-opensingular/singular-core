@@ -13,8 +13,8 @@ import java.util.function.Supplier;
 
 import org.apache.commons.lang3.StringUtils;
 
+import br.net.mirante.singular.exemplos.montreal.form.cancelamento.SPackageRetencao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.cancelamento.SPackageRetencao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado.SPackageNotificacaoSimplificadaDinamizado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.SPackageNotificacaoSimplificadaGasMedicinal;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.habilitacao.SPackageHabilitacaoEmpresa;
