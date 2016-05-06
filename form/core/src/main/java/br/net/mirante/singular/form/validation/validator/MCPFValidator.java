@@ -5,15 +5,15 @@
 
 package br.net.mirante.singular.form.validation.validator;
 
+import br.net.mirante.singular.form.type.core.SIString;
+import br.net.mirante.singular.form.validation.IInstanceValidatable;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.validation.IInstanceValidatable;
 
 public enum MCPFValidator implements IInstanceValueValidator<SIString, String> {
     INSTANCE;

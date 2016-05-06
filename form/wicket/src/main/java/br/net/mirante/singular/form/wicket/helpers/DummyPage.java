@@ -1,29 +1,8 @@
 package br.net.mirante.singular.form.wicket.helpers;
 
-import java.io.Serializable;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-
-import br.net.mirante.singular.form.mform.RefService;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.document.DefaultServiceRegistry;
-import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
-import br.net.mirante.singular.form.mform.document.TypeLoader;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.*;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
@@ -31,6 +10,15 @@ import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+
+import java.io.Serializable;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class DummyPage extends WebPage {
 

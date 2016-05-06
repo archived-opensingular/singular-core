@@ -5,11 +5,10 @@
 
 package br.net.mirante.singular.showcase.component;
 
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
 

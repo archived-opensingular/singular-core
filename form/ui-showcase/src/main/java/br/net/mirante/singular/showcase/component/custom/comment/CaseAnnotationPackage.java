@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.showcase.component.custom.comment;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.basic.AtrBasic;
 
 public class CaseAnnotationPackage extends SPackage {
 

@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;

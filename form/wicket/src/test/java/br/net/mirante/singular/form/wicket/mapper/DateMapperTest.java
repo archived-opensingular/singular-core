@@ -1,14 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.Optional;
-
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.core.STypeDate;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 import org.fest.assertions.api.Assertions;
@@ -16,11 +12,12 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
-import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import java.util.List;
+import java.util.Optional;
+
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
+import static org.junit.Assert.*;
 
 @RunWith(Enclosed.class)
 public class DateMapperTest  {

@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
+import br.net.mirante.singular.form.view.SViewBreadcrumb;
 
 public class CaseListByBreadcrumbPackage extends SPackage {
 
@@ -21,12 +21,12 @@ public class CaseListByBreadcrumbPackage extends SPackage {
                 .asAtr().label("Nome");
         testForm.addFieldInteger("idade", true)
                 .asAtr().label("Idade");
-        STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
-        STypeComposite<?> experiencia = experiencias.getElementsType();
-        STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
-        STypeYearMonth dtFimExperiencia = experiencia.addField("fim", STypeYearMonth.class);
-        STypeString empresa = experiencia.addFieldString("empresa", true);
-        STypeString cargo = experiencia.addFieldString("cargo", true);
+        STypeList<STypeComposite<SIComposite>, SIComposite> experiencias        = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
+        STypeComposite<?>                                   experiencia         = experiencias.getElementsType();
+        STypeYearMonth                                      dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
+        STypeYearMonth                                      dtFimExperiencia    = experiencia.addField("fim", STypeYearMonth.class);
+        STypeString                                         empresa             = experiencia.addFieldString("empresa", true);
+        STypeString                                         cargo               = experiencia.addFieldString("cargo", true);
         STypeString atividades = experiencia.addFieldString("atividades");
 
         {

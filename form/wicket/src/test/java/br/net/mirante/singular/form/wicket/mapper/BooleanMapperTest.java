@@ -1,11 +1,11 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.core.SIBoolean;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.core.SIBoolean;
+import br.net.mirante.singular.form.type.core.STypeBoolean;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.RadioChoice;

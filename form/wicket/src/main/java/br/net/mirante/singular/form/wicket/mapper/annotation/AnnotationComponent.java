@@ -5,9 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;

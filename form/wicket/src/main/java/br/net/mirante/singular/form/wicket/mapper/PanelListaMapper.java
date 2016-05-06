@@ -5,19 +5,12 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-
-import com.google.common.base.Strings;
-
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
-import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.view.SView;
+import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -26,6 +19,12 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import com.google.common.base.Strings;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;

@@ -1,6 +1,6 @@
 package br.net.mirante.singular.showcase.component.file;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.*;
 import org.apache.commons.lang3.StringUtils;
 
 public class CaseFileMultipleAttachmentsPackage extends SPackage {

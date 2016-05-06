@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.showcase.dao.form;
 
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

@@ -5,10 +5,10 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.converter
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.provider.VocabularioControladoTextQueryProvider;
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewAutoComplete;
+import br.net.mirante.singular.form.view.SViewListByTable;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao.dominioService;
 
@@ -35,10 +35,10 @@ public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
                 .converter(new STypeLocalFabricacao.PessoaJuridicaConverter(idEmpresa, razaoSocial, endereco))
                 .filteredProvider((i,f) -> dominioService(i).empresaTerceirizada(f));
         
-        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao         = addFieldListOfComposite("etapasFabricacao", "etapaFabricacaoWrapper");
-        STypeComposite<SIComposite>                         etapaFabricacaoWrapper   = etapasFabricacao.getElementsType();
-        STypeComposite<SIComposite>                         etapaFabricacao          = etapaFabricacaoWrapper.addFieldComposite("etapaFabricacao");
-        STypeString                                         idEtapaFabricacao        = etapaFabricacao.addFieldString("id");
+        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao       = addFieldListOfComposite("etapasFabricacao", "etapaFabricacaoWrapper");
+        STypeComposite<SIComposite>                         etapaFabricacaoWrapper = etapasFabricacao.getElementsType();
+        STypeComposite<SIComposite>                         etapaFabricacao        = etapaFabricacaoWrapper.addFieldComposite("etapaFabricacao");
+        STypeString                                         idEtapaFabricacao      = etapaFabricacao.addFieldString("id");
         STypeString                                         descricaoEtapaFabricacao = etapaFabricacao.addFieldString("descricao");
 
         etapaFabricacao

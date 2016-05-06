@@ -5,18 +5,17 @@
 
 package br.net.mirante.singular.form.spring;
 
-import java.io.Serializable;
-
+import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.document.TypeLoader;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.document.TypeLoader;
+import java.io.Serializable;
 
 /**
  * Representa a configuração para funcionamento do formulário.

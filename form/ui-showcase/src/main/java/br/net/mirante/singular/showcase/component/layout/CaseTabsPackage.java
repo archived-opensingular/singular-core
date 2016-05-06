@@ -5,14 +5,14 @@
 
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.type.util.STypeEMail;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
+import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.view.SViewTab;
 
 public class CaseTabsPackage extends SPackage {
 
@@ -30,12 +30,12 @@ public class CaseTabsPackage extends SPackage {
         (email = testForm.addFieldEmail("email"))
                 .as(AtrBasic.class).label("E-mail");
 
-        STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
-        STypeComposite<?> experiencia = experiencias.getElementsType();
-        STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
-        STypeYearMonth dtFimExperiencia = experiencia.addField("fim", STypeYearMonth.class);
-        STypeString empresa = experiencia.addFieldString("empresa", true);
-        STypeString cargo = experiencia.addFieldString("cargo", true);
+        STypeList<STypeComposite<SIComposite>, SIComposite> experiencias        = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
+        STypeComposite<?>                                   experiencia         = experiencias.getElementsType();
+        STypeYearMonth                                      dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
+        STypeYearMonth                                      dtFimExperiencia    = experiencia.addField("fim", STypeYearMonth.class);
+        STypeString                                         empresa             = experiencia.addFieldString("empresa", true);
+        STypeString                                         cargo               = experiencia.addFieldString("cargo", true);
         STypeString atividades = experiencia.addFieldString("atividades");
 
         {

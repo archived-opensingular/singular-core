@@ -5,11 +5,10 @@
 
 package br.net.mirante.singular.showcase.view.page.prototype;
 
-import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.showcase.view.template.Content;
 import br.net.mirante.singular.showcase.view.template.Template;
-
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;

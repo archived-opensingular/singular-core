@@ -5,12 +5,11 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
 
 public abstract class AbstractSInstanceCampoModel<I extends SInstance>
     extends AbstractSInstanceModel<I>

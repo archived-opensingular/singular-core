@@ -1,14 +1,9 @@
 package br.net.mirante.singular.form.wicket;
 
-import static java.util.stream.Collectors.*;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SInstances;
+import br.net.mirante.singular.form.validation.IValidationError;
+import com.google.common.collect.Sets;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
@@ -17,11 +12,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
 
-import com.google.common.collect.Sets;
+import java.io.Serializable;
+import java.util.*;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SInstances;
-import br.net.mirante.singular.form.validation.IValidationError;
+import static java.util.stream.Collectors.toSet;
 
 public class SValidationFeedbackHandler implements Serializable {
 

@@ -6,9 +6,9 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SPackage;
 
 public class SPackageVocabularioControlado extends SPackage {
 

@@ -5,9 +5,9 @@
 
 package br.net.mirante.singular.showcase.component.input.core.multiselect;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByPicklistView;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
 
 public class CaseInputCoreMultiSelectProviderPackage extends SPackage {
 

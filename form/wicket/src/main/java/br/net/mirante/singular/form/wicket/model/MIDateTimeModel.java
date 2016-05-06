@@ -5,12 +5,12 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
+import br.net.mirante.singular.form.SInstance;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import br.net.mirante.singular.form.mform.SInstance;
 
 public interface MIDateTimeModel {
 

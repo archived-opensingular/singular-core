@@ -1,18 +1,17 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.type.core.STypeBoolean;
+import br.net.mirante.singular.form.type.core.STypeDecimal;
+import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
+import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;
-
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 
 public class MasterDetailMapperTest extends SingularFormBaseTest {
 

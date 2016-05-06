@@ -5,24 +5,23 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static com.google.common.collect.Lists.newArrayList;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.view.SViewTab;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.form.wicket.panel.BSPanelGrid;
+import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
-
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
-import br.net.mirante.singular.form.wicket.panel.BSPanelGrid;
+import static com.google.common.collect.Lists.newArrayList;
 
 public class TabMapper extends DefaultCompostoMapper {
 

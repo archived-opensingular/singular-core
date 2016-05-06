@@ -5,26 +5,20 @@
 
 package br.net.mirante.singular.exemplos.montreal.form.cancelamento;
 
+import br.net.mirante.singular.exemplos.montreal.domain.Titulo;
+import br.net.mirante.singular.exemplos.montreal.service.DominioMontrealService;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeDate;
+import br.net.mirante.singular.form.type.core.STypeDateTime;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewAutoComplete;
+import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.view.SViewTextArea;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
-import br.net.mirante.singular.exemplos.montreal.domain.Titulo;
-import br.net.mirante.singular.exemplos.montreal.service.DominioMontrealService;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
-import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.mform.core.STypeDateTime;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.SSimpleProvider;
 
 public class SPackageRetencao extends SPackage {
 
@@ -85,7 +79,7 @@ public class SPackageRetencao extends SPackage {
             titulo.selection()
                     .id(id)
                     .display("${numero} - ${situacao}")
-                    .simpleProvider((SSimpleProvider) builder -> {
+                    .simpleProvider(builder -> {
                         for (Titulo t : dominioService(builder.getCurrentInstance()).titulos()) {
                             builder.add()
                                     .set(id, t.getId())
@@ -98,7 +92,6 @@ public class SPackageRetencao extends SPackage {
             final STypeComposite<SIComposite> dadosCancelamento = cancelamento.addFieldComposite("dadosCancelamento");
             final STypeString centralReservas = dadosCancelamento.addFieldString("centralReservas");
             centralReservas
-                    .withSelectView()
                     .selectionOf(getOpcoesCentralReserva())
                     .asAtr().label("Central de Reservas")
                     .asAtrBootstrap().colPreference(4);

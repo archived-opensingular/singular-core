@@ -4,11 +4,11 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemSecundaria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeUnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 
 import java.util.Optional;
 
@@ -16,15 +16,15 @@ import java.util.Optional;
 public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
 
-    public STypeEmbalagemPrimaria embalagemPrimaria;
-    public STypeEmbalagemSecundaria embalagemSecundaria;
-    public STypeInteger quantidade;
-    public STypeAttachmentList estudosEstabilidade;
-    public STypeAttachmentList layoutsRotulagem;
+    public STypeEmbalagemPrimaria                       embalagemPrimaria;
+    public STypeEmbalagemSecundaria                     embalagemSecundaria;
+    public STypeInteger                                 quantidade;
+    public STypeAttachmentList                          estudosEstabilidade;
+    public STypeAttachmentList                          layoutsRotulagem;
     public STypeList<STypeLocalFabricacao, SIComposite> locaisFabricacao;
-    public STypeInteger prazoValidade;
-    public STypeUnidadeMedida unidadeMedida;
-    public STypeAttachmentList laudosControle;
+    public STypeInteger                                 prazoValidade;
+    public STypeUnidadeMedida                           unidadeMedida;
+    public STypeAttachmentList                          laudosControle;
 
     static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);

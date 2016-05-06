@@ -8,11 +8,11 @@ package br.net.mirante.singular.bam.form;
 import br.net.mirante.singular.bamclient.portlet.FilterConfig;
 import br.net.mirante.singular.bamclient.portlet.filter.AggregationPeriod;
 import br.net.mirante.singular.bamclient.portlet.filter.FieldType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeSimple;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.type.core.SIString;
+import br.net.mirante.singular.form.type.core.STypeString;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.web.client.RestTemplate;
 

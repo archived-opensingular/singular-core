@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
-import br.net.mirante.singular.form.mform.provider.ProviderContext;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
 import br.net.mirante.singular.form.wicket.model.MultipleSelectMInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;

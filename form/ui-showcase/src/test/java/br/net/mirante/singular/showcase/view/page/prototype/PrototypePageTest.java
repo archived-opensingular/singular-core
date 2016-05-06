@@ -1,14 +1,14 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.showcase.SpringWicketTester;
 import br.net.mirante.singular.showcase.dao.form.Prototype;
 import br.net.mirante.singular.showcase.view.template.Content;
@@ -39,13 +39,12 @@ public class PrototypePageTest {
     public static class Base {
         @Inject
         private SpringWicketTester springWicketTester;
-        @Inject
-        @Named("formConfigWithDatabase")
+        @Inject @Named("formConfigWithDatabase")
         private SFormConfig<String> singularFormConfig;
-        private WicketTester driver;
-        private SDictionary dictionary;
-        private SIComposite currentInstance;
-        private FormTester form;
+        private WicketTester        driver;
+        private SDictionary         dictionary;
+        private SIComposite         currentInstance;
+        private FormTester          form;
 
         @Before
         public void setup() {

@@ -7,19 +7,19 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 
 public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
     public static final String PACOTE = "mform.peticao.notificacaosimplificada.gas";
     public static final String TIPO = "MedicamentoGasMedicinal";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
-    private STypeString descricao;
-    private STypeComposite<SIComposite> informacoesFarmacopeicas;
+    private STypeString                                      descricao;
+    private STypeComposite<SIComposite>                      informacoesFarmacopeicas;
     private STypeList<STypeAcondicionamentoGAS, SIComposite> acondicionamentos;
-    private STypeString nomeComercial;
+    private STypeString                                      nomeComercial;
 
     public SPackageNotificacaoSimplificadaGasMedicinal() {
         super(PACOTE);

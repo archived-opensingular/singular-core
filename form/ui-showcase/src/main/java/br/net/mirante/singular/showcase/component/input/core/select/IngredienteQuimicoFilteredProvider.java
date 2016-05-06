@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.component.input.core.select;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.provider.SimpleProvider;
 
 import java.util.Arrays;
 import java.util.List;

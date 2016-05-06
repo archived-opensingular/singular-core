@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.behavior;
 
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SInstanceViewState;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
@@ -13,10 +16,6 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
-
-import br.net.mirante.singular.form.mform.SInstanceViewState;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
 

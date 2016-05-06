@@ -5,9 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
+import br.net.mirante.singular.form.SInstance;
 import org.apache.wicket.model.IModel;
-
-import br.net.mirante.singular.form.mform.SInstance;
 
 public abstract class AbstractSInstanceModel<I extends SInstance>
     implements IModel<I>, IMInstanciaAwareModel<I> {

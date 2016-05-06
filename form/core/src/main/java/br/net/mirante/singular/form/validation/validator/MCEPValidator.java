@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.form.validation.validator;
 
-import java.util.regex.Pattern;
-
-import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
+
+import java.util.regex.Pattern;
 
 public enum MCEPValidator implements IInstanceValueValidator<SIString, String> {
 

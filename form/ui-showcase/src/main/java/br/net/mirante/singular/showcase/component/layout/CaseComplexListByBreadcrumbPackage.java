@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.view.SViewBreadcrumb;
 
 public class CaseComplexListByBreadcrumbPackage extends SPackage {
 
@@ -16,7 +16,7 @@ public class CaseComplexListByBreadcrumbPackage extends SPackage {
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         STypeList<STypeComposite<SIComposite>, SIComposite> componentes = testForm.addFieldListOfComposite("componentes", "componente");
-        STypeComposite<SIComposite> componente = componentes.getElementsType();
+        STypeComposite<SIComposite>                         componente  = componentes.getElementsType();
         componente.asAtr().label("Componente");
 
         componente.addFieldString("nome")

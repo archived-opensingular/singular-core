@@ -3,8 +3,8 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.provider
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.provider.TextQueryProvider;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.provider.TextQueryProvider;
 
 import java.util.List;
 

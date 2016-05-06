@@ -1,16 +1,12 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Date;
-
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -18,14 +14,18 @@ import org.apache.wicket.util.file.File;
 import org.fest.assertions.core.Condition;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
+
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @SuppressWarnings("rawtypes")
 public class AttachmentFieldTest extends SingularFormBaseTest {
 
-    protected SDictionary dictionary;
-    public STypeAttachment attachmentFileField;
+    protected SDictionary     dictionary;
+    public    STypeAttachment attachmentFileField;
 
     protected void buildBaseType(STypeComposite<?> mockType) {
         dictionary = mockType.getDictionary();
