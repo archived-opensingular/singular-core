@@ -24,8 +24,8 @@ public class VocabularioControladoDTOSInstanceConverter implements SInstanceConv
 
     @Override
     public VocabularioControladoDTO toObject(SIComposite ins) {
-        final String realId =  Value.of(ins, id);
-        return new VocabularioControladoDTO(Long.parseLong(realId), Value.of(ins, descricao));
+        final Integer realId =  Value.of(ins, id);
+        return new VocabularioControladoDTO(realId.longValue(), Value.of(ins, descricao));
     }
 
 }
