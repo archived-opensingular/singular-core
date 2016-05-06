@@ -10,7 +10,7 @@ package br.net.mirante.singular.form.mform.document;
  *
  * @author Daniel C. Bordin
  */
-final class SDocumentFactoryEmpty extends SDocumentFactory {
+public class SDocumentFactoryEmpty extends SDocumentFactory {
 
     @Override
     public RefSDocumentFactory getDocumentFactoryRef() {

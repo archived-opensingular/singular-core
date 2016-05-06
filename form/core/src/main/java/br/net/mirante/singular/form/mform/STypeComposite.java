@@ -359,5 +359,16 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         }
     }
 
+    @Override
+    public void init(INSTANCE_TYPE newInstance) {
+        super.init(newInstance);
+        initFields(newInstance);
+    }
 
+    private void initFields(INSTANCE_TYPE newInstance) {
+        Collection<SType> fields = (Collection) getFields();
+        fields.stream().forEach((t)->{
+            t.init(newInstance.getField(t.getNameSimple()));
+        });
+    }
 }
