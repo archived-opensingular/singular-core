@@ -1,9 +1,13 @@
 package br.net.mirante.singular.server.module.wicket.view.util.dispatcher;
 
+import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 import java.lang.reflect.Constructor;
 
-import br.net.mirante.singular.server.commons.exception.SingularServerException;
-import br.net.mirante.singular.server.commons.wicket.view.template.Template;
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -12,32 +16,43 @@ import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.Request;
+import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.annotation.mount.MountPath;
 
+import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ITaskPageStrategy;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskUserExecutable;
 import br.net.mirante.singular.flow.core.TaskInstance;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.PetServerTaskPageStrategy;
 import br.net.mirante.singular.server.commons.flow.SingularWebRef;
+import br.net.mirante.singular.server.commons.form.FormActions;
+import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.wicket.view.SingularHeaderResponseDecorator;
 import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import br.net.mirante.singular.server.commons.wicket.view.template.Template;
+import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 
 @SuppressWarnings("serial")
-public abstract class AbstractDispatcherPage extends WebPage {
+@MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
+public class DispatcherPage extends WebPage {
 
-    protected static final Logger logger = LoggerFactory.getLogger(AbstractDispatcherPage.class);
+    protected static final Logger logger = LoggerFactory.getLogger(DispatcherPage.class);
 
     private final WebMarkupContainer bodyContainer = new WebMarkupContainer("body");
 
-    public AbstractDispatcherPage() {
+    @Inject
+    private AnalisePeticaoService<?> analisePeticaoService;
+
+    public DispatcherPage() {
         this.add(bodyContainer);
         getApplication().setHeaderResponseDecorator(new SingularHeaderResponseDecorator());
         bodyContainer.add(new HeaderResponseContainer("scripts", "scripts"));
@@ -56,13 +71,20 @@ public abstract class AbstractDispatcherPage extends WebPage {
         response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(Template.class, "singular.js")));
     }
 
-    protected abstract AbstractFormPage.FormPageConfig parseParameters(Request request);
+    protected AbstractFormPage.FormPageConfig parseParameters(Request request) {
+        AbstractFormPage.FormPageConfig config = buildConfig(request);
+        return parseParameters(request, config);
+    }
+
+    protected AbstractFormPage.FormPageConfig parseParameters(Request request, AbstractFormPage.FormPageConfig config) {
+        return null;
+    }
 
     protected void dispatch(AbstractFormPage.FormPageConfig config) {
         try {
             WebPage destination = null;
             SingularWebRef ref = null;
-            TaskInstance ti = loadCurrentTaskByFormId(config.formId);
+            TaskInstance ti = findCurrentTaskByPetitionId(config.formId);
             if (ti != null) {
                 MTask task = ti.getFlowTask();
                 if (task instanceof MTaskUserExecutable) {
@@ -110,8 +132,38 @@ public abstract class AbstractDispatcherPage extends WebPage {
                         " window.close(); "));
     }
 
-    protected abstract TaskInstance loadCurrentTaskByFormId(String formID);
 
-    protected abstract Class<? extends AbstractFormPage> getDefaultFormPageClass();
+    private AbstractFormPage.FormPageConfig buildConfig(Request request) {
+
+        StringValue action = request.getRequestParameters().getParameterValue("a");
+        StringValue formId = request.getRequestParameters().getParameterValue("k");
+        StringValue formName = request.getRequestParameters().getParameterValue(SIGLA_FORM_NAME);
+
+        if (action.isEmpty()) {
+            throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + "/singular");
+        }
+
+        FormActions formActions = FormActions.getById(Integer.parseInt(action.toString("0")));
+
+        AbstractFormPage.FormPageConfig formPageConfig = new AbstractFormPage.FormPageConfig();
+        formPageConfig.formId = formId.toString("");
+        formPageConfig.annotationMode = formActions.getAnnotationMode() == null? AnnotationMode.NONE : formActions.getAnnotationMode();
+        formPageConfig.viewMode = formActions.getViewMode();
+        formPageConfig.type = formName.toString();
+
+        return formPageConfig;
+    }
+
+    protected TaskInstance findCurrentTaskByPetitionId(String petitionId) {
+        if (StringUtils.isBlank(petitionId)) {
+            return null;
+        } else {
+            return Flow.getTaskInstance(analisePeticaoService.findCurrentTaskByPetitionId(petitionId));
+        }
+    }
+
+    protected Class<? extends AbstractFormPage> getDefaultFormPageClass() {
+        return AbstractFormPage.class;
+    }
 
 }

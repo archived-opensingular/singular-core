@@ -1,5 +1,25 @@
 package br.net.mirante.singular.server.core.wicket.template;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.server.commons.config.ServerContext;
 import br.net.mirante.singular.server.commons.form.FormActions;
@@ -17,24 +37,6 @@ import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.datatable.column.MetronicStatusColumn;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import org.apache.wicket.Page;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
-
-import javax.inject.Inject;
-import java.util.Optional;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> extends Content {
 
@@ -166,7 +168,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
                 .baseURL(getBaseUrl(peticao.getProcessGroupContext()) + DispatcherPageUtil.DISPATCHER_PAGE_PATH)
                 .formAction(formActions.getId())
                 .formId(peticao.getCodPeticao())
-                .param(Parameters.SIGLA_PARAM_NAME, peticao.getProcessType())
+                .param(Parameters.SIGLA_FORM_NAME, peticao.getType())
                 .build();
         WebMarkupContainer link = new WebMarkupContainer(id);
         link.add($b.attr("href", href));

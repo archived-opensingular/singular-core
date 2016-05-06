@@ -1,5 +1,16 @@
 package br.net.mirante.singular.server.p.core.wicket.rascunho;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
@@ -10,19 +21,9 @@ import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.core.wicket.ModuleLink;
-
 import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.model.IModel;
-
-import javax.inject.Inject;
-import java.util.List;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class RascunhoContent extends AbstractCaixaContent<PeticaoDTO> {
 
@@ -99,7 +100,7 @@ public class RascunhoContent extends AbstractCaixaContent<PeticaoDTO> {
                             .baseURL(getBaseUrl())
                             .formAction(FormActions.FORM_FILL.getId())
                             .formId(null)
-                            .param(Parameters.SIGLA_PARAM_NAME, process.getAbbreviation())
+                            .param(Parameters.SIGLA_FORM_NAME, process.getFormName())
                             .build();
                     dropdownMenu.adicionarMenu(id -> new ModuleLink(id, WicketUtils.$m.ofValue(process.getName()), processUrl));
                 } else {
@@ -107,7 +108,7 @@ public class RascunhoContent extends AbstractCaixaContent<PeticaoDTO> {
                             .baseURL(getBaseUrl())
                             .formAction(FormActions.FORM_FILL.getId())
                             .formId(null)
-                            .param(Parameters.SIGLA_PARAM_NAME, process.getAbbreviation())
+                            .param(Parameters.SIGLA_FORM_NAME, process.getFormName())
                             .build();
                     adicionarBotaoGlobal(id -> new ModuleLink(id, getMessage("label.button.insert"), url));
                 }

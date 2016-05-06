@@ -128,4 +128,22 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         return ((Number) buildQuery(null, true, siglaFluxo, idsPerfis, filtroRapido, concluidas, true).uniqueResult()).intValue();
     }
 
+    @SuppressWarnings("unchecked")
+    public List<TaskInstanceEntity> findCurrentTasksByPetitionId(String petitionId) {
+        StringBuilder sb = new StringBuilder();
+
+        sb
+                .append(" select ti ")
+                .append(" from " + getPetitionEntityClass().getName() + " pet ")
+                .append(" inner join pet.processInstanceEntity pi ")
+                .append(" inner join pi.tasks ti ")
+                .append(" inner join ti.task task ")
+                .append(" where pet.cod = :petitionId  ")
+                .append("   and (ti.endDate is null OR task.type = :tipoEnd)  ");
+
+        final Query query = getSession().createQuery(sb.toString());
+        query.setParameter("petitionId", Long.valueOf(petitionId));
+        query.setParameter("tipoEnd", TaskType.End);
+        return query.list();
+    }
 }
