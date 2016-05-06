@@ -1,17 +1,17 @@
 package br.net.mirante.singular.server.commons.form;
 
-import br.net.mirante.singular.form.mform.RefService;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
-import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.RefService;
+import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static br.net.mirante.singular.form.mform.RefService.of;
-import static br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler.newTemporaryHandler;
+import static br.net.mirante.singular.form.RefService.of;
+import static br.net.mirante.singular.form.type.core.attachment.handlers.FileSystemAttachmentHandler.newTemporaryHandler;
 
 public class SingularServerDocumentFactory extends SpringSDocumentFactory {
 

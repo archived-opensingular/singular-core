@@ -1,9 +1,8 @@
 package br.net.mirante.singular.server.commons.config;
 
-import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
 import br.net.mirante.singular.form.spring.SpringTypeLoader;
-import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.form.SingularServerDocumentFactory;
 import br.net.mirante.singular.server.commons.form.SingularServerFormConfigFactory;
 import br.net.mirante.singular.server.commons.form.SingularServerSpringTypeLoader;

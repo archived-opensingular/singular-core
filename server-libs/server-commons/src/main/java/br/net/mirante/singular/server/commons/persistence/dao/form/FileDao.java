@@ -1,27 +1,24 @@
 package br.net.mirante.singular.server.commons.persistence.dao.form;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
+import br.net.mirante.singular.form.io.HashUtil;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.type.core.attachment.handlers.IdGenerator;
+import br.net.mirante.singular.server.commons.persistence.entity.form.attachment.AbstractAttachmentEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.attachment.Attachment;
+import br.net.mirante.singular.support.persistence.BaseDAO;
+import com.google.common.base.Throwables;
+import com.google.common.io.ByteStreams;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.IdGenerator;
-import br.net.mirante.singular.form.mform.io.HashUtil;
-import br.net.mirante.singular.server.commons.persistence.entity.form.attachment.AbstractAttachmentEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.attachment.Attachment;
-import br.net.mirante.singular.support.persistence.BaseDAO;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long> implements IAttachmentPersistenceHandler {

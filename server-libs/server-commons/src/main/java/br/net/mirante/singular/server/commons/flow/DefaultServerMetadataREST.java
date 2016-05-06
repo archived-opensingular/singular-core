@@ -22,10 +22,8 @@ import java.util.Map;
 @RestController
 public class DefaultServerMetadataREST implements IServerMetadataREST {
 
-
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
-
 
     @RequestMapping(value = PATH_LIST_MENU, method = RequestMethod.GET)
     @Override

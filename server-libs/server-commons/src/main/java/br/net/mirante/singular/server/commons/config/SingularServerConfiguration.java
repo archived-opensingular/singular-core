@@ -2,7 +2,7 @@ package br.net.mirante.singular.server.commons.config;
 
 
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.SPackage;
 import org.springframework.web.context.ServletContextAware;
 
 import javax.servlet.ServletContext;
@@ -53,7 +53,8 @@ public class SingularServerConfiguration implements ServletContextAware {
         return definitionsBasePackage;
     }
 
-    public Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap() {
+    public Map<Class<? extends
+            ProcessDefinition>, String> processDefinitionFormNameMap() {
         return processDefinitionFormNameMap;
     }
 

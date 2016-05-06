@@ -1,8 +1,8 @@
 package br.net.mirante.singular.server.commons.form;
 
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormContent;

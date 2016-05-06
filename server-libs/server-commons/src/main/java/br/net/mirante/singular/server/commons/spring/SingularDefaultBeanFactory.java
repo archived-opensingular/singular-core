@@ -1,7 +1,7 @@
 package br.net.mirante.singular.server.commons.spring;
 
 import br.net.mirante.singular.flow.core.service.IUserService;
-import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;

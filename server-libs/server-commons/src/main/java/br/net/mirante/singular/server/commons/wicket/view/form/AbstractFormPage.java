@@ -1,9 +1,9 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
 import br.net.mirante.singular.flow.core.MTransition;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;

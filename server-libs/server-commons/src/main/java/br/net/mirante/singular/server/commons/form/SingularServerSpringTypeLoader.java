@@ -1,20 +1,18 @@
 package br.net.mirante.singular.server.commons.form;
 
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.spring.SpringTypeLoader;
+import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-
-import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
-import org.apache.commons.lang3.StringUtils;
-
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.spring.SpringTypeLoader;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 public class SingularServerSpringTypeLoader extends SpringTypeLoader<String> {
 
