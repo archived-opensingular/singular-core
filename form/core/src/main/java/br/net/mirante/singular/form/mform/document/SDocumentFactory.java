@@ -41,6 +41,8 @@ public abstract class SDocumentFactory {
     public final SInstance createInstance(RefType rootType) {
         SInstance instance = createIntanceWithoutSetup(rootType);
         setupDocument(instance.getDocument());
+        SType type = instance.getType();
+        type.init(instance);
         return instance;
     }
 

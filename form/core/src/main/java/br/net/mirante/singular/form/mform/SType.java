@@ -531,13 +531,21 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             }
             instanceCount++;
 
-            if (initListener != null) {
-                initListener.accept(newInstance);
-            }
+//            init(newInstance);
 
             return newInstance;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new SingularFormException("Erro instanciando o tipo '" + getName() + "' para o tipo '" + original.getName() + "'", e);
+        }
+    }
+
+    /**
+     * Run initialization code for new created instance.
+     * @param newInstance Instance recently created.
+     */
+    public void init(I newInstance) {
+        if (initListener != null) {
+            initListener.accept(newInstance);
         }
     }
 
