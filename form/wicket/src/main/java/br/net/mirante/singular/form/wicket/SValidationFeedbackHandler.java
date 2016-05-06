@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,23 +33,36 @@ public class SValidationFeedbackHandler implements Serializable {
     private IModel<? extends SInstance>  instanceModel;
     private final List<IValidationError> currentErrors = new ArrayList<>();
 
-    public static void bindTo(Component targetComponent) {
-        targetComponent.setMetaData(MDK, new SValidationFeedbackHandler(targetComponent));
+    public static SValidationFeedbackHandler bindTo(Component targetComponent) {
+        SValidationFeedbackHandler handler = new SValidationFeedbackHandler(targetComponent);
+        targetComponent.setMetaData(MDK, handler);
+        return handler;
     }
 
     private SValidationFeedbackHandler(Component targetComponent) {
         this.targetComponent = targetComponent;
     }
 
-    public void updateValidationMessages(Optional<AjaxRequestTarget> target,
-                                         Collection<IValidationError> newErrors) {
+    public void clearValidationMessages(Optional<AjaxRequestTarget> target) {
+        updateValidationMessages(target, Collections.emptyList());
+    }
+
+    public void updateValidationMessages(Optional<AjaxRequestTarget> target, Collection<IValidationError> newErrors) {
+        ArrayList<IValidationError> oldErrors = new ArrayList<>(currentErrors);
+
         this.currentErrors.clear();
         this.currentErrors.addAll(newErrors);
+
+        onValidationErrorsChanged(
+            target,
+            (MarkupContainer) this.targetComponent,
+            resolveRootInstance(this.targetComponent),
+            oldErrors, newErrors);
     }
 
     public void onValidationErrorsChanged(Optional<AjaxRequestTarget> target,
                                           MarkupContainer container,
-                                          IModel<SInstance> baseInstance,
+                                          SInstance baseInstance,
                                           Collection<IValidationError> oldErrors,
                                           Collection<IValidationError> newErrors) {}
 
