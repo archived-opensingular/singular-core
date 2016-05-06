@@ -28,7 +28,7 @@ public interface SSimpleProvider extends SimpleProvider<Content, SInstance> {
             throw new RuntimeException("Não foi possivel obter o tipo da instancia");
         }
 
-        final SCompositeListBuilder builder = new SCompositeListBuilder(typeComposite);
+        final SCompositeListBuilder builder = new SCompositeListBuilder(typeComposite, ins);
         final List<Content>         listMap = new ArrayList<>();
 
         fill(builder);

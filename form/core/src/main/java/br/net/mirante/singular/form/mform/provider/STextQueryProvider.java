@@ -12,7 +12,7 @@ public interface STextQueryProvider extends TextQueryProvider<Value.Content, SIC
 
     @Override
     default List<Value.Content> load(SIComposite ins, String query) {
-        final SCompositeListBuilder builder = new SCompositeListBuilder((STypeComposite<SIComposite>) ins.getType());
+        final SCompositeListBuilder builder = new SCompositeListBuilder((STypeComposite<SIComposite>) ins.getType(), ins);
         fill(builder, query);
         final List<Value.Content> listMap = new ArrayList<>();
         builder.getList().forEach(i -> listMap.add(Value.dehydrate(i)));
