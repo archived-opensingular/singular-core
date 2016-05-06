@@ -6,6 +6,7 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 
@@ -19,15 +20,17 @@ public class SCompositeListBuilder {
 
     private List<SIComposite>           list;
     private STypeComposite<SIComposite> type;
+    private SInstance                   currentInstance;
 
     /**
      * Instancia do tipo dos elementos da lista
      *
      * @param type
      */
-    public SCompositeListBuilder(STypeComposite<SIComposite> type) {
+    public SCompositeListBuilder(STypeComposite<SIComposite> type, SInstance currentInstance) {
         this.type = type;
         this.list = new ArrayList<>();
+        this.currentInstance = currentInstance;
     }
 
     /**
@@ -43,6 +46,10 @@ public class SCompositeListBuilder {
 
     public List<SIComposite> getList() {
         return list;
+    }
+
+    public SInstance getCurrentInstance() {
+        return currentInstance;
     }
 
     public static class SCompositeValueSetter {

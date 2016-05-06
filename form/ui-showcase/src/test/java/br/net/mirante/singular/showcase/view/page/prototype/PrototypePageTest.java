@@ -1,6 +1,9 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
@@ -9,9 +12,6 @@ import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.showcase.SpringWicketTester;
 import br.net.mirante.singular.showcase.dao.form.Prototype;
 import br.net.mirante.singular.showcase.view.template.Content;
-import org.apache.wicket.Component;
-import org.apache.wicket.Session;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.tester.FormTester;
@@ -27,10 +27,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import java.util.List;
-
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findOnForm;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @Ignore("Problems with maven environment")
@@ -42,14 +39,16 @@ public class PrototypePageTest {
     public static class Base {
         @Inject
         private SpringWicketTester springWicketTester;
-        @Inject @Named("formConfigWithDatabase")
+        @Inject
+        @Named("formConfigWithDatabase")
         private SFormConfig<String> singularFormConfig;
         private WicketTester driver;
         private SDictionary dictionary;
         private SIComposite currentInstance;
         private FormTester form;
 
-        @Before public void setup(){
+        @Before
+        public void setup() {
             driver = springWicketTester.wt();
             dictionary = SDictionary.create();
             dictionary.loadPackage(SPackagePrototype.class);
@@ -65,7 +64,8 @@ public class PrototypePageTest {
             });
         }
 
-        @Test public void rendersPrototypeOnScreen(){
+        @Test
+        public void rendersPrototypeOnScreen() {
 
             SIList campo = (SIList) currentInstance.getField(SPackagePrototype.CHILDREN);
             assertThat(campo).isNotNull();
@@ -86,7 +86,7 @@ public class PrototypePageTest {
         }
 
         private void startPage() {
-            driver.startPage(new PrototypePage(){
+            driver.startPage(new PrototypePage() {
                 @Override
                 protected Content getContent(String id) {
                     return createDummyContent(id);
@@ -98,12 +98,14 @@ public class PrototypePageTest {
                 }
 
                 private PrototypeContent createDummyContent(final String id) {
-                    return new PrototypeContent(id, StringValue.valueOf("")){
+                    return new PrototypeContent(id, StringValue.valueOf("")) {
                         @Override
-                        protected void loadOrBuildModel(){
+                        protected void loadOrBuildModel() {
                             this.prototype = new Prototype();
                             MElement xml = MformPersistenciaXML.toXML(currentInstance);
-                            if(xml != null){    this.prototype.setXml(xml.toStringExato()); }
+                            if (xml != null) {
+                                this.prototype.setXml(xml.toStringExato());
+                            }
                         }
                     };
                 }

@@ -67,6 +67,9 @@ public final class Flow {
     }
 
     public static TaskInstance getTaskInstance(IEntityTaskInstance entityTaskInstance) {
+        if (entityTaskInstance == null){
+            return null;
+        }
         return new TaskInstance(entityTaskInstance);
     }
 
