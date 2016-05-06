@@ -3,7 +3,6 @@ package br.net.mirante.singular.server.commons.spring;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -89,6 +88,7 @@ public class SingularDefaultPersistenceConfiguration {
         dataSource.setDriverClassName("org.h2.Driver");
         return dataSource;
     }
+
 
     @Bean
     public LocalSessionFactoryBean sessionFactory(final DataSource dataSource) {

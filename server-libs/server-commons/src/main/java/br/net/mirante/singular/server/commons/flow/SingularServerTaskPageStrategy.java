@@ -5,20 +5,20 @@ import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.TaskInstance;
 import org.apache.wicket.markup.html.WebPage;
 
-public class PetServerTaskPageStrategy implements ITaskPageStrategy {
+public class SingularServerTaskPageStrategy implements ITaskPageStrategy {
 
     private SingularWebRef webRef;
 
-    public PetServerTaskPageStrategy(Class<? extends WebPage> page) {
+    public SingularServerTaskPageStrategy(Class<? extends WebPage> page) {
         this.webRef = new SingularWebRef(page);
     }
 
-    public PetServerTaskPageStrategy() {
+    public SingularServerTaskPageStrategy() {
 
     }
 
-    public static final PetServerTaskPageStrategy of(Class<? extends WebPage> page) {
-        return new PetServerTaskPageStrategy(page);
+    public static final SingularServerTaskPageStrategy of(Class<? extends WebPage> page) {
+        return new SingularServerTaskPageStrategy(page);
     }
 
     @Override

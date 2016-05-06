@@ -31,7 +31,7 @@ import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
-import br.net.mirante.singular.server.commons.flow.PetServerTaskPageStrategy;
+import br.net.mirante.singular.server.commons.flow.SingularServerTaskPageStrategy;
 import br.net.mirante.singular.server.commons.flow.SingularWebRef;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
@@ -89,7 +89,7 @@ public class DispatcherPage extends WebPage {
                 MTask task = ti.getFlowTask();
                 if (task instanceof MTaskUserExecutable) {
                     ITaskPageStrategy pageStrategy = ((MTaskUserExecutable) task).getExecutionPage();
-                    if (pageStrategy instanceof PetServerTaskPageStrategy) {
+                    if (pageStrategy instanceof SingularServerTaskPageStrategy) {
                         ref = (SingularWebRef) pageStrategy.getPageFor(ti, null);
                     } else {
                         logger.warn("Atividade atual possui uma estratégia de página não suportada. A página default será utilizada.");
