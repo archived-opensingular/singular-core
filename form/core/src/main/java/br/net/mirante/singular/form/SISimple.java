@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.form;
 
+import java.util.Objects;
+
 import br.net.mirante.singular.form.calculation.CalculationContext;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
-
-import java.util.Objects;
 
 public class SISimple<TIPO_NATIVO> extends SInstance {
 
@@ -143,4 +143,8 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
         return Objects.equals(v1, v2);
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + '(' + getValue() + ')';
+    }
 }
