@@ -1,6 +1,41 @@
 package br.net.mirante.singular.form.io;
 
-import br.net.mirante.singular.form.*;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.function.Function;
+
+import org.fest.assertions.api.Assertions;
+import org.junit.Assert;
+import org.junit.Test;
+
+import br.net.mirante.singular.form.ICompositeInstance;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.RefService;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInfoPackage;
+import br.net.mirante.singular.form.SInfoType;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.document.SDocumentFactory;
@@ -9,18 +44,6 @@ import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeString;
-import org.fest.assertions.api.Assertions;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.function.Function;
-
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 public class TesteFormSerializationUtil {
 
@@ -37,14 +60,80 @@ public class TesteFormSerializationUtil {
             STypeComposite<? extends SIComposite> endereco = pacote.createCompositeType("endereco");
             endereco.addFieldString("rua");
             endereco.addFieldString("bairro");
+            endereco.addFieldInteger("numero");
             endereco.addFieldString("cidade");
         });
         instancia.setValue("rua", "A1");
         instancia.setValue("bairro", "A2");
+        instancia.setValue("numero", 10);
         testSerializacao(instancia);
 
         // Testa um subPath
         testSerializacao(instancia.getField("bairro"));
+
+        instancia.setValue("numero", null);
+        testSerializacao(instancia);
+    }
+
+    @Test
+    public void testTipoCompostoByClass() {
+        SInstanceTesteEndereco instancia = (SInstanceTesteEndereco) SDocumentFactory.empty().createInstance(new RefTypeSeria());
+
+        instancia.setValue("bairro", "A2");
+        instancia.setValue("numero", 10);
+        instancia.getValue("rua");
+        testSerializacao(instancia);
+
+        testSerializacao(instancia.getField("bairro"));
+    }
+
+    @Test
+    public void testTipoCompostoByClassWithNullValue() {
+        SInstanceTesteEndereco instancia = (SInstanceTesteEndereco) SDocumentFactory.empty().createInstance(new RefTypeSeria());
+
+        instancia.setValue("bairro", "A2");
+        instancia.setValue("rua", null);
+        testSerializacao(instancia);
+    }
+
+    public static class RefTypeSeria extends RefType {
+
+        @Override
+        protected SType<?> retrieve() {
+            SDictionary novo = SDictionary.create();
+            return novo.getType(STypeTesteEndereco.class);
+        }
+
+    }
+
+    @SInfoPackage(name = "p.teste.seria")
+    public static class SPackageTesteSeria extends SPackage {
+
+        @Override
+        protected void carregarDefinicoes(PackageBuilder pb) {
+            pb.createType(STypeTesteEndereco.class);
+        }
+
+    }
+
+    @SInfoType(name = "TesteEndereco", spackage = SPackageTesteSeria.class)
+    public static class STypeTesteEndereco extends STypeComposite<SInstanceTesteEndereco> {
+
+        public STypeTesteEndereco() {
+            super(SInstanceTesteEndereco.class);
+        }
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            addFieldString("rua");
+            addFieldString("bairro");
+            addFieldInteger("numero");
+            addFieldString("cidade");
+        }
+    }
+
+    public static class SInstanceTesteEndereco extends SIComposite {
+
     }
 
     @Test
@@ -311,35 +400,52 @@ public class TesteFormSerializationUtil {
     }
 
     private static void assertEquivalent(SInstance original, SInstance novo) {
-        assertNotSame(original, novo);
-        assertEquals(original.getClass(), novo.getClass());
-        assertEquals(original.getType().getName(), novo.getType().getName());
-        assertEquals(original.getType().getClass(), novo.getType().getClass());
-        assertEquals(original.getName(), novo.getName());
-        assertEquals(original.getId(), novo.getId());
-        assertEquals(original.getPathFull(), novo.getPathFull());
-        if (original.getParent() != null) {
-            assertNotNull(novo.getParent());
-            assertEquals(original.getParent().getPathFull(), novo.getParent().getPathFull());
-        } else {
-            assertNull(novo.getParent());
-        }
-        if (original instanceof ICompositeInstance) {
-            List<SInstance> filhosOriginal = new ArrayList<>(((ICompositeInstance) original).getChildren());
-            List<SInstance> filhosNovo = new ArrayList<>(((ICompositeInstance) novo).getChildren());
-            assertEquals(filhosOriginal.size(), filhosNovo.size());
-            for (int i = 0; i < filhosOriginal.size(); i++) {
-                assertEquivalent(filhosOriginal.get(0), filhosNovo.get(0));
+        try {
+            assertNotSame(original, novo);
+            assertEquals(original.getClass(), novo.getClass());
+            assertEquals(original.getType().getName(), novo.getType().getName());
+            assertEquals(original.getType().getClass(), novo.getType().getClass());
+            assertEquals(original.getName(), novo.getName());
+            assertEquals(original.getId(), novo.getId());
+            assertEquals(original.getPathFull(), novo.getPathFull());
+            if (original.getParent() != null) {
+                assertNotNull(novo.getParent());
+                assertEquals(original.getParent().getPathFull(), novo.getParent().getPathFull());
+            } else {
+                assertNull(novo.getParent());
             }
-        } else {
-            assertEquals(original.getValue(), novo.getValue());
-        }
+            // if (false && original instanceof SIComposite) {
+            // SIComposite originalC = (SIComposite) original;
+            // SIComposite novoC = (SIComposite) novo;
+            // for (SInstance field : originalC.getFields()) {
+            // assertEquivalent(field, novoC.getField(field.getName()));
+            // }
+            // for (SInstance field : novoC.getFields()) {
+            // assertEquivalent(originalC.getField(field.getName()), field);
+            // }
+            // }
+            if (original instanceof ICompositeInstance) {
+                List<SInstance> filhosOriginal = new ArrayList<>(((ICompositeInstance) original).getChildren());
+                List<SInstance> filhosNovo = new ArrayList<>(((ICompositeInstance) novo).getChildren());
+                assertEquals(filhosOriginal.size(), filhosNovo.size());
+                for (int i = 0; i < filhosOriginal.size(); i++) {
+                    assertEquivalent(filhosOriginal.get(0), filhosNovo.get(0));
+                }
+            } else {
+                assertEquals(original.getValue(), novo.getValue());
+            }
 
-        assertEquals(original.getAttributes().size(), novo.getAttributes().size());
-        for (Entry<String, SInstance> atrOriginal : original.getAttributes().entrySet()) {
-            SInstance atrNovo = novo.getAttributes().get(atrOriginal.getKey());
-            assertNotNull(atrNovo);
-            assertEquals(atrOriginal.getValue(), atrNovo);
+            assertEquals(original.getAttributes().size(), novo.getAttributes().size());
+            for (Entry<String, SInstance> atrOriginal : original.getAttributes().entrySet()) {
+                SInstance atrNovo = novo.getAttributes().get(atrOriginal.getKey());
+                assertNotNull(atrNovo);
+                assertEquals(atrOriginal.getValue(), atrNovo);
+            }
+        } catch (AssertionError e) {
+            if (e.getMessage().startsWith("Erro comparando")) {
+                throw e;
+            }
+            throw new AssertionError("Erro comparando '" + original.getPathFull() + "'", e);
         }
     }
 }

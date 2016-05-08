@@ -5,7 +5,24 @@
 
 package br.net.mirante.singular.form.io;
 
-import br.net.mirante.singular.form.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
+
+import br.net.mirante.singular.form.ICompositeInstance;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SISimple;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeSimple;
+import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.document.SDocumentFactory;
@@ -15,15 +32,6 @@ import br.net.mirante.singular.form.internal.xml.MParser;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.STypeAnnotationList;
-import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Attr;
-import org.w3c.dom.NamedNodeMap;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Métodos utilitários para converter instancias e anotaçãoes para e de XML.
@@ -64,7 +72,7 @@ public class MformPersistenciaXML {
      * factory de documento informada.
      */
     public static <T extends SInstance> T fromXML(RefType refType, MElement xml, SDocumentFactory documentFactory) {
-        SInstance novo = documentFactory.createInstance(refType);
+        SInstance novo = documentFactory.createInstanceWithoutInitialization(refType);
         return (T) fromXMLInterno(novo, xml);
     }
 

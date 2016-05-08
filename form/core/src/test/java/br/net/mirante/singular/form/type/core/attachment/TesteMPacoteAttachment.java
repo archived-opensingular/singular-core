@@ -1,12 +1,19 @@
 package br.net.mirante.singular.form.type.core.attachment;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.io.HashUtil;
-import br.net.mirante.singular.form.io.TesteFormSerializationUtil;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.TestCaseForm;
+import br.net.mirante.singular.form.io.HashUtil;
+import br.net.mirante.singular.form.io.TesteFormSerializationUtil;
 
 public class TesteMPacoteAttachment extends TestCaseForm {
 
@@ -202,6 +209,17 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     public void testSerializacaoDeserializacaoComAnexo() {
+        SIAttachment arq = (SIAttachment) TesteFormSerializationUtil.createSerializableTestInstance("teste.arq", pacote -> {
+            pacote.createType("arq", STypeAttachment.class);
+        });
+        final byte[] conteudo1 = new byte[] { 1, 2, 3 };
+        arq.setContent(conteudo1);
+        assertConteudo(conteudo1, arq, 1);
+        SIAttachment arq2 = (SIAttachment) TesteFormSerializationUtil.testSerializacao(arq);
+        assertConteudo(conteudo1, arq2, 1);
+    }
+
+    public void testSerializacaoDeserializacaoCompositeComAnexo() {
         SIComposite bloco = (SIComposite) TesteFormSerializationUtil.createSerializableTestInstance("teste.bloco", pacote -> {
             STypeComposite<? extends SIComposite> tipoBloco = pacote.createCompositeType("bloco");
             tipoBloco.addField("arquivo1", STypeAttachment.class);

@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.form.document;
 
+import java.util.Objects;
+
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.io.FormSerializationUtil;
-
-import java.util.Objects;
 
 /**
  * <p>
@@ -39,10 +39,19 @@ public abstract class SDocumentFactory {
      * {@link FormSerializationUtil#checkIfSerializable(SInstance)}).
      */
     public final SInstance createInstance(RefType rootType) {
-        SInstance instance = createIntanceWithoutSetup(rootType);
-        setupDocument(instance.getDocument());
+        SInstance instance = createInstanceWithoutInitialization(rootType);
         SType type = instance.getType();
         type.init(instance);
+        return instance;
+    }
+
+    /**
+     * USO INTERNO: cria uma instancia ser disparar as inicializações
+     * automáticas.
+     */
+    public final SInstance createInstanceWithoutInitialization(RefType rootType) {
+        SInstance instance = createIntanceWithoutSetup(rootType);
+        setupDocument(instance.getDocument());
         return instance;
     }
 
@@ -50,15 +59,6 @@ public abstract class SDocumentFactory {
         SInstance instance = Objects.requireNonNull(rootType).get().newInstance();
         instance.getDocument().setRootRefType(rootType);
         instance.getDocument().setDocumentFactory(this);
-        return instance;
-    }
-
-    @Deprecated
-    public final <T extends SInstance> T createInstance(SType<T> rootType) {
-        T instance = Objects.requireNonNull(rootType).newInstance();
-        SDocument document = instance.getDocument();
-        document.setDocumentFactory(this);
-        setupDocument(document);
         return instance;
     }
 
