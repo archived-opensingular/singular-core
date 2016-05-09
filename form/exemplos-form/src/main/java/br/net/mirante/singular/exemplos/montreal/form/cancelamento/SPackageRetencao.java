@@ -18,7 +18,6 @@ import br.net.mirante.singular.form.type.core.STypeDate;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
-import br.net.mirante.singular.form.view.SMultiSelectionBySelectView;
 import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.view.SViewTextArea;
 
@@ -80,7 +79,7 @@ public class SPackageRetencao extends SPackage {
 
             final STypeList<STypeComposite<SIComposite>, SIComposite> titulos = cancelamento.addFieldListOfComposite("titulos", "titulo");
             titulos.asAtr().label("Títulos").required();
-            titulos.asAtrBootstrap().colPreference(6);
+            titulos.asAtrBootstrap().colPreference(4);
             final STypeComposite<SIComposite> titulo = titulos.getElementsType();
 
             final STypeString id = titulo.addFieldString("id");
@@ -106,22 +105,14 @@ public class SPackageRetencao extends SPackage {
             motivosCancelamento
                     .selectionOf(getOpcoesCentralReserva())
                     .asAtr().label("Motivos do cancelamento").required()
-                    .asAtrBootstrap().colPreference(4);
+                    .asAtrBootstrap().colPreference(8);
             motivosCancelamento.setView(SMultiSelectionByPicklistView::new);
-
 
 
             final STypeString observacoes = cancelamento.addFieldString("observacoes");
             observacoes
                     .asAtr().label("Obsevações").tamanhoMaximo(1000)
                     .getTipo().withView(SViewTextArea::new);
-
-//        final STypeDate dataInclusao = dadosCancelamento.addFieldDate("dataInclusao");
-//        dataInclusao.asAtr().label("Data de inclusão").required()
-//                .asAtrBootstrap().colPreference(3);
-//        final STypeString atendente = dadosCancelamento.addFieldString("atendente");
-//        atendente.asAtr().label("Atendente").required()
-//                .asAtrBootstrap().colPreference(3);
 
             cancelamentos.withView(SViewListByForm::new);
 
