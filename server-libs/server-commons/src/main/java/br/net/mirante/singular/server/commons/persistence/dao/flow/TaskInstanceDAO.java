@@ -1,5 +1,13 @@
 package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Query;
+
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
@@ -7,13 +15,6 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPe
 import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Query;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
 
@@ -77,10 +78,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                         " left join ti.allocatedUser au " +
                         " left join ti.task tv " +
                         " left join tv.taskDefinition td  " +
-                        " , TaskRight tr " +
-                        " left join tr.taskDefinition tdr " +
                         " where 1 = 1" +
-                        " and td.cod = tdr.cod " +
                         (concluidas ? " and tv.type = :tipoEnd " : " and ti.endDate is null ") +
                         addQuickFilter(filtroRapido) +
                         getOrderBy(sortProperty, ascending, count));
