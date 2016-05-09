@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class SpringHibernateInitializer {
 
-    protected static final String SPRING_MVC_DISPATCHER_SERVLET = "Spring MVC Dispatcher Servlet";
+    public static final String SPRING_MVC_DISPATCHER_SERVLET = "Spring MVC Dispatcher Servlet";
 
     public SpringHibernateInitializer() {
 
