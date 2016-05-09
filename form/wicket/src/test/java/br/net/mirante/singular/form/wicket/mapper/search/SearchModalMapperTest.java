@@ -1,15 +1,15 @@
 package br.net.mirante.singular.form.wicket.mapper.search;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
-import br.net.mirante.singular.form.mform.converter.ValueToSICompositeConverter;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.mform.provider.ProviderContext;
-import br.net.mirante.singular.form.mform.provider.filter.Config;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.converter.ValueToSICompositeConverter;
+import br.net.mirante.singular.form.provider.Config;
+import br.net.mirante.singular.form.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.provider.ProviderContext;
+import br.net.mirante.singular.form.type.core.STypeBoolean;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import org.apache.commons.lang3.tuple.Triple;

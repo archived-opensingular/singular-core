@@ -5,27 +5,24 @@
 
 package br.net.mirante.singular.showcase.dao.form;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.List;
-
+import br.net.mirante.singular.form.document.SDocument;
+import br.net.mirante.singular.form.io.HashUtil;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.type.core.attachment.handlers.IdGenerator;
+import com.google.common.base.Throwables;
+import com.google.common.io.ByteStreams;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.IdGenerator;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.io.HashUtil;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.List;
 
 @Repository(SDocument.FILE_PERSISTENCE_SERVICE)
 @SuppressWarnings("serial")

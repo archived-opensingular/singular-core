@@ -3,10 +3,10 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.common;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.exemplos.util.TripleConverter;
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewReadOnly;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.view.SViewListByTable;
+import br.net.mirante.singular.form.view.SViewReadOnly;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.List;

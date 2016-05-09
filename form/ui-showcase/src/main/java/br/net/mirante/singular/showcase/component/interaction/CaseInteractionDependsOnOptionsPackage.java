@@ -5,26 +5,17 @@
 
 package br.net.mirante.singular.showcase.component.interaction;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.provider.Provider;
-import br.net.mirante.singular.form.mform.provider.ProviderContext;
-import br.net.mirante.singular.form.mform.provider.SSimpleProvider;
-import br.net.mirante.singular.form.mform.provider.SimpleProvider;
-import br.net.mirante.singular.form.mform.util.transformer.SCompositeListBuilder;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.type.core.STypeString;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static java.util.stream.Collectors.toList;
 
 public class CaseInteractionDependsOnOptionsPackage extends SPackage {
 
@@ -58,8 +49,8 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
             .split(",");
 
     public STypeComposite<?> testForm;
-    public STypeString letter;
-    public STypeString word;
+    public STypeString       letter;
+    public STypeString       word;
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {

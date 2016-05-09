@@ -5,10 +5,17 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.form.wicket.repeater.PathInstanceItemReuseStrategy;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
@@ -17,17 +24,9 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
-import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
-import br.net.mirante.singular.form.wicket.repeater.PathInstanceItemReuseStrategy;
-import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 

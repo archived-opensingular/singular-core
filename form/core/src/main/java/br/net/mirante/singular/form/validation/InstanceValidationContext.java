@@ -5,21 +5,16 @@
 
 package br.net.mirante.singular.form.validation;
 
-import static java.lang.Boolean.*;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-
-import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SInstanceViewState;
-import br.net.mirante.singular.form.mform.SInstances;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import static java.lang.Boolean.TRUE;
 
 public class InstanceValidationContext {
 

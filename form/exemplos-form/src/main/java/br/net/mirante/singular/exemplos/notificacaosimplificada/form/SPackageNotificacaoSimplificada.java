@@ -9,9 +9,9 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.STypeAc
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal.STypeEnsaioControleQualidade;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SPackage;
 
 public class SPackageNotificacaoSimplificada extends SPackage {
 

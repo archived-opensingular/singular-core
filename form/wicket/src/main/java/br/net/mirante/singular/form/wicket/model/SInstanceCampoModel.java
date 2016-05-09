@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.SInstance;
 
 public class SInstanceCampoModel<I extends SInstance>
     extends AbstractSInstanceCampoModel<I> {

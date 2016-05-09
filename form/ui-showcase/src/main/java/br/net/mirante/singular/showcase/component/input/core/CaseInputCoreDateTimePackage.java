@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.showcase.component.input.core;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.core.STypeDateTime;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.core.STypeDateTime;
 
 public class CaseInputCoreDateTimePackage extends SPackage {
 

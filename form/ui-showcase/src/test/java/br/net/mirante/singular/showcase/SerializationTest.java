@@ -1,9 +1,9 @@
 package br.net.mirante.singular.showcase;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.io.FormSerializationUtil;
 import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import org.junit.Test;

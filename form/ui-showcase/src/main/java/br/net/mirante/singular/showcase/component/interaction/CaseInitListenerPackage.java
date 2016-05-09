@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.showcase.component.interaction;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewListByForm;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class CaseInitListenerPackage extends SPackage {
 
     private STypeList<STypeComposite<SIComposite>, SIComposite> itens;
-    private STypeString nome;
+    private STypeString                                         nome;
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {

@@ -5,18 +5,14 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.context.UIComponentMapper;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.context.UIComponentMapper;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateChoiceBehavior;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateSingularFormComponentPanel;
 import br.net.mirante.singular.form.wicket.component.SingularFormComponentPanel;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
-import org.apache.wicket.markup.html.form.CheckGroup;
-import org.apache.wicket.markup.html.form.FormComponentPanel;
-import org.apache.wicket.markup.html.form.RadioChoice;
-import org.apache.wicket.markup.html.form.RadioGroup;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.model.IModel;
 import org.slf4j.LoggerFactory;
 

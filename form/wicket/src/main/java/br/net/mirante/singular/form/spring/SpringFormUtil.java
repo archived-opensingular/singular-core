@@ -5,11 +5,10 @@
 
 package br.net.mirante.singular.form.spring;
 
+import br.net.mirante.singular.form.SingularFormException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
-
-import br.net.mirante.singular.form.mform.SingularFormException;
 
 /**
  * Guarda um referência estática para o contexto de aplicação Spring de forma a

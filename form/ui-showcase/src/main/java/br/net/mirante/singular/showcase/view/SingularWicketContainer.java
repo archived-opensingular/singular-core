@@ -5,12 +5,8 @@
 
 package br.net.mirante.singular.showcase.view;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Objects;
-
-import javax.servlet.ServletContext;
-
+import br.net.mirante.singular.util.wicket.model.FallbackReadOnlyModel;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -20,9 +16,10 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.springframework.web.util.JavaScriptUtils;
 
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.util.wicket.model.FallbackReadOnlyModel;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import javax.servlet.ServletContext;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Objects;
 
 public interface SingularWicketContainer<CONTAINER extends MarkupContainer, T> {
 

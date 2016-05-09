@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.wicket.model.SelectMInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
 import org.apache.wicket.Component;

@@ -5,17 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.panel;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-import static com.google.common.collect.Lists.*;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -27,9 +19,16 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.wicket.component.SingularForm;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class BSPanelGrid extends Panel {
 

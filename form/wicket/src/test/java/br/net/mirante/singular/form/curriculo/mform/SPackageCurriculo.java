@@ -1,19 +1,19 @@
 package br.net.mirante.singular.form.curriculo.mform;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.basic.view.SViewTab;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeDate;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
-import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
-import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
-import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
-import br.net.mirante.singular.form.mform.util.comuns.STypePersonName;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeBoolean;
+import br.net.mirante.singular.form.type.core.STypeDate;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
+import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
+import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
+import br.net.mirante.singular.form.type.util.STypeEMail;
+import br.net.mirante.singular.form.type.util.STypePersonName;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
+import br.net.mirante.singular.form.view.SViewListByForm;
+import br.net.mirante.singular.form.view.SViewListByTable;
+import br.net.mirante.singular.form.view.SViewTab;
 
 public class SPackageCurriculo extends SPackage {
 
@@ -90,8 +90,8 @@ public class SPackageCurriculo extends SPackage {
                 .asAtrBootstrap().colPreference(5);
         }
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> formacao = curriculo.addFieldListOfComposite("formacaoAcademica", "cursoAcademico");
-        final STypeComposite<?> cursoAcademico = formacao.getElementsType();
+        final STypeList<STypeComposite<SIComposite>, SIComposite> formacao       = curriculo.addFieldListOfComposite("formacaoAcademica", "cursoAcademico");
+        final STypeComposite<?>                                   cursoAcademico = formacao.getElementsType();
         final STypeString academicoTipo = cursoAcademico.addFieldString("tipo", true)
             .selectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado").cast();
         final STypeString academicoNomeCurso = cursoAcademico.addFieldString("nomeCurso", true);

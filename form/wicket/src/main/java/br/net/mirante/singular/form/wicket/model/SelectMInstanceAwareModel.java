@@ -1,9 +1,9 @@
 package br.net.mirante.singular.form.wicket.model;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.converter.SimpleSInstanceConverter;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.converter.SimpleSInstanceConverter;
 import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;

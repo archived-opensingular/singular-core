@@ -5,30 +5,28 @@
 
 package br.net.mirante.singular.form.wicket.panel;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.RefSDocumentFactory;
+import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.document.ServiceRegistry;
+import br.net.mirante.singular.form.document.TypeLoader;
+import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
-import br.net.mirante.singular.form.mform.document.TypeLoader;
-import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos

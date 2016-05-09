@@ -5,15 +5,14 @@
 
 package br.net.mirante.singular.form.spring;
 
+import br.net.mirante.singular.form.document.RefSDocumentFactory;
+import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.document.ServiceRegistry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
 /**
  * Implementação padrão da fábrica de documento para uso junto com o Spring.

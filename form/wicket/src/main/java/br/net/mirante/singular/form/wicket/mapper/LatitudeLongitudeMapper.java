@@ -5,16 +5,15 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import org.apache.wicket.model.IModel;
-
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.core.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.maps.MarkableGoogleMapsPanel;
+import org.apache.wicket.model.IModel;
 
 public class LatitudeLongitudeMapper implements IWicketComponentMapper {
 

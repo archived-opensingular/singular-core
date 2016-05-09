@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.form.validation.validator;
 
+import br.net.mirante.singular.form.type.core.SIString;
+import br.net.mirante.singular.form.validation.IInstanceValidatable;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.validation.IInstanceValidatable;
 
 public enum MTelefoneNacionalValidator implements IInstanceValueValidator<SIString, String> {
 

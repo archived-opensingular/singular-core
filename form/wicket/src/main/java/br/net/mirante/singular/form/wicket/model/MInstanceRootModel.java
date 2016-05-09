@@ -5,16 +5,16 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.event.ISInstanceListener;
+import br.net.mirante.singular.form.event.SInstanceEvent;
+import br.net.mirante.singular.form.event.SInstanceEventType;
+import br.net.mirante.singular.form.event.SInstanceListeners;
+import br.net.mirante.singular.form.io.InstanceSerializableRef;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.event.ISInstanceListener;
-import br.net.mirante.singular.form.mform.event.SInstanceEventType;
-import br.net.mirante.singular.form.mform.event.SInstanceListeners;
-import br.net.mirante.singular.form.mform.event.SInstanceEvent;
-import br.net.mirante.singular.form.mform.io.InstanceSerializableRef;
 
 /**
  * <p>
@@ -23,7 +23,7 @@ import br.net.mirante.singular.form.mform.io.InstanceSerializableRef;
  * posterior resolução do respectivo Dicionário para viabilziar deserialziação.
  * </p>
  *
- * @see {@link br.net.mirante.singular.form.mform.io.InstanceSerializableRef}
+ * @see {@link InstanceSerializableRef}
  * @author Daniel C. Bordin
  */
 public class MInstanceRootModel<I extends SInstance> extends AbstractSInstanceModel<I> implements IMInstanceEventCollector<I> {

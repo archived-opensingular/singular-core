@@ -5,14 +5,13 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 public class MTipoElementosModel
     implements IReadOnlyModel<SType<SInstance>> {

@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByCheckboxView;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SMultiSelectionByCheckboxView;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class STypeStringMultipleSelectionFieldTest {
 
     private static class Base extends SingularFormBaseTest {
 
-        protected STypeList   fieldType;
+        protected STypeList fieldType;
 
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {

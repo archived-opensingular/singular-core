@@ -4,13 +4,13 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Categoria
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.converter.VocabularioControladoDTOSInstanceConverter;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.provider.VocabularioControladoTextQueryProvider;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInfoType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewAutoComplete;
 
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeCategoriaRegulatoria extends STypeComposite<SIComposite> {

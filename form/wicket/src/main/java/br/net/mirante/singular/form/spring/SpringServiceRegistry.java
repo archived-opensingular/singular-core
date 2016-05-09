@@ -5,15 +5,14 @@
 
 package br.net.mirante.singular.form.spring;
 
-import java.util.Collections;
-import java.util.Map;
-
+import br.net.mirante.singular.form.document.ServiceRegistry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * This class provides a {@link ServiceRegistry} that relays service lookup

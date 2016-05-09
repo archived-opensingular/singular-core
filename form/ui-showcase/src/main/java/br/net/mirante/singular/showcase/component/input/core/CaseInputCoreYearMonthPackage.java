@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.showcase.component.input.core;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
 
 public class CaseInputCoreYearMonthPackage extends SPackage {
 

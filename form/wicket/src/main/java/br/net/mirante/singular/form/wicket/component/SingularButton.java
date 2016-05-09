@@ -5,15 +5,14 @@
 
 package br.net.mirante.singular.form.wicket.component;
 
-import java.util.Optional;
-
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
+import java.util.Optional;
 
 public abstract class SingularButton extends AjaxButton {
 

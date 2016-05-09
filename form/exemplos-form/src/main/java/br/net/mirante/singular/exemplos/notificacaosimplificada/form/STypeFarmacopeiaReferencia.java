@@ -2,7 +2,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeFarmacopeia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.*;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeFarmacopeiaReferencia extends STypeComposite<SIComposite> {

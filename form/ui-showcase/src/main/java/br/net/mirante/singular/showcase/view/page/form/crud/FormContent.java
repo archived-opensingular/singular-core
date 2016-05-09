@@ -5,11 +5,21 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
+import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
+import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.showcase.view.template.Content;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -22,21 +32,9 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValue;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.wicket.component.SingularForm;
-import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
-import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
-import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.template.Content;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Optional;
 
 public class FormContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 

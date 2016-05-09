@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
+import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 
 public class CaseListByMasterDetailNestedPackage extends SPackage {
 
@@ -18,12 +18,12 @@ public class CaseListByMasterDetailNestedPackage extends SPackage {
 
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
-        STypeComposite<?> experiencia = experiencias.getElementsType();
-        STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
-        STypeYearMonth dtFimExperiencia = experiencia.addField("fim", STypeYearMonth.class);
-        STypeString empresa = experiencia.addFieldString("empresa", true);
-        STypeString atividades = experiencia.addFieldString("atividades");
+        STypeList<STypeComposite<SIComposite>, SIComposite> experiencias        = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
+        STypeComposite<?>                                   experiencia         = experiencias.getElementsType();
+        STypeYearMonth                                      dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
+        STypeYearMonth                                      dtFimExperiencia    = experiencia.addField("fim", STypeYearMonth.class);
+        STypeString                                         empresa             = experiencia.addFieldString("empresa", true);
+        STypeString                                         atividades          = experiencia.addFieldString("atividades");
 
         STypeList<STypeComposite<SIComposite>, SIComposite> cargos = experiencia.addFieldListOfComposite("cargos", "cargo");
         STypeComposite<?> cargo = cargos.getElementsType();

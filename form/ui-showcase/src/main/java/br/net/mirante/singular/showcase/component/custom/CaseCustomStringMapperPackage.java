@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.showcase.component.custom;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.STypeComposite;
 
 public class CaseCustomStringMapperPackage extends SPackage {
 
