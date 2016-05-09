@@ -42,7 +42,7 @@ public class SingularDefaultPersistenceConfiguration {
     @Value("classpath:db/dml/insert-test-data.sql")
     private Resource insertTestData;
 
-    private DatabasePopulator databasePopulator() {
+    protected DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(drops);
