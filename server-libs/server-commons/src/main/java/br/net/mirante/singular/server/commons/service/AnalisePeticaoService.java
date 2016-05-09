@@ -1,6 +1,13 @@
 package br.net.mirante.singular.server.commons.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import br.net.mirante.singular.flow.core.Flow;
+import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
@@ -8,11 +15,6 @@ import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceD
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 public class AnalisePeticaoService<T extends TaskInstanceDTO> {
@@ -50,7 +52,8 @@ public class AnalisePeticaoService<T extends TaskInstanceDTO> {
     public void salvarExecutarTransicao(String transitionName, Petition peticao) {
         try {
             petitionService.saveOrUpdate(peticao);
-            ProcessInstance pi = Flow.getProcessInstance((Class)Class.forName(peticao.getProcessType()), peticao.getProcessInstanceEntity().getCod());
+            final Class<? extends ProcessDefinition> clazz = Flow.getProcessDefinitionWith(peticao.getProcessType()).getClass();
+            ProcessInstance pi = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
             pi.executeTransition(transitionName);
         } catch (Exception e) {
             throw new SingularServerException(e.getMessage(), e);

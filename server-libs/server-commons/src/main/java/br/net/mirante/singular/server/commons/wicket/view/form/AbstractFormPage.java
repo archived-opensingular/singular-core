@@ -1,5 +1,18 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.internal.xml.MElement;
@@ -15,23 +28,11 @@ import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.flow.RedirectToUrlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
 
 public abstract class AbstractFormPage extends Template {
 
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
-    private static final Logger logger = LoggerFactory.getLogger(AbstractFormPage.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFormPage.class);
 
     protected FormPageConfig config;
 
@@ -202,6 +203,7 @@ public abstract class AbstractFormPage extends Template {
                     addToastrSuccessMessageWorklist("message.action.success", transitionName);
                     target.appendJavaScript("window.close();");
                 }catch (Exception e){ // org.hibernate.StaleObjectStateException
+                    LOGGER.error("Erro ao salvar o XML", e);
                     addToastrErrorMessage("message.save.concurrent_error");
                 }
             }
