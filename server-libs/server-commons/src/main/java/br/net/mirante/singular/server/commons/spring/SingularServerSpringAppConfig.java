@@ -14,6 +14,8 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import javax.annotation.Resources;
+
 @EnableWebMvc
 @EnableWebSecurity
 @Configuration
