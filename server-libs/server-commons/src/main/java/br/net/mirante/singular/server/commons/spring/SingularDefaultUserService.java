@@ -1,12 +1,14 @@
 package br.net.mirante.singular.server.commons.spring;
 
+import javax.inject.Inject;
+
+import org.apache.wicket.Application;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
-import org.apache.wicket.Application;
-
-import javax.inject.Inject;
 
 public class SingularDefaultUserService implements IUserService {
 
@@ -41,11 +43,13 @@ public class SingularDefaultUserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public MUser saveUserIfNeeded(MUser mUser) {
         return actorDAO.saveUserIfNeeded(mUser);
     }
 
     @Override
+    @Transactional
     public MUser saveUserIfNeeded(String codUsuario) {
         return actorDAO.saveUserIfNeeded(codUsuario);
     }
