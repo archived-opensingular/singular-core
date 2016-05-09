@@ -36,7 +36,7 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
             if (dados[0] != null) {
                 actor.setCod(((Number) dados[0]).intValue());
             }
-            actor.setCodUsuario((String) dados[1]);
+            actor.setCodUsuario(dados[1].toString());
             actor.setNome((String) dados[2]);
             actor.setEmail((String) dados[3]);
         }
