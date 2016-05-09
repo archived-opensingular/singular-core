@@ -5,10 +5,6 @@
 
 package br.net.mirante.singular.exemplos.montreal.form.cancelamento;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import br.net.mirante.singular.exemplos.montreal.domain.Titulo;
 import br.net.mirante.singular.exemplos.montreal.service.DominioMontrealService;
 import br.net.mirante.singular.form.PackageBuilder;
@@ -21,17 +17,24 @@ import br.net.mirante.singular.form.type.core.STypeDate;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewAutoComplete;
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.view.SViewTextArea;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 public class SPackageRetencao extends SPackage {
 
-    public static final String PACOTE        = "mform.montreal.atendimento";
-    public static final String TIPO          = "Retencao";
+    public static final String PACOTE = "mform.montreal.atendimento";
+    public static final String TIPO = "Retencao";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
 
     public SPackageRetencao() {
         super(PACOTE);
+    }
+
+    public static DominioMontrealService dominioService(SInstance ins) {
+        return ins.getDocument().lookupService(DominioMontrealService.class);
     }
 
     @Override
@@ -59,74 +62,70 @@ public class SPackageRetencao extends SPackage {
                     .asAtrBootstrap().colPreference(2);
 
             retencao.withInitListener(i -> {
-                i.findNearest(nome).ifPresent(n -> n.setValue("Juracy Abrantes Júnior"));
+                i.findNearest(nome).ifPresent(n -> n.setValue(" Romeu Ambrósio"));
                 i.findNearest(dataInclusao).ifPresent(d -> d.setValue(new Date()));
             });
 
         }
+//
+//        final STypeList<STypeComposite<SIComposite>, SIComposite> cancelamentos = retencao.addFieldListOfComposite("cancelamentos", "retencao");
+//        cancelamentos.withMiniumSizeOf(1).asAtr().label("Cancelamentos");
+//
+//        final STypeComposite<SIComposite> cancelamento = cancelamentos.getElementsType();
+//
+//        {
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> cancelamentos = retencao.addFieldListOfComposite("cancelamentos", "retencao");
-        cancelamentos.withMiniumSizeOf(1).asAtr().label("Cancelamentos");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> titulos = retencao.addFieldListOfComposite("titulos", "titulo");
+        titulos.asAtr().label("Títulos").required();
+        titulos.asAtrBootstrap().colPreference(6);
+        final STypeComposite<SIComposite> titulo = titulos.getElementsType();
 
-        final STypeComposite<SIComposite> cancelamento = cancelamentos.getElementsType();
+        final STypeString id = titulo.addFieldString("id");
+        final STypeString numero = titulo.addFieldString("numero");
+        final STypeString situacao = titulo.addFieldString("situacao");
 
-        {
-            final STypeComposite<SIComposite> titulo = cancelamento.addFieldComposite("titulo");
-            titulo.asAtr().label("Dados do Título").required();
+        titulos.selection()
+                .id(id)
+                .display("${numero} - ${situacao}")
+                .simpleProvider(builder -> {
+                    for (Titulo t : dominioService(builder.getCurrentInstance()).titulos()) {
+                        builder.add()
+                                .set(id, t.getId())
+                                .set(numero, t.getNumero())
+                                .set(situacao, t.getSituacao())
+                        ;
+                    }
+                });
 
-            final STypeString id = titulo.addFieldString("id");
-            final STypeString numero = titulo.addFieldString("numero");
-            final STypeString situacao = titulo.addFieldString("situacao");
-//            numero.asAtr().label("Número")
-//                    .asAtrBootstrap().colPreference(2);
+        final STypeComposite<SIComposite> dadosCancelamento = retencao.addFieldComposite("dadosCancelamento");
+        final STypeString centralReservas = dadosCancelamento.addFieldString("centralReservas");
+        centralReservas
+                .selectionOf(getOpcoesCentralReserva())
+                .asAtr().label("Motivo do cancelamento").required()
+                .asAtrBootstrap().colPreference(4);
 
-            titulo.setView(SViewAutoComplete::new);
-            titulo.selection()
-                    .id(id)
-                    .display("${numero} - ${situacao}")
-                    .simpleProvider(builder -> {
-                        for (Titulo t : dominioService(builder.getCurrentInstance()).titulos()) {
-                            builder.add()
-                                    .set(id, t.getId())
-                                    .set(numero, t.getNumero())
-                                    .set(situacao, t.getSituacao())
-                            ;
-                        }
-                    });
+        final STypeString observacoes = dadosCancelamento.addFieldString("observacoes");
+        observacoes
+                .asAtr().label("Obsevações").tamanhoMaximo(1000)
+                .getTipo().withView(SViewTextArea::new);
+        final STypeString formaContato = dadosCancelamento.addFieldString("formaContato");
+        formaContato.asAtr().label("Forma de contato").required()
+                .asAtrBootstrap().colPreference(3);
+//        final STypeDate dataInclusao = dadosCancelamento.addFieldDate("dataInclusao");
+//        dataInclusao.asAtr().label("Data de inclusão").required()
+//                .asAtrBootstrap().colPreference(3);
+//        final STypeString atendente = dadosCancelamento.addFieldString("atendente");
+//        atendente.asAtr().label("Atendente").required()
+//                .asAtrBootstrap().colPreference(3);
 
-            final STypeComposite<SIComposite> dadosCancelamento = cancelamento.addFieldComposite("dadosCancelamento");
-            final STypeString centralReservas = dadosCancelamento.addFieldString("centralReservas");
-            centralReservas
-                    .selectionOf(getOpcoesCentralReserva())
-                    .asAtr().label("Central de Reservas").required()
-                    .asAtrBootstrap().colPreference(4);
+//            retencao
+//                    .withView(new SViewListByMasterDetail()
+//                            .col(numero, "Número do título")
+//                            .col(observacoes)
+//                            .col(atendente)
+//                    );
+//    }
 
-            final STypeString observacoes = dadosCancelamento.addFieldString("observacoes");
-            observacoes
-                    .asAtr().label("Obsevações").tamanhoMaximo(1000)
-                    .getTipo().withView(SViewTextArea::new);
-            final STypeString formaContato = dadosCancelamento.addFieldString("formaContato");
-            formaContato.asAtr().label("Forma de contato").required()
-                    .asAtrBootstrap().colPreference(3);
-            final STypeDate dataInclusao = dadosCancelamento.addFieldDate("dataInclusao");
-            dataInclusao.asAtr().label("Data de inclusão").required()
-                    .asAtrBootstrap().colPreference(3);
-            final STypeString atendente = dadosCancelamento.addFieldString("atendente");
-            atendente.asAtr().label("Atendente").required()
-                    .asAtrBootstrap().colPreference(3);
-
-            cancelamentos
-                    .withView(new SViewListByMasterDetail()
-                            .col(numero, "Número do título")
-                            .col(observacoes)
-                            .col(atendente)
-                    );
-        }
-
-    }
-
-    public static DominioMontrealService dominioService(SInstance ins) {
-        return ins.getDocument().lookupService(DominioMontrealService.class);
     }
 
     public List<Titulo> titulos() {
@@ -140,7 +139,7 @@ public class SPackageRetencao extends SPackage {
     }
 
     public String[] getOpcoesCentralReserva() {
-        return new String[] {
+        return new String[]{
                 "01. Não conseguiu vaga no hotel desejado",
                 "02. Não conseguiu vaga nos hotéis conveniados",
                 "03. Hotéis lotados no primeiro dia de marcação",
