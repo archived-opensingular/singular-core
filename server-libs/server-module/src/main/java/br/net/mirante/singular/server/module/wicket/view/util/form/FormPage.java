@@ -1,5 +1,21 @@
 package br.net.mirante.singular.server.module.wicket.view.util.form;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
+import org.wicketstuff.annotation.mount.MountPath;
+
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTransition;
@@ -19,20 +35,6 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
-import org.wicketstuff.annotation.mount.MountPath;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 @MountPath("/view")
@@ -137,7 +139,7 @@ public class FormPage extends AbstractFormPage {
             peticao.setType(type);
             singularServerConfiguration.processDefinitionFormNameMap().forEach((key, value) -> {
                 if (value.equals(type)) {
-                    peticao.setProcessType(key.getTypeName());
+                    peticao.setProcessType(Flow.getProcessDefinition(key).getKey());
                 }
             });
             peticao.setCreationDate(new Date());
