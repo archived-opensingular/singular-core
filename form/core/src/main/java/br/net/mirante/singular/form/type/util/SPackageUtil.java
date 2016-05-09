@@ -6,6 +6,8 @@
 package br.net.mirante.singular.form.type.util;
 
 import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SInfoPackage;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
@@ -15,11 +17,8 @@ import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
 import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
 
+@SInfoPackage(name = SDictionary.SINGULAR_PACKAGES_PREFIX + "util")
 public class SPackageUtil extends SPackage {
-
-    public SPackageUtil() {
-        super("mform.util.comuns");
-    }
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {

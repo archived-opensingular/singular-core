@@ -1,12 +1,21 @@
 package br.net.mirante.singular.form;
 
+import org.junit.Assert;
+
 import br.net.mirante.singular.form.SCorePackageTest.TestPacoteA.TestTipoA;
 import br.net.mirante.singular.form.SCorePackageTest.TestPacoteA.TestTipoB;
 import br.net.mirante.singular.form.SCorePackageTest.TestPacoteA.TestTipoComCargaInterna;
 import br.net.mirante.singular.form.SCorePackageTest.TestPacoteA.TestTipoX;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.*;
-import org.junit.Assert;
+import br.net.mirante.singular.form.type.core.SIInteger;
+import br.net.mirante.singular.form.type.core.SIString;
+import br.net.mirante.singular.form.type.core.SPackageCore;
+import br.net.mirante.singular.form.type.core.STypeBoolean;
+import br.net.mirante.singular.form.type.core.STypeDate;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
+import br.net.mirante.singular.form.type.util.STypeEMail;
 
 public class SCorePackageTest extends TestCaseForm {
 
@@ -255,13 +264,10 @@ public class SCorePackageTest extends TestCaseForm {
         }
     }
 
+    @SInfoPackage(name = "teste.pacoteB")
     public static final class TestPacoteB extends SPackage {
         static final AtrRef<STypeInteger, SIInteger, Integer> ATR_LABEL_Y = new AtrRef<>(TestPacoteB.class, "yy", STypeInteger.class,
                 SIInteger.class, Integer.class);
-
-        protected TestPacoteB() {
-            super("teste.pacoteB");
-        }
 
         @Override
         protected void carregarDefinicoes(PackageBuilder pb) {
@@ -270,6 +276,18 @@ public class SCorePackageTest extends TestCaseForm {
             pb.createAttributeIntoType(SType.class, ATR_LABEL_Y);
         }
 
+    }
+
+    public void testPackageName() {
+        assertEquals("teste.pacoteB", SFormUtil.getInfoPackageName(TestPacoteB.class));
+        assertNull(SFormUtil.getInfoPackageName(TestPacoteA.class));
+
+        SDictionary dicionario = SDictionary.create();
+        TestPacoteA pacoteA = dicionario.loadPackage(TestPacoteA.class);
+        TestPacoteB pacoteB = dicionario.loadPackage(TestPacoteB.class);
+
+        assertEquals("teste.pacoteA", pacoteA.getName());
+        assertEquals("teste.pacoteB", pacoteB.getName());
     }
 
     public void testCargaSimplesPacote() {
@@ -384,5 +402,22 @@ public class SCorePackageTest extends TestCaseForm {
 
         assertException(() -> pb.createAttributeType(TestPacoteA.ATR_XX), "Tentativa de criar o atributo",
                 "Deveria dar uma exception pois o atributo pertence a outro pacote");
+    }
+
+    public void testAutomaticLoadOfSingularTypeByName() {
+        assertEquals(SPackageCore.NAME + ".String", SFormUtil.getTypeName(STypeString.class));
+
+        loadTypeByName((Class<? extends SType<?>>) STypeSimple.class);
+        loadTypeByName(STypeString.class);
+        loadTypeByName(STypeDate.class);
+        loadTypeByName(STypeBehavior.class);
+        loadTypeByName(STypeEMail.class);
+        loadTypeByName(STypeCEP.class);
+    }
+
+    private static void loadTypeByName(Class<? extends SType<?>> typeClass) {
+        String typeName = SFormUtil.getTypeName(typeClass);
+        SDictionary dicionario = SDictionary.create();
+        dicionario.getType(typeName);
     }
 }

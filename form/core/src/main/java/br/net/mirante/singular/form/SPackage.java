@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.form;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.lang3.NotImplementedException;
 
 public class SPackage extends SScopeBase {
 
@@ -20,15 +20,20 @@ public class SPackage extends SScopeBase {
     private SDictionary dictionary;
 
     public SPackage() {
-        this.name = getClass().getName();
-        SFormUtil.validatePackageName(name);
-        if (getClass() == SPackage.class) {
-            throw new SingularFormException("Deve ser utilizado o construtor " + SPackage.class.getSimpleName() + "(String) ou "
-                    + SPackage.class.getSimpleName() + " deve ser derivado");
-        }
+        this(null);
     }
 
     protected SPackage(String name) {
+        if (name == null) {
+            if (getClass() == SPackage.class) {
+                throw new SingularFormException("Deve ser utilizado o construtor " + SPackage.class.getSimpleName() + "(String) ou "
+                        + SPackage.class.getSimpleName() + " deve ser derivado");
+            }
+            name = SFormUtil.getInfoPackageName(this.getClass());
+            if (name == null) {
+                name = getClass().getName();
+            }
+        }
         SFormUtil.validatePackageName(name);
         this.name = name;
     }

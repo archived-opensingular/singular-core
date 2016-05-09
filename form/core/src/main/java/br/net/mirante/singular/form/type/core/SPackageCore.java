@@ -5,18 +5,25 @@
 
 package br.net.mirante.singular.form.type.core;
 
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SInfoPackage;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeAttachmentList;
+import br.net.mirante.singular.form.STypeCode;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.STypePredicate;
+import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.type.core.annotation.STypeAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.STypeAnnotationList;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 
+@SInfoPackage(name = SPackageCore.NAME)
 public class SPackageCore extends SPackage {
 
-    public static final String NAME = "singular.form.core";
-
-    public SPackageCore() {
-        super(NAME);
-    }
+    public static final String NAME = SDictionary.SINGULAR_PACKAGES_PREFIX + "core";
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {

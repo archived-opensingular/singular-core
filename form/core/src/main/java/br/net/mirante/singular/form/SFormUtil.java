@@ -5,16 +5,26 @@
 
 package br.net.mirante.singular.form;
 
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.lang.model.SourceVersion;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
+
+import javax.lang.model.SourceVersion;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+
+import br.net.mirante.singular.commons.internal.function.SupplierUtil;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.type.core.SPackageBootstrap;
+import br.net.mirante.singular.form.type.util.SPackageUtil;
 
 public final class SFormUtil {
 
@@ -89,7 +99,7 @@ public final class SFormUtil {
                 if (current.getParent() instanceof SIList) {
                     int pos = ((SIList<?>) current.getParent()).indexOf(current);
                     if (pos == -1) {
-                        throw new SingularFormException(current.getName() + " não é mais filho de "+current.getParent().getName());
+                        throw new SingularFormException(current.getName() + " não é mais filho de " + current.getParent().getName());
                     }
                     sb.append('[').append(pos).append(']');
                 } else {
@@ -130,5 +140,97 @@ public final class SFormUtil {
             return StringUtils.join(labels, " > ");
         else
             return null;
+    }
+
+    /**
+     * Retorna o nome completo do tipo se precisar carregar da definição
+     * mediante a leitura da anotações {@link SInfoType} e {@link SInfoPackage}.
+     */
+    final static String getTypeName(Class<? extends SType<?>> typeClass) {
+        SInfoType infoType = getInfoType(typeClass);
+        Class<? extends SPackage> packageClass = getTypePackage(typeClass);
+        String packageName = getInfoPackageNameOrException(packageClass);
+        if (StringUtils.isBlank(infoType.name())) {
+            throw new SingularFormException("O tipo " + typeClass.getName() + " não define o nome do tipo por meio da anotação @"
+                    + SInfoType.class.getSimpleName());
+        }
+        return packageName + '.' + infoType.name();
+    }
+
+    final static SInfoType getInfoType(Class<? extends SType<?>> typeClass) {
+        SInfoType mFormTipo = typeClass.getAnnotation(SInfoType.class);
+        if (mFormTipo == null) {
+            throw new SingularFormException(
+                    "O tipo '" + typeClass.getName() + " não possui a anotação @" + SInfoType.class.getSimpleName() + " em sua definição.");
+        }
+        return mFormTipo;
+    }
+
+    final static Class<? extends SPackage> getTypePackage(Class<? extends SType<?>> typeClass) {
+        Class<? extends SPackage> sPackage = getInfoType(typeClass).spackage();
+        if (sPackage == null) {
+            throw new SingularFormException(
+                    "O tipo '" + typeClass.getName() + "' não define o atributo 'pacote' na anotação @" + SInfoType.class.getSimpleName());
+        }
+        return sPackage;
+    }
+
+    final static SInfoPackage getInfoPackage(Class<? extends SPackage> packageClass) {
+        return packageClass.getAnnotation(SInfoPackage.class);
+    }
+
+    final static String getInfoPackageName(Class<? extends SPackage> packageClass) {
+        SInfoPackage info = getInfoPackage(packageClass);
+        return info != null && !StringUtils.isBlank(info.name()) ? info.name() : null;
+    }
+
+    final static String getInfoPackageNameOrException(Class<? extends SPackage> packageClass) {
+        String packageName = getInfoPackageName(packageClass);
+        if (packageName == null) {
+            throw new SingularFormException("A classe " + packageClass.getName() + " não define o nome do pacote por meio da anotação @"
+                    + SInfoPackage.class.getSimpleName());
+        }
+        return packageName;
+    }
+
+    private static Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
+
+    private static Map<String,Class<? extends SPackage>> getSingularPackages() {
+        if (singularPackages == null) {
+            singularPackages = SupplierUtil.cached(() -> {
+                Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
+                // addPackage(builder, SPackageBasic.class);
+                addPackage(builder, SPackageUtil.class);
+                addPackage(builder, SPackageBootstrap.class);
+                return builder.build();
+            });
+        }
+        return singularPackages.get();
+    }
+
+    private static void addPackage(Builder<String, Class<? extends SPackage>> builder, Class<? extends SPackage> packageClass) {
+        builder.put(getInfoPackageNameOrException(packageClass), packageClass);
+    }
+
+    /**
+     * Tentar descobrir um pacote padrões do singular ao qual provavelmente o
+     * tipo informado pertence.
+     * 
+     * @return null se o tipo não for de um pacote do singular ou senão for
+     *         encontrado um tipo compatível.
+     */
+    final static Class<? extends SPackage> getSingularPackageForType(String pathFullName) {
+        if (!pathFullName.startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX)) {
+            return null;
+        }
+        Map<String, Class<? extends SPackage>> packages = getSingularPackages();
+        String selected = null;
+        for (String candidate : packages.keySet()) {
+            if (pathFullName.startsWith(candidate) && pathFullName.charAt(candidate.length()) == '.'
+                    && (selected == null || selected.length() < candidate.length())) {
+                selected = candidate;
+            }
+        }
+        return selected == null ? null : packages.get(selected);
     }
 }

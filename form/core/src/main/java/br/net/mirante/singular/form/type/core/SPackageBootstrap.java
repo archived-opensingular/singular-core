@@ -5,14 +5,17 @@
 
 package br.net.mirante.singular.form.type.core;
 
+import java.util.Optional;
+
 import br.net.mirante.singular.form.AtrRef;
 import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SInfoPackage;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 
-import java.util.Optional;
-
+@SInfoPackage(name = SDictionary.SINGULAR_PACKAGES_PREFIX + "plaf.bootstrap")
 public class SPackageBootstrap extends SPackage {
 
     public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_COL_PREFERENCE
@@ -27,10 +30,6 @@ public class SPackageBootstrap extends SPackage {
             = new AtrRef<>(SPackageBootstrap.class, "larguraColunaLG", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_COL_ON_NEW_ROW
             = new AtrRef<>(SPackageBootstrap.class, "newRow", STypeBoolean.class, SIBoolean.class, Boolean.class);
-
-    public SPackageBootstrap() {
-        super("singular.form.plaf.bootstrap");
-    }
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {

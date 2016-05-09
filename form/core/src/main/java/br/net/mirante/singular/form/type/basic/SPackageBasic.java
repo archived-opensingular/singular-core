@@ -5,18 +5,41 @@
 
 package br.net.mirante.singular.form.type.basic;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.core.*;
-
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import br.net.mirante.singular.form.AtrRef;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SAttributeEnabled;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIPredicate;
+import br.net.mirante.singular.form.SISupplier;
+import br.net.mirante.singular.form.SInfoPackage;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeBehavior;
+import br.net.mirante.singular.form.STypePredicate;
+import br.net.mirante.singular.form.STypeSimple;
+import br.net.mirante.singular.form.STypeSupplier;
+import br.net.mirante.singular.form.type.core.SIBoolean;
+import br.net.mirante.singular.form.type.core.SIInteger;
+import br.net.mirante.singular.form.type.core.SIString;
+import br.net.mirante.singular.form.type.core.STypeBoolean;
+import br.net.mirante.singular.form.type.core.STypeDate;
+import br.net.mirante.singular.form.type.core.STypeDecimal;
+import br.net.mirante.singular.form.type.core.STypeFormula;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+
 @SuppressWarnings({"unchecked", "rawtypes"})
+@SInfoPackage(name = SPackageBasic.NAME)
 public class SPackageBasic extends SPackage {
 
-    public static final String NAME = "singular.form.basic";
+    public static final String NAME = SDictionary.SINGULAR_PACKAGES_PREFIX + "basic";
 
     //@formatter:off
     public static final AtrRef<STypeString, SIString, String>    ATR_LABEL                  = new AtrRef<>(SPackageBasic.class, "label", STypeString.class, SIString.class, String.class);
@@ -49,10 +72,6 @@ public class SPackageBasic extends SPackage {
 
     //    public static final AtrRef<MTipoBehavior, MIBehavior, IBehavior<MInstancia>>   ATR_ONCHANGE_BEHAVIOR = new AtrRef(MPacoteBasic.class, "onchangeBehavior", MTipoBehavior.class, MIBehavior.class, IBehavior.class);
     //@formatter:on
-
-    public SPackageBasic() {
-        super(NAME);
-    }
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {

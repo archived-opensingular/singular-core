@@ -5,6 +5,24 @@
 
 package br.net.mirante.singular.form;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
+
 import br.net.mirante.singular.form.builder.selection.SelectionBuilder;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.context.UIComponentMapper;
@@ -17,17 +35,6 @@ import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewSelectionBySelect;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
 public class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled {
@@ -111,7 +118,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     protected void onLoadType(TypeBuilder tb) {}
 
     final SInfoType getInfoType() {
-        return SDictionary.getInfoType(getClass());
+        return SFormUtil.getInfoType((Class<? extends SType<?>>) getClass());
     }
 
     private final <TT extends SType<I>> TypeBuilder extend(String simpleName, Class<TT> parentClass) {
@@ -173,8 +180,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     public SScope getParentScope() {
         if (scope == null) {
             throw new SingularFormException(
-                "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
-                    + "dê override no método onLoadType() e mova as chamada de configuração para ele.");
+                    "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
+                            + "dê override no método onLoadType() e mova as chamada de configuração para ele.");
         }
         return scope;
     }
@@ -220,7 +227,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     final void addAttribute(SAttribute attribute) {
         if (attribute.getOwnerType() != null && attribute.getOwnerType() != this) {
             throw new SingularFormException("O Atributo '" + attribute.getName() + "' pertence excelusivamente ao tipo '"
-                + attribute.getOwnerType().getName() + "'. Assim não pode ser reassociado a classe '" + getName());
+                    + attribute.getOwnerType().getName() + "'. Assim não pode ser reassociado a classe '" + getName());
         }
 
         attributesDefined.add(attribute);
@@ -437,7 +444,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             this.view = view;
         } else {
             throw new SingularFormException(
-                "A view '" + view.getClass().getName() + "' não é aplicável ao tipo: '" + getClass().getName() + "'");
+                    "A view '" + view.getClass().getName() + "' não é aplicável ao tipo: '" + getClass().getName() + "'");
         }
     }
 
@@ -517,7 +524,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         }
         if (instanceClass == null) {
             throw new SingularFormException("O tipo '" + original.getName() + (original == this ? "" : "' que é do tipo '" + getName())
-                + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I newInstance = instanceClass.newInstance();
@@ -588,8 +595,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             debugAttributes(appendable, level);
             appendable.append("\n");
 
-            if (this instanceof STypeSimple && this.asAtrProvider().getProvider() != null) {
-                pad(appendable, level + 2).append("selection of ").append(this.asAtrProvider().getProvider().toString())
+            if (this instanceof STypeSimple && asAtrProvider().getProvider() != null) {
+                pad(appendable, level + 2).append("selection of ").append(asAtrProvider().getProvider().toString())
                     .append("\n");
             }
 

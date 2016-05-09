@@ -8,7 +8,7 @@ package br.net.mirante.singular.form;
 import br.net.mirante.singular.form.function.IBehavior;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 
-@SInfoType(spackage = SPackageBasic.class)
+@SInfoType(name = "Behavior", spackage = SPackageBasic.class)
 public class STypeBehavior extends STypeCode<SIBehavior, IBehavior<SInstance>> {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

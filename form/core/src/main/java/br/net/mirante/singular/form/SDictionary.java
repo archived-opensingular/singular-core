@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.form;
 
+import java.util.Collection;
+
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.type.core.SPackageCore;
 import br.net.mirante.singular.form.view.ViewResolver;
-
-import java.util.Collection;
 
 public class SDictionary implements ITypeContext {
 
@@ -20,6 +20,8 @@ public class SDictionary implements ITypeContext {
     private final SDocument internalDocument = new SDocument();
 
     private ViewResolver viewResolver;
+
+    public static final String SINGULAR_PACKAGES_PREFIX = "singular.form.";
 
     private SDictionary() {
     }
@@ -76,30 +78,11 @@ public class SDictionary implements ITypeContext {
         return new PackageBuilder(novo);
     }
 
-    final static SInfoType getInfoType(Class<?> classeAlvo) {
-        SInfoType mFormTipo = classeAlvo.getAnnotation(SInfoType.class);
-        if (mFormTipo == null) {
-            throw new SingularFormException("O tipo '" + classeAlvo.getName() + " não possui a anotação @" + SInfoType.class.getSimpleName()
-                    + " em sua definição.");
-        }
-        return mFormTipo;
-    }
-
-    private static Class<? extends SPackage> getTypePackage(Class<?> classeAlvo) {
-        Class<? extends SPackage> sPackage = getInfoType(classeAlvo).spackage();
-        if (sPackage == null) {
-            throw new SingularFormException(
-                    "O tipo '" + classeAlvo.getName() + "' não define o atributo 'pacote' na anotação @"
-                    + SInfoType.class.getSimpleName());
-        }
-        return sPackage;
-    }
-
     @Override
     public <T extends SType<?>> T getTypeOptional(Class<T> typeClass) {
         T tipoRef = types.get(typeClass);
         if (tipoRef == null) {
-            Class<? extends SPackage> classPacote = getTypePackage(typeClass);
+            Class<? extends SPackage> classPacote = SFormUtil.getTypePackage(typeClass);
             loadPackage(classPacote);
 
             tipoRef = types.get(typeClass);
@@ -118,7 +101,7 @@ public class SDictionary implements ITypeContext {
     @SuppressWarnings("unchecked")
     final <T extends SType<?>> T registeType(SScope scope, T newType, Class<T> classForRegister) {
         if (classForRegister != null) {
-            Class<? extends SPackage> classePacoteAnotado = getTypePackage(classForRegister);
+            Class<? extends SPackage> classePacoteAnotado = SFormUtil.getTypePackage(classForRegister);
             SPackage pacoteAnotado = packages.getOrNewInstance(classePacoteAnotado);
             SPackage pacoteDestino = findPackage(scope);
             if (!pacoteDestino.getName().equals(pacoteAnotado.getName())) {
@@ -143,7 +126,17 @@ public class SDictionary implements ITypeContext {
 
     @Override
     public SType<?> getTypeOptional(String pathFullName) {
-        return types.get(pathFullName);
+        SType<?> t = types.get(pathFullName);
+        if (t == null) {
+            // Verifica se é um tipo dos pacotes com carga automática do
+            // singular
+            Class<? extends SPackage> singularPackage = SFormUtil.getSingularPackageForType(pathFullName);
+            if (singularPackage != null) {
+                loadPackage(singularPackage);
+                t = types.get(pathFullName);
+            }
+        }
+        return t;
     }
 
     private void carregarInterno(SPackage newPackage) {
