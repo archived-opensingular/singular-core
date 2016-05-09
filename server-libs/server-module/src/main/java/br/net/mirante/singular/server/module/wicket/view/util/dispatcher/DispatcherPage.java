@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -163,7 +164,7 @@ public class DispatcherPage extends WebPage {
     }
 
     protected Class<? extends AbstractFormPage> getDefaultFormPageClass() {
-        return AbstractFormPage.class;
+        return FormPage.class;
     }
 
 }

@@ -264,7 +264,7 @@ public abstract class AbstractFormPage extends Template {
         return enviarModal;
     }
 
-    protected abstract List<MTransition> currentTaskTransitions(String formId);
+    protected abstract List<MTransition> currentTaskTransitions(String petitionId);
 
     protected abstract void executeTransition(String transitionName, IModel<?> currentInstance);
 

@@ -46,7 +46,7 @@ public abstract class FormInitializer {
             logger.info(String.format(SINGULAR_FORM, " Null Form Type Loader, skipping Form Type Loader configuration. "));
         }
         Class<?> formConfigFactory = formConfigFactory();
-        if (typeLoader != null) {
+        if (formConfigFactory != null) {
             applicationContext.register(formConfigFactory);
         } else {
             logger.info(String.format(SINGULAR_FORM, " Null Form Config Factory, skipping Form Config Factory configuration. "));
