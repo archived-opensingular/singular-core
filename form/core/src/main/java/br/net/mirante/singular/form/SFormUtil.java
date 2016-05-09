@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import javax.lang.model.SourceVersion;
 
+import br.net.mirante.singular.form.type.country.brazil.SPackageCountryBrazil;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.ImmutableMap;
@@ -202,6 +203,7 @@ public final class SFormUtil {
                 // addPackage(builder, SPackageBasic.class);
                 addPackage(builder, SPackageUtil.class);
                 addPackage(builder, SPackageBootstrap.class);
+                addPackage(builder, SPackageCountryBrazil.class);
                 return builder.build();
             });
         }
