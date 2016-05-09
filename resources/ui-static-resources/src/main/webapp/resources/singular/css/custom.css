@@ -16,7 +16,7 @@
     text-align: right;
 }
 
-.ms-selected > span::after {
+.ms-selected > span::before {
     font: normal normal normal 14px/1 FontAwesome;
     content: '\f0a8' !important;
     float: left;

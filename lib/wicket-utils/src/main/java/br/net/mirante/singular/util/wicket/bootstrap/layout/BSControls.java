@@ -132,9 +132,9 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                 select);
     }
 
-    public BSControls appendPicklist(Component select) {
-        return (BSControls) super.appendTag("select", true, "multiple", select)
-                .add(new PicklistInitBehaviour());
+    public Component appendPicklist(Component select) {
+        TemplatePanel tt = super.newTemplateTag(t -> "<div><select wicket:id=" + select.getId() + "  multiple=\"multiple\"></select></div>");
+        return  tt.add(select.add(new PicklistInitBehaviour()));
     }
 
     public BSControls appendStaticText(Component text) {
