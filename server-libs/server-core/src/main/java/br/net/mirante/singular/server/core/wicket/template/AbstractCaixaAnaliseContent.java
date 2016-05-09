@@ -3,6 +3,7 @@ package br.net.mirante.singular.server.core.wicket.template;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -26,6 +28,7 @@ import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
@@ -35,6 +38,7 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.datatable.column.MetronicStatusColumn;
+import br.net.mirante.singular.util.wicket.metronic.menu.DropdownMenu;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
@@ -59,6 +63,15 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
     };
 
     protected BSDataTable<T, String> listTable;
+
+    /**
+     * Botões globais
+     */
+    protected RepeatingView botoes = new RepeatingView("_botoes");
+
+    protected DropdownMenu dropdownMenu = new DropdownMenu("_novos");
+
+    private List<ProcessDTO> processes;
 
     @Inject
     protected AnalisePeticaoService<T> analisePeticaoService;
@@ -96,7 +109,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
                 super.onSubmit();
             }
         });
-        queue(filtroRapido, pesquisarButton, listTable = setupDataTable());
+        queue(filtroRapido, pesquisarButton, listTable = setupDataTable(), botoes, dropdownMenu);
     }
 
     protected void onFiltroRapido(IModel<String> model, AjaxRequestTarget target) {
@@ -219,4 +232,11 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         return DEFAULT_ROWS_PER_PAGE;
     }
 
+    public List<ProcessDTO> getProcesses() {
+        return processes;
+    }
+
+    public void setProcesses(List<ProcessDTO> processes) {
+        this.processes = processes;
+    }
 }

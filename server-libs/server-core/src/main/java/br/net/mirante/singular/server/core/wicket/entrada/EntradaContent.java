@@ -1,6 +1,11 @@
 package br.net.mirante.singular.server.core.wicket.entrada;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
+import java.util.Iterator;
+
+import org.apache.wicket.Page;
+import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.core.wicket.historico.HistoricoPage;
@@ -9,12 +14,6 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.MetronicStatusColumn;
-import org.apache.wicket.Page;
-import org.apache.wicket.model.IModel;
-
-import java.util.Iterator;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class EntradaContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> {
 
