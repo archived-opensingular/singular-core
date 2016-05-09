@@ -17,6 +17,7 @@ import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeDate;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
 import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.view.SViewTextArea;
@@ -117,10 +118,20 @@ public class SPackageRetencao extends SPackage {
             cancelamentos.withView(SViewListByForm::new);
 
         }
+
         final STypeString formaContato = retencao.addFieldString("formaContato");
-        formaContato.asAtr().label("Forma de contato").required()
+        formaContato
+                .selectionOf("Telefone", "E-mail", "Outro")
+                .withRadioView()
+                .asAtr().label("Forma de contato").required()
                 .asAtrBootstrap().colPreference(3);
 
+        final STypeString outraFormaContato = retencao.addFieldString("outraFormaContato");
+        outraFormaContato
+                .asAtr().label("Outra forma de contato").required()
+                .dependsOn(formaContato)
+                .visible(i -> "Outro".equals(Value.of(i, formaContato)))
+                .asAtrBootstrap().colPreference(3);
     }
 
     public List<Titulo> titulos() {
