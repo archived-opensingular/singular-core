@@ -3,4 +3,8 @@
     -moz-hyphens: auto;
     -ms-hyphens: auto;
     hyphens: auto;
-} 
+}
+
+.ms-container {
+    width: auto;
+}

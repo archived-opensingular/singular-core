@@ -13,10 +13,13 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeDate;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.view.SViewAutoComplete;
+import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
+import br.net.mirante.singular.form.view.SMultiSelectionBySelectView;
+import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.view.SViewTextArea;
 
 import java.util.Arrays;
@@ -67,50 +70,52 @@ public class SPackageRetencao extends SPackage {
             });
 
         }
-//
-//        final STypeList<STypeComposite<SIComposite>, SIComposite> cancelamentos = retencao.addFieldListOfComposite("cancelamentos", "retencao");
-//        cancelamentos.withMiniumSizeOf(1).asAtr().label("Cancelamentos");
-//
-//        final STypeComposite<SIComposite> cancelamento = cancelamentos.getElementsType();
-//
-//        {
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> titulos = retencao.addFieldListOfComposite("titulos", "titulo");
-        titulos.asAtr().label("Títulos").required();
-        titulos.asAtrBootstrap().colPreference(6);
-        final STypeComposite<SIComposite> titulo = titulos.getElementsType();
+        final STypeList<STypeComposite<SIComposite>, SIComposite> cancelamentos = retencao.addFieldListOfComposite("cancelamentos", "cancelamento");
+        cancelamentos.withMiniumSizeOf(1).asAtr().label("Cancelamentos");
 
-        final STypeString id = titulo.addFieldString("id");
-        final STypeString numero = titulo.addFieldString("numero");
-        final STypeString situacao = titulo.addFieldString("situacao");
+        final STypeComposite<SIComposite> cancelamento = cancelamentos.getElementsType();
 
-        titulos.selection()
-                .id(id)
-                .display("${numero} - ${situacao}")
-                .simpleProvider(builder -> {
-                    for (Titulo t : dominioService(builder.getCurrentInstance()).titulos()) {
-                        builder.add()
-                                .set(id, t.getId())
-                                .set(numero, t.getNumero())
-                                .set(situacao, t.getSituacao())
-                        ;
-                    }
-                });
+        {
 
-        final STypeComposite<SIComposite> dadosCancelamento = retencao.addFieldComposite("dadosCancelamento");
-        final STypeString centralReservas = dadosCancelamento.addFieldString("centralReservas");
-        centralReservas
-                .selectionOf(getOpcoesCentralReserva())
-                .asAtr().label("Motivo do cancelamento").required()
-                .asAtrBootstrap().colPreference(4);
+            final STypeList<STypeComposite<SIComposite>, SIComposite> titulos = cancelamento.addFieldListOfComposite("titulos", "titulo");
+            titulos.asAtr().label("Títulos").required();
+            titulos.asAtrBootstrap().colPreference(6);
+            final STypeComposite<SIComposite> titulo = titulos.getElementsType();
 
-        final STypeString observacoes = dadosCancelamento.addFieldString("observacoes");
-        observacoes
-                .asAtr().label("Obsevações").tamanhoMaximo(1000)
-                .getTipo().withView(SViewTextArea::new);
-        final STypeString formaContato = dadosCancelamento.addFieldString("formaContato");
-        formaContato.asAtr().label("Forma de contato").required()
-                .asAtrBootstrap().colPreference(3);
+            final STypeString id = titulo.addFieldString("id");
+            final STypeString numero = titulo.addFieldString("numero");
+            final STypeString situacao = titulo.addFieldString("situacao");
+
+            titulos.selection()
+                    .id(id)
+                    .display("${numero} - ${situacao}")
+                    .simpleProvider(builder -> {
+                        for (Titulo t : dominioService(builder.getCurrentInstance()).titulos()) {
+                            builder.add()
+                                    .set(id, t.getId())
+                                    .set(numero, t.getNumero())
+                                    .set(situacao, t.getSituacao())
+                            ;
+                        }
+                    });
+            titulos.setView(SMultiSelectionByPicklistView::new);
+
+
+            final STypeList<STypeString, SIString> motivosCancelamento = cancelamento.addFieldListOf("motivosCancelamento", STypeString.class);
+            motivosCancelamento
+                    .selectionOf(getOpcoesCentralReserva())
+                    .asAtr().label("Motivos do cancelamento").required()
+                    .asAtrBootstrap().colPreference(4);
+            motivosCancelamento.setView(SMultiSelectionByPicklistView::new);
+
+
+
+            final STypeString observacoes = cancelamento.addFieldString("observacoes");
+            observacoes
+                    .asAtr().label("Obsevações").tamanhoMaximo(1000)
+                    .getTipo().withView(SViewTextArea::new);
+
 //        final STypeDate dataInclusao = dadosCancelamento.addFieldDate("dataInclusao");
 //        dataInclusao.asAtr().label("Data de inclusão").required()
 //                .asAtrBootstrap().colPreference(3);
@@ -118,13 +123,12 @@ public class SPackageRetencao extends SPackage {
 //        atendente.asAtr().label("Atendente").required()
 //                .asAtrBootstrap().colPreference(3);
 
-//            retencao
-//                    .withView(new SViewListByMasterDetail()
-//                            .col(numero, "Número do título")
-//                            .col(observacoes)
-//                            .col(atendente)
-//                    );
-//    }
+            cancelamentos.withView(SViewListByForm::new);
+
+        }
+        final STypeString formaContato = retencao.addFieldString("formaContato");
+        formaContato.asAtr().label("Forma de contato").required()
+                .asAtrBootstrap().colPreference(3);
 
     }
 
