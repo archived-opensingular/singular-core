@@ -77,7 +77,7 @@ public class DispatcherPage extends WebPage {
     }
 
     protected AbstractFormPage.FormPageConfig parseParameters(Request request, AbstractFormPage.FormPageConfig config) {
-        return null;
+        return config;
     }
 
     protected void dispatch(AbstractFormPage.FormPageConfig config) {
