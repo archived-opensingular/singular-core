@@ -193,7 +193,7 @@ public final class SFormUtil {
         return packageName;
     }
 
-    private static Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
+    private static volatile Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
 
     private static Map<String,Class<? extends SPackage>> getSingularPackages() {
         if (singularPackages == null) {

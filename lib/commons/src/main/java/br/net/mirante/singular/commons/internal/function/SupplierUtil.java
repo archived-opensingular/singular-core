@@ -11,6 +11,9 @@ import java.util.function.Supplier;
  */
 public class SupplierUtil {
 
+    private SupplierUtil() {
+    }
+
     /**
      * Retorna uma supplier baseado em {@link SoftReference} que faz cache do
      * valor criado pelo supplier informado, mas que permite a liberação da
@@ -24,7 +27,7 @@ public class SupplierUtil {
 
         private final Supplier<T> delegate;
 
-        private transient SoftReference<T> reference;
+        private SoftReference<T> reference;
 
         public SoftReferenceCacheSupplier(Supplier<T> delegate) {
             this.delegate = delegate;
@@ -52,7 +55,7 @@ public class SupplierUtil {
                     }
                 }
             }
-            if (value == this) {
+            if (equals(value)) {
                 return null;
             }
             return value;
