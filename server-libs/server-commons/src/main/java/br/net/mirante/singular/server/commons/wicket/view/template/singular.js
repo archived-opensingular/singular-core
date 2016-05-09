@@ -16,11 +16,15 @@
         },
 
         exibirMensagemWorklist: function (mensagem, options) {
-            opener.Singular.exibirMensagem(mensagem, options);
+            if (opener && opener.Singular) {
+                opener.Singular.exibirMensagem(mensagem, options);
+            }
         },
 
         atualizarContentWorklist: function () {
-            opener.Singular.reloadContent();
+            if (opener && opener.Singular) {
+                opener.Singular.reloadContent();
+            }
         }
     });
 
