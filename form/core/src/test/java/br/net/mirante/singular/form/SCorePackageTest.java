@@ -407,7 +407,7 @@ public class SCorePackageTest extends TestCaseForm {
     public void testAutomaticLoadOfSingularTypeByName() {
         assertEquals(SPackageCore.NAME + ".String", SFormUtil.getTypeName(STypeString.class));
 
-        loadTypeByName((Class<? extends SType<?>>) STypeSimple.class);
+        loadTypeByName((Class) STypeSimple.class);
         loadTypeByName(STypeString.class);
         loadTypeByName(STypeDate.class);
         loadTypeByName(STypeBehavior.class);
