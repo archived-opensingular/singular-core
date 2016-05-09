@@ -9,11 +9,10 @@ import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.util.SPackageUtil;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.validation.validator.InstanceValidators;
 
-@SInfoType(name = "CEP", spackage = SPackageUtil.class)
+@SInfoType(name = "CEP", spackage = SPackageCountryBrazil.class)
 public class STypeCEP extends STypeString {
 
     @Override

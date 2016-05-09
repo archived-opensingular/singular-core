@@ -9,11 +9,10 @@ import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.util.SPackageUtil;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.validation.validator.InstanceValidators;
 
-@SInfoType(name = "CPF", spackage = SPackageUtil.class)
+@SInfoType(name = "CPF", spackage = SPackageCountryBrazil.class)
 public class STypeCPF extends STypeString {
 
     @Override
