@@ -5,20 +5,24 @@
 
 package br.net.mirante.singular.exemplos.montreal.form.cancelamento;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import br.net.mirante.singular.exemplos.montreal.domain.Titulo;
 import br.net.mirante.singular.exemplos.montreal.service.DominioMontrealService;
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.type.core.STypeDate;
-import br.net.mirante.singular.form.type.core.STypeDateTime;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewAutoComplete;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.view.SViewTextArea;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 public class SPackageRetencao extends SPackage {
 
@@ -62,12 +66,13 @@ public class SPackageRetencao extends SPackage {
         }
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> cancelamentos = retencao.addFieldListOfComposite("cancelamentos", "retencao");
-        cancelamentos.asAtr().label("Cancelamentos");
+        cancelamentos.withMiniumSizeOf(1).asAtr().label("Cancelamentos");
+
         final STypeComposite<SIComposite> cancelamento = cancelamentos.getElementsType();
 
         {
             final STypeComposite<SIComposite> titulo = cancelamento.addFieldComposite("titulo");
-            titulo.asAtr().label("Dados do Título");
+            titulo.asAtr().label("Dados do Título").required();
 
             final STypeString id = titulo.addFieldString("id");
             final STypeString numero = titulo.addFieldString("numero");
@@ -93,7 +98,7 @@ public class SPackageRetencao extends SPackage {
             final STypeString centralReservas = dadosCancelamento.addFieldString("centralReservas");
             centralReservas
                     .selectionOf(getOpcoesCentralReserva())
-                    .asAtr().label("Central de Reservas")
+                    .asAtr().label("Central de Reservas").required()
                     .asAtrBootstrap().colPreference(4);
 
             final STypeString observacoes = dadosCancelamento.addFieldString("observacoes");
@@ -101,14 +106,14 @@ public class SPackageRetencao extends SPackage {
                     .asAtr().label("Obsevações").tamanhoMaximo(1000)
                     .getTipo().withView(SViewTextArea::new);
             final STypeString formaContato = dadosCancelamento.addFieldString("formaContato");
-            formaContato.asAtr().label("Forma de contato")
-                    .asAtrBootstrap().colPreference(2);
-            final STypeDateTime dataInclusao = dadosCancelamento.addFieldDateTime("dataInclusao");
-            dataInclusao.asAtr().label("Data de inclusão")
-                    .asAtrBootstrap().colPreference(2);
+            formaContato.asAtr().label("Forma de contato").required()
+                    .asAtrBootstrap().colPreference(3);
+            final STypeDate dataInclusao = dadosCancelamento.addFieldDate("dataInclusao");
+            dataInclusao.asAtr().label("Data de inclusão").required()
+                    .asAtrBootstrap().colPreference(3);
             final STypeString atendente = dadosCancelamento.addFieldString("atendente");
-            atendente.asAtr().label("Atendente")
-                    .asAtrBootstrap().colPreference(4);
+            atendente.asAtr().label("Atendente").required()
+                    .asAtrBootstrap().colPreference(3);
 
             cancelamentos
                     .withView(new SViewListByMasterDetail()
