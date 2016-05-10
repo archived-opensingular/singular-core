@@ -5,46 +5,32 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.logging.Logger;
-
-import br.net.mirante.singular.form.mform.basic.view.*;
-import br.net.mirante.singular.form.mform.core.*;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
-import br.net.mirante.singular.form.wicket.mapper.*;
-import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
-import org.apache.wicket.Component;
-
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.context.UIBuilder;
-import br.net.mirante.singular.form.mform.context.UIComponentMapper;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.context.UIBuilder;
+import br.net.mirante.singular.form.context.UIComponentMapper;
+import br.net.mirante.singular.form.type.core.*;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
+import br.net.mirante.singular.form.view.*;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.mapper.*;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentListMapper;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.AutocompleteMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.BooleanRadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleCheckMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
+import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.*;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.BreadPanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import org.apache.wicket.Component;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -85,7 +71,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     private IWicketComponentMapper resolveMapper(SInstance instancia) {
 
         final UIComponentMapper customMapper = instancia.getType().getCustomMapper();
-        final SView view = ViewResolver.resolve(instancia);
+        final SView             view         = ViewResolver.resolve(instancia);
 
         if (customMapper != null) {
             if (customMapper instanceof IWicketComponentMapper) {

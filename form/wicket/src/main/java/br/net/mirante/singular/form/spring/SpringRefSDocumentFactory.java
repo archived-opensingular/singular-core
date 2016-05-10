@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.form.spring;
 
-import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.document.RefSDocumentFactory;
+import br.net.mirante.singular.form.document.SDocumentFactory;
 
 /**
  * Referência serializável a uma fábrica de documentos que utiliza referência

@@ -5,11 +5,10 @@
 
 package br.net.mirante.singular.form.validation;
 
-import java.util.regex.Pattern;
-
+import br.net.mirante.singular.form.SingularFormException;
 import org.apache.commons.validator.routines.EmailValidator;
 
-import br.net.mirante.singular.form.mform.SingularFormException;
+import java.util.regex.Pattern;
 
 public class SingularEmailValidator extends EmailValidator {
 

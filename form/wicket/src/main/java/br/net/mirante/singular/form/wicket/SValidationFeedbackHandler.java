@@ -20,9 +20,9 @@ import org.apache.wicket.util.visit.Visits;
 
 import com.google.common.collect.Sets;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SInstances;
-import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SInstances;
+import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.validation.IValidationError;
 
 public class SValidationFeedbackHandler implements Serializable {

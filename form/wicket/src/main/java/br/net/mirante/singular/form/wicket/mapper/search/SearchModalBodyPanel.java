@@ -1,18 +1,14 @@
 package br.net.mirante.singular.form.wicket.mapper.search;
 
 import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewSearchModal;
-import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.converter.SInstanceConverter;
-import br.net.mirante.singular.form.mform.converter.SimpleSInstanceConverter;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
-import br.net.mirante.singular.form.mform.provider.InMemoryFilteredPagedProviderDecorator;
-import br.net.mirante.singular.form.mform.provider.ProviderContext;
-import br.net.mirante.singular.form.mform.provider.filter.Config;
-import br.net.mirante.singular.form.mform.provider.filter.Config.Column;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.converter.SimpleSInstanceConverter;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.provider.*;
+import br.net.mirante.singular.form.provider.Config.Column;
+import br.net.mirante.singular.form.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;

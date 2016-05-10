@@ -5,11 +5,13 @@
 
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-
-import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
+import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -35,14 +37,11 @@ import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
-
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
-import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
 import org.apache.wicket.util.time.Duration;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;

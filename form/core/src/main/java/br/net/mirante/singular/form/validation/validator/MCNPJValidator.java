@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.validation.validator;
 
-import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
 
 import java.util.Arrays;

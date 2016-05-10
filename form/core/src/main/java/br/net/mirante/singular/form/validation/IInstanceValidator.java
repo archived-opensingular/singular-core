@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.validation;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.SInstance;
 
 /**
  * Validator para {@link SInstance}

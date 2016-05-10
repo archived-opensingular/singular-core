@@ -5,16 +5,15 @@
 
 package br.net.mirante.singular.form.wicket.feedback;
 
+import br.net.mirante.singular.form.SFormUtil;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
+import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.basic.Label;
-
-import br.net.mirante.singular.form.mform.SFormUtil;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
-import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 
 public class SFeedbackPanel extends BSFeedbackPanel {
 

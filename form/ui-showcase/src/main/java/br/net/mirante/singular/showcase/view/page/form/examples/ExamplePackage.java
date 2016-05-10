@@ -5,18 +5,18 @@
 
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
-import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
-import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
-import br.net.mirante.singular.form.mform.util.comuns.STypePersonName;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
+import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
+import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
+import br.net.mirante.singular.form.type.util.STypePersonName;
 import br.net.mirante.singular.form.validation.validator.InstanceValidators;
+import br.net.mirante.singular.form.view.SViewListByForm;
+import br.net.mirante.singular.form.view.SViewSelectionBySelect;
 
 public class ExamplePackage extends SPackage {
 
@@ -33,12 +33,12 @@ public class ExamplePackage extends SPackage {
     }
 
     public STypeComposite<? extends SIComposite> order;
-    public STypeInteger orderNumber;
-    public STypeComposite<?> buyer;
-    public STypePersonName buyerNome;
-    public STypeCPF buyerCpf;
-    public STypeTelefoneNacional buyerTelephone;
-    public STypeAttachment buyerAvatar;
+    public STypeInteger                          orderNumber;
+    public STypeComposite<?>                     buyer;
+    public STypePersonName                       buyerNome;
+    public STypeCPF                              buyerCpf;
+    public STypeTelefoneNacional                 buyerTelephone;
+    public STypeAttachment                       buyerAvatar;
 
     public STypeComposite<SIComposite> address;
     public STypeString addressStreet;

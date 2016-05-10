@@ -5,14 +5,13 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IComponentInheritedModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
-
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
 
 public class MICompostoModel<T extends SIComposite>
     extends AbstractSInstanceModel<T>

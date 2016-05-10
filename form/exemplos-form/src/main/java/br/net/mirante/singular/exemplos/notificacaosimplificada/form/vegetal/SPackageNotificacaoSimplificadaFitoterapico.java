@@ -9,13 +9,13 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNot
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.exemplos.util.PairConverter;
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeDecimal;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.view.SViewListByTable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
@@ -60,11 +60,11 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
                 .converter(new PairConverter(idNomenclaturaBotanica, descNomenclaturaBotanica))
                 .simpleProvider(ins -> dominioService(ins).nomenclaturaBotanica());
 
-        STypeList<STypeComposite<SIComposite>, SIComposite> concentracoes = notificacaoSimplificada.addFieldListOfComposite("concentracoes", "concentracao");
-        STypeComposite<SIComposite> concentracao = concentracoes.getElementsType();
-        SType<?>                planta   = concentracao.addFieldString("planta");
-        STypeDecimal            valorConcentracao = concentracao.addFieldDecimal("concentracao");
-        STypeSimple             unidade = concentracao.addFieldString("unidade");
+        STypeList<STypeComposite<SIComposite>, SIComposite> concentracoes     = notificacaoSimplificada.addFieldListOfComposite("concentracoes", "concentracao");
+        STypeComposite<SIComposite>                         concentracao      = concentracoes.getElementsType();
+        SType<?>                                            planta            = concentracao.addFieldString("planta");
+        STypeDecimal                                        valorConcentracao = concentracao.addFieldDecimal("concentracao");
+        STypeSimple                                         unidade           = concentracao.addFieldString("unidade");
         planta
                 .asAtr().enabled(false).label("Nomenclatura botânica").asAtrBootstrap().colPreference(4);
         valorConcentracao

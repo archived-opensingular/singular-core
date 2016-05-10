@@ -5,13 +5,12 @@
 
 package br.net.mirante.singular.form.wicket.feedback;
 
-import java.io.Serializable;
-
+import br.net.mirante.singular.form.SInstance;
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import java.io.Serializable;
 
 public class SFeedbackMessage extends FeedbackMessage {
 

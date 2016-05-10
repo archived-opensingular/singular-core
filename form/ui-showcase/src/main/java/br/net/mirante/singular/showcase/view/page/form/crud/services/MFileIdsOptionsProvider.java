@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud.services;
 
-import br.net.mirante.singular.form.mform.provider.SSimpleProvider;
-import br.net.mirante.singular.form.mform.util.transformer.SCompositeListBuilder;
+import br.net.mirante.singular.form.provider.SSimpleProvider;
+import br.net.mirante.singular.form.util.transformer.SCompositeListBuilder;
 import br.net.mirante.singular.showcase.dao.form.FileDao;
 import org.springframework.stereotype.Component;
 

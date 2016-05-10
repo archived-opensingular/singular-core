@@ -5,16 +5,12 @@
 
 package br.net.mirante.singular.bam.form;
 
-import java.util.List;
-
-import br.net.mirante.singular.bamclient.portlet.FilterConfig;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.bam.service.FlowMetadataFacade;
+import br.net.mirante.singular.bamclient.portlet.FilterConfig;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.document.ServiceRegistry;
+
+import java.util.List;
 
 public class FilterPackageFactory {
 

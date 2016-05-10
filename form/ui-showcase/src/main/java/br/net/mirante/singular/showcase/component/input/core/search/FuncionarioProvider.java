@@ -1,10 +1,10 @@
 package br.net.mirante.singular.showcase.component.input.core.search;
 
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.provider.FilteredProvider;
-import br.net.mirante.singular.form.mform.provider.ProviderContext;
-import br.net.mirante.singular.form.mform.provider.filter.Config;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.provider.Config;
+import br.net.mirante.singular.form.provider.FilteredProvider;
+import br.net.mirante.singular.form.provider.ProviderContext;
 
 import java.util.List;
 

@@ -5,11 +5,10 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.view.SViewBooleanByRadio;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
-
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
 
 public class BooleanRadioMapper extends RadioMapper {
 

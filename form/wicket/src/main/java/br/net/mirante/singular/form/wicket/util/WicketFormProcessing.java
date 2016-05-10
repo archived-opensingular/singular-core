@@ -5,19 +5,15 @@
 
 package br.net.mirante.singular.form.wicket.util;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-import static java.util.stream.Collectors.*;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.document.SDocument;
+import br.net.mirante.singular.form.event.ISInstanceListener;
+import br.net.mirante.singular.form.event.SInstanceEvent;
+import br.net.mirante.singular.form.validation.IValidationError;
+import br.net.mirante.singular.form.validation.InstanceValidationContext;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import br.net.mirante.singular.form.wicket.feedback.SFeedbackMessage;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -33,19 +29,14 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
 
-import br.net.mirante.singular.form.mform.SFormUtil;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SInstances;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.event.ISInstanceListener;
-import br.net.mirante.singular.form.mform.event.SInstanceEvent;
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.wicket.feedback.SFeedbackMessage;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static java.util.stream.Collectors.toSet;
 
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,

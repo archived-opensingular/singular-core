@@ -6,9 +6,9 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
-import br.net.mirante.singular.form.mform.core.STypeDateTime;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.core.STypeDateTime;
+import br.net.mirante.singular.form.view.SViewDateTime;
 import br.net.mirante.singular.form.wicket.mapper.datetime.DateTimeContainer;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import org.apache.commons.lang3.StringUtils;

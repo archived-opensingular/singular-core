@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.component.input.core.search;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.util.transformer.Value;
 
 import java.util.ArrayList;
 import java.util.List;

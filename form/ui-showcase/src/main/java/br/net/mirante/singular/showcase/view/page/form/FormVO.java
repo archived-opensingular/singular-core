@@ -5,12 +5,11 @@
 
 package br.net.mirante.singular.showcase.view.page.form;
 
-import java.io.Serializable;
-
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader.TemplateEntry;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader.TemplateEntry;
-import br.net.mirante.singular.form.mform.SType;
+import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class FormVO implements Serializable, IModel<String> {

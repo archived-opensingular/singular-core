@@ -1,9 +1,6 @@
 package br.net.mirante.singular.showcase.dao.form;
 
-import javax.inject.Inject;
-
-import java.io.ByteArrayInputStream;
-
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -11,7 +8,9 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import javax.inject.Inject;
+import java.io.ByteArrayInputStream;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
