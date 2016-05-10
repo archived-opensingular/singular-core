@@ -53,7 +53,6 @@ public abstract class WebInitializer {
 
     private void addOpenSessionInView(ServletContext servletContext) {
         FilterRegistration.Dynamic opensessioninview = servletContext.addFilter("opensessioninview", OpenSessionInViewFilter.class);
-        opensessioninview.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "/*");
         opensessioninview.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/SingularWS");
         opensessioninview.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
     }

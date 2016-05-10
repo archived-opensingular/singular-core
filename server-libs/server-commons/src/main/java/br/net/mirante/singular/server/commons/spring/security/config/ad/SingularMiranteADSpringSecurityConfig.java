@@ -1,15 +1,20 @@
-package br.net.mirante.singular.server.commons.spring.security.config;
+package br.net.mirante.singular.server.commons.spring.security.config.ad;
 
 
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.spring.security.AbstractSingularSpringSecurityAdapter;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
+import br.net.mirante.singular.server.commons.spring.security.config.SingularLogoutHandler;
+import br.net.mirante.singular.server.commons.spring.security.config.cas.SingularCASLogoutHandler;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 

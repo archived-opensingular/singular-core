@@ -1,9 +1,11 @@
-package br.net.mirante.singular.server.commons.spring.security.config;
+package br.net.mirante.singular.server.commons.spring.security.config.cas;
 
 
-import br.net.mirante.singular.server.commons.spring.security.AbstractSingularSpringSecurityAdapter;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.spring.security.AbstractSingularSpringSecurityAdapter;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
+import br.net.mirante.singular.server.commons.spring.security.config.SingularLogoutHandler;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,12 +21,16 @@ import java.util.Arrays;
 import java.util.Optional;
 
 
-
 public abstract class SingularCASSpringSecurityConfig extends AbstractSingularSpringSecurityAdapter {
 
     @Inject
     @Named("peticionamentoUserDetailService")
     private Optional<SingularUserDetailsService> peticionamentoUserDetailService;
+
+    @Bean
+    public SingularLogoutHandler singularLogoutHandler() {
+        return new SingularCASLogoutHandler(getCASLogoutURL());
+    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -60,7 +66,9 @@ public abstract class SingularCASSpringSecurityConfig extends AbstractSingularSp
                 .authorizeRequests()
                 .antMatchers(getDefaultPublicUrls()).permitAll()
                 .antMatchers(getContext().getContextPath()).authenticated();
+
     }
 
 
+    public abstract String getCASLogoutURL();
 }

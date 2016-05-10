@@ -1,5 +1,6 @@
 package br.net.mirante.singular.server.commons.config;
 
+import br.net.mirante.singular.server.commons.spring.security.config.SingularLogoutFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -20,7 +21,15 @@ public abstract class SpringSecurityInitializer {
         for (IServerContext context : serverContexts) {
             logger.info(String.format(SINGULAR_SECURITY, "Securing (Spring Security) context: "+context.getContextPath()));
             applicationContext.register(getSpringSecurityConfigClass(context));
+            addLogoutFilter(ctx, applicationContext, springMVCServletMapping, context);
         }
+    }
+
+
+    protected void addLogoutFilter(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext, String springMVCServletMapping, IServerContext context) {
+        ctx
+                .addFilter("logoutFilter", SingularLogoutFilter.class)
+                .addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, context.getUrlPath() + "/logout");
     }
 
     protected void addSpringSecurityFilter(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext, String springMVCServletMapping) {
