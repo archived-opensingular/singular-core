@@ -55,6 +55,10 @@ public class FormPage extends AbstractFormPage {
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
 
+    public FormPage() {
+        super(new FormPageConfig());
+    }
+
     public FormPage(FormPageConfig config) {
         super(config);
     }
