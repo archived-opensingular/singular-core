@@ -5,7 +5,14 @@
 
 package br.net.mirante.singular.showcase.dao.form;
 
-import br.net.mirante.singular.exemplos.montreal.form.cancelamento.SPackageRetencao;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import org.apache.commons.lang3.StringUtils;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado.SPackageNotificacaoSimplificadaDinamizado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.SPackageNotificacaoSimplificadaGasMedicinal;
@@ -22,13 +29,6 @@ import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackageCurriculo;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoGGTOX;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 
 public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
@@ -43,7 +43,6 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(SPackageNotificacaoSimplificadaDinamizado.class, SPackageNotificacaoSimplificadaDinamizado.NOME_COMPLETO);
         add(SPackageNotificacaoSimplificadaGasMedicinal.class, SPackageNotificacaoSimplificadaGasMedicinal.NOME_COMPLETO);
         add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO);
-        add(SPackageRetencao.class, SPackageRetencao.NOME_COMPLETO);
         add(SPackageHabilitacaoEmpresa.class, SPackageHabilitacaoEmpresa.NOME_COMPLETO);
 
         for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {

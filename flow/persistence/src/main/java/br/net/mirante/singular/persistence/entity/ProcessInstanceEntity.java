@@ -12,14 +12,13 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
-import br.net.mirante.singular.flow.core.SingularFlowException;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
 
 /**
  * The persistent class for the TB_INSTANCIA_PROCESSO database table.
@@ -44,10 +43,15 @@ public class ProcessInstanceEntity extends AbstractProcessInstanceEntity<Actor, 
     }
 
     public TaskInstanceEntity getCurrentTask() {
-        if (currentTasks != null && currentTasks.size() == 1) {
-            return currentTasks.stream().findFirst().get();
-        } else if (currentTasks != null && currentTasks.size() != 1) {
-            throw new SingularFlowException("Esse fluxo possui mais de um estado atual, não é possível determinar um único estado atual");
+        // O current task também pode ser uma task com o tipo End,
+        // mas não tem como fazer isso com o @Where
+//        if (currentTasks != null && currentTasks.size() == 1) {
+//            return currentTasks.stream().findFirst().get();
+//        } else if (currentTasks != null && currentTasks.size() != 1) {
+//            throw new SingularFlowException("Esse fluxo possui mais de um estado atual, não é possível determinar um único estado atual");
+//        }
+        if (getTasks() != null && getTasks().size() > 0) {
+            return getTasks().get(getTasks().size() - 1);
         }
         return null;
     }
