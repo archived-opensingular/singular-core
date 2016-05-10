@@ -82,7 +82,7 @@ class MapByName<K> implements Iterable<K> {
 
     final void verifyMustNotBePresent(String fullName) {
         if (byName.containsKey(fullName)) {
-            throw new RuntimeException("A definição '" + fullName + "' já está criada");
+            throw new SingularFormException("A definição '" + fullName + "' já está criada");
         }
     }
 
