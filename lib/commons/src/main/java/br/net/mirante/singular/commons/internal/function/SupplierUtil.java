@@ -3,10 +3,12 @@ package br.net.mirante.singular.commons.internal.function;
 import java.lang.ref.SoftReference;
 import java.util.function.Supplier;
 
+import static org.apache.commons.lang3.ObjectUtils.NULL;
+
 /**
  * CLASSE APENAS PARA USO INTERNO DO SINGULAR, método utilitários para a classe
  * {@link java.util.function.Supplier}.
- * 
+ *
  * @author Daniel C. Bordin
  */
 public class SupplierUtil {
@@ -34,28 +36,21 @@ public class SupplierUtil {
         }
 
         @Override
-        public T get() {
+        public synchronized T get() {
             T value = null;
             if (reference != null) {
                 value = reference.get();
             }
             if (value == null) {
-                synchronized (this) {
-                    if (reference != null) {
-                        value = reference.get();
-                    }
-                    if (value == null) {
-                        value = delegate.get();
-                        if (value == null) {
-                            // Pequeno gato controlado. Usa a propria instância
-                            // atual para indicar o valor de null.
-                            value = (T) this;
-                        }
-                        reference = new SoftReference<>(value);
-                    }
+                if (delegate != null) {
+                    value = delegate.get();
                 }
+                if (value == null) {
+                    value = (T) NULL;
+                }
+                reference = new SoftReference<>(value);
             }
-            if (equals(value)) {
+            if (NULL.equals(value)) {
                 return null;
             }
             return value;

@@ -29,12 +29,9 @@ import br.net.mirante.singular.form.type.util.SPackageUtil;
 
 public final class SFormUtil {
 
-    private static Pattern idPattern;
+    private static final Pattern idPattern = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
 
     static boolean isValidSimpleName(String name) {
-        if (idPattern == null) {
-            idPattern = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
-        }
         return idPattern.matcher(name).matches();
     }
 
