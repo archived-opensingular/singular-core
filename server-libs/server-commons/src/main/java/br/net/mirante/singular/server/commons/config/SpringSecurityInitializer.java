@@ -28,7 +28,7 @@ public abstract class SpringSecurityInitializer {
 
     protected void addLogoutFilter(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext, String springMVCServletMapping, IServerContext context) {
         ctx
-                .addFilter("logoutFilter", SingularLogoutFilter.class)
+                .addFilter("singularLogoutFilter" + System.identityHashCode(context), SingularLogoutFilter.class)
                 .addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, context.getUrlPath() + "/logout");
     }
 
