@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.server.core.wicket.inicio;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import java.net.URL;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
@@ -33,6 +35,7 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.MetronicStatusColumn;
+import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class InicioContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> {
@@ -62,6 +65,12 @@ public class InicioContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> 
                 .appendColumn(buildActionColumn())
                 .setRowsPerPage(getRowsperPage())
                 .build("tabela");
+    }
+
+    protected WebMarkupContainer criarLinkAnalise(TaskInstanceDTO peticao, String id) {
+        WebMarkupContainer link = criarLink(peticao, id, FormActions.FORM_FILL);
+        link.add($b.visibleIf((IReadOnlyModel<Boolean>) () -> !isAlocadoParaUsuarioLogado(peticao) && peticao.isPossuiPermissao()));
+        return link;
     }
 
     @Override
