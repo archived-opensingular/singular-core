@@ -42,7 +42,7 @@ public class ServiceFactoryUtil {
             bp.getRequestContext().put(
                     BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                     getAdressWithoutWsdl(
-                            ConfigProperties.get("singular.ws.endereco"), processGroupContext));
+                            ConfigProperties.get(ConfigProperties.SINGULAR_WS_ENDERECO, "http://localhost:8080%s/SingularWS?wsdl"), processGroupContext));
             singularServiceMap.put(processGroupContext, singularService);
         }
         return singularServiceMap.get(processGroupContext);

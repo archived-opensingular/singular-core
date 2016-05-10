@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -42,7 +43,7 @@ import br.net.mirante.singular.util.wicket.metronic.menu.DropdownMenu;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
-public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> extends Content {
+public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> extends Content implements Loggable {
 
 
     private static final long serialVersionUID = 1767745739019654615L;
@@ -201,6 +202,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
             addToastrSuccessMessage("message.allocate.success");
         }catch (Exception e){
             addToastrErrorMessage("global.analise.atribuir.msg.error");
+            getLogger().error(e.getMessage(), e);
         }
         target.add(listTable);
     }

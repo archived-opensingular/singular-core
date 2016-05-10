@@ -7,6 +7,8 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -233,7 +235,7 @@ public abstract class AbstractFormContent extends Content {
             protected void save(AjaxRequestTarget target) {
                 getCurrentInstance().getObject().getDocument().persistFiles();
                 processAnnotations(getCurrentInstance().getObject());
-                saveForm(getFormModel());
+                saveForm(getCurrentInstance());
                 atualizarContentWorklist(target);
             }
 
@@ -374,13 +376,13 @@ public abstract class AbstractFormContent extends Content {
 
     protected abstract void setProcessInstance(ProcessInstanceEntity pie);
 
-    protected abstract void saveForm(IModel<?> currentInstance);
+    protected abstract void saveForm(IModel<? extends SInstance> currentInstance);
 
     protected abstract void send(IModel<? extends SInstance> currentInstance, MElement xml);
 
     protected abstract void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode);
 
-    protected abstract IModel<?> getFormModel();
+    protected abstract IModel<? extends AbstractPetitionEntity> getFormModel();
 
     protected abstract String getAnnotationsXML(IModel<?> model);
 

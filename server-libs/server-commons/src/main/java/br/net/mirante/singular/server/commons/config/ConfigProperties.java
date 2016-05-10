@@ -3,6 +3,7 @@ package br.net.mirante.singular.server.commons.config;
 
 import br.net.mirante.singular.commons.base.SingularProperties;
 
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -29,6 +30,10 @@ public class ConfigProperties {
 
     public static String get(IServerContext context, String key) {
         return lookupProperty(context.getPropertiesBaseKey() + "." + key);
+    }
+
+    public static String get(String key, String defaultValue) {
+        return Optional.ofNullable(lookupProperty(key)).orElse(defaultValue);
     }
 
     private static String lookupProperty(String key) {

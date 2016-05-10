@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
@@ -103,7 +105,7 @@ public abstract class AbstractFormPage extends Template {
             }
 
             @Override
-            protected void saveForm(IModel<?> currentInstance) {
+            protected void saveForm(IModel<? extends SInstance> currentInstance) {
                 AbstractFormPage.this.saveForm(currentInstance);
             }
 
@@ -118,7 +120,7 @@ public abstract class AbstractFormPage extends Template {
             }
 
             @Override
-            protected IModel<?> getFormModel() {
+            protected IModel<? extends AbstractPetitionEntity> getFormModel() {
                 return AbstractFormPage.this.getFormModel();
             }
 
@@ -282,13 +284,13 @@ public abstract class AbstractFormPage extends Template {
 
     protected abstract void setProcessInstance(ProcessInstanceEntity pie);
 
-    protected abstract void saveForm(IModel<?> currentInstance);
+    protected abstract void saveForm(IModel<? extends SInstance> currentInstance);
 
     protected abstract void send(IModel<? extends SInstance> currentInstance, MElement xml);
 
     protected abstract void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode);
 
-    protected abstract IModel<?> getFormModel();
+    protected abstract IModel<? extends AbstractPetitionEntity> getFormModel();
 
     protected abstract String getAnnotationsXML(IModel<?> model);
 

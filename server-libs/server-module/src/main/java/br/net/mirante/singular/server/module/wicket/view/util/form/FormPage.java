@@ -118,17 +118,21 @@ public class FormPage extends AbstractFormPage {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void saveForm(IModel<?> currentInstance) {
-        Petition petition = currentModel.getObject();
-        if (currentInstance.getObject() instanceof SIComposite) {
-            petition.setDescription(((SIComposite) currentInstance.getObject()).toStringDisplay());
-        }
-        petitionService.saveOrUpdate(petition);
+    protected void saveForm(IModel<? extends SInstance> currentInstance) {
+        petitionService.saveOrUpdate(updateDescription(currentInstance));
     }
 
     @Override
     protected void send(IModel<? extends SInstance> currentInstance, MElement xml) {
-        petitionService.send(currentModel.getObject());
+        petitionService.send(updateDescription(currentInstance));
+    }
+
+    private Petition updateDescription(IModel<? extends SInstance> currentInstance){
+        Petition petition = currentModel.getObject();
+        if (currentInstance.getObject() instanceof SIComposite) {
+            petition.setDescription(((SIComposite) currentInstance.getObject()).toStringDisplay());
+        }
+        return petition;
     }
 
     @Override
@@ -160,7 +164,7 @@ public class FormPage extends AbstractFormPage {
     }
 
     @Override
-    protected IModel<?> getFormModel() {
+    protected IModel<? extends Petition> getFormModel() {
         return currentModel;
     }
 
