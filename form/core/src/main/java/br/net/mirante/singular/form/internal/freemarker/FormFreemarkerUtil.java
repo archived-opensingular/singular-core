@@ -5,19 +5,49 @@
 
 package br.net.mirante.singular.form.internal.freemarker;
 
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SISimple;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.calculation.CalculationContext;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.type.core.*;
-import freemarker.template.*;
+import br.net.mirante.singular.form.type.core.SIBoolean;
+import br.net.mirante.singular.form.type.core.SIDate;
+import br.net.mirante.singular.form.type.core.SIDateTime;
+import br.net.mirante.singular.form.type.core.SINumber;
+import br.net.mirante.singular.form.type.core.SIString;
+import br.net.mirante.singular.form.type.core.SITime;
+import freemarker.template.Configuration;
+import freemarker.template.ObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateBooleanModel;
+import freemarker.template.TemplateCollectionModel;
+import freemarker.template.TemplateDateModel;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateHashModel;
+import freemarker.template.TemplateMethodModelEx;
+import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateModelIterator;
+import freemarker.template.TemplateNumberModel;
+import freemarker.template.TemplateScalarModel;
+import freemarker.template.TemplateSequenceModel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -31,7 +61,7 @@ import java.util.function.Function;
 public final class FormFreemarkerUtil {
 
     private static Configuration cfg;
-    private static FormObjectWrapper wrapper;
+
 
     public static SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate) {
         return new SimpleValueCalculation<String>() {
@@ -74,13 +104,12 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static Configuration getConfiguration() {
+    private static synchronized Configuration getConfiguration() {
         if (cfg == null) {
             Configuration novo = new Configuration(Configuration.VERSION_2_3_22);
             novo.setDefaultEncoding("UTF-8");
             novo.setLocale(new Locale("pt", "BR"));
             novo.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-
             cfg = novo;
         }
         return cfg;
