@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STranslatorForAttribute;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
+import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.internal.freemarker.FormFreemarkerUtil;
 
 import java.util.Arrays;
@@ -174,5 +175,14 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public String getDisplayString() {
         return getAttributeValue(SPackageBasic.ATR_DISPLAY_STRING);
+    }
+
+    public PhraseBreak phraseBreak() {
+        return getAttributeValue(SPackageBasic.ATR_PHRASE_BREAK);
+    }
+
+    public AtrBasic phraseBreak(PhraseBreak phraseBreak) {
+        setAttributeValue(SPackageBasic.ATR_PHRASE_BREAK, phraseBreak);
+        return this;
     }
 }

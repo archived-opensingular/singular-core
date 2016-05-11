@@ -1,17 +1,16 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.provider.Provider;
-import br.net.mirante.singular.form.provider.ProviderContext;
-import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.view.SViewAutoComplete;
-import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
-import br.net.mirante.singular.util.wicket.template.SingularTemplate;
+import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -19,7 +18,11 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.markup.head.*;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -32,16 +35,18 @@ import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
-
-import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static com.google.common.collect.Maps.newLinkedHashMap;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.provider.Provider;
+import br.net.mirante.singular.form.provider.ProviderContext;
+import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.view.SViewAutoComplete;
+import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 
 
 /**
@@ -205,7 +210,7 @@ public class TypeaheadComponent extends Panel {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("TypeaheadComponent.js")));
         response.render(OnDomReadyHeaderItem.forScript(createJSFetcher()));
-        response.render(CssReferenceHeaderItem.forReference(resourceRef("TypeaheadComponent.css")));
+        response.render(CSS_REFERENCE);
     }
 
     private String createJSFetcher() {
@@ -307,15 +312,9 @@ public class TypeaheadComponent extends Panel {
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
-        return new PackageResourceReference(getClass(), resourceName){
-            @Override
-            public List<HeaderItem> getDependencies() {
-                // TODO Auto-generated method stub
-                return super.getDependencies();
-            }
-        };
+        return new PackageResourceReference(getClass(), resourceName);
     }
-
+    
     @Override
     protected void onInitialize() {
         super.onInitialize();
