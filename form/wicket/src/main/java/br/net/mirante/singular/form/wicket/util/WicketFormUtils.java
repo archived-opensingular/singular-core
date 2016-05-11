@@ -74,7 +74,7 @@ public abstract class WicketFormUtils {
         return findCellContainer(component).orElse(null);
     }
 
-    public static Optional<Component> findChildByInstance(MarkupContainer root, SInstance instance) {
+    public static Optional<Component> findChildByInstance(Component root, SInstance instance) {
         return streamDescendants(root)
             .filter(c -> instanciaIfAware(c.getDefaultModel()).orElse(null) == instance)
             .findAny();
