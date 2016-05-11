@@ -5,6 +5,15 @@
 
 package br.net.mirante.singular.form.wicket.panel;
 
+import java.io.Serializable;
+import java.util.Objects;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefSDocumentFactory;
@@ -19,14 +28,6 @@ import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.FencedFeedbackPanel;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos
@@ -181,4 +182,9 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
     public SFormConfig<KEY> getSingularFormConfig() {
         return singularFormConfig;
     }
+
+    public String getRootTypeSubtitle() {
+        return getRootInstance().getObject().asAtr().getSubtitle();
+    }
+
 }

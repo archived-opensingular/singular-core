@@ -59,7 +59,7 @@ public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, final List<?> opcoesValue) {
-        return new ListMultipleChoice(model.getObject().getName(), new MultipleSelectMInstanceAwareModel(model), opcoesValue, renderer());
+        return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectMInstanceAwareModel(model), opcoesValue, renderer());
     }
 
     @SuppressWarnings("rawtypes")
