@@ -83,11 +83,7 @@ public class FormPage extends AbstractFormPage {
         return new Model<String>() {
             @Override
             public String getObject() {
-                if (getIdentifier() == null) {
-                    return new ResourceModel("label.form.content.title", "Nova Solicitação").getObject();
-                } else {
-                    return content.getSingularFormPanel().getRootTypeSubtitle();
-                }
+                return content.getSingularFormPanel().getRootTypeSubtitle();
             }
         };
     }
@@ -98,7 +94,7 @@ public class FormPage extends AbstractFormPage {
             @Override
             public String getObject() {
                 if (getIdentifier() == null) {
-                    return content.getSingularFormPanel().getRootTypeSubtitle();
+                    return new ResourceModel("label.form.content.title", "Nova Solicitação").getObject();
                 } else {
                     return currentModel.getObject().getDescription();
                 }
