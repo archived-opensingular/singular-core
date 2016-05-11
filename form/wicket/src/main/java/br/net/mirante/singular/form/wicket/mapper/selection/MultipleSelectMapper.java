@@ -9,6 +9,7 @@ import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
 import br.net.mirante.singular.form.wicket.model.MultipleSelectMInstanceAwareModel;
@@ -91,7 +92,16 @@ public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
                     output.append(label);
                     first = false;
                 } else {
-                    output.append(", ");
+                    //TODO implementar logica de auto detecção
+                    final PhraseBreak phraseBreak = mi.asAtr().phraseBreak();
+                    switch (phraseBreak) {
+                        case BREAK_LINE:
+                            output.append("\n");
+                            break;
+                        case COMMA:
+                            output.append(", ");
+                            break;
+                    }
                     output.append(label);
                 }
             }
