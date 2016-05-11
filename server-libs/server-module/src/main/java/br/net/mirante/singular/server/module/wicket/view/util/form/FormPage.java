@@ -10,7 +10,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -64,6 +63,7 @@ public class FormPage extends AbstractFormPage {
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
     protected List<MTransition> currentTaskTransitions(String petitionId) {
         return Optional
@@ -80,7 +80,16 @@ public class FormPage extends AbstractFormPage {
 
     @Override
     protected IModel<?> getContentTitleModel() {
-        return new ResourceModel("label.form.content.title", "Nova Solicitação");
+        return new Model<String>() {
+            @Override
+            public String getObject() {
+                if (getIdentifier() == null) {
+                    return new ResourceModel("label.form.content.title", "Nova Solicitação").getObject();
+                } else {
+                    return content.getSingularFormPanel().getRootTypeSubtitle();
+                }
+            }
+        };
     }
 
     @Override
@@ -88,13 +97,10 @@ public class FormPage extends AbstractFormPage {
         return new Model<String>() {
             @Override
             public String getObject() {
-                if (Optional.ofNullable(currentModel)
-                        .map(IModel::getObject)
-                        .map(Petition::getProcessInstanceEntity)
-                        .map(ProcessInstanceEntity::getCod).isPresent()) {
-                    return StringUtils.EMPTY;
+                if (getIdentifier() == null) {
+                    return content.getSingularFormPanel().getRootTypeSubtitle();
                 } else {
-                    return new ResourceModel("label.form.content.subtitle", "Solicitação").getObject();
+                    return currentModel.getObject().getDescription();
                 }
             }
         };
@@ -126,6 +132,7 @@ public class FormPage extends AbstractFormPage {
         petitionService.saveOrUpdate(updateDescription(currentInstance));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void send(IModel<? extends SInstance> currentInstance, MElement xml) {
         petitionService.send(updateDescription(currentInstance));
@@ -134,7 +141,7 @@ public class FormPage extends AbstractFormPage {
     private Petition updateDescription(IModel<? extends SInstance> currentInstance){
         Petition petition = currentModel.getObject();
         if (currentInstance.getObject() instanceof SIComposite) {
-            petition.setDescription(((SIComposite) currentInstance.getObject()).toStringDisplay());
+            petition.setDescription(currentInstance.getObject().toStringDisplay());
         }
         return petition;
     }
@@ -190,9 +197,11 @@ public class FormPage extends AbstractFormPage {
 
     @Override
     protected String getIdentifier() {
-        return String.valueOf(Optional.ofNullable(currentModel)
+        return Optional.ofNullable(currentModel)
                 .map(IModel::getObject)
-                .map(Petition::getCod).orElse(null));
+                .map(Petition::getCod)
+                .map(Object::toString)
+                .orElse(null);
 
     }
 }

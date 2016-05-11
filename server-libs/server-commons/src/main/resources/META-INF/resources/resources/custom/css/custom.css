@@ -81,3 +81,11 @@ DECLARE ESSE CSS NA SUA APLICAÇÃO NO MESMO CAMINHO RELATIVO
     height: 15px;
     top: 15px;
 }
+
+.portlet.light .form .form-body {
+    padding-top: 0px;
+}
+
+.form-body h3:first-of-type {
+    margin-top: 0px;
+}
