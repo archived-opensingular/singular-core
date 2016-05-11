@@ -67,7 +67,7 @@ public class WicketFormProcessing {
     }
 
     public static boolean onFormPrepare(MarkupContainer container, IModel<? extends SInstance> baseInstance, boolean validate) {
-        return processAndPrepareForm(container, Optional.ofNullable(RequestCycle.get().find(AjaxRequestTarget.class)), baseInstance, validate);
+        return processAndPrepareForm(container, Optional.empty(), baseInstance, validate);
     }
 
     private static boolean processAndPrepareForm(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstanceModel, boolean validate) {
@@ -78,7 +78,6 @@ public class WicketFormProcessing {
         };
 
         if (RequestCycle.get().getMetaData(MDK_PROCESSED) == null) {
-//System.out.println(Thread.currentThread().getId());
             if (baseInstanceModel == null)
                 return setAndReturn.apply(false);
 
@@ -108,7 +107,6 @@ public class WicketFormProcessing {
             // re-renderizar form
             refresh(target, container);
         }
-//        System.out.println(Thread.currentThread().getId());
         return setAndReturn.apply(true);
     }
 
