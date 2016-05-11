@@ -143,7 +143,6 @@
             });
             //previne que ao teclar Tab, o primeiro item seja selecionado quando ninguém foi marcado
             Typeahead_._onTabKeyed = function onTabKeyed(type, $e) {
-            	console.log('_onTabKeyed');
                 var $selectable;
                 if ($selectable = Typeahead_.menu.getActiveSelectable()) {
                 	$e.preventDefault();
@@ -170,7 +169,6 @@
             }
             // limpa o campo se tiver um valor inválido
             $typeaheadField.on('typeahead:change', function ($e, selection) {
-            	console.log('change');
         		if(possuiDadoInvalido()){
         			$e.stopPropagation();
         			Typeahead_.close();
