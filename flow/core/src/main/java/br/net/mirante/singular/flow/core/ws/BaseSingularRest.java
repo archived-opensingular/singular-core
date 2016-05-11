@@ -7,9 +7,6 @@ package br.net.mirante.singular.flow.core.ws;
 
 import java.util.Objects;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
 import javax.xml.ws.WebServiceException;
 
 import br.net.mirante.singular.flow.core.Flow;
@@ -17,47 +14,43 @@ import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 
-/**
- * @deprecated
- */
-@WebService
-public class SingularWS {
+public class BaseSingularRest {
 
-    @WebMethod(action = "ping")
+    public static final String START_INSTANCE = "/startInstance";
+    public static final String EXECUTE_DEFAULT_TRANSITION = "/executeDefaultTransition";
+    public static final String EXECUTE_TRANSITION = "/executeTransition";
+    public static final String RELOCATE_TASK = "/relocateTask";
+
     public String ping() {
         return "pong";
     }
 
-    @WebMethod(action = "startInstance")
-    public Long startInstance(@WebParam(name = "processAbbreviation") String processAbbreviation) {
+    public Long startInstance(String processAbbreviation) {
         ProcessDefinition processo = Flow.getProcessDefinitionWith(processAbbreviation);
         ProcessInstance processInstance = processo.newInstance();
         processInstance.start();
         return processInstance.getEntityCod().longValue();
     }
 
-    @WebMethod(action = "executeDefaultTransition")
-    public void executeDefaultTransition(@WebParam(name = "processAbbreviation") String processAbbreviation,
-                                         @WebParam(name = "codProcessInstance") Long codProcessInstance,
-                                         @WebParam(name = "username") String username) {
+    public void executeDefaultTransition(String processAbbreviation,
+                                         Long codProcessInstance,
+                                          String username) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         processInstance.executeTransition();
     }
 
-    @WebMethod(action = "executeTransition")
-    public void executeTransition(@WebParam(name = "processAbbreviation") String processAbbreviation,
-                                  @WebParam(name = "codProcessInstance") Long codProcessInstance,
-                                  @WebParam(name = "transitionName") String transitionName,
-                                  @WebParam(name = "username") String username) {
+    public void executeTransition(String processAbbreviation,
+                                  Long codProcessInstance,
+                                  String transitionName,
+                                  String username) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         processInstance.executeTransition(transitionName);
     }
 
-    @WebMethod(action = "relocateTask")
-    public void relocateTask(@WebParam(name = "processAbbreviation") String processAbbreviation,
-                                  @WebParam(name = "codProcessInstance") Long codProcessInstance,
-                                  @WebParam(name = "username") String username,
-                                  @WebParam(name = "lastVersion") Integer lastVersion) {
+    public void relocateTask(String processAbbreviation,
+                             Long codProcessInstance,
+                             String username,
+                             Integer lastVersion) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         MUser user = Flow.getConfigBean().getUserService().saveUserIfNeeded(username);
         if (user == null) {
@@ -71,4 +64,5 @@ public class SingularWS {
         ProcessInstance processInstance = Flow.getProcessDefinitionWith(processAbbreviation).getDataService().retrieveInstance(codProcessInstance.intValue());
         return Objects.requireNonNull(processInstance);
     }
+    
 }
