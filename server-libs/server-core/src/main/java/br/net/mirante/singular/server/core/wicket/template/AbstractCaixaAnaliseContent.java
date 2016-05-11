@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import br.net.mirante.singular.commons.util.Loggable;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -23,6 +22,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.server.commons.config.ServerContext;
 import br.net.mirante.singular.server.commons.form.FormActions;
@@ -194,11 +194,12 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         // TODO parametrizar qual o flow
         try{
             T taskInstanceDTO = model.getObject();
-            serviceFactoryUtil.getSingularWS(taskInstanceDTO.getProcessGroupContext()).relocateTask(
-                    taskInstanceDTO.getProcessType(),
-                    Long.valueOf(taskInstanceDTO.getProcessInstanceId()),
-                    SingularSession.get().getUsername(),
-                    taskInstanceDTO.getVersionStamp());
+//            serviceFactoryUtil.getSingularWS(taskInstanceDTO.getProcessGroupContext()).relocateTask(
+//                    taskInstanceDTO.getProcessType(),
+//                    Long.valueOf(taskInstanceDTO.getProcessInstanceId()),
+//                    SingularSession.get().getUsername(),
+//                    taskInstanceDTO.getVersionStamp());
+
             addToastrSuccessMessage("message.allocate.success");
         }catch (Exception e){
             addToastrErrorMessage("global.analise.atribuir.msg.error");
