@@ -10,21 +10,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import br.net.mirante.singular.form.AtrRef;
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SAttributeEnabled;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIPredicate;
-import br.net.mirante.singular.form.SISupplier;
-import br.net.mirante.singular.form.SInfoPackage;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeBehavior;
-import br.net.mirante.singular.form.STypePredicate;
-import br.net.mirante.singular.form.STypeSimple;
-import br.net.mirante.singular.form.STypeSupplier;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.type.core.SIBoolean;
 import br.net.mirante.singular.form.type.core.SIInteger;
 import br.net.mirante.singular.form.type.core.SIString;
@@ -42,17 +29,17 @@ public class SPackageBasic extends SPackage {
     public static final String NAME = SDictionary.SINGULAR_PACKAGES_PREFIX + "basic";
 
     //@formatter:off
-    public static final AtrRef<STypeString, SIString, String>    ATR_LABEL                  = new AtrRef<>(SPackageBasic.class, "label", STypeString.class, SIString.class, String.class);
-    public static final AtrRef<?, ?, Object>                     ATR_DEFAULT_IF_NULL        = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
-    public static final AtrRef<?, ?, Object>                     ATR_VALOR_INICIAL          = AtrRef.ofSelfReference(SPackageBasic.class, "valorInicial");
+    public static final AtrRef<STypeString, SIString, String>                     ATR_LABEL                  = new AtrRef<>(SPackageBasic.class, "label", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<?, ?, Object>                                      ATR_DEFAULT_IF_NULL        = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
+    public static final AtrRef<?, ?, Object>                                      ATR_VALOR_INICIAL          = AtrRef.ofSelfReference(SPackageBasic.class, "valorInicial");
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_TRIM                   = new AtrRef<>(SPackageBasic.class, "trim", STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeFormula, SIComposite, Object>                 ATR_FORMULA                = new AtrRef<>(SPackageBasic.class, "formula", STypeFormula.class, SIComposite.class, Object.class);
-    public static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_EMPTY_TO_NULL          = new AtrRef<>(SPackageBasic.class, "emptyToNull", STypeBoolean.class, SIBoolean.class, Boolean.class);
-    public static final AtrRef<STypeString, SIString, String>    ATR_SUBTITLE               = new AtrRef<>(SPackageBasic.class, "subtitle", STypeString.class, SIString.class, String.class);
-    public static final AtrRef<STypeString, SIString, String>    ATR_BASIC_MASK             = new AtrRef<>(SPackageBasic.class, "basicMask", STypeString.class, SIString.class, String.class);
-    public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_TAMANHO_MAXIMO         = new AtrRef<>(SPackageBasic.class, "tamanhoMaximo", STypeInteger.class, SIInteger.class, Integer.class);
-    public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_TAMANHO_INTEIRO_MAXIMO = new AtrRef<>(SPackageBasic.class, "tamanhoInteiroMaximo", STypeInteger.class, SIInteger.class, Integer.class);
-    public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_TAMANHO_DECIMAL_MAXIMO = new AtrRef<>(SPackageBasic.class, "tamanhoDecimalMaximo", STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_EMPTY_TO_NULL          = new AtrRef<>(SPackageBasic.class, "emptyToNull", STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_SUBTITLE               = new AtrRef<>(SPackageBasic.class, "subtitle", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_BASIC_MASK             = new AtrRef<>(SPackageBasic.class, "basicMask", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_TAMANHO_MAXIMO         = new AtrRef<>(SPackageBasic.class, "tamanhoMaximo", STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_TAMANHO_INTEIRO_MAXIMO = new AtrRef<>(SPackageBasic.class, "tamanhoInteiroMaximo", STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_TAMANHO_DECIMAL_MAXIMO = new AtrRef<>(SPackageBasic.class, "tamanhoDecimalMaximo", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_TAMANHO_EDICAO         = new AtrRef<>(SPackageBasic.class, "tamanhoEdicao", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_VISIVEL                = new AtrRef<>(SPackageBasic.class, "visible", STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_ENABLED                = new AtrRef<>(SPackageBasic.class, "enabled", STypeBoolean.class, SIBoolean.class, Boolean.class);
@@ -66,6 +53,7 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_EXISTS                 = new AtrRef<>(SPackageBasic.class, "exists", STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_EXISTS_FUNCTION        = new AtrRef(SPackageBasic.class, "existsFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
     public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_OBRIGATORIO_FUNCTION   = new AtrRef(SPackageBasic.class, "obrigatorioFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
+    public static final AtrRef<STypePhraseBreak, SIPhraseBreak, PhraseBreak>      ATR_PHRASE_BREAK           = new AtrRef<>(SPackageBasic.class, "phraseBreak", STypePhraseBreak.class, SIPhraseBreak.class, PhraseBreak.class);
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<SType<?>>>>
             ATR_DEPENDS_ON_FUNCTION = new AtrRef(SPackageBasic.class, "dependsOnFunction", STypeSupplier.class, SISupplier.class, Supplier.class);
@@ -79,6 +67,7 @@ public class SPackageBasic extends SPackage {
 
         pb.createType(STypeBehavior.class);
         pb.createType(STypeSupplier.class);
+        pb.createType(STypePhraseBreak.class);
 
         pb.createAttributeIntoType(SType.class, ATR_DEFAULT_IF_NULL);
         pb.createAttributeIntoType(SType.class, ATR_REQUIRED);
@@ -89,6 +78,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(STypeSimple.class, ATR_FORMULA);
         pb.createAttributeIntoType(STypeString.class, ATR_TRIM).withDefaultValueIfNull(true);
         pb.createAttributeIntoType(STypeString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(true);
+        pb.createAttributeIntoType(STypeList.class, ATR_PHRASE_BREAK).withDefaultValueIfNull(PhraseBreak.COMMA);
 
         pb.getAttribute(ATR_REQUIRED).withDefaultValueIfNull(false);
         pb.getAttribute(ATR_EXISTS).withDefaultValueIfNull(true);

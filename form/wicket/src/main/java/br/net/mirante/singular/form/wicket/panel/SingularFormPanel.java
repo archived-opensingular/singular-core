@@ -182,4 +182,9 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
     public SFormConfig<KEY> getSingularFormConfig() {
         return singularFormConfig;
     }
+
+    public String getRootTypeSubtitle() {
+        return getRootInstance().getObject().asAtr().getSubtitle();
+    }
+
 }
