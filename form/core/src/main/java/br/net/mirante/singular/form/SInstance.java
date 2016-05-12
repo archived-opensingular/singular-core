@@ -5,18 +5,20 @@
 
 package br.net.mirante.singular.form;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.internal.xml.MElement;
 import br.net.mirante.singular.form.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
+import br.net.mirante.singular.form.validation.IValidationError;
 
 public abstract class SInstance implements SAttributeEnabled {
 
@@ -493,6 +495,14 @@ public abstract class SInstance implements SAttributeEnabled {
 
     final boolean getFlag(InstanceFlags flag) {
         return (flags & flag.bit()) != 0;
+    }
+
+    public boolean hasValidationErrors() {
+        return !getValidationErrors().isEmpty();
+    }
+
+    public Collection<IValidationError> getValidationErrors() {
+        return getDocument().getValidationErrors(getId());
     }
 
 }

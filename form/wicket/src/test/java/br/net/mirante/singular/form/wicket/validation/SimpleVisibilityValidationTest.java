@@ -1,10 +1,11 @@
 package br.net.mirante.singular.form.wicket.validation;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
-import org.junit.Assert;
-import org.junit.Test;
 
 public class SimpleVisibilityValidationTest extends SingularFormBaseTest {
 
@@ -25,7 +26,7 @@ public class SimpleVisibilityValidationTest extends SingularFormBaseTest {
     @Test
     public void testIfContaisErrorOnlyForFieldOne() {
         form.submit(page.getSingularValidationButton());
-        Assert.assertFalse(findFormComponentsByType(fieldOne).findFirst().get().getFeedbackMessages().isEmpty());
-        Assert.assertTrue(findFormComponentsByType(fieldTwo).findFirst().get().getFeedbackMessages().isEmpty());
+        Assert.assertTrue(findModelsByType(fieldOne).findFirst().get().getMInstancia().hasValidationErrors());
+        Assert.assertFalse(findModelsByType(fieldTwo).findFirst().get().getMInstancia().hasValidationErrors());
     }
 }
