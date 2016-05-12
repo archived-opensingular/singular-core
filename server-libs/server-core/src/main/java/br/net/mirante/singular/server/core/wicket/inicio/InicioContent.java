@@ -9,12 +9,16 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
@@ -132,6 +136,16 @@ public class InicioContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> 
                 }
             }
         }
+
+        List<String> LANGUAGES = Arrays.asList("a", "b", "c");
+        final CheckBoxMultipleChoice<String> component = new CheckBoxMultipleChoice<>("lala", LANGUAGES);
+        component.add(new AjaxFormChoiceComponentUpdatingBehavior() {
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                System.out.println("string");
+            }
+        });
+        queue(component);
     }
 
     public String getModuleContext(ProcessGroupEntity processGroupEntity) {
