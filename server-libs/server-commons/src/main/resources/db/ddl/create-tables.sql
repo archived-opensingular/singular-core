@@ -261,7 +261,7 @@ CREATE TABLE DBSINGULAR.TB_PETICAO (
    CO_PETICAO           BIGINT               IDENTITY,
    TP_PETICAO           VARCHAR(300)         NOT NULL,
    TP_PROCESSO_PETICAO  VARCHAR(300)         NOT NULL,
-   NO_PROCESSO          VARCHAR(300)         NOT NULL,
+   NO_PROCESSO          VARCHAR(300)         NULL,
    DS_XML               CLOB         NULL,
    DS_XML_ANOTACAO      CLOB         NULL,
    DS_PETICAO           VARCHAR(300)         NOT NULL,
