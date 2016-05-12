@@ -9,6 +9,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -116,7 +117,7 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
 
                 final String labelPath = StringUtils.defaultString(
                     reporter.map(it -> WicketFormUtils.generateTitlePath(getFence(), parentContext, it, instance)).orElse(null),
-                    SFormUtil.generatePath(instance, it -> it == parentContext));
+                    SFormUtil.generatePath(instance, it -> Objects.equals(it, parentContext)));
 
                 label.setDefaultModelObject(labelPath + " : " + bfm.getMessage());
             }
