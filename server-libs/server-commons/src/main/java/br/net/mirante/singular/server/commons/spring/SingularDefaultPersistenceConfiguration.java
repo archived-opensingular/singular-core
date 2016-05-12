@@ -77,7 +77,7 @@ public class SingularDefaultPersistenceConfiguration {
     @Bean
     public DriverManagerDataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl("jdbc:h2:file:./notificacaodb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1");
+        dataSource.setUrl("jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1");
         dataSource.setUsername("sa");
         dataSource.setPassword("sa");
         final Properties connectionProperties = new Properties();
