@@ -27,18 +27,22 @@ public class PartialValidationButton extends AjaxButton {
     }
 
     //@destacar:bloco
-    protected void addValidationErrors(Form<?> form, SInstance instance) {
+    protected void addValidationErrors(AjaxRequestTarget target, Form<?> form, SInstance instance) {
         final SInstance obrigatorio1 = ((SIComposite) instance).getField("obrigatorio_1");
         InstanceValidationContext validationContext = new InstanceValidationContext();
         validationContext.validateSingle(obrigatorio1);
-        WicketFormProcessing.associateErrorsToComponents(validationContext.getErrorsByInstanceId(), form, new MInstanceRootModel<>(obrigatorio1));
+        WicketFormProcessing.associateErrorsToComponents(
+            Optional.ofNullable(target),
+            form,
+            new MInstanceRootModel<>(obrigatorio1),
+            validationContext.getErrorsByInstanceId());
     }
     //@destacar:fim
 
     @Override
     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
         super.onSubmit(target, form);
-        addValidationErrors(form, currentInstance.getObject());
+        addValidationErrors(target, form, currentInstance.getObject());
         target.add(form);
     }
 

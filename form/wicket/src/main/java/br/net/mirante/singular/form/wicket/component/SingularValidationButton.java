@@ -32,6 +32,11 @@ public abstract class SingularValidationButton extends SingularButton {
         }
         target.add(form);
     }
+    
+    @Override
+    protected boolean isShouldProcessFormSubmitWithoutValidation() {
+        return false;
+    }
 
     public abstract IModel<? extends SInstance>  getCurrentInstance();
 }
