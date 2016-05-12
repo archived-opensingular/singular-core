@@ -122,6 +122,7 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
                 label.setDefaultModelObject(labelPath + " : " + bfm.getMessage());
             }
         }
+
         return component;
     }
 
