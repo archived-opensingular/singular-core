@@ -5,9 +5,11 @@
 
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -29,7 +31,9 @@ import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
-public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
+public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSControls> {
+
+    private IFeedbackPanelFactory feedbackPanelFactory;
 
     public BSControls(String id) {
         this(id, true);
@@ -52,8 +56,8 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         this
             .appendTag("div", true, "class='checkbox'", new BSContainer<>("_" + checkbox.getId())
                 .appendTag("label", new BSContainer<>("_")
-                        .appendTag("input", false, "type='checkbox'", checkbox)
-                        .appendTag("span", label)));
+                    .appendTag("input", false, "type='checkbox'", checkbox)
+                    .appendTag("span", label)));
         return this;
     }
 
@@ -102,11 +106,11 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         this.appendInputGroup(componentId -> {
             BSInputGroup inputGroup = newInputGroup();
             return (BSInputGroup) inputGroup
-                    .appendExtraClasses(" date ")
-                    .appendExtraAttributes(attrs)
-                    .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
-                    .appendButtonAddon(Icone.CALENDAR)
-                    .add(new DatePickerInitBehaviour());
+                .appendExtraClasses(" date ")
+                .appendExtraAttributes(attrs)
+                .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
+                .appendButtonAddon(Icone.CALENDAR)
+                .add(new DatePickerInitBehaviour());
         });
         return this;
     }
@@ -120,21 +124,21 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendSelect(Component select, boolean multiple, boolean bootstrap) {
-        if(multiple) {
+        if (multiple) {
             select.add(new BSSelectInitBehaviour());
         }
 
         return super.appendTag("select", true,
-                ((bootstrap)
-                        ? "class='bs-select form-control' title='" + getString("BSControls.Select.Title") + "'"
-                        : "class='form-control'")
-                        + (multiple ? "multiple" : ""),
-                select);
+            ((bootstrap)
+                ? "class='bs-select form-control' title='" + getString("BSControls.Select.Title") + "'"
+                : "class='form-control'")
+                + (multiple ? "multiple" : ""),
+            select);
     }
 
     public Component appendPicklist(Component select) {
-        TemplatePanel tt = super.newTemplateTag(t -> "<div><select class='form-control' wicket:id=" + select.getId() + "  multiple=\"multiple\"></select></div>");
-        return  tt.add(select.add(new PicklistInitBehaviour()));
+        TemplatePanel tt = super.newTemplateTag(t -> "<div><select wicket:id=" + select.getId() + "  multiple=\"multiple\"></select></div>");
+        return tt.add(select.add(new PicklistInitBehaviour()));
     }
 
     public BSControls appendStaticText(Component text) {
@@ -191,33 +195,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendFeedback(Component fence, IFeedbackMessageFilter filter) {
-        return super.appendTag("span", true,
-            "class='help-block'", newFeedbackPanel("controlErrors", fence, filter)
-                .add(new Behavior() {
-                    @Override
-                    public void renderHead(Component component, IHeaderResponse response) {
-                        super.renderHead(component, response);
-                        FeedbackPanel fp = (FeedbackPanel) component;
-                        if (fp.anyErrorMessage()) {
-                            response.render(OnDomReadyHeaderItem.forScript(""
-                                    + JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"
-                                    + ""));
-                        } else {
-                            response.render(OnDomReadyHeaderItem.forScript(""
-                                    + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"
-                                    + ""));
-                        }
-                        if (fp.anyMessage(FeedbackMessage.WARNING)) {
-                            response.render(OnDomReadyHeaderItem.forScript(""
-                                    + JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"
-                                    + ""));
-                        } else {
-                            response.render(OnDomReadyHeaderItem.forScript(""
-                                    + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"
-                                    + ""));
-                        }
-                    }
-                }));
+        return super.appendTag("span", true, "class='help-block'", newFeedbackPanel("controlErrors", fence, filter));
     }
 
     public Label newHelpBlock(IModel<String> textModel) {
@@ -228,11 +206,47 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return this;
     }
 
-    protected FeedbackPanel newFeedbackPanel(String id, Component fence, IFeedbackMessageFilter filter) {
-        return new BSFeedbackPanel(id, fence, filter);
+    protected Component newFeedbackPanel(String id, Component fence, IFeedbackMessageFilter filter) {
+        IFeedbackPanelFactory factory = ObjectUtils.defaultIfNull(feedbackPanelFactory, IFeedbackPanelFactory.DEFAULT);
+        return factory.newFeedbackPanel(id, fence, filter);
     }
 
     public BSControls appendDiv(Component typeahead) {
         return super.appendTag("div", typeahead);
+    }
+
+    public BSControls setFeedbackPanelFactory(IFeedbackPanelFactory feedbackPanelFactory) {
+        this.feedbackPanelFactory = feedbackPanelFactory;
+        return this;
+    }
+    
+    public static interface IFeedbackPanelFactory extends Serializable {
+        public Component newFeedbackPanel(String id, Component fence, IFeedbackMessageFilter filter);
+
+        public static IFeedbackPanelFactory DEFAULT = (String id, Component fence, IFeedbackMessageFilter filter) -> {
+            BSFeedbackPanel bsFeedbackPanel = new BSFeedbackPanel(id, fence, filter);
+            bsFeedbackPanel.add(new Behavior() {
+                @Override
+                public void renderHead(Component component, IHeaderResponse response) {
+                    super.renderHead(component, response);
+                    FeedbackPanel fp = (FeedbackPanel) component;
+                    if (fp.anyErrorMessage()) {
+                        response.render(OnDomReadyHeaderItem.forScript(
+                            JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"));
+                    } else {
+                        response.render(OnDomReadyHeaderItem.forScript(
+                            JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"));
+                    }
+                    if (fp.anyMessage(FeedbackMessage.WARNING)) {
+                        response.render(OnDomReadyHeaderItem.forScript(
+                            JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"));
+                    } else {
+                        response.render(OnDomReadyHeaderItem.forScript(
+                            JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"));
+                    }
+                }
+            });
+            return bsFeedbackPanel;
+        };
     }
 }

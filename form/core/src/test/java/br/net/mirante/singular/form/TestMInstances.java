@@ -30,6 +30,10 @@ public class TestMInstances {
     @Test
     public void testVisit() {
         SIComposite contato = pacote.contato.newInstance();
+        Assert.assertEquals(contato,
+            SInstances.visit(contato, findFirst(it -> it.getType() == pacote.contato))
+                .orElse(null));
+
         Assert.assertEquals(pacote.nome,
             SInstances.visit(contato, findFirst(it -> it.getType() == pacote.nome))
                 .map(it -> it.getType())

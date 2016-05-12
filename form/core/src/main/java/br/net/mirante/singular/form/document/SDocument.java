@@ -5,7 +5,27 @@
 
 package br.net.mirante.singular.form.document;
 
-import br.net.mirante.singular.form.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.SetMultimap;
+
+import br.net.mirante.singular.form.ICompositeInstance;
+import br.net.mirante.singular.form.RefService;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SInstances;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypes;
+import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.event.ISInstanceListener;
 import br.net.mirante.singular.form.event.SInstanceEventType;
@@ -18,12 +38,6 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.validation.IValidationError;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.SetMultimap;
-
-import java.util.*;
-import java.util.function.Supplier;
 
 /**
  * <p>

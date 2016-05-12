@@ -59,17 +59,20 @@
             }
             function updateValue(newValue) {
                 var $valueField = $('#' + valueField);
+                var oldValue = $valueField.val();
                 $valueField.val(newValue);
-                $valueField.trigger('change');
+                if(oldValue !== newValue){
+                	$valueField.trigger('change');
+                }
             }
             
-            function onClear(e, value) {
+            function onClear(e) {
             	clearCalled = true;
                 $('#' + container + '_clear').remove();
                 $typeaheadField.removeAttr('readonly');
+                $typeaheadField.typeahead('val', '');
                 Typeahead_.enable();
-                $typeaheadField.typeahead('val', value || '');
-            	updateValue(value || '');
+            	updateValue('');
                 $typeaheadField.focus();
             }
 
@@ -95,18 +98,21 @@
                 updateValue(selection.key);
                 appendClearButton();
                 if (subscriberMetadata.jumpToNext) {
-                	$typeaheadField.blur();
+                	$typeaheadField.trigger('blur');
                 }
             });
+            
             $typeaheadField.on('keydown', function (event) {
             	var code = event.keyCode || event.which;
+            	if(code === 9 && hasAjaxUpdate()){
+            		focusNextComponent(event);
+            	}
             	// ativa o campo se estiver readonly e backspace ou delete
             	if ($typeaheadField.attr('readonly') && (code === 8) || (code === 46)) {
             		event.stopPropagation();
             		event.preventDefault();
             		onClear(event);
             	}
-            	console.log('keydown');
             });
             $typeaheadField.on('keypress', function (event) {
             	var code = event.keyCode || event.which;
@@ -119,9 +125,8 @@
             		$('#' + container + '_clear').remove();
                     $typeaheadField.removeAttr('readonly');
                     Typeahead_.enable();
-                    $typeaheadField.focus();
+                    Typeahead_.open();
             	}
-            	console.log('keypress');
             });
             $typeaheadField.on('keyup', function (event) {
             	var code = event.keyCode || event.which;
@@ -134,7 +139,6 @@
             	} else if((code === 8 || code === 46) && !$typeaheadField.val() && !clearCalled){
             		event.preventDefault();
             		onClear(event);
-            		console.log('keyup');
             	}
             });
             //previne que ao teclar Tab, o primeiro item seja selecionado quando ninguém foi marcado
@@ -164,14 +168,22 @@
             	return false;
             }
             // limpa o campo se tiver um valor inválido
-            $typeaheadField.on('blur', function (keydownEvent) {
+            $typeaheadField.on('typeahead:change', function ($e, selection) {
         		if(possuiDadoInvalido()){
-        			$typeaheadField.typeahead('val','');
-        			updateValue('');
-        			//TODO Lucas Lopes - esta validando obrigatoriedade
+        			$e.stopPropagation();
+        			Typeahead_.close();
+        			$typeaheadField.typeahead('val', '');
+                    updateValue('');
+        		} else if($typeaheadField.val()){
+        			var $selectad = $.grep(Typeahead_.menu._getSelectables(), function(obj,i){
+        				return clearText($typeaheadField.val()) === clearText(Typeahead_.menu.getSelectableData($(obj)).val);
+        			});
+        			if((Typeahead_.menu._getSelectables().size() == 1 || $selectad.length == 1) && $typeaheadField.val() !== Typeahead_.menu.getSelectableData($selectad).val){
+        				$e.preventDefault();
+        				Typeahead_.select($selectad);
+        			}
         		}
             });
-            
             if ($typeaheadField.val() && possuiDadoInvalido()) {
                 appendClearButton();
             }

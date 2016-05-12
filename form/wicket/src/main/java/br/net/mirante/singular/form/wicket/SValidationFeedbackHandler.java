@@ -1,9 +1,15 @@
 package br.net.mirante.singular.form.wicket;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SInstances;
-import br.net.mirante.singular.form.validation.IValidationError;
-import com.google.common.collect.Sets;
+import static java.util.stream.Collectors.*;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
@@ -12,34 +18,188 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
 
-import java.io.Serializable;
-import java.util.*;
+import com.google.common.collect.Sets;
 
-import static java.util.stream.Collectors.toSet;
+import br.net.mirante.singular.commons.lambda.IPredicate;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SInstances;
+import br.net.mirante.singular.form.document.SDocument;
+import br.net.mirante.singular.form.validation.IValidationError;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 public class SValidationFeedbackHandler implements Serializable {
 
-    public static final MetaDataKey<SValidationFeedbackHandler> MDK = new MetaDataKey<SValidationFeedbackHandler>() {};
+    static final MetaDataKey<SValidationFeedbackHandler> MDK = new MetaDataKey<SValidationFeedbackHandler>() {};
 
-    private Component                        targetComponent;
-    private List<IValidationError>           errors = new ArrayList<>();
-    private IValidationErrorsChangedListener onValidationErrorsChanged;
-    private Component[]                      refreshOnChange;
-    private IModel<? extends SInstance>      instanceModel;
+    private final Component                                 targetComponent;
+    private final List<IValidationError>                    currentErrors = new ArrayList<>();
+    private final List<ISValidationFeedbackHandlerListener> listeners     = new ArrayList<>(1);
+    private IModel<? extends SInstance>                     instanceModel;
 
-    public void updateValidationMessages(Optional<AjaxRequestTarget> target,
-                                         MarkupContainer container,
-                                         Collection<IValidationError> errors) {
-
+    private SValidationFeedbackHandler(Component targetComponent) {
+        this.targetComponent = targetComponent;
     }
 
-    public static List<IValidationError> collectNestedErrors(Component rootContainer) {
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // BIND
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public static SValidationFeedbackHandler bindTo(Component component) {
+        if (isBound(component)) {
+            return get(component);
+        } else {
+            SValidationFeedbackHandler handler = new SValidationFeedbackHandler(component);
+            component.setMetaData(MDK, handler);
+            return handler;
+        }
+    }
+
+    public static boolean isBound(Component component) {
+        return get(component) != null;
+    }
+
+    public static SValidationFeedbackHandler get(Component component) {
+        return component.getMetaData(MDK);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // CONFIG
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public SValidationFeedbackHandler setInstanceModel(IModel<? extends SInstance> instanceModel) {
+        this.instanceModel = instanceModel;
+        return this;
+    }
+
+    public SValidationFeedbackHandler addListener(ISValidationFeedbackHandlerListener listener) {
+        this.listeners.add(listener);
+        return this;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // LIFECYCLE
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void clearValidationMessages(Optional<AjaxRequestTarget> target) {
+        updateValidationMessages(target, Collections.emptyList());
+    }
+
+    public void updateValidationMessages(Optional<AjaxRequestTarget> target) {
+        List<IValidationError> newErrors = collectNestedErrors();
+        updateValidationMessages(target, newErrors);
+    }
+
+    protected void updateValidationMessages(Optional<AjaxRequestTarget> target, Collection<IValidationError> newErrors) {
+        List<IValidationError> oldErrors = new ArrayList<>(currentErrors);
+
+        this.currentErrors.clear();
+        this.currentErrors.addAll(newErrors);
+
+        if (!oldErrors.equals(newErrors)) {
+            fireFeedbackChanged(
+                target,
+                this.targetComponent,
+                resolveRootInstance(this.targetComponent),
+                oldErrors,
+                newErrors);
+        }
+    }
+
+    private void fireFeedbackChanged(Optional<AjaxRequestTarget> target,
+                                     Component container,
+                                     SInstance baseInstance,
+                                     Collection<IValidationError> oldErrors,
+                                     Collection<IValidationError> newErrors) {
+
+        for (ISValidationFeedbackHandlerListener listener : listeners)
+            listener.onFeedbackChanged(target, container, baseInstance, oldErrors, newErrors);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // COLLECT
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public List<IValidationError> collectNestedErrors() {
+        return collectNestedErrors(this.targetComponent, IPredicate.all());
+    }
+    public static List<IValidationError> collectNestedErrors(Component subContainer) {
+        return collectNestedErrors(subContainer, IPredicate.all());
+    }
+    public List<IValidationError> collectNestedErrors(ValidationErrorLevel level) {
+        return collectNestedErrors(this.targetComponent, it -> level.ge(it.getErrorLevel()));
+    }
+    public static List<IValidationError> collectNestedErrors(Component subContainer, ValidationErrorLevel level) {
+        return collectNestedErrors(subContainer, it -> level.ge(it.getErrorLevel()));
+    }
+    public List<IValidationError> collectNestedErrors(IPredicate<IValidationError> filter) {
+        return collectNestedErrors(this.targetComponent, resolveRootInstance(this.targetComponent), filter);
+    }
+    public static List<IValidationError> collectNestedErrors(Component subContainer, IPredicate<IValidationError> filter) {
+        return collectNestedErrors(subContainer, resolveRootInstance(subContainer), filter);
+    }
+    public boolean containsNestedErrors() {
+        return containsNestedErrors(this.targetComponent, IPredicate.all());
+    }
+    public boolean containsNestedErrors(Component subContainer) {
+        return containsNestedErrors(subContainer, IPredicate.all());
+    }
+    public boolean containsNestedErrors(ValidationErrorLevel level) {
+        return containsNestedErrors(this.targetComponent, it -> level.ge(it.getErrorLevel()));
+    }
+    public boolean containsNestedErrors(Component subContainer, ValidationErrorLevel level) {
+        return containsNestedErrors(subContainer, it -> level.ge(it.getErrorLevel()));
+    }
+    public boolean containsNestedErrors(IPredicate<IValidationError> filter) {
+        return containsNestedErrors(this.targetComponent, filter);
+    }
+    public boolean containsNestedErrors(Component subContainer, IPredicate<IValidationError> filter) {
+        return containsNestedErrors(subContainer, resolveRootInstance(subContainer), filter);
+    }
+
+    private static List<IValidationError> collectNestedErrors(Component rootContainer, SInstance rootInstance, IPredicate<IValidationError> filter) {
+
+        final SDocument document = rootInstance.getDocument();
+        final Set<? extends SInstance> lowerBoundInstances = collectLowerBoundInstances(rootContainer);
+
+        final List<IValidationError> result = new ArrayList<>();
+        SInstances.visit(rootInstance, (i, v) -> {
+            if (lowerBoundInstances.contains(i)) {
+                v.dontGoDeeper();
+            } else {
+                document.getValidationErrors(i.getId()).stream()
+                    .filter(it -> (filter == null) ? true : filter.test(it))
+                    .forEach(it -> result.add(it));
+            }
+        });
+
+        return result;
+    }
+
+    private static boolean containsNestedErrors(Component rootContainer, SInstance rootInstance, IPredicate<IValidationError> filter) {
+
+        final SDocument document = rootInstance.getDocument();
+        final Set<? extends SInstance> lowerBoundInstances = collectLowerBoundInstances(rootContainer);
+
+        Optional<Boolean> f = SInstances.visit(rootInstance, (i, v) -> {
+            if (lowerBoundInstances.contains(i)) {
+                v.dontGoDeeper();
+            } else {
+                Optional<IValidationError> found = document.getValidationErrors(i.getId()).stream()
+                    .filter(it -> (filter == null) ? true : filter.test(it))
+                    .findAny();
+                if (found.isPresent())
+                    v.stop(true);
+            }
+        });
+        return Boolean.TRUE.equals(f.orElse(false));
+    }
+
+    protected static Set<? extends SInstance> collectLowerBoundInstances(Component rootContainer) {
         // coleta os componentes descendentes que possuem um handler, e as instancias correspondentes
         final Set<Component> lowerBoundComponents = Sets.newHashSet();
         if (rootContainer instanceof MarkupContainer) {
             Visits.visitChildren((MarkupContainer) rootContainer, (Component object, IVisit<Void> visit) -> {
-                SValidationFeedbackHandler handler = object.getMetaData(MDK);
+                SValidationFeedbackHandler handler = get(object);
                 if (handler != null) {
                     visit.dontGoDeeper();
                     lowerBoundComponents.add(object);
@@ -47,22 +207,32 @@ public class SValidationFeedbackHandler implements Serializable {
             });
         }
         final Set<? extends SInstance> lowerBoundInstances = lowerBoundComponents.stream()
-            .map(it -> it.getMetaData(MDK).instanceModel.getObject())
+            .map(it -> resolveRootInstance(it))
             .collect(toSet());
-
-        final SValidationFeedbackHandler rootHandler = rootContainer.getMetaData(MDK);
-        final SInstance rootInstance = rootHandler.instanceModel.getObject();
-
-        SInstances.visit(rootInstance, (i, v) -> {});
-
-        return null;
+        return lowerBoundInstances;
     }
 
-    interface IValidationErrorsChangedListener extends Serializable {
-        void onFeedbackChanged(Optional<AjaxRequestTarget> target,
-                               MarkupContainer container,
-                               IModel<SInstance> baseInstance,
-                               Collection<IValidationError> oldErrors,
-                               Collection<IValidationError> newErrors);
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // UTILITY
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static SInstance resolveRootInstance(Component rootContainer) {
+        final SValidationFeedbackHandler rootHandler = get(rootContainer);
+
+        SInstance rootInstance = null;
+
+        if (rootHandler != null && rootHandler.instanceModel != null)
+            rootInstance = rootHandler.instanceModel.getObject();
+
+        if (rootInstance == null) {
+            Object modelObject = rootContainer.getDefaultModelObject();
+            if (modelObject instanceof SInstance)
+                rootInstance = (SInstance) modelObject;
+        }
+
+        if (rootInstance == null)
+            throw new IllegalArgumentException("Could not resolve the root instance");
+
+        return rootInstance;
     }
 }
