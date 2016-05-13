@@ -67,6 +67,7 @@ public class SingularDefaultPersistenceConfiguration {
         populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(sqlCreateFunction);
         initializer.setDatabasePopulator(populator);
+        initializer.setEnabled(isDatabaseInitializerEnabled());
         return initializer;
     }
 
@@ -75,6 +76,7 @@ public class SingularDefaultPersistenceConfiguration {
         final DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
         initializer.setDatabasePopulator(databasePopulator());
+        initializer.setEnabled(isDatabaseInitializerEnabled());
         return initializer;
     }
 
@@ -124,5 +126,9 @@ public class SingularDefaultPersistenceConfiguration {
         hibernateProperties.put("hibernate.cache.use_second_level_cache", "false");
         hibernateProperties.put("hibernate.jdbc.use_get_generated_keys", "true");
         return hibernateProperties;
+    }
+
+    protected boolean isDatabaseInitializerEnabled() {
+        return Boolean.valueOf(System.getProperty("singular.enabled.h2.inserts", "true"));
     }
 }
