@@ -1,5 +1,9 @@
 package br.net.mirante.singular.server.commons.spring;
 
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +15,6 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import javax.sql.DataSource;
-import java.util.Properties;
 
 @EnableTransactionManagement(proxyTargetClass = true)
 public class SingularDefaultPersistenceConfiguration {
@@ -77,7 +78,7 @@ public class SingularDefaultPersistenceConfiguration {
     @Bean
     public DriverManagerDataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl("jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1");
+        dataSource.setUrl(getUrlConnection());
         dataSource.setUsername("sa");
         dataSource.setPassword("sa");
         final Properties connectionProperties = new Properties();
@@ -89,6 +90,9 @@ public class SingularDefaultPersistenceConfiguration {
         return dataSource;
     }
 
+    protected String getUrlConnection() {
+        return "jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1";
+    }
 
     @Bean
     public LocalSessionFactoryBean sessionFactory(final DataSource dataSource) {
