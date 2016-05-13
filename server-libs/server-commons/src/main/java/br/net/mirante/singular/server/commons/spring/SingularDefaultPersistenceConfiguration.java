@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -57,13 +58,15 @@ public class SingularDefaultPersistenceConfiguration {
     }
 
     @Bean
+    @DependsOn("scriptsInitializer")
     public DataSourceInitializer createFunctionInitializer(final DataSource dataSource) {
         final DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.setSeparator("#");
         populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(sqlCreateFunction);
-        initializer.setDatabasePopulator(databasePopulator());
+        initializer.setDatabasePopulator(populator);
         return initializer;
     }
 
