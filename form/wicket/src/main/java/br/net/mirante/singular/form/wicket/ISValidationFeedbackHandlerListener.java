@@ -14,7 +14,7 @@ public interface ISValidationFeedbackHandlerListener extends Serializable {
 
     void onFeedbackChanged(Optional<AjaxRequestTarget> target,
                            Component container,
-                           SInstance baseInstance,
+                           Collection<SInstance> baseInstances,
                            Collection<IValidationError> oldErrors,
                            Collection<IValidationError> newErrors);
 }
