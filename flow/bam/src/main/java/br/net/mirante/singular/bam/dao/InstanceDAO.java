@@ -82,7 +82,10 @@ public class InstanceDAO extends BaseDAO{
             + " where pd.key in(:processCodeWithAccess) "
             + " and pi.beginDate >= :datalimite "
             + (processCode != null ? " and pd.key = :processCode" : "")
-            + " group by month(pi.beginDate), year(pi.beginDate) order by month(pi.beginDate) asc, year(pi.beginDate) asc");
+            + " group by trim(str(month(pi.beginDate))) || trim(str(year(pi.beginDate))), "
+            + "          trim(str(month(pi.beginDate))) ||'/'|| trim(str(year(pi.beginDate))) "
+            + " order by trim(str(month(pi.beginDate))) || trim(str(year(pi.beginDate))) asc, "
+            + "          trim(str(month(pi.beginDate))) ||'/'|| trim(str(year(pi.beginDate))) asc ");
         if (processCode != null) {
             hqlQuery.setParameter("processCode", processCode);
         }
@@ -100,7 +103,10 @@ public class InstanceDAO extends BaseDAO{
             + " where pd.key in(:processCodeWithAccess) "
             + " and pi.endDate >= :datalimite "
             + (processCode != null ? " and pd.key = :processCode" : "")
-            + " group by month(pi.endDate), year(pi.endDate) order by month(pi.endDate) asc, year(pi.endDate) asc");
+            + " group by trim(str(month(pi.endDate))) || trim(str(year(pi.endDate))), "
+            + "          trim(str(month(pi.endDate))) ||'/'|| trim(str(year(pi.endDate))) "
+            + " order by trim(str(month(pi.endDate))) || trim(str(year(pi.endDate))) asc, "
+            + "          trim(str(month(pi.endDate))) ||'/'|| trim(str(year(pi.endDate))) asc ");
         if (processCode != null) {
             hqlQuery.setParameter("processCode", processCode);
         }

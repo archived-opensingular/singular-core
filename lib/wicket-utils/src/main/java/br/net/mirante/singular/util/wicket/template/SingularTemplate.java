@@ -16,18 +16,23 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
+import org.apache.wicket.markup.html.IHeaderResponseDecorator;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.UrlResourceReference;
 
 import com.google.common.collect.ImmutableList;
 
 public abstract class SingularTemplate extends WebPage {
 
+    public static final UrlResourceReference JQUERY_REFERENCE = new UrlResourceReference(Url.parse("/singular-static/resources/metronic/global/plugins/jquery.min.js"));
+
     public static final String JAVASCRIPT_CONTAINER = "javascript-container";
+    public static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = (response) -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
 
     private static final List<HeaderItem> DEFAULT_CSS;
     private static final List<HeaderItem> DEFAULT_JS;
@@ -59,11 +64,10 @@ public abstract class SingularTemplate extends WebPage {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        getApplication()
-                .setHeaderResponseDecorator(r -> new JavaScriptFilteredIntoFooterHeaderResponse(r, SingularTemplate.JAVASCRIPT_CONTAINER));
+        getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
         getApplication()
                 .getJavaScriptLibrarySettings()
-                .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
+                .setJQueryReference(JQUERY_REFERENCE);
 
         add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
@@ -160,7 +164,7 @@ public abstract class SingularTemplate extends WebPage {
                 "/singular-static/resources/metronic/global/scripts/app.js",
                 "/singular-static/resources/metronic/layout4/scripts/layout.js",
                 "/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.js",
-                "/singular-static/resources/metronic/global/plugins/typeahead/typeahead.bundle.min.js",
+                "/singular-static/resources/metronic/global/plugins/typeahead/typeahead.bundle.js",
                 "/singular-static/resources/singular/plugins/stringjs/string.min.js")
                 .stream().map(JavaScriptHeaderItem::forUrl))
         .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));

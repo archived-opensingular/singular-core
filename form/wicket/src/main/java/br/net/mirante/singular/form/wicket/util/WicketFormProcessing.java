@@ -5,23 +5,23 @@
 
 package br.net.mirante.singular.form.wicket.util;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.event.ISInstanceListener;
-import br.net.mirante.singular.form.event.SInstanceEvent;
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.wicket.feedback.SFeedbackMessage;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import static java.util.stream.Collectors.*;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.feedback.FeedbackMessages;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
@@ -29,14 +29,19 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import static java.util.stream.Collectors.toSet;
+import br.net.mirante.singular.form.SFormUtil;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SInstances;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.document.SDocument;
+import br.net.mirante.singular.form.event.ISInstanceListener;
+import br.net.mirante.singular.form.event.SInstanceEvent;
+import br.net.mirante.singular.form.validation.IValidationError;
+import br.net.mirante.singular.form.validation.InstanceValidationContext;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,
@@ -46,6 +51,7 @@ import static java.util.stream.Collectors.toSet;
 public class WicketFormProcessing {
 
     public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {};
+    public final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {};
 
     public static void onFormError(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance) {
         container.visitChildren((c, v) -> {
@@ -65,34 +71,43 @@ public class WicketFormProcessing {
     }
 
     private static boolean processAndPrepareForm(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstanceModel, boolean validate) {
-        if (baseInstanceModel == null)
-            return false;
 
-        final SInstance baseInstance = baseInstanceModel.getObject();
-        final SDocument document = baseInstance.getDocument();
+        final Function<Boolean, Boolean> setAndReturn = (value) -> {
+            RequestCycle.get().setMetaData(MDK_PROCESSED, value);
+            return value;
+        };
 
-        associateErrorsToComponents(
-            document.getValidationErrorsByInstanceId(),
-            container,
-            baseInstanceModel);
+        if (RequestCycle.get().getMetaData(MDK_PROCESSED) == null) {
+            if (baseInstanceModel == null)
+                return setAndReturn.apply(false);
 
-        // Validação do valor do componente
-        if (validate) {
-            InstanceValidationContext validationContext = new InstanceValidationContext();
-            validationContext.validateAll(baseInstance);
-            if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
+            final SInstance baseInstance = baseInstanceModel.getObject();
+            final SDocument document = baseInstance.getDocument();
 
-                refresh(target, container);
-                return false;
+            // Validação do valor do componente
+            if (validate) {
+                InstanceValidationContext validationContext = new InstanceValidationContext();
+                validationContext.validateAll(baseInstance);
+                if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
+
+                    refresh(target, container);
+                    return setAndReturn.apply(false);
+                }
             }
+
+            associateErrorsToComponents(
+                target,
+                container,
+                baseInstanceModel,
+                document.getValidationErrorsByInstanceId());
+            
+            // atualizar documento e recuperar instancias com atributos alterados
+            document.updateAttributes(baseInstance, null);
+
+            // re-renderizar form
+            refresh(target, container);
         }
-
-        // atualizar documento e recuperar instancias com atributos alterados
-        document.updateAttributes(baseInstance, null);
-
-        // re-renderizar form
-        refresh(target, container);
-        return true;
+        return setAndReturn.apply(true);
     }
 
     /**
@@ -133,7 +148,7 @@ public class WicketFormProcessing {
             final InstanceValidationContext validationContext = new InstanceValidationContext();
             validationContext.validateSingle(fieldInstance.getObject());
             if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-                associateErrorsToComponents(validationContext.getErrorsByInstanceId(), formComponent, fieldInstance);
+                associateErrorsToComponents(target, formComponent, fieldInstance, validationContext.getErrorsByInstanceId());
             }
         }
 
@@ -205,51 +220,62 @@ public class WicketFormProcessing {
         }
     }
 
-    public static void associateErrorsToComponents(Map<Integer, ? extends Collection<IValidationError>> instanceErrors, MarkupContainer container, IModel<? extends SInstance> baseInstance) {
+    public static void associateErrorsToComponents(Optional<AjaxRequestTarget> target,
+                                                   MarkupContainer container,
+                                                   IModel<? extends SInstance> baseInstance,
+                                                   Map<Integer, ? extends Collection<IValidationError>> instanceErrors) {
 
-        // associate errors to components
-        Visits.visitPostOrder(container, (Component component, IVisit<Object> visit) -> {
-            if (!component.isVisibleInHierarchy()) {
-                visit.dontGoDeeper();
-            } else {
-                WicketFormUtils.resolveInstance(component.getDefaultModel())
-                    .map(componentInstance -> instanceErrors.remove(componentInstance.getId()))
-                    .ifPresent(errors -> associateErrorsTo(component, baseInstance, false, errors));
-            }
+        Visits.visitPostOrder(container, (Component object, IVisit<Void> visit) -> {
+            if (SValidationFeedbackHandler.isBound(object))
+                SValidationFeedbackHandler.get(object).updateValidationMessages(target);
         });
-
-        // associate remaining errors to container
-        System.out.println(">>> " + container.getPageRelativePath());
-        instanceErrors.values().stream()
-            .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
     }
 
-    private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstanceModel,
-                                          boolean prependFullPathLabel, Collection<IValidationError> errors) {
-        final SInstance instance = baseInstanceModel.getObject();
-        for (IValidationError error : errors) {
-            final Integer instanceId = error.getInstanceId();
-            final String message = (prependFullPathLabel)
-                ? prependFullPathToMessage(instance, error)
-                : error.getMessage();
-            final IModel<? extends SInstance> instanceModel = $m.map(baseInstanceModel,
-                inst -> inst.getDocument().findInstanceById(instanceId).orElse(null));
-
-            final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
-
-            if (feedbackMessages.hasMessage(m -> Objects.equals(m.getMessage(), message)))
-                continue;
-
-            if (error.getErrorLevel() == ValidationErrorLevel.ERROR)
-                feedbackMessages.add(new SFeedbackMessage(component, message, FeedbackMessage.ERROR, instanceModel));
-
-            else if (error.getErrorLevel() == ValidationErrorLevel.WARNING)
-                feedbackMessages.add(new SFeedbackMessage(component, message, FeedbackMessage.WARNING, instanceModel));
-
-            else
-                throw new IllegalStateException("Invalid error level: " + error.getErrorLevel());
-        }
-    }
+    //    public static void associateErrorsToComponents(Map<Integer, ? extends Collection<IValidationError>> instanceErrors, MarkupContainer container, IModel<? extends SInstance> baseInstance) {
+    //
+    //        // associate errors to components
+    //        Visits.visitPostOrder(container, (Component component, IVisit<Object> visit) -> {
+    //            if (!component.isVisibleInHierarchy()) {
+    //                visit.dontGoDeeper();
+    //            } else {
+    //                WicketFormUtils.resolveInstance(component.getDefaultModel())
+    //                    .map(componentInstance -> instanceErrors.remove(componentInstance.getId()))
+    //                    .ifPresent(errors -> associateErrorsTo(component, baseInstance, false, errors));
+    //            }
+    //        });
+    //
+    //        // associate remaining errors to container
+    //        System.out.println(">>> " + container.getPageRelativePath());
+    //        instanceErrors.values().stream()
+    //            .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
+    //    }
+    //
+    //    private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstanceModel,
+    //                                          boolean prependFullPathLabel, Collection<IValidationError> errors) {
+    //        final SInstance instance = baseInstanceModel.getObject();
+    //        for (IValidationError error : errors) {
+    //            final Integer instanceId = error.getInstanceId();
+    //            final String message = (prependFullPathLabel)
+    //                ? prependFullPathToMessage(instance, error)
+    //                : error.getMessage();
+    //            final IModel<? extends SInstance> instanceModel = $m.map(baseInstanceModel,
+    //                inst -> inst.getDocument().findInstanceById(instanceId).orElse(null));
+    //
+    //            final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
+    //
+    //            if (feedbackMessages.hasMessage(m -> Objects.equals(m.getMessage(), message)))
+    //                continue;
+    //
+    //            if (error.getErrorLevel() == ValidationErrorLevel.ERROR)
+    //                feedbackMessages.add(new SFeedbackMessage(component, message, FeedbackMessage.ERROR, instanceModel));
+    //
+    //            else if (error.getErrorLevel() == ValidationErrorLevel.WARNING)
+    //                feedbackMessages.add(new SFeedbackMessage(component, message, FeedbackMessage.WARNING, instanceModel));
+    //
+    //            else
+    //                throw new IllegalStateException("Invalid error level: " + error.getErrorLevel());
+    //        }
+    //    }
 
     protected static String prependFullPathToMessage(SInstance instance, IValidationError error) {
         String message;

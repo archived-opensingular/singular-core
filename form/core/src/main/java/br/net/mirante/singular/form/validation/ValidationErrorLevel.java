@@ -6,5 +6,14 @@
 package br.net.mirante.singular.form.validation;
 
 public enum ValidationErrorLevel {
-    WARNING, ERROR
+    WARNING, ERROR;
+
+    //@formatter:off
+    public boolean eq(ValidationErrorLevel level) { return this == level; }
+    public boolean ne(ValidationErrorLevel level) { return this != level; }
+    public boolean gt(ValidationErrorLevel level) { return this.compareTo(level) > 0; }
+    public boolean ge(ValidationErrorLevel level) { return this.compareTo(level) >= 0; }
+    public boolean lt(ValidationErrorLevel level) { return this.compareTo(level) < 0; }
+    public boolean le(ValidationErrorLevel level) { return this.compareTo(level) <= 0; }
+    //@formatter:on
 }
