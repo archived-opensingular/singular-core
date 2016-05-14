@@ -9,6 +9,9 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static br.net.mirante.singular.form.TestMPacoteCoreTipoLista.INDICE_INVALIDO;
+
+
 public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     public void testTipoCompostoCriacao() {
@@ -189,8 +192,8 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEquals(1, bloco.getFields().size());
         assertTrue(bloco.isEmptyOfData());
         assertNotNull(bloco.getValue("enderecos"));
-        assertNull(bloco.getValue("enderecos[0]"));
-        assertNull(bloco.getFieldList("enderecos").getValue("[0]"));
+        assertException(() -> bloco.getValue("enderecos[0]"), INDICE_INVALIDO);
+        assertException(() -> bloco.getFieldList("enderecos").getValue("[0]"), INDICE_INVALIDO);
 
         bloco.getFieldList("enderecos").addValue("E1");
         assertEquals(1, bloco.getFields().size());
@@ -227,10 +230,10 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEquals(1, bloco.getFields().size());
         assertTrue(bloco.isEmptyOfData());
         assertNotNull(bloco.getValue("enderecos"));
-        assertNull(bloco.getValue("enderecos[0]"));
-        assertNull(bloco.getValue("enderecos[0].rua"));
-        assertNull(bloco.getFieldList("enderecos").getValue("[0]"));
-        assertNull(bloco.getFieldList("enderecos").getValue("[0].rua"));
+        assertException(() -> bloco.getValue("enderecos[0]"), INDICE_INVALIDO);
+        assertException(() -> bloco.getValue("enderecos[0].rua"), INDICE_INVALIDO);
+        assertException(() -> bloco.getFieldList("enderecos").getValue("[0]"), INDICE_INVALIDO);
+        assertException(() -> bloco.getFieldList("enderecos").getValue("[0].rua"), INDICE_INVALIDO);
 
         SIComposite endereco = (SIComposite) bloco.getFieldList("enderecos").addNew();
         assertEquals(1, bloco.getFields().size());
@@ -348,7 +351,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertNotNull(field);
         assertFalse(field.isPresent());
         if (indexException) {
-            assertException(() -> instance.getField(path), IndexOutOfBoundsException.class);
+            assertException(() -> instance.getField(path), INDICE_INVALIDO);
         } else {
             assertException(() -> instance.getField(path), "Não é um campo definido");
         }
