@@ -1,8 +1,13 @@
 package br.net.mirante.singular.server.commons.spring;
 
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -11,9 +16,6 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import javax.sql.DataSource;
-import java.util.Properties;
 
 @EnableTransactionManagement(proxyTargetClass = true)
 public class SingularDefaultPersistenceConfiguration {
@@ -56,13 +58,16 @@ public class SingularDefaultPersistenceConfiguration {
     }
 
     @Bean
+    @DependsOn("scriptsInitializer")
     public DataSourceInitializer createFunctionInitializer(final DataSource dataSource) {
         final DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.setSeparator("#");
         populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(sqlCreateFunction);
-        initializer.setDatabasePopulator(databasePopulator());
+        initializer.setDatabasePopulator(populator);
+        initializer.setEnabled(isDatabaseInitializerEnabled());
         return initializer;
     }
 
@@ -71,13 +76,14 @@ public class SingularDefaultPersistenceConfiguration {
         final DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
         initializer.setDatabasePopulator(databasePopulator());
+        initializer.setEnabled(isDatabaseInitializerEnabled());
         return initializer;
     }
 
     @Bean
     public DriverManagerDataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl("jdbc:h2:file:./notificacaodb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1");
+        dataSource.setUrl(getUrlConnection());
         dataSource.setUsername("sa");
         dataSource.setPassword("sa");
         final Properties connectionProperties = new Properties();
@@ -89,6 +95,9 @@ public class SingularDefaultPersistenceConfiguration {
         return dataSource;
     }
 
+    protected String getUrlConnection() {
+        return "jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1";
+    }
 
     @Bean
     public LocalSessionFactoryBean sessionFactory(final DataSource dataSource) {
@@ -117,5 +126,9 @@ public class SingularDefaultPersistenceConfiguration {
         hibernateProperties.put("hibernate.cache.use_second_level_cache", "false");
         hibernateProperties.put("hibernate.jdbc.use_get_generated_keys", "true");
         return hibernateProperties;
+    }
+
+    protected boolean isDatabaseInitializerEnabled() {
+        return Boolean.valueOf(System.getProperty("singular.enabled.h2.inserts", "true"));
     }
 }

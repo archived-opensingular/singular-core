@@ -14,7 +14,9 @@ public class SingularJSBehavior extends AbstractDefaultAjaxBehavior {
         String js =
                 " Singular = Singular || {}; "
                         + " Singular.reloadContent = function () { "
-                        + "     Singular.atualizarContadores(); "
+                        + "     if (Singular && Singular.atualizarContadores) {"
+                        + "           Singular.atualizarContadores(); "
+                        + "       }    "
                         + "     Wicket.Ajax.get({u: '%s' }); "
                         + " }; ";
 

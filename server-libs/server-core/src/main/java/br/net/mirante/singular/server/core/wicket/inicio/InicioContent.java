@@ -132,6 +132,7 @@ public class InicioContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> 
                 }
             }
         }
+
     }
 
     public String getModuleContext(ProcessGroupEntity processGroupEntity) {

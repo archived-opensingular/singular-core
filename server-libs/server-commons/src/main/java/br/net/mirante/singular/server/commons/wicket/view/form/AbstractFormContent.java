@@ -7,8 +7,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -42,6 +40,7 @@ import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.flow.metadata.ServerContextMetaData;
 import br.net.mirante.singular.server.commons.form.SingularServerDocumentFactory;
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -391,6 +390,10 @@ public abstract class AbstractFormContent extends Content {
     protected abstract boolean hasProcess();
 
     protected abstract String getIdentifier();
+
+    public SingularFormPanel getSingularFormPanel() {
+        return singularFormPanel;
+    }
 }
 
 /**

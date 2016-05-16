@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
@@ -25,6 +23,7 @@ import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -37,6 +36,7 @@ public abstract class AbstractFormPage extends Template {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFormPage.class);
 
     protected FormPageConfig config;
+    protected AbstractFormContent content;
 
     public AbstractFormPage(FormPageConfig config) {
         this.config = config;
@@ -57,7 +57,7 @@ public abstract class AbstractFormPage extends Template {
             throw new RedirectToUrlException(urlServidorSingular);
         }
 
-        return new AbstractFormContent(id, config.type, config.formId, config.viewMode, config.annotationMode) {
+        content = new AbstractFormContent(id, config.type, config.formId, config.viewMode, config.annotationMode) {
 
             @Override
             protected IModel<?> getContentTitleModel() {
@@ -144,6 +144,8 @@ public abstract class AbstractFormPage extends Template {
                 return AbstractFormPage.this.getIdentifier();
             }
         };
+
+        return content;
     }
 
     protected void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
