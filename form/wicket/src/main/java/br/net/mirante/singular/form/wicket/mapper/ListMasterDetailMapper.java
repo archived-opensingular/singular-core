@@ -5,8 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-import static org.apache.commons.lang3.StringUtils.*;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
@@ -64,7 +66,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     @Override
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<? extends SInstance> model = ctx.getModel();
+        @SuppressWarnings("unchecked")
+        final IModel<SIList<SInstance>> model = $m.get(() -> (SIList<SInstance>) ctx.getModel().getObject());;
         final ViewMode viewMode = ctx.getViewMode();
         final SView view = ctx.getView();
 
@@ -73,17 +76,17 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                     + " must be associated with a view  of type" + SViewListByMasterDetail.class.getName() + ".", model.getObject());
         }
 
-        final IModel<String> listaLabel = newLabelModel(ctx, model);
-
         BSContainer<?> externalAtual = new BSContainer<>("externalContainerAtual");
         BSContainer<?> externalIrmao = new BSContainer<>("externalContainerIrmao");
 
         ctx.getExternalContainer().appendTag("div", true, null, externalAtual);
         ctx.getExternalContainer().appendTag("div", true, null, externalIrmao);
 
-        final MasterDetailModal modal = new MasterDetailModal("mods", model, listaLabel, ctx, viewMode, (SViewListByMasterDetail) view, externalIrmao, ctx.getUiBuilderWicket());
+        final MasterDetailModal modal = new MasterDetailModal("mods", model, newItemLabelModel(ctx, model), ctx, viewMode, (SViewListByMasterDetail) view, externalIrmao, ctx.getUiBuilderWicket());
 
         externalAtual.appendTag("div", true, null, modal);
+        
+        final IModel<String> listaLabel = newLabelModel(ctx, model);
 
         ctx.getContainer().appendTag("div", true, null, new MetronicPanel("panel") {
 
@@ -124,21 +127,19 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
      * DATA TABLE
      */
 
-    /**
-     * @param ctx
-     * @param model
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    private IModel<String> newLabelModel(WicketBuildContext ctx, IModel<? extends SInstance> model) {
-        IModel<SIList<SInstance>> listaModel = $m.get(() -> (SIList<SInstance>) model.getObject());
-        SIList<?> iLista = listaModel.getObject();
-        IModel<String> labelModel = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
+    private IModel<String> newLabelModel(WicketBuildContext ctx, IModel<SIList<SInstance>> listaModel) {
+        AtrBasic iLista = listaModel.getObject().asAtr();
+        IModel<String> labelModel = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
         ctx.configureContainer(labelModel);
         return labelModel;
     }
 
-    private BSDataTable<SInstance, ?> buildTable(String id, IModel<? extends SInstance> model, SViewListByMasterDetail view, MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode) {
+    private IModel<String> newItemLabelModel(WicketBuildContext ctx, IModel<SIList<SInstance>> listaModel) {
+        AtrBasic iLista = listaModel.getObject().asAtr();
+        return $m.ofValue(trimToEmpty(iLista.getItemLabel() != null ? iLista.getItemLabel() : iLista.asAtr().getLabel()));
+    }
+
+    private BSDataTable<SInstance, ?> buildTable(String id, IModel<SIList<SInstance>> model, SViewListByMasterDetail view, MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode) {
 
         BSDataTableBuilder<SInstance, ?, ?> builder = new BSDataTableBuilder<>(newDataProvider(model)).withNoRecordsToolbar();
 
@@ -147,8 +148,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         return builder.build(id);
     }
 
-    @SuppressWarnings("unchecked")
-    private BaseDataProvider<SInstance, ?> newDataProvider(final IModel<? extends SInstance> model) {
+    private BaseDataProvider<SInstance, ?> newDataProvider(final IModel<SIList<SInstance>> model) {
         return new BaseDataProvider<SInstance, Object>() {
 
             @Override
@@ -163,8 +163,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             @Override
             public IModel<SInstance> model(SInstance object) {
-                IModel<SIList<SInstance>> listaModel = $m.get(() -> (SIList<SInstance>) model.getObject());
-                return new SInstanceItemListaModel<>(listaModel, listaModel.getObject().indexOf(object));
+                return new SInstanceItemListaModel<>(model, model.getObject().indexOf(object));
             }
         };
     }
@@ -281,7 +280,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                     public void onClick(AjaxRequestTarget target) {
                         final SInstance si = m.getObject();
                         if (si instanceof SIList) {
-                            final SIList sil = (SIList) si;
+                            final SIList<?> sil = (SIList<?>) si;
                             if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
                                 target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
                             } else {
@@ -305,6 +304,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         private       SViewListByMasterDetail      view;
         private       BSContainer<?>               containerExterno;
         private       FormStateUtil.FormState      formState;
+        private       IModel<String>               actionLabel;
 
         @SuppressWarnings("unchecked")
         MasterDetailModal(String id,
@@ -328,7 +328,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             setSize(BSModalBorder.Size.NORMAL);
 
-            this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"), new ActionAjaxButton("btn") {
+            actionLabel = $m.ofValue("");
+            this.addButton(BSModalBorder.ButtonStyle.PRIMARY, actionLabel, new ActionAjaxButton("btn") {
                 @Override
                 protected void onAction(AjaxRequestTarget target, Form<?> form) {
                     target.add(table);
@@ -370,13 +371,21 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         void showNew(AjaxRequestTarget target) {
             closeCallback = this::revert;
             currentInstance = new SInstanceItemListaModel<>(listModel, listModel.getObject().indexOf(listModel.getObject().addNew()));
-            MasterDetailModal.this.configureNewContent("Adicionar", target);
+            actionLabel.setObject(view.getNewActionLabel());
+            MasterDetailModal.this.configureNewContent(actionLabel.getObject(), target);
         }
 
         void showExisting(AjaxRequestTarget target, IModel<SInstance> forEdit, WicketBuildContext ctx) {
-            String prefix = ctx.getViewMode().isEdition() ? "Editar" : "";
             closeCallback = null;
             currentInstance = forEdit;
+            String prefix;
+            if(ctx.getViewMode().isEdition()){
+                prefix = view.getEditActionLabel();
+                actionLabel.setObject(prefix);
+            } else {
+                prefix = "";
+                actionLabel.setObject("Fechar");
+            }
             saveState();
             configureNewContent(prefix, target);
         }

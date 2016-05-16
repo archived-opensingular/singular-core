@@ -90,7 +90,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeComposite<?>           formulaHomeopatica                             = formulasHomeopaticas.getElementsType();
         final STypeComposite<SIComposite> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
         final STypeInteger                idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
-        final STypeSimple                 idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
+        final STypeInteger                 idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
         final STypeString                 descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
 
         descricaoDinamizada

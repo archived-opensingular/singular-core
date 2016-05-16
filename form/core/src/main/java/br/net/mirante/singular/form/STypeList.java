@@ -5,6 +5,11 @@
 
 package br.net.mirante.singular.form;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+
 import br.net.mirante.singular.form.builder.selection.SSelectionBuilder;
 import br.net.mirante.singular.form.builder.selection.SelectionBuilder;
 import br.net.mirante.singular.form.document.SDocument;
@@ -13,11 +18,6 @@ import br.net.mirante.singular.form.type.core.SPackageCore;
 import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
 import br.net.mirante.singular.form.view.SMultiSelectionBySelectView;
 import br.net.mirante.singular.form.view.SView;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
 
 /**
  * Representa um tipo lista, o qual deve ter um tipo definido para todos os seus
@@ -110,11 +110,12 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return elementsType;
     }
 
+    //TODO: utilizar atributos do tipo ao invés de atributos de classe
     public STypeList<E, I> withMiniumSizeOf(Integer size) {
         this.minimumSize = size;
         return this;
     }
-
+    //TODO: utilizar atributos do tipo ao invés de atributos de classe
     public STypeList<E, I> withMaximumSizeOf(Integer size) {
         this.maximumSize = size;
         return this;
