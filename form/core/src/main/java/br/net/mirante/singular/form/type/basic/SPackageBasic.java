@@ -116,8 +116,7 @@ public class SPackageBasic extends SPackage {
         pb.addAttribute(STypeDecimal.class, ATR_TAMANHO_INTEIRO_MAXIMO, 9);
         pb.addAttribute(STypeDecimal.class, ATR_TAMANHO_DECIMAL_MAXIMO, 2);
 
-        pb.getDictionary().getType(SType.class).asAtr()
-                .displayString(ctx -> ctx.instance().toStringDisplayDefault());
+        pb.getType(SType.class).asAtr().displayString(ctx -> ctx.instance().toStringDisplayDefault());
 
         // defina o meta dado do meta dado
         pb.getAttribute(ATR_LABEL).as(AtrBasic.class).label("Label").tamanhoEdicao(30).tamanhoMaximo(50);

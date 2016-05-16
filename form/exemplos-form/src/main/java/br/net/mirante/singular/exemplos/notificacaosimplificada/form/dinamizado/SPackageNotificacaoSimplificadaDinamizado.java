@@ -55,7 +55,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
 
-        pb.getDictionary().loadPackage(SPackageNotificacaoSimplificadaBaixoRisco.class);
+        pb.loadPackage(SPackageNotificacaoSimplificadaBaixoRisco.class);
         pb.createType(STypeLinhaProducaoDinamizado.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);

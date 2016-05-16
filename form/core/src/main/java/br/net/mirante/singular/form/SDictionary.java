@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.type.core.SPackageCore;
 import br.net.mirante.singular.form.view.ViewResolver;
 
-public class SDictionary implements ITypeContext {
+public class SDictionary {
 
     private MapByName<SPackage> packages = new MapByName<>(p -> p.getName());
 
@@ -56,6 +56,12 @@ public class SDictionary implements ITypeContext {
         return dicionario;
     }
 
+    /**
+     * Carrega no dicionário o pacote informado e todas as definições do mesmo, se ainda não tiver sido carregado. É
+     * seguro chamar é método mais de uma vez para o mesmo pacote.
+     *
+     * @return O pacote carregado
+     */
     public <T extends SPackage> T loadPackage(Class<T> packageClass) {
         if (packageClass == null){
             throw new SingularFormException("Classe pacote não pode ser nula");
@@ -78,7 +84,21 @@ public class SDictionary implements ITypeContext {
         return new PackageBuilder(novo);
     }
 
-    @Override
+    /**
+     * Recupera o tipo, já carregado no dicionário, da classe informada. Senão estiver carregado ainda, busca carregá-lo
+     * e as definições do pacote a que pertence. Senão encontrar no dicionário e nem conseguir encontrar para carregar,
+     * então dispara Exception.
+     *
+     * @return Nunca Null.
+     */
+    public <T extends SType<?>> T getType(Class<T> typeClass) {
+        T typeRef = getTypeOptional(typeClass);
+        if (typeRef == null) {
+            throw new SingularFormException("Tipo da classe '" + typeClass.getName() + "' não encontrado");
+        }
+        return typeRef;
+    }
+
     public <T extends SType<?>> T getTypeOptional(Class<T> typeClass) {
         T tipoRef = types.get(typeClass);
         if (tipoRef == null) {
@@ -88,6 +108,28 @@ public class SDictionary implements ITypeContext {
             tipoRef = types.get(typeClass);
         }
         return tipoRef;
+    }
+
+    public SType<?> getType(String fullNamePath) {
+        SType<?> type = getTypeOptional(fullNamePath);
+        if (type == null) {
+            throw new SingularFormException("Tipo '" + fullNamePath + "' não encontrado");
+        }
+        return type;
+    }
+
+    public SType<?> getTypeOptional(String pathFullName) {
+        SType<?> t = types.get(pathFullName);
+        if (t == null) {
+            // Verifica se é um tipo dos pacotes com carga automática do
+            // singular
+            Class<? extends SPackage> singularPackage = SFormUtil.getSingularPackageForType(pathFullName);
+            if (singularPackage != null) {
+                loadPackage(singularPackage);
+                t = types.get(pathFullName);
+            }
+        }
+        return t;
     }
 
     public <I extends SInstance, T extends SType<I>> I newInstance(Class<T> classeTipo) {
@@ -122,21 +164,6 @@ public class SDictionary implements ITypeContext {
             scope = scope.getParentScope();
         }
         return (SPackage) scope;
-    }
-
-    @Override
-    public SType<?> getTypeOptional(String pathFullName) {
-        SType<?> t = types.get(pathFullName);
-        if (t == null) {
-            // Verifica se é um tipo dos pacotes com carga automática do
-            // singular
-            Class<? extends SPackage> singularPackage = SFormUtil.getSingularPackageForType(pathFullName);
-            if (singularPackage != null) {
-                loadPackage(singularPackage);
-                t = types.get(pathFullName);
-            }
-        }
-        return t;
     }
 
     private void carregarInterno(SPackage newPackage) {

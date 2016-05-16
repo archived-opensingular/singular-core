@@ -5,11 +5,7 @@
 
 package br.net.mirante.singular.form;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
@@ -24,7 +20,7 @@ public abstract class SInstance implements SAttributeEnabled {
 
     private SInstance parent;
 
-    private SInstance attributeOwner;
+    private AttributeInstanceInfo attributeInstanceInfo;
 
     private SType<?> type;
 
@@ -82,7 +78,7 @@ public abstract class SInstance implements SAttributeEnabled {
     /**
      * Indica se a instância constitui um dado do documento ou se se é um
      * atributo de uma instância ou tipo. Também retorna true se a instância for
-     * um campo ou item de lista de uma instanância pai que é um atributo. Ou
+     * um campo ou item de lista de uma instância pai que é um atributo. Ou
      * seja, todos os subcampos de um instancia onde isAtribute == true,
      * retornam true.
      */
@@ -90,9 +86,20 @@ public abstract class SInstance implements SAttributeEnabled {
         return getFlag(InstanceFlags.IsAtributo);
     }
 
-    final void setAsAttribute(SInstance attributeOwner) {
+    final void setAsAttribute(String fullName, SType<?> attributeOwner) {
         setFlag(InstanceFlags.IsAtributo, true);
-        this.attributeOwner = attributeOwner;
+        attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
+
+    }
+
+    final void setAsAttribute(String fullName, SInstance attributeOwner) {
+        setFlag(InstanceFlags.IsAtributo, true);
+        attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
+    }
+
+    /** Retorna informações de atributo extra se a instância atual for um atributo. */
+    public final AttributeInstanceInfo getAttributeInstanceInfo() {
+        return attributeInstanceInfo;
     }
 
     /**
@@ -101,8 +108,8 @@ public abstract class SInstance implements SAttributeEnabled {
      * for um atributo ou se atributo pertencer a um tipo em vez de uma
      * instância.
      */
-    public SInstance getAttributeOwner() {
-        return attributeOwner;
+    final SInstance getAttributeOwner() {
+        return attributeInstanceInfo == null ? null : attributeInstanceInfo.getInstanceOwner();
     }
 
     final void setParent(SInstance pai) {
@@ -118,7 +125,8 @@ public abstract class SInstance implements SAttributeEnabled {
         }
         this.parent = pai;
         if (pai != null && pai.isAttribute()) {
-            setAsAttribute(pai.getAttributeOwner());
+            setFlag(InstanceFlags.IsAtributo, true);
+            attributeInstanceInfo = pai.attributeInstanceInfo;
         }
     }
 
@@ -282,17 +290,22 @@ public abstract class SInstance implements SAttributeEnabled {
     private SInstance getOrCreateAttribute(String attributeFullName) {
         SInstance instanceAtr = null;
         if (attributes == null) {
-            attributes = new HashMap<>();
+            attributes = new LinkedHashMap<>();
         } else {
             instanceAtr = attributes.get(attributeFullName);
         }
         if (instanceAtr == null) {
-            SAttribute attributeType = getType().getAttributeDefinedHierarchy(attributeFullName);
+            SType<?> attributeType = getType().getAttributeDefinedHierarchy(attributeFullName);
             instanceAtr = attributeType.newInstance(getDocument());
-            instanceAtr.setAsAttribute(this);
+            instanceAtr.setAsAttribute(attributeFullName, this);
             attributes.put(attributeFullName, instanceAtr);
         }
         return instanceAtr;
+    }
+
+    /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
+    public Optional<SInstance> getAttribute(String fullName) {
+        return attributes == null ? Optional.empty() : Optional.ofNullable(attributes.get(fullName));
     }
 
     @Override
@@ -306,8 +319,12 @@ public abstract class SInstance implements SAttributeEnabled {
         return getType().getValueInTheContextOf(this, fullName, resultClass);
     }
 
-    public Map<String, SInstance> getAttributes() {
-        return attributes == null ? Collections.emptyMap() : attributes;
+    /**
+     * Lista todos os atributos com valor associado diretamente à instância atual.
+     * @return Nunca null
+     */
+    public Collection<SInstance> getAttributes() {
+        return attributes == null ? Collections.emptyList() : attributes.values();
     }
 
     public SInstance getParent() {
@@ -504,5 +521,4 @@ public abstract class SInstance implements SAttributeEnabled {
     public Collection<IValidationError> getValidationErrors() {
         return getDocument().getValidationErrors(getId());
     }
-
 }

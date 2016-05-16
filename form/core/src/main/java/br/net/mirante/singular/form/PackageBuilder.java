@@ -5,6 +5,11 @@
 
 package br.net.mirante.singular.form;
 
+/**
+ * Builder para configuração do tipos e atributos de um pacote, com diversos métodos de apoio.
+ *
+ * @author Daniel C. Bordin
+ */
 public class PackageBuilder {
 
     private final SPackage sPackage;
@@ -16,6 +21,29 @@ public class PackageBuilder {
     public SDictionary getDictionary() {
         return sPackage.getDictionary();
     }
+
+    /**
+     * Recupera o tipo, já carregado no dicionário, da classe informada. Senão estiver carregado ainda, busca carregá-lo
+     * e as definições do pacote a que pertence. Senão encontrar no dicionário e nem conseguir encontrar para carregar,
+     * então dispara Exception. É o mesmo que chamar {@link SDictionary#getType(Class)}.
+     *
+     * @return Nunca Null.
+     */
+    public <T extends SType<?>> T getType(Class<T> typeClass) {
+        return getDictionary().getType(typeClass);
+    }
+
+    /**
+     * Carrega no dicionário o pacote informado e todas as definições do mesmo, se ainda não tiver sido carregado. É
+     * seguro chamar é método mais de uma vez para o mesmo pacote. É o mesmo que chamar {@link
+     * SDictionary#loadPackage(Class)}.
+     *
+     * @return O pacote carregado
+     */
+    public <T extends SPackage> T loadPackage(Class<T> packageClass) {
+        return getDictionary().loadPackage(packageClass);
+    }
+
     public SPackage getPackage() {
         return sPackage;
     }
@@ -46,8 +74,7 @@ public class PackageBuilder {
 
     public <I extends SInstance, T extends SType<I>> STypeList<T, I> createListTypeOf(String simpleNameNewType,
                                                                                         Class<T> elementsTypeClass) {
-        T elementsType = (T) getDictionary().getType(elementsTypeClass);
-        return createListTypeOf(simpleNameNewType, elementsType);
+        return createListTypeOf(simpleNameNewType, getType(elementsTypeClass));
     }
 
     public <I extends SInstance, T extends SType<I>> STypeList<T, I> createListTypeOf(String simpleNameNewType, T elementsType) {
@@ -56,137 +83,107 @@ public class PackageBuilder {
 
     @SuppressWarnings("rawtypes")
     public <T extends SType<?>> void addAttribute(Class<? extends SType> typeClass, AtrRef<T, ?, ?> atr) {
-        addAttributeInternal(typeClass, atr);
+        addAttributeInternal(getType(typeClass), atr);
     }
 
     @SuppressWarnings("rawtypes")
     public <T extends SType<?>, V extends Object> void addAttribute(Class<? extends SType> typeClass, AtrRef<T, ?, V> atr, V attributeValue) {
-        SAttribute attribute = addAttributeInternal(typeClass, atr);
-        SType<?> targetType = getDictionary().getType(typeClass);
+        SType<?> targetType = getType(typeClass);
+        SType<?> attribute = addAttributeInternal(targetType, atr);
         targetType.setAttributeValue(attribute, attributeValue);
     }
 
     @SuppressWarnings("rawtypes")
-    private <T extends SType<?>> SAttribute addAttributeInternal(Class<? extends SType> typeClass, AtrRef<T, ?, ?> atr) {
-        SType<?> targetType = getDictionary().getType(typeClass);
-
-        SAttribute attribute = findAttribute(atr);
+    private <T extends SType<?>> SType<?> addAttributeInternal(SType<?> targetType, AtrRef<T, ?, ?> atr) {
+        SType<?> attribute = getAttribute(atr);
         targetType.addAttribute(attribute);
         return attribute;
     }
 
-    public SAttribute getAttribute(AtrRef<?, ?, ?> atr) {
-        return findAttribute(atr);
-        // return new AtributoBuilder(null, findAtributo(atr));
-    }
-
-    private SAttribute findAttribute(AtrRef<?, ?, ?> atr) {
-        SAttribute attribute = getAttributeOptional(atr);
+    public SType<?> getAttribute(AtrRef<?, ?, ?> atr) {
+        SType<?> attribute = getAttributeOptional(atr);
         if (attribute == null) {
-            throw new RuntimeException("O atributo '" + atr.getNameFull() + "' não está definido");
+            throw new SingularFormException("O atributo '" + atr.getNameFull() + "' não está definido");
         }
         return attribute;
     }
 
-    private SAttribute getAttributeOptional(AtrRef<?, ?, ?> atr) {
+    private SType<?> getAttributeOptional(AtrRef<?, ?, ?> atr) {
         getDictionary().loadPackage(atr.getPackageClass());
 
         if (!atr.isBinded()) {
             return null;
         }
         SType<?> type = getDictionary().getTypeOptional(atr.getNameFull());
-        if (type != null && !(type instanceof SAttribute)) {
-            throw new RuntimeException("O tipo '" + atr.getNameFull() + "' não é um tipo de MAtributo. É " + type.getClass().getName());
+        if (type != null) {
+            type.checkIfIsAttribute();
         }
-        return (SAttribute) type;
+        return type;
     }
 
-    public <T extends SType<?>> SAttribute createAttributeIntoType(Class<? extends SType> targetTypeClass, AtrRef<T, ?, ?> atr) {
-        T attributeType;
+    public <T extends SType<?>> T createAttributeIntoType(Class<? extends SType> targetTypeClass, AtrRef<T, ?, ?> atr) {
+
+        Class attributeTypeClass = atr.isSelfReference() ? targetTypeClass : atr.getTypeClass();
+        T attributeType = (T) getType(attributeTypeClass);
+        SType<?> targetType = getType(targetTypeClass);
+
+        SScopeBase scope = (targetType.getPackage() == sPackage) ? targetType : sPackage;
+        resolveBind(scope, (Class<SType<?>>) targetTypeClass, atr, attributeType);
+        return createAttributeIntoTypeInternal(targetType, atr.getNameFull(), atr.getNameSimple(), attributeType, atr.isSelfReference());
+    }
+
+    public <T extends SType<?>> T createAttributeIntoType(Class<? extends SType<?>> targetTypeClass,
+                                                          String attributeSimpleName, Class<T> attributeTypeClass) {
+        return createAttributeIntoType(getType(targetTypeClass), attributeSimpleName, attributeTypeClass);
+    }
+
+    public <T extends SType<?>> T createAttributeIntoType(SType<?> targetType, String attributeSimpleName,
+                                                          Class<T> attributeTypeClass) {
+        return createAttributeIntoType(targetType, attributeSimpleName, getType(attributeTypeClass));
+    }
+
+    public <T extends SType<?>> T createAttributeIntoType(SType<?> targetType, String attributeSimpleName, T attributeType) {
+        return createAttributeIntoTypeInternal(targetType, sPackage.getName() + "." + attributeSimpleName,
+                attributeSimpleName, attributeType, false);
+    }
+
+    private <T extends SType<?>> T createAttributeIntoTypeInternal(SType<?> targetType, String attrFullName,
+                                                                   String attrSimpleName, T attributeType,
+                                                                   boolean selfReference) {
+        getDictionary().getTypesInternal().verifyMustNotBePresent(attrFullName);
+
+        SScopeBase scope = (targetType.getPackage() == sPackage) ? targetType : sPackage;
+        T attributeDef = scope.extendType(attrSimpleName, attributeType);
+        attributeDef.setAttributeDefinitionInfo(new AttributeDefinitionInfo(targetType, selfReference));
+        targetType.addAttribute(attributeDef);
+        return attributeDef;
+    }
+
+    public <I extends SInstance, T extends SType<I>> T createAttributeType(AtrRef<T, ?, ?> atr) {
         if (atr.isSelfReference()) {
-            attributeType = (T) getDictionary().getType((Class) targetTypeClass);
-        } else {
-            attributeType = (T) getDictionary().getType((Class) atr.getTypeClass());
+            throw new SingularFormException("Não pode ser criado um atributo global que seja selfReference");
         }
-        SType<?> targetType = getDictionary().getType(targetTypeClass);
-        return createAttributeIntoType(targetType, targetTypeClass, atr, attributeType);
+        return createAttributeType(atr, getType(atr.getTypeClass()));
     }
 
-    public <T extends SType<?>> SAttribute createAttributeIntoType(Class<? extends SType<?>> targetTypeClass, String attributeSimpleName,
-            Class<T> attributeTypeClass) {
-        SType<?> targetType = getDictionary().getType(targetTypeClass);
-        return createAttributeIntoType(targetType, attributeSimpleName, attributeTypeClass);
-    }
-
-    public <T extends SType<?>> SAttribute createAttributeIntoType(SType<?> targetType, String attributeSimpleName,
-            Class<T> attributeTypeClass) {
-        SType<?> attributeType = getDictionary().getType(attributeTypeClass);
-        return createAttributeIntoType(targetType, attributeSimpleName, attributeType);
-    }
-
-    public SAttribute createAttributeIntoType(SType<?> targetType, String attributeSimpleName, SType<?> attributeType) {
-        if (targetType.getPackage() == sPackage) {
-            return createAttributeIntoTypeInternal(targetType, attributeSimpleName, false, attributeType);
-        } else {
-            getDictionary().getTypesInternal().verifyMustNotBePresent(sPackage.getName() + "." + attributeSimpleName);
-
-            SAttribute atributo = new SAttribute(attributeSimpleName, attributeType, targetType, false);
-            atributo = sPackage.registerType(atributo, null);
-            targetType.addAttribute(atributo);
-            return atributo;
-        }
-    }
-
-    final <T extends SType<?>> SAttribute createAttributeIntoType(SType<?> targetType, Class<? extends SType> classeAlvo,
-            AtrRef<T, ?, ?> atr, T attributeType) {
-        if (targetType.getPackage() == sPackage) {
-            resolveBind(targetType, (Class<SType<?>>) classeAlvo, atr, attributeType);
-            return createAttributeIntoTypeInternal(targetType, atr.getNameSimple(), atr.isSelfReference(), attributeType);
-        } else {
-            resolveBind(sPackage, (Class<SType<?>>) classeAlvo, atr, attributeType);
-            getDictionary().getTypesInternal().verifyMustNotBePresent(atr.getNameFull());
-
-            SAttribute attribute = new SAttribute(atr.getNameSimple(), attributeType, targetType, atr.isSelfReference());
-            attribute = sPackage.registerType(attribute, null);
-            targetType.addAttribute(attribute);
-            return attribute;
-        }
-
-    }
-
-    private SAttribute createAttributeIntoTypeInternal(SType<?> targetType, String attributeSimpleName, boolean selfReference,
-            SType<?> attributeType) {
-        getDictionary().getTypesInternal().verifyMustNotBePresent(targetType.getName() + "." + attributeSimpleName);
-
-        SAttribute attribute = targetType.registerType(new SAttribute(attributeSimpleName, attributeType, targetType, selfReference), null);
-        targetType.addAttribute(attribute);
-        return attribute;
-    }
-
-    public <I extends SInstance, T extends SType<I>> SAttribute createAttributeType(AtrRef<T, ?, ?> atr) {
-        if (atr.isSelfReference()) {
-            throw new RuntimeException("Não pode ser criado um atributo global que seja selfReference");
-        }
-        return createAttributeType(atr, getDictionary().getType(atr.getTypeClass()));
-    }
-
-    private <T extends SType<?>> SAttribute createAttributeType(AtrRef<T, ?, ?> atr, T attributeType) {
+    private <T extends SType<?>> T createAttributeType(AtrRef<T, ?, ?> atr, T attributeType) {
         resolveBind(sPackage, null, atr, attributeType);
         getDictionary().getTypesInternal().verifyMustNotBePresent(atr.getNameFull());
 
-        SAttribute attribute = new SAttribute(atr.getNameSimple(), attributeType);
-        return sPackage.registerType(attribute, null);
+        T attributeDef = sPackage.extendType(atr.getNameSimple(), attributeType);
+        attributeDef.setAttributeDefinitionInfo(new AttributeDefinitionInfo());
+        return attributeDef;
     }
 
     private void resolveBind(SScope scope, Class<SType<?>> ownerTypeClass, AtrRef<?, ?, ?> atr, SType<?> attributeType) {
         if (atr.getPackageClass() == sPackage.getClass()) {
             atr.bind(scope.getName());
         } else {
-            throw new RuntimeException("Tentativa de criar o atributo '" + atr.getNameSimple() + "' do pacote "
+            throw new SingularFormException("Tentativa de criar o atributo '" + atr.getNameSimple() + "' do pacote "
                     + atr.getPackageClass().getName() + " durante a construção do pacote " + sPackage.getName());
         }
         if (!atr.isSelfReference() && !(atr.getTypeClass().isInstance(attributeType))) {
-            throw new RuntimeException("O atributo " + atr.getNameFull() + " esperava ser do tipo " + atr.getTypeClass().getName()
+            throw new SingularFormException("O atributo " + atr.getNameFull() + " esperava ser do tipo " + atr.getTypeClass().getName()
                     + " mas foi associado a uma instância de " + attributeType.getClass().getName());
         }
     }
