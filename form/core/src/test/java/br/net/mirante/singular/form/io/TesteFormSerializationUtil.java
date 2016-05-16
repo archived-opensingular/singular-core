@@ -245,7 +245,7 @@ public class TesteFormSerializationUtil {
     @Test
     public void testSerializacaoAtributos() {
         SIComposite instancia = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
-            pacote.getDictionary().loadPackage(SPackageBasic.class);
+            pacote.loadPackage(SPackageBasic.class);
             STypeComposite<?> tipoEndereco = pacote.createCompositeType("endereco");
             tipoEndereco.addFieldString("rua");
             tipoEndereco.addFieldString("cidade");
@@ -380,72 +380,26 @@ public class TesteFormSerializationUtil {
         public void setup(PackageBuilder pacote);
     }
 
-    public static void assertEquivalent(SDocument original, SDocument novo) {
-        assertNotSame(original, novo);
-        assertEquals(original.getLastId(), novo.getLastId());
+    public static void assertEquivalent(SDocument original, SDocument copy) {
+        assertNotSame(original, copy);
+        assertEquals(original.getLastId(), copy.getLastId());
 
         for (Entry<String, Pair> service : original.getLocalServices().entrySet()) {
             Object originalService = original.lookupService(service.getKey(), Object.class);
-            Object novoService = novo.lookupService(service.getKey(), Object.class);
+            Object copyService = copy.lookupService(service.getKey(), Object.class);
             if (originalService == null) {
-                assertNull(novoService);
-            } else if (novoService == null && !(service.getValue().provider instanceof ServiceRefTransientValue)) {
+                assertNull(copyService);
+            } else if (copyService == null && !(service.getValue().provider instanceof ServiceRefTransientValue)) {
                 fail("O documento deserializado para o serviço '" + service.getKey() + "' em vez de retorna uma instancia de "
                         + originalService.getClass().getName() + " retornou null");
             }
 
         }
 
-        assertEquivalent(original.getRoot(), novo.getRoot());
+        assertEquivalent(original.getRoot(), copy.getRoot());
     }
 
-    private static void assertEquivalent(SInstance original, SInstance novo) {
-        try {
-            assertNotSame(original, novo);
-            assertEquals(original.getClass(), novo.getClass());
-            assertEquals(original.getType().getName(), novo.getType().getName());
-            assertEquals(original.getType().getClass(), novo.getType().getClass());
-            assertEquals(original.getName(), novo.getName());
-            assertEquals(original.getId(), novo.getId());
-            assertEquals(original.getPathFull(), novo.getPathFull());
-            if (original.getParent() != null) {
-                assertNotNull(novo.getParent());
-                assertEquals(original.getParent().getPathFull(), novo.getParent().getPathFull());
-            } else {
-                assertNull(novo.getParent());
-            }
-            // if (false && original instanceof SIComposite) {
-            // SIComposite originalC = (SIComposite) original;
-            // SIComposite novoC = (SIComposite) novo;
-            // for (SInstance field : originalC.getFields()) {
-            // assertEquivalent(field, novoC.getField(field.getName()));
-            // }
-            // for (SInstance field : novoC.getFields()) {
-            // assertEquivalent(originalC.getField(field.getName()), field);
-            // }
-            // }
-            if (original instanceof ICompositeInstance) {
-                List<SInstance> filhosOriginal = new ArrayList<>(((ICompositeInstance) original).getChildren());
-                List<SInstance> filhosNovo = new ArrayList<>(((ICompositeInstance) novo).getChildren());
-                assertEquals(filhosOriginal.size(), filhosNovo.size());
-                for (int i = 0; i < filhosOriginal.size(); i++) {
-                    assertEquivalent(filhosOriginal.get(0), filhosNovo.get(0));
-                }
-            } else {
-                assertEquals(original.getValue(), novo.getValue());
-            }
-
-            assertEquals(original.getAttributes().size(), novo.getAttributes().size());
-            for (Entry<String, SInstance> atrOriginal : original.getAttributes().entrySet()) {
-                SInstance atrNovo = novo.getAttributes().get(atrOriginal.getKey());
-                assertNotNull(atrNovo);
-                assertEquals(atrOriginal.getValue(), atrNovo);
-            }
-        } catch (AssertionError e) {
-            if (e.getMessage().startsWith("Erro comparando")) {
-                throw e;
-            }
-            throw new AssertionError("Erro comparando '" + original.getPathFull() + "'", e);
-        }
+    private static void assertEquivalent(SInstance original, SInstance copy) {
+        FormAssert.assertEquivalentInstance(original, copy);
     }
 }

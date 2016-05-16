@@ -7,6 +7,8 @@ package br.net.mirante.singular.form;
 
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 
+import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class STranslatorForAttribute implements SAttributeEnabled {
@@ -54,6 +56,19 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
         return ((SInstance) target).getType();
     }
 
+    /**
+     * Lista todos os atributos com valor associado diretamente ao objeto atual.
+     * @return Nunca null
+     */
+    public Collection<SInstance> getAttributes() {
+        return getTarget().getAttributes();
+    }
+
+    /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
+    public Optional<SInstance> getAttribute(String fullName) {
+        return getTarget().getAttribute(fullName);
+    }
+
     //-----------------------------------------------------------
     // Implementando métodos de SAttributeEnabled
     //-----------------------------------------------------------
@@ -79,7 +94,7 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     @Override
-    public <V> void setAttributeValue(SAttribute defAttribute, Object value) {
+    public <V> void setAttributeValue(SType<?> defAttribute, Object value) {
         getTarget().setAttributeValue(defAttribute, value);
     }
 

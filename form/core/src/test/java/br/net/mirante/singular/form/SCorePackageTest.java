@@ -46,6 +46,7 @@ public class SCorePackageTest extends TestCaseForm {
         Assert.assertEquals(true, tipoB.isRequired());
         Assert.assertEquals(false, tipoI.isRequired());
 
+        tipoB.withRequired(true);
         tipoS.withRequired(false);
 
         Assert.assertEquals(false, tipoS.isRequired());
@@ -55,8 +56,15 @@ public class SCorePackageTest extends TestCaseForm {
         tipoB.withRequired(null);
 
         Assert.assertEquals(false, tipoS.isRequired());
-        Assert.assertEquals(null, tipoB.isRequired());
+        Assert.assertEquals(false, tipoB.isRequired());
         Assert.assertEquals(false, tipoI.isRequired());
+
+        tipoS.withRequired(true);
+        tipoB.withRequired(null);
+
+        Assert.assertEquals(true, tipoS.isRequired());
+        Assert.assertEquals(false, tipoB.isRequired());
+        Assert.assertEquals(true, tipoI.isRequired());
     }
 
     public void testValidacaoBasica() {
@@ -184,7 +192,7 @@ public class SCorePackageTest extends TestCaseForm {
         // MIString.class, String.class);
 
         STypeString tipoX = pb.createType("XXXXX", STypeString.class);
-        SAttribute atributo = pb.createAttributeIntoType(tipoX, "atTeste", STypeString.class);
+        STypeString atributo = pb.createAttributeIntoType(tipoX, "atTeste", STypeString.class);
 
         assertNull(pb.getPackage().getLocalTypeOptional("YYYYYYY").orElse(null));
 

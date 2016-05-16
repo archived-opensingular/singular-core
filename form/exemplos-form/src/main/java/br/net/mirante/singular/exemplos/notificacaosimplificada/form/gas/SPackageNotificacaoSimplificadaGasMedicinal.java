@@ -27,7 +27,7 @@ public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
+        pb.loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtr().displayString(" ${nomeComercial} - ${descricao} ");

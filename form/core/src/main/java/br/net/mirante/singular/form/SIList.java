@@ -138,10 +138,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public SInstance get(int index) {
-        if (values == null) {
-            throw new IndexOutOfBoundsException(errorMsg("A lista " + getName() + " está vazia (index=" + index + ")"));
-        }
-        return values.get(index);
+        return getChecking(index, null);
     }
 
     @Override
@@ -156,10 +153,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     final SInstance getFieldLocal(PathReader pathReader) {
-        if (!pathReader.isIndex()) {
-            throw new RuntimeException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo [1])"));
-        }
-        SInstance instance = isEmpty() ? null : values.get(pathReader.getIndex());
+        SInstance instance = getChecking(pathReader);
         if (instance == null) {
             SFormUtil.resolveFieldType(getType(), pathReader);
         }
@@ -168,10 +162,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
-        if (!pathReader.isIndex()) {
-            throw new RuntimeException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo [1])"));
-        }
-        int index = pathReader.getIndex();
+        int index = resolveIndex(pathReader);
         if (values != null && index < values.size()) {
             return Optional.ofNullable(values.get(index));
         }
@@ -180,10 +171,33 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     final SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
-        if (!pathReader.isIndex()) {
-            throw new RuntimeException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo [1])"));
+        return getChecking(pathReader);
+    }
+
+    private SInstance getChecking(PathReader pathReader) {
+        return getChecking(resolveIndex(pathReader), pathReader);
+    }
+
+    private SInstance getChecking(int index, PathReader pathReader) {
+        if (index < 0 || index + 1 > size()) {
+            String msg = "índice inválido: " + index + ((index < 0) ? " < 0" : " > que a lista (size= " + size() +")");
+            if (pathReader == null) {
+                throw new SingularFormException(msg, this);
+            }
+            throw new SingularFormException(pathReader.getErroMsg(this, msg));
         }
-        return isEmpty() ? null : values.get(pathReader.getIndex());
+        return values.get(index);
+    }
+
+    private int resolveIndex(PathReader pathReader) {
+        if (!pathReader.isIndex()) {
+            throw new SingularFormException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo field[1]), mas em vez disso foi solicitado '" + pathReader.getTrecho() + "'"));
+        }
+        int index = pathReader.getIndex();
+        if (index < 0) {
+            throw new SingularFormException(pathReader.getErroMsg(this, index + " é um valor inválido de índice"));
+        }
+        return index;
     }
 
     @Override
@@ -194,7 +208,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             elementsType = ((SIList)obj).getElementsType();
             ((SIList) obj).getValue().clear();
         }else{
-            throw new RuntimeException("SList só suporta valores de mesmo tipo");
+            throw new SingularFormException("SList só suporta valores de mesmo tipo da lista", this);
         }
     }
     @Override
@@ -204,10 +218,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     void setValue(PathReader pathReader, Object value) {
-        if (!pathReader.isIndex()) {
-            throw new RuntimeException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo [1])"));
-        }
-        SInstance instance = get(pathReader.getIndex());
+        SInstance instance = getChecking(pathReader);
         if (pathReader.isLast()) {
             instance.setValue(value);
         } else {
@@ -216,10 +227,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public SInstance remove(int index) {
-        if (values == null) {
-            throw new IndexOutOfBoundsException(errorMsg("A lista " + getName() + " está vazia (index=" + index + ")"));
-        }
-        E child = values.get(index);
+        SInstance child = getChecking(index, null);
         child.internalOnRemove();
         return values.remove(index);
     }

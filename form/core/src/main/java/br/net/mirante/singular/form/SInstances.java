@@ -129,7 +129,6 @@ public abstract class SInstances {
     }
 
     /**
-    /**
      * Implements the postfixed traversal logic.
      * @param rootInstance
      * @param visitor

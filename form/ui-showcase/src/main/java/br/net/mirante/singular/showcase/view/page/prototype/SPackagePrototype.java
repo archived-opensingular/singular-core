@@ -134,7 +134,7 @@ public class SPackagePrototype extends SPackage {
     }
 
     private String typeName(PackageBuilder pb, Class<? extends SType> typeClass) {
-        return pb.getDictionary().getType(typeClass).getName();
+        return pb.getType(typeClass).getName();
     }
 
     private void addAttributeFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {

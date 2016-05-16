@@ -13,6 +13,8 @@ import java.util.Collection;
 
 public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
+    public static final String INDICE_INVALIDO = "índice inválido";
+
     @SuppressWarnings("unchecked")
     public void testTipoListaCriacaoOfTipoSimples() {
         SDictionary dicionario = SDictionary.create();
@@ -36,7 +38,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         lista.remove(1);
         assertLista(lista, new String[] { "Paulo", "Maria" });
-        assertException(() -> lista.remove(10), IndexOutOfBoundsException.class);
+        assertException(() -> lista.remove(10), INDICE_INVALIDO);
 
         SIList<SIInteger> listaInt = (SIList<SIInteger>) dicionario.getType(STypeInteger.class).newList();
         listaInt.addValue(10);
@@ -47,7 +49,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         assertEquals(lista.getValue("[0]"), "Paulo");
         assertEquals(listaInt.getValue("[1]"), 20);
-        assertException(() -> listaInt.getValue("[20]"), IndexOutOfBoundsException.class);
+        assertException(() -> listaInt.getValue("[20]"), INDICE_INVALIDO);
 
     }
 
@@ -73,8 +75,8 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertTrue((pedidos.get(0)) instanceof SIComposite);
         assertTrue((pedidos.getValueAt(0)) instanceof Collection);
 
-        assertException(() -> pedidos.get(10), IndexOutOfBoundsException.class);
-        assertException(() -> pedidos.getValueAt(10), IndexOutOfBoundsException.class);
+        assertException(() -> pedidos.get(10), INDICE_INVALIDO);
+        assertException(() -> pedidos.getValueAt(10), INDICE_INVALIDO);
 
         pedido.setValue("descricao", "bola");
         pedido.setValue("qtd", 20);
@@ -84,7 +86,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         pedido.setValue("descricao", "rede");
         pedido.setValue("qtd", -10);
 
-        assertException(() -> pedidos.getValueAt(10), IndexOutOfBoundsException.class);
+        assertException(() -> pedidos.getValueAt(10), INDICE_INVALIDO);
 
         assertEquals(pedidos.getValue("[0].descricao"), "bola");
         assertEquals(pedidos.getValue("[0].qtd"), 20);
@@ -170,5 +172,47 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         public static final class Pedido extends SIComposite {
         }
 
+    }
+
+    public void testWrongIndexHandling() {
+        testWrongIndexHandling(0);
+        testWrongIndexHandling(1);
+        testWrongIndexHandling(2);
+    }
+
+    private void testWrongIndexHandling(int size) {
+        SIList<SIInteger> list = createIntList(size);
+        assertEquals((size == 0), list.isEmpty());
+        assertEquals(size, list.size());
+
+        assertException(() -> list.getValueAt(-1), INDICE_INVALIDO);
+        assertException(() -> list.get(-1), INDICE_INVALIDO);
+        assertException(() -> list.getField("[-1]"), " inválido");
+        assertException(() -> list.getFieldOpt("[-1]"), " inválido");
+        for(int i = 0; i < size; i++) {
+            assertNotNull(list.get(i));
+            assertEquals(i, list.get(i).getValue());
+            assertEquals(i, list.getField("[" + i+ "]").getValue());
+            assertEquals(i, list.getFieldOpt("[" + i+ "]").get().getValue());
+            assertEquals(i, list.getValueAt(i));
+        }
+        assertException(() -> list.getValueAt(size), INDICE_INVALIDO);
+        assertException(() -> list.get(size), INDICE_INVALIDO);
+        assertException(() -> list.getField("[" + size+ "]"), INDICE_INVALIDO);
+        assertFalse(list.getFieldOpt("[" + size+ "]").isPresent());
+
+
+        assertEquals((size == 0), list.isEmpty());
+        assertEquals(size, list.size());
+    }
+
+    private SIList<SIInteger> createIntList(int size) {
+        PackageBuilder pb = SDictionary.create().createNewPackage("teste");
+        SIList<SIInteger> list = pb.createListTypeOf("numbers", STypeInteger.class).newInstance();
+
+        for(int i = 0; i < size; i++) {
+            list.addValue(i);
+        }
+        return list;
     }
 }

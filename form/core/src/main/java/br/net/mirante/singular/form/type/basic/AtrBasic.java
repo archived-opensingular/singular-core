@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STranslatorForAttribute;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
+import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.internal.freemarker.FormFreemarkerUtil;
 
 import java.util.Arrays;
@@ -28,6 +29,11 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic label(String valor) {
         setAttributeValue(SPackageBasic.ATR_LABEL, valor);
+        return this;
+    }
+
+    public AtrBasic itemLabel(String valor) {
+        setAttributeValue(SPackageBasic.ATR_ITEM_LABEL, valor);
         return this;
     }
 
@@ -143,6 +149,10 @@ public class AtrBasic extends STranslatorForAttribute {
         return getAttributeValue(SPackageBasic.ATR_LABEL);
     }
 
+    public String getItemLabel() {
+        return getAttributeValue(SPackageBasic.ATR_ITEM_LABEL);
+    }
+
     public String getSubtitle() {
         return getAttributeValue(SPackageBasic.ATR_SUBTITLE);
     }
@@ -174,5 +184,14 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public String getDisplayString() {
         return getAttributeValue(SPackageBasic.ATR_DISPLAY_STRING);
+    }
+
+    public PhraseBreak phraseBreak() {
+        return getAttributeValue(SPackageBasic.ATR_PHRASE_BREAK);
+    }
+
+    public AtrBasic phraseBreak(PhraseBreak phraseBreak) {
+        setAttributeValue(SPackageBasic.ATR_PHRASE_BREAK, phraseBreak);
+        return this;
     }
 }

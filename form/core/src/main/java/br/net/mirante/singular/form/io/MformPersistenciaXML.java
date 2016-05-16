@@ -329,12 +329,13 @@ public class MformPersistenciaXML {
                 element.setAttribute(ATRIBUTO_ID, instancia.getId().toString());
             }
             if (builder.isPersistAttributes()) {
-                for (Entry<String, SInstance> atr : instancia.getAttributes().entrySet()) {
-                    if (atr.getValue() instanceof SISimple) {
-                        String sPersistencia = ((SISimple<?>) atr.getValue()).toStringPersistence();
-                        element.setAttribute(atr.getKey(), sPersistencia);
+                for (SInstance atr : instancia.getAttributes()) {
+                    String name = atr.getAttributeInstanceInfo().getName();
+                    if (atr instanceof SISimple) {
+                        String sPersistence = ((SISimple<?>) atr).toStringPersistence();
+                        element.setAttribute(name, sPersistence);
                     } else {
-                        throw new SingularFormException("Não implementada a persitência de atributos compostos: " + atr.getKey(),
+                        throw new SingularFormException("Não implementada a persitência de atributos compostos: " + name,
                                 instancia);
                     }
                 }

@@ -45,6 +45,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
         add(items);
         add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
             @Override

@@ -5,16 +5,25 @@
 
 package br.net.mirante.singular.form.util.transformer;
 
-import br.net.mirante.singular.form.*;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SISimple;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.STypeSimple;
+import br.net.mirante.singular.form.SingularFormException;
 
 /**
  * Essa classe utilitaria realiza uma serie de operacoes sobre os valores guardados pelos MTIpos
@@ -86,6 +95,13 @@ public class Value {
         return null;
     }
 
+    public static <T> List<T> ofList(SIList<?> lista) {
+        if (lista != null) {
+            return (List<T>) lista.getValue();
+        }
+        return null;
+    }
+
     public static <T> boolean notNull(SInstance instancia) {
         if (instancia instanceof SIComposite) {
             return Value.notNull((SIComposite) instancia);
@@ -111,6 +127,16 @@ public class Value {
             SInstance campo = ((SIComposite) instanciaComposta).getField(path);
             if (campo instanceof SISimple) {
                 return Value.of((SISimple<T>) campo);
+            }
+        }
+        return null;
+    }
+
+    public static <T> List<T> ofList(SInstance instanciaComposta, String path) {
+        if (instanciaComposta instanceof SIComposite) {
+            SInstance campo = ((SIComposite) instanciaComposta).getField(path);
+            if (campo instanceof SIList) {
+                return Value.ofList((SIList<?>) campo);
             }
         }
         return null;

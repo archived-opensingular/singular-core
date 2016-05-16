@@ -7,39 +7,29 @@ package br.net.mirante.singular.form;
 
 import java.util.*;
 
-class AttributeMap implements Iterable<SAttribute> {
+class AttributeMap implements Iterable<SType<?>> {
 
-    private Map<String, SAttribute> attributes;
+    private Map<String, SType<?>> attributes;
 
-    final void add(SAttribute atributo) {
+    final void add(SType<?> atributo) {
         if (attributes == null) {
             attributes = new LinkedHashMap<>();
         } else if (attributes.containsKey(atributo.getName())) {
-            throw new RuntimeException("Já existe um atributo '" + atributo.getName() + "' definido");
+            throw new SingularFormException("Já existe um atributo '" + atributo.getName() + "' definido");
         }
         attributes.put(atributo.getName(), atributo);
     }
 
-    public SAttribute get(String name) {
-        if (attributes == null) {
-            return null;
-        }
-        return attributes.get(name);
+    public SType<?> get(String name) {
+        return (attributes == null)  ? null : attributes.get(name);
     }
 
-    public Collection<SAttribute> getAttributes() {
-        if (attributes == null) {
-            return Collections.emptyList();
-        }
-        return attributes.values();
+    public Collection<SType<?>> getAttributes() {
+        return (attributes == null)  ? Collections.emptyList() : attributes.values();
     }
 
     @Override
-    public Iterator<SAttribute> iterator() {
-        if (attributes == null) {
-            return Collections.emptyListIterator();
-        }
-        return attributes.values().iterator();
+    public Iterator<SType<?>> iterator() {
+        return (attributes == null)  ? Collections.emptyListIterator() : attributes.values().iterator();
     }
-
 }
