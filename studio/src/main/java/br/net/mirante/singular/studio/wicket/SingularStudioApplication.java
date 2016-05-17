@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
-import br.net.mirante.singular.studio.view.page.form.ListPage;
+import br.net.mirante.singular.studio.view.page.HomePage;
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 
@@ -41,7 +41,7 @@ public class SingularStudioApplication extends AuthenticatedWebApplication
 
     @Override
     public Class<? extends WebPage> getHomePage() {
-        return ListPage.class;
+        return HomePage.class;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class SingularStudioApplication extends AuthenticatedWebApplication
 
     @Override
     protected Class<? extends WebPage> getSignInPageClass() {
-        return ListPage.class;
+        return HomePage.class;
     }
 
     @Override

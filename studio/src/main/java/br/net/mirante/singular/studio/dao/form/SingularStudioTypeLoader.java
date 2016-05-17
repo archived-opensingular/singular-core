@@ -17,36 +17,14 @@ import br.net.mirante.singular.form.SDictionary;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.spring.SpringTypeLoader;
-import br.net.mirante.singular.studio.component.CaseBase;
-import br.net.mirante.singular.studio.component.ShowCaseTable;
-import br.net.mirante.singular.studio.component.ShowCaseTable.ShowCaseGroup;
-import br.net.mirante.singular.studio.component.ShowCaseTable.ShowCaseItem;
-import br.net.mirante.singular.studio.view.page.form.examples.ExamplePackage;
-import br.net.mirante.singular.studio.view.page.form.examples.SPackageCurriculo;
-import br.net.mirante.singular.studio.view.page.form.examples.SPackagePeticaoGGTOX;
 
 
-public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
+public class SingularStudioTypeLoader extends SpringTypeLoader<String> {
 
     private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
-    public ShowcaseTypeLoader() {
-        add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO);
-        add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
-        add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO);
+    public SingularStudioTypeLoader() {
 
-        for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {
-            for (ShowCaseItem item : group.getItens()) {
-                String itemName = group.getGroupName() + " - " + item.getComponentName();
-                for (CaseBase c : item.getCases()) {
-                    if (c.getSubCaseName() == null) {
-                        add(itemName, c);
-                    } else {
-                        add(itemName + " - " + c.getSubCaseName(), c);
-                    }
-                }
-            }
-        }
     }
 
     private void add(Class<? extends SPackage> packageClass, String typeName) {
@@ -56,10 +34,6 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
             d.loadPackage(packageClass);
             return d.getType(typeName);
         });
-    }
-
-    private void add(String displayName, CaseBase c) {
-        add(c.getTypeName(), displayName, () -> c.getCaseType());
     }
 
     private void add(String typeName, String displayName, Supplier<SType<?>> typeSupplier) {

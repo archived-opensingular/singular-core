@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.studio.view.page.form.crud.services;
+package br.net.mirante.singular.studio.view.services;
 
 import static br.net.mirante.singular.form.RefService.of;
 import static br.net.mirante.singular.form.type.core.attachment.handlers.FileSystemAttachmentHandler.newTemporaryHandler;
@@ -23,7 +23,7 @@ import br.net.mirante.singular.form.type.core.attachment.handlers.InMemoryAttach
 import br.net.mirante.singular.studio.spring.SingularStudioSpringConfiguration;
 
 @Component("showcaseDocumentFactory")
-public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
+public class SingularStudioDocumentFactory extends SpringSDocumentFactory {
 
     private final static SpringServiceRegistry registry;
 

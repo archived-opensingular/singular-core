@@ -38,7 +38,7 @@ public class Footer extends Panel {
     }
 
     private String getVersion() {
-        try (InputStream propsStream = getClass().getResourceAsStream("/showcase.properties")) {
+        try (InputStream propsStream = getClass().getResourceAsStream("/studio.properties")) {
             final Properties showCaseProperties = new Properties();
             showCaseProperties.load(propsStream);
             Object version = showCaseProperties.get("version");
