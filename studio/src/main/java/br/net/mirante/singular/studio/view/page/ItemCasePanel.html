@@ -1,0 +1,24 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:panel>
+    <div class="panel-body">
+        <h4 wicket:id="header">
+            <p wicket:id="description"></p>
+        </h4>
+        <hr/>
+        <form wicket:id="form">
+            <div wicket:id="singularFormPanel" class="form-body"></div>
+            <br/>
+            <div class="form-actions">
+                <wicket:fragment wicket:id="buttons">
+                    <input type="button" class="btn" wicket:id="button"/>
+                </wicket:fragment>
+            </div>
+            <div wicket:id="viewXmlModal" class="portlet-body form">
+                <div wicket:id="xmlCodes"></div>
+            </div>
+        </form>
+        <hr/>
+        <wicket:fragment wicket:id="codes"/>
+    </div>
+</wicket:panel>
+</html>

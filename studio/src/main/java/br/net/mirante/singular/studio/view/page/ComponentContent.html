@@ -1,0 +1,23 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:extend>
+    <div class="portlet light bordered">
+        <div class="portlet-body">
+            <div wicket:id="casesContainer" class="panel-group">
+                <div class="tabbable-custom">
+                    <wicket:fragment wicket:id="cases"></wicket:fragment>
+                </div>
+            </div>
+        </div>
+    </div>
+    <wicket:fragment wicket:id="breadcrumbShowCase">
+        <li>
+            <a wicket:id="breadcrumbShowCaseLink">
+                <wicket:message key="breadcrumb.showcase"/>
+            </a><i class="fa fa-circle"></i>
+        </li>
+        <li class="active">
+            <wicket:message key="breadcrumb.showcase.menu"/>
+        </li>
+    </wicket:fragment>
+</wicket:extend>
+</html>

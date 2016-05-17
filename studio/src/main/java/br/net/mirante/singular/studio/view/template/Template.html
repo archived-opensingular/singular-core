@@ -1,0 +1,19 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:extend>
+    <div wicket:id="pageBody" >
+        <div wicket:id="_Header"/>
+        <div class="clearfix"></div>
+        <div class="page-container">
+            <div wicket:id="_Menu"/>
+            <div wicket:id="_Content"/>
+        </div>
+        <div wicket:id="_Footer"/>
+        <div id='blocking_overlay' class='blocking_overlay' style='display:none;'
+             onclick='this.getElementsByTagName("a")[0].focus(); return false;'>
+            <a href='#' tabindex='-1' onkeydown='return false;'></a>
+        </div>
+    </div>
+</wicket:extend>
+</body>
+</html>
