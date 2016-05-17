@@ -22,7 +22,7 @@
 
     <bean id="springServiceRegistry" class="br.net.mirante.singular.form.spring.SpringServiceRegistry"/>
 
-    <bean id="singularStudioTypeLoader" class="br.net.mirante.singular.studio.dao.form.SingularStudioTypeLoader"/>
+    <bean id="singularStudioTypeLoader" class="br.net.mirante.singular.studio.config.SingularStudioTypeLoader"/>
 
 	<bean id="formConfigWithoutDatabase" class="br.net.mirante.singular.form.spring.SpringFormConfig">
         <property name="typeLoader" ref="singularStudioTypeLoader"/>
