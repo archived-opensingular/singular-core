@@ -5,6 +5,8 @@
 
 package br.net.mirante.singular.form;
 
+import java.util.Objects;
+
 /**
  * Builder para configuração do tipos e atributos de um pacote, com diversos métodos de apoio.
  *
@@ -151,8 +153,7 @@ public class PackageBuilder {
                                                                    String attrSimpleName, T attributeType,
                                                                    boolean selfReference) {
         getDictionary().getTypesInternal().verifyMustNotBePresent(attrFullName);
-
-        SScopeBase scope = (targetType.getPackage() == sPackage) ? targetType : sPackage;
+        SScopeBase scope = Objects.equals(targetType.getPackage(), sPackage) ? targetType : sPackage;
         T attributeDef = scope.extendType(attrSimpleName, attributeType);
         attributeDef.setAttributeDefinitionInfo(new AttributeDefinitionInfo(targetType, selfReference));
         targetType.addAttribute(attributeDef);
