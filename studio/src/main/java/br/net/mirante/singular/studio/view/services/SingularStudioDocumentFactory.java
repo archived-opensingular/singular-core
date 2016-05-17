@@ -22,7 +22,7 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceH
 import br.net.mirante.singular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.studio.spring.SingularStudioSpringConfiguration;
 
-@Component("showcaseDocumentFactory")
+@Component("singularStudioDocumentFactory")
 public class SingularStudioDocumentFactory extends SpringSDocumentFactory {
 
     private final static SpringServiceRegistry registry;

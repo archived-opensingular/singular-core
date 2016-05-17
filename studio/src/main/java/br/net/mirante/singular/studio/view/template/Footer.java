@@ -39,14 +39,14 @@ public class Footer extends Panel {
 
     private String getVersion() {
         try (InputStream propsStream = getClass().getResourceAsStream("/studio.properties")) {
-            final Properties showCaseProperties = new Properties();
-            showCaseProperties.load(propsStream);
-            Object version = showCaseProperties.get("version");
+            final Properties studioProperties = new Properties();
+            studioProperties.load(propsStream);
+            Object version = studioProperties.get("version");
             if (version != null) {
                 return "Versão: "+String.valueOf(version);
             }
         } catch (IOException e) {
-            LOGGER.error("Não foi possivel obter a versão do showcase", e);
+            LOGGER.error("Não foi possivel obter a versão do singular studio", e);
         }
         return StringUtils.EMPTY;
     }
