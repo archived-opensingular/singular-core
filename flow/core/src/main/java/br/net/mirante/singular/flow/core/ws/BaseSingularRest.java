@@ -21,6 +21,11 @@ public class BaseSingularRest {
     public static final String EXECUTE_TRANSITION = "/executeTransition";
     public static final String RELOCATE_TASK = "/relocateTask";
 
+    public static final String PROCESS_ABBREVIATION = "processAbbreviation";
+    public static final String COD_PROCESS_INSTANCE = "codProcessInstance";
+    public static final String USERNAME = "username";
+    public static final String LAST_VERSION = "lastVersion";
+
     public String ping() {
         return "pong";
     }
