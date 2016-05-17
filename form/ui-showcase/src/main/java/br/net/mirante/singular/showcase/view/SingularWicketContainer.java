@@ -5,8 +5,12 @@
 
 package br.net.mirante.singular.showcase.view;
 
-import br.net.mirante.singular.util.wicket.model.FallbackReadOnlyModel;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Objects;
+
+import javax.servlet.ServletContext;
+
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -16,10 +20,8 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.springframework.web.util.JavaScriptUtils;
 
-import javax.servlet.ServletContext;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Objects;
+import br.net.mirante.singular.util.wicket.model.FallbackReadOnlyModel;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public interface SingularWicketContainer<CONTAINER extends MarkupContainer, T> {
 
@@ -113,7 +115,7 @@ public interface SingularWicketContainer<CONTAINER extends MarkupContainer, T> {
     default void alert(AjaxRequestTarget target, Serializable message) {
         CONTAINER self = (CONTAINER) this;
         Page page = self.getPage();
-        if (self != page && page instanceof SingularWicketContainer) {
+        if (!self.equals(page) && page instanceof SingularWicketContainer) {
             ((SingularWicketContainer<?, ?>) page).alert(target, message);
         } else {
             String msgString;

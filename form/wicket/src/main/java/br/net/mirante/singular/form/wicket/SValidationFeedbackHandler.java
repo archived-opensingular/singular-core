@@ -117,7 +117,7 @@ public class SValidationFeedbackHandler implements Serializable {
                                      Collection<IValidationError> newErrors) {
 
         for (ISValidationFeedbackHandlerListener listener : listeners)
-            listener.onFeedbackChanged(target, container, baseInstances, oldErrors, newErrors);
+            listener.onFeedbackChanged(this, target, container, baseInstances, oldErrors, newErrors);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
