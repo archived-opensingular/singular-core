@@ -85,13 +85,13 @@ public class WicketFormProcessing {
             final SDocument document = baseInstance.getDocument();
 
             // Validação do valor do componente
+            boolean hasErrors = false;
             if (validate) {
                 InstanceValidationContext validationContext = new InstanceValidationContext();
                 validationContext.validateAll(baseInstance);
                 if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-
+                    hasErrors = true;
                     refresh(target, container);
-                    return setAndReturn.apply(false);
                 }
             }
 
@@ -100,6 +100,9 @@ public class WicketFormProcessing {
                 container,
                 baseInstanceModel,
                 document.getValidationErrorsByInstanceId());
+
+            if (hasErrors)
+                return setAndReturn.apply(false);
             
             // atualizar documento e recuperar instancias com atributos alterados
             document.updateAttributes(baseInstance, null);

@@ -7,6 +7,7 @@ package br.net.mirante.singular.util.wicket.datatable;
 
 import java.io.Serializable;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.model.IModel;
@@ -14,6 +15,10 @@ import org.apache.wicket.model.IModel;
 public interface IBSAction<T> extends Serializable {
 
     void execute(AjaxRequestTarget target, IModel<T> model);
+
+    default void execute(AjaxRequestTarget target, IModel<T> model, Component component) {
+        execute(target, model);
+    }
 
     default boolean isEnabled(IModel<T> model) {
         return true;

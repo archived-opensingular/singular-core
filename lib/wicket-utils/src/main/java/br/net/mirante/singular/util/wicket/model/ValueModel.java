@@ -12,8 +12,12 @@ import org.apache.wicket.model.Model;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
 
-public final class ValueModel<T extends Serializable> extends Model<T> {
+public final class ValueModel<T extends Serializable>
+        extends Model<T>
+        implements IMappingModel<T> {
+    
     private final IFunction<T, Object> equalsHashArgsFunc;
+    
     public ValueModel(T object, IFunction<T, Object> equalsHashArgsFunc) {
         super(object);
         this.equalsHashArgsFunc = equalsHashArgsFunc;

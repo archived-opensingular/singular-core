@@ -5,7 +5,13 @@
 
 package br.net.mirante.singular.form;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
@@ -518,7 +524,20 @@ public abstract class SInstance implements SAttributeEnabled {
         return !getValidationErrors().isEmpty();
     }
 
+    public boolean hasNestedValidationErrors() {
+        return SInstances.visit(this, (i, v) -> {
+            if (i.hasValidationErrors())
+                v.stop(true);
+        }).isPresent();
+    }
+
     public Collection<IValidationError> getValidationErrors() {
         return getDocument().getValidationErrors(getId());
+    }
+
+    public Collection<IValidationError> getNestedValidationErrors() {
+        List<IValidationError> errors = new ArrayList<>();
+        SInstances.visit(this, (i, v) -> errors.addAll(i.getValidationErrors()));
+        return errors;
     }
 }

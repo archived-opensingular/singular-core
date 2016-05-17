@@ -91,7 +91,7 @@ public class BSActionPanel<T> extends Panel {
             return appendAction(config, childId -> new ActionAjaxLink<T>(childId, model) {
                 @Override
                 public void onAction(AjaxRequestTarget target) {
-                    action.execute(target, this.getModel());
+                    action.execute(target, this.getModel(), this);
                 }
 
                 @Override

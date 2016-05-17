@@ -12,6 +12,10 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.*;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+
+import br.net.mirante.singular.commons.lambda.IConsumer;
 
 public class BSDataTable<T, S> extends DataTable<T, S> {
 
@@ -23,6 +27,7 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
     private boolean advanceTable         = false;
     private boolean condensedTable       = false;
     private boolean showNoRecordsToolbar = true;
+    private IConsumer<Item<T>> onNewRowItem = IConsumer.noop();
 
     public BSDataTable(String id, List<? extends IColumn<T, S>> columns, ISortableDataProvider<T, S> dataProvider) {
         super(id, ensureSerializable(columns), dataProvider, DEFAULT_ROWS_PER_PAGE);
@@ -98,6 +103,18 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
         getCaption()
             .setOutputMarkupId(renderCaption)
             .setOutputMarkupPlaceholderTag(renderCaption);
+    }
+    
+    @Override
+    protected Item<T> newRowItem(String id, int index, IModel<T> model) {
+        Item<T> rowItem = super.newRowItem(id, index, model);
+        onNewRowItem.accept(rowItem);
+        return rowItem;
+    }
+    
+    public BSDataTable<T, S> setOnNewRowItem(IConsumer<Item<T>> onNewRowItem) {
+        this.onNewRowItem = IConsumer.noopIfNull(onNewRowItem);
+        return this;
     }
 
     public boolean isStripedRows() {

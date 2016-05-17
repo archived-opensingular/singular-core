@@ -63,7 +63,7 @@ public class TabMapper extends DefaultCompostoMapper {
                     .addInstanceModels(subtreeModels.get())
                     .addListener(new ISValidationFeedbackHandlerListener() {
                     @Override
-                    public void onFeedbackChanged(Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
+                    public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
                         if (target.isPresent())
                             target.get().add(tabComponent);
                     }
