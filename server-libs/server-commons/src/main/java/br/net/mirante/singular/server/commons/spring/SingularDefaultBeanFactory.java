@@ -1,5 +1,7 @@
 package br.net.mirante.singular.server.commons.spring;
 
+import org.springframework.context.annotation.Bean;
+
 import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
@@ -13,8 +15,6 @@ import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
-import br.net.mirante.singular.server.commons.ws.ServiceFactoryUtil;
-import org.springframework.context.annotation.Bean;
 
 public class SingularDefaultBeanFactory {
 
@@ -42,11 +42,6 @@ public class SingularDefaultBeanFactory {
     @Bean
     public TaskInstanceDAO taskInstanceDAO() {
         return new TaskInstanceDAO();
-    }
-
-    @Bean
-    public ServiceFactoryUtil serviceFactoryUtil() {
-        return new ServiceFactoryUtil();
     }
 
     @Bean

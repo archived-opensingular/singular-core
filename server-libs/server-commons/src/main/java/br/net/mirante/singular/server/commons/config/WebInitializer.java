@@ -1,10 +1,6 @@
 package br.net.mirante.singular.server.commons.config;
 
-import br.net.mirante.singular.server.commons.wicket.SingularApplication;
-import org.apache.wicket.protocol.http.WicketFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate4.support.OpenSessionInViewFilter;
+import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -12,7 +8,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import java.util.EnumSet;
+
+import org.apache.wicket.protocol.http.WicketFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.orm.hibernate4.support.OpenSessionInViewFilter;
+
+import br.net.mirante.singular.server.commons.wicket.SingularApplication;
 
 /**
  * Configura os filtros, servlets e listeners default do singular pet server
@@ -53,7 +55,6 @@ public abstract class WebInitializer {
 
     private void addOpenSessionInView(ServletContext servletContext) {
         FilterRegistration.Dynamic opensessioninview = servletContext.addFilter("opensessioninview", OpenSessionInViewFilter.class);
-        opensessioninview.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/SingularWS");
         opensessioninview.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
     }
 

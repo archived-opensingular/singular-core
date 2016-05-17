@@ -1,5 +1,6 @@
 package br.net.mirante.singular.server.core.wicket.template;
 
+import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.*;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -21,9 +22,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.config.ServerContext;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
@@ -34,7 +38,6 @@ import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import br.net.mirante.singular.server.commons.ws.ServiceFactoryUtil;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
@@ -79,9 +82,6 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
 
     @Inject
     protected PetitionService petitionService;
-
-    @Inject
-    protected ServiceFactoryUtil serviceFactoryUtil;
 
     protected abstract BSDataTable<T, String> setupDataTable();
 
@@ -192,16 +192,20 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
 
     protected void atribuir(AjaxRequestTarget target, IModel<T> model) {
         // TODO parametrizar qual o flow
-        try{
+        try {
             T taskInstanceDTO = model.getObject();
-//            serviceFactoryUtil.getSingularWS(taskInstanceDTO.getProcessGroupContext()).relocateTask(
-//                    taskInstanceDTO.getProcessType(),
-//                    Long.valueOf(taskInstanceDTO.getProcessInstanceId()),
-//                    SingularSession.get().getUsername(),
-//                    taskInstanceDTO.getVersionStamp());
 
+            final ProcessGroupEntity processGroup = petitionService.findByProcessGroupCod(taskInstanceDTO.getProcessGroupCod());
+            final String url = UriComponentsBuilder.fromUriString(processGroup.getConnectionURL() + RELOCATE_TASK)
+                    .queryParam(PROCESS_ABBREVIATION, taskInstanceDTO.getProcessType())
+                    .queryParam(COD_PROCESS_INSTANCE, Long.valueOf(taskInstanceDTO.getProcessInstanceId()))
+                    .queryParam(USERNAME, SingularSession.get().getUsername())
+                    .queryParam(LAST_VERSION, taskInstanceDTO.getVersionStamp())
+                    .build().toUriString();
+
+            new RestTemplate().getForObject(url, Void.class);
             addToastrSuccessMessage("message.allocate.success");
-        }catch (Exception e){
+        } catch (Exception e) {
             addToastrErrorMessage("global.analise.atribuir.msg.error");
             getLogger().error(e.getMessage(), e);
         }
