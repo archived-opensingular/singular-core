@@ -62,10 +62,6 @@ public abstract class BSPanelGrid extends Panel {
     }
 
     private Component buildTabControl() {
-        //return new ListView<String>(ID_TAB, tabMap.keySet().stream().collect(Collectors.toList())) {
-        //    @Override
-        //    protected void populateItem(ListItem<String> item) {
-
         return new RefreshingView<String>(ID_TAB) {
             @Override
             protected Iterator<IModel<String>> getItemModels() {
@@ -111,46 +107,6 @@ public abstract class BSPanelGrid extends Panel {
                 onTabCreated(tab, item);
             }
         };
-        //        return new ListView<String>(ID_TAB, tabMap.keySet().stream().collect(Collectors.toList())) {
-        //            @Override
-        //            protected void populateItem(ListItem<String> item) {
-        //
-        //                String id = item.getModelObject();
-        //                final BSTab tab = tabMap.get(id);
-        //
-        //                if (activeTab == null && item.getIndex() == 0 || activeTab != null && activeTab.equals(tab)) {
-        //                    item.add($b.classAppender("active"));
-        //                }
-        //
-        //                item.add($b.attr("data-tab-name", id));
-        //
-        //                AjaxSubmitLink link = new AjaxSubmitLink("tabAnchor") {
-        //                    @Override
-        //                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-        //                        activeTab = tab;
-        //                        buildTabContent();
-        //                        updateTab(tab, newArrayList(tabMap.values()));
-        //
-        //                        target.appendJavaScript("$('.nav-tabs li').removeClass('active');");
-        //                        target.appendJavaScript("$('.nav-tabs li[data-tab-name=\"" + id + "\"]').addClass('active');");
-        //                        target.add(form);
-        //                        if (toUpdadeOnTab() != null) {
-        //                            toUpdadeOnTab().forEach((c) -> target.add(c));
-        //                        }
-        //                    }
-        //
-        //                };
-        //
-        //                link.add(new Label("header-text", tab.getHeaderText()));
-        //                Label label = new Label("header-icon", "");
-        //                label.add(new AttributeModifier("class", tab.iconClass()));
-        //                link.add(label);
-        //
-        //                item.add(link);
-        //                
-        //                onTabCreated(tab, item);
-        //            }
-        //        };
     }
 
     public abstract void updateTab(BSTab tab, List<BSTab> tabs);
