@@ -30,32 +30,32 @@ class PathReader {
             if (indiceLista) {
                 fim = path.indexOf(']', inicio + 1) + 1;
                 if (fim == 0 || inicio + 2 == fim) {
-                    throw new RuntimeException("Path '" + path + "' inválido na posição " + inicio);
+                    throw new SingularFormException("Path '" + path + "': inválido na posição " + inicio);
                 }
                 for (int i = inicio + 1; i < fim - 1; i++) {
                     if (!Character.isDigit(path.charAt(i))) {
-                        throw new RuntimeException("Path '" + path + "' inválido na posição " + i);
+                        throw new SingularFormException("Path '" + path + "': caracter inválido na posição " + i);
                     }
                 }
                 trecho = path.substring(inicio + 1, fim - 1);
             } else {
                 if (path.charAt(inicio) == '.') {
                     if (inicio == 0) {
-                        throw new RuntimeException("Path '" + path + "' inválido na posição " + inicio);
+                        throw new SingularFormException("Path '" + path + "': inválido na posição " + inicio);
                     } else {
                         inicio++;
                     }
                 } else if (inicio != 0) {
-                    throw new RuntimeException("Path '" + path + "' inválido na posição " + inicio);
+                    throw new SingularFormException("Path '" + path + "': inválido na posição " + inicio);
                 }
 
                 fim = localizarFim(path, inicio);
                 if (inicio == fim) {
-                    throw new RuntimeException("Path '" + path + "' inválido na posição " + inicio);
+                    throw new SingularFormException("Path '" + path + "': inválido na posição " + inicio);
                 }
                 trecho = (inicio == 0 && fim == path.length()) ? path : path.substring(inicio, fim);
                 if (!SFormUtil.isValidSimpleName(trecho)) {
-                    throw new RuntimeException("Path '" + path + "' inválido na posição " + inicio + " : Não é um nome de campo válido");
+                    throw new SingularFormException("Path '" + path + "': inválido na posição " + inicio + " : Não é um nome de campo válido");
                 }
             }
         }
@@ -69,14 +69,14 @@ class PathReader {
 
     public String getTrecho() {
         if (trecho == null) {
-            throw new RuntimeException("Leitura já está no fim");
+            throw new SingularFormException("Leitura já está no fim");
         }
         return trecho;
     }
 
     public PathReader next() {
         if (trecho == null) {
-            throw new RuntimeException("Leitura já está no fim");
+            throw new SingularFormException("Leitura já está no fim");
         }
         return new PathReader(path, fim);
     }
@@ -87,7 +87,7 @@ class PathReader {
 
     public boolean isLast() {
         if (trecho == null) {
-            throw new RuntimeException("Leitura já está no fim");
+            throw new SingularFormException("Leitura já está no fim");
         }
         return fim == path.length();
     }
@@ -98,7 +98,7 @@ class PathReader {
 
     public boolean isIndex() {
         if (trecho == null) {
-            throw new RuntimeException("Leitura já está no fim");
+            throw new SingularFormException("Leitura já está no fim");
         }
         return indiceLista;
     }

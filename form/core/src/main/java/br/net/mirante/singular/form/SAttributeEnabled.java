@@ -11,6 +11,9 @@ import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.basic.AtrBootstrap;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -33,7 +36,8 @@ public interface SAttributeEnabled {
         setAttributeValue(atr.getNameFull(), null, value);
     }
 
-    default <V> void setAttributeValue(SAttribute defAttribute, Object value) {
+    default <V> void setAttributeValue(SType<?> defAttribute, Object value) {
+        defAttribute.checkIfIsAttribute();
         setAttributeValue(defAttribute.getName(), null, value);
     }
 
@@ -42,6 +46,16 @@ public interface SAttributeEnabled {
     }
 
     void setAttributeValue(String attributeFullName, String subPath, Object value);
+
+
+    /**
+     * Lista todos os atributos com valor associado diretamente ao objeto atual.
+     * @return Nunca null
+     */
+    public Collection<SInstance> getAttributes();
+
+    /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
+    public Optional<SInstance> getAttribute(String fullName);
 
     <V> V getAttributeValue(String attributeFullName, Class<V> resultClass);
 
@@ -90,6 +104,4 @@ public interface SAttributeEnabled {
     default AtrProvider asAtrProvider() {
         return as(AtrProvider::new);
     }
-
-
 }

@@ -9,6 +9,10 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColuns<S
 
     private boolean editEnabled = true;
 
+    private String newActionLabel = "Adicionar";
+
+    private String editActionLabel = "Atualizar";
+    
     public SViewListByMasterDetail disableEdit() {
         this.editEnabled = false;
         return this;
@@ -16,5 +20,23 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColuns<S
 
     public boolean isEditEnabled() {
         return editEnabled;
+    }
+    
+    public SViewListByMasterDetail withNewActionLabel(String actionLabel) {
+        this.newActionLabel = actionLabel;
+        return this;
+    }
+    
+    public String getNewActionLabel() {
+        return newActionLabel;
+    }
+
+    public SViewListByMasterDetail withEditActionLabel(String actionLabel) {
+        this.editActionLabel = actionLabel;
+        return this;
+    }
+    
+    public String getEditActionLabel() {
+        return editActionLabel;
     }
 }

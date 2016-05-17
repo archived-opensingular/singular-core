@@ -129,10 +129,10 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         PackageBuilder pb1 = dicionario.createNewPackage("teste1");
 
         STypeSimple<?, ?> tipo = pb1.createType("X", STypeSimple.class);
-        SAttribute at1 = pb1.createAttributeIntoType(tipo, "a", STypeInteger.class);
+        STypeInteger at1 = pb1.createAttributeIntoType(tipo, "a", STypeInteger.class);
 
         PackageBuilder pb2 = dicionario.createNewPackage("teste2");
-        SAttribute at2 = pb2.createAttributeIntoType(tipo, "a", STypeInteger.class);
+        STypeInteger at2 = pb2.createAttributeIntoType(tipo, "a", STypeInteger.class);
 
         assertException(() -> pb2.createAttributeIntoType(dicionario.getType(STypeSimple.class), "a", STypeInteger.class), "já está criada");
 
@@ -316,17 +316,17 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         tipoPosicao.addFieldInteger("linha");
 
         SType<?> tipo = pb1.createType("X", STypeString.class);
-        SAttribute at1 = pb1.createAttributeIntoType(tipo, "a", STypeString.class);
-        SAttribute at2 = pb1.createAttributeIntoType(tipo, "b", tipoPosicao);
+        STypeString at1 = pb1.createAttributeIntoType(tipo, "a", STypeString.class);
+        STypeComposite<?> at2 = pb1.createAttributeIntoType(tipo, "b", tipoPosicao);
 
         tipo.setAttributeValue("a", "a1");
-        assertIsAtributo(tipo.getAttributeInstanceInternal(at1.getName()), null);
+        assertAttribute(tipo.getAttributeInstanceInternal(at1.getName()), null);
 
         tipo.setAttributeValue("b", "cor", "b1");
         tipo.setAttributeValue("b", "linha", 1);
-        assertIsAtributo(tipo.getAttributeInstanceInternal(at2.getName()), null);
-        assertIsAtributo(((ICompositeInstance) tipo.getAttributeInstanceInternal(at2.getName())).getField("cor"), null);
-        assertIsAtributo(((ICompositeInstance) tipo.getAttributeInstanceInternal(at2.getName())).getField("linha"), null);
+        assertAttribute(tipo.getAttributeInstanceInternal(at2.getName()), null);
+        assertAttribute(((ICompositeInstance) tipo.getAttributeInstanceInternal(at2.getName())).getField("cor"), null);
+        assertAttribute(((ICompositeInstance) tipo.getAttributeInstanceInternal(at2.getName())).getField("linha"), null);
 
         SIString instancia = (SIString) tipo.newInstance();
         assertEquals(false, instancia.isAttribute());
@@ -337,18 +337,18 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         instancia.setAttributeValue(at2.getName(), "linha", 2);
 
         assertEquals(2, instancia.getAttributes().size());
-        assertIsAtributo(instancia.getAttributes().get(at1.getName()), instancia);
-        assertIsAtributo(instancia.getAttributes().get(at2.getName()), instancia);
-        assertIsAtributo(((ICompositeInstance) instancia.getAttributes().get(at2.getName())).getField("cor"), instancia);
-        assertIsAtributo(((ICompositeInstance) instancia.getAttributes().get(at2.getName())).getField("linha"), instancia);
-        instancia.getAttributes().values().stream().forEach(a -> assertIsAtributo(a, instancia));
+        assertAttribute(instancia.getAttribute(at1.getName()).get(), instancia);
+        assertAttribute(instancia.getAttribute(at2.getName()).get(), instancia);
+        assertAttribute(((ICompositeInstance) instancia.getAttribute(at2.getName()).get()).getField("cor"), instancia);
+        assertAttribute(((ICompositeInstance) instancia.getAttribute(at2.getName()).get()).getField("linha"), instancia);
+        instancia.getAttributes().stream().forEach(a -> assertAttribute(a, instancia));
     }
 
-    private static void assertIsAtributo(SInstance instancia, SInstance expectedOwner) {
-        assertTrue(instancia.isAttribute());
-        assertTrue(expectedOwner == instancia.getAttributeOwner());
-        if (instancia instanceof ICompositeInstance) {
-            ((ICompositeInstance) instancia).stream().forEach(i -> assertIsAtributo(i, expectedOwner));
+    private static void assertAttribute(SInstance instance, SInstance expectedOwner) {
+        assertTrue(instance.isAttribute());
+        assertTrue(expectedOwner == instance.getAttributeOwner());
+        if (instance instanceof ICompositeInstance) {
+            ((ICompositeInstance) instance).stream().forEach(i -> assertAttribute(i, expectedOwner));
         }
     }
 

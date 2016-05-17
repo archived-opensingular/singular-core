@@ -140,8 +140,8 @@ public abstract class SScopeBase implements SScope {
 
     protected void debug(Appendable appendable, int nivel) {
         if (localTypes != null) {
-            localTypes.values().stream().filter(t -> t instanceof SAttribute).forEach(t -> t.debug(appendable, nivel));
-            localTypes.values().stream().filter(t -> !(t instanceof SAttribute)).forEach(t -> t.debug(appendable, nivel));
+            localTypes.values().stream().filter(t -> t.isAttribute()).forEach(t -> t.debug(appendable, nivel));
+            localTypes.values().stream().filter(t -> !t.isAttribute()).forEach(t -> t.debug(appendable, nivel));
         }
     }
 
