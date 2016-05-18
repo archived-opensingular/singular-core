@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.studio.dao.form;
+package br.net.mirante.singular.studio.config;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
