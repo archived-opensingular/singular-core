@@ -1,8 +1,6 @@
 package br.net.mirante.singular.server.commons.persistence.entity.form;
 
-import br.net.mirante.singular.persistence.entity.BaseEntity;
-import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
-import br.net.mirante.singular.persistence.util.Constants;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -16,11 +14,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
-import java.util.Date;
+
+import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.util.Constants;
 
 @MappedSuperclass
 @Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
-public class AbstractPetitionEntity extends BaseEntity {
+public class AbstractPetitionEntity extends BaseEntity<Long> {
 
     @Id
     @Column(name = "CO_PETICAO")
@@ -37,10 +38,9 @@ public class AbstractPetitionEntity extends BaseEntity {
     @Column(name = "NO_PROCESSO")
     private String processName;
 
-    @Lob
-    @Column(name = "DS_XML")
-    private String xml;
-
+    @Column(name = "CO_FORMULARIO")
+    private Long codForm;
+    
     @Lob
     @Column(name = "DS_XML_ANOTACAO")
     private String annotations;
@@ -71,14 +71,6 @@ public class AbstractPetitionEntity extends BaseEntity {
 
     public void setCod(Long cod) {
         this.cod = cod;
-    }
-
-    public String getXml() {
-        return xml;
-    }
-
-    public void setXml(String xml) {
-        this.xml = xml;
     }
 
     public String getAnnotations() {
@@ -145,4 +137,14 @@ public class AbstractPetitionEntity extends BaseEntity {
     public void setProcessType(String processType) {
         this.processType = processType;
     }
+
+    public Long getCodForm() {
+        return codForm;
+    }
+
+    public void setCodForm(Long codForm) {
+        this.codForm = codForm;
+    }
+    
+    
 }

@@ -1,23 +1,25 @@
 package br.net.mirante.singular.server.commons.service;
 
 
+import java.util.Collections;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.form.service.IPersistenceService;
+import br.net.mirante.singular.form.service.dto.FormDTO;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
-
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
 
 @Transactional
 public class PetitionService<T extends AbstractPetitionEntity> {
@@ -28,6 +30,8 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     @Inject
     private GrupoProcessoDAO grupoProcessoDAO;
 
+    @Inject
+    private IPersistenceService formPersistenceService;
 
     public void delete(PeticaoDTO peticao) {
         petitionDAO.delete(petitionDAO.find(peticao.getCod()));
@@ -53,39 +57,36 @@ public class PetitionService<T extends AbstractPetitionEntity> {
         return petitionDAO.quickSearch(filtro, siglasProcesso);
     }
 
-
-    public void saveOrUpdate(T peticao) {
+    public void saveOrUpdate(T peticao, FormDTO form) {
+        formPersistenceService.saveOrUpdate(form);
+        peticao.setCodForm(form.getCod());
+        
         petitionDAO.saveOrUpdate(peticao);
     }
 
-    public void send(T peticao) {
-        iniciarProcessoFlow(peticao);
-        saveOrUpdate(peticao);
-    }
-
-    private void iniciarProcessoFlow(T peticao) {
+    public void send(T peticao, FormDTO form) {
         ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(peticao.getProcessType());
         ProcessInstance processInstance = processDefinition.newInstance();
         processInstance.setDescription(peticao.getDescription());
+        
+        ProcessInstanceEntity processEntity = processInstance.saveEntity();
+        peticao.setProcessInstanceEntity(processEntity);
+        saveOrUpdate(peticao, form);
+        
         processInstance.start();
-        peticao.setProcessInstanceEntity((ProcessInstanceEntity) processInstance.getEntity());
     }
-
 
     public T find(Long cod) {
         return petitionDAO.find(cod);
     }
 
-
     public T findByProcessCod(Integer cod) {
         return petitionDAO.findByProcessCod(cod);
     }
 
-
     public List<ProcessGroupEntity> listarTodosGruposProcesso() {
         return grupoProcessoDAO.listarTodosGruposProcesso();
     }
-
 
     public ProcessGroupEntity findByProcessGroupName(String name) {
         return grupoProcessoDAO.findByName(name);
@@ -94,5 +95,5 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     public ProcessGroupEntity findByProcessGroupCod(String cod) {
         return grupoProcessoDAO.get(cod);
     }
-
+    
 }

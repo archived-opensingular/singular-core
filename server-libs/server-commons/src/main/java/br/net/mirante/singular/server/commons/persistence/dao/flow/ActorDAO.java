@@ -8,9 +8,9 @@ import org.hibernate.criterion.Restrictions;
 import br.net.mirante.singular.commons.base.SingularProperties;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.persistence.entity.Actor;
-import br.net.mirante.singular.persistence.util.Constants;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.support.persistence.BaseDAO;
+import br.net.mirante.singular.support.persistence.util.Constants;
 
 
 public class ActorDAO extends BaseDAO<Actor, Integer> {

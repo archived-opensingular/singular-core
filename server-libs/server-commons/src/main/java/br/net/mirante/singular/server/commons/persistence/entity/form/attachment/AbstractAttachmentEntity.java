@@ -1,12 +1,17 @@
 package br.net.mirante.singular.server.commons.persistence.entity.form.attachment;
 
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.persistence.entity.BaseEntity;
-import br.net.mirante.singular.persistence.util.Constants;
-
-import javax.persistence.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
+
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.util.Constants;
 
 @MappedSuperclass
 @Table(schema = Constants.SCHEMA, name = "TB_ARQUIVO_PETICAO")

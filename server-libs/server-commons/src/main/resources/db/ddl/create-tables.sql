@@ -262,7 +262,7 @@ CREATE TABLE DBSINGULAR.TB_PETICAO (
    TP_PETICAO           VARCHAR(300)         NOT NULL,
    TP_PROCESSO_PETICAO  VARCHAR(300)         NOT NULL,
    NO_PROCESSO          VARCHAR(300)         NULL,
-   DS_XML               CLOB         NULL,
+   CO_FORMULARIO        BIGINT         NULL,
    DS_XML_ANOTACAO      CLOB         NULL,
    DS_PETICAO           VARCHAR(300)         NOT NULL,
    DT_CRIACAO           DATETIME         NOT NULL,
@@ -272,7 +272,15 @@ CREATE TABLE DBSINGULAR.TB_PETICAO (
    ID_PESSOA_REPRESENTADA            CHAR(32)             null,
    CONSTRAINT PK_PETICAO PRIMARY KEY (CO_PETICAO)
 );
-
+/*==============================================================*/
+/* Table: TB_PETICAO                                            */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_FORMULARIO (
+   CO_FORMULARIO        BIGINT       NOT NULL,
+   DS_XML               CLOB         NOT NULL,
+   CONSTRAINT PK_FORMULARIO PRIMARY KEY (CO_FORMULARIO)
+);
+CREATE SEQUENCE DBSINGULAR.SQ_CO_FORMULARIO  START WITH 1 INCREMENT BY 1;
 /*==============================================================*/
 /* Table: TB_ARQUIVO_PETICAO                                    */
 /*==============================================================*/

@@ -56,6 +56,15 @@ public class SingularDefaultPersistenceConfiguration {
         populator.addScript(insertTestData);
         return populator;
     }
+    
+    @Bean
+    public DataSourceInitializer scriptsInitializer(final DataSource dataSource) {
+        final DataSourceInitializer initializer = new DataSourceInitializer();
+        initializer.setDataSource(dataSource);
+        initializer.setDatabasePopulator(databasePopulator());
+        initializer.setEnabled(isDatabaseInitializerEnabled());
+        return initializer;
+    }
 
     @Bean
     @DependsOn("scriptsInitializer")
@@ -67,15 +76,6 @@ public class SingularDefaultPersistenceConfiguration {
         populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(sqlCreateFunction);
         initializer.setDatabasePopulator(populator);
-        initializer.setEnabled(isDatabaseInitializerEnabled());
-        return initializer;
-    }
-
-    @Bean
-    public DataSourceInitializer scriptsInitializer(final DataSource dataSource) {
-        final DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(dataSource);
-        initializer.setDatabasePopulator(databasePopulator());
         initializer.setEnabled(isDatabaseInitializerEnabled());
         return initializer;
     }

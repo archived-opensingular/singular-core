@@ -24,6 +24,8 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.service.IPersistenceService;
+import br.net.mirante.singular.form.service.dto.FormDTO;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -41,12 +43,17 @@ public class FormPage extends AbstractFormPage {
 
     private IModel<Petition> currentModel;
 
+    private IModel<FormDTO> formModel;
+
     @Inject
     private PetitionService petitionService;
 
     @Inject
     private AnalisePeticaoService analisePeticaoService;
 
+    @Inject
+    private IPersistenceService formPersistenceService;
+    
     @Inject
     @Named("formConfigWithDatabase")
     private SFormConfig<String> singularFormConfig;
@@ -75,7 +82,7 @@ public class FormPage extends AbstractFormPage {
 
     @Override
     protected void executeTransition(String transitionName, IModel<?> currentInstance) {
-        analisePeticaoService.salvarExecutarTransicao(transitionName, currentModel.getObject());
+        analisePeticaoService.salvarExecutarTransicao(transitionName, currentModel.getObject(), formModel.getObject());
     }
 
     @Override
@@ -104,12 +111,12 @@ public class FormPage extends AbstractFormPage {
 
     @Override
     protected String getFormXML() {
-        return currentModel.getObject().getXml();
+        return formModel.getObject().getXml();
     }
 
     @Override
     protected void setFormXML(String xml) {
-        currentModel.getObject().setXml(xml);
+        formModel.getObject().setXml(xml);
     }
 
     @Override
@@ -125,13 +132,13 @@ public class FormPage extends AbstractFormPage {
     @SuppressWarnings("unchecked")
     @Override
     protected void saveForm(IModel<? extends SInstance> currentInstance) {
-        petitionService.saveOrUpdate(updateDescription(currentInstance));
+        petitionService.saveOrUpdate(updateDescription(currentInstance), formModel.getObject());
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected void send(IModel<? extends SInstance> currentInstance, MElement xml) {
-        petitionService.send(updateDescription(currentInstance));
+        petitionService.send(updateDescription(currentInstance), formModel.getObject());
     }
 
     private Petition updateDescription(IModel<? extends SInstance> currentInstance){
@@ -145,6 +152,7 @@ public class FormPage extends AbstractFormPage {
     @Override
     protected void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode) {
         Petition peticao;
+        FormDTO formDTO = null;
         if (formId == null || formId.isEmpty()) {
             peticao = new Petition();
             peticao.setType(type);
@@ -156,11 +164,18 @@ public class FormPage extends AbstractFormPage {
             peticao.setCreationDate(new Date());
             peticao.setDescription("Nova Solicitação");
             peticao.setProcessName(recuperarNomeProcesso(type));
-
+            
         } else {
             peticao = (Petition) petitionService.find(Long.valueOf(formId));
+            if(peticao.getCodForm() != null){
+                formDTO = formPersistenceService.find(peticao.getCodForm());
+            }
+        }
+        if(formDTO == null){
+            formDTO = new FormDTO();
         }
 
+        formModel = $m.ofValue(formDTO);
         currentModel = $m.ofValue(peticao);
     }
 
