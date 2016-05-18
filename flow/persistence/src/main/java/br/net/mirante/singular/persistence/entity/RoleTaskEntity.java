@@ -10,8 +10,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import br.net.mirante.singular.persistence.util.Constants;
-import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import br.net.mirante.singular.support.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 /**
  * The persistent class for the RL_PAPEL_TAREFA database table.

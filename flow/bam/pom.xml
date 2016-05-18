@@ -89,7 +89,7 @@
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>flow-core</artifactId>
+            <artifactId>flow-persistence</artifactId>
             <version>0.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>

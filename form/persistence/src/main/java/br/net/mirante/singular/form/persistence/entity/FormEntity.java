@@ -13,8 +13,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import br.net.mirante.singular.form.persistence.util.Constants;
-import br.net.mirante.singular.form.persistence.util.HybridIdentityOrSequenceGenerator;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 /**
  * The persistent class for the TB_FORMULARIO database table.
@@ -43,4 +44,13 @@ public class FormEntity extends BaseEntity<Long> {
         this.cod = cod;
     }
 
+    public String getXml() {
+        return xml;
+    }
+
+    public void setXml(String xml) {
+        this.xml = xml;
+    }
+
+    
 }

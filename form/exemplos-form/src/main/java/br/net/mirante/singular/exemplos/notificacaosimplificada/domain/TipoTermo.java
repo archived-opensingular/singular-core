@@ -15,14 +15,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import br.net.mirante.singular.support.persistence.enums.SimNao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.MedEntity;
-import br.net.mirante.singular.persistence.entity.BaseEntity;
-import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import java.io.Serializable;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.MedEntity;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
+import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 
 
 /**
@@ -37,7 +36,7 @@ import java.io.Serializable;
         @NamedQuery(name = "TipoTermo.findAll", query = "Select tipoTermo From TipoTermo as tipoTermo where tipoTermo.ativa = 'S'  Order by tipoTermo.descricao  ")
 })
 @SuppressWarnings("serial")
-public class TipoTermo extends BaseEntity implements MedEntity<Long> {
+public class TipoTermo extends BaseEntity<Long> implements MedEntity<Long> {
 
     public static final String DESCRICAO_SUBSTANCIA = "SUBSTÂNCIA";
 
@@ -108,7 +107,7 @@ public class TipoTermo extends BaseEntity implements MedEntity<Long> {
     }
 
     @Override
-    public Serializable getCod() {
+    public Long getCod() {
         return id;
     }
 }

@@ -17,7 +17,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 
 @Transactional(Transactional.TxType.MANDATORY)
 public class BaseDAO<T extends BaseEntity, ID extends Serializable> implements Loggable, Serializable {

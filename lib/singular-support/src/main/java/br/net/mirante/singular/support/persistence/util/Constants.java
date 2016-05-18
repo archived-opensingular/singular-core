@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.persistence.util;
+package br.net.mirante.singular.support.persistence.util;
 
 public interface Constants {
 

@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.form.persistence.entity;
+package br.net.mirante.singular.support.persistence.entity;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 
 @SuppressWarnings("serial")
-public abstract class BaseEntity<PK extends Serializable> {
+public abstract class BaseEntity<PK extends Serializable> implements Serializable{
 
     public abstract PK getCod();
     

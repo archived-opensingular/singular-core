@@ -14,16 +14,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoControleValor;
-import br.net.mirante.singular.persistence.entity.BaseEntity;
-import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoControleValor;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 
 
 @Entity
 @Table(name = "TB_FAIXA_CONCENTRACAO", schema = "DBMEDICAMENTO")
-public class FaixaConcentracao extends BaseEntity implements Serializable {
+public class FaixaConcentracao extends BaseEntity<Long> implements Serializable {
 
     private static final long serialVersionUID = 8905832888354927426L;
 
@@ -74,7 +75,7 @@ public class FaixaConcentracao extends BaseEntity implements Serializable {
     }
 
     @Override
-    public Serializable getCod() {
+    public Long getCod() {
         return id;
     }
 

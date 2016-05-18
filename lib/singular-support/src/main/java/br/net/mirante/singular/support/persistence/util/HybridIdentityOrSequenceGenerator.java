@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.persistence.util;
+package br.net.mirante.singular.support.persistence.util;
 
 import br.net.mirante.singular.commons.base.SingularProperties;
 import org.hibernate.HibernateException;
@@ -31,7 +31,7 @@ public class HybridIdentityOrSequenceGenerator implements PostInsertIdentifierGe
     private static final String ENTITY = "entity_name";
     private static final String SEQUENCE = "sequence";
 
-    public static final String CLASS_NAME = "br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator";
+    public static final String CLASS_NAME = "br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator";
 
     private PostInsertIdentifierGenerator delegate;
 

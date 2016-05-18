@@ -19,7 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
-import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.util.Constants;
 
 /**
  * The base persistent class for the RL_PAPEL_TAREFA database table.
