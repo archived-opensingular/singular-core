@@ -10,10 +10,13 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,6 +32,7 @@ import com.google.common.base.Strings;
 
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.SFormUtil;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
@@ -36,9 +40,11 @@ import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.validation.IValidationError;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.wicket.ISValidationFeedbackHandlerListener;
@@ -62,6 +68,8 @@ import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.model.IMappingModel;
+import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
@@ -258,16 +266,40 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 (target, rowModel) -> {
                 modal.showExisting(target, rowModel, ctx);
             });
-
-            actionColumn.appendAction($m.ofValue(""), Icone.INFO_CIRCLE, new IBSAction<SInstance>() {
+            actionColumn.appendAction(
+                new ActionConfig<>()
+                    .iconeModel(IReadOnlyModel.of(() -> Icone.EXCLAMATION_TRIANGLE))
+                    .buttonModel(Model.of("red"))
+                    .title(IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size() + " erro(s) encontrado(s)"))
+                    .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
+                new IBSAction<SInstance>() {
                 @Override
                 public void execute(AjaxRequestTarget target, IModel<SInstance> model) {
-                    Collection<IValidationError> errors = model.getObject().getNestedValidationErrors();
+                    SInstance baseInstance = model.getObject();
+                    SDocument doc = baseInstance.getDocument();
+                    Collection<IValidationError> errors = baseInstance.getNestedValidationErrors();
                     if ((errors != null) && !errors.isEmpty()) {
+                        String alertLevel = errors.stream()
+                            .map(it -> it.getErrorLevel())
+                            .collect(Collectors.maxBy(Comparator.naturalOrder()))
+                            .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
+                            .get();
+
+                        final StringBuilder sb = new StringBuilder("<div><ul class='list-unstyled alert " + alertLevel + "'>");
+                        for (IValidationError error : errors) {
+                            Optional<SInstance> inst = doc.findInstanceById(error.getInstanceId());
+                            if (inst.isPresent()) {
+                                sb.append("<li>")
+                                    .append(SFormUtil.generateUserFriendlyPath(inst.get(), baseInstance))
+                                    .append(": ")
+                                    .append(error.getMessage())
+                                    .append("</li>");
+                            }
+                        }
+                        sb.append("</ul></div>");
+
                         target.appendJavaScript(""
-                            + "alert('"
-                            + JavaScriptUtils.javaScriptEscape("Erros (" + errors.size() + ")")
-                            + "');");
+                            + ";bootbox.alert('" + JavaScriptUtils.javaScriptEscape(sb.toString()) + "');");
                     }
                 }
                 @Override

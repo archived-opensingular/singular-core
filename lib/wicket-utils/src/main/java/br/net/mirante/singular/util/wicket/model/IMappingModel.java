@@ -5,6 +5,7 @@ import org.apache.wicket.model.IWrapModel;
 
 import br.net.mirante.singular.commons.lambda.IBiConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IPredicate;
 
 public interface IMappingModel<T> extends IReadOnlyModel<T> {
 
@@ -49,6 +50,10 @@ public interface IMappingModel<T> extends IReadOnlyModel<T> {
                 return (object == null) ? null : getter.apply(object);
             }
         };
+    }
+
+    default public IMappingModel<T> filter(IPredicate<T> filter) {
+        return map(it -> filter.test(it) ? it : null);
     }
 
     default <U> IMappingModel<U> map(IFunction<T, U> getter, IBiConsumer<T, U> setter) {

@@ -234,17 +234,21 @@ public class SValidationFeedbackHandler implements Serializable {
         List<SInstance> rootInstance = new ArrayList<>();
 
         if (rootHandler != null && rootHandler.instanceModels != null)
-            rootHandler.instanceModels.forEach(it -> rootInstance.add(it.getObject()));
+            rootHandler.instanceModels.stream()
+                .filter(it -> it != null)
+                .forEach(it -> rootInstance.add(it.getObject()));
 
         if (rootInstance.isEmpty()) {
             Object modelObject = rootContainer.getDefaultModelObject();
             if (modelObject instanceof SInstance)
-                rootInstance.add((SInstance) rootContainer.getDefaultModelObject());
+                rootInstance.add((SInstance) modelObject);
         }
 
         if (rootInstance.isEmpty())
             throw new IllegalArgumentException("Could not resolve the root instance");
 
+        if (rootInstance.contains(null))
+            throw new IllegalStateException();
         return rootInstance;
     }
 }
