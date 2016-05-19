@@ -14,19 +14,32 @@ public class ProcessadorCondigoFonte {
     private final String fonte;
     private final List<Integer> linhasParaDestacar;
     private final List<String> fonteFinal;
+    private final List<String> javadocDeClasse;
     private final static List<String> LIXOS = Collections.singletonList("@formatter");
 
     public ProcessadorCondigoFonte(String fonte) {
         this.fonte = fonte;
         this.linhasParaDestacar = new ArrayList<>();
         this.fonteFinal = new ArrayList<>();
+        this.javadocDeClasse = new ArrayList<>();
         processar();
     }
 
     private void processar() {
+        boolean javadoc = false;
         final String[] linhas = fonte.split("\n");
 
         for (int i = 0; i < linhas.length; i += 1) {
+            if (javadoc && !linhas[i].contains("*/")) {
+                javadocDeClasse.add(linhas[i].replace(" *", ""));
+            }
+            if (linhas[i].startsWith("/**")) {
+                javadoc = true;
+            }
+            if (javadoc && linhas[i].contains("*/")) {
+                javadoc = false;
+            }
+
             if(isLixo(linhas[i])){
                 continue;
             }
@@ -68,6 +81,12 @@ public class ProcessadorCondigoFonte {
     public String getFonteProcessado() {
         StringBuilder sb = new StringBuilder();
         fonteFinal.forEach(s -> sb.append(s).append("\n"));
+        return sb.toString();
+    }
+
+    public String getJavadoc() {
+        StringBuilder sb = new StringBuilder();
+        javadocDeClasse.forEach(s -> sb.append(s).append("\n"));
         return sb.toString();
     }
 

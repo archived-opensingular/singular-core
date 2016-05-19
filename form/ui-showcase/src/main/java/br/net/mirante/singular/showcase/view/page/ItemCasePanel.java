@@ -5,22 +5,19 @@
 
 package br.net.mirante.singular.showcase.view.page;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.internal.xml.MElement;
-import br.net.mirante.singular.form.wicket.component.BFModalBorder;
-import br.net.mirante.singular.form.wicket.component.SingularForm;
-import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
-import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.showcase.component.CaseBase;
-import br.net.mirante.singular.showcase.component.ResourceRef;
-import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.util.wicket.output.BOutputPanel;
-import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -34,17 +31,23 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.lang.Bytes;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.wicket.component.BFModalBorder;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
+import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.form.wicket.util.ProcessadorCondigoFonte;
+import br.net.mirante.singular.showcase.component.CaseBase;
+import br.net.mirante.singular.showcase.component.ResourceRef;
+import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
 
 public class ItemCasePanel extends Panel implements SingularWicketContainer<ItemCasePanel, Void> {
@@ -89,7 +92,10 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     private WebMarkupContainer buildHeaderText() {
 
         WebMarkupContainer headerContainer = new WebMarkupContainer("header");
-        String description = caseBase.getObject().getDescriptionHtml().orElse("");
+        final Optional<ResourceRef> mainSource = caseBase.getObject().getMainSourceResourceName();
+        final ProcessadorCondigoFonte pcf = new ProcessadorCondigoFonte(mainSource.get().getContent());
+        String description = caseBase.getObject().getDescriptionHtml()
+                .orElse(pcf.getJavadoc());
 
         headerContainer.add(new Label("description", $m.ofValue(description)).setEscapeModelStrings(false));
         headerContainer.setVisible(!description.isEmpty());
