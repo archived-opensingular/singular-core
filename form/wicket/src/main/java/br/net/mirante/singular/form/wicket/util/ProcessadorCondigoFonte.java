@@ -27,32 +27,41 @@ public class ProcessadorCondigoFonte {
 
     private void processar() {
         boolean javadoc = false;
+        boolean classeIniciada = false;
         final String[] linhas = fonte.split("\n");
 
         for (int i = 0; i < linhas.length; i += 1) {
-            if (javadoc && !linhas[i].contains("*/")) {
-                javadocDeClasse.add(linhas[i].replace(" *", ""));
-            }
-            if (linhas[i].startsWith("/**")) {
-                javadoc = true;
-            }
-            if (javadoc && linhas[i].contains("*/")) {
-                javadoc = false;
+            final String linha = linhas[i];
+
+            if (!classeIniciada) {
+                if (javadoc && !linha.contains("*/")) {
+                    javadocDeClasse.add(linha.replace(" *", ""));
+                }
+                if (linha.startsWith("/**")) {
+                    javadoc = true;
+                }
+                if (javadoc && linha.contains("*/")) {
+                    javadoc = false;
+                }
+
+                if (linha.contains("public class ")) {
+                    classeIniciada = true;
+                }
             }
 
-            if(isLixo(linhas[i])){
+            if(isLixo(linha) || javadoc){
                 continue;
             }
-            if (isBloco(linhas[i])) {
+            if (isBloco(linha)) {
                 while (!isFimBloco(linhas[++i])) {
-                    fonteFinal.add(linhas[i]);
+                    fonteFinal.add(linha);
                     linhasParaDestacar.add(fonteFinal.size());
                 }
-            } else if (isLinha(linhas[i])) {
+            } else if (isLinha(linha)) {
                 fonteFinal.add(linhas[++i]);
                 linhasParaDestacar.add(fonteFinal.size());
             } else {
-                fonteFinal.add(linhas[i]);
+                fonteFinal.add(linha);
             }
         }
     }
