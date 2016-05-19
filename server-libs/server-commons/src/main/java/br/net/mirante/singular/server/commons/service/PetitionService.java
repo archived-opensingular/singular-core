@@ -11,8 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.form.service.IPersistenceService;
-import br.net.mirante.singular.form.service.dto.FormDTO;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.service.FormDTO;
+import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
@@ -31,7 +32,7 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     private GrupoProcessoDAO grupoProcessoDAO;
 
     @Inject
-    private IPersistenceService formPersistenceService;
+    private IFormService formPersistenceService;
 
     public void delete(PeticaoDTO peticao) {
         petitionDAO.delete(petitionDAO.find(peticao.getCod()));
@@ -57,21 +58,25 @@ public class PetitionService<T extends AbstractPetitionEntity> {
         return petitionDAO.quickSearch(filtro, siglasProcesso);
     }
 
-    public void saveOrUpdate(T peticao, FormDTO form) {
-        formPersistenceService.saveOrUpdate(form);
-        peticao.setCodForm(form.getCod());
+    public void saveOrUpdate(T peticao, FormDTO form, SInstance instance) {
+        if(instance != null){
+            formPersistenceService.saveOrUpdateForm(form, instance);
+            peticao.setCodForm(form.getCod());
+        } else {
+            peticao.setCodForm(null);
+        }
         
         petitionDAO.saveOrUpdate(peticao);
     }
 
-    public void send(T peticao, FormDTO form) {
+    public void send(T peticao, FormDTO form, SInstance instance) {
         ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(peticao.getProcessType());
         ProcessInstance processInstance = processDefinition.newInstance();
         processInstance.setDescription(peticao.getDescription());
         
         ProcessInstanceEntity processEntity = processInstance.saveEntity();
         peticao.setProcessInstanceEntity(processEntity);
-        saveOrUpdate(peticao, form);
+        saveOrUpdate(peticao, form, instance);
         
         processInstance.start();
     }

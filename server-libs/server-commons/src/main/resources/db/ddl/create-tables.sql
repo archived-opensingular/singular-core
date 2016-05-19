@@ -263,7 +263,6 @@ CREATE TABLE DBSINGULAR.TB_PETICAO (
    TP_PROCESSO_PETICAO  VARCHAR(300)         NOT NULL,
    NO_PROCESSO          VARCHAR(300)         NULL,
    CO_FORMULARIO        BIGINT         NULL,
-   DS_XML_ANOTACAO      CLOB         NULL,
    DS_PETICAO           VARCHAR(300)         NOT NULL,
    DT_CRIACAO           DATETIME         NOT NULL,
    DT_EDICAO           DATETIME         NULL,
@@ -273,11 +272,12 @@ CREATE TABLE DBSINGULAR.TB_PETICAO (
    CONSTRAINT PK_PETICAO PRIMARY KEY (CO_PETICAO)
 );
 /*==============================================================*/
-/* Table: TB_PETICAO                                            */
+/* Table: TB_FORMULARIO                                            */
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_FORMULARIO (
    CO_FORMULARIO        BIGINT       NOT NULL,
    DS_XML               CLOB         NOT NULL,
+   DS_XML_ANOTACAO      CLOB         NOT NULL,
    CONSTRAINT PK_FORMULARIO PRIMARY KEY (CO_FORMULARIO)
 );
 CREATE SEQUENCE DBSINGULAR.SQ_CO_FORMULARIO  START WITH 1 INCREMENT BY 1;

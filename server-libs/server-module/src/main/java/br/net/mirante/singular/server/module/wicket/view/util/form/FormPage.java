@@ -10,6 +10,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -23,27 +24,31 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.internal.xml.MElement;
-import br.net.mirante.singular.form.service.IPersistenceService;
-import br.net.mirante.singular.form.service.dto.FormDTO;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.service.FormDTO;
+import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.flow.metadata.ServerContextMetaData;
 import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 
 @SuppressWarnings("serial")
 @MountPath("/view")
 public class FormPage extends AbstractFormPage {
 
     private IModel<Petition> currentModel;
-
-    private IModel<FormDTO> formModel;
+    
+    private final IModel<FormDTO> formModel = $m.ofValue();
 
     @Inject
     private PetitionService petitionService;
@@ -52,7 +57,7 @@ public class FormPage extends AbstractFormPage {
     private AnalisePeticaoService analisePeticaoService;
 
     @Inject
-    private IPersistenceService formPersistenceService;
+    private IFormService formService;
     
     @Inject
     @Named("formConfigWithDatabase")
@@ -69,20 +74,18 @@ public class FormPage extends AbstractFormPage {
         super(config);
     }
 
-
     @SuppressWarnings("unchecked")
-    @Override
-    protected List<MTransition> currentTaskTransitions(String petitionId) {
+    protected List<MTransition> currentTaskTransitions() {
         return Optional
-                .ofNullable(Flow.getTaskInstance(analisePeticaoService.findCurrentTaskByPetitionId(petitionId)))
+                .ofNullable(Flow.getTaskInstance(analisePeticaoService.findCurrentTaskByPetitionId(config.formId)))
                 .map(TaskInstance::getFlowTask)
                 .map(MTask::getTransitions)
                 .orElse(Collections.EMPTY_LIST);
     }
 
     @Override
-    protected void executeTransition(String transitionName, IModel<?> currentInstance) {
-        analisePeticaoService.salvarExecutarTransicao(transitionName, currentModel.getObject(), formModel.getObject());
+    protected void executeTransition(String transitionName, IModel<? extends SInstance> currentInstance) {
+        analisePeticaoService.salvarExecutarTransicao(transitionName, currentModel.getObject(), formModel.getObject(), currentInstance.getObject());
     }
 
     @Override
@@ -97,28 +100,23 @@ public class FormPage extends AbstractFormPage {
 
     @Override
     protected IModel<?> getContentSubtitleModel() {
-        return new Model<String>() {
-            @Override
-            public String getObject() {
-                if (getIdentifier() == null) {
-                    return new ResourceModel("label.form.content.title", "Nova Solicitação").getObject();
-                } else {
-                    return currentModel.getObject().getDescription();
-                }
+        return $m.get(()-> {
+            if (getIdentifier() == null) {
+                return new ResourceModel("label.form.content.title", "Nova Solicitação").getObject();
+            } else {
+                return currentModel.getObject().getDescription();
             }
-        };
+        });
     }
 
-    @Override
-    protected String getFormXML() {
-        return formModel.getObject().getXml();
+    protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
+        if (formModel.getObject() == null || formModel.getObject().getCod() == null) {
+            return documentFactory.createInstance(refType);
+        } else {
+            return formService.loadFormInstance(formModel.getObject().getCod(), refType, documentFactory);
+        }
     }
-
-    @Override
-    protected void setFormXML(String xml) {
-        formModel.getObject().setXml(xml);
-    }
-
+    
     @Override
     protected ProcessInstanceEntity getProcessInstance() {
         return currentModel.getObject().getProcessInstanceEntity();
@@ -132,13 +130,13 @@ public class FormPage extends AbstractFormPage {
     @SuppressWarnings("unchecked")
     @Override
     protected void saveForm(IModel<? extends SInstance> currentInstance) {
-        petitionService.saveOrUpdate(updateDescription(currentInstance), formModel.getObject());
+        petitionService.saveOrUpdate(updateDescription(currentInstance), formModel.getObject(), currentInstance.getObject());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void send(IModel<? extends SInstance> currentInstance, MElement xml) {
-        petitionService.send(updateDescription(currentInstance), formModel.getObject());
+    protected void send(IModel<? extends SInstance> currentInstance) {
+        petitionService.send(updateDescription(currentInstance), formModel.getObject(), currentInstance.getObject());
     }
 
     private Petition updateDescription(IModel<? extends SInstance> currentInstance){
@@ -149,7 +147,6 @@ public class FormPage extends AbstractFormPage {
         return petition;
     }
 
-    @Override
     protected void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode) {
         Petition peticao;
         FormDTO formDTO = null;
@@ -168,17 +165,36 @@ public class FormPage extends AbstractFormPage {
         } else {
             peticao = (Petition) petitionService.find(Long.valueOf(formId));
             if(peticao.getCodForm() != null){
-                formDTO = formPersistenceService.find(peticao.getCodForm());
+                formDTO = formService.findForm(peticao.getCodForm());
             }
         }
         if(formDTO == null){
             formDTO = new FormDTO();
         }
 
-        formModel = $m.ofValue(formDTO);
+        formModel.setObject(formDTO);
         currentModel = $m.ofValue(peticao);
     }
 
+    @Override
+    protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
+        List<MTransition> trans = currentTaskTransitions();
+        if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDITION.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
+            int index = 0;
+            for (MTransition t : trans) {
+                if (t.getMetaDataValue(ServerContextMetaData.KEY) != null && t.getMetaDataValue(ServerContextMetaData.KEY).isEnabledOn(SingularSession.get().getServerContext())) {
+                    String btnId = "flow-btn" + index;
+                    buildFlowTransitionButton(
+                            btnId, buttonContainer,
+                            modalContainer,  t.getName(),
+                            currentInstance, viewMode);
+                }
+            }
+        } else {
+            buttonContainer.setVisible(false).setEnabled(false);
+        }
+    }
+    
     private String recuperarNomeProcesso(String typeName) {
         STypeComposite<?> canabidiol = (STypeComposite<?>) singularFormConfig
                 .getTypeLoader().loadType(typeName).orElseThrow(() -> new SingularServerException("Não foi possivel carregar o tipo"));
@@ -188,16 +204,6 @@ public class FormPage extends AbstractFormPage {
     @Override
     protected IModel<? extends Petition> getFormModel() {
         return currentModel;
-    }
-
-    @Override
-    protected String getAnnotationsXML(IModel<?> model) {
-        return currentModel.getObject().getAnnotations();
-    }
-
-    @Override
-    protected void setAnnotationsXML(IModel<?> model, String xml) {
-        currentModel.getObject().setAnnotations(xml);
     }
 
     @Override

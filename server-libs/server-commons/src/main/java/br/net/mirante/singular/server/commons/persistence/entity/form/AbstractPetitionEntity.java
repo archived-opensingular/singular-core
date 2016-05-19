@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
@@ -41,10 +40,6 @@ public class AbstractPetitionEntity extends BaseEntity<Long> {
     @Column(name = "CO_FORMULARIO")
     private Long codForm;
     
-    @Lob
-    @Column(name = "DS_XML_ANOTACAO")
-    private String annotations;
-
     @Column(name = "DS_PETICAO")
     private String description;
 
@@ -71,14 +66,6 @@ public class AbstractPetitionEntity extends BaseEntity<Long> {
 
     public void setCod(Long cod) {
         this.cod = cod;
-    }
-
-    public String getAnnotations() {
-        return annotations;
-    }
-
-    public void setAnnotations(String annotations) {
-        this.annotations = annotations;
     }
 
     public String getType() {

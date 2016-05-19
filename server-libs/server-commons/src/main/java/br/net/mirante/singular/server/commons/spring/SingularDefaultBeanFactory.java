@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Bean;
 import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.persistence.dao.FormDAO;
-import br.net.mirante.singular.form.persistence.service.PersistenceService;
-import br.net.mirante.singular.form.service.IPersistenceService;
+import br.net.mirante.singular.form.service.FormService;
+import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
@@ -63,8 +63,8 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public IPersistenceService formPersistenceService() {
-        return new PersistenceService();
+    public IFormService formService() {
+        return new FormService();
     }
 
     @Bean

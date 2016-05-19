@@ -9,7 +9,8 @@ import javax.transaction.Transactional;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.form.service.dto.FormDTO;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.service.FormDTO;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
@@ -51,10 +52,10 @@ public class AnalisePeticaoService<T extends TaskInstanceDTO> {
     }
 
     @SuppressWarnings("unchecked")
-    public void salvarExecutarTransicao(String transitionName, Petition peticao, FormDTO form) {
+    public void salvarExecutarTransicao(String transitionName, Petition peticao, FormDTO form, SInstance instance) {
         try {
             
-            petitionService.saveOrUpdate(peticao, form);
+            petitionService.saveOrUpdate(peticao, form, instance);
             
             final Class<? extends ProcessDefinition> clazz = Flow.getProcessDefinitionWith(peticao.getProcessType()).getClass();
             ProcessInstance pi = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());

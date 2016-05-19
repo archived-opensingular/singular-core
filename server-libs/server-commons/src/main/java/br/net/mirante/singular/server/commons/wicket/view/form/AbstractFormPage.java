@@ -1,8 +1,8 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -13,10 +13,9 @@ import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.internal.xml.MElement;
-import br.net.mirante.singular.form.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
@@ -35,7 +34,7 @@ public abstract class AbstractFormPage extends Template {
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFormPage.class);
 
-    protected FormPageConfig config;
+    protected final FormPageConfig config;
     protected AbstractFormContent content;
 
     public AbstractFormPage(FormPageConfig config) {
@@ -47,6 +46,13 @@ public abstract class AbstractFormPage extends Template {
         return false;
     }
 
+    @Override
+    protected void onInitialize() {
+        
+        loadOrCreateFormModel(config.formId, config.type, config.viewMode, config.annotationMode);
+        
+        super.onInitialize();
+    }
 
     @Override
     protected Content getContent(String id) {
@@ -57,8 +63,13 @@ public abstract class AbstractFormPage extends Template {
             throw new RedirectToUrlException(urlServidorSingular);
         }
 
-        content = new AbstractFormContent(id, config.type, config.formId, config.viewMode, config.annotationMode) {
+        content = new AbstractFormContent(id, config.type, config.viewMode, config.annotationMode) {
 
+            @Override
+            protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
+                return AbstractFormPage.this.createInstance(documentFactory, refType);
+            }
+            
             @Override
             protected IModel<?> getContentTitleModel() {
                 return AbstractFormPage.this.getContentTitleModel();
@@ -68,30 +79,14 @@ public abstract class AbstractFormPage extends Template {
             protected IModel<?> getContentSubtitleModel() {
                 return AbstractFormPage.this.getContentSubtitleModel();
             }
-
             @Override
-            protected void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
-                AbstractFormPage.this.buildFlowTransitionButton(buttonId, buttonContainer, modalContainer, transitionName, instanceModel, viewMode);
+            protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
+                AbstractFormPage.this.configureCustomButtons(buttonContainer, modalContainer, viewMode, annotationMode, currentInstance);
             }
-
+            
             @Override
-            protected List<MTransition> currentTaskTransitions(String formId) {
-                return AbstractFormPage.this.currentTaskTransitions(formId);
-            }
-
-            @Override
-            protected BSModalBorder buildConfirmationModal(BSContainer modalContainer, IModel<? extends SInstance> instanceModel) {
+            protected BSModalBorder buildConfirmationModal(BSContainer<?> modalContainer, IModel<? extends SInstance> instanceModel) {
                 return AbstractFormPage.this.buildConfirmationModal(modalContainer, instanceModel);
-            }
-
-            @Override
-            protected String getFormXML() {
-                return AbstractFormPage.this.getFormXML();
-            }
-
-            @Override
-            protected void setFormXML(String xml) {
-                AbstractFormPage.this.setFormXML(xml);
             }
 
             @Override
@@ -99,10 +94,10 @@ public abstract class AbstractFormPage extends Template {
                 return AbstractFormPage.this.getProcessInstance();
             }
 
-            @Override
-            protected void setProcessInstance(ProcessInstanceEntity pie) {
-                AbstractFormPage.this.setProcessInstance(pie);
-            }
+//            @Override
+//            protected void setProcessInstance(ProcessInstanceEntity pie) {
+//                AbstractFormPage.this.setProcessInstance(pie);
+//            }
 
             @Override
             protected void saveForm(IModel<? extends SInstance> currentInstance) {
@@ -110,28 +105,8 @@ public abstract class AbstractFormPage extends Template {
             }
 
             @Override
-            protected void send(IModel<? extends SInstance> currentInstance, MElement xml) {
-                AbstractFormPage.this.send(currentInstance, xml);
-            }
-
-            @Override
-            protected void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode) {
-                AbstractFormPage.this.loadOrCreateFormModel(formId, type, viewMode, annotationMode);
-            }
-
-            @Override
             protected IModel<? extends AbstractPetitionEntity> getFormModel() {
                 return AbstractFormPage.this.getFormModel();
-            }
-
-            @Override
-            protected String getAnnotationsXML(IModel<?> model) {
-                return AbstractFormPage.this.getAnnotationsXML(model);
-            }
-
-            @Override
-            protected void setAnnotationsXML(IModel<?> model, String xml) {
-                AbstractFormPage.this.setAnnotationsXML(model, xml);
             }
 
             @Override
@@ -144,25 +119,28 @@ public abstract class AbstractFormPage extends Template {
                 return AbstractFormPage.this.getIdentifier();
             }
         };
-
+        
         return content;
     }
 
-    protected void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
+    protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
+        
+    }
+    
+    protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
+        return documentFactory.createInstance(refType);
+    }
+    
+    protected void buildFlowTransitionButton(String buttonId, BSContainer<?> buttonContainer, BSContainer<?> modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
         BSModalBorder modal = buildFlowConfirmationModal(buttonId, modalContainer, transitionName, instanceModel, viewMode);
         buildFlowButton(buttonId, buttonContainer, transitionName, instanceModel, modal);
     }
 
-    private void buildFlowButton(String buttonId, BSContainer buttonContainer, String transitionName, IModel<? extends SInstance> instanceModel, BSModalBorder confirmarAcaoFlowModal) {
+    private void buildFlowButton(String buttonId, BSContainer<?> buttonContainer, String transitionName, IModel<? extends SInstance> instanceModel, BSModalBorder confirmarAcaoFlowModal) {
         TemplatePanel tp = buttonContainer
                 .newTemplateTag(
                         tt -> "<button  type='submit' class='btn purple' wicket:id='" + buttonId + "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n");
-        SingularButton singularButton = new SingularButton(buttonId) {
-
-            @Override
-            public IModel<? extends SInstance> getCurrentInstance() {
-                return instanceModel;
-            }
+        SingularButton singularButton = new SingularButton(buttonId, content.getFormInstance()) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -173,7 +151,7 @@ public abstract class AbstractFormPage extends Template {
         tp.add(singularButton);
     }
 
-    private BSModalBorder buildFlowConfirmationModal(String buttonId, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
+    private BSModalBorder buildFlowConfirmationModal(String buttonId, BSContainer<?> modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
         TemplatePanel tpModal = modalContainer.newTemplateTag(tt ->
                 "<div wicket:id='flow-modal" + buttonId + "' class='portlet-body form'>\n"
                         + "<div wicket:id='flow-msg'/>\n"
@@ -188,21 +166,10 @@ public abstract class AbstractFormPage extends Template {
                     }
                 });
 
-        confirmarAcaoFlowModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn", ViewMode.EDITION.equals(viewMode)) {
-            @Override
-            public IModel<? extends SInstance> getCurrentInstance() {
-                return instanceModel;
-            }
-
-            @Override
-            protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
+        confirmarAcaoFlowModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel, ViewMode.EDITION.equals(viewMode)) {
+            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance>  instanceModel){
                 try{
-                    setFormXML(xml.toStringExato());
-                    if (AbstractFormPage.this.config.annotationMode.editable()) {
-                        Optional<String> xmlAnnotation = MformPersistenciaXML.annotationToXmlString(getCurrentInstance().getObject());
-                        setAnnotationsXML(getFormModel(), xmlAnnotation.orElse(null));
-                    }
-                    AbstractFormPage.this.executeTransition(transitionName, getFormModel());
+                    AbstractFormPage.this.executeTransition(transitionName, instanceModel);
                     target.appendJavaScript("Singular.atualizarContentWorklist();");
                     addToastrSuccessMessageWorklist("message.action.success", transitionName);
                     target.appendJavaScript("window.close();");
@@ -226,7 +193,7 @@ public abstract class AbstractFormPage extends Template {
         target.appendJavaScript("Singular.atualizarContentWorklist();");
     }
 
-    protected BSModalBorder buildConfirmationModal(BSContainer modalContainer, IModel<? extends SInstance> instanceModel) {
+    protected BSModalBorder buildConfirmationModal(BSContainer<?> modalContainer, IModel<? extends SInstance> instanceModel) {
         TemplatePanel tpModal = modalContainer.newTemplateTag(tt ->
                 "<div wicket:id='send-modal' class='portlet-body form'>\n"
                         + "<wicket:message key=\"label.confirm.message\"/>\n"
@@ -239,17 +206,9 @@ public abstract class AbstractFormPage extends Template {
                         enviarModal.hide(target);
                     }
                 })
-                .addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn") {
-                    @Override
-                    public IModel<? extends SInstance> getCurrentInstance() {
-                        return instanceModel;
-                    }
-
-                    @Override
-                    protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                        setFormXML(xml.toStringExato());
-                        getCurrentInstance().getObject().getDocument().persistFiles();
-                        AbstractFormPage.this.send(getCurrentInstance(), xml);
+                .addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel) {
+                    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance>  instanceModel){
+                        AbstractFormPage.this.send(instanceModel);
                         atualizarContentWorklist(target);
                         if (getIdentifier() == null) {
                             addToastrSuccessMessageWorklist("message.send.success", URL_PATH_ACOMPANHAMENTO);
@@ -270,17 +229,9 @@ public abstract class AbstractFormPage extends Template {
         return enviarModal;
     }
 
-    protected abstract List<MTransition> currentTaskTransitions(String petitionId);
-
-    protected abstract void executeTransition(String transitionName, IModel<?> currentInstance);
-
-    protected abstract IModel<?> getContentTitleModel();
+    protected abstract void executeTransition(String transitionName, IModel<? extends SInstance> currentInstance);
 
     protected abstract IModel<?> getContentSubtitleModel();
-
-    protected abstract String getFormXML();
-
-    protected abstract void setFormXML(String xml);
 
     protected abstract ProcessInstanceEntity getProcessInstance();
 
@@ -288,19 +239,19 @@ public abstract class AbstractFormPage extends Template {
 
     protected abstract void saveForm(IModel<? extends SInstance> currentInstance);
 
-    protected abstract void send(IModel<? extends SInstance> currentInstance, MElement xml);
-
-    protected abstract void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode);
+    protected abstract void send(IModel<? extends SInstance> currentInstance);
 
     protected abstract IModel<? extends AbstractPetitionEntity> getFormModel();
-
-    protected abstract String getAnnotationsXML(IModel<?> model);
-
-    protected abstract void setAnnotationsXML(IModel<?> model, String xml);
 
     protected abstract boolean hasProcess();
 
     protected abstract String getIdentifier();
+    
+    protected abstract void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode);
+    
+    protected IModel<?> getContentTitleModel() {
+        return $m.get(()->content.getSingularFormPanel().getRootTypeSubtitle());
+    }
 
     public static class FormPageConfig implements Serializable {
 
