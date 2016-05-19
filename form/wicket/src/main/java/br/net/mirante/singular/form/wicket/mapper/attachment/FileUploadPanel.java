@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.panel.SUploadProgressBar;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.extensions.ajax.markup.html.form.upload.UploadProgressBar;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -193,7 +195,21 @@ public class FileUploadPanel extends Panel {
         this.viewMode = viewMode;
         uploadField.setModel(new WrapperAwareModel(model));
         fileDummyField = buildFileDummyField("fileDummyField");
-        add(uploadField, panelWrapper.add(chooseFieldButton, removeFileButton, fileDummyField.add(buildAttachmentShadow(), downloadLink.add(fileName))));
+        add(uploadField,
+            panelWrapper.add(
+                chooseFieldButton,
+                removeFileButton,
+                fileDummyField.add(buildAttachmentShadow(),
+                    downloadLink.add(fileName))
+            )
+        );
+        panelWrapper.queue(new SUploadProgressBar("progress", uploadField){
+            @Override
+            protected Form<?> getForm() {
+                return uploadField.getForm();
+            }
+        });
+        getApplication().getApplicationSettings().setUploadProgressUpdatesEnabled(true);
     }
 
     public WebMarkupContainer buildAttachmentShadow() {
