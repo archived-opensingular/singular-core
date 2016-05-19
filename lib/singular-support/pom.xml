@@ -38,7 +38,7 @@
 
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>wicket-utils</artifactId>
+            <artifactId>singular-commons</artifactId>
             <version>0.6.3-SNAPSHOT</version>
         </dependency>
 

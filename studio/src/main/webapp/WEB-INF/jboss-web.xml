@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jboss-web>
-    <context-root>/studio</context-root>
-    <session-config>
-        <cookie-config>
-            <path>/studio</path>
-        </cookie-config>
-    </session-config>
-</jboss-web>
