@@ -5,16 +5,22 @@
 
     <parent>
         <groupId>br.net.mirante</groupId>
-        <artifactId>singular</artifactId>
+        <artifactId>singular-studio</artifactId>
         <version>0.6.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>singular-studio</artifactId>
-    <name>[singular :: studio]</name>
-    <packaging>war</packaging>
+    <artifactId>studio-core</artifactId>
+    <name>[singular :: studio :: core]</name>
+    <packaging>jar</packaging>
 
-    <modules>
-        <module>core</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>singular-form</artifactId>
+            <version>0.6.3-SNAPSHOT</version>
+        </dependency>
+
+
+    </dependencies>
 
 </project>
