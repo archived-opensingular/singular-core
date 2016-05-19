@@ -5,23 +5,16 @@
 
 package br.net.mirante.singular.bam.wicket.view.component;
 
-import br.net.mirante.singular.bam.form.FilterPackageFactory;
-import br.net.mirante.singular.bam.service.FlowMetadataFacade;
-import br.net.mirante.singular.bam.wicket.UIAdminSession;
-import br.net.mirante.singular.bamclient.portlet.PortletConfig;
-import br.net.mirante.singular.bamclient.portlet.PortletContext;
-import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
-import br.net.mirante.singular.flow.core.authorization.AccessLevel;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.internal.xml.MElement;
-import br.net.mirante.singular.form.wicket.component.SingularForm;
-import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
-import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import static br.net.mirante.singular.bam.form.FilterPackageFactory.ROOT;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -37,14 +30,24 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.json.JSONObject;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-import static br.net.mirante.singular.bam.form.FilterPackageFactory.ROOT;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import br.net.mirante.singular.bam.form.FilterPackageFactory;
+import br.net.mirante.singular.bam.service.FlowMetadataFacade;
+import br.net.mirante.singular.bam.wicket.UIAdminSession;
+import br.net.mirante.singular.bamclient.portlet.PortletConfig;
+import br.net.mirante.singular.bamclient.portlet.PortletContext;
+import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
+import br.net.mirante.singular.flow.core.authorization.AccessLevel;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class PortletPanel<C extends PortletConfig> extends Panel {
 
@@ -142,9 +145,10 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             }
         };
 
-        final SingularSaveButton saveButton = new SingularSaveButton("filterButton") {
-            @Override
-            protected void handleSaveXML(AjaxRequestTarget target, MElement element) {
+        final SingularSaveButton saveButton = new SingularSaveButton("filterButton", panel.getRootInstance()) {
+            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
+                IModel<? extends SInstance> instanceModel) {
+                MElement element = MformPersistenciaXML.toXML(instanceModel.getObject());
                 if (element != null) {
                     final String jsonSource = element.toJSONString();
                     final Optional<JSONObject> filtro = Optional.ofNullable(new JSONObject(jsonSource).getJSONObject(ROOT));
@@ -162,10 +166,6 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
                 modalBorder.show(target);
             }
 
-            @Override
-            public IModel<? extends SInstance> getCurrentInstance() {
-                return panel.getRootInstance();
-            }
         };
         saveButton.add($b.attr("value", getString("label.filter")));
         modalBorder.addButton(BSModalBorder.ButtonStyle.PRIMARY, Model.of(getString("label.filter")), saveButton);

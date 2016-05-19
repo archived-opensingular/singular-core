@@ -36,6 +36,10 @@ public class FormEntity extends BaseEntity<Long> {
     @Column(name = "DS_XML")
     private String xml;
     
+    @Lob
+    @Column(name = "DS_XML_ANOTACAO")
+    private String xmlAnnotations;
+    
     public Long getCod() {
         return cod;
     }
@@ -52,5 +56,12 @@ public class FormEntity extends BaseEntity<Long> {
         this.xml = xml;
     }
 
-    
+    public String getXmlAnnotations() {
+        return xmlAnnotations;
+    }
+
+    public void setXmlAnnotations(String xmlAnnotations) {
+        this.xmlAnnotations = xmlAnnotations;
+    }
+
 }

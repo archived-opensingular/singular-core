@@ -42,7 +42,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
     /**
      * Instancia root do pacote
      */
-    private MInstanceRootModel<? extends SInstance> rootInstance;
+    private final MInstanceRootModel<SInstance> rootInstance;
 
     /**
      * ViewMode, por padrão é de edição
@@ -69,6 +69,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
      */
     public SingularFormPanel(String id, SFormConfig<KEY> singularFormConfig) {
         super(id);
+        this.rootInstance = new MInstanceRootModel<>();
         this.singularFormConfig = Objects.requireNonNull(singularFormConfig);
         this.documentFactoryRef = singularFormConfig.getDocumentFactory().getDocumentFactoryRef();
     }
@@ -113,7 +114,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
     protected void onInitialize() {
         super.onInitialize();
         SInstance instance = createInstance(singularFormConfig);
-        rootInstance = new MInstanceRootModel<>(instance);
+        rootInstance.setObject(instance);
         updateContainer();
         add(buildFeedbackPanel());
     }
@@ -163,7 +164,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
         return getServiceRegistry().lookupService(SingularFormContextWicket.class);
     }
 
-    public IModel<? extends SInstance> getRootInstance() {
+    public final IModel<? extends SInstance> getRootInstance() {
         return rootInstance;
     }
 

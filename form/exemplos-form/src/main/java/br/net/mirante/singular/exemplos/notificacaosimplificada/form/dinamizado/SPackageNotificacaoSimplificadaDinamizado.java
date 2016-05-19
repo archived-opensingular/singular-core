@@ -5,6 +5,18 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
@@ -12,7 +24,15 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.exemplos.util.PairConverter;
 import br.net.mirante.singular.exemplos.util.TripleConverter;
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.STypeAttachmentList;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.provider.Config;
 import br.net.mirante.singular.form.provider.FilteredPagedProvider;
@@ -26,17 +46,6 @@ import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.view.SViewListByTable;
 import br.net.mirante.singular.form.view.SViewSearchModal;
 import br.net.mirante.singular.form.view.SViewTextArea;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
