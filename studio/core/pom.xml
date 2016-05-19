@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>singular-form</artifactId>
+            <artifactId>form-core</artifactId>
             <version>0.6.3-SNAPSHOT</version>
         </dependency>
 
