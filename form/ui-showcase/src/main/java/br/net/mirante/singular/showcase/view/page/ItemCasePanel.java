@@ -24,7 +24,7 @@ import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ResourceRef;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
-public class ItemCasePanel extends Panel {
+public abstract class ItemCasePanel extends Panel {
 
     private static final long serialVersionUID = 3200319871613673285L;
 
@@ -71,7 +71,7 @@ public class ItemCasePanel extends Panel {
 
         for (ResourceRef rr : sources) {
             bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(
-                    BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent()), $m.ofValue(rr.getExtension())));
+                    BSTabPanel.TAB_PANEL_ID, $m.ofValue(rr.getContent()), $m.ofValue(rr.getExtension())));
         }
 
         return bsTabPanel;

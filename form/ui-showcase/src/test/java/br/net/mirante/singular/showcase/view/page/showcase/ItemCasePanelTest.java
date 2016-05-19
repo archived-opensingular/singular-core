@@ -19,6 +19,7 @@ import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.showcase.SpringWicketTester;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreInteger;
+import br.net.mirante.singular.showcase.view.page.FormItemCasePanel;
 import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
 
 /**
@@ -44,14 +45,14 @@ public class ItemCasePanelTest {
 
     @Test
     public void testRendering() {
-        ItemCasePanel icp = new ItemCasePanel("icp", $m.ofValue(cb));
+        ItemCasePanel icp = new FormItemCasePanel("icp", $m.ofValue(cb));
         assertNotNull(icp);
     }
 
     @Test
     public void testeSaveForm() {
         final WicketTester wt = springWicketTester.wt();
-        ItemCasePanel icp = new ItemCasePanel("icp", $m.ofValue(cb));
+        ItemCasePanel icp = new FormItemCasePanel("icp", $m.ofValue(cb));
         wt.startComponentInPage(icp);
         FormTester formTester = wt.newFormTester("icp:form");
         assertNotNull(formTester);

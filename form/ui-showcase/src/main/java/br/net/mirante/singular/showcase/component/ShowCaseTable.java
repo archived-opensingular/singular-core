@@ -8,11 +8,13 @@ package br.net.mirante.singular.showcase.component;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
+
+import org.apache.wicket.util.string.StringValue;
 
 import com.google.common.base.Throwables;
 
@@ -73,16 +75,18 @@ import br.net.mirante.singular.showcase.component.form.validation.CaseValidation
 import br.net.mirante.singular.showcase.component.form.validation.CaseValidationCustom;
 import br.net.mirante.singular.showcase.component.form.validation.CaseValidationPartial;
 import br.net.mirante.singular.showcase.component.form.validation.CaseValidationRequired;
+import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public class ShowCaseTable {
 
-    private final Map<String, ShowCaseGroup> groups = new LinkedHashMap<>();
+    private final Map<String, ShowCaseGroup> formGroups = new LinkedHashMap<>();
+    private final Map<String, ShowCaseGroup> studioGroups = new LinkedHashMap<>();
 
     public ShowCaseTable() {
 
         // @formatter:off
-        group("Input", Icone.PUZZLE)
+        addGroup("Input", Icone.PUZZLE, ListPage.Tipo.FORM)
             .addCase(CaseInputCoreDate.class)
             .addCase(CaseInputCoreYearMonth.class)
             .addCase(CaseInputCoreInteger.class)
@@ -108,11 +112,11 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreMoney.class)
             .addCase(CaseInputCoreDateTime.class)
         ;
-        group("File", Icone.FOLDER)
+        addGroup("File", Icone.FOLDER, ListPage.Tipo.FORM)
             .addCase(CaseFileAttachment.class)
             .addCase(CaseFileMultipleAttachments.class)
         ;
-        group("Layout", Icone.GRID)
+        addGroup("Layout", Icone.GRID, ListPage.Tipo.FORM)
             .addCase(CaseSimpleGrid.class)
             .addCase(CaseFineTunningGrid.class)
             .addCase(CaseListByFormDefault.class)
@@ -130,12 +134,12 @@ public class ShowCaseTable {
             .addCase(CaseRowControlGrid.class)
             .addCase(CaseTabs.class)
         ;
-        group("Validation", Icone.BAN)
+        addGroup("Validation", Icone.BAN, ListPage.Tipo.FORM)
             .addCase(CaseValidationRequired.class)
             .addCase(CaseValidationCustom.class)
             .addCase(CaseValidationBetweenFields.class)
             .addCase(CaseValidationPartial.class);
-        group("Interaction", Icone.ROCKET)
+        addGroup("Interaction", Icone.ROCKET, ListPage.Tipo.FORM)
             .addCase(CaseInteractionExists.class)
             .addCase(CaseInteractionEnabled.class)
             .addCase(CaseInteractionVisible.class)
@@ -144,54 +148,74 @@ public class ShowCaseTable {
             .addCase(CaseInitListener.class)
             .addCase(CaseUpdateListener.class)
         ;
-        group("Custom", Icone.WRENCH)
+        addGroup("Custom", Icone.WRENCH, ListPage.Tipo.FORM)
                 .addCase(CaseCustomStringMapper.class)
                 .addCase(CaseCustonRangeMapper.class)
                 .addCase(CaseAnnotation.class)
         ;
-        group("Maps", Icone.MAP)
+        addGroup("Maps", Icone.MAP, ListPage.Tipo.FORM)
                 .addCase(CaseGoogleMaps.class)
+        ;
+
+        addGroup("Input", Icone.PUZZLE, ListPage.Tipo.STUDIO)
+                .addCase(CaseInputCoreDate.class)
         ;
         //@formatter:on
     }
 
     public ShowCaseItem findCaseItemByComponentName(String name) {
-        final ShowCaseItem[] showCaseItem = new ShowCaseItem[1];
-        getGroups().stream().forEach(i -> {
-            Optional<ShowCaseItem> op = i.getItens().stream()
+        return getGroups().stream()
+                .map(ShowCaseGroup::getItens)
+                .flatMap(Collection::stream)
                 .filter(f -> name.equalsIgnoreCase(f.getComponentName()))
-                .findFirst();
-            if (op.isPresent()) {
-                showCaseItem[0] = op.get();
-            }
-        });
-
-        return showCaseItem[0];
+                .findFirst().orElse(null);
     }
 
-    private ShowCaseGroup group(String groupName, Icone icon) {
+    private ShowCaseGroup addGroup(String groupName, Icone icon, ListPage.Tipo tipo) {
+        Map<String, ShowCaseGroup> groups;
+        if (ListPage.Tipo.FORM.equals(tipo)) {
+            groups = formGroups;
+        } else {
+            groups = studioGroups;
+        }
+        
         ShowCaseGroup group = groups.get(groupName);
         if (group == null) {
-            group = new ShowCaseGroup(groupName, icon);
+            group = new ShowCaseGroup(groupName, icon, tipo);
             groups.put(groupName, group);
         }
         return group;
     }
 
     public Collection<ShowCaseGroup> getGroups() {
-        return groups.values();
+        final List<ShowCaseGroup> groups = new ArrayList<>(formGroups.values());
+        groups.addAll(studioGroups.values());
+        return groups;
+    }
+
+    public Collection<ShowCaseGroup> getGroups(StringValue tipoValue) {
+        if (tipoValue.isNull() || ListPage.Tipo.FORM.toString().equals(tipoValue.toString())) {
+            return formGroups.values();
+        } else if (ListPage.Tipo.STUDIO.toString().equals(tipoValue.toString())) {
+            return studioGroups.values();
+        } else {
+            return Collections.emptyList();
+        }
+
     }
 
     public static class ShowCaseGroup implements Serializable {
 
         private final String groupName;
         private final Icone  icon;
+        private final ListPage.Tipo tipo;
 
         private final Map<String, ShowCaseItem> itens = new TreeMap<>();
 
-        public ShowCaseGroup(String groupName, Icone icon) {
+        public ShowCaseGroup(String groupName, Icone icon, ListPage.Tipo tipo) {
             this.groupName = groupName;
             this.icon = icon;
+            this.tipo = tipo;
         }
 
         public String getGroupName() {
@@ -222,6 +246,10 @@ public class ShowCaseTable {
 
         public Icone getIcon() {
             return icon;
+        }
+
+        public ListPage.Tipo getTipo() {
+            return tipo;
         }
     }
 

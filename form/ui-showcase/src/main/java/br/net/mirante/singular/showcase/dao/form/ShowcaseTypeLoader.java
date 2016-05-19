@@ -37,44 +37,44 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
     private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
     public ShowcaseTypeLoader() {
-        add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO);
-        add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
-        add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO);
-        add(SPackageNotificacaoSimplificadaBaixoRisco.class, SPackageNotificacaoSimplificadaBaixoRisco.NOME_COMPLETO);
-        add(SPackageNotificacaoSimplificadaDinamizado.class, SPackageNotificacaoSimplificadaDinamizado.NOME_COMPLETO);
-        add(SPackageNotificacaoSimplificadaGasMedicinal.class, SPackageNotificacaoSimplificadaGasMedicinal.NOME_COMPLETO);
-        add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO);
-        add(SPackageHabilitacaoEmpresa.class, SPackageHabilitacaoEmpresa.NOME_COMPLETO);
+        add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO, ListPage.Tipo.FORM);
+        add(ExamplePackage.class, ExamplePackage.Types.ORDER.name, ListPage.Tipo.FORM);
+        add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO, ListPage.Tipo.FORM);
+        add(SPackageNotificacaoSimplificadaBaixoRisco.class, SPackageNotificacaoSimplificadaBaixoRisco.NOME_COMPLETO, ListPage.Tipo.FORM);
+        add(SPackageNotificacaoSimplificadaDinamizado.class, SPackageNotificacaoSimplificadaDinamizado.NOME_COMPLETO, ListPage.Tipo.FORM);
+        add(SPackageNotificacaoSimplificadaGasMedicinal.class, SPackageNotificacaoSimplificadaGasMedicinal.NOME_COMPLETO, ListPage.Tipo.FORM);
+        add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO, ListPage.Tipo.FORM);
+        add(SPackageHabilitacaoEmpresa.class, SPackageHabilitacaoEmpresa.NOME_COMPLETO, ListPage.Tipo.FORM);
 
         for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {
             for (ShowCaseItem item : group.getItens()) {
                 String itemName = group.getGroupName() + " - " + item.getComponentName();
                 for (CaseBase c : item.getCases()) {
                     if (c.getSubCaseName() == null) {
-                        add(itemName, c);
+                        add(itemName, c, group.getTipo());
                     } else {
-                        add(itemName + " - " + c.getSubCaseName(), c);
+                        add(itemName + " - " + c.getSubCaseName(), c, group.getTipo());
                     }
                 }
             }
         }
     }
 
-    private void add(Class<? extends SPackage> packageClass, String typeName) {
+    private void add(Class<? extends SPackage> packageClass, String typeName, ListPage.Tipo tipo) {
         String simpleName = StringUtils.defaultIfBlank(StringUtils.substringAfterLast(typeName, "."), typeName);
         add(typeName, simpleName, () -> {
             SDictionary d = SDictionary.create();
             d.loadPackage(packageClass);
             return d.getType(typeName);
-        });
+        }, tipo);
     }
 
-    private void add(String displayName, CaseBase c) {
-        add(c.getTypeName(), displayName, () -> c.getCaseType());
+    private void add(String displayName, CaseBase c, ListPage.Tipo tipo) {
+        add(c.getTypeName(), displayName, () -> c.getCaseType(), tipo);
     }
 
-    private void add(String typeName, String displayName, Supplier<SType<?>> typeSupplier) {
-        entries.put(typeName, new TemplateEntry(displayName, typeSupplier, ListPage.Tipo.FORM));
+    private void add(String typeName, String displayName, Supplier<SType<?>> typeSupplier, ListPage.Tipo tipo) {
+        entries.put(typeName, new TemplateEntry(displayName, typeSupplier, tipo));
     }
 
     @Override

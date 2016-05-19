@@ -41,30 +41,33 @@ public class Menu extends Panel {
     private MetronicMenu buildMenu() {
         MetronicMenu menu = new MetronicMenu("menu");
 
-        menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", ListPage.class));
+        final StringValue tipoValue = getPage().getPageParameters().get(ListPage.PARAM_TIPO);
 
-        final StringValue tipo = getPage().getPageParameters().get("tp");
-        if (tipo.isNull() || tipo.toString().equals(ListPage.Tipo.FORM.toString())) {
-
+        if (tipoValue.isNull() || ListPage.Tipo.FORM.toString().equals(tipoValue.toString())) {
             menu.addItem(new MetronicMenuItem(Icone.ROCKET, "Demo", CrudPage.class));
             menu.addItem(new MetronicMenuItem(Icone.PENCIL, "Protótipo", PrototypeListPage.class));
-
-            final ShowCaseTable showCaseTable = new ShowCaseTable();
-            final Collection<ShowCaseTable.ShowCaseGroup> groups = showCaseTable.getGroups();
-
-            groups.forEach(group -> {
-                final MetronicMenuGroup showCaseGroup = new MetronicMenuGroup(group.getIcon(), group.getGroupName());
-                final Collection<ShowCaseTable.ShowCaseItem> itens = group.getItens();
-                itens.forEach(item -> {
-                    final PageParameters pageParameters = new PageParameters();
-                    final String componentName = item.getComponentName();
-                    showCaseGroup.addItem(
-                            new MetronicMenuItem(null, item.getComponentName(), ComponentPage.class,
-                                    pageParameters.add("cn", componentName.toLowerCase())));
-                });
-                menu.addItem(showCaseGroup);
-            });
         }
+
+        final ShowCaseTable showCaseTable = new ShowCaseTable();
+        final Collection<ShowCaseTable.ShowCaseGroup> groups = showCaseTable.getGroups(tipoValue);
+
+        groups.forEach(group -> {
+            final MetronicMenuGroup showCaseGroup = new MetronicMenuGroup(group.getIcon(), group.getGroupName());
+            final Collection<ShowCaseTable.ShowCaseItem> itens = group.getItens();
+            itens.forEach(item -> {
+                final PageParameters pageParameters = new PageParameters();
+                final PageParameters old = getPage().getPageParameters();
+                final StringValue tipo = old.get(ListPage.PARAM_TIPO);
+                if (!tipo.isNull()) {
+                    pageParameters.add(ListPage.PARAM_TIPO, tipo);
+                }
+                final String componentName = item.getComponentName();
+                showCaseGroup.addItem(
+                        new MetronicMenuItem(null, item.getComponentName(), ComponentPage.class,
+                                pageParameters.add("cn", componentName.toLowerCase())));
+            });
+            menu.addItem(showCaseGroup);
+        });
 
         return menu;
     }
