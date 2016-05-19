@@ -20,7 +20,11 @@
             <version>0.6.3-SNAPSHOT</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>form-persistence</artifactId>
+            <version>0.6.3-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>
