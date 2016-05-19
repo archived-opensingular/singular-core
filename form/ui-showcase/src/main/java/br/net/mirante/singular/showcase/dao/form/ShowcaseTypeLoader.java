@@ -26,6 +26,7 @@ import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
+import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackageCurriculo;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoGGTOX;
@@ -73,7 +74,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
     }
 
     private void add(String typeName, String displayName, Supplier<SType<?>> typeSupplier) {
-        entries.put(typeName, new TemplateEntry(displayName, typeSupplier));
+        entries.put(typeName, new TemplateEntry(displayName, typeSupplier, ListPage.Tipo.FORM));
     }
 
     @Override
@@ -98,10 +99,12 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
 
         private final String displayName;
         private final Supplier<SType<?>> typeSupplier;
+        private final ListPage.Tipo tipo;
 
-        public TemplateEntry(String displayName, Supplier<SType<?>> typeSupplier) {
+        public TemplateEntry(String displayName, Supplier<SType<?>> typeSupplier, ListPage.Tipo tipo) {
             this.displayName = displayName;
             this.typeSupplier = typeSupplier;
+            this.tipo = tipo;
         }
 
         public String getDisplayName() {
@@ -110,6 +113,10 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
 
         public SType<?> getType() {
             return typeSupplier.get();
+        }
+
+        public ListPage.Tipo getTipo() {
+            return tipo;
         }
     }
 }
