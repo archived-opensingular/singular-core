@@ -7,6 +7,7 @@ package br.net.mirante.singular.util.wicket.event;
 
 import java.io.Serializable;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 
@@ -18,15 +19,18 @@ public class ConfirmationEventPayload<T> implements Serializable {
     private final IBSAction<T> onConfirmed;
     private final IBSAction<T> onCanceled;
     private final IModel<T> actionModel;
+    private final Component source;
     private final transient AjaxRequestTarget target;
 
     public ConfirmationEventPayload(
+        Component source,
         AjaxRequestTarget target,
         IModel<String> confirmationMessage,
         IModel<T> actionModel,
         IBSAction<T> onConfirmed,
         IBSAction<T> onCanceled) {
 
+        this.source = source;
         this.target = target;
         this.confirmationMessage = confirmationMessage;
         this.actionModel = actionModel;
@@ -35,14 +39,18 @@ public class ConfirmationEventPayload<T> implements Serializable {
     }
 
     public ConfirmationEventPayload(
+        Component source,
         AjaxRequestTarget target,
         IModel<String> confirmationMessage,
         IModel<T> actionModel,
         IBSAction<T> onConfirmed) {
 
-        this(target, confirmationMessage, actionModel, onConfirmed, null);
+        this(source, target, confirmationMessage, actionModel, onConfirmed, null);
     }
 
+    public Component getSource() {
+        return source;
+    }
     public AjaxRequestTarget getTarget() {
         return target;
     }
@@ -50,9 +58,9 @@ public class ConfirmationEventPayload<T> implements Serializable {
         return confirmationMessage;
     }
     public void onConfirmed(AjaxRequestTarget target) {
-        this.onConfirmed.execute(target, actionModel);
+        this.onConfirmed.execute(target, actionModel, source);
     }
     public void onCanceled(AjaxRequestTarget target) {
-        this.onCanceled.execute(target, actionModel);
+        this.onCanceled.execute(target, actionModel, source);
     }
 }

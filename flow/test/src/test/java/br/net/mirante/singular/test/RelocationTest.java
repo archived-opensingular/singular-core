@@ -1,30 +1,43 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.commons.base.SingularProperties;
-import br.net.mirante.singular.flow.core.*;
-import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
-import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
-import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
-import br.net.mirante.singular.flow.core.ws.SingularWS;
-import br.net.mirante.singular.flow.test.TestDAO;
-import br.net.mirante.singular.persistence.entity.*;
-import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
+import static org.fest.assertions.api.Assertions.assertThat;
+
+import java.util.Date;
+
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.inject.Inject;
-import java.util.Date;
-
-import static org.fest.assertions.api.Assertions.assertThat;
+import br.net.mirante.singular.commons.base.SingularProperties;
+import br.net.mirante.singular.flow.core.ExecutionContext;
+import br.net.mirante.singular.flow.core.Flow;
+import br.net.mirante.singular.flow.core.FlowMap;
+import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
+import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.flow.core.TaskInstance;
+import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
+import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
+import br.net.mirante.singular.flow.core.ws.BaseSingularRest;
+import br.net.mirante.singular.flow.test.TestDAO;
+import br.net.mirante.singular.persistence.entity.Actor;
+import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
+import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
+import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 
 @ActiveProfiles("mssql")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -75,10 +88,10 @@ public class RelocationTest  {
 
         assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
 
-        new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", null);
+        new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", null);
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
 
-        new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 1);
+        new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 1);
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(2));
     }
 
@@ -89,11 +102,11 @@ public class RelocationTest  {
 
         assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
 
-        new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", 0);
+        new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", 0);
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
 
         thrown.expectMessage("Your Task Version Number is Outdated.");
-        new SingularWS().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 0);
+        new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 0);
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
     }
 

@@ -28,8 +28,8 @@ public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
     @Test
     public void testIfContaisErrorOnlyForFieldOne() {
         form.submit(page.getSingularValidationButton());
-        Assert.assertFalse(findFormComponentsByType(fieldOne).findFirst().get().getFeedbackMessages().isEmpty());
-        Assert.assertTrue(findFormComponentsByType(fieldTwo).findFirst().get().getFeedbackMessages().isEmpty());
+        Assert.assertTrue(findModelsByType(fieldOne).findFirst().get().getMInstancia().hasValidationErrors());
+        Assert.assertFalse(findModelsByType(fieldTwo).findFirst().get().getMInstancia().hasValidationErrors());
     }
 
     @Test
@@ -46,8 +46,8 @@ public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
         form.setValue(findFieldOneFormComponent(), testValue);
         tester.executeAjaxEvent(findFieldOneFormComponent(), "change");
         form.submit(page.getSingularValidationButton());
-        Assert.assertTrue(findFormComponentsByType(fieldOne).findFirst().get().getFeedbackMessages().isEmpty());
-        Assert.assertFalse(findFormComponentsByType(fieldTwo).findFirst().get().getFeedbackMessages().isEmpty());
+        Assert.assertFalse(findModelsByType(fieldOne).findFirst().get().getMInstancia().hasValidationErrors());
+        Assert.assertTrue(findModelsByType(fieldTwo).findFirst().get().getMInstancia().hasValidationErrors());
     }
 
     public FormComponent findFieldOneFormComponent() {

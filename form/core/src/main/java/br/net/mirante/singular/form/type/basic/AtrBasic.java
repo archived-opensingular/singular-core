@@ -32,6 +32,11 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
+    public AtrBasic itemLabel(String valor) {
+        setAttributeValue(SPackageBasic.ATR_ITEM_LABEL, valor);
+        return this;
+    }
+
     public AtrBasic subtitle(String valor) {
         setAttributeValue(SPackageBasic.ATR_SUBTITLE, valor);
         return this;
@@ -142,6 +147,10 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public String getLabel() {
         return getAttributeValue(SPackageBasic.ATR_LABEL);
+    }
+
+    public String getItemLabel() {
+        return getAttributeValue(SPackageBasic.ATR_ITEM_LABEL);
     }
 
     public String getSubtitle() {

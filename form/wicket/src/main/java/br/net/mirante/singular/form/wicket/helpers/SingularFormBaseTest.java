@@ -1,11 +1,14 @@
 package br.net.mirante.singular.form.wicket.helpers;
 
 import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.AbstractChoice;
@@ -22,7 +25,6 @@ import java.util.stream.Stream;
 
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 
-
 public abstract class SingularFormBaseTest {
 
     protected DummyPage    page;
@@ -31,8 +33,7 @@ public abstract class SingularFormBaseTest {
 
     protected abstract void buildBaseType(STypeComposite<?> baseType);
 
-    protected void populateInstance(SIComposite instance) {
-    }
+    protected void populateInstance(SIComposite instance) {}
 
     @Before
     public void setUp() {
@@ -50,6 +51,14 @@ public abstract class SingularFormBaseTest {
 
     protected String getFormRelativePath(FormComponent<?> c) {
         return c.getPath().replace(c.getForm().getRootForm().getPath() + ":", StringUtils.EMPTY);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <I extends SInstance> Stream<IMInstanciaAwareModel<I>> findModelsByType(SType<I> type) {
+        return findFormComponentsByType(type)
+            .map(it -> it.getModel())
+            .filter(it -> it instanceof IMInstanciaAwareModel)
+            .map(it -> (IMInstanciaAwareModel<I>) it);
     }
 
     protected Stream<FormComponent> findFormComponentsByType(SType type) {
@@ -74,7 +83,7 @@ public abstract class SingularFormBaseTest {
 
     protected SIComposite createInstance(final SType x) {
         SDocumentFactory factory = page.mockFormConfig.getDocumentFactory();
-        RefType          refType = new RefType() {
+        RefType refType = new RefType() {
             protected SType<?> retrieve() {
                 return x;
             }

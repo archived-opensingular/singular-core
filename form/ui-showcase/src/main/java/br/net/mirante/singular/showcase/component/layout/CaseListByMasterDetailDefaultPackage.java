@@ -30,7 +30,7 @@ public class CaseListByMasterDetailDefaultPackage extends SPackage {
             experiencias
                     .withView(SViewListByMasterDetail::new)
             //@destacar:fim
-                    .asAtr().label("Experiências profissionais");
+                    .asAtr().label("Experiências profissionais").itemLabel("Experiência Profissional");
             dtInicioExperiencia
                     .asAtr().label("Data inicial")
                     .asAtrBootstrap().colPreference(2);

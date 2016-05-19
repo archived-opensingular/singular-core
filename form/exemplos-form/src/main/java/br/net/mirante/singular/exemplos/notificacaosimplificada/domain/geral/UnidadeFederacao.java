@@ -5,8 +5,6 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral;
 
-import br.net.mirante.singular.persistence.entity.BaseEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,13 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
+
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 
 @Entity
 @Table(name = "TB_UNIDADE_FEDERACAO", schema = "DBGERAL")
 @XmlRootElement(name = "unidadeFederacao", namespace = "http://www.anvisa.gov.br/geral/schema/domains")
 @XmlType(name = "unidadeFederacao", namespace = "http://www.anvisa.gov.br/geral/schema/domains")
-public class UnidadeFederacao extends BaseEntity {
+public class UnidadeFederacao extends BaseEntity<String> {
 
     public static final String CODIGO_UF_NAO_INFORMADO = "99";
     private static final long serialVersionUID = 1L;
@@ -57,7 +56,7 @@ public class UnidadeFederacao extends BaseEntity {
     }
 
     @Override
-    public Serializable getCod() {
+    public String getCod() {
         return id;
     }
 }

@@ -18,8 +18,6 @@ import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
-import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
@@ -49,7 +47,7 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
 
     protected WicketBuildContext          ctx;
     protected SView                       view;
-    protected BSContainer                 bodyContainer;
+    protected BSContainer<?>              bodyContainer;
     protected BSControls                  formGroup;
     protected IModel<? extends SInstance> model;
     protected IModel<String>              labelModel;
@@ -74,7 +72,6 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         this.bodyContainer = ctx.getExternalContainer();
 
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
-        final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);
         final BSContainer<?> container = ctx.getContainer();
         final AtributoModel<String> subtitle = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
         final ViewMode viewMode = ctx.getViewMode();
@@ -83,14 +80,12 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         this.formGroup = container.newFormGroup();
         formGroup.setFeedbackPanelFactory((id, fence, filter) -> new SValidationFeedbackPanel(id, fence));
         SValidationFeedbackHandler.bindTo(ctx.getContainer())
-            .setInstanceModel(this.model)
+            .addInstanceModel(this.model)
             .addListener(new ISValidationFeedbackHandlerListener() {
                 @Override
-                public void onFeedbackChanged(Optional<AjaxRequestTarget> target, Component container, SInstance baseInstance, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
+                public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
                     if (target.isPresent())
                         target.get().add(formGroup);
-                    else 
-                        System.out.println(formGroup);
                 }
             });
         label.add(DisabledClassBehavior.getInstance());
@@ -112,7 +107,7 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
 
         if (viewMode.isEdition()) {
             input = appendInput();
-            formGroup.appendFeedback(ctx.getContainer(), feedbackMessageFilter);
+            formGroup.appendFeedback(ctx.getContainer(), IFeedbackMessageFilter.ALL);
             input.add(DisabledClassBehavior.getInstance());
             input.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
                 @Override
@@ -125,7 +120,7 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
                     return oldClasses;
                 }
             })));
-            for (FormComponent fc : findAjaxComponents(input)) {
+            for (FormComponent<?> fc : findAjaxComponents(input)) {
                 ctx.configure(this, fc);
             }
         } else {
@@ -143,14 +138,14 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         }
     }
 
-    protected FormComponent[] findAjaxComponents(Component input) {
+    protected FormComponent<?>[] findAjaxComponents(Component input) {
         if (input instanceof FormComponent) {
-            return new FormComponent[] { (FormComponent) input };
+            return new FormComponent[] { (FormComponent<?>) input };
         } else if (input instanceof MarkupContainer) {
-            List<FormComponent> formComponents = new ArrayList<>();
+            List<FormComponent<?>> formComponents = new ArrayList<>();
             ((MarkupContainer) input).visitChildren((component, iVisit) -> {
                 if (component instanceof FormComponent) {
-                    formComponents.add((FormComponent) component);
+                    formComponents.add((FormComponent<?>) component);
                     iVisit.dontGoDeeper();
                 }
             });

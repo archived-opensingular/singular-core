@@ -54,6 +54,7 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_EXISTS_FUNCTION        = new AtrRef(SPackageBasic.class, "existsFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
     public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_OBRIGATORIO_FUNCTION   = new AtrRef(SPackageBasic.class, "obrigatorioFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
     public static final AtrRef<STypePhraseBreak, SIPhraseBreak, PhraseBreak>      ATR_PHRASE_BREAK           = new AtrRef<>(SPackageBasic.class, "phraseBreak", STypePhraseBreak.class, SIPhraseBreak.class, PhraseBreak.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_ITEM_LABEL             = new AtrRef<>(SPackageBasic.class, "itemLabel", STypeString.class, SIString.class, String.class);
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<SType<?>>>>
             ATR_DEPENDS_ON_FUNCTION = new AtrRef(SPackageBasic.class, "dependsOnFunction", STypeSupplier.class, SISupplier.class, Supplier.class);
@@ -79,6 +80,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(STypeString.class, ATR_TRIM).withDefaultValueIfNull(true);
         pb.createAttributeIntoType(STypeString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(true);
         pb.createAttributeIntoType(STypeList.class, ATR_PHRASE_BREAK).withDefaultValueIfNull(PhraseBreak.COMMA);
+        pb.createAttributeIntoType(STypeList.class, ATR_ITEM_LABEL);
 
         pb.getAttribute(ATR_REQUIRED).withDefaultValueIfNull(false);
         pb.getAttribute(ATR_EXISTS).withDefaultValueIfNull(true);
@@ -116,24 +118,24 @@ public class SPackageBasic extends SPackage {
         pb.addAttribute(STypeDecimal.class, ATR_TAMANHO_INTEIRO_MAXIMO, 9);
         pb.addAttribute(STypeDecimal.class, ATR_TAMANHO_DECIMAL_MAXIMO, 2);
 
-        pb.getDictionary().getType(SType.class).asAtr()
-                .displayString(ctx -> ctx.instance().toStringDisplayDefault());
+        pb.getType(SType.class).asAtr().displayString(ctx -> ctx.instance().toStringDisplayDefault());
 
         // defina o meta dado do meta dado
-        pb.getAttribute(ATR_LABEL).as(AtrBasic.class).label("Label").tamanhoEdicao(30).tamanhoMaximo(50);
-        pb.getAttribute(ATR_SUBTITLE).as(AtrBasic.class).label("Subtítulo").tamanhoEdicao(30).tamanhoMaximo(50);
-        pb.getAttribute(ATR_BASIC_MASK).as(AtrBasic.class).label("Máscara básica").tamanhoEdicao(10).tamanhoMaximo(20);
-        pb.getAttribute(ATR_TAMANHO_MAXIMO).as(AtrBasic.class).label("Tamanho maximo").tamanhoEdicao(3).tamanhoMaximo(4);
-        pb.getAttribute(ATR_TAMANHO_INTEIRO_MAXIMO).as(AtrBasic.class).label("Tamanho inteiro maximo").tamanhoEdicao(3).tamanhoMaximo(4);
-        pb.getAttribute(ATR_TAMANHO_DECIMAL_MAXIMO).as(AtrBasic.class).label("Tamanho decimal maximo").tamanhoEdicao(3).tamanhoMaximo(4);
-        pb.getAttribute(ATR_TAMANHO_EDICAO).as(AtrBasic.class).label("Tamanho edição").tamanhoEdicao(3).tamanhoMaximo(3);
-        pb.getAttribute(ATR_VISIVEL).as(AtrBasic.class).label("Visível");
-        pb.getAttribute(ATR_ENABLED).as(AtrBasic.class).label("Habilitado");
-        pb.getAttribute(ATR_VISIBLE_FUNCTION).as(AtrBasic.class).label("Visível (função)");
-        pb.getAttribute(ATR_ENABLED_FUNCTION).as(AtrBasic.class).label("Habilitado (função)");
-        pb.getAttribute(ATR_DEPENDS_ON_FUNCTION).as(AtrBasic.class).label("Depende de (função)");
-        //        pb.getAtributo(ATR_ONCHANGE_BEHAVIOR).as(AtrBasic.class).label("On change (comportamento)");
-        pb.getAttribute(ATR_ORDEM).as(AtrBasic.class).label("Ordem");
+        pb.getAttribute(ATR_LABEL).asAtr().label("Label").tamanhoEdicao(30).tamanhoMaximo(50);
+        pb.getAttribute(ATR_SUBTITLE).asAtr().label("Subtítulo").tamanhoEdicao(30).tamanhoMaximo(50);
+        pb.getAttribute(ATR_BASIC_MASK).asAtr().label("Máscara básica").tamanhoEdicao(10).tamanhoMaximo(20);
+        pb.getAttribute(ATR_TAMANHO_MAXIMO).asAtr().label("Tamanho maximo").tamanhoEdicao(3).tamanhoMaximo(4);
+        pb.getAttribute(ATR_TAMANHO_INTEIRO_MAXIMO).asAtr().label("Tamanho inteiro maximo").tamanhoEdicao(3).tamanhoMaximo(4);
+        pb.getAttribute(ATR_TAMANHO_DECIMAL_MAXIMO).asAtr().label("Tamanho decimal maximo").tamanhoEdicao(3).tamanhoMaximo(4);
+        pb.getAttribute(ATR_TAMANHO_EDICAO).asAtr().label("Tamanho edição").tamanhoEdicao(3).tamanhoMaximo(3);
+        pb.getAttribute(ATR_VISIVEL).asAtr().label("Visível");
+        pb.getAttribute(ATR_ENABLED).asAtr().label("Habilitado");
+        pb.getAttribute(ATR_VISIBLE_FUNCTION).asAtr().label("Visível (função)");
+        pb.getAttribute(ATR_ENABLED_FUNCTION).asAtr().label("Habilitado (função)");
+        pb.getAttribute(ATR_DEPENDS_ON_FUNCTION).asAtr().label("Depende de (função)");
+        //        pb.getAtributo(ATR_ONCHANGE_BEHAVIOR).asAtr().label("On change (comportamento)");
+        pb.getAttribute(ATR_ORDEM).asAtr().label("Ordem");
+        pb.getAttribute(ATR_ITEM_LABEL).asAtr().label("Item Label").tamanhoEdicao(30).tamanhoMaximo(50);
     }
 
     public static Function<SAttributeEnabled, AtrBasic> aspect() {

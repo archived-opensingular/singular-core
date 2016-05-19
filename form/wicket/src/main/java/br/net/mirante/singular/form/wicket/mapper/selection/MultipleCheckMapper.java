@@ -5,16 +5,17 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.wicket.model.MultipleSelectMInstanceAwareModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.AbstractChoice;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
-import java.util.List;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.wicket.model.MultipleSelectMInstanceAwareModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 @SuppressWarnings("serial")
 public class MultipleCheckMapper extends MultipleSelectMapper {
@@ -31,7 +32,7 @@ public class MultipleCheckMapper extends MultipleSelectMapper {
     @Override
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, List<?> opcoesValue) {
         final ListMultipleChoice choices = retrieveChoices(model, opcoesValue);
-        formGroup.appendCheckboxChoice( retrieveChoices(model, opcoesValue));
+        formGroup.appendCheckboxChoice( choices );
         return choices;
     }
 

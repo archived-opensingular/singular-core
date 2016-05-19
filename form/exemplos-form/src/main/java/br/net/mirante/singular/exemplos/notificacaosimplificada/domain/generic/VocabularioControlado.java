@@ -1,19 +1,32 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.TipoTermo;
-import br.net.mirante.singular.support.persistence.enums.SimNao;
-import br.net.mirante.singular.persistence.entity.BaseEntity;
-import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
-import java.util.Date;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.TipoTermo;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
+import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 
 /**
  * Classe marcadora para todos os tipos de vocabulario controlado Todo
@@ -26,7 +39,7 @@ import java.util.Date;
 @Table(name = "TB_VOCABULARIO_CONTROLADO", schema = "DBMEDICAMENTO")
 @Entity
 @Filter(name = "VocabulariosAtivos", condition = "ativa = \"S\"")
-public abstract class VocabularioControlado extends BaseEntity implements MedEntity<Long> {
+public abstract class VocabularioControlado extends BaseEntity<Long> implements MedEntity<Long> {
 
     private static final long serialVersionUID = 496526748207612785L;
 
@@ -165,7 +178,7 @@ public abstract class VocabularioControlado extends BaseEntity implements MedEnt
     }
 
     @Override
-    public Serializable getCod() {
+    public Long getCod() {
         return id;
     }
 }

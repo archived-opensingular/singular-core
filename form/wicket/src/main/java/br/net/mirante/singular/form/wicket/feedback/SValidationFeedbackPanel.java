@@ -5,9 +5,11 @@
 
 package br.net.mirante.singular.form.wicket.feedback;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -65,11 +67,7 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
                 if (fp.anyMessage(ValidationErrorLevel.ERROR)) {
                     response.render(OnDomReadyHeaderItem.forScript(
                         JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"));
-                } else {
-                    response.render(OnDomReadyHeaderItem.forScript(
-                        JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"));
-                }
-                if (fp.anyMessage(ValidationErrorLevel.WARNING)) {
+                } else if (fp.anyMessage(ValidationErrorLevel.WARNING)) {
                     response.render(OnDomReadyHeaderItem.forScript(
                         JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"));
                 } else {
@@ -119,11 +117,12 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
 
                 final String labelPath = StringUtils.defaultString(
                     reporter.map(it -> WicketFormUtils.generateTitlePath(getFence(), parentContext, it, instance)).orElse(null),
-                    SFormUtil.generatePath(instance, it -> it == parentContext));
+                    SFormUtil.generatePath(instance, it -> Objects.equals(it, parentContext)));
 
                 label.setDefaultModelObject(labelPath + " : " + bfm.getMessage());
             }
         }
+
         return component;
     }
 

@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,47 +21,45 @@ final class MapAttributeDefinitionResolver {
     }
 
     public void set(String attributePath, Object value) {
-        SInstance instancia = getCreating(attributePath);
-        instancia.setValue(value);
+        getCreating(attributePath).setValue(value);
     }
 
     public SInstance getCreating(String attributePath) {
-        SInstance entrada = get(attributePath);
-        if (entrada != null) {
-            return entrada;
+        SInstance entry = get(attributePath);
+        if (entry != null) {
+            return entry;
         }
 
-        for (SType<?> atual = owner; atual != null; atual = atual.getSuperType()) {
-            SAttribute atributo = atual.getAttributeDefinedLocally(attributePath);
-            if (atributo != null) {
-                SInstance novo = atributo.newInstanceFor(owner);
+        for (SType<?> current = owner; current != null; current = current.getSuperType()) {
+            SType<?> attrType = current.getAttributeDefinedLocally(attributePath);
+            if (attrType != null) {
+                SInstance attrInstance = attrType.newAttributeInstanceFor(owner);
                 if (attributes == null) {
                     attributes = new LinkedHashMap<>();
                 }
-                attributes.put(attributePath, novo);
-                return novo;
+                attributes.put(attributePath, attrInstance);
+                return attrInstance;
             }
         }
         if(owner != null) {
-            throw new RuntimeException(
+            throw new SingularFormException(
                     "Não existe o atributo '" + attributePath + "' definido em '" + owner.getName()
                     + "' ou nos tipos extendidos");
         } else {
-            throw new RuntimeException("Não existe o atributo '" + attributePath + "'");
+            throw new SingularFormException("Não existe o atributo '" + attributePath + "'");
         }
     }
 
-    final Map<String, SInstance> getAttributes() {
-        if (attributes == null) {
-            return Collections.emptyMap();
-        }
-        return attributes;
+    /**
+     * Lista todos os atributos definidos.
+     *
+     * @return Nunca null
+     */
+    public final Collection<SInstance> getAttributes() {
+        return (attributes == null) ? Collections.emptyList() : attributes.values();
     }
 
     public SInstance get(String fullPathName) {
-        if (attributes == null) {
-            return null;
-        }
-        return attributes.get(fullPathName);
+        return (attributes == null) ? null : attributes.get(fullPathName);
     }
 }

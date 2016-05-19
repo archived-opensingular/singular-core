@@ -1,0 +1,83 @@
+/**
+CSS PARA OVERRIDE
+DECLARE ESSE CSS NA SUA APLICAÇÃO NO MESMO CAMINHO RELATIVO
+*/
+
+/**
+* Configuração custon para o plugin jQuery, toastr
+**/
+
+@media (max-width: 768px) {
+    #toast-container {
+        margin-top: 142px;
+    }
+}
+
+@media (min-width: 768px) {
+    #toast-container {
+        margin-top: 70px;
+    }
+}
+
+#toast-container {
+    pointer-events: none;
+}
+
+#toast-container.toast-top-center > div {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    pointer-events: auto;
+}
+
+.toast-top-center {
+    left: 25%;
+    margin-left: auto;
+}
+
+.toast-success {
+    background-color: #1BBC9B;
+}
+
+.toast-info {
+    background-color: #5C9BD1;
+}
+
+.toast-error {
+    background-color: #E35B5A;
+}
+
+.toast-warning {
+    background-color: #F7CA18;
+}
+
+.toast-message a {
+    color: #FAFAFA !important;
+    font-weight: bold;
+}
+
+.radio-list {
+    min-height: 30px;
+}
+
+.action-column {
+    width:1%;
+    white-space:nowrap;
+}
+
+@media (min-width: 992px) {
+    .modal-belver {
+        width: 900px;
+    }
+}
+
+
+.page-sidebar-fixed .page-footer {
+    margin-left: 0px;
+}
+
+.logo-default::before {
+    content: url("/singular-static/resources/singular/img/brand.png");
+    height: 15px;
+    top: 15px;
+}

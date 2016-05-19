@@ -8,7 +8,7 @@ package br.net.mirante.singular.persistence.entity;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.util.Constants;
 
 
 /**

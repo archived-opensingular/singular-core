@@ -35,7 +35,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        pb.getDictionary().loadPackage(SPackageNotificacaoSimplificada.class);
+        pb.loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> baixoRisco = pb.createCompositeType(TIPO);
         {
