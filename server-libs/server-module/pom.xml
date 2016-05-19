@@ -40,6 +40,12 @@
             <version>${singular.server.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>flow-bam-support</artifactId>
+            <version>${singular.version}</version>
+        </dependency>
+
         <!-- JAVAX -->
         <dependency>
             <groupId>javax.servlet</groupId>
