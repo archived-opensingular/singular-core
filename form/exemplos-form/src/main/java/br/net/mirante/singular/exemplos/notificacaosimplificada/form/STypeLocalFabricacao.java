@@ -6,6 +6,8 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioS
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.converter.SInstanceConverter;
 import br.net.mirante.singular.form.provider.TextQueryProvider;
+import br.net.mirante.singular.form.type.core.SIInteger;
+import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewSelectionByRadio;
@@ -16,7 +18,7 @@ import java.util.Arrays;
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
-    public  STypeSimple                 tipoLocalFabricacao;
+    public STypeInteger tipoLocalFabricacao;
     public  STypeEmpresaPropria         empresaPropria;
     public  STypeEmpresaTerceirizada    empresaTerceirizada;
     public  STypeComposite<SIComposite> outroLocalFabricacao;
@@ -41,14 +43,14 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .selectionOf(LocalFabricacao.class, new SViewSelectionByRadio())
                 .id((i) -> ((LocalFabricacao) i).getId().toString())
                 .display((i) -> ((LocalFabricacao) i).getDescricao())
-                .converter(new SInstanceConverter<LocalFabricacao, SInstance>() {
+                .converter(new SInstanceConverter<LocalFabricacao, SIInteger>() {
                     @Override
-                    public void fillInstance(SInstance ins, LocalFabricacao obj) {
+                    public void fillInstance(SIInteger ins, LocalFabricacao obj) {
                         ins.setValue(obj.getId());
                     }
 
                     @Override
-                    public LocalFabricacao toObject(SInstance ins) {
+                    public LocalFabricacao toObject(SIInteger ins) {
                         return Arrays.asList(LocalFabricacao.values()).stream().filter(l -> l.getId().equals(ins.getValue())).findFirst().orElse(null);
                     }
                 })
