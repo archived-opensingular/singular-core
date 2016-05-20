@@ -23,36 +23,6 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.showcase.component.form.file.CaseFileAttachment;
-import br.net.mirante.singular.showcase.component.form.file.CaseFileMultipleAttachments;
-import br.net.mirante.singular.showcase.component.form.interaction.CaseInitListener;
-import br.net.mirante.singular.showcase.component.form.interaction.CaseInteractionDependsOnOptions;
-import br.net.mirante.singular.showcase.component.form.interaction.CaseInteractionEnabled;
-import br.net.mirante.singular.showcase.component.form.interaction.CaseInteractionExists;
-import br.net.mirante.singular.showcase.component.form.interaction.CaseInteractionRequired;
-import br.net.mirante.singular.showcase.component.form.interaction.CaseInteractionVisible;
-import br.net.mirante.singular.showcase.component.form.interaction.CaseUpdateListener;
-import br.net.mirante.singular.showcase.component.form.layout.CaseComplexListByBreadcrumb;
-import br.net.mirante.singular.showcase.component.form.layout.CaseFineTunningGrid;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByBreadcrumb;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByFormDefault;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByFormMinimumAndMaximum;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByMasterDetailButtons;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByMasterDetailColumns;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByMasterDetailDefault;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByMasterDetailMiniumAndMaximum;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByMasterDetailNested;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByTableDefault;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByTableMinimiumAndMaximum;
-import br.net.mirante.singular.showcase.component.form.layout.CaseListByTableSimpleType;
-import br.net.mirante.singular.showcase.component.form.layout.CaseRowControlGrid;
-import br.net.mirante.singular.showcase.component.form.layout.CaseSimpleGrid;
-import br.net.mirante.singular.showcase.component.form.layout.CaseTabs;
-import br.net.mirante.singular.showcase.component.form.map.CaseGoogleMaps;
-import br.net.mirante.singular.showcase.component.form.validation.CaseValidationBetweenFields;
-import br.net.mirante.singular.showcase.component.form.validation.CaseValidationCustom;
-import br.net.mirante.singular.showcase.component.form.validation.CaseValidationPartial;
-import br.net.mirante.singular.showcase.component.form.validation.CaseValidationRequired;
 import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
@@ -86,47 +56,12 @@ public class ShowCaseTable {
 
         // @formatter:off
         addGroup(Group.INPUT);
-
-        addGroup("File", Icone.FOLDER, ListPage.Tipo.FORM)
-            .addCase(CaseFileAttachment.class)
-            .addCase(CaseFileMultipleAttachments.class)
-        ;
-        addGroup("Layout", Icone.GRID, ListPage.Tipo.FORM)
-            .addCase(CaseSimpleGrid.class)
-            .addCase(CaseFineTunningGrid.class)
-            .addCase(CaseListByFormDefault.class)
-            .addCase(CaseListByTableDefault.class)
-            .addCase(CaseListByMasterDetailDefault.class)
-            .addCase(CaseListByMasterDetailColumns.class)
-            .addCase(CaseListByMasterDetailButtons.class)
-            .addCase(CaseListByMasterDetailNested.class)
-            .addCase(CaseListByBreadcrumb.class)
-            .addCase(CaseComplexListByBreadcrumb.class)
-            .addCase(CaseListByFormMinimumAndMaximum.class)
-            .addCase(CaseListByTableMinimiumAndMaximum.class)
-            .addCase(CaseListByMasterDetailMiniumAndMaximum.class)
-            .addCase(CaseListByTableSimpleType.class)
-            .addCase(CaseRowControlGrid.class)
-            .addCase(CaseTabs.class)
-        ;
-        addGroup("Validation", Icone.BAN, ListPage.Tipo.FORM)
-            .addCase(CaseValidationRequired.class)
-            .addCase(CaseValidationCustom.class)
-            .addCase(CaseValidationBetweenFields.class)
-            .addCase(CaseValidationPartial.class);
-        addGroup("Interaction", Icone.ROCKET, ListPage.Tipo.FORM)
-            .addCase(CaseInteractionExists.class)
-            .addCase(CaseInteractionEnabled.class)
-            .addCase(CaseInteractionVisible.class)
-            .addCase(CaseInteractionRequired.class)
-            .addCase(CaseInteractionDependsOnOptions.class)
-            .addCase(CaseInitListener.class)
-            .addCase(CaseUpdateListener.class)
-        ;
+        addGroup(Group.FILE);
+        addGroup(Group.LAYOUT);
+        addGroup(Group.VALIDATION);
+        addGroup(Group.INTERACTION);
         addGroup(Group.CUSTOM);
-        addGroup("Maps", Icone.MAP, ListPage.Tipo.FORM)
-                .addCase(CaseGoogleMaps.class)
-        ;
+        addGroup(Group.MAPS);
 
 //        addGroup("Input", Icone.PUZZLE, ListPage.Tipo.STUDIO)
 //                .addCase(CaseInputCoreDate.class)
@@ -150,7 +85,9 @@ public class ShowCaseTable {
             for (Class<? extends SPackage> packageClass : classes) {
                 final CaseItem caseItem = packageClass.getAnnotation(CaseItem.class);
                 final CaseBase caseBase = new CaseBase(packageClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
-                caseBase.annotation();
+                if (!caseItem.customizer().isInterface()) {
+                    createInstance(caseItem).customize(caseBase);
+                }
                 for (Resource resource : caseItem.resources()) {
                     Optional<ResourceRef> resourceRef;
                     if (resource.extension().isEmpty()) {
@@ -166,6 +103,18 @@ public class ShowCaseTable {
             }
         }
 
+    }
+
+    private CaseCustomizer createInstance(CaseItem caseItem) {
+        try {
+            return caseItem.customizer().newInstance();
+        } catch (InstantiationException e) {
+
+        } catch (IllegalAccessException e) {
+
+        }
+
+        return null;
     }
 
     private ShowCaseGroup addGroup(String groupName, Icone icon, ListPage.Tipo tipo) {

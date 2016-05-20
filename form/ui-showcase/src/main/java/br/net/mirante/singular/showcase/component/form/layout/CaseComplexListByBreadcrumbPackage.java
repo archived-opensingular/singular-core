@@ -11,7 +11,13 @@ import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.view.SViewBreadcrumb;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Breadcrumb
+ */
+@CaseItem(componentName = "Breadcrumb", subCaseName = "Complexo", group = Group.LAYOUT)
 public class CaseComplexListByBreadcrumbPackage extends SPackage {
 
     @Override

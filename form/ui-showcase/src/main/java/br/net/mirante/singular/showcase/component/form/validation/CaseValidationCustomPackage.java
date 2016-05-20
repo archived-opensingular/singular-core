@@ -9,7 +9,13 @@ import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Validação customizada, no exemplo verifica se o campo é menor que 1000
+ */
+@CaseItem(componentName = "Custom", group = Group.VALIDATION)
 public class CaseValidationCustomPackage extends SPackage {
 
     @Override

@@ -18,7 +18,13 @@ import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewListByForm;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Listener que é executado ao criar uma nova instância de um tipo
+ */
+@CaseItem(componentName = "Listeners", subCaseName = "Init Listener", group = Group.INTERACTION)
 public class CaseInitListenerPackage extends SPackage {
 
     private STypeList<STypeComposite<SIComposite>, SIComposite> itens;

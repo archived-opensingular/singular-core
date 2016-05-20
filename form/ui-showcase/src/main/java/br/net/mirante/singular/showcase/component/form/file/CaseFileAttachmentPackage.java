@@ -11,7 +11,15 @@ import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.basic.AtrBootstrap;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
+import br.net.mirante.singular.showcase.component.Resource;
 
+/**
+ * Campo para anexar arquivos
+ */
+@CaseItem(componentName = "Attachment", group = Group.FILE,
+resources = @Resource(PageWithAttachment.class))
 public class CaseFileAttachmentPackage extends SPackage {
 
     @Override

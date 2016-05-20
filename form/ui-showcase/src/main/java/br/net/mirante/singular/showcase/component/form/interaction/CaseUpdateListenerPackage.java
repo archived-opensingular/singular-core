@@ -13,7 +13,13 @@ import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Listener que é executado quando um dependsOn é executado
+ */
+@CaseItem(componentName = "Listeners", subCaseName = "Update listener", group = Group.INTERACTION)
 public class CaseUpdateListenerPackage extends SPackage {
 
     private STypeString cep;

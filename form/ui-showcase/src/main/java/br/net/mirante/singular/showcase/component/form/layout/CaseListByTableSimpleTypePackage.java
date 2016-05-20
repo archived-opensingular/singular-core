@@ -12,7 +12,13 @@ import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewListByTable;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * List by Table
+ */
+@CaseItem(componentName = "List by Table", subCaseName = "Simple Type", group = Group.LAYOUT)
 public class CaseListByTableSimpleTypePackage extends SPackage {
 
     @Override

@@ -23,4 +23,5 @@ public @interface CaseItem {
     String subCaseName() default "";
     Resource[] resources() default {};
     AnnotationMode annotation() default AnnotationMode.NONE;
+    Class<? extends CaseCustomizer> customizer() default CaseCustomizer.class;
 }

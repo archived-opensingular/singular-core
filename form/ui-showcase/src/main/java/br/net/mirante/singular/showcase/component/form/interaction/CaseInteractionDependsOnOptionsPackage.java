@@ -16,7 +16,13 @@ import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Combos interdependentes
+ */
+@CaseItem(componentName = "Combos interdependentes", group = Group.INTERACTION)
 public class CaseInteractionDependsOnOptionsPackage extends SPackage {
 
     private static final String[] WORDS = (""

@@ -13,7 +13,13 @@ import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * List by Master Detail
+ */
+@CaseItem(componentName = "List by Master Detail", subCaseName = "Default", group = Group.LAYOUT)
 public class CaseListByMasterDetailDefaultPackage extends SPackage {
 
     @Override

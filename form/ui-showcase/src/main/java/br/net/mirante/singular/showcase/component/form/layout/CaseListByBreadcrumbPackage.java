@@ -13,7 +13,13 @@ import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.SViewBreadcrumb;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Breadcrumb
+ */
+@CaseItem(componentName = "Breadcrumb", subCaseName = "Simples", group = Group.LAYOUT)
 public class CaseListByBreadcrumbPackage extends SPackage {
 
     @Override

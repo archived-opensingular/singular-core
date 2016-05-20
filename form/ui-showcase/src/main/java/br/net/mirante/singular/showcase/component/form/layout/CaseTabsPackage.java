@@ -17,7 +17,13 @@ import br.net.mirante.singular.form.type.util.STypeEMail;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.view.SViewTab;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Tabs
+ */
+@CaseItem(componentName = "Tabs", group = Group.LAYOUT)
 public class CaseTabsPackage extends SPackage {
 
     @Override

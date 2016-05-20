@@ -12,7 +12,13 @@ import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.SIInteger;
 import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Between Fields
+ */
+@CaseItem(componentName = "Between Fields", group = Group.VALIDATION)
 public class CaseValidationBetweenFieldsPackage extends SPackage {
 
     @Override

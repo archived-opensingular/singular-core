@@ -14,7 +14,13 @@ import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.SViewListByForm;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * List by Form
+ */
+@CaseItem(componentName = "List by Form", subCaseName = "Tamanho mínimo e máximo", group = Group.LAYOUT)
 public class CaseListByFormMinimumAndMaximumPackage extends SPackage {
 
     @Override

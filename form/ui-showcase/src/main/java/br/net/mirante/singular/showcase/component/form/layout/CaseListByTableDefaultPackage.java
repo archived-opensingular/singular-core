@@ -14,7 +14,13 @@ import br.net.mirante.singular.form.type.core.STypeDate;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.SViewListByTable;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * List by Table
+ */
+@CaseItem(componentName = "List by Table", subCaseName = "Default", group = Group.LAYOUT)
 public class CaseListByTableDefaultPackage extends SPackage {
 
     @Override

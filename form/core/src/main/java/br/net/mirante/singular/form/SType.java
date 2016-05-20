@@ -731,7 +731,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     public boolean hasValidation() {
-        return isRequired() || !instanceValidators.isEmpty();
+        return isRequired() ||
+                getAttributeValue(SPackageBasic.ATR_OBRIGATORIO_FUNCTION) != null ||
+                !instanceValidators.isEmpty();
     }
 
     public <T extends UIComponentMapper> SType<I> withCustomMapper(Supplier<T> factory) {

@@ -7,7 +7,15 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeAttachmentList;
 import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
+import br.net.mirante.singular.showcase.component.Resource;
 
+/**
+ * Campo para anexar vários arquivos
+ */
+@CaseItem(componentName = "Multiple Attachments", group = Group.FILE,
+resources = @Resource(PageWithAttachment.class))
 public class CaseFileMultipleAttachmentsPackage extends SPackage {
 
     @Override
