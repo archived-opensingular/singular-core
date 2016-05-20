@@ -2,18 +2,16 @@
  * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package br.net.mirante.singular.form.service.dto;
+package br.net.mirante.singular.form.service;
 
 import java.io.Serializable;
 
 /**
- * DTO representing a Form XML with id
+ * DTO representing a Form with id
  */
 public class FormDTO implements Serializable{
 
     private Long cod;
-
-    private String xml;
 
     public Long getCod() {
         return cod;
@@ -21,14 +19,6 @@ public class FormDTO implements Serializable{
 
     public void setCod(Long cod) {
         this.cod = cod;
-    }
-
-    public String getXml() {
-        return xml;
-    }
-
-    public void setXml(String xml) {
-        this.xml = xml;
     }
 
     @Override

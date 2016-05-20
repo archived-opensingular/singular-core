@@ -5,6 +5,23 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.lang.Bytes;
+import org.apache.wicket.util.string.StringValue;
+
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
@@ -20,21 +37,6 @@ import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.template.Content;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.lang.Bytes;
-import org.apache.wicket.util.string.StringValue;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.Optional;
 
 public class FormContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
@@ -165,21 +167,18 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private Component buildSaveButton() {
-        final Component button = new SingularSaveButton("save-btn") {
-            @Override
-            public IModel<? extends SInstance> getCurrentInstance() {
-                return singularFormPanel.getRootInstance();
-            }
+        final Component button = new SingularSaveButton("save-btn", singularFormPanel.getRootInstance()) {
 
             @Override
-            protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                getCurrentInstance().getObject().getDocument().persistFiles();
+            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                MElement xml = MformPersistenciaXML.toXML(instanceModel.getObject());
+                instanceModel.getObject().getDocument().persistFiles();
                 if (xml != null) {
                     currentModel.setXml(xml.toStringExato());
                 } else {
                     currentModel.setXml(StringUtils.EMPTY);
                 }
-                currentModel.setDescription(getCurrentInstance().getObject().toStringDisplay());
+                currentModel.setDescription(instanceModel.getObject().toStringDisplay());
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
@@ -189,28 +188,24 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
     private Component buildSaveAnnotationButton() {
 
-        final Component button = new SingularValidationButton("save-annotation-btn") {
-            @Override
-            public IModel<? extends SInstance> getCurrentInstance() {
-                return singularFormPanel.getRootInstance();
-            }
+        final Component button = new SingularValidationButton("save-annotation-btn", singularFormPanel.getRootInstance()) {
 
-            protected void save() {
-                getCurrentInstance().getObject().getDocument().persistFiles();
-                addAnnotationsToModel(getCurrentInstance().getObject());
-                currentModel.setDescription(getCurrentInstance().getObject().toStringDisplay());
+            protected void save(IModel<? extends SInstance> instanceModel) {
+                instanceModel.getObject().getDocument().persistFiles();
+                addAnnotationsToModel(instanceModel.getObject());
+                currentModel.setDescription(instanceModel.getObject().toStringDisplay());
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
 
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                save();
+                save(instanceModel);
             }
 
             @Override
             protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                save();
+                save(instanceModel);
             }
         };
         return button.add(visibleOnlyInAnnotationBehaviour());
@@ -222,34 +217,29 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private Component buildSaveWithoutValidateButton() {
-        final Component button = new SingularValidationButton("save-whitout-validate-btn") {
-            protected void save() {
-                MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
-                getCurrentInstance().getObject().getDocument().persistFiles();
+        final Component button = new SingularValidationButton("save-whitout-validate-btn", singularFormPanel.getRootInstance()) {
+            protected void save(IModel<? extends SInstance> instanceModel) {
+                MElement rootXml = MformPersistenciaXML.toXML(instanceModel.getObject());
+                instanceModel.getObject().getDocument().persistFiles();
                 if (rootXml != null) {
                     currentModel.setXml(rootXml.toStringExato());
                 } else {
                     currentModel.setXml(StringUtils.EMPTY);
                 }
-                currentModel.setDescription(getCurrentInstance().getObject().toStringDisplay());
-                addAnnotationsToModel(getCurrentInstance().getObject());
+                currentModel.setDescription(instanceModel.getObject().toStringDisplay());
+                addAnnotationsToModel(instanceModel.getObject());
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
 
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                save();
+                save(instanceModel);
             }
 
             @Override
             protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                save();
-            }
-
-            @Override
-            public IModel<? extends SInstance> getCurrentInstance() {
-                return singularFormPanel.getRootInstance();
+                save(instanceModel);
             }
 
         };
@@ -267,15 +257,9 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private Component buildValidateButton() {
-        final SingularValidationButton button = new SingularValidationButton("validate-btn") {
-
+        final SingularValidationButton button = new SingularValidationButton("validate-btn", singularFormPanel.getRootInstance()) {
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-            }
-
-            @Override
-            public IModel<? extends SInstance> getCurrentInstance() {
-                return singularFormPanel.getRootInstance();
             }
         };
 

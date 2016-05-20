@@ -5,22 +5,19 @@
 
 package br.net.mirante.singular.showcase.view.page;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.internal.xml.MElement;
-import br.net.mirante.singular.form.wicket.component.BFModalBorder;
-import br.net.mirante.singular.form.wicket.component.SingularForm;
-import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
-import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.showcase.component.CaseBase;
-import br.net.mirante.singular.showcase.component.ResourceRef;
-import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.util.wicket.output.BOutputPanel;
-import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -34,17 +31,23 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.lang.Bytes;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.wicket.component.BFModalBorder;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
+import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.showcase.component.CaseBase;
+import br.net.mirante.singular.showcase.component.ResourceRef;
+import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
 
 public class ItemCasePanel extends Panel implements SingularWicketContainer<ItemCasePanel, Void> {
@@ -150,7 +153,8 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         };
     }
 
-    private void viewXml(AjaxRequestTarget target, MElement xml) {
+    private void viewXml(AjaxRequestTarget target, SInstance instance) {
+        MElement xml = MformPersistenciaXML.toXML(instance);
         final BSTabPanel xmlCodes = new BSTabPanel("xmlCodes");
         xmlCodes.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(getXmlOutput(xml, true))));
         xmlCodes.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(getXmlOutput(xml, false))));
@@ -183,20 +187,14 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private ItemCaseButton buildValidateButton() {
         return (id, ci) -> {
-            final SingularValidationButton bsb = new SingularValidationButton(id) {
+            final SingularValidationButton bsb = new SingularValidationButton(id, ci) {
                 @Override
                 public boolean isVisible() {
                     return caseBase.getObject().showValidateButton();
                 }
-
                 @Override
                 protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
                                                    IModel<? extends SInstance> instanceModel) {
-                }
-
-                @Override
-                public IModel<? extends SInstance> getCurrentInstance() {
-                    return ci;
                 }
             };
 
@@ -232,16 +230,10 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private ItemCaseButton buildSaveButton() {
         return (id, ci) -> {
-            final SingularSaveButton bsb = new SingularSaveButton(id) {
-
+            final SingularSaveButton bsb = new SingularSaveButton(id, ci) {
                 @Override
-                public IModel<? extends SInstance> getCurrentInstance() {
-                    return ci;
-                }
-
-                @Override
-                protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                    viewXml(target, xml);
+                protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                    viewXml(target, instanceModel.getObject());
                 }
             };
 

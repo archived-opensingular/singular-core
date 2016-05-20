@@ -15,8 +15,8 @@ import java.util.Optional;
 
 public abstract class SingularValidationButton extends SingularButton {
 
-    public SingularValidationButton(String id) {
-        super(id);
+    public SingularValidationButton(String id, IModel<? extends SInstance> currentInstance) {
+        super(id, currentInstance);
     }
 
     protected abstract void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance>  instanceModel);
@@ -38,5 +38,4 @@ public abstract class SingularValidationButton extends SingularButton {
         return false;
     }
 
-    public abstract IModel<? extends SInstance>  getCurrentInstance();
 }

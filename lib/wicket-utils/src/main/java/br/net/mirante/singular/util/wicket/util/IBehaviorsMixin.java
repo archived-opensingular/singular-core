@@ -25,13 +25,13 @@ import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import br.net.mirante.singular.util.wicket.behavior.FormChoiceAjaxUpdateBehavior;
-import br.net.mirante.singular.util.wicket.behavior.FormComponentAjaxUpdateBehavior;
-import br.net.mirante.singular.util.wicket.behavior.IAjaxUpdateConfiguration;
 import br.net.mirante.singular.commons.lambda.IBiConsumer;
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.commons.lambda.ISupplier;
+import br.net.mirante.singular.util.wicket.behavior.FormChoiceAjaxUpdateBehavior;
+import br.net.mirante.singular.util.wicket.behavior.FormComponentAjaxUpdateBehavior;
+import br.net.mirante.singular.util.wicket.behavior.IAjaxUpdateConfiguration;
 
 @SuppressWarnings("serial")
 public interface IBehaviorsMixin extends Serializable {
@@ -97,6 +97,15 @@ public interface IBehaviorsMixin extends Serializable {
             @Override
             public void onConfigure(Component component) {
                 component.setRenderBodyOnly(renderBodyOnly.getObject());
+            }
+        };
+    }
+
+    default Behavior visibleIf(ISupplier<Boolean> model) {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                component.setVisible(model.get());
             }
         };
     }
