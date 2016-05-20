@@ -30,6 +30,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
@@ -106,7 +107,8 @@ public class FormItemCasePanel extends ItemCasePanel implements SingularWicketCo
         };
     }
 
-    private void viewXml(AjaxRequestTarget target, MElement xml) {
+    private void viewXml(AjaxRequestTarget target, SInstance instance) {
+        MElement xml = MformPersistenciaXML.toXML(instance);
         final BSTabPanel xmlCodes = new BSTabPanel("xmlCodes");
         xmlCodes.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(getXmlOutput(xml, true))));
         xmlCodes.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(getXmlOutput(xml, false))));
@@ -139,7 +141,7 @@ public class FormItemCasePanel extends ItemCasePanel implements SingularWicketCo
 
     private ItemCaseButton buildValidateButton() {
         return (id, ci) -> {
-            final SingularValidationButton bsb = new SingularValidationButton(id) {
+            final SingularValidationButton bsb = new SingularValidationButton(id, ci) {
                 @Override
                 public boolean isVisible() {
                     return getCaseBase().getObject().showValidateButton();
@@ -148,11 +150,6 @@ public class FormItemCasePanel extends ItemCasePanel implements SingularWicketCo
                 @Override
                 protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
                                                    IModel<? extends SInstance> instanceModel) {
-                }
-
-                @Override
-                public IModel<? extends SInstance> getCurrentInstance() {
-                    return ci;
                 }
             };
 
@@ -188,16 +185,10 @@ public class FormItemCasePanel extends ItemCasePanel implements SingularWicketCo
 
     private ItemCaseButton buildSaveButton() {
         return (id, ci) -> {
-            final SingularSaveButton bsb = new SingularSaveButton(id) {
-
+            final SingularSaveButton bsb = new SingularSaveButton(id, ci) {
                 @Override
-                public IModel<? extends SInstance> getCurrentInstance() {
-                    return ci;
-                }
-
-                @Override
-                protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                    viewXml(target, xml);
+                protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                    viewXml(target, instanceModel.getObject());
                 }
             };
 
