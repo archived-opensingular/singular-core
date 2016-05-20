@@ -87,6 +87,9 @@ public class FormService implements IFormService{
     }
 
     private String extractContent(SInstance instance){
+        if(instance == null){
+            return null;
+        }
         instance.getDocument().persistFiles();
         return MformPersistenciaXML.toXML(instance).toStringExato();
     }
