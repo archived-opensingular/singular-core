@@ -5,6 +5,40 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.STypeComposite;
@@ -30,38 +64,6 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder.Size;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.StringValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class CrudContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
@@ -258,7 +260,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         final String     definicao       = getDefinicao(model.getObject().getType());
         final BSTabPanel xmlTabs         = new BSTabPanel("xmlTabs");
 
-        final Function<String, BOutputPanel> creator = val -> new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(val));
+        final Function<String, BOutputPanel> creator = val -> new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(val));
 
         xmlTabs.addTab(getString("label.xml.tabulado"), creator.apply(xmlTabulado));
         xmlTabs.addTab(getString("label.xml.persistencia"), creator.apply(xmlPersistencia));
@@ -266,7 +268,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
         if (hasAnnotations()) {
             String xmlAnnotations = getXmlTabulado(model.getObject().getAnnnotations());
-            xmlTabs.addTab(getString("label.xml.anotacao"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlAnnotations)));
+            xmlTabs.addTab(getString("label.xml.anotacao"), new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(xmlAnnotations)));
         }
 
         viewXmlModal.addOrReplace(xmlTabs);

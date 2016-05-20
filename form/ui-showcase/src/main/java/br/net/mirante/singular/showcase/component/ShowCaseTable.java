@@ -5,146 +5,165 @@
 
 package br.net.mirante.singular.showcase.component;
 
-import br.net.mirante.singular.showcase.component.custom.CaseCustomStringMapper;
-import br.net.mirante.singular.showcase.component.custom.CaseCustonRangeMapper;
-import br.net.mirante.singular.showcase.component.custom.comment.CaseAnnotation;
-import br.net.mirante.singular.showcase.component.file.CaseFileAttachment;
-import br.net.mirante.singular.showcase.component.file.CaseFileMultipleAttachments;
-import br.net.mirante.singular.showcase.component.input.core.*;
-import br.net.mirante.singular.showcase.component.input.core.multiselect.*;
-import br.net.mirante.singular.showcase.component.input.core.search.CaseInputModalSearch;
-import br.net.mirante.singular.showcase.component.input.core.search.CaseLazyInputModalSearch;
-import br.net.mirante.singular.showcase.component.input.core.select.*;
-import br.net.mirante.singular.showcase.component.interaction.*;
-import br.net.mirante.singular.showcase.component.layout.*;
-import br.net.mirante.singular.showcase.component.map.CaseGoogleMaps;
-import br.net.mirante.singular.showcase.component.validation.CaseValidationBetweenFields;
-import br.net.mirante.singular.showcase.component.validation.CaseValidationCustom;
-import br.net.mirante.singular.showcase.component.validation.CaseValidationPartial;
-import br.net.mirante.singular.showcase.component.validation.CaseValidationRequired;
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
+
+import org.apache.wicket.util.string.StringValue;
+import org.reflections.Reflections;
+import org.springframework.stereotype.Service;
+
 import com.google.common.base.Throwables;
 
-import java.io.Serializable;
-import java.util.*;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.showcase.view.page.form.ListPage;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
+@Service
 public class ShowCaseTable {
 
-    private final Map<String, ShowCaseGroup> groups = new LinkedHashMap<>();
+    private final Map<String, ShowCaseGroup> formGroups = new LinkedHashMap<>();
+    private final Map<String, ShowCaseGroup> studioGroups = new LinkedHashMap<>();
 
+    private final Map<Group, List<Class<? extends SPackage>>> casePorGrupo = new LinkedHashMap<>();
+
+    @SuppressWarnings("unchecked")
     public ShowCaseTable() {
 
+        Reflections reflections = new Reflections("br.net.mirante.singular.showcase.component");
+        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(CaseItem.class);
+        for (Class<?> aClass : annotated) {
+            if (SPackage.class.isAssignableFrom(aClass)) {
+                Class<? extends SPackage> sPackage = (Class<? extends SPackage>) aClass;
+                final CaseItem annotation = aClass.getAnnotation(CaseItem.class);
+
+                List<Class<? extends SPackage>> classes = casePorGrupo.get(annotation.group());
+                if (classes == null) {
+                    classes = new ArrayList<>();
+                }
+                classes.add(sPackage);
+                casePorGrupo.put(annotation.group(), classes);
+            }
+
+        }
+
         // @formatter:off
-        group("Input", Icone.PUZZLE)
-            .addCase(CaseInputCoreDate.class)
-            .addCase(CaseInputCoreYearMonth.class)
-            .addCase(CaseInputCoreInteger.class)
-            .addCase(CaseInputCoreSelectComboRadio.class)
-            .addCase(CaseInputCoreSelectDefault.class)
-            .addCase(CaseInputCoreSelectComposite.class)
-            .addCase(CaseInputCoreSelectCompositePojo.class)
-            .addCase(CaseInputCoreSelectProvider.class)
-            .addCase(CaseInputCoreSelectComboAutoComplete.class)
-            .addCase(CaseInputCoreMultiSelectDefault.class)
-            .addCase(CaseInputCoreMultiSelectCombo.class)
-            .addCase(CaseInputCoreMultiSelectCheckbox.class)
-            .addCase(CaseInputCoreMultiSelectPickList.class)
-            .addCase(CaseInputCoreMultiSelectComposite.class)
-            .addCase(CaseInputCoreMultiSelectProvider.class)
-            .addCase(CaseInputModalSearch.class)
-            .addCase(CaseLazyInputModalSearch.class)
-            .addCase(CaseInputCoreBasic.class)
-            .addCase(CaseInputCoreBoolean.class)
-            .addCase(CaseInputCoreString.class)
-            .addCase(CaseInputCoreTextArea.class)
-            .addCase(CaseInputCoreDecimal.class)
-            .addCase(CaseInputCoreMoney.class)
-            .addCase(CaseInputCoreDateTime.class)
-        ;
-        group("File", Icone.FOLDER)
-            .addCase(CaseFileAttachment.class)
-            .addCase(CaseFileMultipleAttachments.class)
-        ;
-        group("Layout", Icone.GRID)
-            .addCase(CaseSimpleGrid.class)
-            .addCase(CaseFineTunningGrid.class)
-            .addCase(CaseListByFormDefault.class)
-            .addCase(CaseListByTableDefault.class)
-            .addCase(CaseListByMasterDetailDefault.class)
-            .addCase(CaseListByMasterDetailColumns.class)
-            .addCase(CaseListByMasterDetailButtons.class)
-            .addCase(CaseListByMasterDetailNested.class)
-            .addCase(CaseListByBreadcrumb.class)
-            .addCase(CaseComplexListByBreadcrumb.class)
-            .addCase(CaseListByFormMinimumAndMaximum.class)
-            .addCase(CaseListByTableMinimiumAndMaximum.class)
-            .addCase(CaseListByMasterDetailMiniumAndMaximum.class)
-            .addCase(CaseListByTableSimpleType.class)
-            .addCase(CaseRowControlGrid.class)
-            .addCase(CaseTabs.class)
-        ;
-        group("Validation", Icone.BAN)
-            .addCase(CaseValidationRequired.class)
-            .addCase(CaseValidationCustom.class)
-            .addCase(CaseValidationBetweenFields.class)
-            .addCase(CaseValidationPartial.class);
-        group("Interaction", Icone.ROCKET)
-            .addCase(CaseInteractionExists.class)
-            .addCase(CaseInteractionEnabled.class)
-            .addCase(CaseInteractionVisible.class)
-            .addCase(CaseInteractionRequired.class)
-            .addCase(CaseInteractionDependsOnOptions.class)
-            .addCase(CaseInitListener.class)
-            .addCase(CaseUpdateListener.class)
-        ;
-        group("Custom", Icone.WRENCH)
-                .addCase(CaseCustomStringMapper.class)
-                .addCase(CaseCustonRangeMapper.class)
-                .addCase(CaseAnnotation.class)
-        ;
-        group("Maps", Icone.MAP)
-                .addCase(CaseGoogleMaps.class)
-        ;
+        addGroup(Group.INPUT);
+        addGroup(Group.FILE);
+        addGroup(Group.LAYOUT);
+        addGroup(Group.VALIDATION);
+        addGroup(Group.INTERACTION);
+        addGroup(Group.CUSTOM);
+        addGroup(Group.MAPS);
+
+        addGroup("XSD", Icone.CODE, ListPage.Tipo.FORM)
+            .addCase(new DynamicCaseBase("Gerado"));
+
+        addGroup(Group.STUDIO);
         //@formatter:on
     }
 
     public ShowCaseItem findCaseItemByComponentName(String name) {
-        final ShowCaseItem[] showCaseItem = new ShowCaseItem[1];
-        getGroups().stream().forEach(i -> {
-            Optional<ShowCaseItem> op = i.getItens().stream()
+        return getGroups().stream()
+                .map(ShowCaseGroup::getItens)
+                .flatMap(Collection::stream)
                 .filter(f -> name.equalsIgnoreCase(f.getComponentName()))
-                .findFirst();
-            if (op.isPresent()) {
-                showCaseItem[0] = op.get();
-            }
-        });
-
-        return showCaseItem[0];
+                .findFirst().orElse(null);
     }
 
-    private ShowCaseGroup group(String groupName, Icone icon) {
+    private void addGroup(Group groupEnum) {
+        final ShowCaseGroup group = addGroup(groupEnum.getName(), groupEnum.getIcone(), groupEnum.getTipo());
+
+        final List<Class<? extends SPackage>> classes = casePorGrupo.get(groupEnum);
+        if (classes != null) {
+            for (Class<? extends SPackage> packageClass : classes) {
+                final CaseItem caseItem = packageClass.getAnnotation(CaseItem.class);
+                final CaseBase caseBase = new CaseBase(packageClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
+                if (!caseItem.customizer().isInterface()) {
+                    createInstance(caseItem).customize(caseBase);
+                }
+                for (Resource resource : caseItem.resources()) {
+                    Optional<ResourceRef> resourceRef;
+                    if (resource.extension().isEmpty()) {
+                        resourceRef = ResourceRef.forSource(resource.value());
+                    } else {
+                        resourceRef = ResourceRef.forClassWithExtension(resource.value(), resource.extension());
+                    }
+                    if (resourceRef.isPresent()) {
+                        caseBase.getAditionalSources().add(resourceRef.get());
+                    }
+                }
+                group.addCase(caseBase);
+            }
+        }
+
+    }
+
+    private CaseCustomizer createInstance(CaseItem caseItem) {
+        try {
+            return caseItem.customizer().newInstance();
+        } catch (InstantiationException e) {
+
+        } catch (IllegalAccessException e) {
+
+        }
+
+        return null;
+    }
+
+    private ShowCaseGroup addGroup(String groupName, Icone icon, ListPage.Tipo tipo) {
+        Map<String, ShowCaseGroup> groups;
+        if (ListPage.Tipo.FORM.equals(tipo)) {
+            groups = formGroups;
+        } else {
+            groups = studioGroups;
+        }
+        
         ShowCaseGroup group = groups.get(groupName);
         if (group == null) {
-            group = new ShowCaseGroup(groupName, icon);
+            group = new ShowCaseGroup(groupName, icon, tipo);
             groups.put(groupName, group);
         }
+
         return group;
     }
 
     public Collection<ShowCaseGroup> getGroups() {
-        return groups.values();
+        final List<ShowCaseGroup> groups = new ArrayList<>(formGroups.values());
+        groups.addAll(studioGroups.values());
+        return groups;
+    }
+
+    public Collection<ShowCaseGroup> getGroups(StringValue tipoValue) {
+        if (tipoValue.isNull() || ListPage.Tipo.FORM.toString().equals(tipoValue.toString())) {
+            return formGroups.values();
+        } else if (ListPage.Tipo.STUDIO.toString().equals(tipoValue.toString())) {
+            return studioGroups.values();
+        } else {
+            return Collections.emptyList();
+        }
+
     }
 
     public static class ShowCaseGroup implements Serializable {
 
         private final String groupName;
         private final Icone  icon;
+        private final ListPage.Tipo tipo;
 
         private final Map<String, ShowCaseItem> itens = new TreeMap<>();
 
-        public ShowCaseGroup(String groupName, Icone icon) {
+        public ShowCaseGroup(String groupName, Icone icon, ListPage.Tipo tipo) {
             this.groupName = groupName;
             this.icon = icon;
+            this.tipo = tipo;
         }
 
         public String getGroupName() {
@@ -175,6 +194,10 @@ public class ShowCaseTable {
 
         public Icone getIcon() {
             return icon;
+        }
+
+        public ListPage.Tipo getTipo() {
+            return tipo;
         }
     }
 

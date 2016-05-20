@@ -18,6 +18,7 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
 
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
 import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
@@ -46,9 +47,20 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
 
     private List<FormVO> getFormTypes() {
         if (formTypes == null) {
-            formTypes = showcaseTypeLoader.getEntries().stream().map(t -> new FormVO(t)).collect(Collectors.toList());
+            formTypes = showcaseTypeLoader.getEntries().stream().filter(this::verificarTipo).map(t -> new FormVO(t)).collect(Collectors.toList());
         }
         return formTypes;
+    }
+
+    private boolean verificarTipo(ShowcaseTypeLoader.TemplateEntry templateEntry) {
+        final StringValue tipoValue = getPage().getPageParameters().get(ListPage.PARAM_TIPO);
+        ListPage.Tipo tipo;
+        if (tipoValue.isNull() || tipoValue.toString().equals(ListPage.Tipo.FORM.toString())) {
+            tipo = ListPage.Tipo.FORM;
+        } else {
+            tipo = ListPage.Tipo.STUDIO;
+        }
+        return tipo.equals(templateEntry.getTipo());
     }
 
     @Override
