@@ -12,13 +12,14 @@ import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
+import br.net.mirante.singular.showcase.component.Resource;
 import br.net.mirante.singular.showcase.view.page.form.crud.services.MFileIdsOptionsProvider;
 
 /**
  * É permitido alterar o provedor de dados de forma que estes sejam carregados de forma dinâmica ou de outras fontes de informação.
  */
 @CaseItem(componentName = "Select", subCaseName = "Provedor Dinâmico", group = Group.INPUT,
-            resources = MFileIdsOptionsProvider.class)
+            resources = @Resource(MFileIdsOptionsProvider.class))
 public class CaseInputCoreSelectProviderPackage extends SPackage {
 
     @Override

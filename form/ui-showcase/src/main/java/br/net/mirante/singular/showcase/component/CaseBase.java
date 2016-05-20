@@ -29,6 +29,7 @@ public class CaseBase implements Serializable {
     private final List<ItemCasePanel.ItemCaseButton> botoes = new ArrayList<>();
     private final List<ResourceRef> aditionalSources = new ArrayList<>();
     private Class<? extends SPackage> sPackage;
+    private AnnotationMode annotationMode;
 
     private transient SType<?> caseType;
 
@@ -41,10 +42,13 @@ public class CaseBase implements Serializable {
         this.subCaseName = subCaseName;
     }
 
-    public CaseBase(Class<? extends SPackage> sPackage, String componentName, String subCaseName) {
+    public CaseBase(Class<? extends SPackage> sPackage, String componentName, String subCaseName,
+                    AnnotationMode annotationMode) {
         this.sPackage = sPackage;
         this.componentName = componentName;
         this.subCaseName = subCaseName;
+        this.annotationMode = annotationMode;
+
     }
 
     public String getComponentName() {
@@ -120,5 +124,5 @@ public class CaseBase implements Serializable {
         return getCaseType().hasAnyValidation();
     }
 
-    public AnnotationMode annotation() { return AnnotationMode.NONE;}
+    public AnnotationMode annotation() { return annotationMode;}
 }

@@ -9,7 +9,15 @@ import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
+import br.net.mirante.singular.showcase.component.Resource;
 
+/**
+ * Custom String Mapper
+ */
+@CaseItem(componentName = "Custom Mapper", subCaseName = "Material Desing Input", group = Group.CUSTOM,
+resources = @Resource(MaterialDesignInputMapper.class))
 public class CaseCustomStringMapperPackage extends SPackage {
 
     @Override

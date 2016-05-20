@@ -11,16 +11,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-
 @Inherited
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface CaseItem {
+public @interface Resource {
 
-    String componentName();
-    Group group();
-    String subCaseName() default "";
-    Resource[] resources() default {};
-    AnnotationMode annotation() default AnnotationMode.NONE;
+    Class value();
+    String extension() default "";
 }

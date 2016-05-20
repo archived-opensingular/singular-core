@@ -13,12 +13,13 @@ import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewSearchModal;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
+import br.net.mirante.singular.showcase.component.Resource;
 
 /**
  * Permite a seleção a partir de uma busca filtrada, fazendo o controle de paginação de forma automatica.
  */
 @CaseItem(componentName = "Search Select", subCaseName = "In Memory Pagination", group = Group.INPUT,
-resources = {Funcionario.class, FuncionarioProvider.class, FuncionarioRepository.class})
+resources = {@Resource(Funcionario.class), @Resource(FuncionarioProvider.class), @Resource(FuncionarioRepository.class)})
 public class CaseInputModalSearchPackage extends SPackage {
 
     @Override

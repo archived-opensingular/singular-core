@@ -16,6 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.showcase.SpringWicketTester;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreIntegerPackage;
@@ -40,7 +41,7 @@ public class ItemCasePanelTest {
 
     @Before
     public void setup() {
-        cb = new CaseBase(CaseInputCoreIntegerPackage.class, "Numeric", "Integer");
+        cb = new CaseBase(CaseInputCoreIntegerPackage.class, "Numeric", "Integer", AnnotationMode.NONE);
     }
 
     @Test

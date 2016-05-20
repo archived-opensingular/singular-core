@@ -6,12 +6,13 @@ import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
+import br.net.mirante.singular.showcase.component.Resource;
 
 /**
  * É possivel utilizar objetos serializaveis para realizar a seleção, porem neste caso, é necessario informar o conversor.
  */
 @CaseItem(componentName = "Select", subCaseName = "Tipo composto com objetos serializaveis.", group = Group.INPUT,
-        resources = {IngredienteQuimico.class, IngredienteQuimicoFilteredProvider.class})
+        resources = {@Resource(IngredienteQuimico.class), @Resource(IngredienteQuimicoFilteredProvider.class)})
 public class CaseInputCoreSelectCompositePojoPackage extends SPackage {
 
     @Override

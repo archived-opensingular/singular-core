@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -22,9 +23,6 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.showcase.component.form.custom.CaseCustomStringMapper;
-import br.net.mirante.singular.showcase.component.form.custom.CaseCustonRangeMapper;
-import br.net.mirante.singular.showcase.component.form.custom.comment.CaseAnnotation;
 import br.net.mirante.singular.showcase.component.form.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.component.form.file.CaseFileMultipleAttachments;
 import br.net.mirante.singular.showcase.component.form.interaction.CaseInitListener;
@@ -125,11 +123,7 @@ public class ShowCaseTable {
             .addCase(CaseInitListener.class)
             .addCase(CaseUpdateListener.class)
         ;
-        addGroup("Custom", Icone.WRENCH, ListPage.Tipo.FORM)
-                .addCase(CaseCustomStringMapper.class)
-                .addCase(CaseCustonRangeMapper.class)
-                .addCase(CaseAnnotation.class)
-        ;
+        addGroup(Group.CUSTOM);
         addGroup("Maps", Icone.MAP, ListPage.Tipo.FORM)
                 .addCase(CaseGoogleMaps.class)
         ;
@@ -154,10 +148,19 @@ public class ShowCaseTable {
         final List<Class<? extends SPackage>> classes = casePorGrupo.get(groupEnum);
         if (classes != null) {
             for (Class<? extends SPackage> packageClass : classes) {
-                final CaseItem annotation = packageClass.getAnnotation(CaseItem.class);
-                final CaseBase caseBase = new CaseBase(packageClass, annotation.componentName(), annotation.subCaseName());
-                for (Class resource : annotation.resources()) {
-                    caseBase.getAditionalSources().add(ResourceRef.forSource(resource).orElse(null));
+                final CaseItem caseItem = packageClass.getAnnotation(CaseItem.class);
+                final CaseBase caseBase = new CaseBase(packageClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
+                caseBase.annotation();
+                for (Resource resource : caseItem.resources()) {
+                    Optional<ResourceRef> resourceRef;
+                    if (resource.extension().isEmpty()) {
+                        resourceRef = ResourceRef.forSource(resource.value());
+                    } else {
+                        resourceRef = ResourceRef.forClassWithExtension(resource.value(), resource.extension());
+                    }
+                    if (resourceRef.isPresent()) {
+                        caseBase.getAditionalSources().add(resourceRef.get());
+                    }
                 }
                 group.addCase(caseBase);
             }

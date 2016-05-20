@@ -8,12 +8,13 @@ import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewSearchModal;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
+import br.net.mirante.singular.showcase.component.Resource;
 
 /**
  * Permite a seleção a partir de uma busca filtrada, sendo necessario fazer o controle de paginação manualmente
  */
 @CaseItem(componentName = "Search Select", subCaseName = "Lazy Pagination", group = Group.INPUT,
-resources = {Funcionario.class, LazyFuncionarioProvider.class, FuncionarioRepository.class})
+resources = {@Resource(Funcionario.class), @Resource(LazyFuncionarioProvider.class), @Resource(FuncionarioRepository.class)})
 public class CaseLazyInputModalSearchPackage extends SPackage {
 
     @Override

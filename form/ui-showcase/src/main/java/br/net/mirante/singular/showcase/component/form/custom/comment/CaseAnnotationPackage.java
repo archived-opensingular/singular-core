@@ -9,7 +9,16 @@ import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
+import br.net.mirante.singular.showcase.component.Resource;
 
+/**
+ * Anotações e comentários associados a elementos de um form
+ */
+@CaseItem(componentName = "Annotation", group = Group.CUSTOM, annotation = AnnotationMode.EDIT,
+resources = @Resource(PageWithAnnotation.class))
 public class CaseAnnotationPackage extends SPackage {
 
     public STypeComposite<?> pedido, cliente, endereco, request, id;
