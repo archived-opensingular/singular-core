@@ -61,6 +61,6 @@ public class DynamicCaseBase extends CaseBase {
 
     @Override
     public Optional<String> getDescriptionHtml() {
-        return Optional.of("Esse form foi gerado a partir de um XSD.");
+        return Optional.of("Este form foi gerado a partir de um XSD.");
     }
 }

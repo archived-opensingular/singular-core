@@ -37,7 +37,7 @@ public class ShowCaseTable {
     @SuppressWarnings("unchecked")
     public ShowCaseTable() {
 
-        Reflections reflections = new Reflections("br.net.mirante.singular.showcase.component.form");
+        Reflections reflections = new Reflections("br.net.mirante.singular.showcase.component");
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(CaseItem.class);
         for (Class<?> aClass : annotated) {
             if (SPackage.class.isAssignableFrom(aClass)) {
@@ -66,9 +66,7 @@ public class ShowCaseTable {
         addGroup("XSD", Icone.CODE, ListPage.Tipo.FORM)
             .addCase(new DynamicCaseBase("Gerado"));
 
-//        addGroup("Input", Icone.PUZZLE, ListPage.Tipo.STUDIO)
-//                .addCase(CaseInputCoreDate.class)
-//        ;
+        addGroup(Group.STUDIO);
         //@formatter:on
     }
 

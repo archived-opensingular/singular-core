@@ -15,7 +15,8 @@ public enum Group {
     VALIDATION("Validation", Icone.BAN, ListPage.Tipo.FORM),
     INTERACTION("Interaction", Icone.ROCKET, ListPage.Tipo.FORM),
     CUSTOM("Custom", Icone.WRENCH, ListPage.Tipo.FORM),
-    MAPS("Maps", Icone.MAP, ListPage.Tipo.FORM);
+    MAPS("Maps", Icone.MAP, ListPage.Tipo.FORM),
+    STUDIO("Studio", Icone.MAP, ListPage.Tipo.STUDIO);
 
     private final String name;
     private final Icone icone;
