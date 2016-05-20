@@ -47,7 +47,7 @@ public abstract class ItemCasePanel extends Panel {
 
         WebMarkupContainer headerContainer = new WebMarkupContainer("header");
         final Optional<ResourceRef> mainSource = caseBase.getObject().getMainSourceResourceName();
-        final ProcessadorCodigoFonte pcf = new ProcessadorCodigoFonte(mainSource.get().getContent());
+        final ProcessadorCodigoFonte pcf = new ProcessadorCodigoFonte(mainSource.map(ResourceRef::getContent).orElse(""));
         String description = caseBase.getObject().getDescriptionHtml()
                 .orElse(pcf.getJavadoc());
 

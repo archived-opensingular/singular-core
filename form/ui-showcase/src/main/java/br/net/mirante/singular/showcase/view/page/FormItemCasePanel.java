@@ -39,7 +39,9 @@ import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.component.CaseBase;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
@@ -79,9 +81,18 @@ public class FormItemCasePanel extends ItemCasePanel implements SingularWicketCo
         singularFormPanel = new SingularFormPanel<String>("singularFormPanel", singularFormConfig) {
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                String typeName = getCaseBase().getObject().getCaseType().getName();
+                final CaseBase caseBase = getCaseBase().getObject();
+                String typeName = caseBase.getCaseType().getName();
+                if (caseBase.isDynamic()) {
+                    registerDynamicType(singularFormConfig, caseBase);
+                }
                 RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
                 return singularFormConfig.getDocumentFactory().createInstance(refType);
+            }
+
+            private void registerDynamicType(SFormConfig<String> singularFormConfig, CaseBase caseBase) {
+                final ShowcaseTypeLoader typeLoader = (ShowcaseTypeLoader) singularFormConfig.getTypeLoader();
+                typeLoader.add(caseBase.getComponentName(), caseBase, ListPage.Tipo.FORM);
             }
 
             @Override

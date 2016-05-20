@@ -79,7 +79,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         }, tipo);
     }
 
-    private void add(String displayName, CaseBase c, ListPage.Tipo tipo) {
+    public void add(String displayName, CaseBase c, ListPage.Tipo tipo) {
         add(c.getTypeName(), displayName, () -> c.getCaseType(), tipo);
     }
 

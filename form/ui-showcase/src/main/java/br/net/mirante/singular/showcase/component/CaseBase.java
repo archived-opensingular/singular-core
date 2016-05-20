@@ -29,13 +29,9 @@ public class CaseBase implements Serializable {
     private final List<ItemCasePanel.ItemCaseButton> botoes = new ArrayList<>();
     private final List<ResourceRef> aditionalSources = new ArrayList<>();
     private Class<? extends SPackage> sPackage;
-    private AnnotationMode annotationMode;
+    private AnnotationMode annotationMode = AnnotationMode.NONE;
 
     private transient SType<?> caseType;
-
-    public CaseBase(String componentName) {
-        this(componentName, null);
-    }
 
     public CaseBase(String componentName, String subCaseName) {
         this.componentName = componentName;
@@ -125,4 +121,8 @@ public class CaseBase implements Serializable {
     }
 
     public AnnotationMode annotation() { return annotationMode;}
+
+    public boolean isDynamic() {
+        return false;
+    }
 }

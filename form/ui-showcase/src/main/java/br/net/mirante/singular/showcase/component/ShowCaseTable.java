@@ -63,6 +63,9 @@ public class ShowCaseTable {
         addGroup(Group.CUSTOM);
         addGroup(Group.MAPS);
 
+        addGroup("XSD", Icone.CODE, ListPage.Tipo.FORM)
+            .addCase(new DynamicCaseBase("Gerado"));
+
 //        addGroup("Input", Icone.PUZZLE, ListPage.Tipo.STUDIO)
 //                .addCase(CaseInputCoreDate.class)
 //        ;
