@@ -16,8 +16,11 @@ import java.util.Optional;
 
 public abstract class SingularButton extends AjaxButton {
 
-    public SingularButton(String id) {
+    private final IModel<? extends SInstance> currentInstance;
+    
+    public SingularButton(String id, IModel<? extends SInstance> currentInstance) {
         super(id);
+        this.currentInstance = currentInstance;
     }
 
     @Override
@@ -39,5 +42,7 @@ public abstract class SingularButton extends AjaxButton {
         WicketFormProcessing.onFormError(form, Optional.of(target), getCurrentInstance());
     }
 
-    public abstract IModel<? extends SInstance>  getCurrentInstance();
+    protected IModel<? extends SInstance> getCurrentInstance() {
+        return currentInstance;
+    }
 }
