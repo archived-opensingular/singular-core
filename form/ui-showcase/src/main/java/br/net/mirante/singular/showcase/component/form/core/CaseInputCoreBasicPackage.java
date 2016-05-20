@@ -10,8 +10,14 @@ import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Campos básicos para uso nos formulários do singular
+ */
 
+@CaseItem(componentName = "Basic", group = Group.INPUT)
 public class CaseInputCoreBasicPackage extends SPackage {
 
     @Override

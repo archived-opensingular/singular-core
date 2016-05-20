@@ -8,8 +8,14 @@ package br.net.mirante.singular.showcase.component.form.core;
 import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Campo para inserção de dados booleanos.
+ */
 //@formatter:off
+@CaseItem(componentName = "Boolean", group = Group.INPUT)
 public class CaseInputCoreBooleanPackage extends SPackage {
 
     @Override

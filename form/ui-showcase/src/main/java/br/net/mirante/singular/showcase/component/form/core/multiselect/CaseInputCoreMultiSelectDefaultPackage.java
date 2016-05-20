@@ -9,7 +9,13 @@ import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Se a view não for definida, então define o componente dependendo da quantidade de dados.
+ */
+@CaseItem(componentName = "Multi Select", subCaseName = "Default", group = Group.INPUT)
 public class CaseInputCoreMultiSelectDefaultPackage extends SPackage {
 
     @Override

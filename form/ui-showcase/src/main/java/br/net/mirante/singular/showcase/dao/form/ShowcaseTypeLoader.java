@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
@@ -34,6 +37,9 @@ import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoG
 
 public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
 
+    @Inject
+    private ShowCaseTable showCaseTable;
+
     private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
     public ShowcaseTypeLoader() {
@@ -46,7 +52,11 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO, ListPage.Tipo.FORM);
         add(SPackageHabilitacaoEmpresa.class, SPackageHabilitacaoEmpresa.NOME_COMPLETO, ListPage.Tipo.FORM);
 
-        for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {
+    }
+
+    @PostConstruct
+    private void init() {
+        for (ShowCaseGroup group : showCaseTable.getGroups()) {
             for (ShowCaseItem item : group.getItens()) {
                 String itemName = group.getGroupName() + " - " + item.getComponentName();
                 for (CaseBase c : item.getCases()) {
@@ -93,6 +103,14 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
             }
         }
         return null;
+    }
+
+    public ShowCaseTable getShowCaseTable() {
+        return showCaseTable;
+    }
+
+    public void setShowCaseTable(ShowCaseTable showCaseTable) {
+        this.showCaseTable = showCaseTable;
     }
 
     public static class TemplateEntry {

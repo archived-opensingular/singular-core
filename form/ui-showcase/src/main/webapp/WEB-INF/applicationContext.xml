@@ -28,7 +28,7 @@
 
     <bean id="springServiceRegistry" class="br.net.mirante.singular.form.spring.SpringServiceRegistry"/>
 
-    <bean id="showcaseTypeLoader" class="br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader"/>
+    <bean id="showcaseTypeLoader" class="br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader" />
 
 	<bean id="formConfigWithoutDatabase" class="br.net.mirante.singular.form.spring.SpringFormConfig">
         <property name="typeLoader" ref="showcaseTypeLoader"/>

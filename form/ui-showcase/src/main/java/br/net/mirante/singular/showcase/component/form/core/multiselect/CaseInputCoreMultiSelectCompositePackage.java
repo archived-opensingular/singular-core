@@ -15,7 +15,14 @@ import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.converter.SInstanceConverter;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Para usar um tipo composto na seleção, este deve ser do tipo MTipoSelectItem. <br/>
+ * É permitido se mudar quais campos serão utilizados como chave e valor.
+ */
+@CaseItem(componentName = "Multi Select", subCaseName = "Tipo Composto", group = Group.INPUT)
 public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
 
     @Override

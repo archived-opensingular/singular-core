@@ -10,7 +10,13 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Pemite a seleção de valores compostos de varios tipos diferentes.
+ */
+@CaseItem(componentName = "Select", subCaseName = "Tipo Composto", group = Group.INPUT)
 public class CaseInputCoreSelectCompositePackage extends SPackage {
 
     @Override

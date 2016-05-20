@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ProcessadorCondigoFonte {
+public class ProcessadorCodigoFonte {
 
     private final String fonte;
     private final List<Integer> linhasParaDestacar;
@@ -17,7 +17,7 @@ public class ProcessadorCondigoFonte {
     private final List<String> javadocDeClasse;
     private final static List<String> LIXOS = Collections.singletonList("@formatter");
 
-    public ProcessadorCondigoFonte(String fonte) {
+    public ProcessadorCodigoFonte(String fonte) {
         this.fonte = fonte;
         this.linhasParaDestacar = new ArrayList<>();
         this.fonteFinal = new ArrayList<>();
@@ -40,13 +40,15 @@ public class ProcessadorCondigoFonte {
                 if (linha.startsWith("/**")) {
                     javadoc = true;
                 }
-                if (javadoc && linha.contains("*/")) {
-                    javadoc = false;
-                }
 
                 if (linha.contains("public class ")) {
                     classeIniciada = true;
                 }
+            }
+
+            if (javadoc && linha.contains("*/")) {
+                javadoc = false;
+                continue;
             }
 
             if(isLixo(linha) || javadoc){

@@ -9,7 +9,13 @@ import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.STypeDateTime;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Componente para inserção de data e hora.
+ */
+@CaseItem(componentName = "Date", subCaseName = "Data e Hora", group = Group.INPUT)
 public class CaseInputCoreDateTimePackage extends SPackage {
 
     @Override

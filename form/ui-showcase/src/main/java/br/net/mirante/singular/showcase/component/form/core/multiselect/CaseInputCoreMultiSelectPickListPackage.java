@@ -13,7 +13,13 @@ import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Permite a seleção múltipla no formato de uma pick list.
+ */
+@CaseItem(componentName = "Multi Select", subCaseName = "Pick List", group = Group.INPUT)
 public class CaseInputCoreMultiSelectPickListPackage extends SPackage {
 
     @Override

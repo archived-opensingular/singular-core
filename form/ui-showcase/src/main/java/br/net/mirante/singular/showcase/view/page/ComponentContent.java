@@ -8,6 +8,8 @@ package br.net.mirante.singular.showcase.view.page;
 import static br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
@@ -23,11 +25,14 @@ import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
 public class ComponentContent extends Content implements SingularWicketContainer<ComponentContent, Void> {
 
+    @Inject
+    private ShowCaseTable showCaseTable;
+
     private ShowCaseItem showCaseItem;
 
     public ComponentContent(String id, IModel<String> componentName) {
         super(id, false, false);
-        showCaseItem = new ShowCaseTable().findCaseItemByComponentName(componentName.getObject());
+        showCaseItem = showCaseTable.findCaseItemByComponentName(componentName.getObject());
         add(buildItemCases());
     }
 

@@ -10,7 +10,13 @@ import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Componente para inserção de mês e ano.
+ */
+@CaseItem(componentName = "Date", subCaseName = "Mês/Ano", group = Group.INPUT)
 public class CaseInputCoreYearMonthPackage extends SPackage {
 
     @Override

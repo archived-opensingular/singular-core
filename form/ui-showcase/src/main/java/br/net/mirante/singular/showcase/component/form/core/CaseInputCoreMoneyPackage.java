@@ -9,7 +9,13 @@ import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Campo para inserção de dados monetários.
+ */
+@CaseItem(componentName = "Numeric", subCaseName = "Monetário", group = Group.INPUT)
 public class CaseInputCoreMoneyPackage extends SPackage {
 
     @Override

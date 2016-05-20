@@ -12,36 +12,16 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.wicket.util.string.StringValue;
+import org.reflections.Reflections;
+import org.springframework.stereotype.Service;
 
 import com.google.common.base.Throwables;
 
-import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreBasic;
-import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreBoolean;
-import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreDate;
-import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreDateTime;
-import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreDecimal;
-import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreInteger;
-import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreMoney;
-import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreString;
-import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreTextArea;
-import br.net.mirante.singular.showcase.component.form.core.CaseInputCoreYearMonth;
-import br.net.mirante.singular.showcase.component.form.core.multiselect.CaseInputCoreMultiSelectCheckbox;
-import br.net.mirante.singular.showcase.component.form.core.multiselect.CaseInputCoreMultiSelectCombo;
-import br.net.mirante.singular.showcase.component.form.core.multiselect.CaseInputCoreMultiSelectComposite;
-import br.net.mirante.singular.showcase.component.form.core.multiselect.CaseInputCoreMultiSelectDefault;
-import br.net.mirante.singular.showcase.component.form.core.multiselect.CaseInputCoreMultiSelectPickList;
-import br.net.mirante.singular.showcase.component.form.core.multiselect.CaseInputCoreMultiSelectProvider;
-import br.net.mirante.singular.showcase.component.form.core.search.CaseInputModalSearch;
-import br.net.mirante.singular.showcase.component.form.core.search.CaseLazyInputModalSearch;
-import br.net.mirante.singular.showcase.component.form.core.select.CaseInputCoreSelectComboAutoComplete;
-import br.net.mirante.singular.showcase.component.form.core.select.CaseInputCoreSelectComboRadio;
-import br.net.mirante.singular.showcase.component.form.core.select.CaseInputCoreSelectComposite;
-import br.net.mirante.singular.showcase.component.form.core.select.CaseInputCoreSelectCompositePojo;
-import br.net.mirante.singular.showcase.component.form.core.select.CaseInputCoreSelectDefault;
-import br.net.mirante.singular.showcase.component.form.core.select.CaseInputCoreSelectProvider;
+import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.showcase.component.form.custom.CaseCustomStringMapper;
 import br.net.mirante.singular.showcase.component.form.custom.CaseCustonRangeMapper;
 import br.net.mirante.singular.showcase.component.form.custom.comment.CaseAnnotation;
@@ -78,40 +58,37 @@ import br.net.mirante.singular.showcase.component.form.validation.CaseValidation
 import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
+@Service
 public class ShowCaseTable {
 
     private final Map<String, ShowCaseGroup> formGroups = new LinkedHashMap<>();
     private final Map<String, ShowCaseGroup> studioGroups = new LinkedHashMap<>();
 
+    private final Map<Group, List<Class<? extends SPackage>>> casePorGrupo = new LinkedHashMap<>();
+
+    @SuppressWarnings("unchecked")
     public ShowCaseTable() {
 
+        Reflections reflections = new Reflections("br.net.mirante.singular.showcase.component.form");
+        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(CaseItem.class);
+        for (Class<?> aClass : annotated) {
+            if (SPackage.class.isAssignableFrom(aClass)) {
+                Class<? extends SPackage> sPackage = (Class<? extends SPackage>) aClass;
+                final CaseItem annotation = aClass.getAnnotation(CaseItem.class);
+
+                List<Class<? extends SPackage>> classes = casePorGrupo.get(annotation.group());
+                if (classes == null) {
+                    classes = new ArrayList<>();
+                }
+                classes.add(sPackage);
+                casePorGrupo.put(annotation.group(), classes);
+            }
+
+        }
+
         // @formatter:off
-        addGroup("Input", Icone.PUZZLE, ListPage.Tipo.FORM)
-            .addCase(CaseInputCoreDate.class)
-            .addCase(CaseInputCoreYearMonth.class)
-            .addCase(CaseInputCoreInteger.class)
-            .addCase(CaseInputCoreSelectComboRadio.class)
-            .addCase(CaseInputCoreSelectDefault.class)
-            .addCase(CaseInputCoreSelectComposite.class)
-            .addCase(CaseInputCoreSelectCompositePojo.class)
-            .addCase(CaseInputCoreSelectProvider.class)
-            .addCase(CaseInputCoreSelectComboAutoComplete.class)
-            .addCase(CaseInputCoreMultiSelectDefault.class)
-            .addCase(CaseInputCoreMultiSelectCombo.class)
-            .addCase(CaseInputCoreMultiSelectCheckbox.class)
-            .addCase(CaseInputCoreMultiSelectPickList.class)
-            .addCase(CaseInputCoreMultiSelectComposite.class)
-            .addCase(CaseInputCoreMultiSelectProvider.class)
-            .addCase(CaseInputModalSearch.class)
-            .addCase(CaseLazyInputModalSearch.class)
-            .addCase(CaseInputCoreBasic.class)
-            .addCase(CaseInputCoreBoolean.class)
-            .addCase(CaseInputCoreString.class)
-            .addCase(CaseInputCoreTextArea.class)
-            .addCase(CaseInputCoreDecimal.class)
-            .addCase(CaseInputCoreMoney.class)
-            .addCase(CaseInputCoreDateTime.class)
-        ;
+        addGroup(Group.INPUT);
+
         addGroup("File", Icone.FOLDER, ListPage.Tipo.FORM)
             .addCase(CaseFileAttachment.class)
             .addCase(CaseFileMultipleAttachments.class)
@@ -157,9 +134,9 @@ public class ShowCaseTable {
                 .addCase(CaseGoogleMaps.class)
         ;
 
-        addGroup("Input", Icone.PUZZLE, ListPage.Tipo.STUDIO)
-                .addCase(CaseInputCoreDate.class)
-        ;
+//        addGroup("Input", Icone.PUZZLE, ListPage.Tipo.STUDIO)
+//                .addCase(CaseInputCoreDate.class)
+//        ;
         //@formatter:on
     }
 
@@ -169,6 +146,23 @@ public class ShowCaseTable {
                 .flatMap(Collection::stream)
                 .filter(f -> name.equalsIgnoreCase(f.getComponentName()))
                 .findFirst().orElse(null);
+    }
+
+    private void addGroup(Group groupEnum) {
+        final ShowCaseGroup group = addGroup(groupEnum.getName(), groupEnum.getIcone(), groupEnum.getTipo());
+
+        final List<Class<? extends SPackage>> classes = casePorGrupo.get(groupEnum);
+        if (classes != null) {
+            for (Class<? extends SPackage> packageClass : classes) {
+                final CaseItem annotation = packageClass.getAnnotation(CaseItem.class);
+                final CaseBase caseBase = new CaseBase(packageClass, annotation.componentName(), annotation.subCaseName());
+                for (Class resource : annotation.resources()) {
+                    caseBase.getAditionalSources().add(ResourceRef.forSource(resource).orElse(null));
+                }
+                group.addCase(caseBase);
+            }
+        }
+
     }
 
     private ShowCaseGroup addGroup(String groupName, Icone icon, ListPage.Tipo tipo) {
@@ -184,6 +178,7 @@ public class ShowCaseTable {
             group = new ShowCaseGroup(groupName, icon, tipo);
             groups.put(groupName, group);
         }
+
         return group;
     }
 

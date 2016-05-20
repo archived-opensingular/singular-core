@@ -8,7 +8,13 @@ package br.net.mirante.singular.showcase.component.form.core;
 import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Campo de texto simples
+ */
+@CaseItem(componentName = "String", subCaseName = "Simples", group = Group.INPUT)
 public class CaseInputCoreStringPackage extends SPackage {
 
     @Override

@@ -10,7 +10,13 @@ import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewSelectionByRadio;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Radio
+ */
+@CaseItem(componentName = "Select", subCaseName = "Combo e Radio", group = Group.INPUT)
 public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
     //@formatter:off

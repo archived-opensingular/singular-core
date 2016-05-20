@@ -19,7 +19,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.wicket.util.ProcessadorCondigoFonte;
+import br.net.mirante.singular.form.wicket.util.ProcessadorCodigoFonte;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ResourceRef;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
@@ -47,7 +47,7 @@ public abstract class ItemCasePanel extends Panel {
 
         WebMarkupContainer headerContainer = new WebMarkupContainer("header");
         final Optional<ResourceRef> mainSource = caseBase.getObject().getMainSourceResourceName();
-        final ProcessadorCondigoFonte pcf = new ProcessadorCondigoFonte(mainSource.get().getContent());
+        final ProcessadorCodigoFonte pcf = new ProcessadorCodigoFonte(mainSource.get().getContent());
         String description = caseBase.getObject().getDescriptionHtml()
                 .orElse(pcf.getJavadoc());
 

@@ -9,7 +9,13 @@ import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * Permite a seleção múltipla no formato de um combo. É funcional para listas curtas.
+ */
+@CaseItem(componentName = "Multi Select", subCaseName = "Combo", group = Group.INPUT)
 public class CaseInputCoreMultiSelectComboPackage extends SPackage {
 
     @Override

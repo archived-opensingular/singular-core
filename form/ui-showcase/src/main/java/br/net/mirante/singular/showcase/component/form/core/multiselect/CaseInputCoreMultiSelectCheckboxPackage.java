@@ -10,7 +10,10 @@ import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SMultiSelectionByCheckboxView;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+@CaseItem(componentName = "Multi Select", subCaseName = "Checkbox", group = Group.INPUT)
 public class CaseInputCoreMultiSelectCheckboxPackage extends SPackage {
 
     @Override

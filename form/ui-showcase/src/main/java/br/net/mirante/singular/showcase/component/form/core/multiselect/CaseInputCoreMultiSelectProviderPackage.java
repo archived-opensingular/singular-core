@@ -12,7 +12,13 @@ import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 
+/**
+ * É permitido alterar o provedor de dados de forma que estes sejam carregados de forma dinâmica ou de outras fontes de informação.
+ */
+@CaseItem(componentName = "Multi Select", subCaseName = "Provedor Dinâmico", group = Group.INPUT)
 public class CaseInputCoreMultiSelectProviderPackage extends SPackage {
 
     @Override
