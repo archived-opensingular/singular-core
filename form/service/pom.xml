@@ -7,8 +7,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>form-persistence</artifactId>
-    <name>[singular :: form :: persistence]</name>
+    <artifactId>form-service</artifactId>
+    <name>[singular :: form :: service]</name>
     <packaging>jar</packaging>
 
     <dependencies>
