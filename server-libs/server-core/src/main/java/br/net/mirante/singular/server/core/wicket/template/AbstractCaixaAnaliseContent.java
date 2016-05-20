@@ -1,6 +1,10 @@
 package br.net.mirante.singular.server.core.wicket.template;
 
-import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.*;
+import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.COD_PROCESS_INSTANCE;
+import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.LAST_VERSION;
+import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.PROCESS_ABBREVIATION;
+import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.RELOCATE_TASK;
+import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.USERNAME;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -31,7 +35,6 @@ import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.config.ServerContext;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
-import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
@@ -76,9 +79,6 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
     protected DropdownMenu dropdownMenu = new DropdownMenu("_novos");
 
     private List<ProcessDTO> processes;
-
-    @Inject
-    protected AnalisePeticaoService<T> analisePeticaoService;
 
     @Inject
     protected PetitionService petitionService;
@@ -228,6 +228,10 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         } else {
             return MetronicStatusColumn.BagdeType.INFO;
         }
+    }
+    
+    protected List<String> getUserRoleIds() {
+        return SingularSession.get().getRoleIds();
     }
 
     @Override

@@ -12,9 +12,7 @@ import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcesso
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.FileDao;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
-import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
-import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
@@ -35,11 +33,6 @@ public class SingularDefaultBeanFactory {
     @Bean
     public <T extends AbstractPetitionEntity> PetitionService<T> worklistPetitionServiceFactory() {
         return new PetitionService<T>();
-    }
-
-    @Bean
-    public AnalisePeticaoService<TaskInstanceDTO> analisePeticaoService() {
-        return new AnalisePeticaoService<>();
     }
 
     @Bean

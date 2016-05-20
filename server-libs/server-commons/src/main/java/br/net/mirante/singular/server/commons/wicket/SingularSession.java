@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
@@ -46,6 +47,9 @@ public class SingularSession extends AuthenticatedWebSession {
 
     }
 
+    public List<String> getRoleIds() {
+        return getRoles().stream().collect(Collectors.toList());
+    }
 
     public String getName() {
         if (getUserDetails() != null) {

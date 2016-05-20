@@ -49,17 +49,18 @@ public class EntradaContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO>
         return HistoricoPage.class;
     }
 
+    @SuppressWarnings("unchecked")
     private BaseDataProvider<TaskInstanceDTO, String> createDataProvider() {
         return new BaseDataProvider<TaskInstanceDTO, String>() {
 
             @Override
             public long size() {
-                return analisePeticaoService.countTasks(null, filtroRapido.getModelObject(), false);
+                return petitionService.countTasks(null, getUserRoleIds(), filtroRapido.getModelObject(), false);
             }
 
             @Override
             public Iterator<TaskInstanceDTO> iterator(int first, int count, String sortProperty, boolean ascending) {
-                return (Iterator<TaskInstanceDTO>) analisePeticaoService.listTasks(first, count, sortProperty, ascending, null, filtroRapido.getModelObject(), false).iterator();
+                return (Iterator<TaskInstanceDTO>) petitionService.listTasks(first, count, sortProperty, ascending, null, getUserRoleIds(), filtroRapido.getModelObject(), false).iterator();
             }
         };
     }

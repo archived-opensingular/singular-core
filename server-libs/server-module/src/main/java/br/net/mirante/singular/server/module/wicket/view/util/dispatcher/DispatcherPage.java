@@ -7,7 +7,6 @@ import java.lang.reflect.Constructor;
 
 import javax.inject.Inject;
 
-import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -35,12 +34,13 @@ import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.SingularServerTaskPageStrategy;
 import br.net.mirante.singular.server.commons.flow.SingularWebRef;
 import br.net.mirante.singular.server.commons.form.FormActions;
-import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
+import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.view.SingularHeaderResponseDecorator;
 import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
+import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
 
 @SuppressWarnings("serial")
 @MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
@@ -51,7 +51,7 @@ public class DispatcherPage extends WebPage {
     private final WebMarkupContainer bodyContainer = new WebMarkupContainer("body");
 
     @Inject
-    private AnalisePeticaoService<?> analisePeticaoService;
+    private PetitionService<?> petitionService;
 
     public DispatcherPage() {
         this.add(bodyContainer);
@@ -159,7 +159,7 @@ public class DispatcherPage extends WebPage {
         if (StringUtils.isBlank(petitionId)) {
             return null;
         } else {
-            return Flow.getTaskInstance(analisePeticaoService.findCurrentTaskByPetitionId(petitionId));
+            return Flow.getTaskInstance(petitionService.findCurrentTaskByPetitionId(petitionId));
         }
     }
 

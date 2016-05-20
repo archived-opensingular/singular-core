@@ -21,8 +21,6 @@ import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
-import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
-import br.net.mirante.singular.server.commons.service.AnalisePeticaoService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
@@ -37,9 +35,7 @@ import br.net.mirante.singular.util.wicket.resource.Icone;
 @SuppressWarnings("serial")
 public class MenuWorklist extends MenuAnalise {
 
-    @Inject
-    private AnalisePeticaoService<TaskInstanceDTO> analisePeticaoService;
-
+    @SuppressWarnings("rawtypes")
     @Inject
     private PetitionService petitionService;
 
@@ -47,6 +43,7 @@ public class MenuWorklist extends MenuAnalise {
         super(id);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected MetronicMenu buildMenu() {
         loadMenuGroups();
@@ -64,8 +61,8 @@ public class MenuWorklist extends MenuAnalise {
 
         final List<Pair<Component, ISupplier<String>>> itens = new ArrayList<>();
 
-        itens.add(Pair.of(entrada.getHelper(), () -> String.valueOf(analisePeticaoService.countTasks(null, null, false))));
-        itens.add(Pair.of(concluidas.getHelper(), () -> String.valueOf(analisePeticaoService.countTasks(null, null, true))));
+        itens.add(Pair.of(entrada.getHelper(), () -> String.valueOf(petitionService.countTasks(null, SingularSession.get().getRoleIds(), null, false))));
+        itens.add(Pair.of(concluidas.getHelper(), () -> String.valueOf(petitionService.countTasks(null, SingularSession.get().getRoleIds(), null, true))));
         menu.add(new AddContadoresBehaviour(itens));
 
         return menu;

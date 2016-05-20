@@ -4,11 +4,14 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import java.io.Serializable;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.service.FormDTO;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
@@ -23,13 +27,14 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
+import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 
-public abstract class AbstractFormPage extends Template {
+public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends Template {
 
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFormPage.class);
@@ -37,6 +42,12 @@ public abstract class AbstractFormPage extends Template {
     protected final FormPageConfig config;
     protected AbstractFormContent content;
 
+    protected final IModel<T> currentModel = $m.ofValue();
+    protected final IModel<FormDTO> formModel = $m.ofValue();
+    
+    @Inject
+    protected PetitionService<T> petitionService;
+    
     public AbstractFormPage(FormPageConfig config) {
         this.config = config;
     }
@@ -106,7 +117,7 @@ public abstract class AbstractFormPage extends Template {
 
             @Override
             protected IModel<? extends AbstractPetitionEntity> getFormModel() {
-                return AbstractFormPage.this.getFormModel();
+                return currentModel;
             }
 
             @Override
@@ -122,6 +133,14 @@ public abstract class AbstractFormPage extends Template {
         
         return content;
     }
+    
+    protected abstract T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance);
+    
+    protected abstract IModel<?> getContentSubtitleModel();
+    
+    protected abstract String getIdentifier();
+    
+    protected abstract void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode);
 
     protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
         
@@ -134,6 +153,74 @@ public abstract class AbstractFormPage extends Template {
     protected void buildFlowTransitionButton(String buttonId, BSContainer<?> buttonContainer, BSContainer<?> modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
         BSModalBorder modal = buildFlowConfirmationModal(buttonId, modalContainer, transitionName, instanceModel, viewMode);
         buildFlowButton(buttonId, buttonContainer, transitionName, instanceModel, modal);
+    }
+    
+    public void atualizarContentWorklist(AjaxRequestTarget target) {
+        target.appendJavaScript("Singular.atualizarContentWorklist();");
+    }
+
+    protected BSModalBorder buildConfirmationModal(BSContainer<?> modalContainer, IModel<? extends SInstance> instanceModel) {
+        TemplatePanel tpModal = modalContainer.newTemplateTag(tt ->
+                "<div wicket:id='send-modal' class='portlet-body form'>\n"
+                        + "<wicket:message key=\"label.confirm.message\"/>\n"
+                        + "</div>\n");
+        BSModalBorder enviarModal = new BSModalBorder("send-modal", getMessage("label.title.send"));
+        enviarModal
+                .addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.close", new AjaxButton("cancel-btn") {
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        enviarModal.hide(target);
+                    }
+                })
+                .addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel) {
+                    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance>  instanceModel){
+                        AbstractFormPage.this.send(instanceModel);
+                        atualizarContentWorklist(target);
+                        if (getIdentifier() == null) {
+                            addToastrSuccessMessageWorklist("message.send.success", URL_PATH_ACOMPANHAMENTO);
+                        } else {
+                            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier(), URL_PATH_ACOMPANHAMENTO);
+                        }
+                        target.appendJavaScript("; window.close();");
+                    }
+
+                    @Override
+                    protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                        enviarModal.hide(target);
+                        target.add(form);
+                        addToastrErrorMessage("message.send.error");
+                    }
+                });
+        tpModal.add(enviarModal);
+        return enviarModal;
+    }
+
+    protected void saveForm(IModel<? extends SInstance> currentInstance) {
+        petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), formModel.getObject(), currentInstance.getObject());
+    }
+
+    protected void send(IModel<? extends SInstance> currentInstance) {
+        petitionService.send(getUpdatedPetitionFromInstance(currentInstance), formModel.getObject(), currentInstance.getObject());
+    }
+    
+    protected void executeTransition(String transitionName, IModel<? extends SInstance> currentInstance) {
+        petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), formModel.getObject(), currentInstance.getObject());
+    }
+    
+    protected boolean hasProcess() {
+        return currentModel.getObject().getProcessInstanceEntity() != null;
+    }
+    
+    protected ProcessInstanceEntity getProcessInstance() {
+        return currentModel.getObject().getProcessInstanceEntity();
+    }
+
+    protected void setProcessInstance(ProcessInstanceEntity pie) {
+        currentModel.getObject().setProcessInstanceEntity(pie);
+    }
+    
+    protected IModel<?> getContentTitleModel() {
+        return new ResourceModel("label.form.content.title");
     }
 
     private void buildFlowButton(String buttonId, BSContainer<?> buttonContainer, String transitionName, IModel<? extends SInstance> instanceModel, BSModalBorder confirmarAcaoFlowModal) {
@@ -188,71 +275,7 @@ public abstract class AbstractFormPage extends Template {
         confirmarAcaoFlowModal.add(new Label("flow-msg", String.format("Tem certeza que deseja %s ?", transitionName)));
         return confirmarAcaoFlowModal;
     }
-
-    public void atualizarContentWorklist(AjaxRequestTarget target) {
-        target.appendJavaScript("Singular.atualizarContentWorklist();");
-    }
-
-    protected BSModalBorder buildConfirmationModal(BSContainer<?> modalContainer, IModel<? extends SInstance> instanceModel) {
-        TemplatePanel tpModal = modalContainer.newTemplateTag(tt ->
-                "<div wicket:id='send-modal' class='portlet-body form'>\n"
-                        + "<wicket:message key=\"label.confirm.message\"/>\n"
-                        + "</div>\n");
-        BSModalBorder enviarModal = new BSModalBorder("send-modal", getMessage("label.title.send"));
-        enviarModal
-                .addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.close", new AjaxButton("cancel-btn") {
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        enviarModal.hide(target);
-                    }
-                })
-                .addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel) {
-                    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance>  instanceModel){
-                        AbstractFormPage.this.send(instanceModel);
-                        atualizarContentWorklist(target);
-                        if (getIdentifier() == null) {
-                            addToastrSuccessMessageWorklist("message.send.success", URL_PATH_ACOMPANHAMENTO);
-                        } else {
-                            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier(), URL_PATH_ACOMPANHAMENTO);
-                        }
-                        target.appendJavaScript("; window.close();");
-                    }
-
-                    @Override
-                    protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                        enviarModal.hide(target);
-                        target.add(form);
-                        addToastrErrorMessage("message.send.error");
-                    }
-                });
-        tpModal.add(enviarModal);
-        return enviarModal;
-    }
-
-    protected abstract void executeTransition(String transitionName, IModel<? extends SInstance> currentInstance);
-
-    protected abstract IModel<?> getContentSubtitleModel();
-
-    protected abstract ProcessInstanceEntity getProcessInstance();
-
-    protected abstract void setProcessInstance(ProcessInstanceEntity pie);
-
-    protected abstract void saveForm(IModel<? extends SInstance> currentInstance);
-
-    protected abstract void send(IModel<? extends SInstance> currentInstance);
-
-    protected abstract IModel<? extends AbstractPetitionEntity> getFormModel();
-
-    protected abstract boolean hasProcess();
-
-    protected abstract String getIdentifier();
     
-    protected abstract void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode);
-    
-    protected IModel<?> getContentTitleModel() {
-        return $m.get(()->content.getSingularFormPanel().getRootTypeSubtitle());
-    }
-
     public static class FormPageConfig implements Serializable {
 
         public ViewMode viewMode = ViewMode.VISUALIZATION;

@@ -1,6 +1,13 @@
 package br.net.mirante.singular.server.core.wicket.concluida;
 
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.util.Iterator;
+
+import org.apache.wicket.Page;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.core.wicket.historico.HistoricoPage;
 import br.net.mirante.singular.server.core.wicket.template.AbstractCaixaAnaliseContent;
@@ -8,12 +15,6 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.MetronicStatusColumn;
-import org.apache.wicket.Page;
-import org.apache.wicket.model.IModel;
-
-import java.util.Iterator;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class ConcluidaContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> {
 
@@ -48,17 +49,18 @@ public class ConcluidaContent extends AbstractCaixaAnaliseContent<TaskInstanceDT
         return HistoricoPage.class;
     }
 
+    @SuppressWarnings("unchecked")
     private BaseDataProvider<TaskInstanceDTO, String> createDataProvider() {
         return new BaseDataProvider<TaskInstanceDTO, String>() {
 
             @Override
             public long size() {
-                return analisePeticaoService.countTasks(null, filtroRapido.getModelObject(), true);
+                return petitionService.countTasks(null, getUserRoleIds(), filtroRapido.getModelObject(), true);
             }
 
             @Override
             public Iterator<TaskInstanceDTO> iterator(int first, int count, String sortProperty, boolean ascending) {
-                return (Iterator<TaskInstanceDTO>) analisePeticaoService.listTasks(first, count, sortProperty, ascending, null, filtroRapido.getModelObject(), true).iterator();
+                return (Iterator<TaskInstanceDTO>) petitionService.listTasks(first, count, sortProperty, ascending, null, getUserRoleIds(), filtroRapido.getModelObject(), true).iterator();
             }
         };
     }
