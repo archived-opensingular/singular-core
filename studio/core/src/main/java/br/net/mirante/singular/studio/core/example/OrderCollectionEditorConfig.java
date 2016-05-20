@@ -2,10 +2,16 @@ package br.net.mirante.singular.studio.core.example;
 
 import br.net.mirante.singular.studio.core.CollectionEditorConfig;
 import br.net.mirante.singular.studio.core.EditorConfigBuilder;
-import br.net.mirante.singular.studio.core.type.AtrStudioConfig;
+import br.net.mirante.singular.studio.core.CollectionInfoBuilder;
 
-//@RolesAllowed("gerente", "analista")
+
 public class OrderCollectionEditorConfig implements CollectionEditorConfig<STypeOrder> {
+
+    @Override
+    public void collectionInfo(CollectionInfoBuilder<STypeOrder> builder) {
+        builder
+                .form(STypeOrder.class);
+    }
 
     @Override
     public void configEditor(EditorConfigBuilder cfg, STypeOrder type) {
@@ -17,27 +23,24 @@ public class OrderCollectionEditorConfig implements CollectionEditorConfig<SType
                 .disableQuickFilter()
                 .sortBy(type.id)
                 .delete("Tem certeza que deseja excluir a Compra número ${0}", type.id)
-                //Expadir para o delete, insert, view e edit:
-                // perfil que pode realizar cada operação
-                // gancho para regra de negócio anterior a deleção: sendo possível inclusive não fazer a deleção e apresentar msg
-                // gancho para regra de negócio após a deleção: sendo possível inclusive não fazer a deleção e apresentar msg
+                        //Expadir para o delete, insert, view e edit:
+                        // perfil que pode realizar cada operação
+                        // gancho para regra de negócio anterior a deleção: sendo possível inclusive não fazer a deleção e apresentar msg
+                        // gancho para regra de negócio após a deleção: sendo possível inclusive não fazer a deleção e apresentar msg
                 .disableDelete()
                 .disableInsert()
                 .disableView()
                 .disableEdit()
                 .form()
-                //desabilita validacao
+                        //desabilita validacao
                 .validateBeforeSave(false)
-                //configura botao de salvar
+                        //configura botao de salvar
                 .disableSave()
-                //configura botão de validar
+                        //configura botão de validar
                 .disableValidate()
-                //configura botão de fechar
+                        //configura botão de fechar
                 .disableClose();
     }
 
-    @Override
-    public void complementTypeConfig(STypeOrder type) {
-        type.description.as(AtrStudioConfig.class).defaultSearchCriteria(true);
-    }
+
 }
