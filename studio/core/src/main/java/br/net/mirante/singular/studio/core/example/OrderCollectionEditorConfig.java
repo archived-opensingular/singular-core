@@ -7,12 +7,24 @@ import br.net.mirante.singular.studio.core.CollectionInfoBuilder;
 
 public class OrderCollectionEditorConfig implements CollectionEditorConfig<STypeOrder> {
 
+
+    /*
+     * Configurações que serão utilizadas para montar a casca do sinuglar studio
+     * tais como configurações de menu e de permissoes globais do crud
+     * @param builder
+     */
     @Override
     public void collectionInfo(CollectionInfoBuilder<STypeOrder> builder) {
         builder
                 .form(STypeOrder.class);
     }
 
+    /*
+     * configuracao do renderizador do crud:
+      * Listagem: listagem, filtros, paginacao, exclusao, acoes
+      * Form: editar, novo, visualizar
+     *
+     */
     @Override
     public void configEditor(EditorConfigBuilder cfg, STypeOrder type) {
         cfg
