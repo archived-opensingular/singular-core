@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.SType;
  */
 public interface CollectionEditorConfig<TYPE extends SType<?>> {
 
-    public void configEditor(EditorConfigBuilder cfg);
+    public void configEditor(EditorConfigBuilder cfg, TYPE type);
 
     public void complementTypeConfig(TYPE type);
 }

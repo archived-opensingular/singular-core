@@ -16,14 +16,15 @@
     <dependencies>
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>form-core</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
+            <artifactId>form-wicket</artifactId>
+            <version>${singular.version}</version>
         </dependency>
+
 
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-service</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
     </dependencies>
 
