@@ -15,7 +15,7 @@
 
     <modules>
         <module>core</module>
-        <module>persistence</module>
+        <module>service</module>
         <module>wicket</module>
         <module>ui-showcase</module>
         <module>exemplos-form</module>
