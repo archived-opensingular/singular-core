@@ -276,7 +276,9 @@ public class FileUploadPanel extends Panel {
                                 "$('#" + uploadField.getMarkupId() + "')[0]");
                     }
                 });
+                attributes.getExtraParameters().put("forceDisableAJAXPageBlock", true);
             }
+
         });
         chooseFieldButton.add(new Behavior() {
             @Override
