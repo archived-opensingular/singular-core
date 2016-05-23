@@ -16,25 +16,31 @@ import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
 import br.net.mirante.singular.form.type.util.STypeEMail;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+import java.util.function.Supplier;
+
+@RunWith(Parameterized.class)
 public class SCorePackageTest extends TestCaseForm {
 
-    public void testBasicLoad() {
-        SDictionary.create();
+    public SCorePackageTest(TestFormConfig testFormConfig) {
+        super(testFormConfig);
     }
 
+    @Test
     public void testRecuperarTipo() {
-        SDictionary dicionario = SDictionary.create();
-
-        dicionario.getTypeOptional(STypeString.class);
+        createTestDictionary().getTypeOptional(STypeString.class);
     }
 
+    @Test
     public void testHerancaValorEntreTipos() {
-        SDictionary dicionario = SDictionary.create();
+        SDictionary dictionary = createTestDictionary();
 
-        STypeSimple<?, ?> tipoS = dicionario.getTypeOptional(STypeSimple.class);
-        STypeBoolean      tipoB = dicionario.getTypeOptional(STypeBoolean.class);
-        STypeInteger      tipoI = dicionario.getTypeOptional(STypeInteger.class);
+        STypeSimple<?, ?> tipoS = dictionary.getTypeOptional(STypeSimple.class);
+        STypeBoolean      tipoB = dictionary.getTypeOptional(STypeBoolean.class);
+        STypeInteger      tipoI = dictionary.getTypeOptional(STypeInteger.class);
 
         Assert.assertFalse(tipoS.getAttributeValue(SPackageBasic.ATR_REQUIRED));
         Assert.assertFalse(tipoB.getAttributeValue(SPackageBasic.ATR_REQUIRED));
@@ -67,11 +73,12 @@ public class SCorePackageTest extends TestCaseForm {
         Assert.assertEquals(true, tipoI.isRequired());
     }
 
+    @Test
     public void testValidacaoBasica() {
-        SDictionary dicionario = SDictionary.create();
-        STypeBoolean tipoB = dicionario.getTypeOptional(STypeBoolean.class);
-        STypeInteger tipoI = dicionario.getTypeOptional(STypeInteger.class);
-        STypeString tipoS = dicionario.getTypeOptional(STypeString.class);
+        SDictionary dictionary = createTestDictionary();
+        STypeBoolean tipoB = dictionary.getTypeOptional(STypeBoolean.class);
+        STypeInteger tipoI = dictionary.getTypeOptional(STypeInteger.class);
+        STypeString tipoS = dictionary.getTypeOptional(STypeString.class);
 
         testarAtribuicao(tipoB, true, null, null);
         testarAtribuicao(tipoB, true, true, true);
@@ -129,17 +136,17 @@ public class SCorePackageTest extends TestCaseForm {
             Assert.assertEquals(valorFinalEsperado, instancia.getValue());
 
             assertException(() -> instancia.getType().convert(valor, instancia.getType().getValueClass()),
- "não consegue converter",
-                    "Deveria dar erro de conversão");
+                    "não consegue converter", "Deveria dar erro de conversão");
         }
     }
 
+    @Test
     public void testSelfReference() {
-        SDictionary dicionario = SDictionary.create();
+        SDictionary dictionary = createTestDictionary();
 
-        STypeSimple<?, ?> tipoS = dicionario.getTypeOptional(STypeSimple.class);
-        STypeBoolean tipoB = dicionario.getTypeOptional(STypeBoolean.class);
-        STypeInteger tipoI = dicionario.getTypeOptional(STypeInteger.class);
+        STypeSimple<?, ?> tipoS = dictionary.getTypeOptional(STypeSimple.class);
+        STypeBoolean tipoB = dictionary.getTypeOptional(STypeBoolean.class);
+        STypeInteger tipoI = dictionary.getTypeOptional(STypeInteger.class);
 
         Assert.assertNull(tipoS.getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL));
         Assert.assertNull(tipoB.getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL));
@@ -176,17 +183,17 @@ public class SCorePackageTest extends TestCaseForm {
         assertEquals(true, tipoB.getAttributeValueOrDefaultValueIfNull());
     }
 
+    @Test
     public void testCriacaoDuplicada() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         pb.createType("CPF", STypeString.class);
         assertException(() -> pb.createType("CPF", STypeString.class), "já está criada");
     }
 
+    @Test
     public void testCriacaoAtributoLocal() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         // AtrRef<?, ?, ?> atr = new AtrRef(null, "atTeste", MTipoString.class,
         // MIString.class, String.class);
@@ -220,11 +227,12 @@ public class SCorePackageTest extends TestCaseForm {
         assertEquals("C", tipoX.getAttributeValue("teste.XXXXX.atTeste"));
     }
 
+    @Test
     public void testDefaultNameForType() {
-        SDictionary dicionario = SDictionary.create();
-        assertEquals("TestTipoA", dicionario.getType(TestTipoA.class).getNameSimple());
-        assertEquals("TestTipoB", dicionario.getType(TestTipoB.class).getNameSimple());
-        assertEquals("TX", dicionario.getType(TestTipoX.class).getNameSimple());
+        SDictionary dictionary = createTestDictionary();
+        assertEquals("TestTipoA", dictionary.getType(TestTipoA.class).getNameSimple());
+        assertEquals("TestTipoB", dictionary.getType(TestTipoB.class).getNameSimple());
+        assertEquals("TX", dictionary.getType(TestTipoX.class).getNameSimple());
     }
 
     public static final class TestPacoteA extends SPackage {
@@ -286,99 +294,107 @@ public class SCorePackageTest extends TestCaseForm {
 
     }
 
+    @Test
     public void testPackageName() {
         assertEquals("teste.pacoteB", SFormUtil.getInfoPackageName(TestPacoteB.class));
         assertNull(SFormUtil.getInfoPackageName(TestPacoteA.class));
 
-        SDictionary dicionario = SDictionary.create();
-        TestPacoteA pacoteA = dicionario.loadPackage(TestPacoteA.class);
-        TestPacoteB pacoteB = dicionario.loadPackage(TestPacoteB.class);
+        SDictionary dictionary = createTestDictionary();
+        TestPacoteA pacoteA = dictionary.loadPackage(TestPacoteA.class);
+        TestPacoteB pacoteB = dictionary.loadPackage(TestPacoteB.class);
 
         assertEquals("teste.pacoteA", pacoteA.getName());
         assertEquals("teste.pacoteB", pacoteB.getName());
     }
 
+    @Test
     public void testCargaSimplesPacote() {
-        SDictionary dicionario = SDictionary.create();
-        dicionario.loadPackage(TestPacoteA.class);
-        assertTrue(dicionario.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
-        assertNotNull(dicionario.getTypeOptional(TestTipoA.class));
-        assertNotNull(dicionario.getTypeOptional("teste.pacoteA.TestTipoA"));
-        assertNotNull(dicionario.getTypeOptional("teste.pacoteA.TestTipoAA"));
+        SDictionary dictionary = createTestDictionary();
+        dictionary.loadPackage(TestPacoteA.class);
+        assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
+        assertNotNull(dictionary.getTypeOptional(TestTipoA.class));
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoA"));
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
     }
 
+    @Test
     public void testCargaAutomaticaPacotePorUsoReferenciaDeClasseDeUmTipo() {
-        SDictionary dicionario = SDictionary.create();
-        dicionario.loadPackage(TestPacoteB.class);
-        assertTrue(dicionario.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
-        assertTrue(dicionario.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteB")));
-        assertNotNull(dicionario.getTypeOptional(TestTipoA.class));
-        assertNotNull(dicionario.getTypeOptional("teste.pacoteA.TestTipoA"));
-        assertNotNull(dicionario.getTypeOptional("teste.pacoteA.TestTipoAA"));
-        assertNotNull(dicionario.getTypeOptional("teste.pacoteB.TestTipoB"));
+        SDictionary dictionary = createTestDictionary();
+        dictionary.loadPackage(TestPacoteB.class);
+        assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
+        assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteB")));
+        assertNotNull(dictionary.getTypeOptional(TestTipoA.class));
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoA"));
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteB.TestTipoB"));
     }
 
+    @Test
     public void testCargaAutomaticaPacotePorInstanciarUmTipo() {
-        SDictionary dicionario = SDictionary.create();
-        SIString    is         = dicionario.newInstance(STypeString.class);
+        SDictionary dictionary = createTestDictionary();
+        SIString    is         = dictionary.newInstance(STypeString.class);
         assertNotNull(is);
 
-        SIInteger instancia = dicionario.newInstance(TestTipoA.class);
+        SIInteger instancia = dictionary.newInstance(TestTipoA.class);
         instancia.setValue(10);
         assertEquals((Integer) 10, instancia.getValue());
-        assertCargaPacoteA(dicionario, true);
+        assertCargaPacoteA(dictionary, true);
     }
 
+    @Test
     public void testCargaAutomaticaPacotePorUsarUmAtributo() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        SDictionary dictionary = createTestDictionary();
+        PackageBuilder pb = dictionary.createNewPackage("teste");
 
-        assertCargaPacoteA(dicionario, false);
+        assertCargaPacoteA(dictionary, false);
 
         SType<SIString> tipoEndereco = pb.createType("endereco", STypeString.class).with(TestPacoteA.ATR_XX, 10);
 
-        assertCargaPacoteA(dicionario, true);
+        assertCargaPacoteA(dictionary, true);
 
         assertEquals((Integer) 10, tipoEndereco.getAttributeValue(TestPacoteA.ATR_XX));
-        assertEquals(null, dicionario.getTypeOptional(STypeString.class).getAttributeValue(TestPacoteA.ATR_XX));
-        assertEquals(null, dicionario.getTypeOptional(STypeSimple.class).getAttributeValue(TestPacoteA.ATR_XX));
-        assertEquals(null, dicionario.getTypeOptional(SType.class).getAttributeValue(TestPacoteA.ATR_XX));
+        assertEquals(null, dictionary.getTypeOptional(STypeString.class).getAttributeValue(TestPacoteA.ATR_XX));
+        assertEquals(null, dictionary.getTypeOptional(STypeSimple.class).getAttributeValue(TestPacoteA.ATR_XX));
+        assertEquals(null, dictionary.getTypeOptional(SType.class).getAttributeValue(TestPacoteA.ATR_XX));
     }
 
+    @Test
     public void testCargaAutomaticaPacotePorDarAddEmUmAtributo() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        SDictionary dictionary = createTestDictionary();
+        PackageBuilder pb = dictionary.createNewPackage("teste");
 
-        assertCargaPacoteA(dicionario, false);
+        assertCargaPacoteA(dictionary, false);
         pb.addAttribute(STypeInteger.class, TestPacoteA.ATR_XX);
-        assertCargaPacoteA(dicionario, true);
+        assertCargaPacoteA(dictionary, true);
     }
 
+    @Test
     public void testCargaAutomaticaPacotePorLerUmAtributo() {
-        SDictionary dicionario = SDictionary.create();
-        dicionario.createNewPackage("teste");
+        SDictionary dictionary = createTestDictionary();
+        dictionary.createNewPackage("teste");
 
-        assertCargaPacoteA(dicionario, false);
-        assertEquals(null, dicionario.getType(STypeString.class).getAttributeValue(TestPacoteA.ATR_XX));
-        assertCargaPacoteA(dicionario, true);
+        assertCargaPacoteA(dictionary, false);
+        assertEquals(null, dictionary.getType(STypeString.class).getAttributeValue(TestPacoteA.ATR_XX));
+        assertCargaPacoteA(dictionary, true);
     }
 
-    private static void assertCargaPacoteA(SDictionary dicionario, boolean carregado) {
+    private static void assertCargaPacoteA(SDictionary dictionary, boolean carregado) {
         if (carregado) {
-            assertTrue(dicionario.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
-            assertNotNull(dicionario.getTypeOptional("teste.pacoteA.TestTipoAA"));
-            assertNotNull(dicionario.getTypeOptional("teste.pacoteA.xx"));
+            assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
+            assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
+            assertNotNull(dictionary.getTypeOptional("teste.pacoteA.xx"));
         } else {
-            assertFalse(dicionario.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
-            assertNull(dicionario.getTypeOptional("teste.pacoteA.TestTipoAA"));
-            assertNull(dicionario.getTypeOptional("teste.pacoteA.xx"));
+            assertFalse(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
+            assertNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
+            assertNull(dictionary.getTypeOptional("teste.pacoteA.xx"));
         }
     }
 
+    @Test
     public void testSeTipoBaseadoEmClasseCarregaConfiguracaoInternaDaClasse() {
-        SDictionary dicionario = SDictionary.create();
-        dicionario.loadPackage(TestPacoteA.class);
-        TestTipoComCargaInterna tipo = dicionario.getType(TestTipoComCargaInterna.class);
+        SDictionary dictionary = createTestDictionary();
+        dictionary.loadPackage(TestPacoteA.class);
+        TestTipoComCargaInterna tipo = dictionary.getType(TestTipoComCargaInterna.class);
 
         assertEquals((Boolean) true, tipo.isRequired());
         assertEquals((Integer) 10, tipo.getAttributeValueInitialValue());
@@ -386,9 +402,10 @@ public class SCorePackageTest extends TestCaseForm {
         assertEquals((Integer) 12, tipo.getAttributeValue(TestPacoteA.ATR_XX));
     }
 
+    @Test
     public void testSeTipoBaseadoEmClasseCarregaConfiguracaoInternaDaClasseAoExtender() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        SDictionary dictionary = createTestDictionary();
+        PackageBuilder pb = dictionary.createNewPackage("teste");
         TestTipoComCargaInterna tipo = pb.createType("derivado", TestTipoComCargaInterna.class);
 
         assertEquals((Boolean) true, tipo.isRequired());
@@ -397,21 +414,22 @@ public class SCorePackageTest extends TestCaseForm {
         assertEquals((Integer) 12, tipo.getAttributeValue(TestPacoteA.ATR_XX));
     }
 
+    @Test
     public void testCargaTipoNoPacoteTrocado() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         assertException(() -> pb.createType(TestPacoteA.TestTipoA.class), "como sendo do pacote",
                 "Deveria dar uma exception pois o tipo tem a anotação para entrar em outro pacote");
     }
 
+    @Test
     public void testCargaAtributoNoPacoteTrocado() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         assertException(() -> pb.createAttributeType(TestPacoteA.ATR_XX), "Tentativa de criar o atributo",
                 "Deveria dar uma exception pois o atributo pertence a outro pacote");
     }
 
+    @Test
     public void testAutomaticLoadOfSingularTypeByName() {
         assertEquals(SPackageCore.NAME + ".String", SFormUtil.getTypeName(STypeString.class));
 
@@ -423,9 +441,8 @@ public class SCorePackageTest extends TestCaseForm {
         loadTypeByName(STypeCEP.class);
     }
 
-    private static void loadTypeByName(Class<? extends SType<?>> typeClass) {
+    private void loadTypeByName(Class<? extends SType<?>> typeClass) {
         String typeName = SFormUtil.getTypeName(typeClass);
-        SDictionary dicionario = SDictionary.create();
-        dicionario.getType(typeName);
+        createTestDictionary().getType(typeName);
     }
 }

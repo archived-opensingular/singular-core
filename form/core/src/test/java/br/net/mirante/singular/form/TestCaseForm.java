@@ -1,11 +1,67 @@
 package br.net.mirante.singular.form;
 
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.SDocumentFactory;
 import junit.framework.TestCase;
+import org.junit.runners.Parameterized;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public abstract class TestCaseForm extends TestCase {
+
+    private final Supplier<SDictionary> dictionaryFactory;
+
+    @Parameterized.Parameters(name = "{index}: ({0})")
+    public static Collection<TestFormConfig> data() {
+        List<TestFormConfig> executionParams = new ArrayList<>();
+        addScenario(executionParams, "default option", () -> SDictionary.create());
+        addScenario(executionParams, "ExtendListElementType=false", () -> SDictionary.create().getDictionaryConfig().setExtendListElementType(false).getDictionary());
+        addScenario(executionParams, "ExtendListElementType=true", () -> SDictionary.create().getDictionaryConfig().setExtendListElementType(true).getDictionary());
+        return executionParams;
+    }
+
+    private static void addScenario(List<TestFormConfig> executionParams, String name, SerializableSupplier factory) {
+        executionParams.add(new TestFormConfig(name, factory));
+    }
+
+    private static interface SerializableSupplier<T> extends Supplier<T>, Serializable {};
+
+    protected static class TestFormConfig {
+        private final String scenarioName;
+
+        private final Supplier<SDictionary> dictionaryFactory;
+
+        public TestFormConfig(String scenarioName, Supplier<SDictionary> dictionaryFactory) {
+            this.scenarioName = scenarioName;
+            this.dictionaryFactory = dictionaryFactory;
+        }
+
+        public Supplier<SDictionary> getDictionaryFactory() {
+            return dictionaryFactory;
+        }
+
+        @Override
+        public String toString() {
+            return "Cenário '" + scenarioName + '\'';
+        }
+    }
+
+    public TestCaseForm(TestFormConfig testFormConfig) {
+        this.dictionaryFactory = testFormConfig.getDictionaryFactory();
+    }
+
+    protected final Supplier<SDictionary> getDictionaryFactory() {
+        return dictionaryFactory;
+    }
+
+    protected final SDictionary createTestDictionary() {
+        return dictionaryFactory.get();
+    }
 
     protected static void testCaminho(SInstance registro, String path, String caminhoCompletoEsperado) {
         SInstance esperada = (path == null) ? registro : ((ICompositeInstance) registro).getField(path);
@@ -118,5 +174,42 @@ public abstract class TestCaseForm extends TestCase {
             throw e;
         }
 
+    }
+
+    public SInstance createSerializableTestInstance(Class<? extends SType<?>> typeClass) {
+        return createSerializableTestInstance(getDictionaryFactory(), typeClass);
+    }
+
+    public static SInstance createSerializableTestInstance(Supplier<SDictionary> dictionaryFactory,
+            Class<? extends SType<?>> typeClass) {
+        RefType refType = new RefType() {
+            @Override
+            protected SType<?> retrieve() {
+                return dictionaryFactory.get().getType(typeClass);
+            }
+        };
+        return SDocumentFactory.empty().createInstance(refType);
+    }
+
+    public SInstance createSerializableTestInstance(String typeName, ConfiguratorTestPackage setupCode) {
+        return createSerializableTestInstance(getDictionaryFactory(), typeName, setupCode);
+    }
+
+    public static SInstance createSerializableTestInstance(Supplier<SDictionary> dictionaryFactory, String typeName,
+            ConfiguratorTestPackage setupCode) {
+        RefType refType = new RefType() {
+
+            @Override
+            protected SType<?> retrieve() {
+                SDictionary dictionary = dictionaryFactory.get();
+                setupCode.setup(dictionary.createNewPackage("teste"));
+                return dictionary.getType(typeName);
+            }
+        };
+        return SDocumentFactory.empty().createInstance(refType);
+    }
+
+    public interface ConfiguratorTestPackage extends Serializable {
+        public void setup(PackageBuilder pkg);
     }
 }

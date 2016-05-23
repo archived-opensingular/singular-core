@@ -5,16 +5,21 @@ import br.net.mirante.singular.form.SInstances.IVisitor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-public class TestMInstances {
+@RunWith(Parameterized.class)
+public class TestMInstances extends TestCaseForm {
 
-    private SDictionary           dicionario;
     private SPackageTesteContatos pacote;
+
+    public TestMInstances(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
 
     @Before
     public void setup() {
-        dicionario = SDictionary.create();
-        pacote = dicionario.loadPackage(SPackageTesteContatos.class);
+        pacote = createTestDictionary().loadPackage(SPackageTesteContatos.class);
     }
 
     @Test

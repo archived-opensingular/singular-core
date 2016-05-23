@@ -117,14 +117,18 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         this.superType = superType;
     }
 
-    protected void onLoadType(TypeBuilder tb) {}
+    protected void onLoadType(TypeBuilder tb) { }
 
     final SInfoType getInfoType() {
         return SFormUtil.getInfoType((Class<? extends SType<?>>) getClass());
     }
 
     private final <TT extends SType<I>> TypeBuilder extend(String simpleName, Class<TT> parentClass) {
-        SFormUtil.validateSimpleName(simpleName);
+        if (simpleName == null) {
+            simpleName = nameSimple; //Extende usando o mesmo nome do tipo pai
+        } else {
+            SFormUtil.validateSimpleName(simpleName);
+        }
         if (!parentClass.equals(getClass())) {
             throw new RuntimeException("Erro Interno");
         }
@@ -224,6 +228,16 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             atual = atual.superType;
         }
         return false;
+    }
+
+    /** Verificar se o tipo é um tipo lista ({@link STypeList}). */
+    public boolean isList() {
+        return this instanceof STypeList;
+    }
+
+    /** Verificar se o tipo é um tipo composto ({@link STypeComposite}). */
+    public boolean isComposite() {
+        return this instanceof STypeComposite;
     }
 
     final AttributeDefinitionInfo getAttributeDefinitionInfo() {

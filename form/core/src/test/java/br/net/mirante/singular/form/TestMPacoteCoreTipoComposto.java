@@ -1,22 +1,36 @@
 package br.net.mirante.singular.form;
 
 import br.net.mirante.singular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInterna;
+import br.net.mirante.singular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaB;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static br.net.mirante.singular.form.AssertionsSForm.assertType;
 import static br.net.mirante.singular.form.TestMPacoteCoreTipoLista.INDICE_INVALIDO;
+import static junit.framework.Assert.*;
 
 
+@RunWith(Parameterized.class)
 public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
+    public TestMPacoteCoreTipoComposto(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
+    @Test
     public void testTipoCompostoCriacao() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         STypeComposite<?> tipoEndereco = pb.createCompositeType("endereco");
         tipoEndereco.addField("rua", STypeString.class);
@@ -36,7 +50,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertTipo(tipoEndereco.getLocalType("classificacao.prioridade"), "prioridade", STypeInteger.class);
 
         assertNull(tipoEndereco.getLocalTypeOptional("classificacao.prioridade.x.y").orElse(null));
-        assertException(() -> tipoEndereco.getLocalType("classificacao.prioridade.x.y"), "Não existe o tipo");
+        assertException(() -> tipoEndereco.getLocalType("classificacao.prioridade.x.y"), "Não foi encontrado o tipo");
 
         SIComposite endereco = tipoEndereco.newInstance();
         assertFilhos(endereco, 0);
@@ -79,9 +93,9 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEquals(classeEsperadaDoTipo, tipo.getClass());
     }
 
+    @Test
     public void testeComposicaoCamposQuandoUmCompostoExtendeOutroComposto() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         STypeComposite<?> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldString("nome");
@@ -111,9 +125,9 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEqualsList(fields.stream().map(f -> f.getNameSimple()).collect(Collectors.toList()), (Object[]) nomesEsperados);
     }
 
+    @Test
     public void testCriacaoDinamicaDeCamposNaInstancia() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         STypeComposite<SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldInteger("inicio");
@@ -171,9 +185,9 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEquals(qtdCamposDepois, bloco.getFields().size());
     }
 
+    @Test
     public void testTipoCompostoCriacaoComAtributoDoTipoListaDeTipoSimples() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldListOf("enderecos", STypeString.class);
@@ -209,9 +223,9 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         testCaminho(bloco.getField("enderecos[0]"), null, "enderecos[0]");
     }
 
+    @Test
     public void testTipoCompostoCriacaoComAtributoDoTipoListaDeTipoComposto() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
         STypeList<STypeComposite<SIComposite>, SIComposite> tipoEnderecos = tipoBloco.addFieldListOfComposite("enderecos", "endereco");
@@ -265,20 +279,20 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         testCaminho(bloco.getField("enderecos[0].rua"), null, "enderecos[0].rua");
     }
 
+    @Test
     public void testeOnCargaTipoDireto() {
-        SDictionary dicionario = SDictionary.create();
-        TestTipoCompositeComCargaInterna tipo = dicionario.getType(TestTipoCompositeComCargaInterna.class);
+        TestTipoCompositeComCargaInterna tipo = createTestDictionary().getType(TestTipoCompositeComCargaInterna.class);
         assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
         assertNotNull(tipo.getField("nome"));
         assertEquals((Boolean) true, tipo.isRequired());
     }
 
+    @Test
     public void testeOnCargaTipoChamadaSubTipo() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         TestTipoCompositeComCargaInterna tipo = pb.createType("derivado", TestTipoCompositeComCargaInterna.class);
 
-        TestTipoCompositeComCargaInterna tipoPai = dicionario.getType(TestTipoCompositeComCargaInterna.class);
+        TestTipoCompositeComCargaInterna tipoPai = pb.getDictionary().getType(TestTipoCompositeComCargaInterna.class);
         assertEquals("xxx", tipoPai.as(AtrBasic.class).getLabel());
         assertNotNull(tipoPai.getField("nome"));
         assertEquals((Boolean) true, tipoPai.isRequired());
@@ -288,32 +302,203 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEquals((Boolean) true, tipo.isRequired());
     }
 
-    public static final class TestPacoteCompostoA extends SPackage {
+    @Test
+    @Ignore("Há um probelma estrutural a ser corrigido para que o teste funcione")
+    public void testCargaCamposDeSubTipoCompostoRepetidoDuasVezesByClass() {
+        SDictionary dictionary = createTestDictionary();
+        TestTipoCompositeComCargaInterna a = dictionary.getType(TestTipoCompositeComCargaInterna.class);
+        TestTipoCompositeComCargaInternaB b = dictionary.getType(TestTipoCompositeComCargaInternaB.class);
+        AssertionsSType assertA = assertType(a).isComposite(1);
+        AssertionsSType assertB = assertType(b).isComposite(3);
+        assertB.isString("descricao");
+        assertB.isComposite("bloco1", 1);
+        assertB.isString("bloco1.nome");
+        assertB.isComposite("bloco2", 1);
+        assertB.isString("bloco2.nome");
+        assertNotNull(b.descricao);
+        assertNotNull(b.bloco1);
+        assertNotNull(b.bloco1.nome);
+        assertNotNull(b.bloco2);
+        assertNotNull(b.bloco2.nome);
 
-        protected TestPacoteCompostoA() {
-            super("teste.pacoteCompostoA");
-        }
+        assertNotSame(b.bloco1, b.bloco2);
+        assertNotSame(b.bloco1, a);
+        assertSame(b.bloco1.getSuperType(), a);
+        assertSame(b.bloco2.getSuperType(), a);
+
+        //Mudança em um campo não deve alterar o outro - 1
+        assertA.isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertB.field("bloco1").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertB.field("bloco2").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+
+        b.bloco1.asAtr().label("yyy");
+        assertA.isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertB.field("bloco1").isAttribute(SPackageBasic.ATR_LABEL, "yyy");
+        assertB.field("bloco2").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+
+        //Mudança em um campo não deve alterar o outro - 2
+        assertA.isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        assertB.field("bloco1").isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        assertB.field("bloco2").isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        b.bloco1.asAtr().subtitle("aaa");
+        assertA.isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        assertB.field("bloco1").isAttribute(SPackageBasic.ATR_SUBTITLE, "aaa");
+        assertB.field("bloco2").isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        a.asAtr().subtitle("bbb");
+        assertA.isAttribute(SPackageBasic.ATR_SUBTITLE, "bbb");
+        assertB.field("bloco1").isAttribute(SPackageBasic.ATR_SUBTITLE, "aaa");
+        assertB.field("bloco2").isAttribute(SPackageBasic.ATR_SUBTITLE, "bbb");
+
+
+        //Mudança em um campo não deve alterar o outro - 3 - segundo nível
+        assertNotSame(b.bloco1.nome, b.bloco2.nome);
+        assertNotSame(a.nome, b.bloco2.nome);
+        assertSame(a.nome, b.bloco1.nome.getSuperType() );
+        assertSame(a.nome, b.bloco2.nome.getSuperType());
+
+        assertA.field("nome").isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        assertB.field("bloco1.nome").isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        assertB.field("bloco2.nome").isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        b.bloco1.nome.asAtr().subtitle("rrr");
+        assertA.field("nome").isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        assertB.field("bloco1.nome").isAttribute(SPackageBasic.ATR_SUBTITLE, "rrr");
+        assertB.field("bloco2.nome").isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        a.nome.asAtr().subtitle("sss");
+        assertA.field("nome").isAttribute(SPackageBasic.ATR_SUBTITLE, "sss");
+        assertB.field("bloco1.nome").isAttribute(SPackageBasic.ATR_SUBTITLE, "rrr");
+        assertB.field("bloco2.nome").isAttribute(SPackageBasic.ATR_SUBTITLE, "sss");
+    }
+
+    @Test
+    @Ignore("Há um probelma estrutural a ser corrigido para que o teste funcione")
+    public void testCargaCamposDeSubTipoCompostoRepetidoDuasVezesByReference() {
+        SDictionary dictionary = createTestDictionary();
+        TestTipoCompositeComCargaInterna a = dictionary.getType(TestTipoCompositeComCargaInterna.class);
+        TestTipoCompositeComCargaInternaB b = dictionary.getType(TestTipoCompositeComCargaInternaB.class);
+
+        STypeComposite<SIComposite> c = dictionary.createNewPackage("test").createCompositeType("blockC");
+        c.addFieldString("descricao");
+        TestTipoCompositeComCargaInterna blocoA1 = c.addField("blocoA1", a);
+        TestTipoCompositeComCargaInterna blocoA2 = c.addField("blocoA2", a);
+        TestTipoCompositeComCargaInternaB blocoB1 = c.addField("blocoB1", b);
+        TestTipoCompositeComCargaInternaB blocoB2 = c.addField("blocoB2", b);
+
+        AssertionsSType assertA = assertType(a).isComposite(1);
+        AssertionsSType assertB = assertType(b).isComposite(3);
+        AssertionsSType assertC = assertType(c).isComposite(5);
+        assertC.isString("descricao");
+        assertC.isComposite("blocoA1", 1).isString("nome");
+        assertC.isComposite("blocoA2", 1).isString("nome");
+        assertC.isComposite("blocoB1", 3).isString("bloco2.nome");
+        assertC.isComposite("blocoB1.bloco1", 1).isString("nome");
+        assertC.isComposite("blocoB2.bloco2", 1).isString("nome");
+
+
+        assertNotNull(blocoA1.nome);
+        assertNotNull(blocoB1.descricao);
+        assertNotNull(blocoB1.bloco1.nome);
+
+        assertNotSame(blocoB1, blocoB2);
+        assertNotSame(b, blocoB1);
+        assertSame(blocoB1.getSuperType(), b);
+
+        assertNotSame(blocoA1, blocoA2);
+        assertNotSame(a, blocoA2);
+        assertSame(a, blocoA1.getSuperType());
+
+        assertNotSame(blocoA1.nome, blocoA2.nome);
+        assertNotSame(a.nome, blocoA2.nome);
+        assertSame(a.nome, blocoA2.nome.getSuperType());
+
+        assertNotSame(blocoB1.bloco1 , blocoB2.bloco1);
+        assertNotSame(b.bloco1, blocoB1.bloco1);
+        assertSame(b.bloco1, blocoB1.bloco1.getSuperType());
+
+        assertNotSame(blocoB1.bloco1.nome , blocoB2.bloco1.nome);
+        assertNotSame(b.bloco1.nome, blocoB1.bloco1.nome);
+        assertSame(b.bloco1.nome, blocoB1.bloco1.nome.getSuperType());
+
+
+        //Mudança em um campo não pai, não deve alterar o outro - 1
+        assertA.isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertB.field("bloco1").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertB.field("bloco2").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertC.field("blocoB1.bloco1").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertC.field("blocoB1.bloco2").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertC.field("blocoB2.bloco1").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertC.field("blocoB2.bloco2").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+
+        blocoB1.bloco1.asAtr().label("yyy");
+        assertA.isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertB.field("bloco1").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertB.field("bloco2").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertC.field("blocoB1.bloco1").isAttribute(SPackageBasic.ATR_LABEL, "yyy");
+        assertC.field("blocoB1.bloco2").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertC.field("blocoB2.bloco1").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertC.field("blocoB2.bloco2").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+
+        b.bloco2.asAtr().label("zzz");
+        assertA.isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertB.field("bloco1").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertB.field("bloco2").isAttribute(SPackageBasic.ATR_LABEL, "zzz");
+        assertC.field("blocoB1.bloco1").isAttribute(SPackageBasic.ATR_LABEL, "yyy");
+        assertC.field("blocoB1.bloco2").isAttribute(SPackageBasic.ATR_LABEL, "zzz");
+        assertC.field("blocoB2.bloco1").isAttribute(SPackageBasic.ATR_LABEL, "xxx");
+        assertC.field("blocoB2.bloco2").isAttribute(SPackageBasic.ATR_LABEL, "zzz");
+
+        a.asAtr().label("www");
+        assertA.isAttribute(SPackageBasic.ATR_LABEL, "www");
+        assertB.field("bloco1").isAttribute(SPackageBasic.ATR_LABEL, "www");
+        assertB.field("bloco2").isAttribute(SPackageBasic.ATR_LABEL, "zzz");
+        assertC.field("blocoB1.bloco1").isAttribute(SPackageBasic.ATR_LABEL, "yyy");
+        assertC.field("blocoB1.bloco2").isAttribute(SPackageBasic.ATR_LABEL, "zzz");
+        assertC.field("blocoB2.bloco1").isAttribute(SPackageBasic.ATR_LABEL, "www");
+        assertC.field("blocoB2.bloco2").isAttribute(SPackageBasic.ATR_LABEL, "zzz");
+    }
+
+    @SInfoPackage(name = "teste.pacoteCompostoA")
+    public static final class TestPacoteCompostoA extends SPackage {
 
         @Override
         protected void carregarDefinicoes(PackageBuilder pb) {
             pb.createType(TestTipoCompositeComCargaInterna.class);
+            pb.createType(TestTipoCompositeComCargaInternaB.class);
         }
 
         @SInfoType(name = "TestTipoCompostoComCargaInterna", spackage = TestPacoteCompostoA.class)
         public static final class TestTipoCompositeComCargaInterna extends STypeComposite<SIComposite> {
+
+            public STypeString nome;
+
             @Override
             protected void onLoadType(TypeBuilder tb) {
                 withRequired(true);
-                as(AtrBasic.class).label("xxx");
-                addFieldString("nome");
+                asAtr().label("xxx");
+                nome = addFieldString("nome");
+            }
+        }
+
+        @SInfoType(name = "TestTipoCompostoComCargaInternaB", spackage = TestPacoteCompostoA.class)
+        public static final class TestTipoCompositeComCargaInternaB extends STypeComposite<SIComposite> {
+
+            private STypeString descricao;
+            private TestTipoCompositeComCargaInterna bloco1;
+            private TestTipoCompositeComCargaInterna bloco2;
+
+            @Override
+            protected void onLoadType(TypeBuilder tb) {
+                withRequired(true);
+                descricao = addFieldString("descricao");
+                bloco1 = addField("bloco1", TestTipoCompositeComCargaInterna.class);
+                bloco2 = addField("bloco2", TestTipoCompositeComCargaInterna.class);
             }
         }
 
     }
 
+    @Test
     public void testGetFieldOpt() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldString("ba");

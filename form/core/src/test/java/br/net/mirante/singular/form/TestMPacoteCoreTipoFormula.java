@@ -1,12 +1,22 @@
 package br.net.mirante.singular.form;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-public class TestMPacoteCoreTipoFormula extends TestCase {
+@RunWith(Parameterized.class)
+public class TestMPacoteCoreTipoFormula extends TestCaseForm {
+
+    public TestMPacoteCoreTipoFormula(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
+    @Test
     public void testEmpty() {}
     /*
      * public void testCodeSimple() { MDicionario dicionario =
-     * MDicionario.create(); PacoteBuilder pb =
+     * createTestDictionary(); PacoteBuilder pb =
      * dicionario.criarNovoPacote("teste");
      *
      * MTipoComposto<?> tipoCampos = pb.createTipoComposto("campos");

@@ -1,16 +1,23 @@
 package br.net.mirante.singular.form;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import br.net.mirante.singular.form.internal.xml.MElement;
 import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.type.core.STypeString;
-import org.junit.Assert;
-import org.junit.Test;
 
-public class TestMInstance {
+@RunWith(Parameterized.class)
+public class TestMInstance extends TestCaseForm {
+
+    public TestMInstance(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
 
     @Test public void testIncrementoId() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         STypeComposite<?> tipoPedido = pb.createCompositeType("pedido");
         tipoPedido.addFieldString("nome");
@@ -41,7 +48,6 @@ public class TestMInstance {
         pedido.setValue("itens[0].urgente", true);
         assertId(pedido.getField("itens[0].urgente"), 12, 12);
 
-//        pedido.debug();
         MElement xml = MformPersistenciaXML.toXML(pedido);
 
         SIComposite pedido2 = (SIComposite) MformPersistenciaXML.fromXML(tipoPedido, xml);

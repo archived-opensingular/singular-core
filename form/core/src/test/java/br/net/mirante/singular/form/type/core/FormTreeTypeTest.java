@@ -2,28 +2,23 @@ package br.net.mirante.singular.form.type.core;
 
 import br.net.mirante.singular.form.*;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-public class FormTreeTypeTest extends SPackage {
+import java.util.function.Supplier;
 
-    private STypeComposite node;
+@RunWith(Parameterized.class)
+public class FormTreeTypeTest extends TestCaseForm {
 
-    public FormTreeTypeTest() {
-        super("a.test.pkg");
+    public FormTreeTypeTest(TestFormConfig testFormConfig) {
+        super(testFormConfig);
     }
 
-//    @Override
-//    protected void carregarDefinicoes(PackageBuilder pb) {
-//        super.carregarDefinicoes(pb);
-//
-//        node = pb.createTipo(NodeType.class);
-//    }
-
     @Test public void shouldNotLoop(){
-        SDictionary dict = SDictionary.create();
 //        FormTreeTypeTest pkg = (FormTreeTypeTest) dict.loadPackage((Class)FormTreeTypeTest.class);
 //        STypeComposite<? extends SIComposite> node = pkg.createTipoComposto("node");
 
-        PackageBuilder                        pkg  = dict.createNewPackage("pkg");
+        PackageBuilder                        pkg  = createTestDictionary().createNewPackage("pkg");
         STypeComposite<? extends SIComposite> node = pkg.createCompositeType("node");
 
         node.addFieldString("nome");

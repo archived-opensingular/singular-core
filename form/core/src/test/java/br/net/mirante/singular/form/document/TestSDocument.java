@@ -3,11 +3,22 @@ package br.net.mirante.singular.form.document;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeString;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+import java.util.function.Supplier;
+
+@RunWith(Parameterized.class)
 public class TestSDocument extends TestCaseForm {
 
+    public TestSDocument(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
+    @Test
     public void testCriacaoImplicitaPacoteCore() {
-        SDictionary dicionario = SDictionary.create();
+        SDictionary dicionario = createTestDictionary();
         SIString    instancia1 = dicionario.newInstance(STypeString.class);
         assertFilhos(instancia1, 0);
 
@@ -17,9 +28,9 @@ public class TestSDocument extends TestCaseForm {
         assertNotSame(instancia1.getDocument(), instancia2.getDocument());
     }
 
+    @Test
     public void testCriacaoImplicitaPacoteNovo() {
-        SDictionary       dicionario = SDictionary.create();
-        PackageBuilder    pb         = dicionario.createNewPackage("teste");
+        PackageBuilder    pb         = createTestDictionary().createNewPackage("teste");
         STypeComposite<?> tipo       = pb.createType("nome", STypeComposite.class);
 
         SInstance instancia1 = tipo.newInstance();
@@ -31,9 +42,9 @@ public class TestSDocument extends TestCaseForm {
         assertNotSame(instancia1.getDocument(), instancia2.getDocument());
     }
 
+    @Test
     public void testHerancaPelosSubcampos() {
-        SDictionary                                         dicionario   = SDictionary.create();
-        PackageBuilder                                      pb           = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         STypeList<STypeComposite<SIComposite>, SIComposite> tipoLista    = pb.createListOfNewCompositeType("pessoas", "pessoa");
         STypeComposite<?>                                   tipoComposto = tipoLista.getElementsType();
         tipoComposto.addFieldString("nome");

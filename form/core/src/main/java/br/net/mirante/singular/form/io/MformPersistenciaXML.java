@@ -202,14 +202,14 @@ public class MformPersistenciaXML {
         return xmlResultado;
     }
 
-    private static MElement parseXml(String xmlString) {
+    final static MElement parseXml(String xmlString) {
         try {
             if (StringUtils.isBlank(xmlString)) {
                 return null;
             }
             return MParser.parse(xmlString);
         } catch (Exception e) {
-            throw new SingularFormException("Erro fazendo parde do xml", e);
+            throw new SingularFormException("Erro lendo xml (parse)", e);
         }
     }
 

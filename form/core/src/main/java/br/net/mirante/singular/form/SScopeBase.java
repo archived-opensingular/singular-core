@@ -22,7 +22,7 @@ public abstract class SScopeBase implements SScope {
      * Retorna os tipos criados localmente. Se for um pacote, retorna o tipos do
      * pacote. Se for um tipo, então retorna o tipo criados no escopo local do
      * tipo (tipo dentro de tipo).
-     * 
+     *
      * @return Nunca null
      */
     public Collection<SType<?>> getLocalTypes() {
@@ -65,7 +65,7 @@ public abstract class SScopeBase implements SScope {
                 return tipo.getLocalType(pathReader.next());
             }
         }
-        throw new SingularFormException(pathReader.getTextoErro(this, "Não existe o tipo"));
+        throw new SingularFormException(pathReader.getTextoErro(this, "Não foi encontrado o tipo '" + pathReader.getTrecho() + "' em '"  + getName() + "'"));
     }
 
     final <T extends SType<?>> T registerType(T newType, Class<T> classeDeRegistro) {
@@ -73,8 +73,17 @@ public abstract class SScopeBase implements SScope {
     }
 
     final <T extends SType<?>> T registerType(TypeBuilder tb, Class<T> classeDeRegistro) {
-        getDictionary().registeType(this, (T) tb.getType(), classeDeRegistro);
-        return (T) tb.configure();
+        T type = getDictionary().registeType(this, (T) tb.getType(), classeDeRegistro) ;
+        /*
+        (by Daniel Bordin) O If abaixo impede que o onLoadType seja chamado mais de uma vezes caso o novo tipo seja
+        apenas uma extensão da classe já carregada anteriormente, ou seja, impede que o mesmo onLoadType seja
+        invocado múltiplas vezes. Esse controle é especialmente importante para eveitar entrar em loop quando
+        um tipo tem uma referência para ele mesmo.
+        */
+        //if (type.getSuperType() == null || type.getSuperType().getClass() != type.getClass()) {
+            type.onLoadType(tb);
+        //}
+        return type;
     }
 
     final <T extends SType<?>> T extendType(String simpleNameNewType, T parentType) {
@@ -95,7 +104,7 @@ public abstract class SScopeBase implements SScope {
     final <I extends SIComposite> STypeList<STypeComposite<I>, I> createListOfNewTypeComposite(String simpleNameNewType,
             String simpleNameNewTypeComposto) {
         STypeList<STypeComposite<I>, I> listType = extendType(simpleNameNewType, STypeList.class);
-        listType.setElementsTypeAsNewCompositeType(simpleNameNewTypeComposto);
+        listType.setElementsType(simpleNameNewTypeComposto, resolveType(STypeComposite.class));
         return listType;
     }
 
