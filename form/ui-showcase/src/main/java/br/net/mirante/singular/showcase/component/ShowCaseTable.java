@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple;
+import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple2;
 import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
@@ -64,7 +66,8 @@ public class ShowCaseTable {
         addGroup(Group.MAPS);
 
         addGroup("XSD", Icone.CODE, ListPage.Tipo.FORM)
-            .addCase(new DynamicCaseBase("Gerado"));
+            .addCase(new XsdCaseSimple())
+            .addCase(new XsdCaseSimple2());
 
         addGroup(Group.STUDIO);
         //@formatter:on
