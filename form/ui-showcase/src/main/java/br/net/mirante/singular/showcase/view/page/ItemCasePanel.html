@@ -5,18 +5,7 @@
             <p wicket:id="description"></p>
         </h4>
         <hr/>
-        <form wicket:id="form">
-            <div wicket:id="singularFormPanel" class="form-body"></div>
-            <br/>
-            <div class="form-actions">
-                <wicket:fragment wicket:id="buttons">
-                    <input type="button" class="btn" wicket:id="button"/>
-                </wicket:fragment>
-            </div>
-            <div wicket:id="viewXmlModal" class="portlet-body form">
-                <div wicket:id="xmlCodes"></div>
-            </div>
-        </form>
+        <wicket:child/>
         <hr/>
         <wicket:fragment wicket:id="codes"/>
     </div>

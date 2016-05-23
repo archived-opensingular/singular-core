@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>br.net.mirante</groupId>
+        <artifactId>singular-studio</artifactId>
+        <version>0.6.3-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>studio-core</artifactId>
+    <name>[singular :: studio :: core]</name>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>form-wicket</artifactId>
+            <version>${singular.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>form-service</artifactId>
+            <version>${singular.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

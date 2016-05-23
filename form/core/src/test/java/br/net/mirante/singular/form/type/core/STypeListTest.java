@@ -5,19 +5,27 @@ import br.net.mirante.singular.form.internal.xml.MParser;
 import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class STypeListTest {
+@RunWith(Parameterized.class)
+public class STypeListTest extends TestCaseForm {
 
     private STypeComposite<? extends SIComposite> baseType;
     private STypeString                           name, content;
     private STypeList<STypeComposite<SIComposite>, SIComposite> listType;
 
+    public STypeListTest(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
     @Before
     public void setup() {
-        SDictionary    dict = SDictionary.create();
-        PackageBuilder pkt  = dict.createNewPackage("pkt");
+        PackageBuilder pkt  = createTestDictionary().createNewPackage("pkt");
         baseType = pkt.createCompositeType("baseType");
         name = baseType.addFieldString("name");
         listType = baseType.addFieldListOfComposite("listField", "subStuff");

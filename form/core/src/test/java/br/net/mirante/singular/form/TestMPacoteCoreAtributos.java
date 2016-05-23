@@ -7,10 +7,20 @@ import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
 import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
 import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
 import br.net.mirante.singular.form.type.util.STypeEMail;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+@RunWith(Parameterized.class)
 public class TestMPacoteCoreAtributos extends TestCaseForm {
+
+    public TestMPacoteCoreAtributos(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
 
     public static final class TestPacoteAA extends SPackage {
 
@@ -68,6 +78,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals(novoValor, instancia.getAttributeValue(TestPacoteAA.ATR_YY, Integer.class));
     }
 
+    @Test
     public void testAdicionarAtributoEmOutroPacote() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
@@ -79,6 +90,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals(instancia.getAttributeValue(TestPacoteAA.ATR_XX), (Object) 17);
     }
 
+    @Test
     public void testAtributoValorInicial() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
@@ -114,6 +126,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals("Y", tipo.newInstance().getValue());
     }
 
+    @Test
     public void testCriarDoisAtributosComMesmoNome() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
@@ -124,6 +137,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
                 "Deveria ter ocorrido uma exception por ter dois atributo com mesmo nome criado pelo mesmo pacote");
     }
 
+    @Test
     public void testCriarDoisAtributosDePacotesDiferentesComMesmoNome() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb1 = dicionario.createNewPackage("teste1");
@@ -150,6 +164,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals((Integer) 20, tipo.getAttributeValue(at2.getName()));
     }
 
+    @Test
     public void testCriacaoNovosAtributosNosPacotesCerto() {
         SDictionary dicionario = SDictionary.create();
         dicionario.loadPackage(SCorePackageTest.TestPacoteB.class);
@@ -163,6 +178,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals("teste.pacoteB", tipoAtributo.getParentScope().getName());
     }
 
+    @Test
     public void testCriacaoAtributoDentroDaClasseDoTipo() {
         // Também testa se dá problema um tipo extendendo outro e ambos com
         // onLoadType()
@@ -239,7 +255,8 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals("A3", instanceOfFieldOfTipo1.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
         
     }
-    
+
+    @Test
     public void testAtribuicaoDeValoresDeAtributosPorString() {
         SDictionary dicionario = SDictionary.create();
         TestPacoteCAI pkg = dicionario.loadPackage(TestPacoteCAI.class);
@@ -307,6 +324,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         }
     }
 
+    @Test
     public void testIsAttributeETestAtributoComposto() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb1 = dicionario.createNewPackage("teste1");
@@ -352,6 +370,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         }
     }
 
+    @Test
     public void testTipoCompostoTestarValorInicialEValorDefaultIfNull() {
         testInicialEDefault(STypeInteger.class, 10, 11);
         testInicialEDefault(STypeString.class, "A", "B");

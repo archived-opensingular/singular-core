@@ -14,28 +14,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
+import br.net.mirante.singular.form.*;
 import org.fest.assertions.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.ICompositeInstance;
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.RefService;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SInfoPackage;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.document.SDocumentFactory;
@@ -44,8 +31,15 @@ import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeString;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-public class TesteFormSerializationUtil {
+@RunWith(Parameterized.class)
+public class TesteFormSerializationUtil extends TestCaseForm {
+
+    public TesteFormSerializationUtil(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
 
     @Test
     public void testVerySimplesCase() {
@@ -183,12 +177,14 @@ public class TesteFormSerializationUtil {
     @Test
     @SuppressWarnings("unchecked")
     public void testTipoListComposto() {
-        SIList<SIComposite> instancia = (SIList<SIComposite>) createSerializableTestInstance("teste.enderecos", pacote -> {
-            STypeComposite<SIComposite> endereco = pacote.createListOfNewCompositeType("enderecos", "endereco").getElementsType();
-            endereco.addFieldString("rua");
-            endereco.addFieldString("bairro");
-            endereco.addFieldString("cidade");
-        });
+        SIList<SIComposite> instancia = (SIList<SIComposite>) createSerializableTestInstance("teste.enderecos",
+                pacote -> {
+                    STypeComposite<SIComposite> endereco =
+                            pacote.createListOfNewCompositeType("enderecos", "endereco").getElementsType();
+                    endereco.addFieldString("rua");
+                    endereco.addFieldString("bairro");
+                    endereco.addFieldString("cidade");
+                });
         instancia.addNew(e -> e.setValue("rua", "A1"));
         instancia.addNew(e -> e.setValue("bairro", "A2"));
         instancia.addNew(e -> {
@@ -229,7 +225,8 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testSerializacaoReferenciaServico() {
-        SInstance instancia = createSerializableTestInstance("teste.endereco", pacote -> pacote.createType("endereco", STypeString.class));
+        SInstance instancia = createSerializableTestInstance("teste.endereco", pacote -> pacote.createType("endereco" +
+                "", STypeString.class));
 
         instancia.getDocument().bindLocalService("A", String.class, RefService.of("AA"));
         SInstance instancia2 = testSerializacao(instancia);
@@ -345,7 +342,8 @@ public class TesteFormSerializationUtil {
     }
 
     public static SInstance serializarEDeserializar(SInstance original) {
-        return serializarEDeserializar(original, FormSerializationUtil::toSerializedObject, fs -> FormSerializationUtil.toInstance(fs));
+        return serializarEDeserializar(original, FormSerializationUtil::toSerializedObject,
+                fs -> FormSerializationUtil.toInstance(fs));
     }
 
     private static SInstance serializarEDeserializar(SInstance original, Function<SInstance, FormSerialized> toSerial,
@@ -361,23 +359,6 @@ public class TesteFormSerializationUtil {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static SInstance createSerializableTestInstance(String typeName, ConfiguradorDicionarioTeste setupCode) {
-        RefType refType = new RefType() {
-
-            @Override
-            protected SType<?> retrieve() {
-                SDictionary novo = SDictionary.create();
-                setupCode.setup(novo.createNewPackage("teste"));
-                return novo.getType(typeName);
-            }
-        };
-        return SDocumentFactory.empty().createInstance(refType);
-    }
-
-    public interface ConfiguradorDicionarioTeste extends Serializable {
-        public void setup(PackageBuilder pacote);
     }
 
     public static void assertEquivalent(SDocument original, SDocument copy) {

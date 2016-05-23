@@ -104,17 +104,22 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return addInternal(fieldSimpleName, novo);
     }
 
+    /**
+     * Cria um campo lista com sendo do tipo composite ({@link STypeComposite}) com o
+     * nome infomado. O novo tipo composite é criado sem campos, devendo ser estruturado
+     * na sequencia.
+     */
+    public <I extends SIComposite> STypeList<STypeComposite<I>, I> addFieldListOfComposite(String fieldSimpleName,
+            String simpleNameNewCompositeType) {
+        STypeList<STypeComposite<I>, I> novo = createListOfNewTypeComposite(fieldSimpleName, simpleNameNewCompositeType);
+        return addInternal(fieldSimpleName, novo);
+    }
+
     public STypeAttachmentList addFieldListOfAttachment(String listName, String fieldName) {
         STypeAttachmentList novo = extendType(listName, STypeAttachmentList.class);
         novo.setView(SViewAttachmentList::new);
         novo.setElementsTypeFieldName(fieldName);
         return addInternal(listName, novo);
-    }
-
-    public <I extends SIComposite> STypeList<STypeComposite<I>, I> addFieldListOfComposite(String fieldSimpleName,
-            String simpleNameNewCompositeType) {
-        STypeList<STypeComposite<I>, I> novo = createListOfNewTypeComposite(fieldSimpleName, simpleNameNewCompositeType);
-        return addInternal(fieldSimpleName, novo);
     }
 
     public SType<?> getField(String fieldSimpleName) {

@@ -7,24 +7,31 @@ import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.Matchers;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class TestSDocumentPersistentServices {
+@RunWith(Parameterized.class)
+public class TestSDocumentPersistentServices extends TestCaseForm {
     
     private STypeComposite<?>             groupingType;
     private SIAttachment                  fileFieldInstance;
     private SDocument                     document;
     private IAttachmentPersistenceHandler tempHandler, persistentHandler;
 
+    public TestSDocumentPersistentServices(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
     @Before public void setup(){
-        SDictionary dicionario = SDictionary.create();
-        createTypes(dicionario.createNewPackage("teste"));
+        createTypes(createTestDictionary().createNewPackage("teste"));
         createInstances();
         setupServices();
         

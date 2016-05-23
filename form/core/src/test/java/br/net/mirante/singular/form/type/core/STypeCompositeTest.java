@@ -1,25 +1,30 @@
 package br.net.mirante.singular.form.type.core;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.internal.xml.MParser;
 import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class STypeCompositeTest {
+@RunWith(Parameterized.class)
+public class STypeCompositeTest extends TestCaseForm {
 
     private STypeComposite<? extends SIComposite> baseType, subStuff;
     private STypeString name, content;
 
+    public STypeCompositeTest(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
     @Before public void setup() {
-        SDictionary    dict = SDictionary.create();
-        PackageBuilder pkt  = dict.createNewPackage("pkt");
+        PackageBuilder pkt  = createTestDictionary().createNewPackage("pkt");
         baseType = pkt.createCompositeType("baseType");
         name = baseType.addFieldString("name");
         subStuff = baseType.addFieldComposite("subStuff");

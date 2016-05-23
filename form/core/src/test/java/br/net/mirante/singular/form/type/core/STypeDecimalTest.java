@@ -1,21 +1,31 @@
 package br.net.mirante.singular.form.type.core;
 
+import br.net.mirante.singular.form.AbstractTestOneType;
+import br.net.mirante.singular.form.SDictionary;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class STypeDecimalTest {
+@RunWith(Parameterized.class)
+public class STypeDecimalTest extends AbstractTestOneType<STypeDecimal, SIBigDecimal> {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     STypeDecimal type = new STypeDecimal();
+
+    public STypeDecimalTest(TestFormConfig testFormConfig) {
+        super(testFormConfig, STypeDecimal.class);
+    }
 
     @Test
     public void stringConversions() {

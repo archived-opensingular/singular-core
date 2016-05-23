@@ -16,7 +16,8 @@ import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.voca
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeUnidadeMedida extends STypeComposite<SIComposite> {
 
-    public STypeString sigla, descricao;
+    public STypeString sigla;
+    public STypeString descricao;
     public STypeInteger id;
 
     @Override

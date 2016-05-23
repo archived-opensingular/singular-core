@@ -5,10 +5,11 @@ import br.net.mirante.singular.form.type.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-public class TestMFormUtilUserFriendlyPath {
-
-    private SDictionary _dicionario;
+@RunWith(Parameterized.class)
+public class TestMFormUtilUserFriendlyPath extends TestCaseForm {
 
     private STypeComposite<? extends SIComposite>               _evento;
     private STypeString                                         _descricao;
@@ -23,10 +24,13 @@ public class TestMFormUtilUserFriendlyPath {
 
     private SIList<SIComposite> alertas;
 
+    public TestMFormUtilUserFriendlyPath(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
     @Before
     public void setUp() {
-        _dicionario = SDictionary.create();
-        PackageBuilder pb = _dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         _evento = pb.createCompositeType("evento");
         _descricao = _evento.addField("descricao", STypeString.class);

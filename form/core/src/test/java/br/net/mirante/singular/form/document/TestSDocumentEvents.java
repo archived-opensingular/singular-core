@@ -11,10 +11,16 @@ import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+import java.util.function.Supplier;
+
+@RunWith(Parameterized.class)
 public class TestSDocumentEvents extends TestCaseForm {
 
-    private SDictionary dicionario;
+    private SDictionary dictionary;
     private SIString    root;
     private SDocument   doc;
 
@@ -22,10 +28,14 @@ public class TestSDocumentEvents extends TestCaseForm {
     private ISInstanceListener.EventCollector attributeCollector;
     private ISInstanceListener.EventCollector valueCollector;
 
+    public TestSDocumentEvents(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
     @Before
     public void setUp() {
-        dicionario = SDictionary.create();
-        root = dicionario.newInstance(STypeString.class);
+        dictionary = createTestDictionary();
+        root = dictionary.newInstance(STypeString.class);
         doc = root.getDocument();
 
         globalCollector = new ISInstanceListener.EventCollector();
@@ -33,6 +43,7 @@ public class TestSDocumentEvents extends TestCaseForm {
         valueCollector = new ISInstanceListener.EventCollector(e -> e instanceof SInstanceValueChangeEvent);
     }
 
+    @Test
     public void testValueChanges() {
         doc.getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, globalCollector);
 
@@ -46,6 +57,7 @@ public class TestSDocumentEvents extends TestCaseForm {
         assertEventsCount(2, globalCollector);
     }
 
+    @Test
     public void testAttributeChanges() {
         doc.getInstanceListeners().add(SInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
 
@@ -59,6 +71,7 @@ public class TestSDocumentEvents extends TestCaseForm {
         assertEventsCount(2, attributeCollector);
     }
 
+    @Test
     public void testValueAndAttributeChanges() {
         doc.getInstanceListeners().add(SInstanceEventType.values(), globalCollector);
         doc.getInstanceListeners().add(SInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);

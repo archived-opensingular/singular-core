@@ -47,17 +47,7 @@
         <!-- Projeto Singular -->
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>form-core</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>br.net.mirante</groupId>
             <artifactId>form-wicket</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>br.net.mirante</groupId>
-            <artifactId>singular-support</artifactId>
             <version>0.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>

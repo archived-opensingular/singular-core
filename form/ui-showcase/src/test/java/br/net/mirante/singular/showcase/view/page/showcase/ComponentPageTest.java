@@ -19,9 +19,12 @@ public class ComponentPageTest {
     @Inject
     private SpringWicketTester springWicketTester;
 
+    @Inject
+    private ShowCaseTable showCaseTable;
+
     @Test
     public void testRendering() {
-        new ShowCaseTable().getGroups().forEach(group -> {
+        showCaseTable.getGroups().forEach(group -> {
             group.getItens().forEach(item -> {
                 springWicketTester.wt().startPage(ComponentPage.class, new PageParameters().add("cn", item.getComponentName().toLowerCase()));
                 springWicketTester.wt().assertRenderedPage(ComponentPage.class);

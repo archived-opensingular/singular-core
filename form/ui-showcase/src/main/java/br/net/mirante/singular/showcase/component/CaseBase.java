@@ -5,17 +5,17 @@
 
 package br.net.mirante.singular.showcase.component;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import br.net.mirante.singular.form.SDictionary;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Representa um exemplo de um componente ou solução junto com os respectivo
@@ -28,16 +28,23 @@ public class CaseBase implements Serializable {
     private String descriptionHtml;
     private final List<ItemCasePanel.ItemCaseButton> botoes = new ArrayList<>();
     private final List<ResourceRef> aditionalSources = new ArrayList<>();
+    private Class<? extends SPackage> sPackage;
+    private AnnotationMode annotationMode = AnnotationMode.NONE;
 
     private transient SType<?> caseType;
-    
-    public CaseBase(String componentName) {
-        this(componentName, null);
-    }
 
     public CaseBase(String componentName, String subCaseName) {
         this.componentName = componentName;
         this.subCaseName = subCaseName;
+    }
+
+    public CaseBase(Class<? extends SPackage> sPackage, String componentName, String subCaseName,
+                    AnnotationMode annotationMode) {
+        this.sPackage = sPackage;
+        this.componentName = componentName;
+        this.subCaseName = subCaseName;
+        this.annotationMode = annotationMode;
+
     }
 
     public String getComponentName() {
@@ -61,6 +68,10 @@ public class CaseBase implements Serializable {
 
     @SuppressWarnings("unchecked")
     private Class<? extends SPackage> getPackage() {
+        if (sPackage != null) {
+            return sPackage;
+        }
+
         String target = getClass().getName() + "Package";
         try {
             Class<?> c = getClass().getClassLoader().loadClass(target);
@@ -109,5 +120,9 @@ public class CaseBase implements Serializable {
         return getCaseType().hasAnyValidation();
     }
 
-    public AnnotationMode annotation() { return AnnotationMode.NONE;}
+    public AnnotationMode annotation() { return annotationMode;}
+
+    public boolean isDynamic() {
+        return false;
+    }
 }

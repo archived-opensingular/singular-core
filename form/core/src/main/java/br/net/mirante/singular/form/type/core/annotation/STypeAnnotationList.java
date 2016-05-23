@@ -24,6 +24,6 @@ public class STypeAnnotationList extends STypeList {
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
-        setElementsType(tb.getType().getDictionary().getType(STypeAnnotation.class));
+        setElementsType(getDictionary().getType(STypeAnnotation.class));
     }
 }

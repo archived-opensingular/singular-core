@@ -1,20 +1,30 @@
 package br.net.mirante.singular.form.type.core;
 
+import br.net.mirante.singular.form.AbstractTestOneType;
 import br.net.mirante.singular.form.SDictionary;
 import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.TestCaseForm;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class STypeDateTimeTest {
-    SDictionary dict = SDictionary.create();
+@RunWith(Parameterized.class)
+public class STypeDateTimeTest extends AbstractTestOneType<STypeDateTime, SIDateTime> {
+
+    public STypeDateTimeTest(TestFormConfig testFormConfig) {
+        super(testFormConfig, STypeDateTime.class);
+    }
 
     @Test
     public void storesDateInISOFormat(){
-        SIDateTime d = newInstance(dict);
+        SIDateTime d = newInstance();
 
         DateTime reference = DateTime.parse("2016-01-01T05:21:33.000-02:00");
         d.setValue(reference.toDate());
@@ -22,7 +32,7 @@ public class STypeDateTimeTest {
     }
 
     @Test public void displaysDateInLatinFormat(){
-        SIDateTime d = newInstance(dict);
+        SIDateTime d = newInstance();
 
         DateTime reference = DateTime.parse("2016-01-01T05:21:33.000");
         d.setValue(reference.toDate());
@@ -30,7 +40,7 @@ public class STypeDateTimeTest {
     }
 
     @Test public void selectLabelIsInLatinFormat(){
-        SIDateTime d = newInstance(dict);
+        SIDateTime d = newInstance();
 
         DateTime reference = DateTime.parse("2016-01-01T05:21:33.000");
         d.setValue(reference.toDate());
@@ -38,7 +48,7 @@ public class STypeDateTimeTest {
     }
 
     @Test public void convertsFromISOForrmat(){
-        SIDateTime d = newInstance(dict);
+        SIDateTime d = newInstance();
 
         DateTime reference = DateTime.parse("2016-01-01T05:21:33.000-02:00");
         d.setValue("2016-01-01T05:21:33.000-02:00");
@@ -46,19 +56,10 @@ public class STypeDateTimeTest {
     }
 
     @Test public void convertsLatinForrmat(){
-        SIDateTime d = newInstance(dict);
+        SIDateTime d = newInstance();
 
         DateTime reference = DateTime.parse("2016-01-01T05:21:00.000");
         d.setValue("01/01/2016 05:21");
         assertThat(d.getValue()).isEqualTo(reference.toDate());
-    }
-
-    private SIDateTime newInstance(final SDictionary dict) {
-        return (SIDateTime) SDocumentFactory.empty().createInstance(new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return dict.getType(STypeDateTime.class);
-            }
-        });
     }
 }

@@ -1,8 +1,29 @@
 package br.net.mirante.singular.form.wicket.helpers;
 
-import br.net.mirante.singular.form.*;
+import java.io.Serializable;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+
+import br.net.mirante.singular.form.RefService;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.*;
+import br.net.mirante.singular.form.document.DefaultServiceRegistry;
+import br.net.mirante.singular.form.document.RefSDocumentFactory;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.SDocument;
+import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.document.ServiceRegistry;
+import br.net.mirante.singular.form.document.TypeLoader;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
@@ -10,15 +31,6 @@ import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-
-import java.io.Serializable;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class DummyPage extends WebPage {
 
@@ -61,14 +73,9 @@ public class DummyPage extends WebPage {
         return currentInstance ;
     }
 
-    private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn") {
+    private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getRootInstance()) {
         @Override
         protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {}
-
-        @Override
-        public IModel<? extends SInstance> getCurrentInstance() {
-            return singularFormPanel.getRootInstance();
-        }
     };
 
     public DummyPage() {

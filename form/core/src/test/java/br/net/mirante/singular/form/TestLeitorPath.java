@@ -1,7 +1,19 @@
 package br.net.mirante.singular.form;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
+
+@RunWith(Parameterized.class)
 public class TestLeitorPath extends TestCaseForm {
 
+    public TestLeitorPath(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
+    @Test
     public void testGeral() {
         assertPath("a", "a");
         assertPath("a.b", "a", "b");

@@ -1,27 +1,38 @@
 package br.net.mirante.singular.form.io.definition;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.io.FormAssert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import com.google.common.collect.Lists;
 
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SFormUtil;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.TestCaseForm;
+import br.net.mirante.singular.form.io.FormAssert;
 import br.net.mirante.singular.form.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
 
-public class TestSFormDefinitionPersistenceUtil {
+@RunWith(Parameterized.class)
+public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
+
+    public TestSFormDefinitionPersistenceUtil(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
 
     @Test
     public void testVerySimple() {
-        SDictionary novo = SDictionary.create();
-        PackageBuilder pkg = novo.createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
         STypeString type = pkg.createType("descr", STypeString.class);
 
         SIPersistenceArchive archive = testArchiveAndUnarchive(type);
@@ -42,8 +53,7 @@ public class TestSFormDefinitionPersistenceUtil {
 
     @Test
     public void testTypeCompositeOneLevel() {
-        SDictionary novo = SDictionary.create();
-        PackageBuilder pkg = novo.createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
         STypeComposite<SIComposite> typeEndereco = pkg.createCompositeType("endereco");
         typeEndereco.addFieldString("rua");
         typeEndereco.addFieldInteger("numero");
@@ -59,8 +69,7 @@ public class TestSFormDefinitionPersistenceUtil {
 
     @Test
     public void testTypeCompositeTwoLevels() {
-        SDictionary novo = SDictionary.create();
-        PackageBuilder pkg = novo.createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
         STypeComposite<SIComposite> typeEndereco = pkg.createCompositeType("endereco");
         typeEndereco.addFieldString("rua");
         typeEndereco.addFieldInteger("numero");
@@ -78,8 +87,7 @@ public class TestSFormDefinitionPersistenceUtil {
 
     @Test
     public void testTypeOfCompositeSubMemberInSamePackage() {
-        SDictionary novo = SDictionary.create();
-        PackageBuilder pkg = novo.createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
         STypeComposite<SIComposite> typeEndereco = pkg.createCompositeType("endereco");
         STypeString typeRua = typeEndereco.addFieldString("rua");
         typeEndereco.addFieldInteger("numero");
@@ -102,7 +110,7 @@ public class TestSFormDefinitionPersistenceUtil {
 
     @Test
     public void testTypeOfCompositeSubMemberInDifferentPackage() {
-        PackageBuilder pkg = SDictionary.create().createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
         STypeComposite<SIComposite> typeEndereco = pkg.createCompositeType("endereco");
         STypeString typeRua = typeEndereco.addFieldString("rua");
         typeEndereco.addFieldInteger("numero");
@@ -124,7 +132,8 @@ public class TestSFormDefinitionPersistenceUtil {
     @Test
     @Ignore
     public void testTypeCompositeWithAttribute() {
-        PackageBuilder pkg = SDictionary.create().createNewPackage("myPkg.teste");
+        //TODO Implementar esse caso
+        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
         STypeComposite<SIComposite> typeEndereco = pkg.createCompositeType("endereco");
         typeEndereco.asAtr().label("Endereço");
         typeEndereco.addFieldString("rua").asAtr().label("Rua");
@@ -149,7 +158,6 @@ public class TestSFormDefinitionPersistenceUtil {
 
     private static SIPersistenceArchive testArchiveAndUnarchive(SType<?> type) {
         SIPersistenceArchive archive = SFormDefinitionPersistenceUtil.toArchive(type);
-        System.out.println(toPersistenceString(archive));
 
         SType<?> type2 = SFormDefinitionPersistenceUtil.fromArchive(archive);
 
@@ -159,7 +167,6 @@ public class TestSFormDefinitionPersistenceUtil {
         SType<?> type3 = SFormDefinitionPersistenceUtil.fromArchive(archive2);
 
         assertEquivalenceRootType(type, type3);
-        System.out.println(toPersistenceString(archive2));
         assertThat(toPersistenceString(archive)).isEqualTo(toPersistenceString(archive2));
 
         return archive;
