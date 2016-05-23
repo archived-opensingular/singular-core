@@ -203,7 +203,7 @@ public class FileUploadPanel extends Panel {
                     downloadLink.add(fileName))
             )
         );
-        panelWrapper.queue(new SUploadProgressBar("progress", uploadField){
+        panelWrapper.add(new SUploadProgressBar("progress", uploadField){
             @Override
             protected Form<?> getForm() {
                 return uploadField.getForm();
