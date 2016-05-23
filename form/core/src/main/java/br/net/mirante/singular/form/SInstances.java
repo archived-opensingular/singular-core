@@ -26,6 +26,8 @@ public abstract class SInstances {
         void stop();
         void stop(R result);
         void dontGoDeeper();
+        void setPartial(R result);
+        R getPartial();
     }
 
     public interface IVisitor<I extends SInstance, R> {
@@ -68,7 +70,7 @@ public abstract class SInstances {
      */
     @SuppressWarnings("unchecked")
     public static <I extends SInstance, R> Optional<R> visit(SInstance rootInstance, IVisitFilter filter, IVisitor<I, R> visitor) {
-        final Visit<R> visit = new Visit<>();
+        final Visit<R> visit = new Visit<>(null);
         visitor.onInstance((I) rootInstance, visit);
         if (visit.dontGoDeeper || visit.stopped)
             return Optional.ofNullable(visit.result);
@@ -81,7 +83,7 @@ public abstract class SInstances {
      * Faz um pecorrimento em profundidade dos filhos de parent.
      */
     public static <R> Optional<R> visitChildren(SInstance rootInstance, IVisitFilter filter, IVisitor<SInstance, R> visitor) {
-        Visit<R> visit = new Visit<>();
+        Visit<R> visit = new Visit<>(null);
         internalVisitChildren(rootInstance, visitor, filter, visit);
         return Optional.ofNullable(visit.result);
     }
@@ -90,7 +92,7 @@ public abstract class SInstances {
      * Faz um pecorrimento em profundidade da instância e seus filhos, em ordem pós-fixada (primeiro filhos, depois pais).
      */
     public static <R> Optional<R> visitPostOrder(SInstance rootInstance, IVisitFilter filter, IVisitor<SInstance, R> visitor) {
-        Visit<R> visit = new Visit<>();
+        Visit<R> visit = new Visit<>(null);
         internalVisitPostOrder(rootInstance, visitor, filter, visit);
         return Optional.ofNullable(visit.result);
     }
@@ -108,8 +110,9 @@ public abstract class SInstances {
             for (SInstance object : ((ICompositeInstance) rootInstance).getAllChildren()) {
                 if (filter.visitObject(object)) {
                     I child = (I) object;
-                    final Visit<R> childVisit = new Visit<>();
+                    final Visit<R> childVisit = new Visit<>(visit.getPartial());
                     visitor.onInstance(child, childVisit);
+                    visit.setPartial(childVisit.getPartial());
 
                     if (childVisit.stopped) {
                         visit.stop(childVisit.result);
@@ -137,13 +140,17 @@ public abstract class SInstances {
      */
     @SuppressWarnings("unchecked")
     private static <I extends SInstance, R> void internalVisitPostOrder(SInstance rootInstance, IVisitor<I, R> visitor, IVisitFilter filter, Visit<R> visit) {
+        boolean dontGoAbove = false;
         if (rootInstance instanceof ICompositeInstance) {
             final ICompositeInstance parent = (ICompositeInstance) rootInstance;
             if (filter.visitChildren(rootInstance)) {
-                final Visit<R> childVisit = new Visit<>();
+                final Visit<R> childVisit = new Visit<>(visit.getPartial());
                 for (SInstance child : parent.getAllChildren()) {
                     if (filter.visitObject(child)) {
                         internalVisitPostOrder(child, visitor, filter, childVisit);
+                        visit.setPartial(childVisit.getPartial());
+                        if (childVisit.dontGoDeeper)
+                            dontGoAbove = true;
                         if (childVisit.stopped) {
                             visit.stop(childVisit.result);
                             return;
@@ -153,7 +160,7 @@ public abstract class SInstances {
             }
         }
 
-        if (filter.visitObject(rootInstance))
+        if (!dontGoAbove && filter.visitObject(rootInstance))
             visitor.onInstance((I) rootInstance, visit);
     }
 
@@ -219,9 +226,13 @@ public abstract class SInstances {
      * @return Optional da instância do targetType encontrado
      */
     public static <A extends SInstance> Optional<A> findNearest(SInstance node, SType<A> targetType) {
-        return SInstances.findCommonAncestor(node, targetType)
-            .flatMap(ancestor -> ancestor.findDescendant(targetType))
-            .map(targetNode -> targetNode);
+        Optional<A> desc = SInstances.findDescendant(node, targetType);
+        if (desc.isPresent())
+            return desc;
+        else
+            return SInstances.findCommonAncestor(node, targetType)
+                .flatMap(ancestor -> ancestor.findDescendant(targetType))
+                .map(targetNode -> targetNode);
     }
 
     /**
@@ -420,6 +431,10 @@ public abstract class SInstances {
         boolean dontGoDeeper;
         boolean stopped;
         R       result;
+        R       partial;
+        public Visit(R partial) {
+            this.partial = partial;
+        }
         @Override
         public void dontGoDeeper() {
             this.dontGoDeeper = true;
@@ -432,6 +447,14 @@ public abstract class SInstances {
         public void stop(R result) {
             this.result = result;
             stop();
+        }
+        @Override
+        public void setPartial(R result) {
+            partial = result;
+        }
+        @Override
+        public R getPartial() {
+            return partial;
         }
     }
 }

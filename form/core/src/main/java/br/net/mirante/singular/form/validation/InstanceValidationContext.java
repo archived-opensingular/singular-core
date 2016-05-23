@@ -32,9 +32,14 @@ public class InstanceValidationContext {
     }
 
     public void validateAll(SInstance rootInstance) {
-        SInstances.visitChildren(
+        SInstances.visitPostOrder(
             rootInstance,
-            (inst, v) -> validateInstance(new InstanceValidatable<>(inst, this::onError)));
+            (inst, v) -> {
+                InstanceValidatable<SInstance> validatable = new InstanceValidatable<>(inst, this::onError);
+                validateInstance(validatable, Boolean.TRUE.equals(v.getPartial()));
+                if (validatable.errorFound)
+                    v.setPartial(true);
+            });
         updateDocumentErrors(rootInstance);
     }
     public void validateSingle(SInstance rootInstance) {
@@ -51,8 +56,12 @@ public class InstanceValidationContext {
                 .setValidationErrors(instanceId, contextErrors.get(instanceId)));
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public <I extends SInstance> void validateInstance(IInstanceValidatable<I> validatable) {
+        validateInstance(validatable, false);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected <I extends SInstance> void validateInstance(IInstanceValidatable<I> validatable, boolean containsInvalidChild) {
         final I instance = validatable.getInstance();
         if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance)) {
             if (!isFilledIfRequired(instance)) {
@@ -61,6 +70,8 @@ public class InstanceValidationContext {
             }
             final SType<I> tipo = (SType<I>) instance.getType();
             for (IInstanceValidator<I> validator : tipo.getValidators()) {
+                if (containsInvalidChild && validator.executeOnlyIfChildrenValid())
+                    continue;
                 validatable.setDefaultLevel(tipo.getValidatorErrorLevel(validator));
                 validator.validate((IInstanceValidatable) validatable);
             }
@@ -107,6 +118,7 @@ public class InstanceValidationContext {
         private ValidationErrorLevel             defaultLevel = ValidationErrorLevel.ERROR;
         private final I                          instance;
         private final Consumer<IValidationError> onError;
+        public boolean                           errorFound;
         public InstanceValidatable(I instance, Consumer<IValidationError> onError) {
             this.instance = instance;
             this.onError = onError;
@@ -115,6 +127,7 @@ public class InstanceValidationContext {
         private IValidationError errorInternal(ValidationErrorLevel level, String msg) {
             ValidationError error = new ValidationError(instance.getId(), level, msg);
             onError.accept(error);
+            errorFound = true;
             return error;
         }
 

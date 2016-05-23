@@ -6,9 +6,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -75,7 +77,7 @@ public class SValidationFeedbackHandler implements Serializable {
         this.instanceModels.addAll(instanceModels);
         return this;
     }
-    
+
     public SValidationFeedbackHandler addListener(ISValidationFeedbackHandlerListener listener) {
         this.listeners.add(listener);
         return this;
@@ -159,6 +161,20 @@ public class SValidationFeedbackHandler implements Serializable {
     }
     public boolean containsNestedErrors(Component subContainer, IPredicate<IValidationError> filter) {
         return containsNestedErrors(subContainer, resolveRootInstances(subContainer), filter);
+    }
+    public Optional<ValidationErrorLevel> findNestedErrorsMaxLevel() {
+        return findNestedErrorsMaxLevel(this.targetComponent, IPredicate.all());
+    }
+    public Optional<ValidationErrorLevel> findNestedErrorsMaxLevel(Component subContainer) {
+        return findNestedErrorsMaxLevel(subContainer, IPredicate.all());
+    }
+    public Optional<ValidationErrorLevel> findNestedErrorsMaxLevel(IPredicate<IValidationError> filter) {
+        return findNestedErrorsMaxLevel(this.targetComponent, filter);
+    }
+    public Optional<ValidationErrorLevel> findNestedErrorsMaxLevel(Component subContainer, IPredicate<IValidationError> filter) {
+        return collectNestedErrors(subContainer, resolveRootInstances(subContainer), filter).stream()
+            .map(it -> it.getErrorLevel())
+            .collect(Collectors.maxBy(Comparator.naturalOrder()));
     }
 
     private static List<IValidationError> collectNestedErrors(Component rootContainer, Collection<SInstance> rootInstances, IPredicate<IValidationError> filter) {

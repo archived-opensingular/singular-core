@@ -5,32 +5,35 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.*;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import java.util.HashMap;
+import java.util.Optional;
+
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.SPackageBootstrap;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackPanel;
 import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-
-import java.util.HashMap;
-import java.util.Optional;
-
-import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @SuppressWarnings("serial")
 public class DefaultCompostoMapper implements IWicketComponentMapper {
@@ -59,22 +62,36 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
         public void buildView() {
-//            container.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> buildBreadCrumbBar(id, Arrays.asList("Bread", "Crumb")));
+            //            container.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> buildBreadCrumbBar(id, Arrays.asList("Bread", "Crumb")));
 
             final BSGrid grid = createCompositeGrid(ctx);
+
+            if (!findFeedbackAwareParent().isPresent()) {
+                final BSContainer<?> rootContainer = ctx.getContainer();
+                SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(rootContainer);
+                feedbackHandler.findNestedErrorsMaxLevel();
+                grid.appendTag("div", new SValidationFeedbackPanel("feedback", rootContainer).setShowBox(true));
+            }
+
             buildFields(ctx, grid);
             if (renderAnnotations()) {
                 ctx.getRootContext().updateAnnotations(
-                        appendAnnotationToggleButton(grid.newRow(), instance),
-                        instance);
+                    appendAnnotationToggleButton(grid.newRow(), instance),
+                    instance);
             }
+        }
+
+        protected Optional<MarkupContainer> findFeedbackAwareParent() {
+            return Optional.ofNullable(ctx.getContainer().visitParents(MarkupContainer.class, (c, v) -> {
+                if (SValidationFeedbackHandler.isBound(c))
+                    v.stop(c);
+            }));
         }
 
         private boolean renderAnnotations() {
             return ctx.getRootContext().annotation().enabled() &&
-                    instance.asAtrAnnotation().isAnnotated();
+                instance.asAtrAnnotation().isAnnotated();
         }
-
 
         protected BSGrid createCompositeGrid(WicketBuildContext ctx) {
             final BSContainer<?> parentCol = ctx.getContainer();

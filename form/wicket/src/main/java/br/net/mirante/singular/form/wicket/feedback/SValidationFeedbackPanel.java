@@ -5,8 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.feedback;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,9 +14,11 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedback;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -39,6 +40,7 @@ import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 public class SValidationFeedbackPanel extends Panel implements IFeedback {
 
     private final Component fence;
+    private boolean         showBox = false;
 
     public SValidationFeedbackPanel(String id, Component fence) {
         super(id);
@@ -126,8 +128,31 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
         return component;
     }
 
+    @Override
+    protected void onComponentTag(ComponentTag tag) {
+        super.onComponentTag(tag);
+        if (isShowBox()) {
+            final Optional<ValidationErrorLevel> level = SValidationFeedbackHandler.get(getFence())
+                .findNestedErrorsMaxLevel();
+            if (level.isPresent()) {
+                final String alertLevel = level.get().isWarning()
+                    ? "alert alert-warning"
+                    : "alert alert-danger";
+                new AttributeAppender("class", alertLevel).onComponentTag(this, tag);
+            }
+        }
+    }
+
     public Component getFence() {
         return fence;
+    }
+
+    public boolean isShowBox() {
+        return showBox;
+    }
+    public SValidationFeedbackPanel setShowBox(boolean showBox) {
+        this.showBox = showBox;
+        return this;
     }
 
     /**
