@@ -1,19 +1,26 @@
 package br.net.mirante.singular.form;
 
-import br.net.mirante.singular.form.type.core.SIString;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TestMInstanciaDescendants {
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import br.net.mirante.singular.form.type.core.SIString;
+
+@RunWith(Parameterized.class)
+public class TestMInstanciaDescendants extends TestCaseForm {
+
+    public TestMInstanciaDescendants(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
 
     @Test
     public void test() {
-        SDictionary dicionario = SDictionary.create();
-        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
+        SPackageTesteContatos pacote = createTestDictionary().loadPackage(SPackageTesteContatos.class);
 
         SIComposite contato = pacote.contato.newInstance();
 
@@ -38,14 +45,11 @@ public class TestMInstanciaDescendants {
         Assert.assertEquals(
             Arrays.asList("8888-8888", "9999-8888", "9999-9999"),
             contato.listDescendantValues(pacote.telefones.getElementsType(), String.class));
-
-//        contato.debug();
     }
 
     @Test
     public void testList() {
-        SDictionary dicionario = SDictionary.create();
-        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
+        SPackageTesteContatos pacote = createTestDictionary().loadPackage(SPackageTesteContatos.class);
 
         SIComposite contato = pacote.contato.newInstance();
 
@@ -68,8 +72,7 @@ public class TestMInstanciaDescendants {
 
     @Test
     public void testIncorrectAncestor() {
-        SDictionary dicionario = SDictionary.create();
-        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
+        SPackageTesteContatos pacote = createTestDictionary().loadPackage(SPackageTesteContatos.class);
         SIComposite contato = pacote.contato.newInstance();
 
         Assert.assertFalse(contato.getDescendant(pacote.telefones).findAncestor(pacote.enderecos).isPresent());
@@ -78,8 +81,7 @@ public class TestMInstanciaDescendants {
 
     @Test
     public void testIncorrectDescendant() {
-        SDictionary dic = SDictionary.create();
-        SPackageTesteContatos pac = dic.loadPackage(SPackageTesteContatos.class);
+        SPackageTesteContatos pac = createTestDictionary().loadPackage(SPackageTesteContatos.class);
         SIComposite contato = pac.contato.newInstance();
 
         Assert.assertFalse(contato.getDescendant(pac.telefones).findDescendant(pac.endereco).isPresent());
@@ -91,8 +93,7 @@ public class TestMInstanciaDescendants {
 
     @Test
     public void testStream() {
-        SDictionary dicionario = SDictionary.create();
-        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
+        SPackageTesteContatos pacote = createTestDictionary().loadPackage(SPackageTesteContatos.class);
 
         Set<SType<?>> tipos = new HashSet<>(Arrays.asList(
             pacote.contato,
@@ -118,7 +119,7 @@ public class TestMInstanciaDescendants {
 
         contato.streamDescendants(true)
             .forEachOrdered(instancia -> Assert.assertTrue(
-                "Tipo não encontrado: " + instancia.getType(),
+"Tipo não encontrado: " + instancia.getType(),
                 tipos.remove(instancia.getType())));
 
         Assert.assertTrue("Não percorreu o(s) tipo(s) " + tipos, tipos.isEmpty());

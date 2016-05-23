@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.type.core.attachment;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SDictionary;
@@ -14,9 +15,18 @@ import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.TestCaseForm;
 import br.net.mirante.singular.form.io.HashUtil;
 import br.net.mirante.singular.form.io.TesteFormSerializationUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+@RunWith(Parameterized.class)
 public class TesteMPacoteAttachment extends TestCaseForm {
 
+    public TesteMPacoteAttachment(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
+    @Test
     public void testSimpleAttachment() {
         SIAttachment arquivo = createEmptyAttachment();
         assertNoReference(arquivo, 0);
@@ -47,13 +57,13 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertBinariosAssociadosDocument(arquivo, expectedDistintictFiles);
     }
 
-    private static SIAttachment createEmptyAttachment() {
-        SDictionary     dicionario = SDictionary.create();
-        PackageBuilder  pb         = dicionario.createNewPackage("teste");
+    private SIAttachment createEmptyAttachment() {
+        PackageBuilder  pb         = createTestDictionary().createNewPackage("teste");
         STypeAttachment tipo       = pb.createType("arquivo", STypeAttachment.class);
         return tipo.newInstance();
     }
 
+    @Test
     public void testUpdateContent() {
         SIAttachment arquivo = createEmptyAttachment();
 
@@ -67,6 +77,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertConteudo(conteudo2, arquivo, 1);
     }
 
+    @Test
     public void testSetContentToNull() {
         SIAttachment arquivo = createEmptyAttachment();
         byte[] conteudo = new byte[] { 1, 2 };
@@ -84,6 +95,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertConteudo(conteudo, arquivo, 1);
     }
 
+    @Test
     public void testSetContentSizeZero() {
         SIAttachment arquivo = createEmptyAttachment();
         byte[] conteudo = new byte[0];
@@ -91,6 +103,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertConteudo(conteudo, arquivo, 1);
     }
 
+    @Test
     public void testSetContentWithIOException() {
         SIAttachment arquivo = createEmptyAttachment();
         assertException(() -> arquivo.setContent(new InputStreamComErro()), "Erro lendo origem de dados");
@@ -105,9 +118,9 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertConteudo(conteudo, arquivo, 1);
     }
 
+    @Test
     public void testRepeatedAttachment() {
-        SDictionary                              dicionario = SDictionary.create();
-        PackageBuilder                           pb         = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         STypeList<STypeAttachment, SIAttachment> tipoLista  = pb.createListTypeOf("anexos", STypeAttachment.class);
         SIList<SIAttachment>                     lista      = tipoLista.newInstance(SIAttachment.class);
 
@@ -134,9 +147,9 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertBinariosAssociadosDocument(lista, 0);
     }
 
+    @Test
     public void testRemoveAttachmentWheDeletingInstanceOrParentInstance() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldListOf("anexos", STypeAttachment.class);
@@ -208,8 +221,9 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
     }
 
+    @Test
     public void testSerializacaoDeserializacaoComAnexo() {
-        SIAttachment arq = (SIAttachment) TesteFormSerializationUtil.createSerializableTestInstance("teste.arq", pacote -> {
+        SIAttachment arq = (SIAttachment) createSerializableTestInstance("teste.arq", pacote -> {
             pacote.createType("arq", STypeAttachment.class);
         });
         final byte[] conteudo1 = new byte[] { 1, 2, 3 };
@@ -219,8 +233,9 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertConteudo(conteudo1, arq2, 1);
     }
 
+    @Test
     public void testSerializacaoDeserializacaoCompositeComAnexo() {
-        SIComposite bloco = (SIComposite) TesteFormSerializationUtil.createSerializableTestInstance("teste.bloco", pacote -> {
+        SIComposite bloco = (SIComposite) createSerializableTestInstance("teste.bloco", pacote -> {
             STypeComposite<? extends SIComposite> tipoBloco = pacote.createCompositeType("bloco");
             tipoBloco.addField("arquivo1", STypeAttachment.class);
             tipoBloco.addField("arquivo2", STypeAttachment.class);

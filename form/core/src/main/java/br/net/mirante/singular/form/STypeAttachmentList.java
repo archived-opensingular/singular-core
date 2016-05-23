@@ -8,13 +8,13 @@ import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 public class STypeAttachmentList extends STypeList<STypeAttachment, SIAttachment> {
 
     void setElementsTypeFieldName(String fieldName) {
-        setElementsType(extendType(fieldName, STypeAttachment.class));
+        setElementsType(fieldName, STypeAttachment.class);
     }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
-        tb.getType().asAtr().displayString(context -> {
+        asAtr().displayString(context -> {
             final StringBuilder displayString = new StringBuilder();
             if (context.instance() instanceof SIList) {
                 ((SIList<?>) context.instance()).getChildren()

@@ -85,22 +85,27 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return lista;
     }
 
-    protected void setElementsType(E elementsType) {
+    protected final E setElementsType(Class<E> elementsTypeClass) {
+        return setElementsType(null, resolveType(elementsTypeClass));
+    }
+
+    protected final E setElementsType(E elementsType) {
+        return setElementsType(null, elementsType);
+    }
+
+    protected final E setElementsType(String simpleNameNewType, Class<E> elementsTypeClass) {
+        return setElementsType(simpleNameNewType, resolveType(elementsTypeClass));
+    }
+
+    protected final E setElementsType(String simpleNameNewType, E elementsType) {
         if (this.elementsType != null) {
             throw new RuntimeException("O tipo da lista já está definido");
         }
+        if (elementsType.getClass() == STypeComposite.class || getDictionary().getDictionaryConfig().isExtendListElementType()) {
+            elementsType = extendType(simpleNameNewType, elementsType);
+        }
         this.elementsType = elementsType;
-    }
-
-    /**
-     * Define que o tipo da lista sera um novo tipo record (tipo composto) com o
-     * nome infomado. O novo tipo é criado sem campos, devendo ser estruturado
-     * na sequencia.
-     */
-    @SuppressWarnings("unchecked")
-    void setElementsTypeAsNewCompositeType(String simpleNameNewCompositeType) {
-        STypeComposite<?> type = extendType(simpleNameNewCompositeType, STypeComposite.class);
-        setElementsType((E) type);
+        return elementsType;
     }
 
     /**

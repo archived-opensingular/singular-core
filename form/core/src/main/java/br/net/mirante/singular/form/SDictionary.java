@@ -23,7 +23,13 @@ public class SDictionary {
 
     public static final String SINGULAR_PACKAGES_PREFIX = "singular.form.";
 
+    private SDictionaryConfig dictionaryConfig = new SDictionaryConfig(this);
+
     private SDictionary() {
+    }
+
+    final SDictionaryConfig getDictionaryConfig() {
+        return dictionaryConfig;
     }
 
     /**
@@ -57,8 +63,9 @@ public class SDictionary {
     }
 
     /**
-     * Carrega no dicionário o pacote informado e todas as definições do mesmo, se ainda não tiver sido carregado. É
-     * seguro chamar é método mais de uma vez para o mesmo pacote.
+     * Carrega no dicionário o pacote informado e todas as definições do mesmo,
+     * se ainda não tiver sido carregado. É seguro chamar é método mais de uma
+     * vez para o mesmo pacote.
      *
      * @return O pacote carregado
      */
@@ -68,7 +75,6 @@ public class SDictionary {
         }
         T novo = packages.get(packageClass);
         if (novo == null) {
-            packages.verifyMustNotBePresent(packageClass);
             novo = MapByName.newInstance(packageClass);
             packages.verifyMustNotBePresent(novo);
             carregarInterno(novo);
@@ -85,9 +91,10 @@ public class SDictionary {
     }
 
     /**
-     * Recupera o tipo, já carregado no dicionário, da classe informada. Senão estiver carregado ainda, busca carregá-lo
-     * e as definições do pacote a que pertence. Senão encontrar no dicionário e nem conseguir encontrar para carregar,
-     * então dispara Exception.
+     * Recupera o tipo, já carregado no dicionário, da classe informada. Senão
+     * estiver carregado ainda, busca carregá-lo e as definições do pacote a que
+     * pertence. Senão encontrar no dicionário e nem conseguir encontrar para
+     * carregar, então dispara Exception.
      *
      * @return Nunca Null.
      */

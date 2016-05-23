@@ -1,21 +1,27 @@
 package br.net.mirante.singular.form;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.SIDate;
 import br.net.mirante.singular.form.type.core.STypeDate;
 import br.net.mirante.singular.form.type.core.STypeInteger;
-import org.junit.Assert;
-import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+@RunWith(Parameterized.class)
+public class TestMPacoteBasic extends TestCaseForm {
 
-public class TestMPacoteBasic{
+    public TestMPacoteBasic(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
 
     @Test public void testCargaSimples() {
-        SDictionary dicionario = SDictionary.create();
+        SDictionary dicionario = createTestDictionary();
         dicionario.loadPackage(SPackageBasic.class);
-
-//        dicionario.debug();
 
         STypeInteger mtInt = dicionario.getType(STypeInteger.class);
         Assert.assertEquals(Integer.valueOf(1), mtInt.convert("1"));
@@ -24,7 +30,7 @@ public class TestMPacoteBasic{
     }
 
     @Test public void tipoDate(){
-        SDictionary dicionario = SDictionary.create();
+        SDictionary dicionario = createTestDictionary();
         dicionario.loadPackage(SPackageBasic.class);
 
         STypeDate mData = dicionario.getType(STypeDate.class);

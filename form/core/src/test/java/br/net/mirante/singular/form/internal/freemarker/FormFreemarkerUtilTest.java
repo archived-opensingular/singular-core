@@ -7,20 +7,27 @@ import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.StringAssert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.Date;
+import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class FormFreemarkerUtilTest {
+@RunWith(Parameterized.class)
+public class FormFreemarkerUtilTest extends TestCaseForm {
 
     private STypeComposite<? extends SIComposite>               curriculoType;
     private STypeComposite<SIComposite>                         dadosType;
     private STypeList<STypeComposite<SIComposite>, SIComposite> certificadosType;
 
+    public FormFreemarkerUtilTest(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
     @Before public void setup() {
-        SDictionary    dict = SDictionary.create();
-        PackageBuilder pkt  = dict.createNewPackage("pkt");
+        PackageBuilder pkt  = createTestDictionary().createNewPackage("pkt");
         curriculoType = pkt.createCompositeType("curriculo");
 
         dadosType = curriculoType.addFieldComposite("dados");
@@ -77,8 +84,7 @@ public class FormFreemarkerUtilTest {
 
     @Test
     public void testMixedFieldsWithMethods() {
-        SDictionary                           dict       = SDictionary.create();
-        PackageBuilder                        pkt        = dict.createNewPackage("pkt");
+        PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
         STypeComposite<? extends SIComposite> recordType = pkt.createCompositeType("record");
         STypeString                           nameType   = recordType.addFieldString("name");
         recordType.addFieldString("value");

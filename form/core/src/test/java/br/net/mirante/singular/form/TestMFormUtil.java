@@ -1,12 +1,22 @@
 package br.net.mirante.singular.form;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
-import org.junit.Assert;
 
+@RunWith(Parameterized.class)
 public class TestMFormUtil extends TestCaseForm {
 
+    public TestMFormUtil(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
+    @Test
     public void testValidacaoNomeSimples() {
         testarNomeInvalido(" sss ");
         testarNomeInvalido("sss ");
@@ -34,8 +44,9 @@ public class TestMFormUtil extends TestCaseForm {
         }
     }
 
+    @Test
     public void testResolverTipoCampo() {
-        SDictionary dicionario = SDictionary.create();
+        SDictionary dicionario = createTestDictionary();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeComposite<SIComposite>                         tipoBloco        = pb.createCompositeType("bloco");
@@ -49,8 +60,6 @@ public class TestMFormUtil extends TestCaseForm {
         STypeList<STypeString, SIString>                    tipoListaString3 = tipoBloco.addFieldListOf("nomes", tipoString3);
         STypeList<STypeComposite<SIComposite>, SIComposite> listaSubBloco2   = tipoBloco.addFieldListOfComposite("listaSubBloco2", "coisa");
         STypeInteger                                        tipoQtd          = listaSubBloco2.getElementsType().addFieldInteger("qtd");
-
-//        tipoBloco.debug();
 
         assertTipoResultante(tipoBloco, "integer1", integer1);
         assertTipoResultante(tipoBloco, "integer1", dicionario.getType("teste.bloco.integer1"));

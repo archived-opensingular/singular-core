@@ -6,20 +6,27 @@ import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.document.SDocumentFactoryEmpty;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class InitListenerTest {
+@RunWith(Parameterized.class)
+public class InitListenerTest extends TestCaseForm {
 
-    SDictionary dict = SDictionary.create();
     private STypeComposite<SIComposite> base;
     private STypeString                 field1, field2;
 
+    public InitListenerTest(TestFormConfig testFormConfig) {
+        super(testFormConfig);
+    }
+
     @Before
     public void setup() {
-        PackageBuilder test = dict.createNewPackage("test");
+        PackageBuilder test = createTestDictionary().createNewPackage("test");
         base = test.createCompositeType("base");
         field1 = base.addFieldString("field1");
         field2 = base.addFieldString("field2");
