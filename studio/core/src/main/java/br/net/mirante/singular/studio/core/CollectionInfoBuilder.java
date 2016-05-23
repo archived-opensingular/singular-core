@@ -6,7 +6,4 @@ public class CollectionInfoBuilder<TYPE> {
         return this;
     }
 
-    public CollectionInfoBuilder<TYPE> rolesAllowed(String analista, String gerente) {
-        return this;
-    }
 }
