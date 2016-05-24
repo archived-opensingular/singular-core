@@ -83,7 +83,6 @@ public class AttachmentListMapper extends AbstractListaMapper {
                 }
             }
 
-            //TODO: Fabs : I sense replication
             @Override
             protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
                 super.updateAjaxAttributes(attributes);
