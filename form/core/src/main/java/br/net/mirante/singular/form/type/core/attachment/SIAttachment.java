@@ -89,11 +89,15 @@ public class SIAttachment extends SIComposite {
         setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, id);
     }
 
+    public void setFileHashSHA1(String hash) {  setValue(STypeAttachment.FIELD_HASH_SHA1, hash);    }
+
+    public void setFileSize(Integer size) { setValue(STypeAttachment.FIELD_SIZE, size); }
+
     /**
      * Retorna o tamanho do arquivo binário associado ou -1 se não houver
      * arquivo.
      */
-    Integer getFileSize() {
+    public Integer getFileSize() {
         return getValueInteger(STypeAttachment.FIELD_SIZE);
     }
 
@@ -113,7 +117,7 @@ public class SIAttachment extends SIComposite {
         return getAttributeValue(STypeAttachment.ATR_ORIGINAL_ID);
     }
 
-    String getFileHashSHA1() {
+    public String getFileHashSHA1() {
         return getValueString(STypeAttachment.FIELD_HASH_SHA1);
     }
 
