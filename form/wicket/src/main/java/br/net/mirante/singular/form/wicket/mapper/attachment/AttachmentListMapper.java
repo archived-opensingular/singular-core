@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.AbstractListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.MapperCommons;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
+import br.net.mirante.singular.form.wicket.panel.SUploadProgressBar;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -54,10 +55,13 @@ public class AttachmentListMapper extends AbstractListaMapper {
             throw new SingularFormException("O tipo " + attachments.getType() + " não é compativel com AttachmentListMapper.");
         }
 
-        final FileUploadField multipleFileUploadHiddenField = buildFileUploadField(ctx.getContainer(), (IModel<SIList<SIAttachment>>) ctx.getModel());
+        final FileUploadField multipleFileUploadHiddenField =
+                buildFileUploadField(ctx.getContainer(),
+                        (IModel<SIList<SIAttachment>>) ctx.getModel());
 
         ctx.getContainer().appendTag("input", true, "type='file' style='display:none' multiple", multipleFileUploadHiddenField);
-        ctx.getContainer().appendTag("div", buildMetronicPanel(ctx, multipleFileUploadHiddenField));
+        ctx.getContainer().appendTag("div",
+                buildMetronicPanel(ctx, multipleFileUploadHiddenField));
 
     }
 
@@ -90,6 +94,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
                                 "$('#"+uploadField.getMarkupId()+"')[0]");
                     }
                 });
+                attributes.getExtraParameters().put("forceDisableAJAXPageBlock", true);
             }
 
             @Override
@@ -112,13 +117,14 @@ public class AttachmentListMapper extends AbstractListaMapper {
     }
 
 
-    private MetronicPanel buildMetronicPanel(final WicketBuildContext ctx, final FileUploadField multipleFileUploadHiddenField) {
+    private MetronicPanel buildMetronicPanel(final WicketBuildContext ctx,
+                                             final FileUploadField multipleFileUploadHiddenField) {
 
         final IModel<SIList<SInstance>> listModel    = $m.get(ctx::getCurrentInstance);
         final SIList<?>                 listInstance = listModel.getObject();
         final IModel<String>            label        = $m.ofValue(trimToEmpty(listInstance.as(SPackageBasic.aspect()).getLabel()));
 
-        return new MetronicPanel("metronicPanel") {
+        MetronicPanel panel = new MetronicPanel("metronicPanel") {
 
             @Override
             protected void buildHeading(BSContainer<?> heading, Form<?> form) {
@@ -128,6 +134,15 @@ public class AttachmentListMapper extends AbstractListaMapper {
                 if (ctx.getViewMode().isEdition()) {
                     appendAddButton(heading, multipleFileUploadHiddenField);
                 }
+
+                heading.appendTag("span", new SUploadProgressBar("progress", multipleFileUploadHiddenField){
+                    @Override
+                    protected Form<?> getForm() {
+                        return multipleFileUploadHiddenField.getForm();
+                    }
+                });
+
+                heading.getApplication().getApplicationSettings().setUploadProgressUpdatesEnabled(true);
             }
 
             @Override
@@ -139,9 +154,10 @@ public class AttachmentListMapper extends AbstractListaMapper {
             protected void buildContent(BSContainer<?> content, Form<?> form) {
 
                 final TemplatePanel list = content.newTemplateTag(t -> ""
-                        + " <div wicket:id='_e'> "
+                        + " <div wicket:id='_e' whatever='something'> "
                         + "     <div class='col-md-6' wicket:id='_r'></div> "
                         + " </div> ");
+
 
                 list.add($b.onConfigure(c -> c.setVisible(!listModel.getObject().isEmpty())));
                 list.add(new ElementsView("_e", listModel) {
@@ -157,6 +173,8 @@ public class AttachmentListMapper extends AbstractListaMapper {
             }
 
         };
+
+        return panel;
     }
 
     private void appendAddButton(BSContainer<?> container, FileUploadField multipleFileUploadHiddenField) {

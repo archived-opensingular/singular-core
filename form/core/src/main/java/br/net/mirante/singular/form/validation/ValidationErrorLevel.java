@@ -15,5 +15,7 @@ public enum ValidationErrorLevel {
     public boolean ge(ValidationErrorLevel level) { return this.compareTo(level) >= 0; }
     public boolean lt(ValidationErrorLevel level) { return this.compareTo(level) < 0; }
     public boolean le(ValidationErrorLevel level) { return this.compareTo(level) <= 0; }
+    public boolean isWarning() { return this == WARNING; }
+    public boolean isError()   { return this == ERROR;   }
     //@formatter:on
 }

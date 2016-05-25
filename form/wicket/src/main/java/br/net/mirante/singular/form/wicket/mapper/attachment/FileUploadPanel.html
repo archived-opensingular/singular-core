@@ -6,6 +6,11 @@
         .fileDummyField {
             position: absolute !important;
         }
+
+        .wupb-container{
+            padding-bottom: 5px;
+        }
+
         .attachmentShadow {
             background: -webkit-linear-gradient(right, transparent, white);
             background: -o-linear-gradient(right, transparent, white);
@@ -21,7 +26,7 @@
         }
     </style>
     <input type="file" wicket:id="fileUpload" style="display:none;"/>
-    <div wicket:id="panelWrapper">
+    <div wicket:id="panelWrapper" style="width: 100%;">
         <div style="white-space: nowrap;">
             <div wicket:id="fileDummyField" style="overflow: hidden !important;">
                 <i class="fa fa-file"></i>&nbsp;
@@ -29,7 +34,7 @@
                 <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>
             </div>
         </div>
-        <span class="input-group-btn" >
+        <span class="input-group-btn" style="float: right; padding-left: 7px;">
             <button wicket:id="choose" class="btn btn-sm blue"
                     style="padding: 7px 5px;" type="button">
                 <span class="glyphicon glyphicon-plus"></span> Escolher
@@ -39,6 +44,7 @@
                 <span class="glyphicon glyphicon-trash"></span>
             </button>
         </span>
+        <span wicket:id="progress">[[upload progressbar]]</span>
     </div>
 </wicket:panel>
 </body>

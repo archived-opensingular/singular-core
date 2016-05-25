@@ -1,7 +1,18 @@
 jQuery(document).ready(function () {
 
         Wicket.Event.subscribe('/ajax/call/beforeSend', function (evt, attrs, jqXHR, settings) {
-            if (enableAJAXPageBlock) {
+            var showLoading = enableAJAXPageBlock;
+            if(attrs && attrs['ep']){
+                $.each(attrs['ep'], function(i,v){
+                    console.log("v",v);
+                    if(v["name"] == "forceDisableAJAXPageBlock"){
+                        showLoading = !v["value"];
+                        console.log('showLoading', showLoading);
+                    }
+                });
+            }
+
+            if (showLoading) {
                 $('#blocking_overlay').show();
                 window.blocking_overlay_timeoutId = setTimeout(function () {
                     $('#blocking_overlay').css('opacity', '0.5');
