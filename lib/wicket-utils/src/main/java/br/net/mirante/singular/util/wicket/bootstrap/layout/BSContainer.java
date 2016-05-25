@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import br.net.mirante.singular.util.wicket.bootstrap.BootstrapSize;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -79,13 +80,14 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public BSControls newFormGroup() {
-        return newFormGroup(true);
+        /* #FLAMA DEFAULT LG A PEDIDO DA FLAMA */
+        return newFormGroup(BootstrapSize.LG);
     }
 
-    public BSControls newFormGroup(boolean compact) {
+    public BSControls newFormGroup(BootstrapSize bsSize) {
         return newComponent(componentId -> {
             BSControls controls = new BSControls(componentId, false)
-                    .setCssClass("form-group" + (compact ? " form-group-sm" : ""));
+                    .setCssClass("form-group" + bsSize.apply("form-group"));
             controls.add(new AttributeAppender("class", "can-have-error", " "));
             return controls;
         });
