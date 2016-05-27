@@ -48,12 +48,17 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-wicket</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>exemplos-form</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
+            <version>${singular.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>studio-core</artifactId>
+            <version>${singular.version}</version>
         </dependency>
 
 
