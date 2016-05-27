@@ -9,6 +9,7 @@ import java.io.Serializable;
 
 public class SingularStudioCollectionPanel<TYPE extends SType<?>> extends Panel {
 
+    private final PanelControl panelControl = new PanelControl();
     private boolean showList = true;
     private Object formID;
     private CollectionConfigCollector<TYPE> configCollector;
@@ -18,13 +19,14 @@ public class SingularStudioCollectionPanel<TYPE extends SType<?>> extends Panel 
         this.configCollector = configCollector;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onConfigure() {
         super.onConfigure();
         if (showList) {
-            this.addOrReplace(new SingularStudioListPanel("content", new PanelControl()));
+            this.addOrReplace(new SingularStudioListPanel("content", panelControl, configCollector));
         } else {
-            this.addOrReplace(new SingularStudioFormPanel("content", new PanelControl(), formID, null));
+            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, configCollector, formID, null));
         }
     }
 
