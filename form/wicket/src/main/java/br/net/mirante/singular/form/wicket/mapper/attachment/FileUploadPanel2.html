@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:panel>
+    <input type="hidden" wicket:id="file_name" />
+    <input type="hidden" wicket:id="file_hash" />
+    <input type="hidden" wicket:id="file_size" />
+    <input type="hidden" wicket:id="file_id" />
+
+    <div style="width: 100%;" class="input-group">
+        <div class="files" wicket:id="files">
+        </div>
+        <div class="progress" wicket:id="progress">
+            <div class="progress-bar progress-bar-success" ></div>
+        </div>
+        <span class="input-group-btn" style="float: right; padding-left: 7px;">
+            <span class="btn btn-sm blue fileinput-button" >
+                <span class="glyphicon glyphicon-plus"></span>
+                <span style="padding: 7px 5px;" > Escolher</span>
+                <input type="file" wicket:id="fileUpload" />
+            </span>
+        </span>
+    </div>
+
+</wicket:panel>
+</body>
+</html>
