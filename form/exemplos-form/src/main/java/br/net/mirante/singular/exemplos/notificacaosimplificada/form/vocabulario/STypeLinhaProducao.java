@@ -53,7 +53,7 @@ public class STypeLinhaProducao extends STypeComposite<SIComposite> {
                     .required()
                     .label("Linha de produção")
                     .asAtrBootstrap()
-                    .colPreference(4);
+                    .colPreference(6);
             this.setView(SViewAutoComplete::new);
 
             this.autocompleteOf(LinhaCbpf.class)

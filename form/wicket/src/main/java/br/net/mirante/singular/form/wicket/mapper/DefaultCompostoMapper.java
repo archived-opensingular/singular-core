@@ -101,6 +101,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
             grid.add(DisabledClassBehavior.getInstance());
             grid.setDefaultModel(model);
+            grid.setCssClass("composite-box-grid");
             return grid;
         }
 

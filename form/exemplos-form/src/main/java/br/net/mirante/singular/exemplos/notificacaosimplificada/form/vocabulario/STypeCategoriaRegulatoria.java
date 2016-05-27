@@ -26,7 +26,7 @@ public class STypeCategoriaRegulatoria extends STypeComposite<SIComposite> {
         {
             this
                     .asAtrBootstrap()
-                    .colPreference(4)
+                    .colPreference(6)
                     .asAtr()
                     .label("Classe")
                     .required();

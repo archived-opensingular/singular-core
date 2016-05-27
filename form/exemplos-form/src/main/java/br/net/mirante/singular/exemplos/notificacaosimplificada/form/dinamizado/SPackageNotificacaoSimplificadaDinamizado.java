@@ -71,8 +71,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         notificacaoSimplificada.asAtr().label("Notificação Simplificada - Medicamento Dinamizado");
         notificacaoSimplificada.asAtr().displayString("${nomeComercial.nomeComercial} - ${caracteristicas.linhaProducao.descricao} (<#list caracteristicas.formulasHomeopaticas as c>${c.descricaoDinamizada.descricao}<#sep>, </#sep></#list>) ");
 
-        addCaracteristicas(notificacaoSimplificada);
         addNomeComercial(notificacaoSimplificada);
+        addCaracteristicas(notificacaoSimplificada);
         addAcondicionamentos(notificacaoSimplificada);
         addListaFormulaProduto(notificacaoSimplificada);
         addIndicacaoTerapeutica(notificacaoSimplificada);
@@ -228,7 +228,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .required()
                 .label("Nome do medicamento")
                 .asAtrBootstrap()
-                .colPreference(4);
+                .colPreference(12);
     }
 
     private void addListaFormulaProduto(STypeComposite<?> notificacaoSimplificada) {
