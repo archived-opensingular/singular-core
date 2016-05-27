@@ -1,27 +1,21 @@
 package br.net.mirante.singular.studio.core;
 
-import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeSimple;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
+public class CollectionEditorConfigBuilder {
 
-public class EditorConfigBuilder {
+    private CollectionEditorConfig editor = new CollectionEditorConfig();
 
-    private List<Pair<String, STypeSimple<?, ?>>> columns = new ArrayList<>();
-    private Integer defaultSortColumnIndex;
-    private Class<? extends SPackage> formPackage;
-    private String formName;
-
-
-    public EditorConfigBuilder(Class<? extends SPackage> formPackage, String formName) {
-        this.formPackage = formPackage;
-        this.formName = formName;
+    CollectionEditorConfigBuilder() {
     }
 
     public ListConfigurer list() {
         return new ListConfigurer();
+    }
+
+    CollectionEditorConfig getEditor() {
+        return editor;
     }
 
     public class ListConfigurer {
@@ -32,7 +26,7 @@ public class EditorConfigBuilder {
         }
 
         public ColumnConfigurer column(String caption, STypeSimple<?, ?> column) {
-            columns.add(Pair.of(caption, column));
+            editor.getColumns().add(Pair.of(caption, column));
             return new ColumnConfigurer(this);
         }
 
@@ -74,19 +68,19 @@ public class EditorConfigBuilder {
         }
 
         public ColumnConfigurer column(String caption, STypeSimple<?, ?> column) {
-            columns.add(Pair.of(caption, column));
+            editor.getColumns().add(Pair.of(caption, column));
             return this;
         }
 
         public ListConfigurer sortBy(STypeSimple<?, ?> column) {
-            for (int i = 0; i < columns.size(); i++) {
-                Pair p = columns.get(i);
+            for (int i = 0; i < editor.getColumns().size(); i++) {
+                Pair p = editor.getColumns().get(i);
                 if (p.getValue().equals(column)) {
-                    defaultSortColumnIndex = i;
+                    editor.setDefaultSortColumnIndex(i);
                     break;
                 }
             }
-            if (defaultSortColumnIndex == null) {
+            if (editor.getDefaultSortColumnIndex() == null) {
                 throw new SingularStudioException("A coluna utilizada no sortBy não foi declarada previamente.");
             }
             return listConfigurer;
@@ -100,7 +94,6 @@ public class EditorConfigBuilder {
             return this;
         }
     }
-
 
     public class FormConfigurer {
         public FormConfigurer validateBeforeSave(boolean b) {
