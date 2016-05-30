@@ -120,6 +120,8 @@ public class SPackageBasic extends SPackage {
 
         pb.getType(SType.class).asAtr().displayString(ctx -> ctx.instance().toStringDisplayDefault());
 
+        pb.getType(SType.class).setAttributeCalculation(ATR_LABEL, ctx -> SFormUtil.generateUserFriendlyName(ctx.instance().getName()));
+        
         // defina o meta dado do meta dado
         pb.getAttribute(ATR_LABEL).asAtr().label("Label").tamanhoEdicao(30).tamanhoMaximo(50);
         pb.getAttribute(ATR_SUBTITLE).asAtr().label("Subtítulo").tamanhoEdicao(30).tamanhoMaximo(50);
