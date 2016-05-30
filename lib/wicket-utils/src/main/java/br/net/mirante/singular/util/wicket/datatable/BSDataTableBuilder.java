@@ -8,6 +8,7 @@ package br.net.mirante.singular.util.wicket.datatable;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.net.mirante.singular.util.wicket.model.ValueModel;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
@@ -24,6 +25,8 @@ import br.net.mirante.singular.util.wicket.datatable.column.BSPropertyColumn;
  * @param <PREVCOL> Coluna
  */
 public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
+
+
 
     public interface BSActionColumnCallback<T, S> extends IConsumer<BSActionColumn<T, S>> {}
 
