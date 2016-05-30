@@ -19,6 +19,7 @@ import br.net.mirante.singular.form.calculation.CalculationContext;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.util.STypeEMail;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.SMultiSelectionByCheckboxView;
 import br.net.mirante.singular.form.view.SMultiSelectionBySelectView;
 import br.net.mirante.singular.form.view.SView;
@@ -45,20 +46,19 @@ public class SPackageBootstrap extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_COL_ON_NEW_ROW);
 
         //@formatter:off
-        pb.getType(STypeString.class  ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, IntCalc.nil().forView(SViewTextArea.class, 12).orElse(6));
-        pb.getType(STypeEMail.class   ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 6);
-        pb.getType(STypeSimple.class  ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 6);
-        pb.getType(STypeDateTime.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 6);
-        pb.getType(STypeDate.class    ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 4);
-        pb.getType(STypeTime.class    ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 4);
-        pb.getType(STypeBoolean.class ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 6);
-        pb.getType(STypeDecimal.class ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 6);
-        pb.getType(STypeInteger.class ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 6);
-        pb.getType(STypeMonetary.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 6);
-        pb.getType(STypeList.class    ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, IntCalc.nil()
-            .forView(SMultiSelectionBySelectView.class, 6)
-            .forView(SMultiSelectionByCheckboxView.class, 6)
-            .orElse(12));
+        pb.getType(STypeEMail.class    ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 6);
+        pb.getType(STypeSimple.class   ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 6);
+        pb.getType(STypeDateTime.class ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 6);
+        pb.getType(STypeDate.class     ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 4);
+        pb.getType(STypeTime.class     ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 4);
+        pb.getType(STypeYearMonth.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 4);
+        pb.getType(STypeBoolean.class  ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 4);
+        pb.getType(STypeDecimal.class  ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 4);
+        pb.getType(STypeInteger.class  ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 4);
+        pb.getType(STypeMonetary.class ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, c -> 4);
+        pb.getType(STypeString.class   ).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, IntCalc.nil()
+            .forView(SViewTextArea.class, 12)
+            .orElse(6));
         //@formatter:on
     }
 
