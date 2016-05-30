@@ -123,7 +123,7 @@
 
     <profiles>
         <profile>
-            <id>test</id>
+            <id>test1</id>
             <activation>
                 <property>
                     <name>UNIT_TEST</name>
