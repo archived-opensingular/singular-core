@@ -16,16 +16,16 @@ import java.util.function.Supplier;
 
 public class SingularServerSpringTypeLoader extends SpringTypeLoader<String> {
 
-    private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
-
-    public SingularServerSpringTypeLoader() {}
-
+    private final Map<String, Supplier<SType<?>>> entries = new LinkedHashMap<>();
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
 
+    public SingularServerSpringTypeLoader() {
+    }
+
     @PostConstruct
-    private void init(){
-        singularServerConfiguration.getFormPackagesTypeMap().entrySet().forEach( e -> add(e.getKey(), e.getValue()));
+    private void init() {
+        singularServerConfiguration.getFormPackagesTypeMap().entrySet().forEach(e -> add(e.getKey(), e.getValue()));
     }
 
     private void add(Class<? extends SPackage> packageClass, String typeName) {
@@ -38,43 +38,11 @@ public class SingularServerSpringTypeLoader extends SpringTypeLoader<String> {
     }
 
     private void add(String typeName, String displayName, Supplier<SType<?>> typeSupplier) {
-        entries.put(typeName, new TemplateEntry(displayName, typeSupplier));
-    }
-
-    public TemplateEntry findEntryByType(String type) {
-        for (TemplateEntry t : entries.values()) {
-            if (t.getType().getName().equals(type)) {
-                return t;
-            }
-        }
-        return null;
+        entries.put(typeName, typeSupplier);
     }
 
     @Override
     protected Optional<SType<?>> loadTypeImpl(String typeId) {
-        return Optional.ofNullable(findEntryByType(typeId)).map(TemplateEntry::getType);
-    }
-
-    public static class TemplateEntry {
-
-        private final String displayName;
-        private final Supplier<SType<?>> typeSupplier;
-
-        public TemplateEntry(String displayName, Supplier<SType<?>> typeSupplier) {
-            this.displayName = displayName;
-            this.typeSupplier = typeSupplier;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public SType<?> getType() {
-            return typeSupplier.get();
-        }
-
-        public SDictionary getDictionary() {
-            return getType().getDictionary();
-        }
+        return Optional.ofNullable(entries.get(typeId)).map(Supplier::get);
     }
 }

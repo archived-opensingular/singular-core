@@ -4,15 +4,19 @@ import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -234,7 +238,10 @@ public abstract class AbstractCaixaContent<T extends PeticaoDTO> extends Content
         add(tabela);
         add(deleteForm.add(deleteModal));
         if (getMenu() != null) {
-            setProcesses(SingularSession.get().getMenuPorLabel(getMenu()).getProcesses());
+            setProcesses(Optional.ofNullable(SingularSession.get().getMenuPorLabel(getMenu())).map(MenuGroupDTO::getProcesses).orElse(new ArrayList<>(0)));
+            if (CollectionUtils.isEmpty(getProcesses())){
+                getLogger().warn("!! NENHUM PROCESSO ENCONTRADO PARA A MONTAGEM DO MENU !!");
+            }
         }
     }
 

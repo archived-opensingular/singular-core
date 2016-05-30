@@ -92,8 +92,6 @@ public class RascunhoContent extends AbstractCaixaContent<PeticaoDTO> {
         super.onInitialize();
 
         if (getMenu() != null) {
-            setProcesses(SingularSession.get().getMenuPorLabel(getMenu()).getProcesses());
-
             for (ProcessDTO process : getProcesses()) {
                 if (getProcesses().size() > 1) {
                     String processUrl = DispatcherPageUtil

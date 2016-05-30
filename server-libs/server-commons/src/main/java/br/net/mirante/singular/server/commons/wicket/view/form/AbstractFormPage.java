@@ -43,7 +43,7 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
     protected AbstractFormContent content;
 
     protected final IModel<T> currentModel = $m.ofValue();
-    protected final IModel<FormDTO> formModel = $m.ofValue();
+    protected final IModel<FormDTO> formModel = $m.ofValue(new FormDTO());
     
     @Inject
     protected PetitionService<T> petitionService;
