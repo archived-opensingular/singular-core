@@ -5,22 +5,20 @@
 
 package br.net.mirante.singular.form;
 
+/**
+ * Classe de suporte a construção de um tipo durante a chamada do método {@link SType#onLoadType(TypeBuilder)}.
+ */
 public class TypeBuilder {
+    //TODO (por Daniel Bordin 29/05/2016) Por em quanto não é muito útil essa classe. Verificar a permanência dela se
+    // não encontrarmos utilidade até o fim do ano
 
     private final SType<?> targetType;
 
-    private final Class<? extends SType<?>> targetTypeClass;
-
-    <X extends SType<?>> TypeBuilder(Class<X> targetTypeClass) {
-        this.targetTypeClass = targetTypeClass;
-        this.targetType = MapByName.newInstance(targetTypeClass);
+    <X extends SType<?>> TypeBuilder(X newType) {
+        this.targetType = newType;
     }
 
     final SType<?> getType() {
         return targetType;
-    }
-
-    public Class<? extends SType<?>> getTypeClass() {
-        return targetTypeClass;
     }
 }

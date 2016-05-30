@@ -72,13 +72,15 @@ public interface ICompositeInstance {
      * @return Null se o campo no path indicado não tiver sido instanciado
      *         ainda.
      */
-    public default SIComposite getFieldRecord(String path) {
-        SInstance instancia = getField(path);
-        if (instancia != null && !(instancia instanceof SIComposite)) {
-            throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
-                + " referente ao tipo " + instancia.getType().getName() + " em vez de " + SIComposite.class.getName());
+    public default SIComposite getFieldComposite(String path) {
+        SInstance instance = getField(path);
+        if (instance != null && !(instance instanceof SIComposite)) {
+            throw new SingularFormException(
+                    "'" + path + "' retornou um instancia da classe " + instance.getClass().getName() +
+                            " referente ao tipo " + instance.getType().getName() + " em vez de " +
+                            SIComposite.class.getName(), (SInstance) this);
         }
-        return (SIComposite) instancia;
+        return (SIComposite) instance;
     }
 
     /**
@@ -92,15 +94,15 @@ public interface ICompositeInstance {
      */
     @SuppressWarnings("unchecked")
     public default <T extends SInstance> SIList<T> getFieldList(String path, Class<T> typeOfInstanceElements) {
-        SIList<?> lista = getFieldList(path);
-        if (lista == null) {
+        SIList<?> list = getFieldList(path);
+        if (list == null) {
             return null;
-        } else if (typeOfInstanceElements.isAssignableFrom(lista.getElementsType().getInstanceClass())) {
-            return (SIList<T>) lista;
+        } else if (typeOfInstanceElements.isAssignableFrom(list.getElementsType().getInstanceClass())) {
+            return (SIList<T>) list;
         }
-        throw new RuntimeException(
-            "'" + path + "' + retornou uma lista cujos as instancia do tipo " + lista.getElementsType().getInstanceClass().getName()
-                        + ", que não é compatível com o tipo solicitado " + typeOfInstanceElements.getName());
+        throw new SingularFormException("'" + path + "' + retornou uma lista cujos as instancia do tipo " +
+                list.getElementsType().getInstanceClass().getName() + ", que não é compatível com o tipo solicitado " +
+                typeOfInstanceElements.getName(), (SInstance) this);
     }
 
     /**
@@ -112,12 +114,14 @@ public interface ICompositeInstance {
      *         ainda.
      */
     public default SIList<?> getFieldList(String path) {
-        SInstance instancia = getField(path);
-        if (instancia != null && !(instancia instanceof SIList)) {
-            throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
-                + " referente ao tipo " + instancia.getType().getName() + " em vez de " + SIList.class.getName());
+        SInstance instance = getField(path);
+        if (instance != null && !(instance instanceof SIList)) {
+            throw new SingularFormException(
+                    "'" + path + "' retornou um instancia da classe " + instance.getClass().getName() +
+                            " referente ao tipo " + instance.getType().getName() + " em vez de " +
+                            SIList.class.getName(), (SInstance) this);
         }
-        return (SIList<?>) instancia;
+        return (SIList<?>) instance;
     }
 
     public default String getValueString(String fieldPath) {

@@ -18,11 +18,26 @@ public class SingularFormException extends SingularException {
     }
 
     /**
+     * Cria um erro incluindo informações de contexto para o objeto informado. Se o objeto não for um SType ou
+     * SInstance, então simplesmente dá um toString() no mesmo.
+     */
+    public SingularFormException(String msg, Object target) {
+        super(createErroMsg(msg, target, null));
+    }
+
+    /**
      * Cria o erro incluindo informações de contexto da instancia sobre a qual
      * ocorreu o erro.
      */
     public SingularFormException(String msg, SInstance instance) {
         super(createErroMsg(msg, instance, null));
+    }
+
+    /**
+     * Cria o erro incluindo informações de contexto do tipo sobre o qual ocorreu o erro.
+     */
+    public SingularFormException(String msg, SType<?> type) {
+        super(createErroMsg(msg, type, null));
     }
 
     /**
@@ -43,6 +58,40 @@ public class SingularFormException extends SingularException {
      */
     public SingularFormException(String msg, Throwable cause, SInstance instance) {
         super(createErroMsg(msg, instance, null), cause);
+    }
+
+    private static String createErroMsg(String msg, Object target, String complement) {
+        if (target instanceof SType) {
+            return createErroMsg(msg, (SType<?>) target, complement);
+        } else if (target instanceof SInstance) {
+            return createErroMsg(msg, (SInstance) target, complement);
+        } else if (target != null) {
+            try {
+                StringBuilder sb = new StringBuilder(msg).append('\n');
+                sb.append(", target=").append(target);
+                if (complement != null) {
+                    sb.append("\n, ").append(complement);
+                }
+                return sb.toString();
+            } catch (Exception e) {
+            }
+        }
+        return msg;
+    }
+
+    private static String createErroMsg(String msg, SType<?> type, String complement) {
+        if (type != null) {
+            try {
+                StringBuilder sb = new StringBuilder(msg).append('\n');
+                sb.append(", tipo=").append(type);
+                if (complement != null) {
+                    sb.append("\n, ").append(complement);
+                }
+                return sb.toString();
+            } catch (Exception e) {
+            }
+        }
+        return msg;
     }
 
     private static String createErroMsg(String msg, SInstance instance, String complemento) {

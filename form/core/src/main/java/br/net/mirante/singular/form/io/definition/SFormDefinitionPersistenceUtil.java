@@ -55,6 +55,8 @@ public class SFormDefinitionPersistenceUtil {
         ensureType(ctx, type.getSuperType());
 
         if (type instanceof STypeComposite) {
+            //TODO (por Daniel Bordin) O código abaixo ainda precisa resolver a questão de field que foram extendido
+            // e tiveram apenas uma atributo alterado
             for (SType<?> localField : ((STypeComposite<?>) type).getFieldsLocal()) {
                 SIPersistenceType pMember = pType.addMember(localField.getNameSimple());
                 writeType(ctx, pMember, localField);
