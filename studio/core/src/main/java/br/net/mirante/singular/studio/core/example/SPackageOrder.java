@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.SPackage;
 public class SPackageOrder extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
+        pb.createType(STypeItem.class);
         pb.createType(STypeOrder.class);
     }
 }

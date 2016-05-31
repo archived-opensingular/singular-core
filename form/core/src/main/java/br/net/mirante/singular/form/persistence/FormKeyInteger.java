@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.persistence;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class FormKeyInteger extends AbstractFormKey<Integer> {
 
     public FormKeyInteger(Integer value) {

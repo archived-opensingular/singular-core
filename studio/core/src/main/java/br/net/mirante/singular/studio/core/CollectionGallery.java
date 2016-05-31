@@ -2,7 +2,7 @@ package br.net.mirante.singular.studio.core;
 
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.studio.util.SingularStudioCollectionScanner;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class CollectionGallery {
 
     public List<CollectionCanvas> getCollectionCanvas() {
         initialize();
-        return (List<CollectionCanvas>) CollectionUtils.unmodifiableCollection(collectionCanvasList);
+        return (List<CollectionCanvas>) ListUtils.unmodifiableList(collectionCanvasList);
     }
 
     public String getPackagesToScan() {

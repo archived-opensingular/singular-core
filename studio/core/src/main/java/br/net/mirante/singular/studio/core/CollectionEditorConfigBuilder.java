@@ -74,8 +74,8 @@ public class CollectionEditorConfigBuilder {
 
         public ListConfigurer sortBy(STypeSimple<?, ?> column) {
             for (int i = 0; i < editor.getColumns().size(); i++) {
-                Pair p = editor.getColumns().get(i);
-                if (p.getValue().equals(column)) {
+                Pair<String, String> p = editor.getColumns().get(i);
+                if (p.getValue().equals(column.getName())) {
                     editor.setDefaultSortColumnIndex(i);
                     break;
                 }

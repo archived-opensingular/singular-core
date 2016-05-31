@@ -30,7 +30,7 @@ public class OrderCollectionDefinition implements CollectionDefinition<STypeOrde
         cfg
                 .list()
                 .column(type.id)
-                .column(type.description)
+                .column(type.descricao)
                 .rowsPerPage(10)
                 .disableQuickFilter()
                 .sortBy(type.id)
