@@ -174,6 +174,8 @@ public abstract class SUploadProgressBar extends Panel {
                 "new Wicket.WUPB('%s', '%s', '%s', '%s', '%s', '%s');",
                 getCallbackForm().getMarkupId(), statusDiv.getMarkupId(), barDiv.getMarkupId(), url, uploadFieldId,
                 status);
+
+        formatter.close();
         response.render(OnDomReadyHeaderItem.forScript(builder.toString()));
     }
 

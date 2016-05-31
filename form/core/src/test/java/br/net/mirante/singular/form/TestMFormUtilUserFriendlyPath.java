@@ -41,9 +41,9 @@ public class TestMFormUtilUserFriendlyPath extends TestCaseForm {
         _alerta = _alertas.getElementsType();
         _alerta_data = _alerta.addField("data", STypeDate.class);
 
-        _evento.asAtr().label("Evento");
+        // _evento.asAtr().label("Evento"); // calculado
         _descricao.asAtr().label("Descrição");
-        // *** período não possui label
+        _periodo.asAtr().label(""); // *** período com label vazia
         _dataInicial.asAtr().label("Data inicial");
         _dataFinal.asAtr().label("Data final");
         _alertas.asAtr().label("Alertas");

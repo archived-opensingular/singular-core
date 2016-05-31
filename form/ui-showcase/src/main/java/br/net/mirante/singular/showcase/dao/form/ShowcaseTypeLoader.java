@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import br.net.mirante.singular.studio.core.example.SPackageOrder;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
