@@ -1,32 +1,37 @@
 package br.net.mirante.singular.studio.core;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.studio.util.SingularStudioCollectionScanner;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CollectionGallery {
 
-    private List<CollectionCanvas> collectionCanvasList = new ArrayList<>();
+    private List<CollectionCanvas> collectionCanvasList = null;
     private String packagesToScan = "br.net.mirante.singular";
 
     private void initialize() {
-        String[] packagesToScanArray = {""};
-        if (packagesToScan != null) {
-            packagesToScanArray = packagesToScan.replaceAll(" ", "").split(",");
-        }
-        List<CollectionDefinition<SType<?>>> collectionDefinitionList = SingularStudioCollectionScanner.scan(packagesToScanArray);
-        for (CollectionDefinition<SType<?>> c : collectionDefinitionList) {
-            CollectionCanvas canvas = new CollectionCanvas();
-            canvas.collectionDefinition = c;
+        if (collectionCanvasList == null) {
+            collectionCanvasList = new ArrayList<>();
+            String[] packagesToScanArray = {""};
+            if (packagesToScan != null) {
+                packagesToScanArray = packagesToScan.replaceAll(" ", "").split(",");
+            }
+            List<CollectionDefinition<SType<?>>> collectionDefinitionList = SingularStudioCollectionScanner.scan(packagesToScanArray);
+            for (CollectionDefinition<SType<?>> c : collectionDefinitionList) {
             /*collection info */
-            CollectionInfoBuilder<SType<?>> collectionInfoBuilder = new CollectionInfoBuilder<>();
-            c.collectionInfo(collectionInfoBuilder);
-            canvas.collectionInfo = collectionInfoBuilder.getCollectionInfo();
-            collectionCanvasList.add(canvas);
+                CollectionInfoBuilder<SType<?>> collectionInfoBuilder = new CollectionInfoBuilder<>();
+                c.collectionInfo(collectionInfoBuilder);
+                collectionCanvasList.add(new CollectionCanvas<>(c, collectionInfoBuilder.getCollectionInfo()));
+            }
         }
+    }
+
+    public List<CollectionCanvas> getCollectionCanvas() {
+        initialize();
+        return (List<CollectionCanvas>) CollectionUtils.unmodifiableCollection(collectionCanvasList);
     }
 
     public String getPackagesToScan() {
@@ -35,16 +40,6 @@ public class CollectionGallery {
 
     public void setPackagesToScan(String packagesToScan) {
         this.packagesToScan = packagesToScan;
-    }
-
-    private static class CollectionCanvas {
-        CollectionDefinition<SType<?>> collectionDefinition;
-        CollectionInfo<SType<?>> collectionInfo;
-        IFunction<SType<?>, CollectionEditorConfig> editorConfigFunction = t -> {
-            CollectionEditorConfigBuilder collectionEditorConfigBuilder = new CollectionEditorConfigBuilder();
-            collectionDefinition.configEditor(collectionEditorConfigBuilder, t);
-            return collectionEditorConfigBuilder.getEditor();
-        };
     }
 
 
