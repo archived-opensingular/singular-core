@@ -9,6 +9,7 @@ import static java.util.stream.Collectors.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +17,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import javax.lang.model.SourceVersion;
 
@@ -122,14 +122,15 @@ public final class SFormUtil {
         final Pattern PREFIXO_SIGLA = Pattern.compile("([A-Z]+)([A-Z][a-z])");
         final ImmutableSet<String> UPPERCASE_SPECIAL_CASES = ImmutableSet.of("id", "url");
 
-        return capitalize(Stream.of(simpleName)
-            .flatMap(s -> Stream.of(LOWER_UPPER.matcher(s).replaceAll("$1-$2")))
-            .flatMap(s -> Stream.of(PREFIXO_SIGLA.matcher(s).replaceAll("$1-$2")))
-            .flatMap(s -> Stream.of(s.split("[-_]")))
+        return capitalize(Arrays.asList(simpleName).stream()
+            .map(s -> LOWER_UPPER.matcher(s).replaceAll("$1-$2"))
+            .map(s -> PREFIXO_SIGLA.matcher(s).replaceAll("$1-$2"))
+            .flatMap(s -> Arrays.asList(s.split("[-_]+")).stream())
             .map(s -> ((isAllUpperCase(s)) ? s : uncapitalize(s)))
             .map(s -> (UPPERCASE_SPECIAL_CASES.contains(s)) ? capitalize(s) : s)
             .collect(joining(" ")));
     }
+
     public static String generateUserFriendlyPath(SInstance instance) {
         return generateUserFriendlyPath(instance, null);
     }

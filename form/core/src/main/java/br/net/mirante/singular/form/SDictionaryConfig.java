@@ -8,11 +8,6 @@ package br.net.mirante.singular.form;
 public class SDictionaryConfig {
 
     private final SDictionary dictionary;
-    /**
-     * Esse atributo foi criado para mascara um bug temporariamente. Deveria ser sempre true, mas isso gerar efeito
-     * colaterias.
-     */
-    private boolean extendListElementType = false;
 
     public SDictionaryConfig(SDictionary dictionary) {
         this.dictionary = dictionary;
@@ -22,12 +17,5 @@ public class SDictionaryConfig {
         return dictionary;
     }
 
-    public boolean isExtendListElementType() {
-        return extendListElementType;
-    }
-
-    public SDictionaryConfig setExtendListElementType(boolean extendListElementType) {
-        this.extendListElementType = extendListElementType;
-        return this;
-    }
+    //TODO (por Daniel Bordin - 29/05/16) Acabou ficando sem conteudo, senão for usado até o fim do ano, apagar
 }

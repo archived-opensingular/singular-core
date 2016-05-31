@@ -20,8 +20,6 @@ public abstract class TestCaseForm extends TestCase {
     public static Collection<TestFormConfig> data() {
         List<TestFormConfig> executionParams = new ArrayList<>();
         addScenario(executionParams, "default option", () -> SDictionary.create());
-        addScenario(executionParams, "ExtendListElementType=false", () -> SDictionary.create().getDictionaryConfig().setExtendListElementType(false).getDictionary());
-        addScenario(executionParams, "ExtendListElementType=true", () -> SDictionary.create().getDictionaryConfig().setExtendListElementType(true).getDictionary());
         return executionParams;
     }
 
@@ -101,7 +99,7 @@ public abstract class TestCaseForm extends TestCase {
             throw new RuntimeException("Não é uma lista");
         }
         List<?> valores = (List<?>) valor;
-        assertEquals(valores.size(), valoresEsperados.length);
+        assertEquals(valoresEsperados.length, valores.size());
         for (int i = 0; i < valoresEsperados.length; i++) {
             if (!Objects.equals(valoresEsperados[i], valores.get(i))) {
                 throw new RuntimeException(

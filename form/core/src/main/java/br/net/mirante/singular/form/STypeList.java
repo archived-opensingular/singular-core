@@ -57,18 +57,18 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
      * MTipoLista&lt;MTipoString> tipoLista = ...
      *
      * // metodo simples e não dispara exception se tipo errado
-     * MILista&lt;MIString> lista1 = (MILista&lt;MIString>) tipoLista.novaInstancia();
+     * MILista&lt;MIString> lista1 = (MILista&lt;MIString>) tipoLista.newInstance();
      *
      * // já devolvendo lista no tipo certo e verificando se correto
-     * MILista&lt;MIString> lista2 = tipoLista.novaInstancia(MIString.class);
+     * MILista&lt;MIString> lista2 = tipoLista.newInstance(MIString.class);
      * </pre>
      */
     @SuppressWarnings("unchecked")
     public <T extends SInstance> SIList<T> newInstance(Class<T> classOfElements) {
         SIList<?> newList = newInstance();
         if (!classOfElements.isAssignableFrom(getElementsType().getInstanceClass())) {
-            throw new RuntimeException("As instancias da lista são do tipo " + getElementsType().getInstanceClass().getName()
-                    + ", que não é compatível com o solicitado " + classOfElements.getName());
+            throw new SingularFormException("As instancias da lista são do tipo " + getElementsType().getInstanceClass().getName()
+                    + ", que não é compatível com o solicitado " + classOfElements.getName(), this);
         }
         return (SIList<T>) newList;
     }
@@ -76,13 +76,13 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
     @Override
     SIList<I> newInstance(SDocument owner) {
         if (elementsType == null) {
-            throw new RuntimeException("Não é possível instanciar o tipo '" + getName()
-                    + "' pois o tipo da lista (o tipo de seus elementos) não foram definidos");
+            throw new SingularFormException("Não é possível instanciar o tipo '" + getName()
+                    + "' pois o tipo da lista (o tipo de seus elementos) está null", this);
         }
-        SIList<I> lista = new SIList<>();
-        lista.setType(this);
-        lista.setDocument(owner);
-        return lista;
+        SIList<I> list = new SIList<>();
+        list.setType(this);
+        list.setDocument(owner);
+        return list;
     }
 
     protected final E setElementsType(Class<E> elementsTypeClass) {
@@ -99,13 +99,20 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
 
     protected final E setElementsType(String simpleNameNewType, E elementsType) {
         if (this.elementsType != null) {
-            throw new RuntimeException("O tipo da lista já está definido");
+            throw new SingularFormException("O tipo da lista já está definido", this);
         }
-        if (elementsType.getClass() == STypeComposite.class || getDictionary().getDictionaryConfig().isExtendListElementType()) {
-            elementsType = extendType(simpleNameNewType, elementsType);
+        this.elementsType = extendType(simpleNameNewType, elementsType);
+        return this.elementsType;
+    }
+
+    @Override
+    protected void extendSubReference() {
+        if (getSuperType() instanceof STypeList) {
+            E type = (E) ((STypeList) getSuperType()).elementsType;
+            if (type != null) {
+                setElementsType(type);
+            }
         }
-        this.elementsType = elementsType;
-        return elementsType;
     }
 
     /**

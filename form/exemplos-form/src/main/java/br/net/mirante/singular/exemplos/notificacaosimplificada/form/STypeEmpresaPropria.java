@@ -10,14 +10,14 @@ import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEmpresaPropria extends STypeComposite<SIComposite> {
 
-    public STypeString razaoSocialPropria;
+    public STypeString razaoSocial;
     public STypeCNPJ cnpj;
     public STypeString endereco;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        razaoSocialPropria = addFieldString("razaoSocial");
-        razaoSocialPropria
+        razaoSocial = addFieldString("razaoSocial");
+        razaoSocial
                 .asAtr()
                 .label("Razão Social")
                 .enabled(false);
