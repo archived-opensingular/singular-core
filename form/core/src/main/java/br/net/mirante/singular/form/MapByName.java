@@ -65,25 +65,32 @@ class MapByName<K> implements Iterable<K> {
         try {
             return classeAlvo.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException("Erro instanciando " + classeAlvo.getName(), e);
+            throw new SingularFormException("Erro instanciando " + classeAlvo.getName(), e);
         }
     }
 
-    final <T extends K> void verifyMustNotBePresent(Class<T> classeAlvo) {
+    final <T extends K> void verifyMustNotBePresent(Class<T> classeAlvo, Object owner) {
         T valor = get(classeAlvo);
         if (valor != null) {
-            throw new RuntimeException("A definição '" + getNome(valor) + "' já está carregada");
+            throw new SingularFormException(erroMsg("A definição '" + getNome(valor) + "' já está carregada", owner));
         }
     }
 
-    final void verifyMustNotBePresent(K alvo) {
-        verifyMustNotBePresent(getNome(alvo));
+    final void verifyMustNotBePresent(K alvo, Object owner) {
+        verifyMustNotBePresent(getNome(alvo), owner);
     }
 
-    final void verifyMustNotBePresent(String fullName) {
+    final void verifyMustNotBePresent(String fullName, Object owner) {
         if (byName.containsKey(fullName)) {
-            throw new SingularFormException("A definição '" + fullName + "' já está criada");
+            throw new SingularFormException(erroMsg("A definição '" + fullName + "' já está criada", owner));
         }
+    }
+
+    private String erroMsg(String msg, Object owner) {
+        if (owner instanceof  SDictionary) {
+            return msg + " no dicionário";
+        }
+        return msg + " em " + owner;
     }
 
     private String getNome(K val) {

@@ -9,6 +9,7 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNot
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.type.core.STypeDate;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
@@ -24,12 +25,17 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
     public STypeString  descricaoTipoEnsaio;
     public STypeString  descricaoTipoReferencia;
     public STypeInteger idTipoEnsaio;
+    public STypeComposite<SIComposite> tipoEnsaio;
+    public STypeComposite<SIComposite> tipoReferencia;
+    public STypeComposite<SIComposite> informacoesFarmacopeicas;
+    public STypeAttachmentList resultadosLote;
+    public STypeString justificativa;
+    public STypeAttachmentList resultadosControleQualidade;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
-
-        STypeComposite<SIComposite> tipoEnsaio = this.addFieldComposite("tipoEnsaio");
+        tipoEnsaio = this.addFieldComposite("tipoEnsaio");
         idTipoEnsaio = tipoEnsaio.addFieldInteger("id");
         descricaoTipoEnsaio = tipoEnsaio.addFieldString("descricao");
         tipoEnsaio.selectionOf(TipoEnsaioControleQualidade.class)
@@ -54,7 +60,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
         tipoEnsaio.asAtr().label("Ensaio de Controle de Qualidade").enabled(false);
 
-        STypeComposite<SIComposite> tipoReferencia   = this.addFieldComposite("tipoReferencia");
+        tipoReferencia   = this.addFieldComposite("tipoReferencia");
         STypeInteger                idTipoReferencia = tipoReferencia.addFieldInteger("id");
         descricaoTipoReferencia = tipoReferencia.addFieldString("descricao");
 
@@ -76,7 +82,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                 .simpleProviderOf(TipoReferencia.values());
 
         {
-            STypeComposite<SIComposite> informacoesFarmacopeicas = this.addFieldComposite("informacoesFarmacopeicas");
+           informacoesFarmacopeicas = this.addFieldComposite("informacoesFarmacopeicas");
             informacoesFarmacopeicas
                     .asAtr()
                     .dependsOn(tipoReferencia)
@@ -87,7 +93,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
         }
 
         {
-            STypeAttachmentList resultadosLote = this.addFieldListOfAttachment("resultadosLote", "resuladoLote");
+            resultadosLote = this.addFieldListOfAttachment("resultadosLote", "resuladoLote");
             resultadosLote.asAtr().label("Metodologia/Especificação/Resultado para um lote")
                     .dependsOn(tipoReferencia)
                     .visible(i -> TipoReferencia.NAO_FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
@@ -97,14 +103,15 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
             nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 
-        STypeString justificativa = this.addFieldString("justificativa");
+        justificativa = this.addFieldString("justificativa");
         justificativa
                 .asAtr().dependsOn(tipoReferencia)
                 .label("Justificativa").visible(i -> TipoReferencia.NAO_SE_APLICA.getId().equals(Value.of(i, idTipoReferencia)))
                 .tamanhoMaximo(600)
                 .getTipo().withView(SViewTextArea::new);
 
-        this.addFieldListOfAttachment("resultadosControleQualidade", "resultado")
+        resultadosControleQualidade = this.addFieldListOfAttachment("resultadosControleQualidade", "resultado");
+        resultadosControleQualidade
                 .asAtr()
                 .label("Resultados do controle da qualidade")
                 .visible(i -> TipoEnsaioControleQualidade.RESULTADOS.getId().equals(Value.of(i, idTipoEnsaio)))

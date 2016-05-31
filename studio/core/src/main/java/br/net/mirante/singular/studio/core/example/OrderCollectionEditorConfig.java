@@ -1,16 +1,16 @@
 package br.net.mirante.singular.studio.core.example;
 
-import br.net.mirante.singular.studio.core.CollectionEditorConfig;
-import br.net.mirante.singular.studio.core.EditorConfigBuilder;
+import br.net.mirante.singular.studio.core.CollectionDefinition;
+import br.net.mirante.singular.studio.core.CollectionEditorConfigBuilder;
 import br.net.mirante.singular.studio.core.CollectionInfoBuilder;
 
 
-public class OrderCollectionEditorConfig implements CollectionEditorConfig<STypeOrder> {
+public class OrderCollectionEditorConfig implements CollectionDefinition<STypeOrder> {
 
 
     /*
      * Configurações que serão utilizadas para montar a casca do sinuglar studio
-     * tais como configurações de menu e de permissoes globais do crud
+     * tais como configurações de menu e de permissoes globais do studio-form
      * @param builder
      */
     @Override
@@ -20,13 +20,13 @@ public class OrderCollectionEditorConfig implements CollectionEditorConfig<SType
     }
 
     /*
-     * configuracao do renderizador do crud:
+     * configuracao do renderizador do studio-form:
       * Listagem: listagem, filtros, paginacao, exclusao, acoes
       * Form: editar, novo, visualizar
      *
      */
     @Override
-    public void configEditor(EditorConfigBuilder cfg, STypeOrder type) {
+    public void configEditor(CollectionEditorConfigBuilder cfg, STypeOrder type) {
         cfg
                 .list()
                 .column(type.id)

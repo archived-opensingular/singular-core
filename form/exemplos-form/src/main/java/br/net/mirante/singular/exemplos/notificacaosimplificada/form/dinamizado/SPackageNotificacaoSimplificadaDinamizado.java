@@ -308,7 +308,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
     }
 
-    private abstract class FormaFarmaceuticaProvider implements FilteredPagedProvider<FormaFarmaceuticaBasica> {
+    private static abstract class FormaFarmaceuticaProvider implements FilteredPagedProvider<FormaFarmaceuticaBasica> {
 
         abstract List<Integer> getIds(SInstance root);
 

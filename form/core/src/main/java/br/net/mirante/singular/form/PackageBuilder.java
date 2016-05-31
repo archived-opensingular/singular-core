@@ -59,9 +59,7 @@ public class PackageBuilder {
     }
 
     public <T extends SType<?>> T createType(Class<T> newTypeClass) {
-        getDictionary().getTypesInternal().verifyMustNotBePresent(newTypeClass);
-        TypeBuilder tb = new TypeBuilder(newTypeClass);
-        return sPackage.registerType(tb, newTypeClass);
+        return sPackage.registerType(MapByName.newInstance(newTypeClass), newTypeClass);
     }
 
     @SuppressWarnings("unchecked")
@@ -152,7 +150,7 @@ public class PackageBuilder {
     private <T extends SType<?>> T createAttributeIntoTypeInternal(SType<?> targetType, String attrFullName,
                                                                    String attrSimpleName, T attributeType,
                                                                    boolean selfReference) {
-        getDictionary().getTypesInternal().verifyMustNotBePresent(attrFullName);
+        getDictionary().getTypesInternal().verifyMustNotBePresent(attrFullName, sPackage);
         SScopeBase scope = Objects.equals(targetType.getPackage(), sPackage) ? targetType : sPackage;
         T attributeDef = scope.extendType(attrSimpleName, attributeType);
         attributeDef.setAttributeDefinitionInfo(new AttributeDefinitionInfo(targetType, selfReference));
@@ -169,7 +167,7 @@ public class PackageBuilder {
 
     private <T extends SType<?>> T createAttributeType(AtrRef<T, ?, ?> atr, T attributeType) {
         resolveBind(sPackage, null, atr, attributeType);
-        getDictionary().getTypesInternal().verifyMustNotBePresent(atr.getNameFull());
+        getDictionary().getTypesInternal().verifyMustNotBePresent(atr.getNameFull(), sPackage);
 
         T attributeDef = sPackage.extendType(atr.getNameSimple(), attributeType);
         attributeDef.setAttributeDefinitionInfo(new AttributeDefinitionInfo());

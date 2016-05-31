@@ -17,6 +17,16 @@ public class TestMFormUtil extends TestCaseForm {
     }
 
     @Test
+    public void testGenerateUserFriendlyName() {
+        assertEquals("Dados pessoais", SFormUtil.generateUserFriendlyName("dadosPessoais"));
+        assertEquals("Informacoes de contato", SFormUtil.generateUserFriendlyName("informacoesDeContato"));
+        assertEquals("Nome", SFormUtil.generateUserFriendlyName("nome"));
+        assertEquals("Endereco comercial", SFormUtil.generateUserFriendlyName("endereco-comercial"));
+        assertEquals("URL origem", SFormUtil.generateUserFriendlyName("URLOrigem"));
+        assertEquals("ABCDEF", SFormUtil.generateUserFriendlyName("ABCDEF"));
+    }
+
+    @Test
     public void testValidacaoNomeSimples() {
         testarNomeInvalido(" sss ");
         testarNomeInvalido("sss ");
@@ -49,17 +59,17 @@ public class TestMFormUtil extends TestCaseForm {
         SDictionary dicionario = createTestDictionary();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        STypeComposite<SIComposite>                         tipoBloco        = pb.createCompositeType("bloco");
-        STypeInteger                                        integer1         = tipoBloco.addFieldInteger("integer1");
-        STypeString                                         string1          = tipoBloco.addFieldString("string1");
-        STypeComposite<?>                                   tipoSubBloco     = tipoBloco.addFieldComposite("subBloco");
-        STypeInteger                                        integer2         = tipoSubBloco.addFieldInteger("integer2");
-        STypeString                                         tipoString2      = pb.createType("string2", STypeString.class);
-        STypeList<STypeString, SIString>                    tipoListaString2 = tipoBloco.addFieldListOf("enderecos", tipoString2);
-        STypeString                                         tipoString3      = pb.createType("string3", STypeString.class);
-        STypeList<STypeString, SIString>                    tipoListaString3 = tipoBloco.addFieldListOf("nomes", tipoString3);
-        STypeList<STypeComposite<SIComposite>, SIComposite> listaSubBloco2   = tipoBloco.addFieldListOfComposite("listaSubBloco2", "coisa");
-        STypeInteger                                        tipoQtd          = listaSubBloco2.getElementsType().addFieldInteger("qtd");
+        STypeComposite<SIComposite> tipoBloco = pb.createCompositeType("bloco");
+        STypeInteger integer1 = tipoBloco.addFieldInteger("integer1");
+        STypeString string1 = tipoBloco.addFieldString("string1");
+        STypeComposite<?> tipoSubBloco = tipoBloco.addFieldComposite("subBloco");
+        STypeInteger integer2 = tipoSubBloco.addFieldInteger("integer2");
+        STypeString tipoString2 = pb.createType("string2", STypeString.class);
+        STypeList<STypeString, SIString> tipoListaString2 = tipoBloco.addFieldListOf("enderecos", tipoString2);
+        STypeString tipoString3 = pb.createType("string3", STypeString.class);
+        STypeList<STypeString, SIString> tipoListaString3 = tipoBloco.addFieldListOf("nomes", tipoString3);
+        STypeList<STypeComposite<SIComposite>, SIComposite> listaSubBloco2 = tipoBloco.addFieldListOfComposite("listaSubBloco2", "coisa");
+        STypeInteger tipoQtd = listaSubBloco2.getElementsType().addFieldInteger("qtd");
 
         assertTipoResultante(tipoBloco, "integer1", integer1);
         assertTipoResultante(tipoBloco, "integer1", dicionario.getType("teste.bloco.integer1"));
@@ -125,7 +135,7 @@ public class TestMFormUtil extends TestCaseForm {
             }
         } else if (temQueSerCompativel) {
             fail("No path '" + path + "' foi encontrado o resultado '" + tipoResultado.getName() + "', mas era esperado '"
-                    + tipoEsperado.getName() + "'");
+                + tipoEsperado.getName() + "'");
         }
     }
 }
