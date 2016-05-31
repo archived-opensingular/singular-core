@@ -1,7 +1,8 @@
 package br.net.mirante.singular.studio.wicket;
 
 import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.studio.core.CollectionConfigCollector;
+import br.net.mirante.singular.studio.core.CollectionEditorConfig;
+import br.net.mirante.singular.studio.core.CollectionInfo;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -12,11 +13,11 @@ public class SingularStudioCollectionPanel<TYPE extends SType<?>> extends Panel 
     private final PanelControl panelControl = new PanelControl();
     private boolean showList = true;
     private Object formID;
-    private CollectionConfigCollector<TYPE> configCollector;
+    private CollectionInfo<TYPE> collectionInfo;
+    private CollectionEditorConfig collectionEditorConfig;
 
-    public SingularStudioCollectionPanel(String id, CollectionConfigCollector<TYPE> configCollector) {
+    public SingularStudioCollectionPanel(String id, CollectionInfo<TYPE> collectionInfo, CollectionEditorConfig collectionEditorConfig) {
         super(id);
-        this.configCollector = configCollector;
     }
 
     @SuppressWarnings("unchecked")
@@ -24,9 +25,9 @@ public class SingularStudioCollectionPanel<TYPE extends SType<?>> extends Panel 
     protected void onConfigure() {
         super.onConfigure();
         if (showList) {
-            this.addOrReplace(new SingularStudioListPanel("content", panelControl, configCollector));
+            this.addOrReplace(new SingularStudioListPanel("content", panelControl, collectionEditorConfig));
         } else {
-            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, configCollector, formID, null));
+            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, formID, null));
         }
     }
 

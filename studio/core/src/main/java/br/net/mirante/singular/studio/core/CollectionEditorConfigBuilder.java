@@ -26,7 +26,7 @@ public class CollectionEditorConfigBuilder {
         }
 
         public ColumnConfigurer column(String caption, STypeSimple<?, ?> column) {
-            editor.getColumns().add(Pair.of(caption, column));
+            editor.getColumns().add(Pair.of(caption, column.getName()));
             return new ColumnConfigurer(this);
         }
 
@@ -68,7 +68,7 @@ public class CollectionEditorConfigBuilder {
         }
 
         public ColumnConfigurer column(String caption, STypeSimple<?, ?> column) {
-            editor.getColumns().add(Pair.of(caption, column));
+            editor.getColumns().add(Pair.of(caption, column.getName()));
             return this;
         }
 
