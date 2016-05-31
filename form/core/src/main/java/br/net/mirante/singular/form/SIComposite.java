@@ -82,6 +82,16 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         return getFieldOpt(new PathReader(path));
     }
 
+    /**
+     * Retorna o campo cujo o nome seja igual ao do tipo informado e verifica se o campo encontrado é do mesmo tipo
+     * informado. Caso não seja do mesmo tipo, dispara uma exception.
+     */
+    public <II extends SInstance> II getField(SType<II> type) {
+        SInstance instance = getField(type.getNameSimple());
+        type.checkIfIsInstanceOf(instance);
+        return (II) instance;
+    }
+
     @Override
     final SInstance getFieldLocal(PathReader pathReader) {
         return getFieldByIndexOrCreate(findFieldIndex(pathReader));
@@ -100,10 +110,6 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     final SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
         int fieldIndex = findFieldIndex(pathReader);
         return (fields == null) ? null : fields.getByIndex(fieldIndex);
-    }
-
-    public <T extends SInstance> T getChildren(SType<T> tipoPai) {
-        throw new RuntimeException("Método não implementado");
     }
 
     @Override

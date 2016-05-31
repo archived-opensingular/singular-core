@@ -130,7 +130,7 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
     }
 
     @Test
-    @Ignore
+    @Ignore("Falta implementar a persistência dos atributos do tipo")
     public void testTypeCompositeWithAttribute() {
         //TODO Implementar esse caso
         PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");

@@ -19,10 +19,11 @@ import java.util.Arrays;
 public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
     public STypeInteger tipoLocalFabricacao;
-    public  STypeEmpresaPropria         empresaPropria;
-    public  STypeEmpresaTerceirizada    empresaTerceirizada;
-    public  STypeComposite<SIComposite> outroLocalFabricacao;
-    private STypeComposite<SIComposite> envasadora;
+    public STypeEmpresaPropria         empresaPropria;
+    public STypeEmpresaTerceirizada    empresaTerceirizada;
+    public STypeComposite<SIComposite> outroLocalFabricacao;
+    public STypeEmpresaInternacional empresaInternacional;
+    public STypeComposite<SIComposite> envasadora;
 
     static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);
@@ -51,7 +52,8 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
                     @Override
                     public LocalFabricacao toObject(SIInteger ins) {
-                        return Arrays.asList(LocalFabricacao.values()).stream().filter(l -> l.getId().equals(ins.getValue())).findFirst().orElse(null);
+                        return Arrays.asList(LocalFabricacao.values()).stream().filter(l -> l.getId().equals(
+                                ins.getValue())).findFirst().orElse(null);
                     }
                 })
                 .simpleProviderOf(LocalFabricacao.values());
@@ -59,7 +61,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
         empresaPropria = this.addField("empresaPropria", STypeEmpresaPropria.class);
 
         empresaPropria.withUpdateListener((ins) -> {
-                    ins.findNearest(empresaPropria.razaoSocialPropria).ifPresent(_ins -> _ins.setValue("Empresa de teste"));
+                    ins.findNearest(empresaPropria.razaoSocial).ifPresent(_ins -> _ins.setValue("Empresa de teste"));
                     ins.findNearest(empresaPropria.cnpj).ifPresent(_ins -> _ins.setValue("11111111000191"));
                     ins.findNearest(empresaPropria.endereco).ifPresent(_ins -> _ins.setValue("SCLN 211 BLOCO B SUBSOLO"));
                 }
@@ -69,7 +71,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
                 .dependsOn(tipoLocalFabricacao)
                 .visible(i -> LocalFabricacao.PRODUCAO_PROPRIA.getId().equals(Value.of(i, tipoLocalFabricacao)));
 
-        final STypeEmpresaInternacional empresaInternacional = this.addField("empresaInternacional", STypeEmpresaInternacional.class);
+        empresaInternacional = this.addField("empresaInternacional", STypeEmpresaInternacional.class);
 
         empresaInternacional
                 .asAtr()
