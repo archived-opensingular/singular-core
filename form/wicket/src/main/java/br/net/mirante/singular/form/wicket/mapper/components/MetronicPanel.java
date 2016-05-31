@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.mapper.components;
 
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 
@@ -13,6 +16,10 @@ import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+
+import java.util.Set;
 
 public abstract class MetronicPanel extends TemplatePanel {
 
@@ -78,6 +85,18 @@ public abstract class MetronicPanel extends TemplatePanel {
                 + "    <div wicket:id='_ft' class='panel-footer text-right'></div>"
                 + "  </div>"
                 + "");
+    }
+
+    public static ClassAttributeModifier dependsOnModifier(IModel<? extends SInstance> model){
+        return new ClassAttributeModifier() {
+            @Override
+            protected Set<String> update(Set<String> oldClasses) {
+                if(model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null){
+                    oldClasses.add("dependant-input-group");
+                }
+                return oldClasses;
+            }
+        };
     }
 
     public static final class MetronicPanelBuilder {

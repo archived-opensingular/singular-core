@@ -15,16 +15,17 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.*;
 import com.google.common.base.Strings;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 
+import java.util.Set;
+
+import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -32,12 +33,16 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 public class PanelListaMapper extends AbstractListaMapper {
 
     public void buildView(WicketBuildContext ctx) {
+        final BSContainer<?> parentCol = ctx.getContainer();
+        parentCol.appendComponent((id) -> this.newpanel(id, ctx));
+    }
 
+    public MetronicPanel newpanel(String id, WicketBuildContext ctx) {
         final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
         final SIList<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
         final SView view = ctx.getView();
-        final BSContainer<?> parentCol = ctx.getContainer();
+
         final ViewMode viewMode = ctx.getViewMode();
         final SType<?> currentType = ctx.getCurrentInstance().getType();
 
@@ -45,7 +50,7 @@ public class PanelListaMapper extends AbstractListaMapper {
 
         ctx.configureContainer(label);
 
-        parentCol.appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(id,
+        MetronicPanel panel = MetronicPanel.MetronicPanelBuilder.build(id,
                 (heading, form) -> {
 
                     heading.appendTag("span", new Label("_title", label));
@@ -68,11 +73,13 @@ public class PanelListaMapper extends AbstractListaMapper {
                     list.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
                     list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form));
                     content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
-
+                    content.getParent().add(dependsOnModifier(listaModel));
                 },
                 (footer, form) -> {
                     footer.setVisible(false);
-                }));
+                });
+
+        return panel;
     }
 
     private static final class PanelElementsView extends ElementsView {

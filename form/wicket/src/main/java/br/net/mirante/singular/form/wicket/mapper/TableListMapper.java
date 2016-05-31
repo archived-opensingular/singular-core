@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.*;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
 
 import java.util.Set;
@@ -54,6 +55,11 @@ public class TableListMapper extends AbstractListaMapper {
             return;
         }
 
+        ctx.setHint(ControlsFieldComponentAbstractMapper.NO_DECORATION, true);
+        ctx.getContainer().appendComponent((String id) -> buildPannel(ctx, id));
+    }
+
+    private MetronicPanel buildPannel(WicketBuildContext ctx, String id){
         final IModel<SIList<SInstance>> list = $m.get(ctx::getCurrentInstance);
         final SViewListByTable view = (SViewListByTable) ctx.getView();
         final Boolean isEdition = ctx.getViewMode() == null || ctx.getViewMode().isEdition();
@@ -62,11 +68,11 @@ public class TableListMapper extends AbstractListaMapper {
 
         addMinimumSize(currentType, iLista);
 
-        ctx.setHint(ControlsFieldComponentAbstractMapper.NO_DECORATION, true);
-        ctx.getContainer().appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(id,
-            (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
-            (c, form) -> builContent(c, form, list, ctx, view, isEdition),
-            (f, form) -> f.setVisible(false)));
+        MetronicPanel panel = MetronicPanelBuilder.build(id,
+                (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
+                (c, form) -> builContent(c, form, list, ctx, view, isEdition),
+                (f, form) -> f.setVisible(false));
+        return panel;
     }
 
     private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
@@ -154,6 +160,8 @@ public class TableListMapper extends AbstractListaMapper {
         template.add(tableHeader)
             .add(tableRows)
             .add(tableFooter.add(footerBody));
+
+        content.getParent().add(dependsOnModifier(list));
     }
 
     private static final class TableElementsView extends ElementsView {
