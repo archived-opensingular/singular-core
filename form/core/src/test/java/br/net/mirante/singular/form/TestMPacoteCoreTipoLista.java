@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form;
 
+import br.net.mirante.singular.form.TestMPacoteCoreTipoLista.TestPackageWithCircularReference.TypeTestPark;
 import br.net.mirante.singular.form.TestMPacoteCoreTipoLista.TestPackageWithCircularReference.TypeTestTree;
 import br.net.mirante.singular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.Pedido;
 import br.net.mirante.singular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.TestTipoListaComCargaInterna;
@@ -14,6 +15,7 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
+import static br.net.mirante.singular.form.AssertionsSForm.assertInstance;
 import static br.net.mirante.singular.form.AssertionsSForm.assertType;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -53,9 +55,9 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         SIList<SIInteger> listaInt = (SIList<SIInteger>) pb.getDictionary().getType(STypeInteger.class).newList();
         listaInt.addValue(10);
-        assertLista(listaInt, new Integer[] { 10 });
+        assertLista(listaInt, new Integer[]{10});
         listaInt.addValue("20");
-        assertLista(listaInt, new Integer[] { 10, 20 });
+        assertLista(listaInt, new Integer[]{10, 20});
         assertException(() -> listaInt.addValue("XX"), "não consegue converter");
 
         assertEquals(lista.getValue("[0]"), "Paulo");
@@ -119,16 +121,25 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     public void testTipoListaCriacaoOfTipoCompostoTipado() {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
-        STypeList<TipoPedido, Pedido> tipoPedido = pb.createListTypeOf("formulas", TipoPedido.class);
-        assertType(tipoPedido.getElementsType().id).isNotNull();
-        assertType(tipoPedido.getElementsType().nome).isNotNull();
-        assertType(tipoPedido.getElementsType().embalagem).isNotNull().isComposite(2);
-        assertType(tipoPedido.getElementsType()).isComposite(3);
+        STypeList<TipoPedido, Pedido> tipoPedidos = pb.createListTypeOf("formulas", TipoPedido.class);
+        TipoPedido tipoPedidoLista = tipoPedidos.getElementsType();
+        assertType(tipoPedidoLista).isDirectExtensionOf(TipoPedido.class);
 
-        assertType(tipoPedido.getElementsType().embalagem.descricao).isNotNull();
-        assertType(tipoPedido.getElementsType().embalagem.especial).isNotNull();
+        assertType(tipoPedidoLista.id).isNotNull();
+        assertType(tipoPedidoLista.nome).isNotNull();
+        assertType(tipoPedidoLista.embalagem).isNotNull().isComposite(2);
+        assertType(tipoPedidoLista).isComposite(3);
 
-        SIList<Pedido> pedidos = (SIList<Pedido>) tipoPedido.newInstance();
+        assertType(tipoPedidoLista.embalagem.descricao).isNotNull();
+        assertType(tipoPedidoLista.embalagem.especial).isNotNull();
+
+        assertType(tipoPedidoLista.id).isDirectExtensionOf(TipoPedido.class, "id");
+        assertType(tipoPedidoLista.nome).isDirectExtensionOf(TipoPedido.class, "nome");
+        assertType(tipoPedidoLista.embalagem).isExtensionOfParentCompositeFieldReference();
+        assertType(tipoPedidoLista.embalagem.descricao).isExtensionOfParentCompositeFieldReference();
+        assertType(tipoPedidoLista.embalagem.especial).isExtensionOfParentCompositeFieldReference();
+
+        SIList<Pedido> pedidos = (SIList<Pedido>) tipoPedidos.newInstance();
 
         Pedido pedido = pedidos.addNew();
         pedido.setValue("id", "1");
@@ -146,7 +157,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         STypeComposite<SIComposite> original = pb.createCompositeType("original");
         original.addFieldString("s1");
-        STypeList<?,?> list = pb.createListTypeOf("list", original);
+        STypeList<?, ?> list = pb.createListTypeOf("list", original);
         testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalCompositeType(original, list);
 
         //-----------------------------------------------------------------
@@ -194,13 +205,12 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         ((STypeComposite) list.getElementsType()).addFieldString("s2");
 
         testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalType(original, list);
-        assertType(list.getElementsType()).isComposite(original.getFields().size()+1);
+        assertType(list.getElementsType()).isComposite(original.getFields().size() + 1);
     }
 
     private void testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalType(SType<?> original,
             STypeList<?, ?> list) {
-        assertNotSame(original, list.getElementsType());
-        assertSame(original, list.getElementsType().getSuperType());
+        assertType(list.getElementsType()).isDirectExtensionOf(original);
 
         assertType(original).isAttribute(SPackageBasic.ATR_LABEL, null);
         assertType(list.getElementsType()).isAttribute(SPackageBasic.ATR_LABEL, null);
@@ -213,10 +223,10 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         original.asAtr().subtitle("yyy");
         assertType(original).isAttribute(SPackageBasic.ATR_SUBTITLE, "yyy");
         assertType(list.getElementsType()).isAttribute(SPackageBasic.ATR_SUBTITLE, "yyy");
-   }
+    }
 
     @Test
-    @Ignore("Desativado devido a problema estrutural. Voltar quando tiver sido resolvido")
+    //@Ignore("Desativado devido a problema estrutural. Voltar quando tiver sido resolvido")
     public void testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalTypeByClassPedido() {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         TipoPedido pedido = pb.getType(TipoPedido.class);
@@ -233,7 +243,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         verificarVariaveisPedidoCriada(list.getElementsType());
     }
 
-    private void verificarVariaveisPedidoCriada(STypeList<?,?> list) {
+    private void verificarVariaveisPedidoCriada(STypeList<?, ?> list) {
         verificarVariaveisPedidoCriada((TipoPedido) list.getElementsType());
     }
 
@@ -244,7 +254,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     }
 
     @Test
-    @Ignore("Desativado devido a problema estrutural. Voltar quando tiver sido resolvido")
+    //@Ignore("Desativado devido a problema estrutural. Voltar quando tiver sido resolvido")
     public void testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalTypeByClassPedidoTwoTimes() {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         TipoPedido pedido = pb.getType(TipoPedido.class);
@@ -267,27 +277,26 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         verificarVariaveisPedidoCriada(list2.getElementsType());
     }
 
-    private void testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalTypeByClassPedido(TipoPedido pedido, STypeList<TipoPedido, Pedido> list1, STypeList<TipoPedido, Pedido> list2) {
-        assertNotSame(list1.getElementsType(), list1.getElementsType());
-        assertNotSame(pedido, list1.getElementsType());
-        assertSame(pedido, list1.getElementsType().getSuperType());
-        assertSame(pedido, list2.getElementsType().getSuperType());
+    private void testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalTypeByClassPedido(TipoPedido pedido,
+            STypeList<TipoPedido, Pedido> list1, STypeList<TipoPedido, Pedido> list2) {
+        assertType(list1.getElementsType()).isDirectExtensionOf(pedido);
+        assertType(list2.getElementsType()).isDirectExtensionOf(pedido).isNotSameAs(list1.getElementsType());
 
-        assertType(pedido).isAttribute(SPackageBasic.ATR_LABEL, null);
-        assertType(list1.getElementsType()).isAttribute(SPackageBasic.ATR_LABEL, null);
-        assertType(list2.getElementsType()).isAttribute(SPackageBasic.ATR_LABEL, null);
+        assertType(pedido).isAttrLabel(null);
+        assertType(list1.getElementsType()).isAttrLabel(null);
+        assertType(list2.getElementsType()).isAttrLabel(null);
         list1.getElementsType().asAtr().label("xxx");
-        assertType(pedido).isAttribute(SPackageBasic.ATR_LABEL, null);
-        assertType(list1.getElementsType()).isAttribute(SPackageBasic.ATR_LABEL, "xxx");
-        assertType(list2.getElementsType()).isAttribute(SPackageBasic.ATR_LABEL, null);
+        assertType(pedido).isAttrLabel(null);
+        assertType(list1.getElementsType()).isAttrLabel("xxx");
+        assertType(list2.getElementsType()).isAttrLabel(null);
 
-        assertType(pedido).isAttribute(SPackageBasic.ATR_SUBTITLE, null);
-        assertType(list1.getElementsType()).isAttribute(SPackageBasic.ATR_SUBTITLE, null);
-        assertType(list2.getElementsType()).isAttribute(SPackageBasic.ATR_SUBTITLE, null);
+        assertType(pedido).isAttrSubTitle(null);
+        assertType(list1.getElementsType()).isAttrSubTitle(null);
+        assertType(list2.getElementsType()).isAttrSubTitle(null);
         pedido.asAtr().subtitle("yyy");
-        assertType(pedido).isAttribute(SPackageBasic.ATR_SUBTITLE, "yyy");
-        assertType(list1.getElementsType()).isAttribute(SPackageBasic.ATR_SUBTITLE, "yyy");
-        assertType(list2.getElementsType()).isAttribute(SPackageBasic.ATR_SUBTITLE, "yyy");
+        assertType(pedido).isAttrSubTitle("yyy");
+        assertType(list1.getElementsType()).isAttrSubTitle("yyy");
+        assertType(list2.getElementsType()).isAttrSubTitle("yyy");
     }
 
     @Test
@@ -351,6 +360,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
             public TipoPedido() {
                 super(Pedido.class);
             }
+
             @Override
             protected void onLoadType(TypeBuilder tb) {
                 id = addFieldString("id");
@@ -380,17 +390,17 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertException(() -> list.get(-1), INDICE_INVALIDO);
         assertException(() -> list.getField("[-1]"), " inválido");
         assertException(() -> list.getFieldOpt("[-1]"), " inválido");
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             assertNotNull(list.get(i));
             assertEquals(i, list.get(i).getValue());
-            assertEquals(i, list.getField("[" + i+ "]").getValue());
-            assertEquals(i, list.getFieldOpt("[" + i+ "]").get().getValue());
+            assertEquals(i, list.getField("[" + i + "]").getValue());
+            assertEquals(i, list.getFieldOpt("[" + i + "]").get().getValue());
             assertEquals(i, list.getValueAt(i));
         }
         assertException(() -> list.getValueAt(size), INDICE_INVALIDO);
         assertException(() -> list.get(size), INDICE_INVALIDO);
-        assertException(() -> list.getField("[" + size+ "]"), INDICE_INVALIDO);
-        assertFalse(list.getFieldOpt("[" + size+ "]").isPresent());
+        assertException(() -> list.getField("[" + size + "]"), INDICE_INVALIDO);
+        assertFalse(list.getFieldOpt("[" + size + "]").isPresent());
 
 
         assertEquals((size == 0), list.isEmpty());
@@ -401,36 +411,42 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         SIList<SIInteger> list = pb.createListTypeOf("numbers", STypeInteger.class).newInstance();
 
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             list.addValue(i);
         }
         return list;
     }
 
     @Test
-    public void testCircularReferenceWithListAndCompositePartial() {
-        //TODO apagar esse teste e ativar o debaixo quando tudo estiver funcionado
-        SDictionary dictionary = createTestDictionary();
-        if (!dictionary.getDictionaryConfig().isExtendListElementType()) {
-            realTestCircularReferenceWithListAndComposite();
-        }
-    }
+    public void realTestCircularReferenceWithListAndComposite() {
+        TypeTestTree tTree = createTestDictionary().getType(TypeTestTree.class);
+        AssertionsSType aTree = assertType(tTree);
+        aTree.isAttrLabel("Tree").isComposite(2);
+        aTree.isString("name").isNotRecursiveReference();
+        aTree.isList("childrens").isNotRecursiveReference();
+        aTree.isNotRecursiveReference();
+        aTree.listElementType("childrens").isDirectExtensionOf(tTree).isRecursiveReference();
+        aTree.listElementType("childrens").isAttrLabel("SubTree").isComposite(2);
+        assertType(tTree.name).isNotNull().isSameAs(tTree.getField("name"));
+        assertType(tTree.childrens).isNotNull().isSameAs(tTree.getField("childrens"));
+        assertType(((TypeTestTree) aTree.listElementType("childrens").getTarget()).name).isSameAs(tTree.name);
+        assertType(((TypeTestTree) aTree.listElementType("childrens").getTarget()).childrens).isSameAs(tTree.childrens);
 
-    @Test
-    @Ignore("Desativado até todos os cenários estiverem funcionando")
-    public void testCircularReferenceWithListAndCompositeFull() {
-        realTestCircularReferenceWithListAndComposite();
-    }
+        testTreeRecursiveInstance(tTree, tTree.name, tTree.childrens);
 
-    private void realTestCircularReferenceWithListAndComposite() {
-        TypeTestTree stype = createTestDictionary().getType(TypeTestTree.class);
-        AssertionsSType atype = assertType(stype);
-        atype.isComposite(2);
-        atype.isString("name");
-        atype.isList("childrens");
-        atype.listElementType("childrens").isComposite(2);
-        assertThat((Object) stype.name).isNotNull().isSameAs(stype.getField("name"));
-        assertThat((Object) stype.childrens).isNotNull().isSameAs(stype.getField("childrens"));
+        TypeTestPark tPark = tTree.getDictionary().getType(TypeTestPark.class);
+
+        testCompositeWithTreeFields(tTree, tTree.name, tTree.childrens, tPark);
+
+        AssertionsSType aPark = assertType(tPark);
+        aPark.field("tree").isSameAs(tPark.tree);
+        aPark.field("trees").listElementType().isNotSameAs(tPark.tree).isSameAs(tPark.trees.getElementsType());
+        aPark.field("trees").listElementType().field("name").isSameAs(tPark.trees.getElementsType().name);
+        aPark.field("trees").listElementType().field("childrens").isSameAs(tPark.trees.getElementsType().childrens);
+        aPark.field("trees").listElementType().field("childrens").listElementType().isSameAs(
+                tPark.trees.getElementsType().childrens.getElementsType());
+        aPark.field("trees").listElementType().field("childrens").listElementType().isDirectExtensionOf(
+                tTree.childrens.getElementsType());
     }
 
     @SInfoPackage(name = "circular")
@@ -439,9 +455,10 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         @Override
         protected void carregarDefinicoes(PackageBuilder pb) {
             pb.createType(TypeTestTree.class);
+            pb.createType(TypeTestPark.class);
         }
 
-        @SInfoType(name="item", spackage = TestPackageWithCircularReference.class)
+        @SInfoType(name = "tree", spackage = TestPackageWithCircularReference.class)
         public static final class TypeTestTree extends STypeComposite<SIComposite> {
 
             public STypeString name;
@@ -451,7 +468,107 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
             protected void onLoadType(TypeBuilder tb) {
                 name = addFieldString("name");
                 childrens = addFieldListOf("childrens", TypeTestTree.class);
+                asAtr().label("Tree");
+                childrens.getElementsType().asAtr().label("SubTree");
             }
         }
+
+        @SInfoType(name = "park", spackage = TestPackageWithCircularReference.class)
+        public static final class TypeTestPark extends STypeComposite<SIComposite> {
+
+            public STypeString name;
+            public TypeTestTree tree;
+            public STypeList<TypeTestTree, SIComposite> trees;
+
+            @Override
+            protected void onLoadType(TypeBuilder tb) {
+                name = addFieldString("name");
+                tree = addField("tree", TypeTestTree.class);
+                trees = addFieldListOf("trees", TypeTestTree.class);
+            }
+        }
+    }
+
+    @Test
+    public void testCircularReferenceWithOutTypeDefinedByClass() {
+        PackageBuilder pb = createTestDictionary().createNewPackage("test");
+        STypeComposite<SIComposite> tTree = pb.createCompositeType("tree");
+        STypeString tTreeName = tTree.addFieldString("name");
+        STypeList<STypeComposite<SIComposite>, SIComposite> tTreeChildrens = tTree.addFieldListOf("childrens", tTree);
+        STypeComposite<SIComposite> tSubTree = tTreeChildrens.getElementsType();
+        tTree.asAtr().label("Tree");
+        tSubTree.asAtr().label("SubTree");
+
+        AssertionsSType aTree = assertType(tTree);
+        aTree.isAttrLabel("Tree").isComposite(2);
+        aTree.isString("name").isNotRecursiveReference();
+        aTree.isList("childrens").isNotRecursiveReference();
+        aTree.isNotRecursiveReference();
+        aTree.listElementType("childrens").isDirectExtensionOf(tTree).isRecursiveReference();
+        aTree.listElementType("childrens").isAttrLabel("SubTree").isComposite(2);
+        aTree.listElementType("childrens").field("name").isSameAs(tTreeName);
+        aTree.listElementType("childrens").listElementType("childrens").isSameAs(tSubTree);
+
+        testTreeRecursiveInstance(tTree, tTreeName, tTreeChildrens);
+
+        STypeComposite<SIComposite> tPark = pb.createCompositeType("park");
+        STypeString tParkName = tPark.addFieldString("name");
+        STypeComposite<SIComposite> tParkTree = tPark.addField("tree", tTree);
+        STypeList<STypeComposite<SIComposite>, SIComposite> tParkTrees = tPark.addFieldListOf("trees", tTree);
+
+        testCompositeWithTreeFields(tTree, tTreeName, tTreeChildrens, tPark);
+    }
+
+    private void testCompositeWithTreeFields(STypeComposite<SIComposite> tTree, SType<?> tTreeName,
+            SType<?> tTreeChildrens2, STypeComposite<SIComposite> tPark) {
+        STypeList<STypeComposite<SIComposite>, SIComposite> tTreeChildrens =
+                (STypeList<STypeComposite<SIComposite>, SIComposite>) tTreeChildrens2;
+
+        tPark.getField("tree").asAtr().label("parkTree");
+        tPark.getLocalType("tree.childrens").asAtr().label("parkSubTree");
+        tPark.getLocalType("trees.tree").asAtr().label("parkTree2");
+        tPark.getLocalType("trees.tree.childrens").asAtr().label("parkSubTree2");
+
+        AssertionsSType aPark = assertType(tPark);
+        aPark.isComposite(3);
+        aPark.field("tree").isDirectExtensionOf(tTree);
+        aPark.field("trees").listElementType().isDirectExtensionOf(tTree).isNotSameAs(tPark.getField("tree"));
+        aPark.field("trees").listElementType().field("name").isDirectExtensionOf(tTreeName);
+        aPark.field("trees").listElementType().field("childrens").isDirectExtensionOf(tTreeChildrens);
+        aPark.field("trees").listElementType().field("childrens").listElementType().isDirectExtensionOf(
+                tTreeChildrens.getElementsType());
+
+        SIComposite iPark = tPark.newInstance();
+    }
+
+    private void testTreeRecursiveInstance(STypeComposite<SIComposite> tTree, SType<?> tName, SType<?> tChildrens2) {
+        STypeList<STypeComposite<SIComposite>, SIComposite> tChildrens =
+                (STypeList<STypeComposite<SIComposite>, SIComposite>) tChildrens2;
+
+        SIComposite iTree = tTree.newInstance();
+        iTree.setValue(tName, "a");
+        SIComposite f = iTree.getField(tChildrens).addNew();
+        f.setValue(tName, "b");
+        f = iTree.getField(tChildrens).addNew();
+        f.setValue(tName, "c");
+        f.getField(tChildrens).addNew().setValue(tName, "d");
+
+        AssertionsSInstance aITree = assertInstance(iTree);
+        aITree.isAttrLabel("Tree");
+        aITree.field("childrens[0]").isComposite().isAttrLabel("SubTree");
+        aITree.field("childrens[1].childrens[0]").isComposite().isAttrLabel("SubTree");
+        aITree.isValueEquals("name", "a");
+        aITree.isValueEquals("childrens[0].name", "b");
+        aITree.isValueEquals("childrens[1].name", "c");
+        aITree.isValueEquals("childrens[1].childrens[0].name", "d");
+        aITree.isList("childrens", 2);
+        aITree.isList("childrens[0].childrens", 0);
+        aITree.isList("childrens[1].childrens", 1);
+        aITree.isList("childrens[1].childrens[0].childrens", 0);
+    }
+
+    @Ignore
+    public void testCircularReferenceWithIntermediaryClassAndWithOutTypeDefinedByClass() {
+
     }
 }

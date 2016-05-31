@@ -3,10 +3,8 @@ package br.net.mirante.singular.form.type.core.attachment;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SDictionary;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
@@ -184,7 +182,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
         // Testa apenas com subBloco
         bloco = tipoBloco.newInstance();
-        SIComposite subBloco = bloco.getFieldRecord("subBloco");
+        SIComposite subBloco = bloco.getFieldComposite("subBloco");
         subBloco.getField("subArquivo1", SIAttachment.class).setContent(conteudo1);
         subBloco.getField("subArquivo2", SIAttachment.class).setContent(conteudo2);
 
@@ -202,7 +200,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         anexos.addNew().setContent(conteudo3); // 0
         anexos.addNew().setContent(conteudo2); // 1
         anexos.addNew().setContent(conteudo1); // 2
-        subBloco = bloco.getFieldRecord("subBloco");
+        subBloco = bloco.getFieldComposite("subBloco");
         subBloco.getField("subArquivo1", SIAttachment.class).setContent(conteudo1);
         subBloco.getField("subArquivo2", SIAttachment.class).setContent(conteudo2);
         subBloco.getField("subArquivo3", SIAttachment.class).setContent(conteudo3);
