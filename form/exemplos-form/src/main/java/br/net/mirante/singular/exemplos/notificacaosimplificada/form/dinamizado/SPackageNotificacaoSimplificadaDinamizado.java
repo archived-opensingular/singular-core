@@ -62,7 +62,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     }
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         pb.loadPackage(SPackageNotificacaoSimplificadaBaixoRisco.class);
         pb.createType(STypeLinhaProducaoDinamizado.class);

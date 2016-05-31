@@ -26,7 +26,7 @@ public class SPackageVocabularioControlado extends SPackage {
 
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeEmbalagemPrimaria.class);
         pb.createType(STypeCategoriaRegulatoria.class);
         pb.createType(STypeEmbalagemSecundaria.class);

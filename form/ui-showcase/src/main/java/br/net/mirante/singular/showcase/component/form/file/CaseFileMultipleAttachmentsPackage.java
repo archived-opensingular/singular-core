@@ -19,7 +19,7 @@ resources = @Resource(PageWithAttachment.class))
 public class CaseFileMultipleAttachmentsPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         final STypeAttachmentList layoutsRotulagem = tipoMyForm

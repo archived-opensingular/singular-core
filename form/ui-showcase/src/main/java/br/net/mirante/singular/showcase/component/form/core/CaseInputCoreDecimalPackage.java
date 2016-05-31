@@ -19,7 +19,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreDecimalPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         tipoMyForm.addFieldDecimal("decimalPadrao")
@@ -30,7 +30,7 @@ public class CaseInputCoreDecimalPackage extends SPackage {
                 .tamanhoInteiroMaximo(15)
                 .tamanhoDecimalMaximo(10);
 
-        super.carregarDefinicoes(pb);
+        super.onLoadPackage(pb);
     }
 
 }

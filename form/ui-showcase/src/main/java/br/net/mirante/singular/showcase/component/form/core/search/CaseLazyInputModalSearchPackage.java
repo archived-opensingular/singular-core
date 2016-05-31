@@ -18,7 +18,7 @@ resources = {@Resource(Funcionario.class), @Resource(LazyFuncionarioProvider.cla
 public class CaseLazyInputModalSearchPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 

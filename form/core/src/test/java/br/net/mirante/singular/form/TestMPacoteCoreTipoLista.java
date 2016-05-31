@@ -322,7 +322,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         }
 
         @Override
-        protected void carregarDefinicoes(PackageBuilder pb) {
+        protected void onLoadPackage(PackageBuilder pb) {
             pb.createType(TestTipoListaComCargaInterna.class);
             pb.createType(TipoEmbalagem.class);
             pb.createType(TipoPedido.class);
@@ -453,7 +453,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     public static final class TestPackageWithCircularReference extends SPackage {
 
         @Override
-        protected void carregarDefinicoes(PackageBuilder pb) {
+        protected void onLoadPackage(PackageBuilder pb) {
             pb.createType(TypeTestTree.class);
             pb.createType(TypeTestPark.class);
         }

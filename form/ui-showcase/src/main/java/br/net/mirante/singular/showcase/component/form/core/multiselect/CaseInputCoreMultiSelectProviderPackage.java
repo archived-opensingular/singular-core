@@ -22,7 +22,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreMultiSelectProviderPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> arquivos = tipoMyForm.addFieldListOfComposite("arquivos", "arquivo");

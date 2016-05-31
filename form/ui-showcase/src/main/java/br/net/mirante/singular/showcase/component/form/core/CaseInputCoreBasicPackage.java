@@ -21,7 +21,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreBasicPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         tipoMyForm.addFieldCNPJ("cnpj")
                 .as(AtrBasic.class).label("CNPJ");
@@ -35,6 +35,6 @@ public class CaseInputCoreBasicPackage extends SPackage {
                 .as(AtrBasic.class).label("Descrição");
         tipoMyForm.addField("telefone", STypeTelefoneNacional.class)
                 .as(AtrBasic.class).label("Telefone");
-        super.carregarDefinicoes(pb);
+        super.onLoadPackage(pb);
     }
 }

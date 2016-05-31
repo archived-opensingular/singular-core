@@ -23,7 +23,7 @@ resources = {@Resource(Funcionario.class), @Resource(FuncionarioProvider.class),
 public class CaseInputModalSearchPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
