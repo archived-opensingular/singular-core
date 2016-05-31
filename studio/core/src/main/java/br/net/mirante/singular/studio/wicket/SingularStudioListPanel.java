@@ -23,7 +23,8 @@ import java.util.Iterator;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
-public class SingularStudioListPanel<TYPE extends SType<?>> extends Panel {
+@SuppressWarnings("serial")
+public class SingularStudioListPanel extends Panel {
 
     private final IFunction<Class<SType<?>>, SType<?>> typeLoader;
 
@@ -33,7 +34,7 @@ public class SingularStudioListPanel<TYPE extends SType<?>> extends Panel {
     public SingularStudioListPanel(String id,
                                    IFunction<Class<SType<?>>, SType<?>> typeLoader,
                                    SingularStudioCollectionPanel.PanelControl panelControl,
-                                   CollectionCanvas<TYPE> canvas) {
+                                   CollectionCanvas canvas) {
         super(id);
         this.typeLoader = typeLoader;
 
@@ -42,7 +43,7 @@ public class SingularStudioListPanel<TYPE extends SType<?>> extends Panel {
                 (IBSComponentFactory<BSDataTable<SInstance, String>>) tableId ->
                         buildDataTable(tableId,
                                 canvas.getCollectionInfo(),
-                                canvas.getEditorConfigFunction((TYPE) typeLoader.apply((Class<SType<?>>) canvas.getCollectionInfo().getSTypeClass()))));
+                                canvas.getEditorConfigFunction(typeLoader.apply((Class<SType<?>>) canvas.getCollectionInfo().getSTypeClass()))));
         add(container);
     }
 
@@ -56,11 +57,11 @@ public class SingularStudioListPanel<TYPE extends SType<?>> extends Panel {
         return builder.build(id);
     }
 
-    protected FormPersistence<?> getPersistence(CollectionInfo<TYPE> collectionInfo) {
-        return formPersistenceFactory.get((SType<SInstance>) typeLoader.apply((Class<SType<?>>) collectionInfo.getSTypeClass()));
+    protected FormPersistence<?> getPersistence(CollectionInfo collectionInfo) {
+        return formPersistenceFactory.get(typeLoader.apply((Class<SType<?>>) collectionInfo.getSTypeClass()));
     }
 
-    protected SortableDataProvider<SInstance, String> dataProvider(CollectionInfo<TYPE> collectionInfo) {
+    protected SortableDataProvider<SInstance, String> dataProvider(CollectionInfo collectionInfo) {
         return new SortableDataProvider<SInstance, String>() {
             @Override
             public Iterator<? extends SInstance> iterator(long first, long count) {

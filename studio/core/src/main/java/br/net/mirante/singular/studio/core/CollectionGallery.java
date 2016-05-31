@@ -24,7 +24,7 @@ public class CollectionGallery {
             /*collection info */
                 CollectionInfoBuilder<SType<?>> collectionInfoBuilder = new CollectionInfoBuilder<>();
                 c.collectionInfo(collectionInfoBuilder);
-                collectionCanvasList.add(new CollectionCanvas<>(c, collectionInfoBuilder.getCollectionInfo()));
+                collectionCanvasList.add(new CollectionCanvas(c, collectionInfoBuilder.getCollectionInfo()));
             }
         }
     }

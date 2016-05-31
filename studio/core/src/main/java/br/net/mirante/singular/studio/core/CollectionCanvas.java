@@ -6,29 +6,29 @@ import br.net.mirante.singular.form.SType;
 import java.io.Serializable;
 import java.util.Optional;
 
-public class CollectionCanvas<T extends SType<?>> implements Serializable{
-    private CollectionDefinition<T> collectionDefinition;
-    private CollectionInfo<T> collectionInfo;
-    private IFunction<T, CollectionEditorConfig> editorConfigFunction = t -> {
+public class CollectionCanvas implements Serializable {
+    private CollectionDefinition collectionDefinition;
+    private CollectionInfo collectionInfo;
+    private IFunction<SType<?>, CollectionEditorConfig> editorConfigFunction = t -> {
         CollectionEditorConfigBuilder collectionEditorConfigBuilder = new CollectionEditorConfigBuilder();
         collectionDefinition.configEditor(collectionEditorConfigBuilder, t);
         return collectionEditorConfigBuilder.getEditor();
     };
 
-    CollectionCanvas(CollectionDefinition<T> collectionDefinition, CollectionInfo<T> collectionInfo) {
+    CollectionCanvas(CollectionDefinition collectionDefinition, CollectionInfo collectionInfo) {
         this.collectionDefinition = collectionDefinition;
         this.collectionInfo = collectionInfo;
     }
 
-    public CollectionInfo<T> getCollectionInfo() {
+    public CollectionInfo getCollectionInfo() {
         return collectionInfo;
     }
 
-    public CollectionEditorConfig getEditorConfigFunction(T type) {
+    public CollectionEditorConfig getEditorConfigFunction(SType<?> type) {
         return editorConfigFunction.apply(type);
     }
 
-    public CollectionEditorConfig getEditorConfigFunction(IFunction<Class<T>, Optional<T>> typeLoader) {
+    public CollectionEditorConfig getEditorConfigFunction(IFunction<Class<SType<?>>, Optional<SType<?>>> typeLoader) {
         return editorConfigFunction.apply(typeLoader.apply(collectionInfo.getSTypeClass()).get());
     }
 }

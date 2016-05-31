@@ -7,16 +7,16 @@ import java.io.Serializable;
 /**
  * Configuração do editor do studio-form não serializável.
  */
-public class CollectionInfo<TYPE extends SType<?>> implements Serializable {
+public class CollectionInfo implements Serializable {
 
-    private Class<TYPE> clazz;
+    private Class<SType<?>> clazz;
 
 
-    public Class<TYPE> getSTypeClass() {
+    public Class<SType<?>> getSTypeClass() {
         return clazz;
     }
 
-    void setSTypeClass(Class<TYPE> clazz) {
+    void setSTypeClass(Class<SType<?>> clazz) {
         this.clazz = clazz;
     }
 }

@@ -2,10 +2,12 @@ package br.net.mirante.singular.studio.core;
 
 import br.net.mirante.singular.form.SType;
 
+import java.io.Serializable;
+
 /**
  * @author Daniel C. Bordin
  */
-public interface CollectionDefinition<TYPE extends SType<?>> {
+public interface CollectionDefinition<TYPE extends SType<?>> extends Serializable {
 
     /**
      * configuracao do renderizador do studio-form:
