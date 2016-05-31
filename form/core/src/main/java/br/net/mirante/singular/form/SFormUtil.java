@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 
 import br.net.mirante.singular.commons.internal.function.SupplierUtil;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
@@ -119,23 +120,16 @@ public final class SFormUtil {
     public static String generateUserFriendlyName(String simpleName) {
         final Pattern LOWER_UPPER = Pattern.compile("(.*?[a-z])([A-Z].*?)");
         final Pattern PREFIXO_SIGLA = Pattern.compile("([A-Z]+)([A-Z][a-z])");
+        final ImmutableSet<String> UPPERCASE_SPECIAL_CASES = ImmutableSet.of("id", "url");
+
         return capitalize(Stream.of(simpleName)
             .flatMap(s -> Stream.of(LOWER_UPPER.matcher(s).replaceAll("$1-$2")))
             .flatMap(s -> Stream.of(PREFIXO_SIGLA.matcher(s).replaceAll("$1-$2")))
             .flatMap(s -> Stream.of(s.split("[-_]")))
-            .map(s -> adjustCapitalization(s))
+            .map(s -> ((isAllUpperCase(s)) ? s : uncapitalize(s)))
+            .map(s -> (UPPERCASE_SPECIAL_CASES.contains(s)) ? capitalize(s) : s)
             .collect(joining(" ")));
     }
-    private static String adjustCapitalization(String s) {
-        int len = s.length();
-        if (isAllUpperCase(s))
-            return s;
-        if (len > 2)
-            return capitalize(s);
-        else
-            return uncapitalize(s);
-    }
-
     public static String generateUserFriendlyPath(SInstance instance) {
         return generateUserFriendlyPath(instance, null);
     }

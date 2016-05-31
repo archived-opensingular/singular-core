@@ -18,11 +18,11 @@ public class TestMFormUtil extends TestCaseForm {
 
     @Test
     public void testGenerateUserFriendlyName() {
-        assertEquals("Dados Pessoais", SFormUtil.generateUserFriendlyName("dadosPessoais"));
-        assertEquals("Informacoes de Contato", SFormUtil.generateUserFriendlyName("informacoesDeContato"));
+        assertEquals("Dados pessoais", SFormUtil.generateUserFriendlyName("dadosPessoais"));
+        assertEquals("Informacoes de contato", SFormUtil.generateUserFriendlyName("informacoesDeContato"));
         assertEquals("Nome", SFormUtil.generateUserFriendlyName("nome"));
-        assertEquals("Endereco Comercial", SFormUtil.generateUserFriendlyName("endereco-comercial"));
-        assertEquals("URL Origem", SFormUtil.generateUserFriendlyName("URLOrigem"));
+        assertEquals("Endereco comercial", SFormUtil.generateUserFriendlyName("endereco-comercial"));
+        assertEquals("URL origem", SFormUtil.generateUserFriendlyName("URLOrigem"));
         assertEquals("ABCDEF", SFormUtil.generateUserFriendlyName("ABCDEF"));
     }
 
