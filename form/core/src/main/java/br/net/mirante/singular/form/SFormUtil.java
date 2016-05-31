@@ -9,6 +9,7 @@ import static java.util.stream.Collectors.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -123,13 +124,14 @@ public final class SFormUtil {
         final ImmutableSet<String> UPPERCASE_SPECIAL_CASES = ImmutableSet.of("id", "url");
 
         return capitalize(Stream.of(simpleName)
-            .flatMap(s -> Stream.of(LOWER_UPPER.matcher(s).replaceAll("$1-$2")))
-            .flatMap(s -> Stream.of(PREFIXO_SIGLA.matcher(s).replaceAll("$1-$2")))
-            .flatMap(s -> Stream.of(s.split("[-_]")))
+            .map(s -> LOWER_UPPER.matcher(s).replaceAll("$1-$2"))
+            .map(s -> PREFIXO_SIGLA.matcher(s).replaceAll("$1-$2"))
+            .flatMap(s -> Arrays.asList(s.split("[-_]+")).stream())
             .map(s -> ((isAllUpperCase(s)) ? s : uncapitalize(s)))
             .map(s -> (UPPERCASE_SPECIAL_CASES.contains(s)) ? capitalize(s) : s)
             .collect(joining(" ")));
     }
+
     public static String generateUserFriendlyPath(SInstance instance) {
         return generateUserFriendlyPath(instance, null);
     }
