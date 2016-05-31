@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import javax.lang.model.SourceVersion;
 
@@ -123,7 +122,7 @@ public final class SFormUtil {
         final Pattern PREFIXO_SIGLA = Pattern.compile("([A-Z]+)([A-Z][a-z])");
         final ImmutableSet<String> UPPERCASE_SPECIAL_CASES = ImmutableSet.of("id", "url");
 
-        return capitalize(Stream.of(simpleName)
+        return capitalize(Arrays.asList(simpleName).stream()
             .map(s -> LOWER_UPPER.matcher(s).replaceAll("$1-$2"))
             .map(s -> PREFIXO_SIGLA.matcher(s).replaceAll("$1-$2"))
             .flatMap(s -> Arrays.asList(s.split("[-_]+")).stream())
