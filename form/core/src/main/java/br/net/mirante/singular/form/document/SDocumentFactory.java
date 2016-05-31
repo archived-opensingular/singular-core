@@ -18,7 +18,7 @@ import br.net.mirante.singular.form.io.FormSerializationUtil;
  * fábrica de acordo com suas necessidades ou usar
  * {@link SDocumentFactory#empty()}.
  * </p>
- * >p> As instâncias criadas já estarão preparadas para serialização se
+ * <p> As instâncias criadas já estarão preparadas para serialização se
  * necessário (ver {@link FormSerializationUtil#checkIfSerializable(SInstance)}
  * ).
  * </p>

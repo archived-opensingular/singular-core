@@ -432,42 +432,21 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertType(((TypeTestTree) aTree.listElementType("childrens").getTarget()).name).isSameAs(tTree.name);
         assertType(((TypeTestTree) aTree.listElementType("childrens").getTarget()).childrens).isSameAs(tTree.childrens);
 
-
-        SIComposite iTree = tTree.newInstance();
-        iTree.setValue(tTree.name, "a");
-        SIComposite f = iTree.getField(tTree.childrens).addNew();
-        f.setValue(tTree.name, "b");
-        f = iTree.getField(tTree.childrens).addNew();
-        f.setValue(tTree.name, "c");
-        f.getField(tTree.childrens).addNew().setValue(tTree.name, "d");
-
-        AssertionsSInstance aITree = assertInstance(iTree);
-        aITree.isAttrLabel("Tree");
-        aITree.field("childrens[0]").isComposite().isAttrLabel("SubTree");
-        aITree.isValueEquals("name", "a");
-        aITree.isValueEquals("childrens[0].name", "b");
-        aITree.isValueEquals("childrens[1].name", "c");
-        aITree.isValueEquals("childrens[1].childrens[0].name", "d");
-        aITree.isList("childrens", 2);
-        aITree.isList("childrens[0].childrens", 0);
-        aITree.isList("childrens[1].childrens", 1);
-        aITree.isList("childrens[1].childrens[0].childrens", 0);
+        testTreeRecursiveInstance(tTree, tTree.name, tTree.childrens);
 
         TypeTestPark tPark = tTree.getDictionary().getType(TypeTestPark.class);
-        AssertionsSType aPark = assertType(tPark);
-        aPark.isComposite(3);
-        aPark.field("tree").isDirectExtensionOf(tTree).isSameAs(tPark.tree);
-        aPark.field("trees").listElementType().isDirectExtensionOf(tTree).isNotSameAs(tPark.tree);
-        aPark.field("trees").listElementType().isDirectExtensionOf(tTree).isNotSameAs(tPark.tree);
-        aPark.field("trees").listElementType().isSameAs(tPark.trees.getElementsType());
-        aPark.field("trees").listElementType().field("name").isSameAs(tPark.trees.getElementsType().name);
-        aPark.field("trees").listElementType().field("name").isDirectExtensionOf(tTree.name);
-        aPark.field("trees").listElementType().field("childrens").isSameAs(tPark.trees.getElementsType().childrens);
-        aPark.field("trees").listElementType().field("childrens").isDirectExtensionOf(tTree.childrens);
-        aPark.field("trees").listElementType().field("childrens").listElementType().isSameAs(tPark.trees.getElementsType().childrens.getElementsType());
-        aPark.field("trees").listElementType().field("childrens").listElementType().isDirectExtensionOf(tTree.childrens.getElementsType());
 
-        SIComposite iPark = tPark.newInstance();
+        testCompositeWithTreeFields(tTree, tTree.name, tTree.childrens, tPark);
+
+        AssertionsSType aPark = assertType(tPark);
+        aPark.field("tree").isSameAs(tPark.tree);
+        aPark.field("trees").listElementType().isNotSameAs(tPark.tree).isSameAs(tPark.trees.getElementsType());
+        aPark.field("trees").listElementType().field("name").isSameAs(tPark.trees.getElementsType().name);
+        aPark.field("trees").listElementType().field("childrens").isSameAs(tPark.trees.getElementsType().childrens);
+        aPark.field("trees").listElementType().field("childrens").listElementType().isSameAs(
+                tPark.trees.getElementsType().childrens.getElementsType());
+        aPark.field("trees").listElementType().field("childrens").listElementType().isDirectExtensionOf(
+                tTree.childrens.getElementsType());
     }
 
     @SInfoPackage(name = "circular")
@@ -479,7 +458,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
             pb.createType(TypeTestPark.class);
         }
 
-        @SInfoType(name = "item", spackage = TestPackageWithCircularReference.class)
+        @SInfoType(name = "tree", spackage = TestPackageWithCircularReference.class)
         public static final class TypeTestTree extends STypeComposite<SIComposite> {
 
             public STypeString name;
@@ -508,5 +487,88 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
                 trees = addFieldListOf("trees", TypeTestTree.class);
             }
         }
+    }
+
+    @Test
+    public void testCircularReferenceWithOutTypeDefinedByClass() {
+        PackageBuilder pb = createTestDictionary().createNewPackage("test");
+        STypeComposite<SIComposite> tTree = pb.createCompositeType("tree");
+        STypeString tTreeName = tTree.addFieldString("name");
+        STypeList<STypeComposite<SIComposite>, SIComposite> tTreeChildrens = tTree.addFieldListOf("childrens", tTree);
+        STypeComposite<SIComposite> tSubTree = tTreeChildrens.getElementsType();
+        tTree.asAtr().label("Tree");
+        tSubTree.asAtr().label("SubTree");
+
+        AssertionsSType aTree = assertType(tTree);
+        aTree.isAttrLabel("Tree").isComposite(2);
+        aTree.isString("name").isNotRecursiveReference();
+        aTree.isList("childrens").isNotRecursiveReference();
+        aTree.isNotRecursiveReference();
+        aTree.listElementType("childrens").isDirectExtensionOf(tTree).isRecursiveReference();
+        aTree.listElementType("childrens").isAttrLabel("SubTree").isComposite(2);
+        aTree.listElementType("childrens").field("name").isSameAs(tTreeName);
+        aTree.listElementType("childrens").listElementType("childrens").isSameAs(tSubTree);
+
+        testTreeRecursiveInstance(tTree, tTreeName, tTreeChildrens);
+
+        STypeComposite<SIComposite> tPark = pb.createCompositeType("park");
+        STypeString tParkName = tPark.addFieldString("name");
+        STypeComposite<SIComposite> tParkTree = tPark.addField("tree", tTree);
+        STypeList<STypeComposite<SIComposite>, SIComposite> tParkTrees = tPark.addFieldListOf("trees", tTree);
+
+        testCompositeWithTreeFields(tTree, tTreeName, tTreeChildrens, tPark);
+    }
+
+    private void testCompositeWithTreeFields(STypeComposite<SIComposite> tTree, SType<?> tTreeName,
+            SType<?> tTreeChildrens2, STypeComposite<SIComposite> tPark) {
+        STypeList<STypeComposite<SIComposite>, SIComposite> tTreeChildrens =
+                (STypeList<STypeComposite<SIComposite>, SIComposite>) tTreeChildrens2;
+
+        tPark.getField("tree").asAtr().label("parkTree");
+        tPark.getLocalType("tree.childrens").asAtr().label("parkSubTree");
+        tPark.getLocalType("trees.tree").asAtr().label("parkTree2");
+        tPark.getLocalType("trees.tree.childrens").asAtr().label("parkSubTree2");
+
+        AssertionsSType aPark = assertType(tPark);
+        aPark.isComposite(3);
+        aPark.field("tree").isDirectExtensionOf(tTree);
+        aPark.field("trees").listElementType().isDirectExtensionOf(tTree).isNotSameAs(tPark.getField("tree"));
+        aPark.field("trees").listElementType().field("name").isDirectExtensionOf(tTreeName);
+        aPark.field("trees").listElementType().field("childrens").isDirectExtensionOf(tTreeChildrens);
+        aPark.field("trees").listElementType().field("childrens").listElementType().isDirectExtensionOf(
+                tTreeChildrens.getElementsType());
+
+        SIComposite iPark = tPark.newInstance();
+    }
+
+    private void testTreeRecursiveInstance(STypeComposite<SIComposite> tTree, SType<?> tName, SType<?> tChildrens2) {
+        STypeList<STypeComposite<SIComposite>, SIComposite> tChildrens =
+                (STypeList<STypeComposite<SIComposite>, SIComposite>) tChildrens2;
+
+        SIComposite iTree = tTree.newInstance();
+        iTree.setValue(tName, "a");
+        SIComposite f = iTree.getField(tChildrens).addNew();
+        f.setValue(tName, "b");
+        f = iTree.getField(tChildrens).addNew();
+        f.setValue(tName, "c");
+        f.getField(tChildrens).addNew().setValue(tName, "d");
+
+        AssertionsSInstance aITree = assertInstance(iTree);
+        aITree.isAttrLabel("Tree");
+        aITree.field("childrens[0]").isComposite().isAttrLabel("SubTree");
+        aITree.field("childrens[1].childrens[0]").isComposite().isAttrLabel("SubTree");
+        aITree.isValueEquals("name", "a");
+        aITree.isValueEquals("childrens[0].name", "b");
+        aITree.isValueEquals("childrens[1].name", "c");
+        aITree.isValueEquals("childrens[1].childrens[0].name", "d");
+        aITree.isList("childrens", 2);
+        aITree.isList("childrens[0].childrens", 0);
+        aITree.isList("childrens[1].childrens", 1);
+        aITree.isList("childrens[1].childrens[0].childrens", 0);
+    }
+
+    @Ignore
+    public void testCircularReferenceWithIntermediaryClassAndWithOutTypeDefinedByClass() {
+
     }
 }

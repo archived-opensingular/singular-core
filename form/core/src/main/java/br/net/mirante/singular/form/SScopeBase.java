@@ -46,13 +46,16 @@ public abstract class SScopeBase implements SScope {
         if (isRecursiveReference()) {
             //Se é uma referência recursiva, não deve criar um novo mapa local e sim usar o mapa do tipo original
             // para o qual aponta
-            SScope parent = getParentScope();
-            if (parent.getClass() != getClass()) {
-                //Verificação de sanidade
-                throw new SingularFormException(
-                        "Erro interno: uma referência recursiva não extende um tipo que é da mesma classe", this);
-            } else if (parent instanceof  SScopeBase) {
-                return ((SScopeBase) parent).getLocalTypesMap();
+            if (this instanceof SType) {
+                SType<?> superType = ((SType<?>) this).getSuperType();
+                if (superType == null || superType.getClass() != getClass()) {
+                    //Verificação de sanidade
+                    throw new SingularFormException(
+                            "Erro interno: uma referência recursiva não extende um tipo que é da mesma classe " +
+                                    "(superType()=" + superType + ")", this);
+                } else {
+                    return ((SScopeBase) superType).getLocalTypesMap();
+                }
             }
         }
         return localTypes == null ? Collections.emptyMap() : localTypes;
