@@ -54,9 +54,10 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
         if (mi != null && mi.getValue() != null) {
-            return mi.getType().asAtrProvider().getDisplayFunction().apply(
-                    (Serializable) mi.getType().asAtrProvider().getConverter().toObject(mi)
-            );
+            Serializable instanceObject = mi.getType().asAtrProvider().getConverter().toObject(mi);
+            if (instanceObject != null) {
+                return mi.getType().asAtrProvider().getDisplayFunction().apply(instanceObject);
+            }
         }
         return StringUtils.EMPTY;
     }

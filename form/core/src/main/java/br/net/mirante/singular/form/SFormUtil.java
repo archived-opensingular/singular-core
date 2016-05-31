@@ -5,7 +5,11 @@
 
 package br.net.mirante.singular.form;
 
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,15 +20,16 @@ import java.util.regex.Pattern;
 
 import javax.lang.model.SourceVersion;
 
-import br.net.mirante.singular.form.type.country.brazil.SPackageCountryBrazil;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 
 import br.net.mirante.singular.commons.internal.function.SupplierUtil;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.SPackageBootstrap;
+import br.net.mirante.singular.form.type.country.brazil.SPackageCountryBrazil;
 import br.net.mirante.singular.form.type.util.SPackageUtil;
 
 public final class SFormUtil {
@@ -112,6 +117,20 @@ public final class SFormUtil {
         return null;
     }
 
+    public static String generateUserFriendlyName(String simpleName) {
+        final Pattern LOWER_UPPER = Pattern.compile("(.*?[a-z])([A-Z].*?)");
+        final Pattern PREFIXO_SIGLA = Pattern.compile("([A-Z]+)([A-Z][a-z])");
+        final ImmutableSet<String> UPPERCASE_SPECIAL_CASES = ImmutableSet.of("id", "url");
+
+        return capitalize(Arrays.asList(simpleName).stream()
+            .map(s -> LOWER_UPPER.matcher(s).replaceAll("$1-$2"))
+            .map(s -> PREFIXO_SIGLA.matcher(s).replaceAll("$1-$2"))
+            .flatMap(s -> Arrays.asList(s.split("[-_]+")).stream())
+            .map(s -> ((isAllUpperCase(s)) ? s : uncapitalize(s)))
+            .map(s -> (UPPERCASE_SPECIAL_CASES.contains(s)) ? capitalize(s) : s)
+            .collect(joining(" ")));
+    }
+
     public static String generateUserFriendlyPath(SInstance instance) {
         return generateUserFriendlyPath(instance, null);
     }
@@ -150,7 +169,7 @@ public final class SFormUtil {
         String packageName = getInfoPackageNameOrException(packageClass);
         if (StringUtils.isBlank(infoType.name())) {
             throw new SingularFormException("O tipo " + typeClass.getName() + " não define o nome do tipo por meio da anotação @"
-                    + SInfoType.class.getSimpleName());
+                + SInfoType.class.getSimpleName());
         }
         return packageName + '.' + infoType.name();
     }
@@ -159,7 +178,7 @@ public final class SFormUtil {
         SInfoType mFormTipo = typeClass.getAnnotation(SInfoType.class);
         if (mFormTipo == null) {
             throw new SingularFormException(
-                    "O tipo '" + typeClass.getName() + " não possui a anotação @" + SInfoType.class.getSimpleName() + " em sua definição.");
+                "O tipo '" + typeClass.getName() + " não possui a anotação @" + SInfoType.class.getSimpleName() + " em sua definição.");
         }
         return mFormTipo;
     }
@@ -168,7 +187,7 @@ public final class SFormUtil {
         Class<? extends SPackage> sPackage = getInfoType(typeClass).spackage();
         if (sPackage == null) {
             throw new SingularFormException(
-                    "O tipo '" + typeClass.getName() + "' não define o atributo 'pacote' na anotação @" + SInfoType.class.getSimpleName());
+                "O tipo '" + typeClass.getName() + "' não define o atributo 'pacote' na anotação @" + SInfoType.class.getSimpleName());
         }
         return sPackage;
     }
@@ -186,14 +205,14 @@ public final class SFormUtil {
         String packageName = getInfoPackageName(packageClass);
         if (packageName == null) {
             throw new SingularFormException("A classe " + packageClass.getName() + " não define o nome do pacote por meio da anotação @"
-                    + SInfoPackage.class.getSimpleName());
+                + SInfoPackage.class.getSimpleName());
         }
         return packageName;
     }
 
     private static volatile Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
 
-    private static Map<String,Class<? extends SPackage>> getSingularPackages() {
+    private static Map<String, Class<? extends SPackage>> getSingularPackages() {
         if (singularPackages == null) {
             singularPackages = SupplierUtil.cached(() -> {
                 Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
@@ -226,7 +245,7 @@ public final class SFormUtil {
         String selected = null;
         for (String candidate : packages.keySet()) {
             if (pathFullName.startsWith(candidate) && pathFullName.charAt(candidate.length()) == '.'
-                    && (selected == null || selected.length() < candidate.length())) {
+                && (selected == null || selected.length() < candidate.length())) {
                 selected = candidate;
             }
         }

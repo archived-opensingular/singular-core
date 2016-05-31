@@ -31,6 +31,9 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_LABEL, valor);
         return this;
     }
+    public AtrBasic noLabel() {
+        return label("");
+    }
 
     public AtrBasic itemLabel(String valor) {
         setAttributeValue(SPackageBasic.ATR_ITEM_LABEL, valor);
