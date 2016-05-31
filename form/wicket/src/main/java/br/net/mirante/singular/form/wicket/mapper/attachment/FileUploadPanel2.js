@@ -16,6 +16,7 @@ if(window.FileUploadPanel == undefined){
             done: function (e, data) {
                 console.log(e,data);
                 $.each(data.result.files, function (index, file) {
+                    console.log('f',file, $('#' + params.files_id ));
                     $('#' + params.files_id ).append(
                         $('<p/>').append(
                             $('<a />')

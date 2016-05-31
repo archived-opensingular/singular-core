@@ -109,7 +109,6 @@ class UploadBehavior extends Behavior implements IResourceListener {
 
     private void processFileItem(JSONArray fileGroup, FileItem item) throws Exception {
         if (!item.isFormField()) {
-            Thread.sleep(10000);//TODO: Just to slow down things
             IAttachmentRef ref = temporaryHandler().addAttachment(item.getInputStream());
             fileGroup.put(createJsonFile(item, ref));
             instance.setFileName(item.getName());

@@ -120,7 +120,7 @@ public class FileUploadPanel2 extends Panel {
                 " $(function () { \n" +
                 "     var params = { \n" +
                 "             file_field_id: '"+fileField.getMarkupId()+"', \n" +
-                "             files_id : 'files_' +'"+ filesContainer.getMarkupId()+"', \n" +
+                "             files_id : '"+ filesContainer.getMarkupId()+"', \n" +
                 "             progress_bar_id : '"+progressBar.getMarkupId()+"', \n" +
                 "  \n" +
                 "             name_id: '"+nameField.getMarkupId()+"', \n" +

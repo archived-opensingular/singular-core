@@ -19,6 +19,9 @@ public class AttachmentMapper extends ControlsFieldComponentAbstractMapper {
     @Override
     public Component appendInput() {
 
+        /*final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDITION);
+        formGroup.appendDiv(container);
+        return container.getUploadField();*/
         final FileUploadPanel2 container = new FileUploadPanel2("container", (IModel<SIAttachment>) model, ViewMode.EDITION);
         formGroup.appendDiv(container);
         return container.getUploadField();

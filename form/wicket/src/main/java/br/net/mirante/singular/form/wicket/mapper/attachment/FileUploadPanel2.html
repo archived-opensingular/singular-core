@@ -7,8 +7,10 @@
     <input type="hidden" wicket:id="file_size" />
     <input type="hidden" wicket:id="file_id" />
 
-    <div style="width: 100%;" class="input-group">
-        <div class="files" wicket:id="files">
+    <div style="width: 100%;">
+        <div class="input-group" style="white-space: nowrap; overflow: hidden !important;">
+            <i class="fa fa-file"></i>&nbsp;
+            <div class="files" wicket:id="files"></div>
         </div>
         <div class="progress" wicket:id="progress">
             <div class="progress-bar progress-bar-success" ></div>
