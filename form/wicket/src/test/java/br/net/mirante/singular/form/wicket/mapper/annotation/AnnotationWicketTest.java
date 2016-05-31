@@ -31,7 +31,6 @@ public class AnnotationWicketTest {
         @Test
         public void rendersSomethingAsATitle() {
             tester.assertContains("Comentários");
-            tester.assertContainsNot("Comentários sobre");
         }
 
         @Test public void rendersAButtonForEachAnnotatedFiedl(){
