@@ -2,18 +2,41 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
 <wicket:panel>
+    <style>
+        .fileDummyField {
+            position: absolute !important;
+        }
+
+        .wupb-container{
+            padding-bottom: 5px;
+        }
+
+        .attachmentShadow {
+            background: -webkit-linear-gradient(right, transparent, white);
+            background: -o-linear-gradient(right, transparent, white);
+            background: -moz-linear-gradient(right, transparent, white);
+            background: linear-gradient( to right, transparent, white);
+            width: 55px;
+            height: 30px;
+            position: absolute;
+            float: right;
+            right: 5px;
+            top: 0;
+            pointer-events: none;
+        }
+    </style>
+
     <input type="hidden" wicket:id="file_name" />
     <input type="hidden" wicket:id="file_hash" />
     <input type="hidden" wicket:id="file_size" />
     <input type="hidden" wicket:id="file_id" />
 
     <div style="width: 100%;">
-        <div class="input-group" style="white-space: nowrap; overflow: hidden !important;">
-            <i class="fa fa-file"></i>&nbsp;
-            <div class="files" wicket:id="files"></div>
-        </div>
-        <div class="progress" wicket:id="progress">
-            <div class="progress-bar progress-bar-success" ></div>
+        <div style="white-space: nowrap;">
+            <div class="form-control fileDummyField"  style="overflow: hidden !important;">
+                <i class="fa fa-file" style="float: left;"></i>&nbsp;
+                <div class="files" wicket:id="files" style="float: left;padding-left: 7px;"></div>
+            </div>
         </div>
         <span class="input-group-btn" style="float: right; padding-left: 7px;">
             <span class="btn btn-sm blue fileinput-button" >
@@ -22,6 +45,9 @@
                 <input type="file" wicket:id="fileUpload" />
             </span>
         </span>
+        <div class="progress" wicket:id="progress">
+            <div class="progress-bar progress-bar-success" ></div>
+        </div>
     </div>
 
 </wicket:panel>
