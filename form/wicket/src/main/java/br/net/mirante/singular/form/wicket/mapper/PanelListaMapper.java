@@ -56,11 +56,11 @@ public class PanelListaMapper extends AbstractListaMapper {
                     heading.appendTag("span", new Label("_title", label));
                     heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
-                    if ((view instanceof SViewListByForm)
-                            && ((SViewListByForm) view).isNewEnabled()
-                            && viewMode.isEdition()) {
-                        appendAddButton(listaModel, form, heading, false);
-                    }
+//                    if ((view instanceof SViewListByForm)
+//                            && ((SViewListByForm) view).isNewEnabled()
+//                            && viewMode.isEdition()) {
+//                        appendAddButton(listaModel, form, heading, false);
+//                    }
                 },
                 (content, form) -> {
 
@@ -76,7 +76,28 @@ public class PanelListaMapper extends AbstractListaMapper {
                     content.getParent().add(dependsOnModifier(listaModel));
                 },
                 (footer, form) -> {
-                    footer.setVisible(false);
+//                    footer.setVisible(false);
+                    final String markup = "" +
+                            "<button wicket:id=\"_add\" " +
+                            "       class=\"btn btn-add\" type=\"button\" " +
+                            "       title=\"Adicionar item\">" +
+                            "       <i class=\"fa fa-plus\"></i>" +
+                            "           Adicionar item" +
+                            "</button>";
+                    final TemplatePanel template = footer.newTemplateTag(tp -> markup);
+                    if (((SViewListByForm) view).isNewEnabled() && viewMode.isEdition()) {
+                        AddButton btn = new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
+                        template.add(btn);
+                    }else{
+                        footer.setVisible(false);
+                    }
+
+                    footer.add(new ClassAttributeModifier(){
+                        protected Set<String> update(Set<String> oldClasses) {
+                            oldClasses.remove("text-right");
+                            return oldClasses;
+                        }
+                    });
                 });
 
         return panel;
