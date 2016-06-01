@@ -74,6 +74,9 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
         this.documentFactoryRef = singularFormConfig.getDocumentFactory().getDocumentFactoryRef();
     }
 
+
+
+
     /**
      * Cria ou substitui o container
      */
