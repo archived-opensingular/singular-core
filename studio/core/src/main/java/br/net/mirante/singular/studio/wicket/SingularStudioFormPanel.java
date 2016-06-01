@@ -7,21 +7,26 @@ import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
 import br.net.mirante.singular.studio.spring.StudioCollectionToolboxBean;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.Form;
 
 import javax.inject.Inject;
 
 @SuppressWarnings("serial")
-public class SingularStudioFormPanel  extends SingularStudioPanel {
+public class SingularStudioFormPanel extends SingularStudioPanel {
 
     @Inject
     private StudioCollectionToolboxBean studioCollectionToolboxBean;
+
+    private Form<?> form;
+    private BSContainer formPanel;
 
 
     /**
      * Construtor do painel
      *
-     * @param id                 o markup id wicket
+     * @param id           o markup id wicket
      * @param panelControl
      * @param formID
      * @param canvas
@@ -33,17 +38,21 @@ public class SingularStudioFormPanel  extends SingularStudioPanel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        queue(new WebMarkupContainer("portletContainer"));
-        queue(new SingularFormPanel<Class<SType<?>>>("portletBodyContainer", studioCollectionToolboxBean){
-            @Override
-            protected SInstance createInstance(SFormConfig<Class<SType<?>>> singularFormConfig) {
-                return studioCollectionToolboxBean.getDocumentFactory().createInstance(new RefType() {
+
+        queue(form = new Form<>("studio-form"));
+        queue(formPanel = new BSContainer("form-panel"));
+
+        formPanel.appendTag("div", true, "",
+                new SingularFormPanel<Class<SType<?>>>("singular-form-panel", studioCollectionToolboxBean) {
                     @Override
-                    protected SType<?> retrieve() {
-                        return sType();
+                    protected SInstance createInstance(SFormConfig<Class<SType<?>>> singularFormConfig) {
+                        return studioCollectionToolboxBean.getDocumentFactory().createInstance(new RefType() {
+                            @Override
+                            protected SType<?> retrieve() {
+                                return sType();
+                            }
+                        });
                     }
                 });
-            }
-        });
     }
 }

@@ -34,7 +34,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
         } else if (component instanceof SingularFormComponentPanel) {
             component.add(new AjaxUpdateSingularFormComponentPanel(model, listener));
         } else if (!(component instanceof FormComponentPanel<?>)) {
-            component.add(new AjaxUpdateInputBehavior("change", model, listener));
+            component.add(new AjaxUpdateInputBehavior("blur", model, listener));
         } else {
             LoggerFactory.getLogger(WicketBuildContext.class).warn("Atualização ajax não suportada para " + component);
         }
