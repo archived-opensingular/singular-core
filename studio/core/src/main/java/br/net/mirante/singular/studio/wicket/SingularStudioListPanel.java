@@ -10,11 +10,13 @@ import br.net.mirante.singular.studio.core.CollectionEditorConfig;
 import br.net.mirante.singular.studio.core.CollectionInfo;
 import br.net.mirante.singular.studio.persistence.FormPersistenceFactory;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
@@ -38,13 +40,26 @@ public class SingularStudioListPanel extends Panel {
         super(id);
         this.typeLoader = typeLoader;
 
-        BSContainer container = new BSContainer("listPanelContent");
-        container.appendTag("table", true, "",
+
+        BSContainer portletBodyContainer = new BSContainer("portletBodyContainer");
+        BSGrid grid = portletBodyContainer.newGrid();
+        grid.newRow();
+        //TODO adicionar filtro e etc.
+
+
+        BSContainer listPanelContent = new BSContainer("listPanelContent");
+        listPanelContent.appendTag("table", true, " class=\"table table-striped table-hover dataTable table-bordered\" ",
                 (IBSComponentFactory<BSDataTable<SInstance, String>>) tableId ->
                         buildDataTable(tableId,
                                 canvas.getCollectionInfo(),
                                 canvas.getEditorConfigFunction(typeLoader.apply((Class<SType<?>>) canvas.getCollectionInfo().getSTypeClass()))));
-        add(container);
+
+
+        queue(new WebMarkupContainer("portletContainer"));
+        queue(portletBodyContainer);
+        portletBodyContainer.appendTag("div", true, "class=\"dataTables_wrapper no-footer table-responsive  \"", listPanelContent);
+
+
     }
 
 
