@@ -10,14 +10,14 @@ import br.net.mirante.singular.form.persistence.FormPersistenceInMemory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FormPersistenceFactory {
+public class StudioCollectionPersistenceFactory {
 
     private SDocumentFactory documentFactory;
     private Map<SType<?>, FormPersistence<?>> repositoryMap = new HashMap<>();
 
-    public FormPersistenceFactory() {}
+    public StudioCollectionPersistenceFactory() {}
 
-    public FormPersistenceFactory(SDocumentFactory documentFactory) {
+    public StudioCollectionPersistenceFactory(SDocumentFactory documentFactory) {
         this.documentFactory = documentFactory;
     }
 

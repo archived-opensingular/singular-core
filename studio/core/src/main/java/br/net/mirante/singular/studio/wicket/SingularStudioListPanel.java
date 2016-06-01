@@ -1,14 +1,9 @@
 package br.net.mirante.singular.studio.wicket;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.persistence.FormPersistence;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
-import br.net.mirante.singular.studio.core.CollectionEditorConfig;
-import br.net.mirante.singular.studio.core.CollectionInfo;
-import br.net.mirante.singular.studio.persistence.FormPersistenceFactory;
+import br.net.mirante.singular.studio.spring.StudioCollectionToolboxBean;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
@@ -26,19 +21,22 @@ import java.util.Iterator;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 @SuppressWarnings("serial")
-public class SingularStudioListPanel extends Panel {
+public class SingularStudioListPanel extends Panel implements SingularStudioPanel {
 
-    private final IFunction<Class<SType<?>>, SType<?>> typeLoader;
+    private final CollectionCanvas canvas;
+    private final SingularStudioCollectionPanel.PanelControl panelControl;
+
 
     @Inject
-    private FormPersistenceFactory formPersistenceFactory;
+    private StudioCollectionToolboxBean studioCollectionToolboxBean;
+
 
     public SingularStudioListPanel(String id,
-                                   IFunction<Class<SType<?>>, SType<?>> typeLoader,
                                    SingularStudioCollectionPanel.PanelControl panelControl,
                                    CollectionCanvas canvas) {
         super(id);
-        this.typeLoader = typeLoader;
+        this.canvas = canvas;
+        this.panelControl = panelControl;
 
 
         BSContainer portletBodyContainer = new BSContainer("portletBodyContainer");
@@ -50,9 +48,7 @@ public class SingularStudioListPanel extends Panel {
         BSContainer listPanelContent = new BSContainer("listPanelContent");
         listPanelContent.appendTag("table", true, " class=\"table table-striped table-hover dataTable table-bordered\" ",
                 (IBSComponentFactory<BSDataTable<SInstance, String>>) tableId ->
-                        buildDataTable(tableId,
-                                canvas.getCollectionInfo(),
-                                canvas.getEditorConfigFunction(typeLoader.apply((Class<SType<?>>) canvas.getCollectionInfo().getSTypeClass()))));
+                        buildDataTable(tableId));
 
 
         queue(new WebMarkupContainer("portletContainer"));
@@ -63,24 +59,20 @@ public class SingularStudioListPanel extends Panel {
     }
 
 
-    protected BSDataTable<SInstance, String> buildDataTable(String id, CollectionInfo collectionInfo, CollectionEditorConfig collectionEditorConfig) {
-        BSDataTableBuilder<SInstance, String, ?> builder = new BSDataTableBuilder<>(dataProvider(collectionInfo));
-        for (Pair<String, String> p : collectionEditorConfig.getColumns()) {
+    protected BSDataTable<SInstance, String> buildDataTable(String id) {
+        BSDataTableBuilder<SInstance, String, ?> builder = new BSDataTableBuilder<>(dataProvider());
+        for (Pair<String, String> p : editorConfig().getColumns()) {
             builder.appendPropertyColumn($m.ofValue(p.getKey()), p.getValue(), SInstance::toStringDisplay);
         }
         builder.setRowsPerPage(10);
         return builder.build(id);
     }
 
-    protected FormPersistence<?> getPersistence(CollectionInfo collectionInfo) {
-        return formPersistenceFactory.get(typeLoader.apply((Class<SType<?>>) collectionInfo.getSTypeClass()));
-    }
-
-    protected SortableDataProvider<SInstance, String> dataProvider(CollectionInfo collectionInfo) {
+    protected SortableDataProvider<SInstance, String> dataProvider() {
         return new SortableDataProvider<SInstance, String>() {
             @Override
             public Iterator<? extends SInstance> iterator(long first, long count) {
-                return getPersistence(collectionInfo).loadAllAsIterable().iterator();
+                return repository().loadAllAsIterable().iterator();
             }
 
             @Override
@@ -93,5 +85,15 @@ public class SingularStudioListPanel extends Panel {
                 return new MInstanceRootModel<>(object);
             }
         };
+    }
+
+    @Override
+    public StudioCollectionToolboxBean getToolbox() {
+        return studioCollectionToolboxBean;
+    }
+
+    @Override
+    public CollectionCanvas getCanvas() {
+        return canvas;
     }
 }

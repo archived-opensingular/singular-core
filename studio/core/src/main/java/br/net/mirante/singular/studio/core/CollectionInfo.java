@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class CollectionInfo implements Serializable {
 
     private Class<SType<?>> clazz;
+    private String title;
 
 
     public Class<SType<?>> getSTypeClass() {
@@ -18,5 +19,13 @@ public class CollectionInfo implements Serializable {
 
     void setSTypeClass(Class<SType<?>> clazz) {
         this.clazz = clazz;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    void setTitle(String title) {
+        this.title = title;
     }
 }
