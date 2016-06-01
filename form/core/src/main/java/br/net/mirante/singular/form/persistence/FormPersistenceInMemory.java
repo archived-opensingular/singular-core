@@ -13,18 +13,18 @@ import java.util.*;
  * @author Daniel C. Bordin
  */
 public class FormPersistenceInMemory<INSTANCE extends SIComposite>
-        extends AbstractFormPersistence<INSTANCE, FormKeyInteger> {
+        extends AbstractFormPersistence<INSTANCE, FormKeyInt> {
 
-    private final Map<FormKeyInteger, INSTANCE> collection = new LinkedHashMap<>();
+    private final Map<FormKeyInt, INSTANCE> collection = new LinkedHashMap<>();
 
     private int id;
 
     public FormPersistenceInMemory(SDocumentFactory documentFactory, RefType refType) {
-        super(FormKeyInteger.class);
+        super(FormKeyInt.class);
     }
 
     @Override
-    protected void updateInternal(FormKeyInteger key, INSTANCE instance) {
+    protected void updateInternal(FormKeyInt key, INSTANCE instance) {
         if (!collection.containsKey(key)) {
             throw new SingularFormPersistenceException("Não existe uma isntância com a chave informada").add(this).add(
                     "key", key);
@@ -33,19 +33,19 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     }
 
     @Override
-    protected void deleteInternal(FormKeyInteger key) {
+    protected void deleteInternal(FormKeyInt key) {
         collection.remove(key);
     }
 
     @Override
-    protected FormKeyInteger insertInternal(INSTANCE instance) {
-        FormKeyInteger key = new FormKeyInteger(++id);
+    protected FormKeyInt insertInternal(INSTANCE instance) {
+        FormKeyInt key = new FormKeyInt(++id);
         collection.put(key, instance);
         return key;
     }
 
     @Override
-    protected INSTANCE loadInternal(FormKeyInteger key) {
+    protected INSTANCE loadInternal(FormKeyInt key) {
         return collection.get(key);
     }
 

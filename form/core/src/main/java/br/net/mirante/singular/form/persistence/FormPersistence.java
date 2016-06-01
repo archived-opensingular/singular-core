@@ -16,6 +16,14 @@ public interface FormPersistence<INSTANCE extends SInstance> {
 
     public FormKey keyFromString(String persistenceString);
 
+    /**
+     * Tenta converter o valor para o tipo de FormKey utlizado pela FormPersitente. Se o tipo não for uma representação
+     * de chave entendível pela persitencia atual, então dispara uma exception.
+     *
+     * @return null se o valor for null
+     */
+    public FormKey keyFromObject(Object objectValueToBeConverted);
+
     public FormKey insert(INSTANCE instance);
 
     public INSTANCE load(FormKey key);
