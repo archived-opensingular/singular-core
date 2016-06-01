@@ -3,12 +3,14 @@ package br.net.mirante.singular.studio.wicket;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
 import br.net.mirante.singular.studio.spring.StudioCollectionToolboxBean;
 
 import javax.inject.Inject;
 
+@SuppressWarnings("serial")
 public class SingularStudioFormPanel<TYPE extends SType<?>> extends SingularFormPanel<String> implements SingularStudioPanel {
 
     private final SingularStudioCollectionPanel.PanelControl panelControl;
@@ -18,10 +20,10 @@ public class SingularStudioFormPanel<TYPE extends SType<?>> extends SingularForm
     private StudioCollectionToolboxBean studioCollectionToolboxBean;
 
 
-
     /**
      * Construtor do painel
-     *  @param id                 o markup id wicket
+     *
+     * @param id                 o markup id wicket
      * @param panelControl
      * @param formID
      * @param singularFormConfig configuração para manipulação do documento a ser criado ou
@@ -35,7 +37,12 @@ public class SingularStudioFormPanel<TYPE extends SType<?>> extends SingularForm
 
     @Override
     protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-        return null;
+        return studioCollectionToolboxBean.getDocumentFactory().createInstance(new RefType() {
+            @Override
+            protected SType<?> retrieve() {
+                return sType();
+            }
+        });
     }
 
     @Override

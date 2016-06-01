@@ -1,9 +1,11 @@
 package br.net.mirante.singular.studio.wicket;
 
 import br.net.mirante.singular.studio.core.CollectionCanvas;
+import br.net.mirante.singular.studio.spring.StudioCollectionToolboxBean;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import javax.inject.Inject;
 import java.io.Serializable;
 
 public class SingularStudioCollectionPanel extends Panel {
@@ -13,6 +15,8 @@ public class SingularStudioCollectionPanel extends Panel {
     private boolean showList = true;
     private Object formID;
 
+    @Inject
+    private StudioCollectionToolboxBean studioCollectionToolboxBean;
 
     public SingularStudioCollectionPanel(String content, CollectionCanvas canvas) {
         super(content);
@@ -26,7 +30,7 @@ public class SingularStudioCollectionPanel extends Panel {
         if (showList) {
             this.addOrReplace(new SingularStudioListPanel("content", panelControl, canvas));
         } else {
-            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, formID, null, canvas));
+            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, formID, studioCollectionToolboxBean, canvas));
         }
     }
 
