@@ -1,0 +1,21 @@
+.singular-form-required{
+  position: relative;
+
+  &::before {
+    display: none;
+  }
+
+  &::after {
+
+    content: "";
+    position: absolute;
+    top: calc(50% - 2px);
+    width: 4px;
+    height: 4px;
+    display: inline-block;
+    background-color: $brand-danger;
+    border-radius: 50%;
+    margin-left: 6px;
+
+  }
+}
