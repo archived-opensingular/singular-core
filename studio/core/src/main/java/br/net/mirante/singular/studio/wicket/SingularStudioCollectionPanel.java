@@ -1,20 +1,19 @@
 package br.net.mirante.singular.studio.wicket;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
+import br.net.mirante.singular.studio.spring.StudioCollectionToolboxBean;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import javax.inject.Inject;
 import java.io.Serializable;
 
-public abstract class SingularStudioCollectionPanel extends Panel {
+public class SingularStudioCollectionPanel extends Panel {
 
     private final PanelControl panelControl = new PanelControl();
+    private final CollectionCanvas canvas;
     private boolean showList = true;
     private Object formID;
-    private CollectionCanvas canvas;
-
 
     public SingularStudioCollectionPanel(String content, CollectionCanvas canvas) {
         super(content);
@@ -26,13 +25,11 @@ public abstract class SingularStudioCollectionPanel extends Panel {
     protected void onConfigure() {
         super.onConfigure();
         if (showList) {
-            this.addOrReplace(new SingularStudioListPanel("content", (IFunction<Class<SType<?>>, SType<?>>) this::loadType, panelControl, canvas));
+            this.addOrReplace(new SingularStudioListPanel("content", panelControl, canvas));
         } else {
-            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, formID, null));
+            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, canvas, formID));
         }
     }
-
-    public abstract SType<?> loadType(Class<SType<?>> sTypeClass);
 
     public class PanelControl implements Serializable {
 
