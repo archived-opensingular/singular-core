@@ -217,7 +217,7 @@ public abstract class SInstances {
     public static <CA extends SInstance & ICompositeInstance> Optional<CA> findCommonAncestor(SInstance node, SType<?> targetType) {
         for (SScope type = targetType; type != null; type = type.getParentScope()) {
             for (SInstance ancestor = node; ancestor != null; ancestor = ancestor.getParent()) {
-                if (ancestor.getType() == type && ancestor instanceof ICompositeInstance) {
+                if (SType.class.isAssignableFrom(type.getClass()) && ancestor.getType().isTypeOf((SType<?>) type) && ancestor instanceof ICompositeInstance) {
                     return Optional.of((CA) ancestor);
                 }
             }
