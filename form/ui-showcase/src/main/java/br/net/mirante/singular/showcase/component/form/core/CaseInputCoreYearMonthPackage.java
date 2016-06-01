@@ -20,7 +20,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreYearMonthPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         tipoMyForm.addField("inicio", STypeYearMonth.class)
                 .as(AtrBasic.class)

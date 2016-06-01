@@ -245,7 +245,7 @@ public class SCorePackageTest extends TestCaseForm {
         }
 
         @Override
-        protected void carregarDefinicoes(PackageBuilder pb) {
+        protected void onLoadPackage(PackageBuilder pb) {
             pb.createAttributeType(ATR_XX);
             pb.addAttribute(SType.class, ATR_XX);
 
@@ -286,7 +286,7 @@ public class SCorePackageTest extends TestCaseForm {
                 SIInteger.class, Integer.class);
 
         @Override
-        protected void carregarDefinicoes(PackageBuilder pb) {
+        protected void onLoadPackage(PackageBuilder pb) {
             pb.createType("TestTipoB", TestTipoA.class);
 
             pb.createAttributeIntoType(SType.class, ATR_LABEL_Y);

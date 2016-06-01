@@ -21,7 +21,7 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
     //@formatter:off
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         //View por Select

@@ -20,7 +20,7 @@ public class SPackageProvider extends SPackage {
     }
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeProvider.class);
         pb.createType(STypeConverter.class);
         pb.createType(STypeFunction.class);

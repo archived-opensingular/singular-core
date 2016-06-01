@@ -20,7 +20,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreDatePackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         tipoMyForm.addFieldDate("inicioDia")
                   .as(AtrBasic.class).label("Data Início");

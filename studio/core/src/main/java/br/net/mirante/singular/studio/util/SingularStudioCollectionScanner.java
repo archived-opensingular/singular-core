@@ -1,5 +1,6 @@
 package br.net.mirante.singular.studio.util;
 
+import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.studio.core.CollectionDefinition;
 import br.net.mirante.singular.studio.core.SingularStudioException;
 import org.reflections.Reflections;
@@ -15,9 +16,9 @@ public class SingularStudioCollectionScanner {
 
     private static final Logger logger = LoggerFactory.getLogger(SingularStudioCollectionScanner.class);
 
-    public static List<CollectionDefinition<?>> scan(String... packages) {
+    public static List<CollectionDefinition<SType<?>>> scan(String... packages) {
         try {
-            List<CollectionDefinition<?>> collectionDefinitions = new ArrayList<>();
+            List<CollectionDefinition<SType<?>>> collectionDefinitions = new ArrayList<>();
             Reflections reflections = new Reflections(packages);
             Set<Class<? extends CollectionDefinition>> definitions = reflections.getSubTypesOf(CollectionDefinition.class);
             for (Class<?> clazz : definitions) {
@@ -25,7 +26,7 @@ public class SingularStudioCollectionScanner {
                         && !Modifier.isAbstract(clazz.getModifiers())
                         && !Modifier.isInterface(clazz.getModifiers())
                         ) {
-                    collectionDefinitions.add((CollectionDefinition<?>) clazz.newInstance());
+                    collectionDefinitions.add((CollectionDefinition<SType<?>>) clazz.newInstance());
                 }
             }
             return collectionDefinitions;

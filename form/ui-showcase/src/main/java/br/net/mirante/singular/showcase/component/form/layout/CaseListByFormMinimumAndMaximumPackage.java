@@ -24,7 +24,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseListByFormMinimumAndMaximumPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         STypeList<STypeComposite<SIComposite>, SIComposite> experiencias        = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");

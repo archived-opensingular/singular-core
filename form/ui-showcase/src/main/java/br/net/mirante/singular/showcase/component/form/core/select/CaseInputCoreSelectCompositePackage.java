@@ -20,7 +20,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreSelectCompositePackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         final STypeComposite<SIComposite> tipoMyForm         = pb.createCompositeType("testForm");
         final STypeComposite<SIComposite> ingredienteQuimico = tipoMyForm.addFieldComposite("ingredienteQuimico");

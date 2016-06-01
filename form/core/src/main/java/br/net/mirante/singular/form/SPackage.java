@@ -43,7 +43,11 @@ public class SPackage extends SScopeBase {
         return name;
     }
 
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    /**
+     * Método para ser sobescrito que é chamado no pacote para que o mesmo crie os seus tipos, crie atributos e
+     * configure os tipos.
+     */
+    protected void onLoadPackage(PackageBuilder pb) {
     }
 
     @Override
