@@ -22,7 +22,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseListByTableSimpleTypePackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         STypeComposite<?>                testForm = pb.createCompositeType("testForm");
         STypeList<STypeString, SIString> nomes    = testForm.addFieldListOf("nomes", STypeString.class);

@@ -17,7 +17,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreMultiSelectCheckboxPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         tipoMyForm.asAtr().label("Salada de Frutas");
         tipoMyForm.addFieldListOf("frutas", STypeString.class).selectionOf(String.class, new SMultiSelectionByCheckboxView())

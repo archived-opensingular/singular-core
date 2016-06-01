@@ -19,7 +19,7 @@ public class CaseInputCoreTextAreaPackage extends SPackage {
 
     @Override
     //@formatter:off
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 

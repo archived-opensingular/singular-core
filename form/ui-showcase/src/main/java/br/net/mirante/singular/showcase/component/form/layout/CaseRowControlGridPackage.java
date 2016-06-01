@@ -19,8 +19,8 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseRowControlGridPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
-        super.carregarDefinicoes(pb);
+    protected void onLoadPackage(PackageBuilder pb) {
+        super.onLoadPackage(pb);
 
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 

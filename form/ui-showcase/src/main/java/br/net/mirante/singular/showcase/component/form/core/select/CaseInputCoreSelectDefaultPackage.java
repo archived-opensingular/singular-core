@@ -19,7 +19,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreSelectDefaultPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> root = pb.createCompositeType("testForm");
 
         addSelection(root, 3, true);

@@ -23,7 +23,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreMultiSelectPickListPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         final STypeList<STypeString, SIString> frutas = tipoMyForm.addFieldListOf("frutas", STypeString.class);
         frutas.asAtr().phraseBreak(PhraseBreak.BREAK_LINE);

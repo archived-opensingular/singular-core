@@ -1,22 +1,24 @@
 package br.net.mirante.singular.studio.wicket;
 
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.studio.core.CollectionConfigCollector;
+import br.net.mirante.singular.studio.core.CollectionCanvas;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import java.io.Serializable;
 
-public class SingularStudioCollectionPanel<TYPE extends SType<?>> extends Panel {
+public abstract class SingularStudioCollectionPanel extends Panel {
 
     private final PanelControl panelControl = new PanelControl();
     private boolean showList = true;
     private Object formID;
-    private CollectionConfigCollector<TYPE> configCollector;
+    private CollectionCanvas canvas;
 
-    public SingularStudioCollectionPanel(String id, CollectionConfigCollector<TYPE> configCollector) {
-        super(id);
-        this.configCollector = configCollector;
+
+    public SingularStudioCollectionPanel(String content, CollectionCanvas canvas) {
+        super(content);
+        this.canvas = canvas;
     }
 
     @SuppressWarnings("unchecked")
@@ -24,11 +26,13 @@ public class SingularStudioCollectionPanel<TYPE extends SType<?>> extends Panel 
     protected void onConfigure() {
         super.onConfigure();
         if (showList) {
-            this.addOrReplace(new SingularStudioListPanel("content", panelControl, configCollector));
+            this.addOrReplace(new SingularStudioListPanel("content", (IFunction<Class<SType<?>>, SType<?>>) this::loadType, panelControl, canvas));
         } else {
-            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, configCollector, formID, null));
+            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, formID, null));
         }
     }
+
+    public abstract SType<?> loadType(Class<SType<?>> sTypeClass);
 
     public class PanelControl implements Serializable {
 

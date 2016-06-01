@@ -104,7 +104,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
     public static class SPackageTesteSeria extends SPackage {
 
         @Override
-        protected void carregarDefinicoes(PackageBuilder pb) {
+        protected void onLoadPackage(PackageBuilder pb) {
             pb.createType(STypeTesteEndereco.class);
         }
 
