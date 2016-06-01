@@ -30,7 +30,7 @@ public class SPackageHabilitacaoEmpresa extends SPackage {
 
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         pb.loadPackage(SPackageNotificacaoSimplificada.class);
 
         final STypeComposite<?> habilitacaoEmpresa = pb.createCompositeType(TIPO);

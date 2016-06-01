@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.SPackage;
 @SInfoPackage(name = "test.order")
 public class SPackageOrder extends SPackage {
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeItem.class);
         pb.createType(STypeOrder.class);
     }

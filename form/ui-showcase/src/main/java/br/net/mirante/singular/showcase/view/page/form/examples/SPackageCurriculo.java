@@ -28,7 +28,7 @@ public class SPackageCurriculo extends SPackage {
     }
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> curriculo = pb.createCompositeType("Curriculo");
         {
             curriculo.asAtr().label("Currículo");

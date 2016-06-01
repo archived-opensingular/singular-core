@@ -15,7 +15,7 @@ public class SPackageFormPersistence extends SPackage {
     public static final AtrRef<STypeFormKey, SISimple, FormKey> ATR_FORM_KEY = new AtrRef<>(SPackageFormPersistence.class,
             "formKey", STypeFormKey.class, SISimple.class, FormKey.class);
 
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeFormKey.class);
         pb.addAttribute(STypeComposite.class, ATR_FORM_KEY);
     }

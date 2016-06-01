@@ -25,7 +25,7 @@ public class CaseInputCoreSelectComboAutoCompletePackage extends SPackage {
     private static final String[] DOMAINS = {"@gmail.com", "@hotmail.com", "@yahoo.com"};
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 

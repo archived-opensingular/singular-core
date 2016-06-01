@@ -42,7 +42,7 @@ public class SPackageBootstrap extends SPackage {
     //@formatter:on
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         adicionarDefinicaoColuna(pb, ATR_COL_PREFERENCE, null);
         adicionarDefinicaoColuna(pb, ATR_COL_XS_PREFERENCE, "XS");
         adicionarDefinicaoColuna(pb, ATR_COL_SM_PREFERENCE, "SM");

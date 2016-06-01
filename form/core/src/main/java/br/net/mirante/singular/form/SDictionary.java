@@ -12,7 +12,6 @@ import br.net.mirante.singular.form.type.core.SPackageCore;
 import br.net.mirante.singular.form.view.ViewResolver;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 public class SDictionary {
 
@@ -189,7 +188,7 @@ public class SDictionary {
         PackageBuilder pb = new PackageBuilder(newPackage);
         newPackage.setDictionary(this);
         packages.add(newPackage);
-        newPackage.carregarDefinicoes(pb);
+        newPackage.onLoadPackage(pb);
     }
 
     public void debug() {

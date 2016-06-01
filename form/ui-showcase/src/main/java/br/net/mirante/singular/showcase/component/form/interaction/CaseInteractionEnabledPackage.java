@@ -29,9 +29,9 @@ public class CaseInteractionEnabledPackage extends SPackage {
     public STypeDate recordDate;
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
-        super.carregarDefinicoes(pb);
+        super.onLoadPackage(pb);
 
         testForm = pb.createCompositeType("testForm");
 

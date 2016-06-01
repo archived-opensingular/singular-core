@@ -51,7 +51,7 @@ public class ExamplePackage extends SPackage {
     }
 
     @Override
-    public void carregarDefinicoes(PackageBuilder pb) {
+    public void onLoadPackage(PackageBuilder pb) {
         buildOrderType(pb);
     }
 

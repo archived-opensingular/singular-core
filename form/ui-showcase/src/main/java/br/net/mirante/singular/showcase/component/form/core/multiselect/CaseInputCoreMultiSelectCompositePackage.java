@@ -26,7 +26,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreMultiSelectCompositePackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> root = pb.createCompositeType("testForm");
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> componentesQuimicos = root.addFieldListOfComposite("componentesQuimicos", "componenteQuimico");

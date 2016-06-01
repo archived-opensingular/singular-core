@@ -51,7 +51,7 @@ public class SPackagePrototype extends SPackage {
     }
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         final STypeComposite<?> meta = pb.createCompositeType(META_FORM);
         meta.addFieldString(NAME_FIELD).asAtr().label("Nome")
                 .asAtr().required();

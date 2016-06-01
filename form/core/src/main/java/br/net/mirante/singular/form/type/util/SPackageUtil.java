@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.type.basic.SPackageBasic;
 public class SPackageUtil extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeEMail.class);
         pb.createType(STypeYearMonth.class);
         pb.createType(STypePersonName.class);

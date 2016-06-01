@@ -31,8 +31,8 @@ public class CaseInitListenerPackage extends SPackage {
     private STypeString                                         nome;
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
-        super.carregarDefinicoes(pb);
+    protected void onLoadPackage(PackageBuilder pb) {
+        super.onLoadPackage(pb);
 
         final STypeComposite<SIComposite> testForm = pb.createCompositeType("testForm");
         itens = testForm.addFieldListOfComposite("itens", "itenm");

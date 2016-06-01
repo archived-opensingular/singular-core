@@ -21,7 +21,7 @@ import br.net.mirante.singular.showcase.component.Resource;
 public class CaseValidationPartialPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
