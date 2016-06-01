@@ -68,7 +68,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                         + "<button"
                         + " wicket:id='_remover_'"
                         + " class='btn btn-danger btn-sm'"
-                        + " style='padding:5px 3px 1px;margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+"'class='" + Icone.MINUS + "'></i>"
+                        + " style='padding:5px 3px 1px;margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+" 'class='" + Icone.REMOVE + "'></i>"
                         + "</button>")
                 .add(btn);
         return btn;
