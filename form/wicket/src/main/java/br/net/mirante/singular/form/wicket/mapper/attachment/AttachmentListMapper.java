@@ -154,7 +154,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
             protected void buildContent(BSContainer<?> content, Form<?> form) {
 
                 final TemplatePanel list = content.newTemplateTag(t -> ""
-                        + " <div wicket:id='_e' whatever='something'> "
+                        + " <div wicket:id='_e' > "
                         + "     <div class='col-md-6' wicket:id='_r'></div> "
                         + " </div> ");
 
