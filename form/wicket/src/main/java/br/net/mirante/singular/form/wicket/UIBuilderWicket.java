@@ -90,7 +90,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
         //@formatter:off
         return new ViewMapperRegistry<IWicketComponentMapper>()
                 .register(STypeSimple.class,     SViewSelectionByRadio.class,           RadioMapper::new)
-                .register(STypeSimple.class,     SViewSelectionBySelect.class,          SelectMapper::new)
+                .register(STypeSimple.class,     SViewSelectionBySelect.class,          AutocompleteMapper::new)
                 .register(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
@@ -108,7 +108,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeComposite.class,                                         DefaultCompostoMapper::new)
                 .register(STypeComposite.class,   SViewTab.class,                       TabMapper::new)
                 .register(STypeComposite.class,   SViewSelectionByRadio.class,          RadioMapper::new)
-                .register(STypeComposite.class,   SViewSelectionBySelect.class,         SelectMapper::new)
+                .register(STypeComposite.class,   SViewSelectionBySelect.class,         AutocompleteMapper::new)
                 .register(STypeComposite.class,   SViewSearchModal.class,               SearchModalMapper::new)
                 .register(STypeComposite.class,   SViewAutoComplete.class,              AutocompleteMapper::new)
                 .register(STypeComposite.class,   SViewReadOnly.class,                  ReadOnlyControlsFieldComponentMapper::new)
