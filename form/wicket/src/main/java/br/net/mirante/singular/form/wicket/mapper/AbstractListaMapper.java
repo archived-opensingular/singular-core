@@ -182,7 +182,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     protected static final class AddButton extends ActionAjaxButton {
         private final IModel<SIList<SInstance>> modelLista;
 
-        private AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mLista) {
+        protected AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mLista) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             modelLista = mLista;
