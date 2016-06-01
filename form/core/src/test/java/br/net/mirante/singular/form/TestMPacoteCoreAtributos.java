@@ -35,7 +35,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         }
 
         @Override
-        protected void carregarDefinicoes(PackageBuilder pb) {
+        protected void onLoadPackage(PackageBuilder pb) {
             pb.createAttributeType(ATR_XX);
             pb.addAttribute(SType.class, ATR_XX);
 
@@ -293,7 +293,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         TipoComAtributoInterno1 fieldOfTipoComAtributoInterno1;
 
         @Override
-        protected void carregarDefinicoes(PackageBuilder pb) {
+        protected void onLoadPackage(PackageBuilder pb) {
             pb.createType(TipoComAtributoInterno1.class);
             pb.createType(TipoComAtributoInterno2.class);
             pb.createAttributeIntoType(TipoComAtributoInterno1.class, ATR_REF_ID1);

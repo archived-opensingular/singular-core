@@ -25,8 +25,8 @@ public class CaseUpdateListenerPackage extends SPackage {
     private STypeString cep;
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
-        super.carregarDefinicoes(pb);
+    protected void onLoadPackage(PackageBuilder pb) {
+        super.onLoadPackage(pb);
 
         final STypeComposite<SIComposite> testForm = pb.createCompositeType("testForm");
         testForm.asAtr().label("Endereço");

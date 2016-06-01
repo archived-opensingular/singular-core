@@ -5,7 +5,7 @@ import br.net.mirante.singular.studio.core.CollectionEditorConfigBuilder;
 import br.net.mirante.singular.studio.core.CollectionInfoBuilder;
 
 
-public class OrderCollectionEditorConfig implements CollectionDefinition<STypeOrder> {
+public class OrderCollectionDefinition implements CollectionDefinition<STypeOrder> {
 
 
     /*
@@ -30,7 +30,7 @@ public class OrderCollectionEditorConfig implements CollectionDefinition<STypeOr
         cfg
                 .list()
                 .column(type.id)
-                .column(type.description)
+                .column(type.descricao)
                 .rowsPerPage(10)
                 .disableQuickFilter()
                 .sortBy(type.id)

@@ -457,7 +457,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
     public static final class TestPacoteCompostoA extends SPackage {
 
         @Override
-        protected void carregarDefinicoes(PackageBuilder pb) {
+        protected void onLoadPackage(PackageBuilder pb) {
             pb.createType(TestTipoCompositeComCargaInterna.class);
             pb.createType(TestTipoCompositeComCargaInternaB.class);
         }

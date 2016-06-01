@@ -63,7 +63,7 @@ public class SPackageBasic extends SPackage {
     //@formatter:on
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
 
         pb.createType(STypeBehavior.class);

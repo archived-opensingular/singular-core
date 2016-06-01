@@ -28,7 +28,7 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
 
     private Constructor<KEY> findConstructorString(Class<KEY> keyClass) {
         try {
-            return (Constructor<KEY>) (Constructor<?>) keyClass.getClass().getConstructor(String.class);
+            return keyClass.getConstructor(String.class);
         } catch (Exception e) {
             throw new SingularFormPersistenceException(
                     "Erro tentando obter o construtor " + keyClass.getSimpleName() + "(String) na classe " +
@@ -165,7 +165,7 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
     protected final <KEY extends FormKey> KEY checkKey(FormKey key, INSTANCE instance, String msgRequired) {
         if (key == null) {
             if (msgRequired != null) {
-                throw new SingularFormPersistenceException("Era esperado que " + msgRequired).add(this).add("key", key)
+                throw new SingularFormPersistenceException("Era esperado que " + msgRequired).add(this).add("key", null)
                         .add(instance);
             }
         } else if (!keyClass.isInstance(key)) {

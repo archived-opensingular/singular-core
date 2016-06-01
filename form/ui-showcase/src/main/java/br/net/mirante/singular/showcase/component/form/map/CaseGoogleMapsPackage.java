@@ -19,8 +19,8 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseGoogleMapsPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
-        super.carregarDefinicoes(pb);
+    protected void onLoadPackage(PackageBuilder pb) {
+        super.onLoadPackage(pb);
 
         STypeComposite<?> form = pb.createCompositeType("testForm");
         STypeLatitudeLongitude campoCoordenada = form.addField("coordenada", STypeLatitudeLongitude.class);

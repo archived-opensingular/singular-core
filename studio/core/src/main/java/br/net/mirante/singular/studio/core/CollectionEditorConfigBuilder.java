@@ -26,7 +26,7 @@ public class CollectionEditorConfigBuilder {
         }
 
         public ColumnConfigurer column(String caption, STypeSimple<?, ?> column) {
-            editor.getColumns().add(Pair.of(caption, column));
+            editor.getColumns().add(Pair.of(caption, column.getName()));
             return new ColumnConfigurer(this);
         }
 
@@ -68,14 +68,14 @@ public class CollectionEditorConfigBuilder {
         }
 
         public ColumnConfigurer column(String caption, STypeSimple<?, ?> column) {
-            editor.getColumns().add(Pair.of(caption, column));
+            editor.getColumns().add(Pair.of(caption, column.getName()));
             return this;
         }
 
         public ListConfigurer sortBy(STypeSimple<?, ?> column) {
             for (int i = 0; i < editor.getColumns().size(); i++) {
-                Pair p = editor.getColumns().get(i);
-                if (p.getValue().equals(column)) {
+                Pair<String, String> p = editor.getColumns().get(i);
+                if (p.getValue().equals(column.getName())) {
                     editor.setDefaultSortColumnIndex(i);
                     break;
                 }

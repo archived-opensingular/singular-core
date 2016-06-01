@@ -26,7 +26,7 @@ public class SPackageCore extends SPackage {
     public static final String NAME = SDictionary.SINGULAR_PACKAGES_PREFIX + "core";
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         pb.createType(SType.class);
         pb.createType(STypeSimple.class);

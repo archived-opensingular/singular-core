@@ -8,14 +8,16 @@ import br.net.mirante.singular.form.type.core.STypeString;
 public class STypeOrder extends STypeComposite<SIComposite> {
 
     public STypeInteger id;
-    public STypeString description;
+    public STypeString descricao;
     public STypeList<STypeItem, SIComposite> itens;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
 
         id = addFieldInteger("id");
-        description = addFieldString("descricao");
+        id.asAtr().label("Id");
+        descricao = addFieldString("descricao");
+        descricao.asAtr().label("Descrição");
         itens = addFieldListOf("itens", STypeItem.class);
     }
 }

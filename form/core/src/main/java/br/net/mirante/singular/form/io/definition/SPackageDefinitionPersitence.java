@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.SPackage;
 public class SPackageDefinitionPersitence extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypePersistenceAttribute.class);
         pb.createType(STypePersistenceType.class);
         pb.createType(STypePersistencePackage.class);

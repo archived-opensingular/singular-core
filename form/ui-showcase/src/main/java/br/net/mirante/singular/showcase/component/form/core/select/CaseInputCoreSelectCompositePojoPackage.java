@@ -16,7 +16,7 @@ import br.net.mirante.singular.showcase.component.Resource;
 public class CaseInputCoreSelectCompositePojoPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         final STypeComposite<?>           tipoMyForm         = pb.createCompositeType("testForm");
         final STypeComposite<SIComposite> ingredienteQuimico = tipoMyForm.addFieldComposite("ingredienteQuimico");
