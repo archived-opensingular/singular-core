@@ -34,3 +34,14 @@
 .ms-selection {
     width: 49% !important;
 }
+
+.singular-form-required:before {
+    content: "* ";
+    color: red;
+}
+
+
+tr.singular-form-table-row.has-errors,
+.singular-form-table-row.has-errors > tr {
+    background-color: #fbe1e3 !important;
+}

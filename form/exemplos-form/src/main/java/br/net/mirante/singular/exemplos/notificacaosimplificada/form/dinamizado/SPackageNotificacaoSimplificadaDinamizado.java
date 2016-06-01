@@ -291,7 +291,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         informarOutraIndicacaoTerapeutica
                 .asAtr()
                 .label("Informar outra indicação terapêutica")
-                
+
                 .asAtrBootstrap().colPreference(12);
         STypeSimple outraIndicacaoTerapeutica = notificacaoSimplificada.addFieldString("outraIndicacaoTerapeutica");
         outraIndicacaoTerapeutica

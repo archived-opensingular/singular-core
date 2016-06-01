@@ -19,7 +19,6 @@ import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
-import br.net.mirante.singular.form.wicket.resource.FormDefaultStyles;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
@@ -165,16 +164,6 @@ public class WicketBuildContext implements Serializable {
 
         WicketFormUtils.setInstanceId(getContainer(), instance);
         WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
-
-        if (getContainer() != null) {
-            getContainer().add(new Behavior() {
-                @Override
-                public void renderHead(Component component, IHeaderResponse response) {
-                    super.renderHead(component, response);
-                    response.render(CssReferenceHeaderItem.forReference(FormDefaultStyles.RESOURCE_REFERENCE));
-                }
-            });
-        }
 
         return this;
     }

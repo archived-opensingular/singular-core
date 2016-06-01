@@ -224,7 +224,7 @@ public class TypeaheadComponent extends Panel {
     private String staticJSFetch() {
         String js = "";
         js += " $('#" + labelField.getMarkupId() + "').typeahead('destroy');";
-        js += " $('#" + labelField.getMarkupId() + "').val('" + ObjectUtils.defaultIfNull(labelField.getModelObject(), "") + "');";
+        js += " $('#" + labelField.getMarkupId() + "').val('" + ObjectUtils.defaultIfNull(Optional.ofNullable(labelField.getModel()).map((x) -> x.getObject()).orElse(null), "") + "');";
         js += " $('#" + labelField.getMarkupId() + "').typeahead( ";
         js += "     { ";
         js += "          highlight: true,";
