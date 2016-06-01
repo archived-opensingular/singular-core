@@ -165,7 +165,7 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
     protected final <KEY extends FormKey> KEY checkKey(FormKey key, INSTANCE instance, String msgRequired) {
         if (key == null) {
             if (msgRequired != null) {
-                throw new SingularFormPersistenceException("Era esperado que " + msgRequired).add(this).add("key", key)
+                throw new SingularFormPersistenceException("Era esperado que " + msgRequired).add(this).add("key", null)
                         .add(instance);
             }
         } else if (!keyClass.isInstance(key)) {
