@@ -164,7 +164,7 @@ public class TableListMapper extends AbstractListaMapper {
         content.getParent().add(dependsOnModifier(list));
     }
 
-    private void buildFooter(BSContainer<?> footer, Form<?> form, IModel<SIList<SInstance>> list,
+    private static void buildFooter(BSContainer<?> footer, Form<?> form, IModel<SIList<SInstance>> list,
                              WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
         final String markup = "" +
                 "<button wicket:id=\"_add\" " +
