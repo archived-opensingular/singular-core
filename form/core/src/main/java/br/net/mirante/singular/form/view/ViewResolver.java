@@ -84,7 +84,6 @@ public class ViewResolver {
     private SView resolveInternal(SInstance instance) {
         SType type = instance.getType();
         SView view = null;
-        // FIXME: Fabs:  DOes not consider if it's supertype
         while (type != null) {
             view = type.getView();
             if (view != null) { return view;    }
