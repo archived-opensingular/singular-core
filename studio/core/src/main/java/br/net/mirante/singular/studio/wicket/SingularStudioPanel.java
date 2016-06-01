@@ -7,29 +7,60 @@ import br.net.mirante.singular.studio.core.CollectionCanvas;
 import br.net.mirante.singular.studio.core.CollectionEditorConfig;
 import br.net.mirante.singular.studio.core.CollectionInfo;
 import br.net.mirante.singular.studio.spring.StudioCollectionToolboxBean;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.panel.Panel;
 
-public interface SingularStudioPanel {
+import javax.inject.Inject;
 
-    public StudioCollectionToolboxBean getToolbox();
-
-    public CollectionCanvas getCanvas();
+public abstract class SingularStudioPanel extends Panel {
 
 
-    default public <T extends SInstance> FormPersistence<T> repository() {
+    private final CollectionCanvas canvas;
+
+    private final SingularStudioCollectionPanel.PanelControl panelControl;
+
+
+    @Inject
+    private StudioCollectionToolboxBean studioCollectionToolboxBean;
+
+    public SingularStudioPanel(String id, SingularStudioCollectionPanel.PanelControl panelControl, CollectionCanvas canvas) {
+        super(id);
+        this.canvas = canvas;
+        this.panelControl = panelControl;
+    }
+
+    public StudioCollectionToolboxBean getToolbox() {
+        return studioCollectionToolboxBean;
+    }
+
+    public CollectionCanvas getCanvas() {
+        return canvas;
+    }
+
+
+    public <T extends SInstance> FormPersistence<T> repository() {
         return getToolbox().repository(getCanvas());
     }
 
-    default public CollectionEditorConfig editorConfig() {
+    public CollectionEditorConfig editorConfig() {
         return getToolbox().editorConfig(getCanvas());
     }
 
 
-    default public CollectionInfo collectionInfo() {
+    public CollectionInfo collectionInfo() {
         return getToolbox().collectionInfo(getCanvas());
     }
 
-    default public <T extends SInstance> SType<T> sType() {
+    public <T extends SInstance> SType<T> sType() {
         return getToolbox().sType(getCanvas());
+    }
+
+   protected void showForm(AjaxRequestTarget target, Object formId) {
+        panelControl.showForm(target, formId);
+    }
+
+    protected void showList(AjaxRequestTarget target) {
+        panelControl.showList(target);
     }
 
 }

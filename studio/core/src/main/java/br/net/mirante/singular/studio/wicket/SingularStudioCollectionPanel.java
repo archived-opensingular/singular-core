@@ -15,9 +15,6 @@ public class SingularStudioCollectionPanel extends Panel {
     private boolean showList = true;
     private Object formID;
 
-    @Inject
-    private StudioCollectionToolboxBean studioCollectionToolboxBean;
-
     public SingularStudioCollectionPanel(String content, CollectionCanvas canvas) {
         super(content);
         this.canvas = canvas;
@@ -30,7 +27,7 @@ public class SingularStudioCollectionPanel extends Panel {
         if (showList) {
             this.addOrReplace(new SingularStudioListPanel("content", panelControl, canvas));
         } else {
-            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, formID, studioCollectionToolboxBean, canvas));
+            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, canvas, formID));
         }
     }
 
