@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.panel.SUploadProgressBar;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -23,7 +24,14 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
+import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
+import org.apache.wicket.util.time.Duration;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -42,6 +50,82 @@ public class FileUploadPanel2 extends Panel {
     private final WebMarkupContainer filesContainer, progressBar;
     private final DownloadBehavior downloader;
     private final UploadBehavior uploader;
+
+    private final Label fileName = new Label("fileName", new AbstractReadOnlyModel<String>() {
+        @Override
+        public String getObject() {
+            if (!model.getObject().isEmptyOfData()) {
+                return model.getObject().getFileName();
+            }
+            return StringUtils.EMPTY;
+        }
+    }) {
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            add($b.attr("title", $m.ofValue(model.getObject().getFileName())));
+        }
+    };
+
+    private final Link<Void> downloadLink = new Link<Void>("downloadLink") {
+
+        private static final String SELF = "_self", BLANK = "_blank";
+        private IModel<String> target = $m.ofValue(SELF);
+
+        @Override
+        public void onClick() {
+            final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
+                @Override
+                public void write(OutputStream outputStream) throws IOException {
+                    outputStream.write(model.getObject().getContentAsByteArray());
+                }
+            };
+
+            final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
+
+            requestHandler.setFileName(model.getObject().getFileName());
+            requestHandler.setCacheDuration(Duration.NONE);
+
+            if (model.getObject().isContentTypeBrowserFriendly()) {
+                requestHandler.setContentDisposition(ContentDisposition.INLINE);
+            } else {
+                requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+            }
+
+            getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
+        }
+
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new AttributeModifier("target", target));
+        }
+
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            if (model.getObject().isContentTypeBrowserFriendly()) {
+                target.setObject(BLANK);
+            } else {
+                target.setObject(SELF);
+            }
+        }
+    };
+
+    private final AjaxButton removeFileButton = new AjaxButton("removeFileButton") {
+        @Override
+        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+            super.onSubmit(target, form);
+            model.getObject().clearInstance();
+            if (model.getObject().getParent() instanceof SIList) {
+                final SIList parent = (SIList) model.getObject().getParent();
+                parent.remove(parent.indexOf(model.getObject()));
+                target.add(form);
+            } else {
+                target.add(this);
+            }
+        }
+    };
 
     public FileUploadPanel2(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
@@ -72,9 +156,10 @@ public class FileUploadPanel2 extends Panel {
         idField = new HiddenField("file_id",
                 new PropertyModel<>(model, "fileId"));
 
-        add(    filesContainer = new WebMarkupContainer("files"),
+        add(    (filesContainer = new WebMarkupContainer("files"))
+                    .add(downloadLink.add(fileName)),
                 fileField,
-
+                removeFileButton,
                 nameField, hashField, sizeField, idField,
                 progressBar = new WebMarkupContainer("progress")
         );
