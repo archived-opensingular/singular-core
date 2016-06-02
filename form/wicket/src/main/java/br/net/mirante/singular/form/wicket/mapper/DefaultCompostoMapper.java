@@ -107,12 +107,22 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
             BSRow row = grid.newRow();
+            int rowColTotal = 0;
             for (SType<?> tCampo : type.getFields()) {
                 final Boolean newRow = tCampo.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
                 if (newRow != null && newRow) {
                     row = grid.newRow();
                 }
-                buildField(ctx.getUiBuilderWicket(), row, fieldModel(tCampo));
+                
+                final SInstanceCampoModel<SInstance> instanceModel = fieldModel(tCampo);
+
+                rowColTotal += getPrefColspan(ctx, instanceModel.getObject());
+                if (rowColTotal > BSGrid.MAX_COLS) {
+                    // row = grid.newRow();  //TODO? descomentar para quebrar rows a cada 12 cols.
+                    rowColTotal = 0;
+                }
+
+                buildField(ctx.getUiBuilderWicket(), row, instanceModel);
             }
         }
 
@@ -131,46 +141,45 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             return null;
         }
 
-        protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row,
-                                  final SInstanceCampoModel<SInstance> mCampo) {
+        protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row, final SInstanceCampoModel<SInstance> mCampo) {
 
-            final SType<?> type = mCampo.getMInstancia().getType();
             final SInstance iCampo = mCampo.getObject();
             final ViewMode viewMode = ctx.getViewMode();
 
+            final BSCol col = row.newCol();
+            configureColspan(ctx, iCampo, col);
             if (iCampo instanceof SIComposite) {
-                final BSCol col = configureColspan(ctx, type, iCampo, row.newCol());
                 wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true, mCampo), viewMode);
             } else {
-                wicketBuilder.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true, mCampo), viewMode);
+                wicketBuilder.build(ctx.createChild(col, true, mCampo), viewMode);
             }
         }
 
-        protected BSCol configureColspan(WicketBuildContext ctx, SType<?> tCampo, final SInstance iCampo, BSCol col) {
-            final HashMap<String, Integer> hintColWidths = ctx.getHint(DefaultCompostoMapper.COL_WIDTHS);
-            /*
-            * Heuristica de distribuicao de tamanho das colunas, futuramente pode ser
-            * parametrizado ou transoformado em uma configuracao
-            */
-            final int colPref;
-
-            if (hintColWidths.containsKey(tCampo.getName())) {
-                colPref = hintColWidths.get(tCampo.getName());
-            } else {
-                colPref = iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
-            }
+        protected void configureColspan(WicketBuildContext ctx, final SInstance iCampo, BSCol col) {
+            final int colPref = getPrefColspan(ctx, iCampo);
 
             final Optional<Integer> colXs = Optional.ofNullable(iCampo.asAtrBootstrap().getColXs());
             final Optional<Integer> colSm = Optional.ofNullable(iCampo.asAtrBootstrap().getColSm());
             final Optional<Integer> colMd = Optional.ofNullable(iCampo.asAtrBootstrap().getColMd());
             final Optional<Integer> colLg = Optional.ofNullable(iCampo.asAtrBootstrap().getColLg());
 
+            /*
+             * Heuristica de distribuicao de tamanho das colunas, futuramente pode ser
+             * parametrizado ou transoformado em uma configuracao
+             */
             col.xs(colXs.orElse(Integer.min(colPref * 4, BSCol.MAX_COLS)));
             col.sm(colSm.orElse(Integer.min(colPref * 3, BSCol.MAX_COLS)));
             col.md(colMd.orElse(Integer.min(colPref * 2, BSCol.MAX_COLS)));
             col.lg(colLg.orElse(Integer.min(colPref, BSCol.MAX_COLS)));
+        }
 
-            return col;
+        protected int getPrefColspan(WicketBuildContext ctx, final SInstance iCampo) {
+            final SType<?> tCampo = iCampo.getType();
+            final HashMap<String, Integer> hintColWidths = ctx.getHint(DefaultCompostoMapper.COL_WIDTHS);
+
+            return (hintColWidths.containsKey(tCampo.getName()))
+                ? hintColWidths.get(tCampo.getName())
+                : iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
         }
     }
 
