@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.persistence.FormKey;
+import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
@@ -15,6 +16,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
 
 import javax.inject.Inject;
 
@@ -99,10 +101,11 @@ public class SingularStudioFormPanel extends SingularStudioPanel {
     }
 
     protected void saveButton() {
-        queue(new AjaxButton("save-button", form) {
+        queue(new SingularSaveButton("save-button", singularFormPanel.getRootInstance(), true) {
+
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                repository().insertOrUpdate(singularFormPanel.getRootInstance().getObject());
+            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                repository().insertOrUpdate(instanceModel.getObject());
                 showList(target);
             }
 
