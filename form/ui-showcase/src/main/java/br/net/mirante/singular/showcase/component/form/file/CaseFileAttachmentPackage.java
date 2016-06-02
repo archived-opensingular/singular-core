@@ -23,7 +23,7 @@ resources = @Resource(PageWithAttachment.class))
 public class CaseFileAttachmentPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         STypeAttachment anexo = tipoMyForm.addField("anexo", STypeAttachment.class);

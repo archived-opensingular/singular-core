@@ -7,8 +7,8 @@ import br.net.mirante.singular.form.type.basic.AtrBasic;
 public class SPackageCountryBrazil extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
-        super.carregarDefinicoes(pb);
+    protected void onLoadPackage(PackageBuilder pb) {
+        super.onLoadPackage(pb);
 
         pb.createType(STypeCNPJ.class);
         pb.createType(STypeCPF.class);

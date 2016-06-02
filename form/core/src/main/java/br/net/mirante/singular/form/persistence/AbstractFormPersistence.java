@@ -3,6 +3,9 @@ package br.net.mirante.singular.form.persistence;
 import br.net.mirante.singular.form.SIComposite;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -19,21 +22,45 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
 
     private final Constructor<KEY> keyConstructor;
 
+    private final Method convertMethod;
+
     private String name;
+
+    private static final String CONVERTER_METHOD_NAME = "convertToKey";
 
     public AbstractFormPersistence(Class<KEY> keyClass) {
         this.keyClass = keyClass;
         this.keyConstructor = findConstructorString(keyClass);
+        this.convertMethod = findConvertMethod(keyClass);
     }
 
     private Constructor<KEY> findConstructorString(Class<KEY> keyClass) {
         try {
-            return (Constructor<KEY>) (Constructor<?>) keyClass.getClass().getConstructor(String.class);
+            return keyClass.getConstructor(String.class);
         } catch (Exception e) {
             throw new SingularFormPersistenceException(
                     "Erro tentando obter o construtor " + keyClass.getSimpleName() + "(String) na classe " +
                             keyClass.getName(), e).add(this);
         }
+    }
+
+    private Method findConvertMethod(Class<KEY> keyClass) {
+        Method method;
+        try {
+            method = keyClass.getMethod(CONVERTER_METHOD_NAME, Object.class);
+        } catch (Exception e) {
+            throw new SingularFormPersistenceException(
+                    "Erro tentando obter o metodo " + CONVERTER_METHOD_NAME + "(Object) na classe " +
+                            keyClass.getName(), e).add(this);
+        }
+        if (!Modifier.isStatic(method.getModifiers()) || !Modifier.isPublic(method.getModifiers()) ||
+                !keyClass.isAssignableFrom(method.getReturnType())) {
+            throw new SingularFormPersistenceException(
+                    "O metodo " + CONVERTER_METHOD_NAME + "(Object) encontrado na classe " + keyClass.getName() +
+                            " não é compatível com a assintura de método esperado, que seria 'public static " +
+                            keyClass.getSimpleName() + " " + CONVERTER_METHOD_NAME + "(Object)'").add(this);
+        }
+        return method;
     }
 
     public String getName() {
@@ -52,6 +79,22 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
             throw new SingularFormPersistenceException(
                     "Erro criando FormKey para o valor string da chave '" + persistenceString + "'", e).add(this);
         }
+    }
+
+    public KEY keyFromObject(Object objectValueToBeConverted) {
+        if (objectValueToBeConverted == null) {
+            return null;
+        } else if (keyClass.isInstance(objectValueToBeConverted)) {
+            return keyClass.cast(objectValueToBeConverted);
+        }
+        Object result;
+        try {
+            result = convertMethod.invoke(null, objectValueToBeConverted);
+        } catch (Exception e) {
+            throw new SingularFormPersistenceException("Erro chamado método " + CONVERTER_METHOD_NAME).add("value",
+                    objectValueToBeConverted).add(this);
+        }
+        return keyClass.cast(result);
     }
 
     @Override
@@ -165,7 +208,7 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
     protected final <KEY extends FormKey> KEY checkKey(FormKey key, INSTANCE instance, String msgRequired) {
         if (key == null) {
             if (msgRequired != null) {
-                throw new SingularFormPersistenceException("Era esperado que " + msgRequired).add(this).add("key", key)
+                throw new SingularFormPersistenceException("Era esperado que " + msgRequired).add(this).add("key", null)
                         .add(instance);
             }
         } else if (!keyClass.isInstance(key)) {

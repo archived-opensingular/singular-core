@@ -4,14 +4,20 @@ import br.net.mirante.singular.form.SType;
 
 public class CollectionInfoBuilder<TYPE extends SType<?>> {
 
-    private CollectionInfo<TYPE> collectionInfo = new CollectionInfo<>();
+    private CollectionInfo collectionInfo = new CollectionInfo();
+
 
     public CollectionInfoBuilder<TYPE> form(Class<TYPE> clazz) {
-        collectionInfo.setSTypeClass(clazz);
+        collectionInfo.setSTypeClass((Class<SType<?>>) clazz);
         return this;
     }
 
-    CollectionInfo<TYPE> getCollectionInfo() {
+    public CollectionInfoBuilder<TYPE> title(String title) {
+        collectionInfo.setTitle(title);
+        return this;
+    }
+
+    CollectionInfo getCollectionInfo() {
         return collectionInfo;
     }
 

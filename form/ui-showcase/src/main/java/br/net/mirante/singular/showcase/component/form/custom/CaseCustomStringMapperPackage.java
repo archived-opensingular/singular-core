@@ -21,7 +21,7 @@ resources = @Resource(MaterialDesignInputMapper.class))
 public class CaseCustomStringMapperPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         STypeComposite<SIComposite> tipoMyForm = pb.createCompositeType("testForm");
 

@@ -18,7 +18,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreStringPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 

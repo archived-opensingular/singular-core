@@ -23,7 +23,7 @@ import br.net.mirante.singular.showcase.view.page.form.crud.services.MFileIdsOpt
 public class CaseInputCoreSelectProviderPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         final STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         /*

@@ -5,8 +5,30 @@
 
 package br.net.mirante.singular.form.wicket;
 
+import static com.google.common.collect.Lists.*;
+import static com.google.common.collect.Maps.*;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
+
 import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.view.SView;
@@ -25,25 +47,8 @@ import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.MetaDataKey;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.CssReferenceHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.string.Strings;
 
-import java.io.Serializable;
-import java.util.*;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
-
-@SuppressWarnings({"serial", "rawtypes"})
+@SuppressWarnings({ "serial", "rawtypes" })
 public class WicketBuildContext implements Serializable {
 
     static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
@@ -53,31 +58,33 @@ public class WicketBuildContext implements Serializable {
     public static final HintKey<IModel<String>> TITLE_KEY                                     = () -> null;
     public static final HintKey<Boolean>        RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
 
-    private final WicketBuildContext parent;
-    private final List<WicketBuildContext> children = newArrayList();
-    private final BSContainer<?> container;
-    private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
-    private final boolean hintsInherited;
-    private final BSContainer externalContainer;
-    private final BSContainer rootContainer;
+    private final WicketBuildContext                parent;
+    private final List<WicketBuildContext>          children = newArrayList();
+    private final BSContainer<?>                    container;
+    private final HashMap<HintKey<?>, Serializable> hints    = new HashMap<>();
+    private final boolean                           hintsInherited;
+    private final BSContainer                       externalContainer;
+    private final BSContainer                       rootContainer;
 
-    private IModel<? extends SInstance> model;
-    private UIBuilderWicket uiBuilderWicket;
-    private ViewMode viewMode;
-    private AnnotationMode annotation = AnnotationMode.NONE;
-    private HashMap<Integer, AnnotationComponent> annotations = newHashMap();
-    private HashMap<Integer,Component> annotationsTargetBuffer = newHashMap();
-    private BSContainer annotationContainer;
+    private IModel<? extends SInstance>           model;
+    private UIBuilderWicket                       uiBuilderWicket;
+    private ViewMode                              viewMode;
+    private AnnotationMode                        annotation              = AnnotationMode.NONE;
+    private HashMap<Integer, AnnotationComponent> annotations             = newHashMap();
+    private HashMap<Integer, Component>           annotationsTargetBuffer = newHashMap();
+    private BSContainer                           annotationContainer;
 
-    private boolean showBreadcrumb;
-    private List<String> breadCrumbs = newArrayList();
+    private boolean                                                      showBreadcrumb;
+    private List<String>                                                 breadCrumbs      = newArrayList();
     private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
-    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus;
+    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus        selectedBreadCrumbStatus;
 
     private SView view;
 
-    public AnnotationMode annotation(){ return annotation; }
-    public void annotation(AnnotationMode mode){
+    public AnnotationMode annotation() {
+        return annotation;
+    }
+    public void annotation(AnnotationMode mode) {
         Objects.requireNonNull(mode);
         annotation = mode;
     }
@@ -85,43 +92,44 @@ public class WicketBuildContext implements Serializable {
     public void setAnnotationContainer(BSContainer annotationContainer) {
         this.annotationContainer = annotationContainer;
     }
-    public void add(AnnotationComponent c){
+    public void add(AnnotationComponent c) {
         Integer id = c.referenced().getMInstancia().getId();
         annotations.put(id, c);
     }
-    public void updateAnnotations(Component c, SInstance target){
-        if(target != null){
-            for(WicketBuildContext ctx : contextChain()){
-                if(ctx.annotations.containsKey(target.getId())){
+    public void updateAnnotations(Component c, SInstance target) {
+        if (target != null) {
+            for (WicketBuildContext ctx : contextChain()) {
+                if (ctx.annotations.containsKey(target.getId())) {
                     ctx.annotations.get(target.getId()).setReferencedComponent(c);
                     return;
                 }
             }
 
-            annotationsTargetBuffer.put(target.getId(),c);
+            annotationsTargetBuffer.put(target.getId(), c);
         }
     }
 
-    public Optional<Component> getAnnotationTargetFor(SInstance target){
+    public Optional<Component> getAnnotationTargetFor(SInstance target) {
         if (!isRootContext()) {
             return getRootContext().getAnnotationTargetFor(target);
         }
         Component component = annotationsTargetBuffer.get(target.getId());
-        if(component != null) return Optional.of(component);
+        if (component != null)
+            return Optional.of(component);
         return Optional.empty();
     }
 
     /**
      * @return Components that must be refreshed whent the context is changed
      */
-    public List<Component> updateOnRefresh(){
+    public List<Component> updateOnRefresh() {
         return newArrayList(annotationContainer.getParent());
     }
 
     private List<WicketBuildContext> contextChain() {
         List<WicketBuildContext> contextChain = newArrayList(this);
         WicketBuildContext ctx = this;
-        while(ctx.getParent() != null){
+        while (ctx.getParent() != null) {
             ctx = ctx.getParent();
             contextChain.add(ctx);
         }
@@ -133,9 +141,9 @@ public class WicketBuildContext implements Serializable {
     }
 
     public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer,
-                              boolean hintsInherited, IModel<? extends SInstance> model) {
+        boolean hintsInherited, IModel<? extends SInstance> model) {
         this.parent = parent;
-        if(parent != null){
+        if (parent != null) {
             parent.children.add(this);
         }
         this.container = container;
@@ -189,7 +197,7 @@ public class WicketBuildContext implements Serializable {
      * @see SDocument
      * @see br.net.mirante.singular.form.wicket.mapper.TabMapper
      */
-    public void initContainerBehavior(){
+    public void initContainerBehavior() {
         getContainer().add(new InitRootContainerBehavior(getModel()));
     }
 
@@ -210,13 +218,12 @@ public class WicketBuildContext implements Serializable {
                 formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
             }
             final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
-            final SType<?> tipo = model.getMInstancia().getType();
-            if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
-                mapper.addAjaxUpdate(
-                        formComponent,
-                        IMInstanciaAwareModel.getInstanceModel(model),
-                        new OnFieldUpdatedListener());
-            }
+            // final SType<?> tipo = model.getMInstancia().getType();
+            // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
+            mapper.addAjaxUpdate(
+                formComponent,
+                IMInstanciaAwareModel.getInstanceModel(model),
+                new OnFieldUpdatedListener());
         }
     }
 
@@ -227,14 +234,14 @@ public class WicketBuildContext implements Serializable {
     public void configureContainer(IModel<String> title) {
         setHint(TITLE_KEY, title);
     }
-    
+
     public Optional<IModel<String>> resolveContainerTitle() {
         return Optional.ofNullable(getHint(TITLE_KEY));
     }
-    
-//    public boolean resolveReceivesInvisibleInnerComponentErrors() {
-//        return Boolean.TRUE.equals(getHint(RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY));
-//    }
+
+    //    public boolean resolveReceivesInvisibleInnerComponentErrors() {
+    //        return Boolean.TRUE.equals(getHint(RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY));
+    //    }
 
     public static Optional<WicketBuildContext> get(Component comp) {
         return Optional.ofNullable(comp.getMetaData(METADATA_KEY));
@@ -289,9 +296,13 @@ public class WicketBuildContext implements Serializable {
         return rootContainer;
     }
 
-    public WicketBuildContext getParent() { return parent;  }
+    public WicketBuildContext getParent() {
+        return parent;
+    }
 
-    public List<WicketBuildContext> getChildren() { return newArrayList(children);}
+    public List<WicketBuildContext> getChildren() {
+        return newArrayList(children);
+    }
 
     public BSContainer<?> getContainer() {
         return container;
@@ -343,7 +354,7 @@ public class WicketBuildContext implements Serializable {
 
         @Override
         public void onConfigure(Component component) {
-            if( instanceModel.getObject() != null) {
+            if (instanceModel.getObject() != null) {
                 instanceModel.getObject().getDocument().updateAttributes(null);
             }
         }

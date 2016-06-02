@@ -81,7 +81,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             }
 
             if (newFieldValue == null) {
-                throw new SingularFormException(erroValue(composite, newFieldValue, ref, null,
+                throw new SingularFormException(erroValue(composite, null, ref, null,
                         "Erro tentando setar valor na instância extendida de " + composite +
                                 " pois não foi encontrado o valor para atribuir ao campo " + ref.getField().getName()));
             }
@@ -112,10 +112,10 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             SType<?> expectedType = composite.getField(ref.getField().getName());
             if (expectedType == null) {
                 if (currentValue == null) {
-                    throw new SingularFormException(erroValue(composite, expectedType, ref, currentValue,
+                    throw new SingularFormException(erroValue(composite, null, ref, null,
                             "O campo java deveria ter um valor, mas está null"));
                 } else if (!isTypeChildrenOf(composite, currentValue)) {
-                    throw new SingularFormException(erroValue(composite, expectedType, ref, currentValue,
+                    throw new SingularFormException(erroValue(composite, null, ref, currentValue,
                             "O campo java tem um tipo que não é filho direto (ou indireto) de " + composite));
                 }
             } else if (currentValue != expectedType) {
@@ -235,13 +235,17 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
 
     private static CompositePublicInfo getCompositePublicInfo(Class<? extends STypeComposite> compositeClass) {
         if (classInfoCache == null) {
-            classInfoCache = CacheBuilder.newBuilder().weakValues().build(
-                    new CacheLoader<Class<?>, CompositePublicInfo>() {
-                        @Override
-                        public CompositePublicInfo load(Class<?> aClass) throws Exception {
-                            return readPublicFields(aClass);
-                        }
-                    });
+            synchronized (TypeProcessorPublicFieldsReferences.class) {
+                if (classInfoCache == null) {
+                    classInfoCache = CacheBuilder.newBuilder().weakValues().build(
+                            new CacheLoader<Class<?>, CompositePublicInfo>() {
+                                @Override
+                                public CompositePublicInfo load(Class<?> aClass) throws Exception {
+                                    return readPublicFields(aClass);
+                                }
+                            });
+                }
+            }
         }
         return classInfoCache.getUnchecked(compositeClass);
     }

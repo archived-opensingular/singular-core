@@ -22,8 +22,8 @@ resources = {@Resource(RangeSliderMapper.class), @Resource(value = RangeSliderMa
 public class CaseCustonRangeMapperPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
-        super.carregarDefinicoes(pb);
+    protected void onLoadPackage(PackageBuilder pb) {
+        super.onLoadPackage(pb);
 
         STypeComposite<SIComposite> testForm = pb.createCompositeType("testForm");
 

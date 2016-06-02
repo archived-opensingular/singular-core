@@ -29,7 +29,7 @@ public class CaseAnnotationPackage extends SPackage {
      */
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         pedido = pb.createCompositeType("testForm");
         pedido.asAtr().label("Pedido");
 
@@ -60,6 +60,6 @@ public class CaseAnnotationPackage extends SPackage {
 
         //@destacar
         request.asAtrAnnotation().setAnnotated().label("Observações Finais"); //Permite definir seu pŕoprio rótulo
-        super.carregarDefinicoes(pb);
+        super.onLoadPackage(pb);
     }
 }

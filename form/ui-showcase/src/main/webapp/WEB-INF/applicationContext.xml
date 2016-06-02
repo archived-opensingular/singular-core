@@ -42,4 +42,12 @@
         <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
 	</bean>
 
+    <bean id="showcaseStudioTypeLoader" class="br.net.mirante.singular.showcase.dao.form.studio.ShowcaseStudioTypeLoader" />
+
+    <bean id="collectionGallery" class="br.net.mirante.singular.studio.core.CollectionGallery" />
+
+    <bean id="persistenceFactory" class="br.net.mirante.singular.studio.persistence.StudioCollectionPersistenceFactory">
+        <constructor-arg ref="showcaseDocumentFactory"/>
+    </bean>
+
 </beans>

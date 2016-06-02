@@ -15,7 +15,7 @@ public class FormTreeTypeTest extends TestCaseForm {
     }
 
     @Test public void shouldNotLoop(){
-//        FormTreeTypeTest pkg = (FormTreeTypeTest) dict.loadPackage((Class)FormTreeTypeTest.class);
+//        FormTreeTypeTest pkg = (FormTreeTypeTest) dict.onLoadPackage((Class)FormTreeTypeTest.class);
 //        STypeComposite<? extends SIComposite> node = pkg.createTipoComposto("node");
 
         PackageBuilder                        pkg  = createTestDictionary().createNewPackage("pkg");

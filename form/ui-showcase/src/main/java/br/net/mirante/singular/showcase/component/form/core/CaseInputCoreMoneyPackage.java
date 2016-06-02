@@ -19,7 +19,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreMoneyPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         tipoMyForm.addFieldMonetary("monetario")
@@ -30,7 +30,7 @@ public class CaseInputCoreMoneyPackage extends SPackage {
                 .tamanhoInteiroMaximo(15)
                 .tamanhoDecimalMaximo(3);
 
-        super.carregarDefinicoes(pb);
+        super.onLoadPackage(pb);
     }
 
 }

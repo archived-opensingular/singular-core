@@ -1,35 +1,33 @@
 package br.net.mirante.singular.studio.core;
 
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.STypeSimple;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectionEditorConfig {
+public class CollectionEditorConfig implements Serializable{
 
-    private List<Pair<String, STypeSimple<?, ?>>> columns = new ArrayList<>();
+    /*
+     * Lista de par de label (caption da table) e nome do tipo
+     * O nome vai no lugar do SType para permitir que essa classe seja serializável
+     */
+    private List<Pair<String, String>> columns = new ArrayList<>();
     private Integer defaultSortColumnIndex;
 
     CollectionEditorConfig() {
     }
 
-    void setColumns(List<Pair<String, STypeSimple<?, ?>>> columns) {
-        this.columns = columns;
-    }
-
-    void setDefaultSortColumnIndex(Integer defaultSortColumnIndex) {
-        this.defaultSortColumnIndex = defaultSortColumnIndex;
-    }
-
-
-    public List<Pair<String, STypeSimple<?, ?>>> getColumns() {
+    public List<Pair<String, String>> getColumns() {
         return columns;
     }
 
     public Integer getDefaultSortColumnIndex() {
         return defaultSortColumnIndex;
+    }
+
+    void setDefaultSortColumnIndex(Integer defaultSortColumnIndex) {
+        this.defaultSortColumnIndex = defaultSortColumnIndex;
     }
 
 }

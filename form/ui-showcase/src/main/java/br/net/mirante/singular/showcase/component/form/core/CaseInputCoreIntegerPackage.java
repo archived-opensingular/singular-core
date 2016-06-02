@@ -19,7 +19,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseInputCoreIntegerPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         STypeInteger mTipoInteger = tipoMyForm.addFieldInteger("qtd");

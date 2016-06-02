@@ -27,7 +27,7 @@ import br.net.mirante.singular.showcase.component.Group;
 public class CaseTabsPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         STypeString nome;

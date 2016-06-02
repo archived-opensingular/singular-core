@@ -29,7 +29,7 @@ public class SPackageNotificacaoSimplificada extends SPackage {
 
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         pb.loadPackage(SPackageVocabularioControlado.class);
         pb.createType(STypeEmpresaPropria.class);
         pb.createType(STypeEmpresaInternacional.class);

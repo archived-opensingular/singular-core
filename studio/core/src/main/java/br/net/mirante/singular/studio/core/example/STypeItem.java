@@ -9,14 +9,16 @@ import br.net.mirante.singular.form.type.core.STypeString;
 public class STypeItem extends STypeComposite<SIComposite> {
 
     public STypeInteger id;
-    public STypeString description;
+    public STypeString descricao;
     public STypeMonetary cost;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
 
         id = addFieldInteger("id");
-        description = addFieldString("descricao");
+        id.asAtr().label("Id");
+        descricao = addFieldString("descricao");
+        descricao.asAtr().label("Descrição");
         cost = addFieldMonetary("cost");
     }
 }

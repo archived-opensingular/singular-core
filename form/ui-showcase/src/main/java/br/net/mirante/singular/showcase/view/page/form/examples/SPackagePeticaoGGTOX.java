@@ -26,7 +26,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
     }
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
 
         final STypeComposite<?> peticionamento = pb.createCompositeType(TIPO);
 

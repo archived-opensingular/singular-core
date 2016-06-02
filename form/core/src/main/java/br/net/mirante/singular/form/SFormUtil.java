@@ -183,7 +183,7 @@ public final class SFormUtil {
         return mFormTipo;
     }
 
-    final static Class<? extends SPackage> getTypePackage(Class<? extends SType<?>> typeClass) {
+    public final static Class<? extends SPackage> getTypePackage(Class<? extends SType<?>> typeClass) {
         Class<? extends SPackage> sPackage = getInfoType(typeClass).spackage();
         if (sPackage == null) {
             throw new SingularFormException(
