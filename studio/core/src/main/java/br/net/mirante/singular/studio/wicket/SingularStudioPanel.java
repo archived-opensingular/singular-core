@@ -2,6 +2,7 @@ package br.net.mirante.singular.studio.wicket;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.FormPersistence;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
 import br.net.mirante.singular.studio.core.CollectionEditorConfig;
@@ -67,8 +68,8 @@ public abstract class SingularStudioPanel extends Panel {
         return getToolbox().sType(getCanvas());
     }
 
-   protected void showForm(AjaxRequestTarget target, Object formId) {
-        panelControl.showForm(target, formId);
+   protected void showForm(AjaxRequestTarget target, FormKey formKey) {
+        panelControl.showForm(target, formKey);
     }
 
     protected void showList(AjaxRequestTarget target) {

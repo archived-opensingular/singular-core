@@ -1,20 +1,21 @@
 package br.net.mirante.singular.form.persistence;
 
 import br.net.mirante.singular.form.SISimple;
+import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeSimple;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Daniel C. Bordin
  */
+@SInfoType(spackage = SPackageFormPersistence.class)
 public class STypeFormKey extends STypeSimple<SISimple<FormKey>, FormKey> {
 
     private static final char SEPARATOR = '@';
 
     public STypeFormKey() {
-        super( (Class<SISimple<FormKey>>) (Class) SISimple.class, FormKey.class);
+        super((Class<SISimple<FormKey>>) (Class) SISimple.class, FormKey.class);
     }
 
     @Override
