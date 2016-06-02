@@ -6635,6 +6635,7 @@ Customized Bootstrap Pagination
 Customized Bootstrap Panels
 ***/
 .panel {
+  background-color: #fafbfc;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
   box-shadow: none !important; }
@@ -6661,14 +6662,13 @@ Customized Bootstrap Panels
 /***
 Accordions
 ***/
-.panel-heading {
-  background: #eee; }
-  .panel-heading a {
-    text-decoration: none; }
-  .panel-heading a:active,
-  .panel-heading a:focus,
-  .panel-heading a:hover {
-    text-decoration: none; }
+.panel-heading a {
+  text-decoration: none; }
+
+.panel-heading a:active,
+.panel-heading a:focus,
+.panel-heading a:hover {
+  text-decoration: none; }
 
 /***
 Customized Bootstrap Popover

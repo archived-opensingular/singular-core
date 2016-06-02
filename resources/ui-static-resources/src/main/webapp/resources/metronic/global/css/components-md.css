@@ -41,7 +41,7 @@ body {
 @-ms-viewport {
   width: auto !important; }
 
-.md-shadow-z-1, .alert, .badge, .btn:not(.md-skip), .btn-group > .btn:not(.md-skip), .btn.btn-link:not(.md-skip):hover, .icon-btn, .label:not(.md-skip), .note, .panel, .social-icons li > a, .social-icons.social-icons-color > li > a, .well {
+.md-shadow-z-1, .alert, .badge, .btn:not(.md-skip), .btn-group > .btn:not(.md-skip), .btn.btn-link:not(.md-skip):hover, .icon-btn, .label:not(.md-skip), .note, .social-icons li > a, .social-icons.social-icons-color > li > a, .well {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.18); }
 
 .md-shadow-z-1-i {
@@ -6734,44 +6734,38 @@ Customized Bootstrap Pagination
 /***
 Customized Bootstrap Panels
 ***/
-.panel-group .panel {
-  overflow: visible; }
-
-.panel .panel-body {
-  font-size: 13px; }
-
-.panel .panel-title > a:hover {
-  text-decoration: none; }
-
-.accordion .panel .panel-heading {
-  padding: 0; }
-
-.accordion .panel .panel-title {
-  padding: 0; }
-  .accordion .panel .panel-title .accordion-toggle {
-    display: block;
-    padding: 10px 15px; }
-  .accordion .panel .panel-title .accordion-toggle.accordion-toggle-styled {
-    background: url("../img/accordion-plusminus.png") no-repeat;
-    background-position: right -19px;
-    margin-right: 15px; }
-  .accordion .panel .panel-title .accordion-toggle.accordion-toggle-styled.collapsed {
-    background-position: right 12px; }
+.panel {
+  background-color: #fafbfc; }
+  .panel-group .panel {
+    overflow: visible; }
+  .panel .panel-body {
+    font-size: 13px; }
+  .panel .panel-title > a:hover {
+    text-decoration: none; }
+  .accordion .panel .panel-heading {
+    padding: 0; }
+  .accordion .panel .panel-title {
+    padding: 0; }
+    .accordion .panel .panel-title .accordion-toggle {
+      display: block;
+      padding: 10px 15px; }
+    .accordion .panel .panel-title .accordion-toggle.accordion-toggle-styled {
+      background: url("../img/accordion-plusminus.png") no-repeat;
+      background-position: right -19px;
+      margin-right: 15px; }
+    .accordion .panel .panel-title .accordion-toggle.accordion-toggle-styled.collapsed {
+      background-position: right 12px; }
 
 /***
 Accordions
 ***/
-.panel-heading {
-  background: #eee; }
-  .panel-heading a {
-    text-decoration: none; }
-  .panel-heading a:active,
-  .panel-heading a:focus,
-  .panel-heading a:hover {
-    text-decoration: none; }
+.panel-heading a {
+  text-decoration: none; }
 
-.panel {
-  border: 0; }
+.panel-heading a:active,
+.panel-heading a:focus,
+.panel-heading a:hover {
+  text-decoration: none; }
 
 /***
 Customized Bootstrap Popover

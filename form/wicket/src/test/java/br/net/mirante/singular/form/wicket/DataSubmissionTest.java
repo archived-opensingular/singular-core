@@ -155,7 +155,11 @@ public class DataSubmissionTest {
             assertThat(tester.getTagById(text2.getMarkupId())).isNotNull();
 
             form.setValue(text1, "clear");
-            tester.executeAjaxEvent(text1, "onchange");
+            tester.executeAjaxEvent(text1, "change");
+
+            tags = (List) findTag(tester.getLastRenderedPage(), TextField.class);
+            text1 = tags.get(0);
+            text2 = tags.get(1);
 
             assertThat(tester.getTagById(text1.getMarkupId())).isNotNull();
             assertThat(tester.getTagById(text2.getMarkupId())).isNull();
