@@ -5,6 +5,8 @@ import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.persistence.FormKey;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
 import br.net.mirante.singular.studio.spring.StudioCollectionToolboxBean;
@@ -26,18 +28,24 @@ public class SingularStudioFormPanel extends SingularStudioPanel {
     private BSContainer formPanel;
     private SingularFormPanel<Class<SType<?>>> singularFormPanel;
     private FormKey formKey;
+    private ViewMode viewMode;
+    private AnnotationMode annotationMode;
 
     /**
      * Construtor do painel
      *
-     * @param id           o markup id wicket
+     * @param id             o markup id wicket
      * @param panelControl
-     * @param formKey
      * @param canvas
+     * @param formKey
+     * @param viewMode
+     * @param annotationMode
      */
-    public SingularStudioFormPanel(String id, SingularStudioCollectionPanel.PanelControl panelControl, CollectionCanvas canvas, FormKey formKey) {
+    public SingularStudioFormPanel(String id, SingularStudioCollectionPanel.PanelControl panelControl, CollectionCanvas canvas, FormKey formKey, ViewMode viewMode, AnnotationMode annotationMode) {
         super(id, panelControl, canvas);
         this.formKey = formKey;
+        this.viewMode = viewMode;
+        this.annotationMode = annotationMode;
     }
 
     @Override
@@ -55,6 +63,17 @@ public class SingularStudioFormPanel extends SingularStudioPanel {
     protected void addSingularFormPanel() {
         formPanel.appendTag("div", true, "",
                 singularFormPanel = new SingularFormPanel<Class<SType<?>>>("singular-form-panel", studioCollectionToolboxBean) {
+
+                    @Override
+                    public AnnotationMode annotation() {
+                        return annotationMode;
+                    }
+
+                    @Override
+                    public ViewMode getViewMode() {
+                        return viewMode;
+                    }
+
                     @Override
                     protected SInstance createInstance(SFormConfig<Class<SType<?>>> singularFormConfig) {
                         if (formKey != null) {
@@ -90,7 +109,7 @@ public class SingularStudioFormPanel extends SingularStudioPanel {
             @Override
             protected void onError(AjaxRequestTarget target, Form<?> form) {
                 super.onError(target, form);
-                throw new RuntimeException("erro");
+                getLogger().error("Erro ao processar executar ação do botão salvar.");
             }
         });
     }

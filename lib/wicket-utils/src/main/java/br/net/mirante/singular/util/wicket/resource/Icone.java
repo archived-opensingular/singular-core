@@ -57,6 +57,7 @@ public enum Icone {
     TAG                 ("icon-tag"),
     TAGS                ("fa fa-tags"),
     TIMES               ("fa fa-times"),
+    TRASH               ("fa fa-trash-o "),
     UNDO                ("icon-action-undo"),
     USER                ("fa fa-user"),
     USERS               ("icon-users"),

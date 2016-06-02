@@ -7,7 +7,7 @@ package br.net.mirante.singular.form.wicket.enums;
 
 public enum AnnotationMode {
 
-    NONE, EDIT, READ_ONLY;
+    NONE, EDIT, READ_ONLY, annotationMode;
 
     public boolean editable() {
         return this.equals(EDIT);
