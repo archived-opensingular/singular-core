@@ -24,10 +24,8 @@
     window.SingularTypeahead = {
         configure: function (container, valueField) {
             console.log(container);
-            // $('.twitter-typeahead').addClass("input-icon input-icon-lg right`");
-            // container.prepend('<i class="fa fa-chevron-down"></i>');
             $('#'+container+' span').first()
-                .addClass("input-icon input-icon-lg right")
+                .addClass("input-icon input-icon-sm right")
                 .prepend('<i class="fa fa-chevron-down"></i>');
         	var clearText = function (x) {return S(x).latinise().s.toUpperCase();};
 

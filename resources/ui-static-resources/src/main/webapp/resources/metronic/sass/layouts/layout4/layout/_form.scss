@@ -19,3 +19,30 @@
 
   }
 }
+
+.tt-input {
+  &[readonly] {
+    background: none;
+  }
+}
+
+.twitter-typeahead {
+  .fa.fa-chevron-down {
+    z-index: 1;
+  }
+}
+
+.tt-clear-icon {
+  z-index: 3;
+}
+
+.has-error {
+  input {
+    background: url('data:image/svg+xml;utf8,#{($svg-alert)}') no-repeat 99% 50%;
+    background-size: 18px 18px;
+  }
+
+  .control-label {
+    color: $text-color;
+  }
+}
