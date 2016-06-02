@@ -31,6 +31,9 @@ public class AttachmentMapper extends ControlsFieldComponentAbstractMapper {
     }
 
     @Override
+    public boolean updateOnChange() {   return false;   }
+
+    @Override
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         throw new SingularFormException("Este metodo não deve ser acessado, para download utilizar appendReadOnlyInput");
     }

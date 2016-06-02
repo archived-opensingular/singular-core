@@ -159,7 +159,7 @@ public class FileUploadPanel2 extends Panel {
         add(    (filesContainer = new WebMarkupContainer("files"))
                     .add(downloadLink.add(fileName)),
                 fileField,
-                removeFileButton,
+//                removeFileButton,
                 nameField, hashField, sizeField, idField,
                 progressBar = new WebMarkupContainer("progress")
         );

@@ -11,6 +11,11 @@
             padding-bottom: 5px;
         }
 
+        .progress{
+            margin-left: 30px;
+            position: relative;
+        }
+
     </style>
 
     <input type="hidden" wicket:id="file_name" />
@@ -33,16 +38,11 @@
                 <span style="padding: 7px 5px;" > Escolher</span>
                 <input type="file" wicket:id="fileUpload" />
             </span>
-            <button wicket:id="removeFileButton" class="btn btn-sm red"
-                    style="padding: 7px 7px;" title="Remover" type="button">
-                <span class="glyphicon glyphicon-trash"></span>
-            </button>
         </span>
-        <div class="progress" wicket:id="progress">
-            <div class="progress-bar progress-bar-success" ></div>
-        </div>
     </div>
-
+    <div class="progress" wicket:id="progress">
+        <div class="progress-bar progress-bar-success" ></div>
+    </div>
 </wicket:panel>
 </body>
 </html>

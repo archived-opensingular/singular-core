@@ -220,10 +220,12 @@ public class WicketBuildContext implements Serializable {
             final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
             // final SType<?> tipo = model.getMInstancia().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
-            mapper.addAjaxUpdate(
-                formComponent,
-                IMInstanciaAwareModel.getInstanceModel(model),
-                new OnFieldUpdatedListener());
+            if(mapper.updateOnChange()){
+                mapper.addAjaxUpdate(
+                        formComponent,
+                        IMInstanciaAwareModel.getInstanceModel(model),
+                        new OnFieldUpdatedListener());
+            }
         }
     }
 
