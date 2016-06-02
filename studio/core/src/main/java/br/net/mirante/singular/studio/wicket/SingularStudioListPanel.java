@@ -1,5 +1,6 @@
 package br.net.mirante.singular.studio.wicket;
 
+import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
@@ -8,6 +9,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -15,7 +17,10 @@ import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvid
 import org.apache.wicket.model.IModel;
 
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
+import static br.net.mirante.singular.form.persistence.SPackageFormPersistence.ATR_FORM_KEY;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 @SuppressWarnings({"serial", "unchecked"})
@@ -45,23 +50,53 @@ public class SingularStudioListPanel extends SingularStudioPanel {
                     public void onClick(AjaxRequestTarget target) {
                         showForm(target, null);
                     }
-                }.setBody($m.ofValue("Novo")));
+                }.setBody($m.ofValue(getString("label.button.new"))));
     }
 
     protected BSContainer buildDataTable(String id) {
-
         BSDataTableBuilder<SInstance, String, ?> builder = new BSDataTableBuilder<>(dataProvider());
-        for (Pair<String, String> p : editorConfig().getColumns()) {
-            builder.appendPropertyColumn($m.ofValue(p.getKey()), p.getValue(), SInstance::toStringDisplay);
-        }
-        builder.setRowsPerPage(10);
 
+        buildDisplayColumns(builder);
+        buildActionColumns(builder);
 
         BSContainer tableContainer = new BSContainer(id);
         tableContainer.appendTag("table", true, " class=\"table table-striped table-hover dataTable table-bordered\" ",
                 (IBSComponentFactory<BSDataTable<SInstance, String>>) tableId -> builder.build(tableId));
 
         return tableContainer;
+    }
+
+    private void buildDisplayColumns(BSDataTableBuilder<SInstance, String, ?> builder) {
+        for (Pair<String, String> p : editorConfig().getColumns()) {
+            builder.appendPropertyColumn($m.ofValue(p.getKey()), p.getValue(), (SInstance i) -> {
+                String subpath = p.getValue().replaceFirst(Pattern.quote(sType().getName()), "");
+                String remainingPath = subpath.startsWith(".") ? subpath.substring(1) : subpath;
+                if (i instanceof SIComposite) {
+                    return Optional
+                            .ofNullable((SIComposite) i)
+                            .map(inst -> inst.getField(remainingPath))
+                            .map(SInstance::toStringDisplay)
+                            .orElse("");
+                } else {
+                    return Optional
+                            .ofNullable(i)
+                            .map(SInstance::toStringDisplay)
+                            .orElse("");
+                }
+            });
+        }
+    }
+
+    private void buildActionColumns(BSDataTableBuilder<SInstance, String, ?> builder) {
+        builder.appendActionColumn(
+                $m.ofValue(""),
+                ac -> ac.appendAction(
+                        $m.ofValue(getString("label.table.column.edit")),
+                        Icone.PENCIL,
+                        (ajaxRequestTarget, model) -> showForm(ajaxRequestTarget, model.getObject().getAttributeValue(ATR_FORM_KEY))
+                )
+        );
+        builder.setRowsPerPage(Integer.MAX_VALUE);
     }
 
     protected SortableDataProvider<SInstance, String> dataProvider() {
