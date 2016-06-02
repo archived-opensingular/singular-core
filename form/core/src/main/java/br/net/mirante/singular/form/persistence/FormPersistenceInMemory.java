@@ -50,17 +50,17 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     }
 
     @Override
-    protected Iterable<INSTANCE> loadAllAsIterableInternal() {
-        return collection.values();
-    }
-
-    @Override
-    public Collection<INSTANCE> loadAllAsCollectionInternal() {
-        return collection.values();
-    }
-
-    @Override
-    protected List<INSTANCE> loadAllAsListInternal() {
+    protected List<INSTANCE> loadAllInternal() {
         return Lists.newArrayList(collection.values());
+    }
+
+    @Override
+    protected List<INSTANCE> loadAllInternal(long first, long max) {
+        return loadAllInternal().subList((int)first, (int) Math.min(first + max, countAll()));
+    }
+
+    @Override
+    public long countAll() {
+        return collection.values().size();
     }
 }

@@ -87,6 +87,7 @@ public class CollectionEditorConfigBuilder {
         }
 
         public ColumnConfigurer rowsPerPage(int i) {
+            editor.setRowsPerPage(i);
             return this;
         }
 

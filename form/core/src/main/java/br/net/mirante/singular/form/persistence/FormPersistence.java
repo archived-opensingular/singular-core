@@ -36,9 +36,9 @@ public interface FormPersistence<INSTANCE extends SInstance> {
 
     public FormKey insertOrUpdate(INSTANCE instance);
 
-    public Iterable<INSTANCE> loadAllAsIterable();
+    public List<INSTANCE> loadAll(long first, long max);
 
-    public Collection<INSTANCE> loadAllAsCollection();
+    public List<INSTANCE> loadAll();
 
-    public List<INSTANCE> loadAllAsList();
+    public long countAll();
 }
