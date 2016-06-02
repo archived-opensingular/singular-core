@@ -114,6 +114,11 @@ public class SingularStudioFormPanel extends SingularStudioPanel {
                 super.onError(target, form);
                 getLogger().error("Erro ao processar executar ação do botão salvar.");
             }
+
+            @Override
+            public boolean isVisible() {
+                return viewMode == ViewMode.EDITION || annotationMode == AnnotationMode.EDIT;
+            }
         });
     }
 
