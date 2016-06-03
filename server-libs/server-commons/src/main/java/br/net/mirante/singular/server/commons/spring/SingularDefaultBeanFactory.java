@@ -29,7 +29,6 @@ public class SingularDefaultBeanFactory {
         return new PetitionDAO<T>();
     }
 
-
     @Bean
     public <T extends AbstractPetitionEntity> PetitionService<T> worklistPetitionServiceFactory() {
         return new PetitionService<T>();

@@ -58,6 +58,11 @@ public class FormPage extends AbstractFormPage<Petition> {
     }
 
     @Override
+    protected String getProcessType(FormPageConfig config) {
+        return null;
+    }
+
+    @Override
     protected IModel<?> getContentTitleModel() {
         return $m.get(()->content.getSingularFormPanel().getRootTypeSubtitle());
     }
