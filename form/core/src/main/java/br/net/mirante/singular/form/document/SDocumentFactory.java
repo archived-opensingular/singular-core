@@ -94,6 +94,6 @@ public abstract class SDocumentFactory {
      * documento ao criá-los.
      */
     public static final SDocumentFactory empty() {
-        return new SDocumentFactoryEmpty();
+        return SDocumentFactoryEmpty.getEmptyInstance();
     }
 }

@@ -12,6 +12,21 @@ package br.net.mirante.singular.form.document;
  */
 public class SDocumentFactoryEmpty extends SDocumentFactory {
 
+    private static SDocumentFactoryEmpty instance;
+
+    protected SDocumentFactoryEmpty() {}
+
+    final static SDocumentFactory getEmptyInstance() {
+        if (instance == null) {
+            synchronized (SDocumentFactoryEmpty.class) {
+                if (instance == null) {
+                    instance = new SDocumentFactoryEmpty();
+                }
+            }
+        }
+        return instance;
+    }
+
     @Override
     public RefSDocumentFactory getDocumentFactoryRef() {
         return new RefEmptySDocumentFactory();
@@ -30,7 +45,7 @@ public class SDocumentFactoryEmpty extends SDocumentFactory {
 
         @Override
         protected SDocumentFactory retrieve() {
-            return new SDocumentFactoryEmpty();
+            return getEmptyInstance();
         }
     }
 }
