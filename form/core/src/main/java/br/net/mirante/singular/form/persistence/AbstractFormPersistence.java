@@ -160,18 +160,13 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
     }
 
     @Override
-    public final Iterable<INSTANCE> loadAllAsIterable() {
-        return loadAllAsIterableInternal();
+    public List<INSTANCE> loadAll(long first, long max) {
+        return loadAllInternal(first, max);
     }
 
     @Override
-    public final Collection<INSTANCE> loadAllAsCollection() {
-        return loadAllAsCollectionInternal();
-    }
-
-    @Override
-    public final List<INSTANCE> loadAllAsList() {
-        return loadAllAsListInternal();
+    public List<INSTANCE> loadAll() {
+        return loadAllInternal();
     }
 
     protected abstract void updateInternal(KEY key, INSTANCE instance);
@@ -182,11 +177,9 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
 
     protected abstract INSTANCE loadInternal(KEY key);
 
-    protected abstract Iterable<INSTANCE> loadAllAsIterableInternal();
+    protected abstract List<INSTANCE> loadAllInternal();
 
-    protected abstract Collection<INSTANCE> loadAllAsCollectionInternal();
-
-    protected abstract List<INSTANCE> loadAllAsListInternal();
+    protected abstract List<INSTANCE> loadAllInternal(long first, long max);
 
 
     //-------------------------------------------------

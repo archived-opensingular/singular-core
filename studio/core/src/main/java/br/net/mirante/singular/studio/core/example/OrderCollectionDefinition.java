@@ -16,7 +16,8 @@ public class OrderCollectionDefinition implements CollectionDefinition<STypeOrde
     @Override
     public void collectionInfo(CollectionInfoBuilder<STypeOrder> builder) {
         builder
-                .form(STypeOrder.class);
+                .form(STypeOrder.class)
+                .title("Compras");
     }
 
     /*

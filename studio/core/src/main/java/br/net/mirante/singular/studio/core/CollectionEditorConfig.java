@@ -14,6 +14,7 @@ public class CollectionEditorConfig implements Serializable{
      */
     private List<Pair<String, String>> columns = new ArrayList<>();
     private Integer defaultSortColumnIndex;
+    private long rowsPerPage;
 
     CollectionEditorConfig() {
     }
@@ -30,4 +31,11 @@ public class CollectionEditorConfig implements Serializable{
         this.defaultSortColumnIndex = defaultSortColumnIndex;
     }
 
+    public long getRowsPerPage() {
+        return rowsPerPage;
+    }
+
+    void setRowsPerPage(long rowsPerPage) {
+        this.rowsPerPage = rowsPerPage;
+    }
 }

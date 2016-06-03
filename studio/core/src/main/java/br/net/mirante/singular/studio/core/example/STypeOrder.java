@@ -17,7 +17,10 @@ public class STypeOrder extends STypeComposite<SIComposite> {
         id = addFieldInteger("id");
         id.asAtr().label("Id");
         descricao = addFieldString("descricao");
-        descricao.asAtr().label("Descrição");
+        descricao
+                .asAtr()
+                .label("Descrição")
+                .required();
         itens = addFieldListOf("itens", STypeItem.class);
     }
 }
