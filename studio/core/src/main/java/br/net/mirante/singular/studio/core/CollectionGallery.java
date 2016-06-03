@@ -43,4 +43,11 @@ public class CollectionGallery {
     }
 
 
+    public CollectionCanvas getCollectionCanvas(Class<? extends CollectionDefinition> collectionDefinition) {
+        return getCollectionCanvas()
+                .stream()
+                .filter(cc -> cc.getCollectionDefinition().getClass().equals(collectionDefinition))
+                .findFirst()
+                .get();
+    }
 }

@@ -20,6 +20,10 @@ public class CollectionCanvas implements Serializable {
         this.collectionInfo = collectionInfo;
     }
 
+    public CollectionDefinition getCollectionDefinition() {
+        return collectionDefinition;
+    }
+
     public CollectionInfo getCollectionInfo() {
         return collectionInfo;
     }

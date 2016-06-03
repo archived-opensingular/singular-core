@@ -5,6 +5,16 @@
 
 package br.net.mirante.singular.showcase.component;
 
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple;
+import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple2;
+import br.net.mirante.singular.studio.core.CollectionDefinition;
+import br.net.mirante.singular.util.wicket.resource.Icone;
+import com.google.common.base.Throwables;
+import org.apache.wicket.util.string.StringValue;
+import org.reflections.Reflections;
+import org.springframework.stereotype.Service;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,25 +26,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.wicket.util.string.StringValue;
-import org.reflections.Reflections;
-import org.springframework.stereotype.Service;
-
-import com.google.common.base.Throwables;
-
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple;
-import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple2;
-import br.net.mirante.singular.showcase.view.page.form.ListPage;
-import br.net.mirante.singular.util.wicket.resource.Icone;
-
 @Service
 public class ShowCaseTable {
 
     private final Map<String, ShowCaseGroup> formGroups = new LinkedHashMap<>();
     private final Map<String, ShowCaseGroup> studioGroups = new LinkedHashMap<>();
 
-    private final Map<Group, List<Class<? extends SPackage>>> casePorGrupo = new LinkedHashMap<>();
+    private final Map<Group, List<Class<?>>> casePorGrupo = new LinkedHashMap<>();
 
     @SuppressWarnings("unchecked")
     public ShowCaseTable() {
@@ -42,17 +40,17 @@ public class ShowCaseTable {
         Reflections reflections = new Reflections("br.net.mirante.singular.showcase.component");
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(CaseItem.class);
         for (Class<?> aClass : annotated) {
-            if (SPackage.class.isAssignableFrom(aClass)) {
-                Class<? extends SPackage> sPackage = (Class<? extends SPackage>) aClass;
-                final CaseItem annotation = aClass.getAnnotation(CaseItem.class);
 
-                List<Class<? extends SPackage>> classes = casePorGrupo.get(annotation.group());
-                if (classes == null) {
-                    classes = new ArrayList<>();
-                }
-                classes.add(sPackage);
-                casePorGrupo.put(annotation.group(), classes);
+
+            final CaseItem annotation = aClass.getAnnotation(CaseItem.class);
+
+            List<Class<?>> classes = casePorGrupo.get(annotation.group());
+            if (classes == null) {
+                classes = new ArrayList<>();
             }
+            classes.add(aClass);
+            casePorGrupo.put(annotation.group(), classes);
+
 
         }
 
@@ -65,7 +63,7 @@ public class ShowCaseTable {
         addGroup(Group.CUSTOM);
         addGroup(Group.MAPS);
 
-        addGroup("XSD", Icone.CODE, ListPage.Tipo.FORM)
+        addGroup("XSD", Icone.CODE, ShowCaseType.FORM)
             .addCase(new XsdCaseSimple())
             .addCase(new XsdCaseSimple2());
 
@@ -84,11 +82,19 @@ public class ShowCaseTable {
     private void addGroup(Group groupEnum) {
         final ShowCaseGroup group = addGroup(groupEnum.getName(), groupEnum.getIcone(), groupEnum.getTipo());
 
-        final List<Class<? extends SPackage>> classes = casePorGrupo.get(groupEnum);
+        final List<Class<?>> classes = casePorGrupo.get(groupEnum);
         if (classes != null) {
-            for (Class<? extends SPackage> packageClass : classes) {
-                final CaseItem caseItem = packageClass.getAnnotation(CaseItem.class);
-                final CaseBase caseBase = new CaseBase(packageClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
+            for (Class<?> caseClass : classes) {
+                final CaseItem caseItem = caseClass.getAnnotation(CaseItem.class);
+                final CaseBase caseBase;
+                if (SPackage.class.isAssignableFrom(caseClass)) {
+                    caseBase = new CaseBaseForm(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
+                } else if (CollectionDefinition.class.isAssignableFrom(caseClass)) {
+                    caseBase = new CaseBaseStudio(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
+                } else {
+                    throw new RuntimeException("Apenas classes do tipo " + SPackage.class.getName() + " e " + CollectionDefinition.class.getName() + " podem ser anotadas com @" + CaseItem.class.getName());
+                }
+
                 if (!caseItem.customizer().isInterface()) {
                     createInstance(caseItem).customize(caseBase);
                 }
@@ -121,14 +127,14 @@ public class ShowCaseTable {
         return null;
     }
 
-    private ShowCaseGroup addGroup(String groupName, Icone icon, ListPage.Tipo tipo) {
+    private ShowCaseGroup addGroup(String groupName, Icone icon, ShowCaseType tipo) {
         Map<String, ShowCaseGroup> groups;
-        if (ListPage.Tipo.FORM.equals(tipo)) {
+        if (ShowCaseType.FORM.equals(tipo)) {
             groups = formGroups;
         } else {
             groups = studioGroups;
         }
-        
+
         ShowCaseGroup group = groups.get(groupName);
         if (group == null) {
             group = new ShowCaseGroup(groupName, icon, tipo);
@@ -145,9 +151,9 @@ public class ShowCaseTable {
     }
 
     public Collection<ShowCaseGroup> getGroups(StringValue tipoValue) {
-        if (tipoValue.isNull() || ListPage.Tipo.FORM.toString().equals(tipoValue.toString())) {
+        if (tipoValue.isNull() || ShowCaseType.FORM.toString().equals(tipoValue.toString())) {
             return formGroups.values();
-        } else if (ListPage.Tipo.STUDIO.toString().equals(tipoValue.toString())) {
+        } else if (ShowCaseType.STUDIO.toString().equals(tipoValue.toString())) {
             return studioGroups.values();
         } else {
             return Collections.emptyList();
@@ -158,12 +164,12 @@ public class ShowCaseTable {
     public static class ShowCaseGroup implements Serializable {
 
         private final String groupName;
-        private final Icone  icon;
-        private final ListPage.Tipo tipo;
+        private final Icone icon;
+        private final ShowCaseType tipo;
 
         private final Map<String, ShowCaseItem> itens = new TreeMap<>();
 
-        public ShowCaseGroup(String groupName, Icone icon, ListPage.Tipo tipo) {
+        public ShowCaseGroup(String groupName, Icone icon, ShowCaseType tipo) {
             this.groupName = groupName;
             this.icon = icon;
             this.tipo = tipo;
@@ -184,7 +190,7 @@ public class ShowCaseTable {
         private ShowCaseGroup addCase(CaseBase c) {
             ShowCaseItem item = itens.get(c.getComponentName());
             if (item == null) {
-                item = new ShowCaseItem(c.getComponentName());
+                item = new ShowCaseItem(c.getComponentName(), c.getShowCaseType());
                 itens.put(c.getComponentName(), item);
             }
             item.addCase(c);
@@ -199,7 +205,7 @@ public class ShowCaseTable {
             return icon;
         }
 
-        public ListPage.Tipo getTipo() {
+        public ShowCaseType getTipo() {
             return tipo;
         }
     }
@@ -209,9 +215,11 @@ public class ShowCaseTable {
         private final String componentName;
 
         private final List<CaseBase> cases = new ArrayList<>();
+        private ShowCaseType showCaseType;
 
-        public ShowCaseItem(String componentName) {
+        public ShowCaseItem(String componentName, ShowCaseType showCaseType) {
             this.componentName = componentName;
+            this.showCaseType = showCaseType;
         }
 
         public String getComponentName() {
@@ -224,6 +232,10 @@ public class ShowCaseTable {
 
         public List<CaseBase> getCases() {
             return cases;
+        }
+
+        public ShowCaseType getShowCaseType() {
+            return showCaseType;
         }
     }
 }
