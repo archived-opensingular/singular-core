@@ -39,7 +39,8 @@ public class FormService implements IFormService{
         SInstance instance = MformPersistenciaXML.fromXML(refType, entity.getXml(), documentFactory);
         
         MformPersistenciaXML.annotationLoadFromXml(instance, entity.getXmlAnnotations());
-        
+
+        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
         return instance;
     }
     
@@ -48,6 +49,7 @@ public class FormService implements IFormService{
         FormKey key = getKey(instance);
         if (key == null) {
             key = insert(instance);
+            instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
         } else {
             update(instance);
         }
