@@ -79,17 +79,7 @@
 		<!-- SINGULAR -->
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>wicket-utils</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>br.net.mirante</groupId>
             <artifactId>form-wicket</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>br.net.mirante</groupId>
-            <artifactId>flow-persistence</artifactId>
             <version>0.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>

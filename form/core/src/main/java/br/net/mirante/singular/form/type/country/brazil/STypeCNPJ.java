@@ -18,6 +18,6 @@ public class STypeCNPJ extends STypeString {
     @Override
     protected void onLoadType(TypeBuilder tb) {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.cnpj());
-        as(AtrBasic.class).label("CNPJ").basicMask("CNPJ").tamanhoMaximo(null);
+        asAtr().label("CNPJ").basicMask("CNPJ").tamanhoMaximo(null);
     }
 }

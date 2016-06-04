@@ -23,10 +23,10 @@ public class CaseInputCoreDecimalPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         tipoMyForm.addFieldDecimal("decimalPadrao")
-                .as(AtrBasic.class).label("Número decimal default");
+                .asAtr().label("Número decimal default");
 
         tipoMyForm.addFieldDecimal("decimalLongo")
-                .as(AtrBasic.class).label("Decimal com 15 inteiros e 10 dígitos")
+                .asAtr().label("Decimal com 15 inteiros e 10 dígitos")
                 .tamanhoInteiroMaximo(15)
                 .tamanhoDecimalMaximo(10);
 

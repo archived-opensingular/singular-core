@@ -23,17 +23,17 @@ public class NewRowTest extends SingularFormBaseTest {
     protected void buildBaseType(STypeComposite<?> mockType) {
 
         nome = mockType.addFieldString("nome");
-        nome.as(AtrBasic.class).label("Nome")
+        nome.asAtr().label("Nome")
                 .asAtrBootstrap().newRow()
                 .asAtrBootstrap().colPreference(6);
 
         idade = mockType.addFieldInteger("idade");
-        idade.as(AtrBasic.class).label("Idade")
+        idade.asAtr().label("Idade")
                 .asAtrBootstrap().newRow()
                 .asAtrBootstrap().colPreference(2);
 
         email = mockType.addFieldEmail("email");
-        email.as(AtrBasic.class).label("E-mail")
+        email.asAtr().label("E-mail")
                 .asAtrBootstrap().newRow()
                 .asAtrBootstrap().colPreference(8);
     }
