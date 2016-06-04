@@ -15,7 +15,6 @@ public class ConfigProperties {
     public static final  String     SINGULAR_SERVIDOR_ENDERECO    = "singular.servidor.endereco";
     public static final  String     SINGULAR_MODULE_FORM_ENDERECO = "singular.module.form.endereco";
     public static final  String     SINGULAR_DEV_MODE             = "singular.config.dev";
-    private static final Properties PROPERTIES_SERVER             = SingularProperties.INSTANCE.getProperties();
 
     /**
      * Permite acesso as propriedades configuradas para servidor de peticionamento como um todo:
@@ -36,9 +35,8 @@ public class ConfigProperties {
     }
 
     private static String lookupProperty(String key) {
-        if (PROPERTIES_SERVER.containsKey(key)) {
-            Object value = PROPERTIES_SERVER.get(key);
-            return value == null ? null : value.toString();
+        if (SingularProperties.INSTANCE.containsKey(key)) {
+            return SingularProperties.INSTANCE.getProperty(key);
         }
         return System.getProperty(key);
     }

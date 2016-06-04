@@ -32,6 +32,9 @@ public class SingularDefaultPersistenceConfiguration {
     @Value("classpath:db/ddl/create-tables.sql")
     private Resource sqlCreateTables;
 
+    @Value("classpath:db/ddl/create-tables-form.sql")
+    private Resource sqlCreateTablesForm;
+
     @Value("classpath:db/ddl/create-tables-actor.sql")
     private Resource sqlCreateTablesActor;
 
@@ -48,6 +51,7 @@ public class SingularDefaultPersistenceConfiguration {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(drops);
+        populator.addScript(sqlCreateTablesForm);
         populator.addScript(sqlCreateTables);
         populator.addScript(sqlCreateTablesActor);
         populator.addScript(sqlCreateTablesFlow);
