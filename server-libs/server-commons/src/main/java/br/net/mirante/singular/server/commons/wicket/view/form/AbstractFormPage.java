@@ -48,7 +48,10 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
     
     public AbstractFormPage(FormPageConfig config) {
         this.config = config;
+        config.processType = getProcessType(config);
     }
+
+    protected abstract String getProcessType(FormPageConfig config);
 
     @Override
     protected boolean withMenu() {
