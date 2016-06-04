@@ -1,22 +1,30 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
+import br.net.mirante.singular.flow.core.Flow;
+import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.persistence.FormKey;
+import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
@@ -28,7 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -42,16 +53,27 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
 
     protected final IModel<T> currentModel = $m.ofValue();
     protected final IModel<FormKey> formModel = $m.ofValue();
-    
+
+    private final Class<T> petitionClass;
+
+    @Inject
+    @Named("formConfigWithDatabase")
+    private SFormConfig<String> singularFormConfig;
+
     @Inject
     protected PetitionService<T> petitionService;
-    
-    public AbstractFormPage(FormPageConfig config) {
-        this.config = config;
-        config.processType = getProcessType(config);
-    }
 
-    protected abstract String getProcessType(FormPageConfig config);
+    @Inject
+    private IFormService formService;
+
+    public AbstractFormPage(Class<T> petitionClass, FormPageConfig config, String defaultProcessType) {
+        this.petitionClass = Objects.requireNonNull(petitionClass);
+        this.config = Objects.requireNonNull(config);
+        Objects.requireNonNull(config.formType);
+        if (config.processType == null) {
+            config.processType = defaultProcessType;
+        }
+    }
 
     @Override
     protected boolean withMenu() {
@@ -60,22 +82,42 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
 
     @Override
     protected void onInitialize() {
-        
-        loadOrCreateFormModel(config.formId, config.type, config.viewMode, config.annotationMode);
-        
+
+        T petition;
+        if (StringUtils.isBlank(config.formId)) {
+            try {
+                petition = petitionClass.newInstance();
+            } catch (Exception e) {
+                throw new SingularServerException("Error creating new petition instance",e);
+            }
+            petition.setType(config.formType);
+            petition.setProcessType(config.processType);
+            petition.setCreationDate(new Date());
+            petition.setProcessName(getTypeLabel(config.formType));
+            onNewPetitionCreation(petition, config);
+        } else {
+            petition = petitionService.find(Long.valueOf(config.formId));
+        }
+
+        if(petition.getCodForm() != null){
+            FormKey formKey = formService.keyFromObject(petition.getCodForm());
+            formModel.setObject(formKey);
+        }
+        currentModel.setObject(petition);
+
         super.onInitialize();
     }
 
     @Override
     protected Content getContent(String id) {
 
-        if (config.type == null
+        if (config.formType == null
                 && config.formId == null) {
             String urlServidorSingular = ConfigProperties.get(ConfigProperties.SINGULAR_SERVIDOR_ENDERECO);
             throw new RedirectToUrlException(urlServidorSingular);
         }
 
-        content = new AbstractFormContent(id, config.type, config.viewMode, config.annotationMode) {
+        content = new AbstractFormContent(id, config.formType, config.viewMode, config.annotationMode) {
 
             @Override
             protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
@@ -135,20 +177,36 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
         return content;
     }
     
-    protected abstract T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance);
-    
+
     protected abstract IModel<?> getContentSubtitleModel();
     
     protected abstract String getIdentifier();
     
-    protected abstract void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode);
+    protected void onNewPetitionCreation(T petition, FormPageConfig config) {
+    }
 
     protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
         
     }
-    
-    protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
-        return documentFactory.createInstance(refType);
+
+    protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance) {
+        T petition = currentModel.getObject();
+        if (currentInstance.getObject() instanceof SIComposite) {
+            petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
+        }
+        return petition;
+    }
+
+    protected String createPetitionDescriptionFromForm(SInstance instance) {
+        return instance.toStringDisplay();
+    }
+
+    protected final SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
+        if (formModel.getObject() == null) {
+            return documentFactory.createInstance(refType);
+        } else {
+            return formService.loadFormInstance(formModel.getObject(), refType, documentFactory);
+        }
     }
     
     protected void buildFlowTransitionButton(String buttonId, BSContainer<?> buttonContainer, BSContainer<?> modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
@@ -208,7 +266,8 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
     }
     
     protected void executeTransition(String transitionName, IModel<? extends SInstance> currentInstance) {
-        FormKey key = petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject());
+        FormKey key = petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(),
+                currentInstance.getObject());
         formModel.setObject(key);
     }
     
@@ -230,8 +289,8 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
 
     private void buildFlowButton(String buttonId, BSContainer<?> buttonContainer, String transitionName, IModel<? extends SInstance> instanceModel, BSModalBorder confirmarAcaoFlowModal) {
         TemplatePanel tp = buttonContainer
-                .newTemplateTag(
-                        tt -> "<button  type='submit' class='btn purple' wicket:id='" + buttonId + "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n");
+                .newTemplateTag(tt -> "<button  type='submit' class='btn purple' wicket:id='" + buttonId +
+                        "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n");
         SingularButton singularButton = new SingularButton(buttonId, content.getFormInstance()) {
 
             @Override
@@ -244,10 +303,9 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
     }
 
     private BSModalBorder buildFlowConfirmationModal(String buttonId, BSContainer<?> modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
-        TemplatePanel tpModal = modalContainer.newTemplateTag(tt ->
-                "<div wicket:id='flow-modal" + buttonId + "' class='portlet-body form'>\n"
-                        + "<div wicket:id='flow-msg'/>\n"
-                        + "</div>\n");
+        TemplatePanel tpModal = modalContainer.newTemplateTag(
+                tt -> "<div wicket:id='flow-modal" + buttonId + "' class='portlet-body form'>\n" +
+                        "<div wicket:id='flow-msg'/>\n" + "</div>\n");
         BSModalBorder confirmarAcaoFlowModal = new BSModalBorder("flow-modal" + buttonId, getMessage("label.button.confirm"));
         tpModal.add(confirmarAcaoFlowModal);
         confirmarAcaoFlowModal
@@ -258,42 +316,51 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
                     }
                 });
 
-        confirmarAcaoFlowModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel, ViewMode.EDITION.equals(viewMode)) {
-            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance>  instanceModel){
-                try{
-                    AbstractFormPage.this.executeTransition(transitionName, instanceModel);
-                    target.appendJavaScript("Singular.atualizarContentWorklist();");
-                    addToastrSuccessMessageWorklist("message.action.success", transitionName);
-                    target.appendJavaScript("window.close();");
-                }catch (Exception e){ // org.hibernate.StaleObjectStateException
-                    LOGGER.error("Erro ao salvar o XML", e);
-                    addToastrErrorMessage("message.save.concurrent_error");
-                }
-            }
+        confirmarAcaoFlowModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm",
+                new SingularSaveButton("confirm-btn", instanceModel, ViewMode.EDITION.equals(viewMode)) {
+                    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
+                            IModel<? extends SInstance> instanceModel) {
+                        try {
+                            AbstractFormPage.this.executeTransition(transitionName, instanceModel);
+                            target.appendJavaScript("Singular.atualizarContentWorklist();");
+                            addToastrSuccessMessageWorklist("message.action.success", transitionName);
+                            target.appendJavaScript("window.close();");
+                        } catch (Exception e) { // org.hibernate.StaleObjectStateException
+                            LOGGER.error("Erro ao salvar o XML", e);
+                            addToastrErrorMessage("message.save.concurrent_error");
+                        }
+                    }
 
-            @Override
-            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                confirmarAcaoFlowModal.hide(target);
-                target.add(form);
-            }
-        });
+                    @Override
+                    protected void onValidationError(AjaxRequestTarget target, Form<?> form,
+                            IModel<? extends SInstance> instanceModel) {
+                        confirmarAcaoFlowModal.hide(target);
+                        target.add(form);
+                    }
+                });
         confirmarAcaoFlowModal.add(new Label("flow-msg", String.format("Tem certeza que deseja %s ?", transitionName)));
         return confirmarAcaoFlowModal;
     }
-    
+
+    private String getTypeLabel(String typeName) {
+        STypeComposite<?> type = (STypeComposite<?>) singularFormConfig
+                .getTypeLoader().loadType(typeName).orElseThrow(() -> new SingularServerException("Não foi possivel carregar o tipo"));
+        return type.asAtr().getLabel();
+    }
+
     public static class FormPageConfig implements Serializable {
 
         public ViewMode viewMode = ViewMode.VISUALIZATION;
         public AnnotationMode annotationMode = AnnotationMode.NONE;
         public String formId;
-        public String type;
+        public String formType;
         public String processType;
 
         public FormPageConfig() {
         }
 
-        public FormPageConfig(String type, String processType, String formId, AnnotationMode annotationMode, ViewMode viewMode) {
-            this.type = type;
+        public FormPageConfig(String formType, String processType, String formId, AnnotationMode annotationMode, ViewMode viewMode) {
+            this.formType = formType;
             this.formId = formId;
             this.processType = processType;
             this.annotationMode = annotationMode;

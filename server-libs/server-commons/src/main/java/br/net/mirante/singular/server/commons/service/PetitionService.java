@@ -75,7 +75,11 @@ public class PetitionService<T extends AbstractPetitionEntity> {
         FormKey key;
         if(instance != null){
             key = formPersistenceService.insertOrUpdate(instance);
-            peticao.setCodForm(((FormKeyNumber) key).longValue());
+            Long keyAsLong = ((FormKeyNumber) key).longValue();
+            if (peticao.getCodForm() != null && ! peticao.getCodForm().equals(keyAsLong)) {
+                throw new SingularServerException("Tentado criar novo formulário mas a petição já possui um");
+            }
+            peticao.setCodForm(keyAsLong);
         } else {
             peticao.setCodForm(null);
             key = null;

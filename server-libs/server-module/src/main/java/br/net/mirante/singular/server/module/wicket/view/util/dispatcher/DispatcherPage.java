@@ -150,7 +150,7 @@ public class DispatcherPage extends WebPage {
         formPageConfig.formId = formId.toString("");
         formPageConfig.annotationMode = formActions.getAnnotationMode() == null? AnnotationMode.NONE : formActions.getAnnotationMode();
         formPageConfig.viewMode = formActions.getViewMode();
-        formPageConfig.type = formName.toString();
+        formPageConfig.formType = formName.toString();
 
         return formPageConfig;
     }

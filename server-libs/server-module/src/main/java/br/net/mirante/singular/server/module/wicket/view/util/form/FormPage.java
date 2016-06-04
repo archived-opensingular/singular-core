@@ -37,27 +37,16 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 @MountPath("/view")
 public class FormPage extends AbstractFormPage<Petition> {
 
-    @Inject
-    private IFormService formService;
-    
-    @Inject
-    @Named("formConfigWithDatabase")
-    private SFormConfig<String> singularFormConfig;
 
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
 
     public FormPage() {
-        super(new FormPageConfig());
+        this(new FormPageConfig());
     }
 
     public FormPage(FormPageConfig config) {
-        super(config);
-    }
-
-    @Override
-    protected String getProcessType(FormPageConfig config) {
-        return null;
+        super(Petition.class,  config, null);
     }
 
     @Override
@@ -76,46 +65,16 @@ public class FormPage extends AbstractFormPage<Petition> {
         });
     }
 
-    protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
-        if (formModel.getObject() == null || formModel.getObject() == null) {
-            return documentFactory.createInstance(refType);
-        } else {
-            return formService.loadFormInstance(formModel.getObject(), refType, documentFactory);
-        }
-    }
-    
-    protected Petition getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance){
-        Petition petition = currentModel.getObject();
-        if (currentInstance.getObject() instanceof SIComposite) {
-            petition.setDescription(currentInstance.getObject().toStringDisplay());
-        }
-        return petition;
-    }
-
-    protected void loadOrCreateFormModel(String formId, String type, ViewMode viewMode, AnnotationMode annotationMode) {
-        Petition peticao;
-        FormKey formKey = null;
-        if (formId == null || formId.isEmpty()) {
-            peticao = new Petition();
-            peticao.setType(type);
-            singularServerConfiguration.processDefinitionFormNameMap().forEach((key, value) -> {
-                if (value.equals(type)) {
-                    peticao.setProcessType(Flow.getProcessDefinition(key).getKey());
-                }
-            });
-            peticao.setCreationDate(new Date());
-            peticao.setDescription("Nova Solicitação");
-            peticao.setProcessName(recuperarNomeProcesso(type));
-            
-        } else {
-            peticao = (Petition) petitionService.find(Long.valueOf(formId));
-            if(peticao.getCodForm() != null){
-                formKey = formService.keyFromObject(peticao.getCodForm());
+    @Override
+    protected void onNewPetitionCreation(Petition petition, FormPageConfig config) {
+        super.onNewPetitionCreation(petition, config);
+        //TODO (por Daniel Bordin) O código abaixo, não fui eu quem fez, faz sentido? Como não sei onde fica essa
+        // página não testei.
+        singularServerConfiguration.processDefinitionFormNameMap().forEach((key, value) -> {
+            if (value.equals(config.processType)) {
+                petition.setProcessType(Flow.getProcessDefinition(key).getKey());
             }
-        }
-
-        formModel.setObject(formKey);
-        currentModel.setObject(peticao);
+        });
     }
 
     @Override
@@ -142,15 +101,7 @@ public class FormPage extends AbstractFormPage<Petition> {
         return Optional.ofNullable(currentModel)
                 .map(IModel::getObject)
                 .map(Petition::getCod)
-                .map(Object::toString)
-                .orElse(null);
+                .map(Object::toString).orElse(null);
 
     }
-    
-    private String recuperarNomeProcesso(String typeName) {
-        STypeComposite<?> canabidiol = (STypeComposite<?>) singularFormConfig
-                .getTypeLoader().loadType(typeName).orElseThrow(() -> new SingularServerException("Não foi possivel carregar o tipo"));
-        return canabidiol.as(AtrBasic::new).getLabel();
-    }
-
 }
