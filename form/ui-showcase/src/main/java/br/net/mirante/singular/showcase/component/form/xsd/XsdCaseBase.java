@@ -12,9 +12,10 @@ import br.net.mirante.singular.form.SDictionary;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.io.FormXsdUtil;
 import br.net.mirante.singular.showcase.component.CaseBase;
+import br.net.mirante.singular.showcase.component.CaseBaseForm;
 import br.net.mirante.singular.showcase.component.ResourceRef;
 
-public abstract class XsdCaseBase extends CaseBase {
+public abstract class XsdCaseBase extends CaseBaseForm {
 
     private final String xsdFileName;
 

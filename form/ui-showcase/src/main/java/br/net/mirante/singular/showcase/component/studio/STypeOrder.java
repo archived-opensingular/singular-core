@@ -1,4 +1,4 @@
-package br.net.mirante.singular.studio.core.example;
+package br.net.mirante.singular.showcase.component.studio;
 
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.core.STypeInteger;

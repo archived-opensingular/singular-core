@@ -9,20 +9,20 @@ import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public enum Group {
-    INPUT("Input", Icone.PUZZLE, ListPage.Tipo.FORM),
-    FILE("File", Icone.FOLDER, ListPage.Tipo.FORM),
-    LAYOUT("Layout", Icone.GRID, ListPage.Tipo.FORM),
-    VALIDATION("Validation", Icone.BAN, ListPage.Tipo.FORM),
-    INTERACTION("Interaction", Icone.ROCKET, ListPage.Tipo.FORM),
-    CUSTOM("Custom", Icone.WRENCH, ListPage.Tipo.FORM),
-    MAPS("Maps", Icone.MAP, ListPage.Tipo.FORM),
-    STUDIO("Studio", Icone.MAP, ListPage.Tipo.STUDIO);
+    INPUT("Input", Icone.PUZZLE, ShowCaseType.FORM),
+    FILE("File", Icone.FOLDER, ShowCaseType.FORM),
+    LAYOUT("Layout", Icone.GRID, ShowCaseType.FORM),
+    VALIDATION("Validation", Icone.BAN, ShowCaseType.FORM),
+    INTERACTION("Interaction", Icone.ROCKET, ShowCaseType.FORM),
+    CUSTOM("Custom", Icone.WRENCH, ShowCaseType.FORM),
+    MAPS("Maps", Icone.MAP, ShowCaseType.FORM),
+    STUDIO("Studio", Icone.MAP, ShowCaseType.STUDIO);
 
     private final String name;
     private final Icone icone;
-    private final ListPage.Tipo tipo;
+    private final ShowCaseType tipo;
 
-    Group(String name, Icone icone, ListPage.Tipo tipo) {
+    Group(String name, Icone icone, ShowCaseType tipo) {
 
         this.name = name;
         this.icone = icone;
@@ -37,7 +37,7 @@ public enum Group {
         return icone;
     }
 
-    public ListPage.Tipo getTipo() {
+    public ShowCaseType getTipo() {
         return tipo;
     }
 }

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.showcase.component.ShowCaseType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -54,11 +55,11 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
 
     private boolean verificarTipo(ShowcaseTypeLoader.TemplateEntry templateEntry) {
         final StringValue tipoValue = getPage().getPageParameters().get(ListPage.PARAM_TIPO);
-        ListPage.Tipo tipo;
-        if (tipoValue.isNull() || tipoValue.toString().equals(ListPage.Tipo.FORM.toString())) {
-            tipo = ListPage.Tipo.FORM;
+        ShowCaseType tipo;
+        if (tipoValue.isNull() || tipoValue.toString().equals(ShowCaseType.FORM.toString())) {
+            tipo = ShowCaseType.FORM;
         } else {
-            tipo = ListPage.Tipo.STUDIO;
+            tipo = ShowCaseType.STUDIO;
         }
         return tipo.equals(templateEntry.getTipo());
     }

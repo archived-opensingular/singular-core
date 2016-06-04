@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.internal.xml.MElement;
 import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.FormKeyLong;
@@ -92,6 +93,11 @@ public class FormService implements IFormService{
             return null;
         }
         instance.getDocument().persistFiles();
-        return MformPersistenciaXML.toXML(instance).toStringExato();
+        final MElement mElement = MformPersistenciaXML.toXML(instance);
+        if (mElement != null) {
+            return mElement.toStringExato();
+        } else {
+            return "";
+        }
     }
 }
