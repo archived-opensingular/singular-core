@@ -1,25 +1,9 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
-import java.io.Serializable;
-
-import javax.inject.Inject;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.flow.RedirectToUrlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.service.FormDTO;
+import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
@@ -33,6 +17,20 @@ import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.io.Serializable;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends Template {
 
@@ -43,7 +41,7 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
     protected AbstractFormContent content;
 
     protected final IModel<T> currentModel = $m.ofValue();
-    protected final IModel<FormDTO> formModel = $m.ofValue(new FormDTO());
+    protected final IModel<FormKey> formModel = $m.ofValue();
     
     @Inject
     protected PetitionService<T> petitionService;
@@ -196,15 +194,19 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
     }
 
     protected void saveForm(IModel<? extends SInstance> currentInstance) {
-        petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), formModel.getObject(), currentInstance.getObject());
+        FormKey key = petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance),
+                currentInstance.getObject());
+        formModel.setObject(key);
     }
 
     protected void send(IModel<? extends SInstance> currentInstance) {
-        petitionService.send(getUpdatedPetitionFromInstance(currentInstance), formModel.getObject(), currentInstance.getObject());
+        FormKey key = petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject());
+        formModel.setObject(key);
     }
     
     protected void executeTransition(String transitionName, IModel<? extends SInstance> currentInstance) {
-        petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), formModel.getObject(), currentInstance.getObject());
+        FormKey key = petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject());
+        formModel.setObject(key);
     }
     
     protected boolean hasProcess() {
