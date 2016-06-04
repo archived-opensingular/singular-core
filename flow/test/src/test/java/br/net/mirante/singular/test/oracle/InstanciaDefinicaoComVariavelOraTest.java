@@ -9,7 +9,8 @@ import org.springframework.test.context.ActiveProfiles;
 public class InstanciaDefinicaoComVariavelOraTest extends InstanciaDefinicaoComVariavelTest {
 
     @BeforeClass
-    public static void configProperites() {
-        SingularProperties.INSTANCE.loadFrom(ClassLoader.getSystemClassLoader().getResourceAsStream("singular-ora.properties"));
+    public static void configProperties() {
+        SingularProperties.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
+                "singular-ora.properties"));
     }
 }
