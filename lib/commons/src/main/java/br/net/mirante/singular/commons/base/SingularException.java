@@ -110,13 +110,17 @@ public class SingularException extends RuntimeException {
         }
         for (InfoEntry entry : entries) {
             msg.append('\n');
-            for (int level = 0; level <= entry.level; level++) msg.append("  ");
+            for (int level = 0; level <= entry.level; level++) {
+                msg.append("  ");
+            }
             int i = 0;
             if (entry.label != null) {
                 msg.append(entry.label);
                 i = entry.label.length();
             }
-            for (; i < max; i++) msg.append(' ');
+            for (; i < max; i++) {
+                msg.append(' ');
+            }
             msg.append(':').append(' ');
             msg.append(entry.value);
         }
@@ -126,12 +130,12 @@ public class SingularException extends RuntimeException {
     /**
      * Representa uma informação adicional sobre a Exception.
      */
-    private static class InfoEntry {
+    private static final class InfoEntry {
         public final int level;
         public final String label;
         public final String value;
 
-        private InfoEntry(int level, String label, String value) {
+        public InfoEntry(int level, String label, String value) {
             this.level = level;
             this.label = label;
             this.value = value;

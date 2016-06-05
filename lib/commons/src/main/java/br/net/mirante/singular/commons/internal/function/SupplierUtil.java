@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.ObjectUtils.NULL;
  *
  * @author Daniel C. Bordin
  */
-public class SupplierUtil {
+public final class SupplierUtil {
 
     private SupplierUtil() {
     }

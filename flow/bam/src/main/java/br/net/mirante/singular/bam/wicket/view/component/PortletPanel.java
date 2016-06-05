@@ -124,10 +124,9 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
     }
 
     private SType<?> createPortletFilterType() {
-        SType<?> type = new FilterPackageFactory(config.getObject().getFilterConfigs(), singularFormConfig.getServiceRegistry(),
+        return new FilterPackageFactory(config.getObject().getFilterConfigs(), singularFormConfig.getServiceRegistry(),
                 context.getObject().getProcessDefinitionCode())
                 .createFilterPackage();
-        return type;
     }
 
     private void buildFilters() {
