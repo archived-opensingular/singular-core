@@ -27,6 +27,7 @@ public enum SingularProperties {
      */
     INSTANCE;
 
+    public static final String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
     public static final String HIBERNATE_GENERATOR = "flow.persistence.hibernate.generator";
     public static final String HIBERNATE_SEQUENCE_PROPERTY_PATTERN = "flow.persistence.%s.sequence";
     private static Logger logger = LoggerFactory.getLogger(SingularProperties.class);
@@ -105,7 +106,7 @@ public enum SingularProperties {
     }
 
     private static File findConfDir() {
-        String path = System.getProperty("singular.server.home");
+        String path = System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
         if (path != null) {
             if (logger.isInfoEnabled()) {
                 logger.info("   Encontrado a propriedade singular.server.home=" + path);
