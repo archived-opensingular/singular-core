@@ -210,26 +210,8 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return addField(fieldSimpleName, STypeString.class, required);
     }
 
-    // Não deve estar aqui pois é específico do Brasil
-    @Deprecated
-    public STypeCPF addFieldCPF(String fieldSimpleName) {
-        return addField(fieldSimpleName, STypeCPF.class);
-    }
-
-    // Não deve estar aqui pois é específico do Brasil
-    @Deprecated
-    public STypeCNPJ addFieldCNPJ(String fieldSimpleName) {
-        return addField(fieldSimpleName, STypeCNPJ.class);
-    }
-
     public STypeEMail addFieldEmail(String fieldSimpleName) {
         return addField(fieldSimpleName, STypeEMail.class);
-    }
-
-    // Não deve estar aqui pois é específico do Brasil
-    @Deprecated
-    public STypeCEP addFieldCEP(String fieldSimpleName) {
-        return addField(fieldSimpleName, STypeCEP.class);
     }
 
     /**

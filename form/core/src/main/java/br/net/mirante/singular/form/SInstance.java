@@ -263,7 +263,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public final String toStringDisplay() {
-        return as(AtrBasic.class).getDisplayString();
+        return asAtr().getDisplayString();
     }
 
     @Override

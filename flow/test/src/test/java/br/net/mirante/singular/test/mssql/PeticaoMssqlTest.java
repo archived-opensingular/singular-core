@@ -9,7 +9,8 @@ import org.springframework.test.context.ActiveProfiles;
 public class PeticaoMssqlTest extends PeticaoTest {
 
     @BeforeClass
-    public static void configProperites() {
-        SingularProperties.INSTANCE.loadFrom(ClassLoader.getSystemClassLoader().getResourceAsStream("singular-mssql.properties"));
+    public static void configProperties() {
+        SingularProperties.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
+                "singular-mssql.properties"));
     }
 }

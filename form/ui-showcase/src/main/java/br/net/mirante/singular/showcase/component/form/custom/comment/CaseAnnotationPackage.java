@@ -9,6 +9,8 @@ import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
+import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
@@ -41,16 +43,16 @@ public class CaseAnnotationPackage extends SPackage {
 
         cliente = pedido.addFieldComposite("Cliente");
         cliente.asAtr().label("Dados do Cliente");
-        cliente.addFieldCPF("cpf").as(AtrBasic.class).label("CPF");
-        cliente.addFieldEmail("email").as(AtrBasic.class).label("E-Mail");
+        cliente.addField("cpf", STypeCPF.class);
+        cliente.addFieldEmail("email").asAtr().label("E-Mail");
         //@destacar
         cliente.asAtrAnnotation().setAnnotated(); // Usará o rótulo do campo para a anotação
         cliente.asAtrBootstrap().colPreference(6);
 
         endereco = pedido.addFieldComposite("Endereco");
         endereco.asAtr().label("Endereco do Cliente");
-        endereco.addFieldCEP("cep").as(AtrBasic.class).label("CEP");
-        endereco.addFieldCEP("Logradouro").as(AtrBasic.class).label("Logradouro");
+        endereco.addField("cep", STypeCEP.class);
+        endereco.addFieldString("Logradouro").asAtr().label("Logradouro");
         endereco.asAtrBootstrap().colPreference(6);
 
         request = pedido.addFieldComposite("request");

@@ -23,10 +23,10 @@ public class CaseInputCoreMoneyPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         tipoMyForm.addFieldMonetary("monetario")
-                .as(AtrBasic.class).label("Monetário default");
+                .asAtr().label("Monetário default");
 
         tipoMyForm.addFieldMonetary("monetarioLongo")
-                .as(AtrBasic.class).label("Monetário com 15 inteiros e 3 decimais")
+                .asAtr().label("Monetário com 15 inteiros e 3 decimais")
                 .tamanhoInteiroMaximo(15)
                 .tamanhoDecimalMaximo(3);
 

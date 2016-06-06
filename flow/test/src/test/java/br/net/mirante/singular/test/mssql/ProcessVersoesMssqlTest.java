@@ -9,7 +9,8 @@ import org.springframework.test.context.ActiveProfiles;
 public class ProcessVersoesMssqlTest extends ProcessVersoesTest {
 
     @BeforeClass
-    public static void configProperites() {
-        SingularProperties.INSTANCE.loadFrom(ClassLoader.getSystemClassLoader().getResourceAsStream("singular-mssql.properties"));
+    public static void configProperties() {
+        SingularProperties.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
+                "singular-mssql.properties"));
     }
 }
