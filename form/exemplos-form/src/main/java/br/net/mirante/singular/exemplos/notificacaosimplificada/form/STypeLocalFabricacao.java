@@ -61,9 +61,9 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
         empresaPropria = this.addField("empresaPropria", STypeEmpresaPropria.class);
 
         empresaPropria.withUpdateListener((ins) -> {
-                    ins.findNearest(empresaPropria.razaoSocial).ifPresent(_ins -> _ins.setValue("Empresa de teste"));
-                    ins.findNearest(empresaPropria.cnpj).ifPresent(_ins -> _ins.setValue("11111111000191"));
-                    ins.findNearest(empresaPropria.endereco).ifPresent(_ins -> _ins.setValue("SCLN 211 BLOCO B SUBSOLO"));
+                    ins.findNearest(empresaPropria.razaoSocial).ifPresent(ins2 -> ins2.setValue("Empresa de teste"));
+                    ins.findNearest(empresaPropria.cnpj).ifPresent(ins2 -> ins2.setValue("11111111000191"));
+                    ins.findNearest(empresaPropria.endereco).ifPresent(ins2 -> ins2.setValue("SCLN 211 BLOCO B SUBSOLO"));
                 }
         );
 

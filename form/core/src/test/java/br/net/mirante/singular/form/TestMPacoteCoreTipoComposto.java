@@ -280,7 +280,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
     @Test
     public void testeOnCargaTipoDireto() {
         TestTipoCompositeComCargaInterna tipo = createTestDictionary().getType(TestTipoCompositeComCargaInterna.class);
-        assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
+        assertEquals("xxx", tipo.asAtr().getLabel());
         assertNotNull(tipo.getField("nome"));
         assertEquals((Boolean) true, tipo.isRequired());
     }
@@ -291,11 +291,11 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         TestTipoCompositeComCargaInterna tipo = pb.createType("derivado", TestTipoCompositeComCargaInterna.class);
 
         TestTipoCompositeComCargaInterna tipoPai = pb.getDictionary().getType(TestTipoCompositeComCargaInterna.class);
-        assertEquals("xxx", tipoPai.as(AtrBasic.class).getLabel());
+        assertEquals("xxx", tipoPai.asAtr().getLabel());
         assertNotNull(tipoPai.getField("nome"));
         assertEquals((Boolean) true, tipoPai.isRequired());
 
-        assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
+        assertEquals("xxx", tipo.asAtr().getLabel());
         assertNotNull(tipo.getField("nome"));
         assertEquals((Boolean) true, tipo.isRequired());
     }

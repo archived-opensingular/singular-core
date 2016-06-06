@@ -1,10 +1,12 @@
-package br.net.mirante.singular.studio.core.example;
+package br.net.mirante.singular.showcase.component.studio;
 
+import br.net.mirante.singular.showcase.component.CaseItem;
+import br.net.mirante.singular.showcase.component.Group;
 import br.net.mirante.singular.studio.core.CollectionDefinition;
 import br.net.mirante.singular.studio.core.CollectionEditorConfigBuilder;
 import br.net.mirante.singular.studio.core.CollectionInfoBuilder;
 
-
+@CaseItem(componentName = "Order", group = Group.STUDIO)
 public class OrderCollectionDefinition implements CollectionDefinition<STypeOrder> {
 
 
@@ -16,7 +18,8 @@ public class OrderCollectionDefinition implements CollectionDefinition<STypeOrde
     @Override
     public void collectionInfo(CollectionInfoBuilder<STypeOrder> builder) {
         builder
-                .form(STypeOrder.class);
+                .form(STypeOrder.class)
+                .title("Compras");
     }
 
     /*

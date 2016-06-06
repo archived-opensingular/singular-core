@@ -23,13 +23,13 @@ public class CaseFineTunningGridPackage extends SPackage {
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         testForm.addFieldString("nome")
-                .as(AtrBasic.class).label("Nome")
+                .asAtr().label("Nome")
                 .asAtrBootstrap().colLg(7).colMd(8).colSm(9).colXs(12);
         testForm.addFieldInteger("idade")
-                .as(AtrBasic.class).label("Idade")
+                .asAtr().label("Idade")
                 .asAtrBootstrap().colLg(3).colMd(4).colSm(3).colXs(6);
         testForm.addFieldEmail("email")
-                .as(AtrBasic.class).label("E-mail")
+                .asAtr().label("E-mail")
                 .asAtrBootstrap().colLg(10).colMd(12).colSm(12).colXs(12);
 
     }

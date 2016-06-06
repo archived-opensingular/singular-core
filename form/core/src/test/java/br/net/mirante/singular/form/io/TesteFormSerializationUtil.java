@@ -248,15 +248,15 @@ public class TesteFormSerializationUtil extends TestCaseForm {
             tipoEndereco.addFieldString("cidade");
         });
         instancia.setValue("rua", "A");
-        instancia.as(AtrBasic.class).label("Address");
-        instancia.getField("rua").as(AtrBasic.class).label("Street");
-        instancia.getField("cidade").as(AtrBasic.class).label("City");
+        instancia.asAtr().label("Address");
+        instancia.getField("rua").asAtr().label("Street");
+        instancia.getField("cidade").asAtr().label("City");
 
         SIComposite instancia2 = (SIComposite) testSerializacao(instancia);
 
-        assertEquals("Address", instancia2.as(AtrBasic.class).getLabel());
-        assertEquals("Street", instancia2.getField("rua").as(AtrBasic.class).getLabel());
-        assertEquals("City", instancia2.getField("cidade").as(AtrBasic.class).getLabel());
+        assertEquals("Address", instancia2.asAtr().getLabel());
+        assertEquals("Street", instancia2.getField("rua").asAtr().getLabel());
+        assertEquals("City", instancia2.getField("cidade").asAtr().getLabel());
 
     }
 

@@ -9,6 +9,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.showcase.component.ShowCaseType;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
@@ -45,7 +46,7 @@ public class Menu extends Panel {
 
         final StringValue tipoValue = getPage().getPageParameters().get(ListPage.PARAM_TIPO);
 
-        if (tipoValue.isNull() || ListPage.Tipo.FORM.toString().equals(tipoValue.toString())) {
+        if (tipoValue.isNull() || ShowCaseType.FORM.toString().equals(tipoValue.toString())) {
             menu.addItem(new MetronicMenuItem(Icone.ROCKET, "Demo", CrudPage.class));
             menu.addItem(new MetronicMenuItem(Icone.PENCIL, "Protótipo", PrototypeListPage.class));
         }

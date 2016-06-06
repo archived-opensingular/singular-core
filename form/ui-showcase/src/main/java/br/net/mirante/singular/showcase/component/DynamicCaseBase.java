@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.showcase.component;
 
+import java.util.Date;
 import java.util.Optional;
 
 import br.net.mirante.singular.form.PackageBuilder;
@@ -13,13 +14,13 @@ import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
 
-public class DynamicCaseBase extends CaseBase {
+public class DynamicCaseBase extends CaseBaseForm {
 
     private String packageName = "teste";
     private String typeName = "endereco";
 
     public DynamicCaseBase(String componentName) {
-        super(componentName, null);
+        super(componentName);
     }
 
     public DynamicCaseBase(String componentName, String subCaseName) {
@@ -35,7 +36,6 @@ public class DynamicCaseBase extends CaseBase {
     public SType<?> getCaseType() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage(packageName);
-
         STypeComposite<?> tipoEndereco = pb.createCompositeType(typeName);
         tipoEndereco.addField("rua", STypeString.class).asAtr().label("Rua");
         tipoEndereco.addFieldString("bairro", true).asAtr().label("Bairro");

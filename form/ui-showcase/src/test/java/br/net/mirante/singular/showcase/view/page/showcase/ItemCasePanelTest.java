@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.showcase.component.CaseBaseForm;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
@@ -31,7 +32,7 @@ import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
 @ContextConfiguration(locations = {"/applicationContext.xml"})
 public class ItemCasePanelTest {
 
-    CaseBase cb;
+    CaseBaseForm cb;
 
     @Inject @Named("formConfigWithDatabase")
     private SFormConfig<String> singularFormConfig;
@@ -41,7 +42,7 @@ public class ItemCasePanelTest {
 
     @Before
     public void setup() {
-        cb = new CaseBase(CaseInputCoreIntegerPackage.class, "Numeric", "Integer", AnnotationMode.NONE);
+        cb = new CaseBaseForm(CaseInputCoreIntegerPackage.class, "Numeric", "Integer", AnnotationMode.NONE);
     }
 
     @Test

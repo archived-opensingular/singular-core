@@ -8,6 +8,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -160,12 +161,13 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                     .dependsOn(descricaoDinamizada)
                     .visible(i -> {
                         final SIList<SIComposite> list = i.findNearest(formulasHomeopaticas).orElse(null);
-                        return !(list == null || list.isEmpty()) && list.stream()
+                        final boolean hasIdDescricaoDinamizadaPresent = list.stream()
                                 .map(SIComposite::getChildren)
                                 .flatMap(Collection::stream)
                                 .map(ins -> ins.findNearest(descricaoDinamizada))
                                 .filter(ins -> ins.isPresent() && Value.notNull(ins.get(), idDescricaoDinamizada))
                                 .findFirst().isPresent();
+                        return !(list == null || list.isEmpty()) && hasIdDescricaoDinamizadaPresent;
                     })
                     .displayString("${descricao}")
                     .asAtrBootstrap()
@@ -310,40 +312,46 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
     }
 
-    private static abstract class FormaFarmaceuticaProvider implements FilteredPagedProvider<FormaFarmaceuticaBasica> {
 
-        abstract List<Integer> getIds(SInstance root);
+}
 
-        @Override
-        public void configureProvider(Config cfg) {
+class FormaFarmaceuticaProvider implements FilteredPagedProvider<FormaFarmaceuticaBasica> {
 
-            cfg.getFilter().addFieldString("descricao").asAtr().label("Descrição");
+    List<Integer> getIds(SInstance root) {return Collections.emptyList();}
 
-            final STypeString conceito = cfg.getFilter().addFieldString("conceito");
-            conceito.withTextAreaView();
-            conceito.asAtr().label("Conceito");
+    @Override
+    public void configureProvider(Config cfg) {
 
-            cfg.result()
-                    .addColumn("conceito", "Conceito")
-                    .addColumn("descricao", "Descrição");
-        }
+        cfg.getFilter().addFieldString("descricao").asAtr().label("Descrição");
 
-        @Override
-        public long getSize(ProviderContext<SInstance> context) {
-            return dominioService(context.getInstance())
-                    .countFormasFarmaceuticasDinamizadas(getIds(context.getInstance()),
-                            Value.of(context.getFilterInstance(), "descricao"), Value.of(context.getFilterInstance(), "conceito"));
-        }
+        final STypeString conceito = cfg.getFilter().addFieldString("conceito");
+        conceito.withTextAreaView();
+        conceito.asAtr().label("Conceito");
 
-        @Override
-        public List<FormaFarmaceuticaBasica> load(ProviderContext<SInstance> context) {
-            return dominioService(context.getInstance())
-                    .formasFarmaceuticasDinamizadas(getIds(context.getInstance()),
-                            Value.of(context.getFilterInstance(), "descricao"),
-                            Value.of(context.getFilterInstance(), "conceito"),
-                            context.getFirst(), context.getCount());
-        }
-
+        cfg.result()
+                .addColumn("conceito", "Conceito")
+                .addColumn("descricao", "Descrição");
     }
+
+    @Override
+    public long getSize(ProviderContext<SInstance> context) {
+        return dominioService(context.getInstance())
+                .countFormasFarmaceuticasDinamizadas(getIds(context.getInstance()),
+                        Value.of(context.getFilterInstance(), "descricao"), Value.of(context.getFilterInstance(), "conceito"));
+    }
+
+    @Override
+    public List<FormaFarmaceuticaBasica> load(ProviderContext<SInstance> context) {
+        return dominioService(context.getInstance())
+                .formasFarmaceuticasDinamizadas(getIds(context.getInstance()),
+                        Value.of(context.getFilterInstance(), "descricao"),
+                        Value.of(context.getFilterInstance(), "conceito"),
+                        context.getFirst(), context.getCount());
+    }
+
+    private DominioService dominioService(SInstance ins) {
+        return ins.getDocument().lookupService(DominioService.class);
+    }
+
 }
 

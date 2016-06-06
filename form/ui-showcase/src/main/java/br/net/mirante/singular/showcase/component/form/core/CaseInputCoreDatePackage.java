@@ -23,9 +23,9 @@ public class CaseInputCoreDatePackage extends SPackage {
     protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
         tipoMyForm.addFieldDate("inicioDia")
-                  .as(AtrBasic.class).label("Data Início");
+                  .asAtr().label("Data Início");
         tipoMyForm.addField("inicioHora", STypeTime.class)
-                .as(AtrBasic.class).label("Hora Início");
+                .asAtr().label("Hora Início");
     }
 
 }

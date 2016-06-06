@@ -69,7 +69,7 @@ public class TestFormWicketBuild  {
         SIString instancia = (SIString) createIntance(() -> {
             PackageBuilder pb = dicionario.createNewPackage("teste");
             STypeString tipoCidade = pb.createType("cidade", STypeString.class);
-            tipoCidade.as(AtrBasic.class).label("Cidade").tamanhoEdicao(21);
+            tipoCidade.asAtr().label("Cidade").tamanhoEdicao(21);
             return tipoCidade;
         });
 

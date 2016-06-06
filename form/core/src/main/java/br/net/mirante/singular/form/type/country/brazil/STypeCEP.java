@@ -18,6 +18,6 @@ public class STypeCEP extends STypeString {
     @Override
     protected void onLoadType(TypeBuilder tb) {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.cep());
-        as(AtrBasic.class).label("CEP").basicMask("CEP").tamanhoMaximo(null);
+        asAtr().label("CEP").basicMask("CEP").tamanhoMaximo(null);
     }
 }
