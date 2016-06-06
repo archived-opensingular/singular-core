@@ -2,7 +2,7 @@ if(window.FileUploadPanel == undefined){
     window.FileUploadPanel = function(){};
 
     window.FileUploadPanel.setup = function(params) {
-        console.log("params", params);
+        $('#' + params.progress_bar_id).hide();
         $('#' + params.file_field_id).fileupload({
             url: params.upload_url,
             paramName: params.param_name,
@@ -11,6 +11,7 @@ if(window.FileUploadPanel == undefined){
             start: function (e, data) {
                 // console.log($('#files_" + fieldId + "'));
                 $('#' + params.files_id ).html('');
+                $('#' + params.progress_bar_id).hide();
                 $('#' + params.progress_bar_id + ' .progress-bar').css('width','0%');
             },
             done: function (e, data) {
@@ -24,6 +25,7 @@ if(window.FileUploadPanel == undefined){
                                 .text(file.name)
                         )
                     );
+                    $('#' + params.progress_bar_id).hide();
                     $('#' + params.name_id).val(file.name);
                     $('#' + params.id_id).val(file.fileId);
                     $('#' + params.hash_id).val(file.hashSHA1);
@@ -32,6 +34,7 @@ if(window.FileUploadPanel == undefined){
             },
             progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#' + params.progress_bar_id).show();
                 $('#' + params.progress_bar_id + ' .progress-bar').css( 'width',
                     progress + '%' );
             }
