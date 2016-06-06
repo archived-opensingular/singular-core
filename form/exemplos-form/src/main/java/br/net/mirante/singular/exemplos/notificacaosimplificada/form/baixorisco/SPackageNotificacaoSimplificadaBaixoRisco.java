@@ -40,7 +40,7 @@ public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
         final STypeComposite<?> baixoRisco = pb.createCompositeType(TIPO);
         {
             baixoRisco.asAtr().displayString("${nomeComercial} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");
-            baixoRisco.asAtr().label("Notificação Simplificada - Medicamento de Baixo Risco");
+            baixoRisco.asAtr().label("Medicamento de Baixo Risco");
         }
 
         final STypeLinhaProducao linhaProducao = baixoRisco.addField("linhaProducao", STypeLinhaProducao.class);
