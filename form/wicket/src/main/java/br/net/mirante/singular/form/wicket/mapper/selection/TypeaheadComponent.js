@@ -42,9 +42,9 @@
 
             function hasAjaxUpdate() {
                 var events = $('#' + valueField).data('events');
-                if (events && events.hasOwnProperty('change')) {
-                    for (var i = 0; i <= events.change.length; i += 1) {
-                        if (events.change[i].handler.toString().indexOf('Wicket') > 0) {
+                if (events && events.hasOwnProperty('blur')) {
+                    for (var i = 0; i <= events.blur.length; i += 1) {
+                        if (events.blur[i].handler.toString().indexOf('Wicket') > 0) {
                             return true;
                         }
                     }
@@ -66,7 +66,7 @@
                 var oldValue = $valueField.val();
                 $valueField.val(newValue);
                 if(oldValue !== newValue){
-                	$valueField.trigger('change');
+                	$valueField.trigger('blur');
                 }
             }
             
