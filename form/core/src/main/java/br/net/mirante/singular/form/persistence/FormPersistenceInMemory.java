@@ -26,7 +26,7 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     @Override
     protected void updateInternal(FormKeyInt key, INSTANCE instance) {
         if (!collection.containsKey(key)) {
-            throw new SingularFormPersistenceException("Não existe uma isntância com a chave informada").add(this).add(
+            throw addInfo(new SingularFormPersistenceException("Não existe uma isntância com a chave informada")).add(
                     "key", key);
         }
         collection.put(key, instance);
@@ -56,7 +56,7 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
 
     @Override
     protected List<INSTANCE> loadAllInternal(long first, long max) {
-        return loadAllInternal().subList((int)first, (int) Math.min(first + max, countAll()));
+        return loadAllInternal().subList((int) first, (int) Math.min(first + max, countAll()));
     }
 
     @Override
