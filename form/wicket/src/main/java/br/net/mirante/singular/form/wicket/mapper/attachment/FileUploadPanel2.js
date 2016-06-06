@@ -3,6 +3,16 @@ if(window.FileUploadPanel == undefined){
 
     window.FileUploadPanel.setup = function(params) {
         $('#' + params.progress_bar_id).hide();
+
+        var choose_btn = $('#' + params.name_id).parent().find('.file-choose-button');
+        var trash_btn = $('#' + params.name_id).parent().find('.file-trash-button');
+
+        if($('#' + params.id_id).val()){
+            choose_btn.hide();
+        }else{
+            trash_btn.hide();
+        }
+
         $('#' + params.file_field_id).fileupload({
             url: params.upload_url,
             paramName: params.param_name,

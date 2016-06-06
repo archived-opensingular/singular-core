@@ -112,7 +112,7 @@ public class FileUploadPanel2 extends Panel {
         }
     };
 
-    private final AjaxButton removeFileButton = new AjaxButton("removeFileButton") {
+    private final AjaxButton removeFileButton = new AjaxButton("remove_btn") {
         @Override
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             super.onSubmit(target, form);
@@ -122,9 +122,10 @@ public class FileUploadPanel2 extends Panel {
                 parent.remove(parent.indexOf(model.getObject()));
                 target.add(form);
             } else {
-                target.add(this);
+                target.add(FileUploadPanel2.this);
             }
         }
+
     };
 
     public FileUploadPanel2(String id, IModel<SIAttachment> model, ViewMode viewMode) {
@@ -159,7 +160,7 @@ public class FileUploadPanel2 extends Panel {
         add(    (filesContainer = new WebMarkupContainer("files"))
                     .add(downloadLink.add(fileName)),
                 fileField,
-//                removeFileButton,
+                removeFileButton,
                 nameField, hashField, sizeField, idField,
                 progressBar = new WebMarkupContainer("progress")
         );

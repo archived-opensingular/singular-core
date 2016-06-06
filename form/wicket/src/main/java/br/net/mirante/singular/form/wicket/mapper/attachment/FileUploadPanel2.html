@@ -16,6 +16,11 @@
             position: relative;
         }
 
+        .file-trash-button {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+
     </style>
 
     <input type="hidden" wicket:id="file_name" />
@@ -34,10 +39,13 @@
             </div>
         </div>
         <span class="input-group-btn" style="float: right; padding-left: 7px;width: 20%;">
-            <span class="btn btn-sm blue fileinput-button" >
+            <span class="btn btn-sm blue fileinput-button file-choose-button" >
                 <span class="glyphicon glyphicon-plus"></span>
                 <span style="padding: 7px 5px;" > Escolher</span>
                 <input type="file" wicket:id="fileUpload" />
+            </span>
+            <span wicket:id="remove_btn" class="btn btn-sm red fileinput-button file-trash-button" >
+                <span class="glyphicon glyphicon-trash"></span>
             </span>
         </span>
     </div>
