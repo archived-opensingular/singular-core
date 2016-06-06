@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
@@ -9,6 +10,7 @@ import br.net.mirante.singular.form.wicket.panel.SUploadProgressBar;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -32,6 +34,7 @@ import org.apache.wicket.util.time.Duration;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Set;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -113,6 +116,20 @@ public class FileUploadPanel2 extends Panel {
     };
 
     private final AjaxButton removeFileButton = new AjaxButton("remove_btn") {
+
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new ClassAttributeModifier() {
+                protected Set<String> update(Set<String> oldClasses) {
+                    if(model.getObject().getFileId() == null){
+                        oldClasses.add("file-trash-button-hidden");
+                    }
+                    return oldClasses;
+                }
+            });
+        }
+
         @Override
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             super.onSubmit(target, form);
@@ -126,6 +143,22 @@ public class FileUploadPanel2 extends Panel {
             }
         }
 
+    };
+
+    private final WebMarkupContainer uploadFileButton = new WebMarkupContainer("upload_btn") {
+
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new ClassAttributeModifier() {
+                protected Set<String> update(Set<String> oldClasses) {
+                    if(model.getObject().getFileId() != null){
+                        oldClasses.add("file-trash-button-hidden");
+                    }
+                    return oldClasses;
+                }
+            });
+        }
     };
 
     public FileUploadPanel2(String id, IModel<SIAttachment> model, ViewMode viewMode) {
@@ -159,7 +192,7 @@ public class FileUploadPanel2 extends Panel {
 
         add(    (filesContainer = new WebMarkupContainer("files"))
                     .add(downloadLink.add(fileName)),
-                fileField,
+                uploadFileButton.add(fileField),
                 removeFileButton,
                 nameField, hashField, sizeField, idField,
                 progressBar = new WebMarkupContainer("progress")

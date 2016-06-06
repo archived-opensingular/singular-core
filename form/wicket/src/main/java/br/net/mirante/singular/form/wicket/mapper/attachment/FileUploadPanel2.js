@@ -4,14 +4,20 @@ if(window.FileUploadPanel == undefined){
     window.FileUploadPanel.setup = function(params) {
         $('#' + params.progress_bar_id).hide();
 
-        var choose_btn = $('#' + params.name_id).parent().find('.file-choose-button');
-        var trash_btn = $('#' + params.name_id).parent().find('.file-trash-button');
+        var update_action_buttons = function () {
+            var choose_btn = $('#' + params.name_id).parent().find('.file-choose-button');
+            var trash_btn = $('#' + params.name_id).parent().find('.file-trash-button');
 
-        if($('#' + params.id_id).val()){
-            choose_btn.hide();
-        }else{
-            trash_btn.hide();
+            if($('#' + params.id_id).val()){
+                trash_btn.css('display','block').css('width','35px'); // Somewhat, we need this in order to not destroy the layout
+                choose_btn.hide();
+            }else{
+                choose_btn.show();
+                trash_btn.hide();
+            }
         }
+
+        update_action_buttons();
 
         $('#' + params.file_field_id).fileupload({
             url: params.upload_url,
@@ -40,6 +46,8 @@ if(window.FileUploadPanel == undefined){
                     $('#' + params.id_id).val(file.fileId);
                     $('#' + params.hash_id).val(file.hashSHA1);
                     $('#' + params.size_id).val(file.size);
+
+                    update_action_buttons();
                 });
             },
             progressall: function (e, data) {
