@@ -17,6 +17,6 @@ public class SPackageFormPersistence extends SPackage {
 
     protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeFormKey.class);
-        pb.addAttribute(STypeComposite.class, ATR_FORM_KEY);
+        pb.createAttributeIntoType(STypeComposite.class, ATR_FORM_KEY);
     }
 }

@@ -1,8 +1,12 @@
 package br.net.mirante.singular.studio.wicket;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.FormPersistence;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
 import br.net.mirante.singular.studio.core.CollectionEditorConfig;
 import br.net.mirante.singular.studio.core.CollectionInfo;
@@ -13,7 +17,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 import javax.inject.Inject;
 
-public abstract class SingularStudioPanel extends Panel {
+public abstract class SingularStudioPanel extends Panel implements Loggable {
 
 
     private final CollectionCanvas canvas;
@@ -67,8 +71,16 @@ public abstract class SingularStudioPanel extends Panel {
         return getToolbox().sType(getCanvas());
     }
 
-   protected void showForm(AjaxRequestTarget target, Object formId) {
-        panelControl.showForm(target, formId);
+   protected void showForm(AjaxRequestTarget target, FormKey formKey) {
+        panelControl.showForm(target, formKey, ViewMode.EDITION, AnnotationMode.NONE);
+    }
+
+    protected void showForm(AjaxRequestTarget target, FormKey formKey, ViewMode viewMode) {
+        panelControl.showForm(target, formKey, viewMode, AnnotationMode.NONE);
+    }
+
+    protected void showForm(AjaxRequestTarget target, FormKey formKey, ViewMode viewMode, AnnotationMode annotationMode) {
+        panelControl.showForm(target, formKey, viewMode, annotationMode);
     }
 
     protected void showList(AjaxRequestTarget target) {

@@ -1,21 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper.search;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.converter.SimpleSInstanceConverter;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.provider.*;
-import br.net.mirante.singular.form.provider.Config.Column;
-import br.net.mirante.singular.form.view.SViewSearchModal;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.datatable.IBSAction;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -27,9 +15,30 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Iterator;
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.converter.SimpleSInstanceConverter;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.provider.Config;
+import br.net.mirante.singular.form.provider.Config.Column;
+import br.net.mirante.singular.form.provider.FilteredPagedProvider;
+import br.net.mirante.singular.form.provider.FilteredProvider;
+import br.net.mirante.singular.form.provider.InMemoryFilteredPagedProviderDecorator;
+import br.net.mirante.singular.form.provider.ProviderContext;
+import br.net.mirante.singular.form.view.SViewSearchModal;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.IBSAction;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 @SuppressWarnings("unchecked")
 class SearchModalBodyPanel extends Panel {
@@ -67,18 +76,24 @@ class SearchModalBodyPanel extends Panel {
     protected void onInitialize() {
         super.onInitialize();
 
-        final Config config = new Config();
-        getInstance().asAtrProvider().getFilteredProvider().configureProvider(config);
+        add(innerSingularFormPanel = buildInnerSingularFormPanel());
+        add(buildFilterButton());
+        add(resultTable = buildResultTable(getConfig()));
+    }
 
-        FilteredProvider provider = getInstance().asAtrProvider().getFilteredProvider();
+    private Config getConfig() {
+        Config config = new Config();
+        getFilteredProvider().configureProvider(config);
+        return config;
+    }
+
+    private FilteredPagedProvider getFilteredProvider() {
+        FilteredProvider provider =  getInstance().asAtrProvider().getFilteredProvider();
 
         if (!(provider instanceof FilteredPagedProvider)) {
             provider = new InMemoryFilteredPagedProviderDecorator<>(provider);
         }
-
-        add(innerSingularFormPanel = buildInnerSingularFormPanel(config));
-        add(buildFilterButton());
-        add(resultTable = buildResultTable(config, (FilteredPagedProvider) provider));
+        return (FilteredPagedProvider) provider;
     }
 
     private AjaxButton buildFilterButton() {
@@ -91,7 +106,7 @@ class SearchModalBodyPanel extends Panel {
         };
     }
 
-    private WebMarkupContainer buildResultTable(Config config, FilteredPagedProvider provider) {
+    private WebMarkupContainer buildResultTable(Config config) {
 
         final BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
             @Override
@@ -99,7 +114,7 @@ class SearchModalBodyPanel extends Panel {
                 ProviderContext providerContext = new ProviderContext();
                 providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
                 providerContext.setFilterInstance((SInstance) innerSingularFormPanel.getRootInstance().getObject());
-                return provider.getSize(providerContext);
+                return getFilteredProvider().getSize(providerContext);
             }
 
             @Override
@@ -111,7 +126,7 @@ class SearchModalBodyPanel extends Panel {
                 providerContext.setCount(count);
                 providerContext.setSortProperty(sortProperty);
                 providerContext.setAscending(ascending);
-                return provider.load(providerContext).iterator();
+                return getFilteredProvider().load(providerContext).iterator();
             }
         });
 
@@ -152,7 +167,7 @@ class SearchModalBodyPanel extends Panel {
         return builder.build(RESULT_TABLE_ID);
     }
 
-    private SingularFormPanel buildInnerSingularFormPanel(Config config) {
+    private SingularFormPanel buildInnerSingularFormPanel() {
 
         final SingularFormPanel parentSingularFormPanel = this.visitParents(SingularFormPanel.class, new IVisitor<SingularFormPanel, SingularFormPanel>() {
             @Override
@@ -161,28 +176,18 @@ class SearchModalBodyPanel extends Panel {
             }
         });
 
-        return new InnerSingularFormPanel(FORM_PANEL_ID, parentSingularFormPanel.getSingularFormConfig(), config);
-    }
-
-    private static class InnerSingularFormPanel extends SingularFormPanel {
-
-        private transient Config cfg;
-
-        public InnerSingularFormPanel(String id, SFormConfig singularFormConfig, Config cfg) {
-            super(id, singularFormConfig);
-            this.cfg = cfg;
-        }
-
-        @Override
-        protected SInstance createInstance(SFormConfig singularFormConfig) {
-            RefType filterRefType = new RefType() {
-                @Override
-                protected SType<?> retrieve() {
-                    return cfg.getFilter();
-                }
-            };
-            return singularFormConfig.getDocumentFactory().createInstance(filterRefType);
-        }
+        return new SingularFormPanel(FORM_PANEL_ID, parentSingularFormPanel.getSingularFormConfig()) {
+            @Override
+            protected SInstance createInstance(SFormConfig singularFormConfig) {
+                RefType filterRefType = new RefType() {
+                    @Override
+                    protected SType<?> retrieve() {
+                        return getConfig().getFilter();
+                    }
+                };
+                return singularFormConfig.getDocumentFactory().createInstance(filterRefType);
+            }
+        };
     }
 
     private SInstance getInstance() {

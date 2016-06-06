@@ -7,19 +7,15 @@ package br.net.mirante.singular.form.service;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.persistence.BasicFormPersistence;
+import br.net.mirante.singular.form.persistence.FormKey;
+import br.net.mirante.singular.form.persistence.FormKeyInt;
 
 /**
  * Service for Form instances
  */
-public interface IFormService {
+public interface IFormService extends BasicFormPersistence<SInstance> {
 
-    SInstance loadFormInstance(Long cod, RefType refType, SDocumentFactory documentFactory);
-    
-    FormDTO findForm(Long cod);
-    
-    FormDTO saveForm(SInstance instance);
+    SInstance loadFormInstance(FormKey key, RefType refType, SDocumentFactory documentFactory);
 
-    void updateForm(FormDTO form, SInstance instance);
-    
-    void saveOrUpdateForm(FormDTO form, SInstance instance);
 }

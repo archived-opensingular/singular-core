@@ -27,8 +27,8 @@ public class CaseFileAttachmentPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         STypeAttachment anexo = tipoMyForm.addField("anexo", STypeAttachment.class);
-        anexo.as(AtrBasic.class).label("Anexo");
-//        anexo.as(AtrBasic.class).required(true);
+        anexo.asAtr().label("Anexo");
+        anexo.asAtr().required(true);
         anexo.as(AtrBootstrap.class).colPreference(3);
 
         tipoMyForm.addField("a1", STypeAttachment.class).asAtr().label("a1");

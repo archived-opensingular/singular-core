@@ -48,9 +48,4 @@ public class SingularFormPersistenceException extends SingularFormException {
     public SingularFormPersistenceException add(int level, String label, Object value) {
         return (SingularFormPersistenceException) super.add(level, label, value);
     }
-
-    final SingularFormPersistenceException add(AbstractFormPersistence persitence) {
-        persitence.addExceptionInfo(this);
-        return this;
-    }
 }

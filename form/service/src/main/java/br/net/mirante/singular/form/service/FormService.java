@@ -4,81 +4,67 @@
  */
 package br.net.mirante.singular.form.service;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.internal.xml.MElement;
 import br.net.mirante.singular.form.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.persistence.*;
 import br.net.mirante.singular.form.persistence.dao.FormDAO;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 @Transactional
-public class FormService implements IFormService{
+public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService{
 
     @Inject
     private FormDAO formDAO;
-    
+
+    public FormService() {
+        super(FormKeyLong.class);
+    }
+
     @Override
-    public SInstance loadFormInstance(Long cod, RefType refType, SDocumentFactory documentFactory) {
-        FormEntity entity = formDAO.find(cod);
+    public SInstance loadFormInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
+        FormEntity entity = formDAO.find(checkKey(key, null,"a chave não fosse nula").longValue());
         if(entity == null){
             return null;
         }
         SInstance instance = MformPersistenciaXML.fromXML(refType, entity.getXml(), documentFactory);
         
         MformPersistenciaXML.annotationLoadFromXml(instance, entity.getXmlAnnotations());
-        
+
+        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
         return instance;
     }
     
     @Override
-    public FormDTO findForm(Long cod) {
-        FormEntity entity = formDAO.find(cod);
-        if(entity == null){
-            return null;
-        }
-        FormDTO dto = new FormDTO();
-        dto.setCod(entity.getCod());
-        return dto;
-    }
-
-    @Override
-    public void saveOrUpdateForm(FormDTO form, SInstance instance) {
-        if(form != null){
-            if(form.getCod() == null){
-                form.setCod(saveForm(instance).getCod());
-            } else {
-                updateForm(form, instance);
-            }
-        }
-    }
-    
-    @Override
-    public FormDTO saveForm(SInstance instance) {
+    protected FormKeyLong insertInternal(SInstance instance) {
         FormEntity entity = new FormEntity();
         entity.setXml(extractContent(instance));
         entity.setXmlAnnotations(extractAnnotations(instance));
         formDAO.saveOrUpdate(entity);
-        
-        FormDTO form = new FormDTO();
-        form.setCod(entity.getCod());
-        
-        return form;
+        return new FormKeyLong(entity.getCod());
     }
 
     @Override
-    public void updateForm(FormDTO form, SInstance instance) {
-        FormEntity entity = formDAO.find(form.getCod());
+    protected void updateInternal(FormKeyLong key, SInstance instance) {
+        FormEntity entity = formDAO.find(key.longValue());
         if(entity == null){
-            throw new SingularFormException("Form não encontrado cod="+form.getCod());
+            throw addInfo(new SingularFormPersistenceException("Form não encontrado")).add("key", key);
         }
         entity.setXml(extractContent(instance));
         entity.setXmlAnnotations(extractAnnotations(instance));
         formDAO.saveOrUpdate(entity);
+    }
+
+    @Override
+    protected void deleteInternal(FormKeyLong key) {
+        throw new RuntimeException("Metodo nao implementado");
     }
 
     private String extractAnnotations(SInstance instance){
@@ -91,6 +77,11 @@ public class FormService implements IFormService{
             return null;
         }
         instance.getDocument().persistFiles();
-        return MformPersistenciaXML.toXML(instance).toStringExato();
+        final MElement mElement = MformPersistenciaXML.toXML(instance);
+        if (mElement != null) {
+            return mElement.toStringExato();
+        } else {
+            return "";
+        }
     }
 }

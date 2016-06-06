@@ -8,6 +8,7 @@ package br.net.mirante.singular.showcase.view.template;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
+import br.net.mirante.singular.showcase.component.ShowCaseType;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -54,7 +55,7 @@ public class Header extends Panel {
             @Override
             public void onClick() {
                 PageParameters pp = new PageParameters();
-                pp.add(ListPage.PARAM_TIPO, ListPage.Tipo.FORM);
+                pp.add(ListPage.PARAM_TIPO, ShowCaseType.FORM);
                 setResponsePage(ListPage.class, pp);
             }
 
@@ -67,7 +68,7 @@ public class Header extends Panel {
             @Override
             public void onClick() {
                 PageParameters pp = new PageParameters();
-                pp.add(ListPage.PARAM_TIPO, ListPage.Tipo.STUDIO);
+                pp.add(ListPage.PARAM_TIPO, ShowCaseType.STUDIO);
                 setResponsePage(ListPage.class, pp);
             }
 

@@ -1,5 +1,8 @@
 package br.net.mirante.singular.studio.wicket;
 
+import br.net.mirante.singular.form.persistence.FormKey;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
 import br.net.mirante.singular.studio.spring.StudioCollectionToolboxBean;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -13,7 +16,9 @@ public class SingularStudioCollectionPanel extends Panel {
     private final PanelControl panelControl = new PanelControl();
     private final CollectionCanvas canvas;
     private boolean showList = true;
-    private Object formID;
+    private FormKey formKey = null;
+    private ViewMode viewMode = ViewMode.EDITION;
+    private AnnotationMode annotationMode = AnnotationMode.NONE;
 
     public SingularStudioCollectionPanel(String content, CollectionCanvas canvas) {
         super(content);
@@ -27,7 +32,7 @@ public class SingularStudioCollectionPanel extends Panel {
         if (showList) {
             this.addOrReplace(new SingularStudioListPanel("content", panelControl, canvas));
         } else {
-            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, canvas, formID));
+            this.addOrReplace(new SingularStudioFormPanel("content", panelControl, canvas, formKey, viewMode, annotationMode));
         }
     }
 
@@ -37,9 +42,11 @@ public class SingularStudioCollectionPanel extends Panel {
             SingularStudioCollectionPanel.this.showList = true;
         }
 
-        public void setForm(Object formID) {
+        public void setForm(FormKey formKey, ViewMode viewMode, AnnotationMode annotationMode) {
             SingularStudioCollectionPanel.this.showList = false;
-            SingularStudioCollectionPanel.this.formID = formID;
+            SingularStudioCollectionPanel.this.formKey = formKey;
+            SingularStudioCollectionPanel.this.viewMode = viewMode;
+            SingularStudioCollectionPanel.this.annotationMode = annotationMode;
         }
 
         public void showList(AjaxRequestTarget target) {
@@ -49,10 +56,10 @@ public class SingularStudioCollectionPanel extends Panel {
 
         /**
          * @param target
-         * @param formID Se nulo, cadastrar um novo form
+         * @param formKey Se nulo, cadastrar um novo form
          */
-        public void showForm(AjaxRequestTarget target, Object formID) {
-            setForm(formID);
+        public void showForm(AjaxRequestTarget target, FormKey formKey, ViewMode viewMode, AnnotationMode annotationMode) {
+            setForm(formKey, viewMode, annotationMode);
             target.add(SingularStudioCollectionPanel.this);
         }
     }

@@ -10,35 +10,26 @@ import com.google.common.collect.Lists;
 import java.util.*;
 
 /**
+ * Serviço de persistência para alteração e recuperação de instâncias. Se diferencia de {@link BasicFormPersistence} ao
+ * acrescentar a funcionalidades de pesquisa.
+ *
  * @author Daniel C. Bordin
  */
-public interface FormPersistence<INSTANCE extends SInstance> {
-
-    public FormKey keyFromString(String persistenceString);
+public interface FormPersistence<INSTANCE extends SInstance> extends BasicFormPersistence<INSTANCE> {
 
     /**
-     * Tenta converter o valor para o tipo de FormKey utlizado pela FormPersitente. Se o tipo não for uma representação
-     * de chave entendível pela persitencia atual, então dispara uma exception.
-     *
-     * @return null se o valor for null
+     * Recupera a instância correspondete a chava ou dispara Exception se não encontrar.
      */
-    public FormKey keyFromObject(Object objectValueToBeConverted);
-
-    public FormKey insert(INSTANCE instance);
-
     public INSTANCE load(FormKey key);
 
+    /**
+     * Tentar recupeara a instância correspondente a chave, mas pode retornar resultado vazio.
+     */
     public Optional<INSTANCE> loadOpt(FormKey key);
 
-    public void delete(FormKey key);
+    public List<INSTANCE> loadAll(long first, long max);
 
-    public void update(INSTANCE instance);
+    public List<INSTANCE> loadAll();
 
-    public FormKey insertOrUpdate(INSTANCE instance);
-
-    public Iterable<INSTANCE> loadAllAsIterable();
-
-    public Collection<INSTANCE> loadAllAsCollection();
-
-    public List<INSTANCE> loadAllAsList();
+    public long countAll();
 }

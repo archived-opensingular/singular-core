@@ -9,6 +9,9 @@ import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
+import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
+import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
@@ -23,18 +26,13 @@ public class CaseInputCoreBasicPackage extends SPackage {
     @Override
     protected void onLoadPackage(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
-        tipoMyForm.addFieldCNPJ("cnpj")
-                .as(AtrBasic.class).label("CNPJ");
-        tipoMyForm.addFieldCPF("cpf")
-                .as(AtrBasic.class).label("CPF");
-        tipoMyForm.addFieldCEP("cep")
-                .as(AtrBasic.class).label("CEP");
-        tipoMyForm.addFieldEmail("email")
-                .as(AtrBasic.class).label("E-mail");
+        tipoMyForm.addField("cnpj", STypeCNPJ.class);
+        tipoMyForm.addField("cpf", STypeCPF.class);
+        tipoMyForm.addField("cep", STypeCEP.class);
+        tipoMyForm.addFieldEmail("email");
         tipoMyForm.addFieldString("descricao")
-                .as(AtrBasic.class).label("Descrição");
-        tipoMyForm.addField("telefone", STypeTelefoneNacional.class)
-                .as(AtrBasic.class).label("Telefone");
+                .asAtr().label("Descrição");
+        tipoMyForm.addField("telefone", STypeTelefoneNacional.class);
         super.onLoadPackage(pb);
     }
 }
