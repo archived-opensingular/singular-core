@@ -29,14 +29,13 @@ import static java.util.Collections.synchronizedList;
 
 /**
  * Class responsible for handling the temporary upload of files inside the
- * {@link AttachmentContainer}. It's worth noting that this class will
+ * {@link FileUploadPanel}. It's worth noting that this class will
  * only use the temporary (deafult), handler. Which leaves the definitive
  * task into the hands of the developer user.
  *
  * @author Fabricio Buzeto
  */
 @SuppressWarnings("serial")
-@Deprecated
 class UploadBehavior extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper();
     private Component component;
@@ -93,7 +92,7 @@ class UploadBehavior extends Behavior implements IResourceListener {
                 }
                 temporaryIds.clear();
             }
-            processFiles(filesJson, request.getFile(AttachmentContainer.PARAM_NAME));
+            processFiles(filesJson, request.getFile(FileUploadPanel.PARAM_NAME));
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {

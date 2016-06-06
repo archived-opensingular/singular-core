@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import br.net.mirante.singular.form.SIList;
@@ -10,94 +5,69 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.panel.SUploadProgressBar;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
-import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.AjaxCallListener;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.extensions.ajax.markup.html.form.upload.UploadProgressBar;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.upload.FileUpload;
+import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
 import org.apache.wicket.util.time.Duration;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
+import java.util.Set;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 /**
- * FileUploadPanel
- * Classe responsavel por renderizar o conteudo do componente de anexo do singular
+ * Created by nuk on 27/05/16.
  */
 public class FileUploadPanel extends Panel {
+    public static String PARAM_NAME = "FILE-UPLOAD";
 
-    private final static String CLICK_DELEGATE_SCRIPT_TEMPLATE = "$('#%s').on('click', function(){$('#%s').click();});";
-
-    /**
-     * Model principal, deve ser provido na construção da instancia
-     */
     private final IModel<SIAttachment> model;
+    private final ViewMode viewMode;
 
-    /**
-     * Componente de upload do wicket
-     */
-    private final SFileUploadField uploadField = new SFileUploadField("fileUpload") {
+    private final FileUploadField fileField;
+    private final HiddenField nameField, hashField, sizeField, idField;
+    private final WebMarkupContainer filesContainer, progressBar;
+    private final DownloadBehavior downloader;
+    private final UploadBehavior uploader;
+
+    private final Label fileName = new Label("fileName", new AbstractReadOnlyModel<String>() {
+        @Override
+        public String getObject() {
+            if (!model.getObject().isEmptyOfData()) {
+                return model.getObject().getFileName();
+            }
+            return StringUtils.EMPTY;
+        }
+    }) {
         @Override
         protected void onConfigure() {
             super.onConfigure();
-            setVisible(viewMode.isEdition());
+            add($b.attr("title", $m.ofValue(model.getObject().getFileName())));
         }
     };
 
-    /**
-     * Markup do botão de escolha
-     */
-    private final WebMarkupContainer chooseFieldButton = new WebMarkupContainer("choose");
-
-    /**
-     * Agrupa os componentes, dinamicamente pode ser um inputgroup
-     */
-    private final WebMarkupContainer panelWrapper = new WebMarkupContainer("panelWrapper") {
-        @Override
-        protected void onInitialize() {
-            super.onInitialize();
-            if (viewMode.isEdition()) {
-                add($b.classAppender("input-group"));
-            }
-        }
-    };
-
-    /**
-     * Markup do field que mostra o link para download
-     */
-    private final WebMarkupContainer fileDummyField;
-
-    /**
-     * DownloadLink, escreve o arquivo do SIAttachment.
-     */
     private final Link<Void> downloadLink = new Link<Void>("downloadLink") {
 
         private static final String SELF = "_self", BLANK = "_blank";
@@ -143,30 +113,21 @@ public class FileUploadPanel extends Panel {
         }
     };
 
-    /**
-     * Label do nome do arquivo
-     */
-    private final Label fileName = new Label("fileName", new AbstractReadOnlyModel<String>() {
-        @Override
-        public String getObject() {
-            if (!model.getObject().isEmptyOfData()) {
-                return model.getObject().getFileName();
-            }
-            return StringUtils.EMPTY;
-        }
-    }) {
-        @Override
-        protected void onConfigure() {
-            super.onConfigure();
-            add($b.attr("title", $m.ofValue(model.getObject().getFileName())));
-        }
-    };
+    private final AjaxButton removeFileButton = new AjaxButton("remove_btn") {
 
-    /**
-     * Markup do botão de remover arquivos,
-     * utilizia  methodo cleaninstance da instancia
-     */
-    private final AjaxButton removeFileButton = new AjaxButton("removeFileButton") {
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new ClassAttributeModifier() {
+                protected Set<String> update(Set<String> oldClasses) {
+                    if(model.getObject().getFileId() == null){
+                        oldClasses.add("file-trash-button-hidden");
+                    }
+                    return oldClasses;
+                }
+            });
+        }
+
         @Override
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             super.onSubmit(target, form);
@@ -176,64 +137,68 @@ public class FileUploadPanel extends Panel {
                 parent.remove(parent.indexOf(model.getObject()));
                 target.add(form);
             } else {
-                target.add(fileDummyField, fileName, removeFileButton, chooseFieldButton);
+                target.add(FileUploadPanel.this);
             }
+        }
+
+    };
+
+    private final WebMarkupContainer uploadFileButton = new WebMarkupContainer("upload_btn") {
+
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new ClassAttributeModifier() {
+                protected Set<String> update(Set<String> oldClasses) {
+                    if(model.getObject().getFileId() != null){
+                        oldClasses.add("file-trash-button-hidden");
+                    }
+                    return oldClasses;
+                }
+            });
         }
     };
 
-    private final ViewMode viewMode;
-
-    /**
-     * Construdor do Panel, todos os parametros são obrigatorios
-     *
-     * @param id    do compoente
-     * @param model que contem o SIAttachment
-     */
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
-        super(id);
+        super(id, model);
         this.model = model;
         this.viewMode = viewMode;
-        uploadField.setModel(new WrapperAwareModel(model));
-        fileDummyField = buildFileDummyField("fileDummyField");
-        add(uploadField,
-            panelWrapper.add(
-                chooseFieldButton,
-                removeFileButton,
-                fileDummyField.add(buildAttachmentShadow(),
-                    downloadLink.add(fileName))
-            )
-        );
-        panelWrapper.add(new SUploadProgressBar("progress", uploadField){
+
+        fileField = new FileUploadField("fileUpload", new IMInstanciaAwareModel() {
             @Override
-            protected Form<?> getForm() {
-                return uploadField.getForm();
+            public Object getObject() {return null;}
+
+            @Override
+            public void setObject(Object object) {}
+
+            @Override
+            public void detach() {}
+
+            @Override
+            public SInstance getMInstancia() {
+                return model.getObject();
             }
         });
-        getApplication().getApplicationSettings().setUploadProgressUpdatesEnabled(true);
-    }
+        nameField = new HiddenField("file_name",
+                new PropertyModel<>(model, "fileName"));
+        hashField = new HiddenField("file_hash",
+                new PropertyModel<>(model, "fileHashSHA1"));
+        sizeField = new HiddenField("file_size",
+                new PropertyModel<>(model, "fileSize"));
+        idField = new HiddenField("file_id",
+                new PropertyModel<>(model, "fileId"));
 
-    public WebMarkupContainer buildAttachmentShadow() {
-        WebMarkupContainer attachmentShadow = new WebMarkupContainer("attachmentShadow");
-        if (viewMode.isEdition()) {
-            attachmentShadow.add($b.classAppender("attachmentShadow"));
-        } else {
-            attachmentShadow.add($b.attr("style", "display:none;"));
-        }
-        return attachmentShadow;
-    }
-
-    /**
-     * Inicialização do panel, somente configura o outputmarkid
-     */
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-        fileDummyField.setOutputMarkupId(true);
-        fileName.setOutputMarkupId(true);
-        chooseFieldButton.setOutputMarkupId(true);
-        removeFileButton.setOutputMarkupId(true);
-        fileName.add($b.onConfigure(c -> c.add($b.attr("title", c.getDefaultModel()))));
-        configureBehaviours();
+        add(    (filesContainer = new WebMarkupContainer("files"))
+                    .add(downloadLink.add(fileName)),
+                uploadFileButton.add(fileField),
+                removeFileButton,
+                nameField, hashField, sizeField, idField,
+                progressBar = new WebMarkupContainer("progress")
+        );
+        add(
+            downloader = new DownloadBehavior(model.getObject()),
+            uploader = new UploadBehavior(model.getObject())
+        );
     }
 
     private WebMarkupContainer buildFileDummyField(String id) {
@@ -249,109 +214,53 @@ public class FileUploadPanel extends Panel {
         return markup;
     }
 
-    /**
-     * Adiciona os behaviours aos componentes
-     */
-    protected void configureBehaviours() {
-        super.onConfigure();
-        uploadField.add(new AjaxFormSubmitBehavior("change") {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target) {
-                super.onSubmit(target);
-                final FileUpload upload = uploadField.getFileUpload();
-                if (upload != null) {
-                    model.getObject().setContent(upload.getBytes());
-                    model.getObject().setFileName(upload.getClientFileName());
-                    target.add(fileDummyField, fileName, chooseFieldButton, removeFileButton);
-                }
-            }
-
-            @Override
-            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
-                super.updateAjaxAttributes(attributes);
-                attributes.getAjaxCallListeners().add(new AjaxCallListener() {
-                    @Override
-                    public CharSequence getPrecondition(Component component) {
-                        return generateOnchangeValidationJS(
-                                "$('#" + uploadField.getMarkupId() + "')[0]");
-                    }
-                });
-                attributes.getExtraParameters().put("forceDisableAJAXPageBlock", true);
-            }
-
-        });
-        chooseFieldButton.add(new Behavior() {
-            @Override
-            public void renderHead(Component component, IHeaderResponse response) {
-                super.renderHead(component, response);
-                response.render(OnDomReadyHeaderItem.forScript(String.format(CLICK_DELEGATE_SCRIPT_TEMPLATE,
-                        chooseFieldButton.getMarkupId(true), uploadField.getMarkupId(true))));
-            }
-        });
-        chooseFieldButton.add($b.onConfigure(c -> c.setVisible(model.getObject().isEmptyOfData() && viewMode.isEdition())));
-        removeFileButton.add($b.onConfigure(c -> c.setVisible(!model.getObject().isEmptyOfData() && viewMode.isEdition())));
+    public WebMarkupContainer buildAttachmentShadow() {
+        WebMarkupContainer attachmentShadow = new WebMarkupContainer("attachmentShadow");
+        if (viewMode.isEdition()) {
+            attachmentShadow.add($b.classAppender("attachmentShadow"));
+        } else {
+            attachmentShadow.add($b.attr("style", "display:none;"));
+        }
+        return attachmentShadow;
     }
 
-    private String generateOnchangeValidationJS(String element) {
-        Bytes max = getApplication().getApplicationSettings().getDefaultMaximumUploadSize();
-        return "FileUploadPanel.validateInputFile( " + element + " ," + max.bytes() + ")";
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
     }
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("FileUploadPanel.js")));
+        response.render(OnDomReadyHeaderItem.forScript(
+                " $(function () { \n" +
+                "     var params = { \n" +
+                "             file_field_id: '"+fileField.getMarkupId()+"', \n" +
+                "             files_id : '"+ filesContainer.getMarkupId()+"', \n" +
+                "             progress_bar_id : '"+progressBar.getMarkupId()+"', \n" +
+                "  \n" +
+                "             name_id: '"+nameField.getMarkupId()+"', \n" +
+                "             id_id: '"+idField.getMarkupId()+"', \n" +
+                "             hash_id: '"+hashField.getMarkupId()+"', \n" +
+                "             size_id: '"+sizeField.getMarkupId()+"', \n" +
+                "  \n" +
+                "             param_name : '"+PARAM_NAME+"', \n" +
+                "             upload_url : '"+uploader.getUrl()+"', \n" +
+                "             download_url : '"+downloader.getUrl()+"', \n" +
+                "  \n" +
+                "     }; \n" +
+                "  \n" +
+                "     window.FileUploadPanel.setup(params); \n" +
+                " });"
+        ));
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
         return new PackageResourceReference(getClass(), resourceName);
     }
 
-    /**
-     * @return o field principal do painel
-     */
-    public SFileUploadField getUploadField() {
-        return uploadField;
-    }
-
-    /**
-     * Wrapper model para utilização em um fileuploadField, adiciona o comportamento de
-     * IMInstanciaAwareModel, tornando capaz de recuperar o SIAttachment
-     */
-    class WrapperAwareModel implements IMInstanciaAwareModel<List<FileUpload>> {
-
-        /**
-         * Model que armazena o  SIAttachment
-         */
-        private final IModel<SIAttachment> realModeal;
-
-        /**
-         * Arquivos
-         */
-        private List<FileUpload> files;
-
-        WrapperAwareModel(IModel<SIAttachment> realModeal) {
-            this.realModeal = realModeal;
-        }
-
-        @Override
-        public List<FileUpload> getObject() {
-            return files;
-        }
-
-        @Override
-        public void setObject(List<FileUpload> files) {
-            this.files = files;
-        }
-
-        @Override
-        public void detach() {
-
-        }
-
-        @Override
-        public SInstance getMInstancia() {
-            return realModeal.getObject();
-        }
+    public FileUploadField getUploadField() {
+        return fileField;
     }
 }

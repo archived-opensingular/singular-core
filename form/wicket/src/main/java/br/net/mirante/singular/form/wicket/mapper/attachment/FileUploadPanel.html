@@ -11,40 +11,51 @@
             padding-bottom: 5px;
         }
 
-        .attachmentShadow {
-            background: -webkit-linear-gradient(right, transparent, white);
-            background: -o-linear-gradient(right, transparent, white);
-            background: -moz-linear-gradient(right, transparent, white);
-            background: linear-gradient( to right, transparent, white);
-            width: 55px;
-            height: 30px;
-            position: absolute;
-            float: right;
-            right: 5px;
-            top: 0;
-            pointer-events: none;
+        .progress{
+            margin-left: 30px;
+            position: relative;
         }
+
+        .file-trash-button {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+
+        .file-trash-button-hidden{
+            display: none;
+        }
+
     </style>
-    <input type="file" wicket:id="fileUpload" style="display:none;"/>
-    <div wicket:id="panelWrapper" style="width: 100%;">
+
+    <input type="hidden" wicket:id="file_name" />
+    <input type="hidden" wicket:id="file_hash" />
+    <input type="hidden" wicket:id="file_size" />
+    <input type="hidden" wicket:id="file_id" />
+
+    <div style="width: 100%;">
         <div style="white-space: nowrap;">
-            <div wicket:id="fileDummyField" style="overflow: hidden !important;">
-                <i class="fa fa-file"></i>&nbsp;
-                <span wicket:id="attachmentShadow" ></span>
-                <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>
+            <div class="form-control fileDummyField"
+                 style="overflow: hidden !important; width: 80%;">
+                <i class="fa fa-file" style="float: left;"></i>&nbsp;
+                <div class="files" wicket:id="files" style="float: left;padding-left: 7px;">
+                    <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>
+                </div>
             </div>
         </div>
-        <span class="input-group-btn" style="float: right; padding-left: 7px;">
-            <button wicket:id="choose" class="btn btn-sm blue"
-                    style="padding: 7px 5px;" type="button">
-                <span class="glyphicon glyphicon-plus"></span> Escolher
-            </button>
-            <button wicket:id="removeFileButton" class="btn btn-sm red"
-                    style="padding: 7px 7px;" title="Remover" type="button">
+        <span class="input-group-btn" style="float: right; padding-left: 7px;width: 20%;">
+            <span wicket:id="upload_btn" class="btn btn-sm blue fileinput-button file-choose-button" >
+                <span class="glyphicon glyphicon-plus"></span>
+                <span style="padding: 7px 5px;" > Escolher</span>
+                <input type="file" wicket:id="fileUpload" />
+            </span>
+            <span wicket:id="remove_btn" class="btn btn-sm red file-trash-button" >
                 <span class="glyphicon glyphicon-trash"></span>
-            </button>
+            </span>
         </span>
-        <span wicket:id="progress">[[upload progressbar]]</span>
+    </div>
+    <br />
+    <div class="progress" wicket:id="progress" style="display: none;">
+        <div class="progress-bar progress-bar-success" ></div>
     </div>
 </wicket:panel>
 </body>

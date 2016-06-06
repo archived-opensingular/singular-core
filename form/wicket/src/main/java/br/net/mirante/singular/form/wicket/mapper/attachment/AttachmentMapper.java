@@ -22,7 +22,7 @@ public class AttachmentMapper extends ControlsFieldComponentAbstractMapper {
         /*final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDITION);
         formGroup.appendDiv(container);
         return container.getUploadField();*/
-        final FileUploadPanel2 container = new FileUploadPanel2("container", (IModel<SIAttachment>) model, ViewMode.EDITION);
+        final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDITION);
         formGroup.appendDiv(container);
         return container.getUploadField();
 //        AttachmentContainer container = new AttachmentContainer((IModel<? extends SIAttachment>) model);
