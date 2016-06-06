@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * Carrega os arquivos de propriedades do singular e dá fácil acesso ao mesmos, mediante um singleton {@link
  * SingularProperties#INSTANCE}. <p>Primeiro lê do arquivos de propriedades e depois tentar ler do diretório de
- * configuraão, se o mesmo existir, ou seja, as variáveis no diretório de configuração têm precedência.</p>
+ * configuração se o mesmo existir, ou seja, as variáveis no diretório de configuração têm precedência.</p>
  *
  * @author Daniel C. Bordin
  * @author Vinicius Nunes
@@ -51,7 +51,7 @@ public enum SingularProperties {
      * Limpa as propriedades da memoria e força recarga a partir da memória e classPath.
      */
     public synchronized void reload() {
-        logger.info("Carrengado configurações do Singular");
+        logger.info("Carregando configurações do Singular");
         Properties newProperties = readClasspathDefaults();
         readPropertiesFilesOverrides(newProperties);
         properties = newProperties;
