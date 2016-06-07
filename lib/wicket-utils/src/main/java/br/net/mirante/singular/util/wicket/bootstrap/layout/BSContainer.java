@@ -81,7 +81,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
     public BSControls newFormGroup() {
         /* #FLAMA DEFAULT LG A PEDIDO DA FLAMA */
-        return newFormGroup(BootstrapSize.SM);
+        return newFormGroup(BootstrapSize.LG);
     }
 
     public BSControls newFormGroup(BootstrapSize bsSize) {
