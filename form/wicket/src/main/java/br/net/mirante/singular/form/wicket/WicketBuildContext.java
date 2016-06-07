@@ -47,44 +47,42 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
-@SuppressWarnings({"serial", "rawtypes"})
+@SuppressWarnings({ "serial", "rawtypes" })
 public class WicketBuildContext implements Serializable {
 
     static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
 
-    public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {
-    };
+    public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {};
 
     public static final HintKey<IModel<String>> TITLE_KEY                                     = () -> null;
     public static final HintKey<Boolean>        RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
 
-    private final WicketBuildContext parent;
-    private final List<WicketBuildContext> children = newArrayList();
-    private final BSContainer<?> container;
-    private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
-    private final boolean     hintsInherited;
-    private final BSContainer externalContainer;
-    private final BSContainer rootContainer;
+    private final WicketBuildContext                parent;
+    private final List<WicketBuildContext>          children = newArrayList();
+    private final BSContainer<?>                    container;
+    private final HashMap<HintKey<?>, Serializable> hints    = new HashMap<>();
+    private final boolean                           hintsInherited;
+    private final BSContainer                       externalContainer;
+    private final BSContainer                       rootContainer;
 
-    private IModel<? extends SInstance> model;
-    private UIBuilderWicket             uiBuilderWicket;
-    private ViewMode                    viewMode;
+    private IModel<? extends SInstance>           model;
+    private UIBuilderWicket                       uiBuilderWicket;
+    private ViewMode                              viewMode;
     private AnnotationMode                        annotation              = AnnotationMode.NONE;
     private HashMap<Integer, AnnotationComponent> annotations             = newHashMap();
     private HashMap<Integer, Component>           annotationsTargetBuffer = newHashMap();
-    private BSContainer annotationContainer;
+    private BSContainer                           annotationContainer;
 
-    private boolean showBreadcrumb;
+    private boolean                                                      showBreadcrumb;
     private List<String>                                                 breadCrumbs      = newArrayList();
     private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
-    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus;
+    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus        selectedBreadCrumbStatus;
 
     private SView view;
 
     public AnnotationMode annotation() {
         return annotation;
     }
-
     public void annotation(AnnotationMode mode) {
         Objects.requireNonNull(mode);
         annotation = mode;
@@ -93,12 +91,10 @@ public class WicketBuildContext implements Serializable {
     public void setAnnotationContainer(BSContainer annotationContainer) {
         this.annotationContainer = annotationContainer;
     }
-
     public void add(AnnotationComponent c) {
         Integer id = c.referenced().getMInstancia().getId();
         annotations.put(id, c);
     }
-
     public void updateAnnotations(Component c, SInstance target) {
         if (target != null) {
             for (WicketBuildContext ctx : contextChain()) {
@@ -131,7 +127,7 @@ public class WicketBuildContext implements Serializable {
 
     private List<WicketBuildContext> contextChain() {
         List<WicketBuildContext> contextChain = newArrayList(this);
-        WicketBuildContext       ctx          = this;
+        WicketBuildContext ctx = this;
         while (ctx.getParent() != null) {
             ctx = ctx.getParent();
             contextChain.add(ctx);
@@ -144,7 +140,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer,
-                              boolean hintsInherited, IModel<? extends SInstance> model) {
+        boolean hintsInherited, IModel<? extends SInstance> model) {
         this.parent = parent;
         if (parent != null) {
             parent.children.add(this);
@@ -197,8 +193,9 @@ public class WicketBuildContext implements Serializable {
     /**
      * Configura formComponentes, adicionando comportamentos de acordo com sua definição.
      *
-     * @param mapper        o mapper
+     * @param mapper o mapper
      * @param formComponent o componente que tem como model IMInstanciaAwareModel
+     *
      */
     public void configure(IWicketComponentMapper mapper, FormComponent<?> formComponent) {
         final IModel defaultModel = formComponent.getDefaultModel();
@@ -212,10 +209,12 @@ public class WicketBuildContext implements Serializable {
             final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
             // final SType<?> tipo = model.getMInstancia().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
-            mapper.addAjaxUpdate(
-                    formComponent,
-                    IMInstanciaAwareModel.getInstanceModel(model),
-                    new OnFieldUpdatedListener());
+            if(mapper.updateOnChange()){
+                mapper.addAjaxUpdate(
+                        formComponent,
+                        IMInstanciaAwareModel.getInstanceModel(model),
+                        new OnFieldUpdatedListener());
+            }
         }
     }
 
@@ -256,8 +255,8 @@ public class WicketBuildContext implements Serializable {
     protected static <T> String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof IMInstanciaAwareModel<?>) {
-            SInstance    instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
-            List<String> labels    = new ArrayList<>();
+            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            List<String> labels = new ArrayList<>();
             while (instancia != null) {
                 labels.add(instancia.as(SPackageBasic.aspect()).getLabel());
                 instancia = instancia.getParent();

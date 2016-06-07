@@ -42,9 +42,16 @@
 
             function hasAjaxUpdate() {
                 var events = $('#' + valueField).data('events');
-                if (events && events.hasOwnProperty('blur')) {
-                    for (var i = 0; i <= events.blur.length; i += 1) {
-                        if (events.blur[i].handler.toString().indexOf('Wicket') > 0) {
+                if (events && events.hasOwnProperty('change')) {
+                    for (var i = 0; i <= events.change.length; i += 1) {
+                        if (events.change[i] && events.change[i].handler.toString().indexOf('Wicket') > 0) {
+                            return true;
+                        }
+                    }
+                }
+                if (events && events.hasOwnProperty('singular:blurchange')) {
+                    for (var i = 0; i <= events['singular:blurchange'].length; i += 1) {
+                        if (events['singular:blurchange'][i] && events['singular:blurchange'][i].handler.toString().indexOf('Wicket') > 0) {
                             return true;
                         }
                     }
@@ -66,7 +73,7 @@
                 var oldValue = $valueField.val();
                 $valueField.val(newValue);
                 if(oldValue !== newValue){
-                	$valueField.trigger('blur');
+                	$valueField.trigger('change');
                 }
             }
             
@@ -144,6 +151,9 @@
             		event.preventDefault();
             		onClear(event);
             	}
+            });
+            $typeaheadField.on('blur', function(event){
+                $('#' + valueField).trigger('blur', event);
             });
             //previne que ao teclar Tab, o primeiro item seja selecionado quando ninguém foi marcado
             Typeahead_._onTabKeyed = function onTabKeyed(type, $e) {

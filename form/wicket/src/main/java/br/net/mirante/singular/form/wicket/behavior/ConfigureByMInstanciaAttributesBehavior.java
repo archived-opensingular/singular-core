@@ -57,6 +57,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
 
         SInstance instance = resolveInstance(component);
         if (instance != null) {
+            tag.put("snglr", "");//identifica como sendo o singular
             tag.put("data-instance-id", instance.getId());
             tag.put("data-instance-path", instance.getPathFull());
         }

@@ -5,9 +5,9 @@ import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.provider.SimpleProvider;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.Serializable;
@@ -23,7 +23,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Ultima execução : 08/04/2016
  * Falhou: Não que eu saiba
  */
-@Ignore("We have to figure out how to deal with this case of TypeAhead")
 public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
     STypeString                 genero;
@@ -67,7 +66,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
         final FormComponent input         = findFirstFormComponentsByType(page.getForm(), pessoa);
         tester.assertInvisible(input.getPageRelativePath());
         form.select(getFormRelativePath(selecaoGenero), 0);
-        tester.executeAjaxEvent(selecaoGenero, "blur");
+        tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
         tester.assertVisible(input.getPageRelativePath());
     }
 
@@ -79,13 +78,13 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
         {
             form.select(getFormRelativePath(selecaoGenero), 1);
-            tester.executeAjaxEvent(selecaoGenero, "blur");
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
             setAndCheckValue(input);
         }
 
         {
             form.select(getFormRelativePath(selecaoGenero), 0);
-            tester.executeAjaxEvent(selecaoGenero, "blur");
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
             setAndCheckValue(input);
         }
 
@@ -99,13 +98,13 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
         {
             form.select(getFormRelativePath(selecaoGenero), 1);
-            tester.executeAjaxEvent(selecaoGenero, "blur");
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
             setAndCheckValue(input);
         }
 
         {
             form.select(getFormRelativePath(selecaoGenero), 0);
-            tester.executeAjaxEvent(selecaoGenero, "blur");
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
             setAndCheckValue(input);
         }
 
@@ -114,7 +113,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
     private void setAndCheckValue(FormComponent input) {
         form.setValue(input, "Danilo");
-        tester.executeAjaxEvent(input, "blur");
+        tester.executeAjaxEvent(input, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
         assertThat(input.getModel().getObject()).isNotNull();
     }
 

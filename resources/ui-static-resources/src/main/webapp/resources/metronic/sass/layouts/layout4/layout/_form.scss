@@ -46,3 +46,22 @@
     color: $text-color;
   }
 }
+
+.btn-noclose {
+  float: right;
+  margin-left: 20px;
+}
+
+.composite-box-grid > div {
+  margin: 0 0 8px 0;
+  padding: 0 32px 8px 32px;
+  background-color: #fff;
+  border-radius: 3px;
+  border: 1px solid $input-border;
+}
+
+.form-actions {
+  margin: 0 0 $form-group-margin-bottom*2;
+  padding: 8px;
+  background-color: #fff;
+}

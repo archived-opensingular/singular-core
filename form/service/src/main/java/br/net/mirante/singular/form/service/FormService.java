@@ -10,9 +10,7 @@ import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.internal.xml.MElement;
 import br.net.mirante.singular.form.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.persistence.FormKey;
-import br.net.mirante.singular.form.persistence.FormKeyLong;
-import br.net.mirante.singular.form.persistence.SPackageFormPersistence;
+import br.net.mirante.singular.form.persistence.*;
 import br.net.mirante.singular.form.persistence.dao.FormDAO;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
@@ -21,18 +19,18 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 @Transactional
-public class FormService implements IFormService{
+public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService{
 
     @Inject
     private FormDAO formDAO;
 
-    public FormKey keyFromObject(Object objectValueToBeConverted) {
-        return FormKeyLong.convertToKey(objectValueToBeConverted);
+    public FormService() {
+        super(FormKeyLong.class);
     }
 
     @Override
     public SInstance loadFormInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
-        FormEntity entity = formDAO.find(getCod(key));
+        FormEntity entity = formDAO.find(checkKey(key, null,"a chave não fosse nula").longValue());
         if(entity == null){
             return null;
         }
@@ -45,19 +43,7 @@ public class FormService implements IFormService{
     }
     
     @Override
-    public FormKey insertOrUpdate(SInstance instance) {
-        FormKey key = getKey(instance);
-        if (key == null) {
-            key = insert(instance);
-            instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
-        } else {
-            update(instance);
-        }
-        return key;
-    }
-    
-    @Override
-    public FormKey insert(SInstance instance) {
+    protected FormKeyLong insertInternal(SInstance instance) {
         FormEntity entity = new FormEntity();
         entity.setXml(extractContent(instance));
         entity.setXmlAnnotations(extractAnnotations(instance));
@@ -66,23 +52,19 @@ public class FormService implements IFormService{
     }
 
     @Override
-    public void update(SInstance instance) {
-        FormKey key = getKey(instance);
-        FormEntity entity = formDAO.find(getCod(key));
+    protected void updateInternal(FormKeyLong key, SInstance instance) {
+        FormEntity entity = formDAO.find(key.longValue());
         if(entity == null){
-            throw new SingularFormException("Form não encontrado key="+key);
+            throw addInfo(new SingularFormPersistenceException("Form não encontrado")).add("key", key);
         }
         entity.setXml(extractContent(instance));
         entity.setXmlAnnotations(extractAnnotations(instance));
         formDAO.saveOrUpdate(entity);
     }
 
-    private FormKey getKey(SInstance instance) {
-        return instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
-    }
-
-    private Long getCod(FormKey key) {
-        return ((FormKeyLong) key).getValue();
+    @Override
+    protected void deleteInternal(FormKeyLong key) {
+        throw new RuntimeException("Metodo nao implementado");
     }
 
     private String extractAnnotations(SInstance instance){
