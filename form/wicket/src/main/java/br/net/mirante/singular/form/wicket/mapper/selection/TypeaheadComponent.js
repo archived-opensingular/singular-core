@@ -46,7 +46,14 @@
                 var events = $('#' + valueField).data('events');
                 if (events && events.hasOwnProperty('change')) {
                     for (var i = 0; i <= events.change.length; i += 1) {
-                        if (events.change[i].handler.toString().indexOf('Wicket') > 0) {
+                        if (events.change[i] && events.change[i].handler.toString().indexOf('Wicket') > 0) {
+                            return true;
+                        }
+                    }
+                }
+                if (events && events.hasOwnProperty('singular:blurchange')) {
+                    for (var i = 0; i <= events['singular:blurchange'].length; i += 1) {
+                        if (events['singular:blurchange'][i] && events['singular:blurchange'][i].handler.toString().indexOf('Wicket') > 0) {
                             return true;
                         }
                     }
@@ -146,6 +153,9 @@
             		event.preventDefault();
             		onClear(event);
             	}
+            });
+            $typeaheadField.on('blur', function(event){
+                $('#' + valueField).trigger('blur', event);
             });
             //previne que ao teclar Tab, o primeiro item seja selecionado quando ninguém foi marcado
             Typeahead_._onTabKeyed = function onTabKeyed(type, $e) {
