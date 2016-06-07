@@ -48,4 +48,6 @@ public interface IWicketComponentMapper extends UIComponentMapper {
     interface HintKey<T> extends Serializable {
         T getDefaultValue();
     }
+
+    default boolean updateOnChange(){ return true; }
 }
