@@ -7,6 +7,7 @@ package br.net.mirante.singular.form.document;
 
 import java.util.Objects;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.io.FormSerializationUtil;
@@ -95,5 +96,17 @@ public abstract class SDocumentFactory {
      */
     public static final SDocumentFactory empty() {
         return SDocumentFactoryEmpty.getEmptyInstance();
+    }
+
+    /**
+     * Cria uma nova fábrica de documento que além das configurações originais, aplicará os passos adicionais
+     * informados. A nova configuração será executada na sequencia da configuração original.
+     *
+     * @param extraSetupStep Passo adicional de configuração a se executado no documento em complemento a factory
+     *                       atual.
+     * @return Nova fábrica com o passo novo
+     */
+    public SDocumentFactory extendAddingSetupStep(IConsumer<SDocument> extraSetupStep) {
+        return new SDocumentExtended(this, extraSetupStep);
     }
 }
