@@ -244,10 +244,15 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
     protected static String definirLabel(WicketBuildContext ctx) {
         SType<?> type = ctx.getCurrentInstance().getType();
-        String label = Optional.ofNullable(type.asAtr().getLabel()).orElse("item");
-        String[] parts = label.trim().split(" ");
-        if(parts.length > 1){   label = parts[0];   }
-        return label;
+        AbstractSViewListWithControls view = (AbstractSViewListWithControls) ctx.getView();
+        return (String) view.label().orElse(
+                Optional.ofNullable(type.asAtr().getLabel())
+                        .map((x) ->{
+                            String[] parts = x.trim().split(" ");
+                            return "Adicionar "+parts[0];
+                        })
+                        .orElse("Adicionar item")
+        );
     }
 
     protected static String createButtonMarkup(WicketBuildContext ctx) {
@@ -256,9 +261,9 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         return "" +
                 "<button wicket:id=\"_add\" " +
                 "       class=\"btn btn-add\" type=\"button\" " +
-                "       title=\"Adicionar "+label+"\">" +
+                "       title=\""+label+"\">" +
                 "       <i class=\"fa fa-plus\"></i>" +
-                "           Adicionar "+label +
+                "           "+label +
                 "</button>";
     }
 
