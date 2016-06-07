@@ -7,10 +7,13 @@ package br.net.mirante.singular.form.wicket.mapper;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
+import br.net.mirante.singular.form.view.AbstractSViewListWithControls;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import org.apache.commons.collections.Factory;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
@@ -212,5 +215,59 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                 }
             }
         }
+    }
+
+
+
+    protected static void buildFooter(BSContainer<?> footer,
+                                      Form<?> form,
+                                      WicketBuildContext ctx) {
+        Factory createAddButton = () -> new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
+        buildFooter(footer, ctx, createAddButton);
+    }
+
+    protected static void buildFooter(BSContainer<?> footer, WicketBuildContext ctx, Factory createAddButton) {
+        if (canAddItems(ctx)) {
+            final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
+            template.add((Component) createAddButton.create());
+        }else{
+            footer.setVisible(false);
+        }
+
+        personalizeCSS(footer);
+    }
+
+    protected static boolean canAddItems(WicketBuildContext ctx) {
+        return ((AbstractSViewListWithControls)ctx.getView()).isNewEnabled()
+                && ctx.getViewMode().isEdition();
+    }
+
+    protected static String definirLabel(WicketBuildContext ctx) {
+        SType<?> type = ctx.getCurrentInstance().getType();
+        String label = Optional.ofNullable(type.asAtr().getLabel()).orElse("item");
+        String[] parts = label.trim().split(" ");
+        if(parts.length > 1){   label = parts[0];   }
+        return label;
+    }
+
+    protected static String createButtonMarkup(WicketBuildContext ctx) {
+        String label = definirLabel(ctx);
+
+        return "" +
+                "<button wicket:id=\"_add\" " +
+                "       class=\"btn btn-add\" type=\"button\" " +
+                "       title=\"Adicionar "+label+"\">" +
+                "       <i class=\"fa fa-plus\"></i>" +
+                "           Adicionar "+label +
+                "</button>";
+    }
+
+    protected static void personalizeCSS(BSContainer<?> footer) {
+        footer.add(new ClassAttributeModifier(){
+            protected Set<String> update(Set<String> oldClasses) {
+                oldClasses.remove("text-right");
+                return oldClasses;
+            }
+        });
     }
 }

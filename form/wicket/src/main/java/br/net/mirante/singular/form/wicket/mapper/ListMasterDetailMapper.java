@@ -106,33 +106,12 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             protected void buildHeading(BSContainer<?> heading, Form<?> form) {
                 heading.appendTag("span", new Label("_title", listaLabel));
                 heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(listaLabel.getObject()))));
-//                if (viewMode.isEdition() && ((SViewListByMasterDetail) view).isNewEnabled()) {
-//                    appendAddButton(heading, modal, ctx.getModel());
-//                }
             }
 
             @Override
             protected void buildFooter(BSContainer<?> footer, Form<?> form) {
-                final String markup = "" +
-                        "<button wicket:id=\"_add\" " +
-                        "       class=\"btn btn-add\" type=\"button\" " +
-                        "       title=\"Adicionar item\">" +
-                        "       <i class=\"fa fa-plus\"></i>" +
-                        "           Adicionar item" +
-                        "</button>";
-                final TemplatePanel template = footer.newTemplateTag(tp -> markup);
-                if (((SViewListByMasterDetail) view).isNewEnabled() && viewMode.isEdition()) {
-                    template.add(newAddAjaxLink(modal, ctx.getModel()));
-                }else{
-                    footer.setVisible(false);
-                }
-
-                footer.add(new ClassAttributeModifier(){
-                    protected Set<String> update(Set<String> oldClasses) {
-                        oldClasses.remove("text-right");
-                        return oldClasses;
-                    }
-                });
+                AbstractListaMapper.buildFooter(footer, ctx,
+                        () -> newAddAjaxLink(modal, ctx.getModel()));
             }
 
             @Override

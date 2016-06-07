@@ -8,8 +8,11 @@ package br.net.mirante.singular.form.wicket.mapper;
 import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.*;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
 
+import java.util.Optional;
 import java.util.Set;
 
+import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.form.view.AbstractSViewListWithControls;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -71,7 +74,7 @@ public class TableListMapper extends AbstractListaMapper {
         MetronicPanel panel = MetronicPanelBuilder.build(id,
                 (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
                 (c, form) -> builContent(c, form, list, ctx, view, isEdition),
-                (f, form) -> buildFooter(f, form, list, ctx, view, isEdition) /*f.setVisible(false)*/);
+                (f, form) -> buildFooter(f, form, ctx) );
         return panel;
     }
 
@@ -162,31 +165,6 @@ public class TableListMapper extends AbstractListaMapper {
             .add(tableFooter.add(footerBody));
 
         content.getParent().add(dependsOnModifier(list));
-    }
-
-    private static void buildFooter(BSContainer<?> footer, Form<?> form, IModel<SIList<SInstance>> list,
-                             WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
-        final String markup = "" +
-                "<button wicket:id=\"_add\" " +
-                "       class=\"btn btn-add\" type=\"button\" " +
-                "       title=\"Adicionar item\">" +
-                "       <i class=\"fa fa-plus\"></i>" +
-                "           Adicionar item" +
-                "</button>";
-        final TemplatePanel template = footer.newTemplateTag(tp -> markup);
-        if (view.isNewEnabled() && isEdition) {
-            AddButton btn = new AddButton("_add", form, list);
-            template.add(btn);
-        }else{
-            footer.setVisible(false);
-        }
-
-        footer.add(new ClassAttributeModifier(){
-            protected Set<String> update(Set<String> oldClasses) {
-                oldClasses.remove("text-right");
-                return oldClasses;
-            }
-        });
     }
 
     private static final class TableElementsView extends ElementsView {
