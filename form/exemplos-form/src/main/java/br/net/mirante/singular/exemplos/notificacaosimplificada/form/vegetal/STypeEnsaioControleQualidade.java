@@ -9,7 +9,6 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNot
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.type.core.STypeDate;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
@@ -83,7 +82,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
         {
            informacoesFarmacopeicas = this.addFieldComposite("informacoesFarmacopeicas");
-            informacoesFarmacopeicas
+           informacoesFarmacopeicas
                     .asAtr()
                     .dependsOn(tipoReferencia)
                     .visible(i -> TipoReferencia.FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));

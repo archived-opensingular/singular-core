@@ -16,6 +16,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.showcase.component.CaseBaseForm;
+import br.net.mirante.singular.showcase.component.ShowCaseType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -45,7 +47,7 @@ import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
-public class FormItemCasePanel extends ItemCasePanel implements SingularWicketContainer<FormItemCasePanel, Void> {
+public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements SingularWicketContainer<FormItemCasePanel, Void> {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,7 +60,7 @@ public class FormItemCasePanel extends ItemCasePanel implements SingularWicketCo
     @Named("formConfigWithoutDatabase")
     private SFormConfig<String> singularFormConfig;
 
-    public FormItemCasePanel(String id, IModel<CaseBase> caseBase) {
+    public FormItemCasePanel(String id, IModel<CaseBaseForm> caseBase) {
         super(id, caseBase);
     }
 
@@ -81,7 +83,7 @@ public class FormItemCasePanel extends ItemCasePanel implements SingularWicketCo
         singularFormPanel = new SingularFormPanel<String>("singularFormPanel", singularFormConfig) {
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                final CaseBase caseBase = getCaseBase().getObject();
+                final CaseBaseForm caseBase = getCaseBase().getObject();
                 String typeName = caseBase.getCaseType().getName();
                 if (caseBase.isDynamic()) {
                     registerDynamicType(singularFormConfig, caseBase);
@@ -90,9 +92,9 @@ public class FormItemCasePanel extends ItemCasePanel implements SingularWicketCo
                 return singularFormConfig.getDocumentFactory().createInstance(refType);
             }
 
-            private void registerDynamicType(SFormConfig<String> singularFormConfig, CaseBase caseBase) {
+            private void registerDynamicType(SFormConfig<String> singularFormConfig, CaseBaseForm caseBase) {
                 final ShowcaseTypeLoader typeLoader = (ShowcaseTypeLoader) singularFormConfig.getTypeLoader();
-                typeLoader.add(caseBase.getComponentName(), caseBase, ListPage.Tipo.FORM);
+                typeLoader.add(caseBase.getComponentName(), caseBase, ShowCaseType.FORM);
             }
 
             @Override

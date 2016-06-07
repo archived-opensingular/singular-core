@@ -21,31 +21,35 @@ import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
  * Representa um exemplo de um componente ou solução junto com os respectivo
  * códigos e explicações.
  */
-public class CaseBase implements Serializable {
+public abstract class CaseBase implements Serializable {
 
     private final String componentName;
     private final String subCaseName;
     private String descriptionHtml;
     private final List<ItemCasePanel.ItemCaseButton> botoes = new ArrayList<>();
     private final List<ResourceRef> aditionalSources = new ArrayList<>();
-    private Class<? extends SPackage> sPackage;
+    protected Class<?> caseClass;
     private AnnotationMode annotationMode = AnnotationMode.NONE;
 
-    private transient SType<?> caseType;
+    private ShowCaseType showCaseType;
+
+    public CaseBase(String componentName) {
+        this(componentName, null);
+    }
 
     public CaseBase(String componentName, String subCaseName) {
         this.componentName = componentName;
         this.subCaseName = subCaseName;
     }
 
-    public CaseBase(Class<? extends SPackage> sPackage, String componentName, String subCaseName,
-                    AnnotationMode annotationMode) {
-        this.sPackage = sPackage;
+    public CaseBase(Class<?> caseClass, ShowCaseType type, String componentName, String subCaseName, AnnotationMode annotation) {
+        this.caseClass = caseClass;
         this.componentName = componentName;
         this.subCaseName = subCaseName;
-        this.annotationMode = annotationMode;
-
+        this.showCaseType = type;
+        this.annotationMode = annotation;
     }
+
 
     public String getComponentName() {
         return componentName;
@@ -66,46 +70,8 @@ public class CaseBase implements Serializable {
         return getDescriptionResourceName().map(ResourceRef::getContent);
     }
 
-    @SuppressWarnings("unchecked")
-    private Class<? extends SPackage> getPackage() {
-        if (sPackage != null) {
-            return sPackage;
-        }
-
-        String target = getClass().getName() + "Package";
-        try {
-            Class<?> c = getClass().getClassLoader().loadClass(target);
-            if (!SPackage.class.isAssignableFrom(c)) {
-                throw new RuntimeException(target + " não extende " + SPackage.class.getName());
-            }
-            return (Class<? extends SPackage>) c;
-        } catch (ClassNotFoundException e) {
-            throw new SingularFormException("É esperado uma classe com o nome " + target + " como complemento de " + getClass().getName(),
-                    e);
-        }
-    }
-
-    public String getTypeName() {
-        return getPackage().getName() + ".testForm"; 
-    }
-    
-    public SType<?> getCaseType() {
-        if(caseType == null){
-            SDictionary dicionario = SDictionary.create();
-            SPackage p = dicionario.loadPackage(getPackage());
-            
-            caseType = p.getLocalTypeOptional("testForm")
-                .orElseThrow(() -> new SingularFormException("O pacote " + p.getName() + " não define o tipo para exibição 'testForm'"));
-        }
-        return caseType;
-    }
-
     public Optional<ResourceRef> getDescriptionResourceName() {
         return ResourceRef.forClassWithExtension(getClass(), "html");
-    }
-
-    public Optional<ResourceRef> getMainSourceResourceName() {
-        return ResourceRef.forSource(getPackage());
     }
 
     public List<ResourceRef> getAditionalSources() {
@@ -116,13 +82,16 @@ public class CaseBase implements Serializable {
         return botoes;
     }
 
-    public boolean showValidateButton(){
-        return getCaseType().hasAnyValidation();
-    }
 
     public AnnotationMode annotation() { return annotationMode;}
 
     public boolean isDynamic() {
         return false;
+    }
+
+    public abstract Optional<ResourceRef> getMainSourceResourceName();
+
+    public ShowCaseType getShowCaseType() {
+        return showCaseType;
     }
 }

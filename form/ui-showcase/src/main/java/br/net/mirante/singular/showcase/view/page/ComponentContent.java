@@ -10,6 +10,10 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.showcase.component.CaseBaseForm;
+import br.net.mirante.singular.showcase.component.CaseBaseStudio;
+import br.net.mirante.singular.showcase.component.ShowCaseType;
+import br.net.mirante.singular.showcase.view.page.studio.StudioItemCasePanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
@@ -49,19 +53,19 @@ public class ComponentContent extends Content implements SingularWicketContainer
                 if (name == null) {
                     name = c.getComponentName();
                 }
-                if (isForm()) {
-                    bsTabPanel.addTab(name, new FormItemCasePanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(c)));
+                if (ShowCaseType.FORM.equals(showCaseItem.getShowCaseType())) {
+                    bsTabPanel.addTab(name, new FormItemCasePanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue((CaseBaseForm)c)));
                 } else {
-                    bsTabPanel.addTab(name, new StudioItemCasePanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(c)));
+                    bsTabPanel.addTab(name, new StudioItemCasePanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue((CaseBaseStudio)c)));
                 }
             });
             casesContainer.add(bsTabPanel);
 
         } else if (!showCaseItem.getCases().isEmpty()) {
-            if (isForm()) {
-                casesContainer.add(new FormItemCasePanel("cases", $m.ofValue(showCaseItem.getCases().get(0))));
+            if (ShowCaseType.FORM.equals(showCaseItem.getShowCaseType())) {
+                casesContainer.add(new FormItemCasePanel("cases", $m.ofValue((CaseBaseForm)showCaseItem.getCases().get(0))));
             } else {
-                casesContainer.add(new StudioItemCasePanel("cases", $m.ofValue(showCaseItem.getCases().get(0))));
+                casesContainer.add(new StudioItemCasePanel("cases", $m.ofValue((CaseBaseStudio)showCaseItem.getCases().get(0))));
             }
         }
 
@@ -87,8 +91,4 @@ public class ComponentContent extends Content implements SingularWicketContainer
         return $m.ofValue("");
     }
 
-    public boolean isForm() {
-        final StringValue tipoValue = RequestCycle.get().getRequest().getQueryParameters().getParameterValue(ListPage.PARAM_TIPO);
-        return tipoValue.isNull() || ListPage.Tipo.FORM.toString().equals(tipoValue.toString());
-    }
 }

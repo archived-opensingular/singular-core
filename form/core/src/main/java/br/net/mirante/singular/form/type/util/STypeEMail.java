@@ -16,6 +16,7 @@ public class STypeEMail extends STypeString {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
+        asAtr().label("E-mail");
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.email());
     }
 }

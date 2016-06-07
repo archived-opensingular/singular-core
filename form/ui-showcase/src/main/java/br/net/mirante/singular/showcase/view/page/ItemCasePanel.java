@@ -24,13 +24,13 @@ import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ResourceRef;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
-public abstract class ItemCasePanel extends Panel {
+public abstract class ItemCasePanel<T extends CaseBase> extends Panel {
 
     private static final long serialVersionUID = 3200319871613673285L;
 
-    private final IModel<CaseBase> caseBase;
+    private final IModel<T> caseBase;
 
-    public ItemCasePanel(String id, IModel<CaseBase> caseBase) {
+    public ItemCasePanel(String id, IModel<T> caseBase) {
         super(id);
         this.caseBase = caseBase;
     }
@@ -77,7 +77,7 @@ public abstract class ItemCasePanel extends Panel {
         return bsTabPanel;
     }
 
-    protected IModel<CaseBase> getCaseBase() {
+    protected IModel<T> getCaseBase() {
         return caseBase;
     }
 

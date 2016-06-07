@@ -302,7 +302,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     @Test
     public void testeOnCargaTipoDireto() {
         TestTipoListaComCargaInterna tipo = createTestDictionary().getType(TestTipoListaComCargaInterna.class);
-        assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
+        assertEquals("xxx", tipo.asAtr().getLabel());
         assertEquals((Boolean) true, tipo.isRequired());
     }
 
@@ -311,7 +311,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         TestTipoListaComCargaInterna tipo = pb.createType("arquivo", TestTipoListaComCargaInterna.class);
 
-        assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
+        assertEquals("xxx", tipo.asAtr().getLabel());
         assertEquals((Boolean) true, tipo.isRequired());
     }
 
@@ -333,7 +333,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
             @Override
             protected void onLoadType(TypeBuilder tb) {
                 withRequired(true);
-                as(AtrBasic.class).label("xxx");
+                asAtr().label("xxx");
             }
         }
 

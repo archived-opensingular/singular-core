@@ -260,7 +260,7 @@ public class TypeaheadComponent extends Panel {
         js += " );";
         js += " $('#" + container.getMarkupId() + " .typeahead').on('typeahead:selected', function(event, selection, dataset) {  ";
         js += "     $('#" + valueField.getMarkupId(true) + "').val(selection.key);";
-        js += "     $('#" + valueField.getMarkupId(true) + "').trigger('change');";
+        js += "     $('#" + valueField.getMarkupId(true) + "').trigger('blur');";
         js += " });";
         js += " SingularTypeahead.configure('" + container.getMarkupId() + "','" + valueField.getMarkupId() + "');";
         return js;

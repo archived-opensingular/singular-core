@@ -27,13 +27,13 @@ public class CaseSimpleGridPackage extends SPackage {
         STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         testForm.addFieldString("nome")
-                .as(AtrBasic.class).label("Nome")
+                .asAtr().label("Nome")
                 .asAtrBootstrap().colPreference(6);
         testForm.addFieldInteger("idade")
-                .as(AtrBasic.class).label("Idade")
+                .asAtr().label("Idade")
                 .asAtrBootstrap().colPreference(2);
         testForm.addFieldEmail("email")
-                .as(AtrBasic.class).label("E-mail")
+                .asAtr().label("E-mail")
                 .asAtrBootstrap().colPreference(8);
 
     }

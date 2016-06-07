@@ -7,6 +7,10 @@ package br.net.mirante.singular.form.persistence;
  */
 public class FormKeyInt extends AbstractFormKey<Integer> implements FormKeyNumber {
 
+    public FormKeyInt(int value) {
+        super(Integer.valueOf(value));
+    }
+
     public FormKeyInt(Integer value) {
         super(value);
     }
@@ -41,7 +45,7 @@ public class FormKeyInt extends AbstractFormKey<Integer> implements FormKeyNumbe
 
     @Override
     public Long longValue() {
-        return new Long(getValue());
+        return Long.valueOf(getValue());
     }
 
     @Override

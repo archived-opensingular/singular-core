@@ -67,7 +67,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
         final FormComponent input         = findFirstFormComponentsByType(page.getForm(), pessoa);
         tester.assertInvisible(input.getPageRelativePath());
         form.select(getFormRelativePath(selecaoGenero), 0);
-        tester.executeAjaxEvent(selecaoGenero, "change");
+        tester.executeAjaxEvent(selecaoGenero, "blur");
         tester.assertVisible(input.getPageRelativePath());
     }
 
@@ -79,13 +79,13 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
         {
             form.select(getFormRelativePath(selecaoGenero), 1);
-            tester.executeAjaxEvent(selecaoGenero, "change");
+            tester.executeAjaxEvent(selecaoGenero, "blur");
             setAndCheckValue(input);
         }
 
         {
             form.select(getFormRelativePath(selecaoGenero), 0);
-            tester.executeAjaxEvent(selecaoGenero, "change");
+            tester.executeAjaxEvent(selecaoGenero, "blur");
             setAndCheckValue(input);
         }
 
@@ -99,13 +99,13 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
         {
             form.select(getFormRelativePath(selecaoGenero), 1);
-            tester.executeAjaxEvent(selecaoGenero, "change");
+            tester.executeAjaxEvent(selecaoGenero, "blur");
             setAndCheckValue(input);
         }
 
         {
             form.select(getFormRelativePath(selecaoGenero), 0);
-            tester.executeAjaxEvent(selecaoGenero, "change");
+            tester.executeAjaxEvent(selecaoGenero, "blur");
             setAndCheckValue(input);
         }
 
@@ -114,7 +114,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
     private void setAndCheckValue(FormComponent input) {
         form.setValue(input, "Danilo");
-        tester.executeAjaxEvent(input, "change");
+        tester.executeAjaxEvent(input, "blur");
         assertThat(input.getModel().getObject()).isNotNull();
     }
 

@@ -43,7 +43,7 @@ public class SViewTab extends SView {
     }
 
     public STab addTab(SType<?> type) {
-        return addTab(type.getNameSimple(), type.as(AtrBasic.class).getLabel())
+        return addTab(type.getNameSimple(), type.asAtr().getLabel())
             .add(type);
     }
 

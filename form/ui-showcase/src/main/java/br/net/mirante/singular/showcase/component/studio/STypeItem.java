@@ -1,15 +1,16 @@
-package br.net.mirante.singular.studio.core.example;
+package br.net.mirante.singular.showcase.component.studio;
 
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeMonetary;
 import br.net.mirante.singular.form.type.core.STypeString;
 
-@SInfoType(name = "Order", spackage = SPackageOrder.class)
-public class STypeOrder extends STypeComposite<SIComposite> {
+@SInfoType(name = "Item", spackage = SPackageOrder.class)
+public class STypeItem extends STypeComposite<SIComposite> {
 
     public STypeInteger id;
     public STypeString descricao;
-    public STypeList<STypeItem, SIComposite> itens;
+    public STypeMonetary cost;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -18,6 +19,6 @@ public class STypeOrder extends STypeComposite<SIComposite> {
         id.asAtr().label("Id");
         descricao = addFieldString("descricao");
         descricao.asAtr().label("Descrição");
-        itens = addFieldListOf("itens", STypeItem.class);
+        cost = addFieldMonetary("cost");
     }
 }

@@ -2,6 +2,7 @@ package br.net.mirante.singular.studio.wicket;
 
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -14,8 +15,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -44,7 +48,8 @@ public class SingularStudioListPanel extends SingularStudioPanel {
     protected void addNewButton(BSContainer portletBodyContainer) {
         BSGrid grid = portletBodyContainer.newGrid();
         grid
-                .newRow()
+                .appendTag("h4", true, "", new Label("title", $m.ofValue(collectionInfo().getTitle())))
+                .appendTag("hr", true, "", new WebMarkupContainer("regua"))
                 .appendTag("a", true, "class=\"btn blue\"", new AjaxLink("id") {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
@@ -90,25 +95,38 @@ public class SingularStudioListPanel extends SingularStudioPanel {
     private void buildActionColumns(BSDataTableBuilder<SInstance, String, ?> builder) {
         builder.appendActionColumn(
                 $m.ofValue(""),
-                ac -> ac.appendAction(
-                        $m.ofValue(getString("label.table.column.edit")),
-                        Icone.PENCIL,
-                        (ajaxRequestTarget, model) -> showForm(ajaxRequestTarget, model.getObject().getAttributeValue(ATR_FORM_KEY))
-                )
+                ac -> {
+                    ac.appendAction(
+                            $m.ofValue(getString("label.table.column.view")),
+                            Icone.EYE,
+                            (ajaxRequestTarget, model) -> showForm(ajaxRequestTarget, model.getObject().getAttributeValue(ATR_FORM_KEY), ViewMode.VISUALIZATION));
+                    ac.appendAction(
+                            $m.ofValue(getString("label.table.column.edit")),
+                            Icone.PENCIL,
+                            (ajaxRequestTarget, model) -> showForm(ajaxRequestTarget, model.getObject().getAttributeValue(ATR_FORM_KEY)));
+                    ac.appendAction(
+                            $m.ofValue(getString("label.table.column.delete")),
+                            Icone.TRASH,
+                            (ajaxRequestTarget, model) -> {
+                                repository().delete(model.getObject().getAttributeValue(ATR_FORM_KEY));
+                                showList(ajaxRequestTarget);
+                            });
+
+                }
         );
-        builder.setRowsPerPage(Integer.MAX_VALUE);
+        builder.setRowsPerPage(editorConfig().getRowsPerPage());
     }
 
     protected SortableDataProvider<SInstance, String> dataProvider() {
         return new SortableDataProvider<SInstance, String>() {
             @Override
             public Iterator<? extends SInstance> iterator(long first, long count) {
-                return repository().loadAllAsIterable().iterator();
+                return new ArrayList(repository().loadAll(first, count)).iterator();
             }
 
             @Override
             public long size() {
-                return Integer.MAX_VALUE;
+                return repository().countAll();
             }
 
             @Override

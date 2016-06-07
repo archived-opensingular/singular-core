@@ -14,7 +14,8 @@ import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import br.net.mirante.singular.studio.core.example.SPackageOrder;
+import br.net.mirante.singular.showcase.component.CaseBaseForm;
+import br.net.mirante.singular.showcase.component.ShowCaseType;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
@@ -30,7 +31,6 @@ import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
-import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackageCurriculo;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoGGTOX;
@@ -44,14 +44,14 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
     private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
     public ShowcaseTypeLoader() {
-        add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO, ListPage.Tipo.FORM);
-        add(ExamplePackage.class, ExamplePackage.Types.ORDER.name, ListPage.Tipo.FORM);
-        add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO, ListPage.Tipo.FORM);
-        add(SPackageNotificacaoSimplificadaBaixoRisco.class, SPackageNotificacaoSimplificadaBaixoRisco.NOME_COMPLETO, ListPage.Tipo.FORM);
-        add(SPackageNotificacaoSimplificadaDinamizado.class, SPackageNotificacaoSimplificadaDinamizado.NOME_COMPLETO, ListPage.Tipo.FORM);
-        add(SPackageNotificacaoSimplificadaGasMedicinal.class, SPackageNotificacaoSimplificadaGasMedicinal.NOME_COMPLETO, ListPage.Tipo.FORM);
-        add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO, ListPage.Tipo.FORM);
-        add(SPackageHabilitacaoEmpresa.class, SPackageHabilitacaoEmpresa.NOME_COMPLETO, ListPage.Tipo.FORM);
+        add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO, ShowCaseType.FORM);
+        add(ExamplePackage.class, ExamplePackage.Types.ORDER.name, ShowCaseType.FORM);
+        add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackageNotificacaoSimplificadaBaixoRisco.class, SPackageNotificacaoSimplificadaBaixoRisco.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackageNotificacaoSimplificadaDinamizado.class, SPackageNotificacaoSimplificadaDinamizado.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackageNotificacaoSimplificadaGasMedicinal.class, SPackageNotificacaoSimplificadaGasMedicinal.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackageHabilitacaoEmpresa.class, SPackageHabilitacaoEmpresa.NOME_COMPLETO, ShowCaseType.FORM);
 
     }
 
@@ -60,18 +60,21 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         for (ShowCaseGroup group : showCaseTable.getGroups()) {
             for (ShowCaseItem item : group.getItens()) {
                 String itemName = group.getGroupName() + " - " + item.getComponentName();
-                for (CaseBase c : item.getCases()) {
-                    if (c.getSubCaseName() == null) {
-                        add(itemName, c, group.getTipo());
-                    } else {
-                        add(itemName + " - " + c.getSubCaseName(), c, group.getTipo());
+                for (CaseBase cb : item.getCases()) {
+                    if (cb instanceof CaseBaseForm) {
+                        CaseBaseForm c = (CaseBaseForm)cb;
+                        if (c.getSubCaseName() == null) {
+                            add(itemName, c, group.getTipo());
+                        } else {
+                            add(itemName + " - " + c.getSubCaseName(), c, group.getTipo());
+                        }
                     }
                 }
             }
         }
     }
 
-    private void add(Class<? extends SPackage> packageClass, String typeName, ListPage.Tipo tipo) {
+    private void add(Class<? extends SPackage> packageClass, String typeName, ShowCaseType tipo) {
         String simpleName = StringUtils.defaultIfBlank(StringUtils.substringAfterLast(typeName, "."), typeName);
         add(typeName, simpleName, () -> {
             SDictionary d = SDictionary.create();
@@ -80,11 +83,11 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         }, tipo);
     }
 
-    public void add(String displayName, CaseBase c, ListPage.Tipo tipo) {
+    public void add(String displayName, CaseBaseForm c, ShowCaseType tipo) {
         add(c.getTypeName(), displayName, () -> c.getCaseType(), tipo);
     }
 
-    private void add(String typeName, String displayName, Supplier<SType<?>> typeSupplier, ListPage.Tipo tipo) {
+    private void add(String typeName, String displayName, Supplier<SType<?>> typeSupplier, ShowCaseType tipo) {
         entries.put(typeName, new TemplateEntry(displayName, typeSupplier, tipo));
     }
 
@@ -118,9 +121,9 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
 
         private final String displayName;
         private final Supplier<SType<?>> typeSupplier;
-        private final ListPage.Tipo tipo;
+        private final ShowCaseType tipo;
 
-        public TemplateEntry(String displayName, Supplier<SType<?>> typeSupplier, ListPage.Tipo tipo) {
+        public TemplateEntry(String displayName, Supplier<SType<?>> typeSupplier, ShowCaseType tipo) {
             this.displayName = displayName;
             this.typeSupplier = typeSupplier;
             this.tipo = tipo;
@@ -134,7 +137,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
             return typeSupplier.get();
         }
 
-        public ListPage.Tipo getTipo() {
+        public ShowCaseType getTipo() {
             return tipo;
         }
     }
