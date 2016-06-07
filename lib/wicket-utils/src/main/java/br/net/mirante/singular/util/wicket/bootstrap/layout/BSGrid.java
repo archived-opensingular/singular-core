@@ -91,10 +91,6 @@ public class BSGrid extends BSContainer<BSGrid> {
 
     private BSGridSize defaultGridSize = BSGridSize.MD;
 
-    public static MetaDataKey<Boolean> WRAPPED_BY_BOXED_GRID = new MetaDataKey<Boolean>() {
-    };
-
-
     public BSGrid(String id) {
         super(id);
     }
