@@ -76,7 +76,6 @@ public class PanelListaMapper extends AbstractListaMapper {
                     content.getParent().add(dependsOnModifier(listaModel));
                 },
                 (footer, form) -> {
-//                    footer.setVisible(false);
                     final String markup = "" +
                             "<button wicket:id=\"_add\" " +
                             "       class=\"btn btn-add\" type=\"button\" " +
