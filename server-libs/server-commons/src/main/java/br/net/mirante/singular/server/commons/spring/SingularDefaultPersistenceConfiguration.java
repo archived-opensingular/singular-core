@@ -35,6 +35,9 @@ public class SingularDefaultPersistenceConfiguration {
     @Value("classpath:db/ddl/create-tables-form.sql")
     private Resource sqlCreateTablesForm;
 
+    @Value("classpath:db/ddl/create-constraints-form.sql")
+    private Resource sqlCreateConstraintsForm;
+
     @Value("classpath:db/ddl/create-tables-actor.sql")
     private Resource sqlCreateTablesActor;
 
@@ -56,6 +59,7 @@ public class SingularDefaultPersistenceConfiguration {
         populator.addScript(sqlCreateTablesActor);
         populator.addScript(sqlCreateTablesFlow);
         populator.addScript(sqlCreateConstraints);
+        populator.addScript(sqlCreateConstraintsForm);
         populator.addScript(insertDadosSingular);
         populator.addScript(insertTestData);
         return populator;
