@@ -65,13 +65,13 @@ public interface IWicketComponentMapper extends UIComponentMapper {
                 (component instanceof RadioGroup) ||
                 (component instanceof CheckGroup)) {
             component.add(new AjaxUpdateChoiceBehavior(model, listener));
-            component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);
+//            component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);
         } else if (component instanceof SingularFormComponentPanel) {
             component.add(new AjaxUpdateSingularFormComponentPanel(model, listener));
         } else if (!(component instanceof FormComponentPanel<?>)) {
             component.add(SINGULAR_BLUR_CHANGE_DEBOUNCER);
             component.add(new AjaxUpdateInputBehavior(SINNGULAR_BLUR_CHANGE_EVENT, model, listener));
-            component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);
+//            component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);
         } else {
             LoggerFactory.getLogger(WicketBuildContext.class).warn("Atualização ajax não suportada para " + component);
         }
