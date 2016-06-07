@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.form.type.core;
+package br.net.mirante.singular.form.type.util;
 
 import br.net.mirante.singular.form.SIComposite;
 

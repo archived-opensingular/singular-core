@@ -14,6 +14,7 @@ import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
 import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.type.util.STypeEMail;
+import br.net.mirante.singular.form.type.util.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.type.util.STypePersonName;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
