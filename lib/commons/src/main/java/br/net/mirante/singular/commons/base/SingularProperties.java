@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
@@ -135,18 +136,18 @@ public enum SingularProperties {
             url = add(url, name, ClassLoader.getSystemClassLoader().getResources(name));
             url = add(url, name, SingularProperties.class.getClassLoader().getResources(name));
             return url;
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new SingularException("Erro procurando arquivo de properties '" + name + "' no class path", e);
         }
     }
 
-    private URL add(URL current, String name, Enumeration<URL> resources) {
+    private URL add(URL current, String name, Enumeration<URL> resources) throws URISyntaxException {
         URL selected = current;
         while (resources.hasMoreElements()) {
             URL u = resources.nextElement();
             if (selected == null) {
                 selected = u;
-            } else if (!selected.equals(u)) {
+            } else if (!selected.toURI().equals(u.toURI())) {
                 throw new SingularException(
                         "Foram encontrados dois arquivos com mesmo nome '" + name + "' no class path").add("arquivo 1",
                         selected).add("arquivo 2", u);
