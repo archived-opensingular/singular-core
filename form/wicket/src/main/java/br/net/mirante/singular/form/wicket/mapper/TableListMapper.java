@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.*;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
 
 import java.util.Set;
@@ -54,6 +55,11 @@ public class TableListMapper extends AbstractListaMapper {
             return;
         }
 
+        ctx.setHint(ControlsFieldComponentAbstractMapper.NO_DECORATION, true);
+        ctx.getContainer().appendComponent((String id) -> buildPannel(ctx, id));
+    }
+
+    private MetronicPanel buildPannel(WicketBuildContext ctx, String id){
         final IModel<SIList<SInstance>> list = $m.get(ctx::getCurrentInstance);
         final SViewListByTable view = (SViewListByTable) ctx.getView();
         final Boolean isEdition = ctx.getViewMode() == null || ctx.getViewMode().isEdition();
@@ -62,11 +68,11 @@ public class TableListMapper extends AbstractListaMapper {
 
         addMinimumSize(currentType, iLista);
 
-        ctx.setHint(ControlsFieldComponentAbstractMapper.NO_DECORATION, true);
-        ctx.getContainer().appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(id,
-            (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
-            (c, form) -> builContent(c, form, list, ctx, view, isEdition),
-            (f, form) -> f.setVisible(false)));
+        MetronicPanel panel = MetronicPanelBuilder.build(id,
+                (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
+                (c, form) -> builContent(c, form, list, ctx, view, isEdition),
+                (f, form) -> buildFooter(f, form, list, ctx, view, isEdition) /*f.setVisible(false)*/);
+        return panel;
     }
 
     private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
@@ -79,9 +85,9 @@ public class TableListMapper extends AbstractListaMapper {
         header.appendTag("span", title);
         header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
-        if (view.isNewEnabled() && isEdition) {
-            appendAddButton(list, form, header, false);
-        }
+//        if (view.isNewEnabled() && isEdition) {
+//            appendAddButton(list, form, header, false);
+//        }
 
         final SType<SInstance> elementsType = list.getObject().getElementsType();
 
@@ -154,6 +160,33 @@ public class TableListMapper extends AbstractListaMapper {
         template.add(tableHeader)
             .add(tableRows)
             .add(tableFooter.add(footerBody));
+
+        content.getParent().add(dependsOnModifier(list));
+    }
+
+    private static void buildFooter(BSContainer<?> footer, Form<?> form, IModel<SIList<SInstance>> list,
+                             WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
+        final String markup = "" +
+                "<button wicket:id=\"_add\" " +
+                "       class=\"btn btn-add\" type=\"button\" " +
+                "       title=\"Adicionar item\">" +
+                "       <i class=\"fa fa-plus\"></i>" +
+                "           Adicionar item" +
+                "</button>";
+        final TemplatePanel template = footer.newTemplateTag(tp -> markup);
+        if (view.isNewEnabled() && isEdition) {
+            AddButton btn = new AddButton("_add", form, list);
+            template.add(btn);
+        }else{
+            footer.setVisible(false);
+        }
+
+        footer.add(new ClassAttributeModifier(){
+            protected Set<String> update(Set<String> oldClasses) {
+                oldClasses.remove("text-right");
+                return oldClasses;
+            }
+        });
     }
 
     private static final class TableElementsView extends ElementsView {

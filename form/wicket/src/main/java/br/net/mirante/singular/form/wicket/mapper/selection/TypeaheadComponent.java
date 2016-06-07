@@ -224,7 +224,7 @@ public class TypeaheadComponent extends Panel {
     private String staticJSFetch() {
         String js = "";
         js += " $('#" + labelField.getMarkupId() + "').typeahead('destroy');";
-        js += " $('#" + labelField.getMarkupId() + "').val('" + ObjectUtils.defaultIfNull(labelField.getModelObject(), "") + "');";
+        js += " $('#" + labelField.getMarkupId() + "').val('" + ObjectUtils.defaultIfNull(Optional.ofNullable(labelField.getModel()).map((x) -> x.getObject()).orElse(null), "") + "');";
         js += " $('#" + labelField.getMarkupId() + "').typeahead( ";
         js += "     { ";
         js += "          highlight: true,";
@@ -260,7 +260,7 @@ public class TypeaheadComponent extends Panel {
         js += " );";
         js += " $('#" + container.getMarkupId() + " .typeahead').on('typeahead:selected', function(event, selection, dataset) {  ";
         js += "     $('#" + valueField.getMarkupId(true) + "').val(selection.key);";
-        js += "     $('#" + valueField.getMarkupId(true) + "').trigger('change');";
+        js += "     $('#" + valueField.getMarkupId(true) + "').trigger('blur');";
         js += " });";
         js += " SingularTypeahead.configure('" + container.getMarkupId() + "','" + valueField.getMarkupId() + "');";
         return js;

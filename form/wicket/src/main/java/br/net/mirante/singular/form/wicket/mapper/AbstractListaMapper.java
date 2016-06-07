@@ -68,7 +68,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                         + "<button"
                         + " wicket:id='_remover_'"
                         + " class='btn btn-danger btn-sm'"
-                        + " style='padding:5px 3px 1px;margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+"'class='" + Icone.MINUS + "'></i>"
+                        + " style='padding:5px 3px 1px;margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+" 'class='" + Icone.REMOVE + "'></i>"
                         + "</button>")
                 .add(btn);
         return btn;
@@ -182,7 +182,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     protected static final class AddButton extends ActionAjaxButton {
         private final IModel<SIList<SInstance>> modelLista;
 
-        private AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mLista) {
+        protected AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mLista) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             modelLista = mLista;

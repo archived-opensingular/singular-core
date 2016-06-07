@@ -6,13 +6,7 @@
 package br.net.mirante.singular.form;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -61,7 +55,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     private MapAttributeDefinitionResolver attributesResolved;
 
-    private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators = new LinkedHashMap<>();
+    private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators;
 
     private Set<SType<?>> dependentTypes;
 
@@ -552,17 +546,38 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return addInstanceValidator(ValidationErrorLevel.ERROR, validador);
     }
 
-    public SType<I> addInstanceValidator(ValidationErrorLevel level, IInstanceValidator<I> validador) {
-        this.instanceValidators.put(validador, level);
+    public SType<I> addInstanceValidator(ValidationErrorLevel level, IInstanceValidator<I> validator) {
+        if (instanceValidators == null) {
+            instanceValidators = new LinkedHashMap<>();
+        }
+        instanceValidators.put(validator, level);
         return this;
     }
 
     public Collection<IInstanceValidator<I>> getValidators() {
-        return instanceValidators.keySet();
+        Collection<IInstanceValidator<I>> list =
+                superType == null ? Collections.emptyList() : superType.getValidators();
+        if (instanceValidators != null && !instanceValidators.isEmpty()) {
+            if (list.isEmpty()) {
+                list = instanceValidators.keySet();
+            } else {
+                if (!(list instanceof ArrayList)) {
+                    ArrayList<IInstanceValidator<I>> list2 = new ArrayList<>(list.size() + instanceValidators.size());
+                    list2.addAll(list);
+                    list = list2;
+                }
+                list.addAll(instanceValidators.keySet());
+            }
+        }
+        return list;
     }
 
     public ValidationErrorLevel getValidatorErrorLevel(IInstanceValidator<I> validator) {
-        return instanceValidators.get(validator);
+        ValidationErrorLevel level = instanceValidators == null ? null : instanceValidators.get(validator);
+        if (level == null && superType != null) {
+            level = superType.getValidatorErrorLevel(validator);
+        }
+        return level;
     }
 
     @SuppressWarnings("unchecked")
@@ -767,7 +782,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     public boolean hasValidation() {
         return isRequired() ||
                 getAttributeValue(SPackageBasic.ATR_OBRIGATORIO_FUNCTION) != null ||
-                !instanceValidators.isEmpty();
+                !hasValidationInternal();
+    }
+
+    private boolean hasValidationInternal() {
+        return (instanceValidators != null && !instanceValidators.isEmpty()) ||
+                (superType != null && superType.hasValidationInternal());
     }
 
     public <T extends UIComponentMapper> SType<I> withCustomMapper(Supplier<T> factory) {

@@ -69,7 +69,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         pb.createType(STypeLinhaProducaoDinamizado.class);
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
-        notificacaoSimplificada.asAtr().label("Notificação Simplificada - Medicamento Dinamizado");
+        notificacaoSimplificada.asAtr().label("Medicamento Dinamizado");
         notificacaoSimplificada.asAtr().displayString("${nomeComercial.nomeComercial} - ${caracteristicas.linhaProducao.descricao} (<#list caracteristicas.formulasHomeopaticas as c>${c.descricaoDinamizada.descricao}<#sep>, </#sep></#list>) ");
 
         addNomeComercial(notificacaoSimplificada);
@@ -292,7 +292,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         STypeBoolean informarOutraIndicacaoTerapeutica = notificacaoSimplificada.addFieldBoolean("informarOutraIndicacaoTerapeutica");
         informarOutraIndicacaoTerapeutica
                 .asAtr()
-                .label("Informar outra indicação terapêutica");
+                .label("Informar outra indicação terapêutica")
+
+                .asAtrBootstrap().colPreference(12);
         STypeSimple outraIndicacaoTerapeutica = notificacaoSimplificada.addFieldString("outraIndicacaoTerapeutica");
         outraIndicacaoTerapeutica
                 .withView(SViewTextArea::new)
@@ -306,7 +308,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         indicacaoTerapeutica
                 .asAtr()
                 .dependsOn(informarOutraIndicacaoTerapeutica)
-                .visible(i -> BooleanUtils.isNotTrue(Value.of(i, informarOutraIndicacaoTerapeutica)));
+                .enabled(i -> BooleanUtils.isNotTrue(Value.of(i, informarOutraIndicacaoTerapeutica)));
 
     }
 

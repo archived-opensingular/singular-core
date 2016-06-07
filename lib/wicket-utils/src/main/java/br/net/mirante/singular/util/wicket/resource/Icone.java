@@ -49,6 +49,7 @@ public enum Icone {
     PLUS                ("fa fa-plus"),
     ROCKET              ("icon-rocket"),
     REDO                ("icon-action-redo"),
+    REMOVE              ("fa fa-remove"),
     SHARE_ALT           ("fa fa-share-alt"),
     SHARE_SQUARE        ("fa fa-share-square-o"),
     STAR                ("icon-star"),
