@@ -5,13 +5,14 @@ import static org.mockito.Mockito.mock;
 import javax.inject.Inject;
 
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.RefService;
@@ -26,7 +27,6 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceH
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @Transactional
 @Rollback(value = false)
-@Ignore
 public class FormServiceTest {
 
     @Inject
@@ -50,6 +50,11 @@ public class FormServiceTest {
         document.setAttachmentPersistenceTemporaryHandler(RefService.of(tempHandler));
         document.bindLocalService("filePersistence",
                 IAttachmentPersistenceHandler.class, RefService.of(persistentHandler));
+    }
+
+    @Test
+    public void injecaoFunciona() {
+        Assert.notNull(formService);
     }
 
     protected final SDictionary createTestDictionary() {
