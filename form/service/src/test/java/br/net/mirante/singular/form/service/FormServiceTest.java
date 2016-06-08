@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import javax.inject.Inject;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
@@ -25,6 +26,7 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceH
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @Transactional
 @Rollback(value = false)
+@Ignore
 public class FormServiceTest {
 
     @Inject
