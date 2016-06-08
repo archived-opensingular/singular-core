@@ -75,6 +75,7 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
         new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.showcase.view.page.**").mount(this);
 
         setHeaderResponseDecorator(r -> new JavaScriptFilteredIntoFooterHeaderResponse(r, SingularTemplate.JAVASCRIPT_CONTAINER));
+
     }
 
     @Override

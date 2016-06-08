@@ -157,4 +157,5 @@ class UploadBehavior extends Behavior implements IResourceListener {
     public String getUrl() {
         return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
     }
+
 }

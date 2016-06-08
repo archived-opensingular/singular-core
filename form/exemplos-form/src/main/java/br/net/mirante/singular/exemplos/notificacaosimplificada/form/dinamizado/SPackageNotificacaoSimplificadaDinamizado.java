@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -244,6 +245,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .withMiniumSizeOf(1)
                 .asAtr()
                 .label("Fórmula do produto");
+        notificacaoSimplificada.addField("OutraFormula", STypeAttachment.class).asAtr().label("Outra Formula");
     }
 
     private void addListaLayoutFolheto(STypeComposite<?> notificacaoSimplificada) {
