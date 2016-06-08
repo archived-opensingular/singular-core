@@ -40,17 +40,17 @@ public class CaseInteractionVisiblePackage extends SPackage {
         recordText = record.addFieldString("text");
         recordDate = record.addFieldDate("date");
 
-        visible.as(SPackageBasic.aspect()).label("Visible");
+        visible.asAtr().label("Visible");
 
-        record.as(SPackageBasic.aspect())
+        record.asAtr()
                 .visible(ins -> ins.findNearestValue(visible, Boolean.class).orElse(false))
                 .dependsOn(visible);
 
-        recordText.as(SPackageBasic.aspect())
+        recordText.asAtr()
                 .label("Text")
                 .asAtrBootstrap().colPreference(3);
 
-        recordDate.as(SPackageBasic.aspect())
+        recordDate.asAtr()
                 .label("Date")
                 .asAtrBootstrap().colPreference(2);
     }

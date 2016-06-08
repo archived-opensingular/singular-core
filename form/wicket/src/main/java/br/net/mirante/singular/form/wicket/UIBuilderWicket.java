@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.context.UIComponentMapper;
 import br.net.mirante.singular.form.type.core.*;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
+import br.net.mirante.singular.form.type.util.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.*;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;

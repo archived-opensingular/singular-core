@@ -5,7 +5,10 @@ import br.net.mirante.singular.form.type.core.STypeDecimal;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -218,6 +221,50 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
      */
     public AssertionsSType isDecimal(String fieldPath) {
         return is(STypeDecimal.class, fieldPath);
+    }
+
+    /**
+     * Verifica se o tipo atual tem todos os tipos informados como campos dependentes e mais nenhum campo.
+     */
+    public AssertionsSType dependentsTypesAre(SType<?>... types) {
+        Set<SType<?>> expectedSet = new LinkedHashSet<>(Arrays.asList(types));
+        Set<SType<?>> currentSet = getTarget().getDependentTypes();
+        isDependentType(types);
+        for (SType<?> type : types) {
+            if (!currentSet.contains(type)) {
+                throw new AssertionError(errorMsg("A lista de dependente de " + getTarget() + " não contêm " + type));
+            }
+        }
+        for (SType<?> type : currentSet) {
+            if (!expectedSet.contains(type)) {
+                throw new AssertionError(errorMsg(
+                        "O tipo " + type + " foi encontrado como dependente de " + getTarget() +
+                                ", mas isso não era esperado"));
+            }
+        }
+        return this;
+    }
+
+    /** Verifica se o tipo atual tem todos os tipos informados como campos dependentes. */
+    public AssertionsSType isDependentType(SType<?>... types) {
+        for (SType<?> type : types) {
+            if (!getTarget().isDependentType(type)) {
+                throw new AssertionError(errorMsg("O tipo " + type + " não está como dependente de " + getTarget() +
+                        " ( isDependentType(type) retornou false)"));
+            }
+        }
+        return this;
+    }
+
+    /** Verifica se o tipo atual não possui nenhum dos tipos informados como campos dependentes. */
+    public AssertionsSType isNotDependentType(SType<?>... types) {
+        for (SType<?> type : types) {
+            if (getTarget().isDependentType(type)) {
+                throw new AssertionError(errorMsg("O tipo " + type + " está como dependente de " + getTarget() +
+                        " ( isDependentType(type) retornou true)"));
+            }
+        }
+        return this;
     }
 
     @Override
