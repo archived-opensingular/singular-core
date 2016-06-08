@@ -179,7 +179,7 @@ public class WicketFormProcessing {
                 .map(SInstance::getId)
                 .collect(toSet());
 
-            final Function<SType<?>, Boolean> depends = (type) -> fieldInstance.getObject().getType().getDependentTypes().contains(type);
+            final Function<SType<?>, Boolean> depends = (type) -> fieldInstance.getObject().getType().isDependentType(type);
 
             final Predicate<SInstance> predicate = ins -> {
                 if (ins == null) {

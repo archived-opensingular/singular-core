@@ -103,6 +103,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             simpleName = getInfoType().name();
             if (StringUtils.isEmpty(simpleName)) {
                 simpleName = getClass().getSimpleName();
+                if (simpleName.startsWith("STYPE")) {
+                    simpleName =simpleName.substring(5);
+                }
             }
         }
         SFormUtil.validateSimpleName(simpleName);
@@ -354,11 +357,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     @Override
-    public final <V extends Object> V getAttributeValue(String fullName, Class<V> resultClass) {
+    public final <V> V getAttributeValue(String fullName, Class<V> resultClass) {
         return getValueInTheContextOf(null, fullName, resultClass);
     }
 
-    final <V extends Object> V getValueInTheContextOf(SInstance contextInstance, String fullName, Class<V> resultClass) {
+    final <V> V getValueInTheContextOf(SInstance contextInstance, String fullName, Class<V> resultClass) {
         fullName = mapName(fullName);
         SInstance instance = getAttributeInstanceInternal(fullName);
         if (instance != null) {
@@ -384,7 +387,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return originalName;
     }
 
-    public SType<I> with(AtrRef<?, ?, ? extends Object> attribute, Object value) {
+    public SType<I> with(AtrRef<?, ?, ?> attribute, Object value) {
         setAttributeValue((AtrRef<?, ?, Object>) attribute, value);
         return this;
     }
@@ -418,7 +421,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL);
     }
 
-    public <V extends Object> V getAttributeValueOrDefaultValueIfNull(Class<V> resultClass) {
+    public <V> V getAttributeValueOrDefaultValueIfNull(Class<V> resultClass) {
         if (Objects.equals(nameSimple, SPackageBasic.ATR_DEFAULT_IF_NULL.getNameSimple())) {
             return null;
         }
@@ -525,10 +528,65 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     public Set<SType<?>> getDependentTypes() {
+        Set<SType<?>> result = getDependentTypesInternal();
+        return result == null ? Collections.emptySet() : Collections.unmodifiableSet(result);
+    }
+
+    private Set<SType<?>> getDependentTypesInternal() {
         if (dependentTypes == null) {
-            dependentTypes = new LinkedHashSet<>();
+            return superType == null ? null : superType.getDependentTypes();
         }
-        return dependentTypes;
+        Set<SType<?>> resultSuper = superType.getDependentTypesInternal();
+        if (resultSuper == null) {
+            return dependentTypes;
+        }
+        Set<SType<?>> sum = new LinkedHashSet<>(resultSuper.size() + dependentTypes.size());
+        sum.addAll(resultSuper);
+        sum.addAll(dependentTypes);
+        return sum;
+    }
+
+    public final void addDependentType(SType<?> type) {
+        if (! isDependentType(type)) {
+            if (type.hasDirectOrInderectDependentType(this)) {
+                throw new SingularFormException(
+                        "Referência circular de dependência detectada ao tentar adicionar " + type +
+                                " como dependente de " + this);
+            }
+            if (dependentTypes == null) {
+                dependentTypes = new LinkedHashSet<>();
+            }
+            dependentTypes.add(type);
+        }
+    }
+
+    private boolean hasDirectOrInderectDependentType(SType<?> type) {
+        if (dependentTypes != null) {
+            for(SType<?> d : dependentTypes ) {
+                if (type.isTypeOf(d)) {
+                    return true;
+                } else if (d.hasDirectOrInderectDependentType(type)) {
+                    return true;
+                }
+            }
+        } else if (superType != null) {
+            return superType.hasDirectOrInderectDependentType(type);
+        }
+        return false;
+    }
+
+    public final boolean isDependentType(SType<?> type) {
+        if (dependentTypes != null) {
+            for(SType<?> d : dependentTypes ) {
+                if (type.isTypeOf(d)) {
+                    return true;
+                }
+            }
+        }
+        if (superType != null) {
+            return superType.isDependentType(type);
+        }
+        return false;
     }
 
     public boolean hasDependentTypes() {
@@ -774,7 +832,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return name.startsWith(prefixo) && name.length() > prefixo.length() && name.charAt(prefixo.length()) == '.';
     }
 
-    public <T extends Object> T convert(Object value, Class<T> resultClass) {
+    public <T> T convert(Object value, Class<T> resultClass) {
         throw new SingularFormException("Método não suportado");
     }
 
