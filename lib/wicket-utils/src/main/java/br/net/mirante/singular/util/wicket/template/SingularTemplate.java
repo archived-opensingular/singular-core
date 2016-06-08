@@ -23,13 +23,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.UrlResourceReference;
 
 import com.google.common.collect.ImmutableList;
 
 public abstract class SingularTemplate extends WebPage {
-
-    public static final UrlResourceReference JQUERY_REFERENCE = new UrlResourceReference(Url.parse("/singular-static/resources/metronic/global/plugins/jquery.min.js"));
 
     public static final String JAVASCRIPT_CONTAINER = "javascript-container";
     public static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = (response) -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
@@ -65,9 +64,12 @@ public abstract class SingularTemplate extends WebPage {
     protected void onInitialize() {
         super.onInitialize();
         getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
+
+        /*Essa estratégia é utilizada para garantir que o jquery será sempre carregado pois está fixo no html
+        * sem esse artificio páginas sem componentes ajax do wicket apresentarão erros de javascript.*/
         getApplication()
                 .getJavaScriptLibrarySettings()
-                .setJQueryReference(JQUERY_REFERENCE);
+                .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
 
         add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));

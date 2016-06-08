@@ -6,7 +6,7 @@ import br.net.mirante.singular.studio.core.CollectionDefinition;
 import br.net.mirante.singular.studio.core.CollectionEditorConfigBuilder;
 import br.net.mirante.singular.studio.core.CollectionInfoBuilder;
 
-@CaseItem(componentName = "Order", group = Group.STUDIO)
+@CaseItem(componentName = "Order", group = Group.STUDIO_SAMPLES)
 public class OrderCollectionDefinition implements CollectionDefinition<STypeOrder> {
 
 
