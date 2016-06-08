@@ -155,7 +155,7 @@ public class DataSubmissionTest {
             assertThat(tester.getTagById(text2.getMarkupId())).isNotNull();
 
             form.setValue(text1, "clear");
-            tester.executeAjaxEvent(text1, "onchange");
+            tester.executeAjaxEvent(text1, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
 
             assertThat(tester.getTagById(text1.getMarkupId())).isNotNull();
             assertThat(tester.getTagById(text2.getMarkupId())).isNull();

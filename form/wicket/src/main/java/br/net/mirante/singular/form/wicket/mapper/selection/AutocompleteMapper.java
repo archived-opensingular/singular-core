@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.converter.SInstanceConverter;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewAutoComplete;
+import br.net.mirante.singular.form.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -21,7 +22,11 @@ public class AutocompleteMapper extends ControlsFieldComponentAbstractMapper {
     @Override
     public Component appendInput() {
         validateView(view);
-        final TypeaheadComponent comp = new TypeaheadComponent(model.getObject().getName(), model, ((SViewAutoComplete) view).fetch());
+        SViewAutoComplete.Mode fetch = SViewAutoComplete.Mode.STATIC;
+        if(view instanceof SViewAutoComplete){
+            fetch = ((SViewAutoComplete) view).fetch();
+        }
+        final TypeaheadComponent comp = new TypeaheadComponent(model.getObject().getName(), model, fetch);
         formGroup.appendDiv(comp);
         return comp.getValueField();
     }
@@ -33,7 +38,8 @@ public class AutocompleteMapper extends ControlsFieldComponentAbstractMapper {
     }
 
     private boolean isAValidView(SView view) {
-        return view instanceof SViewAutoComplete;
+        return view instanceof SViewAutoComplete ||
+                view instanceof SViewSelectionBySelect;
     }
 
     @Override

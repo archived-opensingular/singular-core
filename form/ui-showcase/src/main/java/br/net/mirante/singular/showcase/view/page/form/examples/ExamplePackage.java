@@ -95,10 +95,10 @@ public class ExamplePackage extends SPackage {
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", STypeTelefoneNacional.class);
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", STypeAttachment.class);
 
-        this.buyerNome.as(SPackageBasic.aspect()).required();
+        this.buyerNome.asAtr().required();
 
         this.buyerCpf
-            .as(SPackageBasic.aspect())
+            .asAtr()
             .dependsOn(this.buyerNome)
         ;
     }

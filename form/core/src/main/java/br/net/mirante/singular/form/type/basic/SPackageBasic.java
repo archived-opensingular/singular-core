@@ -120,7 +120,8 @@ public class SPackageBasic extends SPackage {
 
         pb.getType(SType.class).asAtr().displayString(ctx -> ctx.instance().toStringDisplayDefault());
 
-        pb.getType(SType.class).setAttributeCalculation(ATR_LABEL, ctx -> SFormUtil.generateUserFriendlyName(ctx.instance().getName()));
+        //TODO vinicius: modificar essa funcionalidade para ser ativada por SType ou por package
+//        pb.getType(SType.class).setAttributeCalculation(ATR_LABEL, ctx -> SFormUtil.generateUserFriendlyName(ctx.instance().getName()));
         
         // defina o meta dado do meta dado
         pb.getAttribute(ATR_LABEL).asAtr().label("Label").tamanhoEdicao(30).tamanhoMaximo(50);
@@ -138,9 +139,5 @@ public class SPackageBasic extends SPackage {
         //        pb.getAtributo(ATR_ONCHANGE_BEHAVIOR).asAtr().label("On change (comportamento)");
         pb.getAttribute(ATR_ORDEM).asAtr().label("Ordem");
         pb.getAttribute(ATR_ITEM_LABEL).asAtr().label("Item Label").tamanhoEdicao(30).tamanhoMaximo(50);
-    }
-
-    public static Function<SAttributeEnabled, AtrBasic> aspect() {
-        return AtrBasic::new;
     }
 }

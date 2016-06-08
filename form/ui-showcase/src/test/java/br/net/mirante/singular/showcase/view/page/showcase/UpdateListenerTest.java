@@ -3,6 +3,7 @@ package br.net.mirante.singular.showcase.view.page.showcase;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Test;
@@ -49,12 +50,12 @@ public class UpdateListenerTest extends SingularFormBaseTest {
         final FormComponent cep = findFirstFormComponentsByType(page.getForm(), this.cep);
 
         form.setValue(cep, "70863520");
-        tester.executeAjaxEvent(cep, "change");
+        tester.executeAjaxEvent(cep, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
         assertEquals("Logradouro incorreto",
                 logradouro.getDefaultModelObjectAsString(), "CLN 211 Bloco 'B' Subsolo");
 
         form.setValue(cep, "70070120");
-        tester.executeAjaxEvent(cep, "change");
+        tester.executeAjaxEvent(cep, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
         assertEquals("Logradouro incorreto",
                 logradouro.getDefaultModelObjectAsString(), "SBS - Qd. 02 - Bl. Q - Centro Empresarial João Carlos Saad 12° andar");
     }
@@ -66,7 +67,7 @@ public class UpdateListenerTest extends SingularFormBaseTest {
         final FormComponent cep = findFirstFormComponentsByType(page.getForm(), this.cep);
 
         form.setValue(cep, "12345678");
-        tester.executeAjaxEvent(cep, "change");
+        tester.executeAjaxEvent(cep, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
         assertEquals("Logradouro incorreto",
                 logradouro.getDefaultModelObjectAsString(), "Não encontrado");
     }

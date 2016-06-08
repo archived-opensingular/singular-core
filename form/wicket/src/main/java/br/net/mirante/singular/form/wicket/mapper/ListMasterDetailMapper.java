@@ -8,16 +8,13 @@ package br.net.mirante.singular.form.wicket.mapper;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -109,14 +106,12 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             protected void buildHeading(BSContainer<?> heading, Form<?> form) {
                 heading.appendTag("span", new Label("_title", listaLabel));
                 heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(listaLabel.getObject()))));
-                if (viewMode.isEdition() && ((SViewListByMasterDetail) view).isNewEnabled()) {
-                    appendAddButton(heading, modal, ctx.getModel());
-                }
             }
 
             @Override
             protected void buildFooter(BSContainer<?> footer, Form<?> form) {
-                footer.setVisible(false);
+                AbstractListaMapper.buildFooter(footer, ctx,
+                        () -> newAddAjaxLink(modal, ctx.getModel()));
             }
 
             @Override
@@ -337,26 +332,30 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 + " class='btn blue btn-sm pull-right'"
                 + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
                 + "</button>")
-            .add(new AjaxLink<Void>("_add") {
-                @Override
-                protected void onInitialize() {
-                    super.onInitialize();
-                    add(WicketUtils.$b.attr("title", "Adicionar"));
-                }
+            .add(newAddAjaxLink(modal, m));
+    }
 
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    final SInstance si = m.getObject();
-                    if (si instanceof SIList) {
-                        final SIList<?> sil = (SIList<?>) si;
-                        if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
-                            target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
-                        } else {
-                            modal.showNew(target);
-                        }
+    private AjaxLink<Void> newAddAjaxLink(final MasterDetailModal modal, final IModel<? extends SInstance> m) {
+        return new AjaxLink<Void>("_add") {
+            @Override
+            protected void onInitialize() {
+                super.onInitialize();
+                add(WicketUtils.$b.attr("title", "Adicionar"));
+            }
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                final SInstance si = m.getObject();
+                if (si instanceof SIList) {
+                    final SIList<?> sil = (SIList<?>) si;
+                    if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
+                        target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                    } else {
+                        modal.showNew(target);
                     }
                 }
-            });
+            }
+        };
     }
 
     private static class MasterDetailModal extends BFModalWindow {

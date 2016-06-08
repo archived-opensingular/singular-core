@@ -108,6 +108,15 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         if (viewMode.isEdition()) {
             input = appendInput();
             formGroup.appendFeedback(ctx.getContainer(), IFeedbackMessageFilter.ALL);
+            formGroup.add(new ClassAttributeModifier() {
+                @Override
+                protected Set<String> update(Set<String> oldClasses) {
+                    if(model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null){
+                        oldClasses.add("dependant-input-group");
+                    }
+                    return oldClasses;
+                }
+            });
             input.add(DisabledClassBehavior.getInstance());
             input.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
                 @Override

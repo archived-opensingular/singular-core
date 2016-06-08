@@ -151,6 +151,11 @@ public abstract class TestCaseForm extends TestCase {
         assertException(acao, exceptionEsperada, null, null);
     }
 
+    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada,
+            String trechoMsgEsperada) {
+        assertException(acao, exceptionEsperada, trechoMsgEsperada, null);
+    }
+
     public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
             String msgFailException) {
         try {

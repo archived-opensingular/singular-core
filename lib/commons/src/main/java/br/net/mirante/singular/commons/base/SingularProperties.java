@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
@@ -30,7 +31,7 @@ public enum SingularProperties {
     public static final String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
     public static final String HIBERNATE_GENERATOR = "flow.persistence.hibernate.generator";
     public static final String HIBERNATE_SEQUENCE_PROPERTY_PATTERN = "flow.persistence.%s.sequence";
-    private static final Logger logger = LoggerFactory.getLogger(SingularProperties.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SingularProperties.class);
     private Properties properties;
 
     private static final String[] PROPERTIES_FILES_NAME = {"singular-form-service.properties", "singular.properties"};
@@ -51,7 +52,7 @@ public enum SingularProperties {
      * Limpa as propriedades da memoria e força recarga a partir da memória e classPath.
      */
     public synchronized void reload() {
-        logger.info("Carregando configurações do Singular");
+        LOGGER.info("Carregando configurações do Singular");
         Properties newProperties = readClasspathDefaults();
         readPropertiesFilesOverrides(newProperties);
         properties = newProperties;
@@ -72,12 +73,12 @@ public enum SingularProperties {
         for (String name : PROPERTIES_FILES_NAME) {
             URL url = findProperties(name);
             if (url == null) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("   Não foi encontrado o arquivo no classpath: {}", name);
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("   Não foi encontrado o arquivo no classpath: {}", name);
                 }
             } else {
-                if (logger.isInfoEnabled()) {
-                    logger.info("   Lendo arquivo de propriedades '{}' em {}", name, url);
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("   Lendo arquivo de propriedades '{}' em {}", name, url);
                 }
                 newProperties = loadNotOverriding(newProperties, name, url);
             }
@@ -102,7 +103,7 @@ public enum SingularProperties {
                         "' definida anteriormente em outro arquivo de propriedade no class path.").add("url",
                         propertiesUrl);
             } else {
-                newProperties.put(entry.getKey(), entry.getValue());
+                newProperties.setProperty((String) entry.getKey(), (String) entry.getValue());
             }
         }
         return newProperties;
@@ -111,19 +112,17 @@ public enum SingularProperties {
     private static File findConfDir() {
         String path = System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
         if (path != null) {
-            if (logger.isInfoEnabled()) {
-                logger.info("   Encontrado a propriedade singular.server.home={}", path);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("   Encontrado a propriedade singular.server.home={}", path);
             }
             File confDir = new File(path, "conf");
             if (confDir.exists()) {
-                if (!confDir.isDirectory()) {
-                    if (logger.isWarnEnabled()) {
-                        logger.warn("   Era esperado que \"[singular.server.home]\\conf\" fosse um diretório");
-                    }
+                if (!confDir.isDirectory() && LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("   Era esperado que \"[singular.server.home]\\conf\" fosse um diretório");
                 }
                 return confDir;
-            } else {
-                logger.warn("      Não exite o diretório " + confDir);
+            } else if (LOGGER.isWarnEnabled()){
+                LOGGER.warn("      Não exite o diretório {}", confDir);
             }
         }
         return null;
@@ -131,22 +130,20 @@ public enum SingularProperties {
 
     private URL findProperties(String name) {
         try {
-            URL url = null;
-            url = add(url, name, ClassLoader.getSystemClassLoader().getResources(name));
-            url = add(url, name, SingularProperties.class.getClassLoader().getResources(name));
-            return url;
-        } catch (IOException e) {
+            URL url = add(null, name, ClassLoader.getSystemClassLoader().getResources(name));
+            return add(url, name, SingularProperties.class.getClassLoader().getResources(name));
+        } catch (Exception e) {
             throw new SingularException("Erro procurando arquivo de properties '" + name + "' no class path", e);
         }
     }
 
-    private URL add(URL current, String name, Enumeration<URL> resources) {
+    private URL add(URL current, String name, Enumeration<URL> resources) throws URISyntaxException {
         URL selected = current;
         while (resources.hasMoreElements()) {
             URL u = resources.nextElement();
             if (selected == null) {
                 selected = u;
-            } else if (!selected.equals(u)) {
+            } else if (!selected.toURI().equals(u.toURI())) {
                 throw new SingularException(
                         "Foram encontrados dois arquivos com mesmo nome '" + name + "' no class path").add("arquivo 1",
                         selected).add("arquivo 2", u);
@@ -155,21 +152,13 @@ public enum SingularProperties {
         return selected;
     }
 
-    private InputStream getFromClassLoader(String path) {
-        InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
-        if (is == null) {
-            is = SingularProperties.class.getClassLoader().getResourceAsStream(path);
-        }
-        return is;
-    }
-
     private void loadOverriding(Properties newProperties, File arq) {
         if (arq.exists()) {
-            if (logger.isInfoEnabled()) {
-                logger.info("   Lendo arquivo de propriedades " + arq);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("   Lendo arquivo de propriedades {}", arq);
             }
-            try {
-                loadOverriding(newProperties, new FileInputStream(arq));
+            try (FileInputStream in = new FileInputStream(arq)) {
+                loadOverriding(newProperties, in);
             } catch (Exception e) {
                 throw new SingularException("Erro lendo arquivo de propriedades", e).add("arquivo", arq);
             }
@@ -177,8 +166,8 @@ public enum SingularProperties {
     }
 
     private void loadOverriding(Properties newProperties, URL resoruce) {
-        if (logger.isInfoEnabled()) {
-            logger.info("   Lendo arquivo de propriedades " + resoruce);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("   Lendo arquivo de propriedades {}", resoruce);
         }
         try {
             loadOverriding(newProperties, resoruce.openStream());
@@ -191,7 +180,7 @@ public enum SingularProperties {
         Properties p = new Properties();
         p.load(in);
         for (Map.Entry<Object, Object> entry : p.entrySet()) {
-            newProperties.put(entry.getKey(), entry.getValue());
+            newProperties.setProperty((String) entry.getKey(), (String) entry.getValue());
         }
     }
 

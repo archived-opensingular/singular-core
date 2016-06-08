@@ -81,7 +81,7 @@ public class SPackageBootstrap extends SPackage {
         pb.createAttributeType(atrRef);
         pb.addAttribute(SType.class, atrRef);
         pb.getAttribute(atrRef)
-            .as(SPackageBasic.aspect()).label(("Largura preferencial " + defaultIfNull(label, "")).trim());
+            .asAtr().label(("Largura preferencial " + defaultIfNull(label, "")).trim());
     }
 
 }

@@ -42,7 +42,7 @@ public class SPackageNotificacaoSimplificadaFitoterapico extends SPackage {
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtr().displayString("${nomenclaturaBotanica.descricao} - ${nomeComercial}");
-        notificacaoSimplificada.asAtr().label("Notificação Simplificada - Produto Tradicional Fitoterápico");
+        notificacaoSimplificada.asAtr().label("Produto Tradicional Fitoterápico");
 
         final STypeComposite<SIComposite> nomenclaturaBotanica     = notificacaoSimplificada.addFieldComposite("nomenclaturaBotanica");
         STypeInteger            idNomenclaturaBotanica   = nomenclaturaBotanica.addFieldInteger("id");

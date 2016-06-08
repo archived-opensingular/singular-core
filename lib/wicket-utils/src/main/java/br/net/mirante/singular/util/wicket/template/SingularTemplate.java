@@ -119,6 +119,8 @@ public abstract class SingularTemplate extends WebPage {
             "/singular-static/resources/singular/plugins/syntaxHighlighter/css/shThemeDefault.css",
             "/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.css",
             "/singular-static/resources/metronic/global/plugins/typeahead/typeahead.css",
+            "/singular-static/resources/metronic/global/css/typhography.css",
+            "/singular-static/resources/metronic/layout4/css/custom.css",
             "/singular-static/resources/singular/css/custom.css",
             "resources/custom/css/custom.css")
             .stream().map(CssHeaderItem::forUrl).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));

@@ -76,8 +76,8 @@ DECLARE ESSE CSS NA SUA APLICAÇÃO NO MESMO CAMINHO RELATIVO
     margin-left: 0px;
 }
 
-.logo-default::before {
-    content: url("/singular-static/resources/singular/img/brand.png");
-    height: 15px;
-    top: 15px;
-}
+/*.logo-default::before {*/
+    /*content: url("/singular-static/resources/singular/img/brand.png");*/
+    /*height: 15px;*/
+    /*top: 15px;*/
+/*}*/

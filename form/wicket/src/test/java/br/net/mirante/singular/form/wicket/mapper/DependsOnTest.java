@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -153,7 +154,7 @@ public class DependsOnTest {
             final DropDownChoice categoryChoice = options().get(0);
             final DropDownChoice elementChoice  = options().get(1);
             form.select(getFormRelativePath(categoryChoice), 2);
-            tester.executeAjaxEvent(categoryChoice, "change");
+            tester.executeAjaxEvent(categoryChoice, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
             List<Object> displayArray = new ArrayList<>();
             for (Object choice : elementChoice.getChoices()) {
                 displayArray.add(elementChoice.getChoiceRenderer().getDisplayValue(choice));
@@ -178,10 +179,10 @@ public class DependsOnTest {
             category = baseCompositeField.addFieldString("category");
             element = baseCompositeField.addFieldString("element");
 
-            category.as(SPackageBasic.aspect()).label("category");
+            category.asAtr().label("category");
             category.selectionOf(OPTIONS.keySet().toArray(new String[]{}));
 
-            element.as(SPackageBasic.aspect())
+            element.asAtr()
                     .label("Word")
                     .dependsOn(category);
             element.selectionOf(String.class)

@@ -122,7 +122,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
 
         final IModel<SIList<SInstance>> listModel    = $m.get(ctx::getCurrentInstance);
         final SIList<?>                 listInstance = listModel.getObject();
-        final IModel<String>            label        = $m.ofValue(trimToEmpty(listInstance.as(SPackageBasic.aspect()).getLabel()));
+        final IModel<String>            label        = $m.ofValue(trimToEmpty(listInstance.asAtr().getLabel()));
 
         MetronicPanel panel = new MetronicPanel("metronicPanel") {
 
@@ -154,7 +154,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
             protected void buildContent(BSContainer<?> content, Form<?> form) {
 
                 final TemplatePanel list = content.newTemplateTag(t -> ""
-                        + " <div wicket:id='_e' whatever='something'> "
+                        + " <div wicket:id='_e' > "
                         + "     <div class='col-md-6' wicket:id='_r'></div> "
                         + " </div> ");
 

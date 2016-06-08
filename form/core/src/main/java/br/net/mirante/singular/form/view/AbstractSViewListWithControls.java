@@ -5,11 +5,14 @@
 
 package br.net.mirante.singular.form.view;
 
+import java.util.Optional;
+
 public class AbstractSViewListWithControls<SELF extends AbstractSViewList> extends AbstractSViewList {
 
     private boolean newEnabled = true;
     private boolean insertEnabled = false;
     private boolean deleteEnabled = true;
+    private String label;
 
     public final boolean isNewEnabled() {
         return newEnabled;
@@ -60,6 +63,15 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
     public final SELF setInsertEnabled(boolean insertEnabled) {
         this.insertEnabled = insertEnabled;
         return (SELF) this;
+    }
+
+    public final SELF label(String label) {
+        this.label = label;
+        return (SELF) this;
+    }
+
+    public Optional<String> label() {
+        return Optional.ofNullable(this.label);
     }
 
 }

@@ -41,7 +41,6 @@ import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
-import br.net.mirante.singular.form.wicket.resource.FormDefaultStyles;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
@@ -174,22 +173,12 @@ public class WicketBuildContext implements Serializable {
         WicketFormUtils.setInstanceId(getContainer(), instance);
         WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
 
-        if (getContainer() != null) {
-            getContainer().add(new Behavior() {
-                @Override
-                public void renderHead(Component component, IHeaderResponse response) {
-                    super.renderHead(component, response);
-                    response.render(CssReferenceHeaderItem.forReference(FormDefaultStyles.RESOURCE_REFERENCE));
-                }
-            });
-        }
-
         return this;
     }
 
     /**
      * Adiciona um behavior que executa o update atributes do SDocument em toda requisição.
-     *
+     * <p>
      * Normalmente este método não deve ser chamado externamente,
      * porem pode existir situações em que o container root não é atualizado
      * e novos componentes filhos são adicionados.
@@ -253,7 +242,7 @@ public class WicketBuildContext implements Serializable {
         IModel<?> model = formComponent.getModel();
         if (model instanceof IMInstanciaAwareModel<?>) {
             SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
-            return instancia.as(SPackageBasic.aspect()).getLabel();
+            return instancia.asAtr().getLabel();
         }
         return "[" + formComponent.getId() + "]";
     }
@@ -269,7 +258,7 @@ public class WicketBuildContext implements Serializable {
             SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
             List<String> labels = new ArrayList<>();
             while (instancia != null) {
-                labels.add(instancia.as(SPackageBasic.aspect()).getLabel());
+                labels.add(instancia.asAtr().getLabel());
                 instancia = instancia.getParent();
             }
             labels.removeIf(it -> Strings.defaultIfEmpty(it, "").trim().isEmpty());
