@@ -9,7 +9,7 @@ CREATE SEQUENCE DBSINGULAR.SQ_CO_TIPO_FORMULARIO  START WITH 1 INCREMENT BY 1;
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_FORMULARIO (
    CO_FORMULARIO        BIGINT                  NOT NULL,
-   CO_TIPO_FORMULARIO   BIGINT                  NOT NULL,
+   CO_TIPO_FORMULARIO   BIGINT                  NULL --NOT NULL, COMENTANDO ATÉ ALTERAR O CODIGO
    DS_XML               VARCHAR(MAX)         NOT NULL,
    DS_XML_ANOTACAO      VARCHAR(MAX)         NULL,
    CO_COLECAO           BIGINT                  NULL,
