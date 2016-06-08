@@ -40,15 +40,15 @@ public class CaseInteractionRequiredPackage extends SPackage {
         recordText = record.addFieldString("text");
         recordDate = record.addFieldDate("date");
 
-        required.as(SPackageBasic.aspect()).label("Required");
+        required.asAtr().label("Required");
 
-        recordText.as(SPackageBasic.aspect())
+        recordText.asAtr()
                 .label("Text")
                 .dependsOn(required)
                 .asAtr().required(ins -> ins.findNearestValue(required, Boolean.class).orElse(false))
                 .asAtrBootstrap().colPreference(3);
 
-        recordDate.as(SPackageBasic.aspect())
+        recordDate.asAtr()
                 .label("Date").dependsOn(required)
                 .asAtr().required(ins -> ins.findNearestValue(required, Boolean.class).orElse(false))
                 .asAtrBootstrap().colPreference(2);

@@ -42,17 +42,17 @@ public class CaseInteractionEnabledPackage extends SPackage {
         recordDate = record.addFieldDate("date");
 
         enabled
-                .as(SPackageBasic.aspect()).label("Enable");
+                .asAtr().label("Enable");
 
-        record.as(SPackageBasic.aspect())
+        record.asAtr()
                 .enabled(ins -> ins.findNearestValue(enabled, Boolean.class).orElse(false))
                 .dependsOn(enabled);
 
-        recordText.as(SPackageBasic.aspect())
+        recordText.asAtr()
                 .label("Text")
                 .asAtrBootstrap().colPreference(3);
 
-        recordDate.as(SPackageBasic.aspect())
+        recordDate.asAtr()
                 .label("Date")
                 .asAtrBootstrap().colPreference(2);
     }

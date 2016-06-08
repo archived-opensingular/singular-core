@@ -137,11 +137,11 @@ public final class SFormUtil {
         SInstance child = null;
         for (SInstance node = instance; node != null && !node.equals(parentContext); child = node, node = node.getParent()) {
 
-            final String labelNode = node.as(SPackageBasic.aspect()).getLabel();
+            final String labelNode = node.asAtr().getLabel();
 
             if (node instanceof SIList<?>) {
                 SIList<?> lista = (SIList<?>) node;
-                String labelLista = lista.as(SPackageBasic.aspect()).getLabel();
+                String labelLista = lista.asAtr().getLabel();
                 int index = lista.indexOf(child) + 1;
                 labels.add(labelLista + ((index > 0) ? " [" + (index) + ']' : ""));
             } else {

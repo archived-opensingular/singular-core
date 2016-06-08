@@ -136,10 +136,10 @@ public class TableListMapper extends AbstractListaMapper {
             for (SType<?> tCampo : compositeElementsType.getFields()) {
 
                 final Integer preferentialWidth = tCampo.asAtrBootstrap().getColPreference(1);
-                final IModel<String> headerModel = $m.ofValue(tCampo.as(SPackageBasic.aspect()).getLabel());
+                final IModel<String> headerModel = $m.ofValue(tCampo.asAtr().getLabel());
                 final BSTDataCell cell = row.newTHeaderCell(headerModel);
                 final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
-                final boolean isCampoObrigatorio = tCampo.as(SPackageBasic.aspect()).isRequired();
+                final boolean isCampoObrigatorio = tCampo.asAtr().isRequired();
 
                 ctx.configureContainer(headerModel);
 

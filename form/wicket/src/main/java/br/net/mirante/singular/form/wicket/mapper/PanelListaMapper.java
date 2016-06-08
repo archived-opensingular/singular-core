@@ -41,7 +41,7 @@ public class PanelListaMapper extends AbstractListaMapper {
     public MetronicPanel newpanel(String id, WicketBuildContext ctx) {
         final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
         final SIList<?> iLista = listaModel.getObject();
-        final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
+        final IModel<String> label = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
         final SView view = ctx.getView();
 
         final ViewMode viewMode = ctx.getViewMode();

@@ -140,8 +140,4 @@ public class SPackageBasic extends SPackage {
         pb.getAttribute(ATR_ORDEM).asAtr().label("Ordem");
         pb.getAttribute(ATR_ITEM_LABEL).asAtr().label("Item Label").tamanhoEdicao(30).tamanhoMaximo(50);
     }
-
-    public static Function<SAttributeEnabled, AtrBasic> aspect() {
-        return AtrBasic::new;
-    }
 }
