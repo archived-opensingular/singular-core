@@ -112,9 +112,14 @@ public abstract class AbstractFormContent extends Content {
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
-//                SDocumentFactory documentFactory = singularFormConfig.getDocumentFactory();
-                SDocumentFactory documentFactory = new TaskAwareDocumentFactory(AbstractFormContent.this);
-                return AbstractFormContent.this.createInstance(documentFactory, refType);
+
+                ProcessInstanceEntity processInstance = getProcessInstance();
+                SDocumentFactory extendedFactory = singularFormConfig.getDocumentFactory().extendAddingSetupStep(
+                        document -> {
+                            document.bindLocalService("processService",AbstractFormContent.ProcessFormService.class,
+                                    RefService.of((AbstractFormContent.ProcessFormService)()->processInstance));
+                        });
+                return AbstractFormContent.this.createInstance(extendedFactory, refType);
             }
 
             @Override
@@ -283,40 +288,5 @@ public abstract class AbstractFormContent extends Content {
     @FunctionalInterface
     public interface ProcessFormService extends Serializable {
         ProcessInstanceEntity getProcessInstance();
-    }
-    
-    /**
-     * This DocumentFactory is just a delagate which sets a Aware Service for
-     * accessing the current ProcessInstance.
-     */
-    static class TaskAwareDocumentFactory extends SingularServerDocumentFactory implements Serializable {
-        
-        AbstractFormContent content;
-        
-        public TaskAwareDocumentFactory( AbstractFormContent content){
-            this.content = content;
-        }
-        
-        SDocumentFactory target() { return content.singularFormConfig.getDocumentFactory();}
-        
-        ProcessInstanceEntity instance() { return content.getProcessInstance();}
-        
-        @Override
-        public RefSDocumentFactory getDocumentFactoryRef() {
-            return target().getDocumentFactoryRef();
-        }
-        
-        @Override
-        public ServiceRegistry getServiceRegistry() {
-            return target().getServiceRegistry();
-        }
-        
-        @Override
-        protected void setupDocument(SDocument document) {
-            super.setupDocument(document);
-            //TODO: Fabs this does not work for init instance
-            document.bindLocalService("processService",AbstractFormContent.ProcessFormService.class, 
-                RefService.of((AbstractFormContent.ProcessFormService)()->instance()));
-        }
     }
 }
