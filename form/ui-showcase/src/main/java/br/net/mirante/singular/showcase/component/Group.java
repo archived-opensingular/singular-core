@@ -16,7 +16,7 @@ public enum Group {
     INTERACTION("Interaction", Icone.ROCKET, ShowCaseType.FORM),
     CUSTOM("Custom", Icone.WRENCH, ShowCaseType.FORM),
     MAPS("Maps", Icone.MAP, ShowCaseType.FORM),
-    STUDIO("Studio", Icone.MAP, ShowCaseType.STUDIO);
+    STUDIO_SAMPLES("Samples", Icone.DOCS, ShowCaseType.STUDIO);
 
     private final String name;
     private final Icone icone;
