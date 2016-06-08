@@ -19,6 +19,6 @@ public class STypeTelefoneNacional extends STypeString {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.telefoneNacional());
-        asAtr().tamanhoMaximo(15).label("Telefone");
+        asAtr().maxLength(15).label("Telefone");
     }
 }

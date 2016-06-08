@@ -293,7 +293,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .withView(SViewTextArea::new)
                 .asAtr()
                 .required()
-                .tamanhoMaximo(600)
+                .maxLength(600)
                 .label("Outra indicação terapêutica")
                 .dependsOn(informarOutraIndicacaoTerapeutica)
                 .visible(i -> BooleanUtils.isTrue(Value.of(i, informarOutraIndicacaoTerapeutica)));

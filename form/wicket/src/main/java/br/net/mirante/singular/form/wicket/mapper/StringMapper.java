@@ -31,7 +31,7 @@ public class StringMapper extends ControlsFieldComponentAbstractMapper {
             new MInstanciaValorModel<>(model), String.class).setLabel(labelModel));
 
         Optional<Integer> maxSize = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
         if (maxSize.isPresent()) {
             comp.add(StringValidator.maximumLength(maxSize.get()));
             comp.add(new CountDownBehaviour());

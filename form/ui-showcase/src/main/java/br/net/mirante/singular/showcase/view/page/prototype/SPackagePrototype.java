@@ -140,7 +140,7 @@ public class SPackagePrototype extends SPackage {
 
     private void addAttributeFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {
         tamanhoCampo = fieldType.addFieldInteger(TAMANHO_CAMPO);
-        tamanhoCampo.asAtr().label("Colunas").tamanhoMaximo(12)
+        tamanhoCampo.asAtr().label("Colunas").maxLength(12)
                 .getTipo().asAtrBootstrap().colPreference(2);
 
         obrigatorio = fieldType.addFieldBoolean(OBRIGATORIO);

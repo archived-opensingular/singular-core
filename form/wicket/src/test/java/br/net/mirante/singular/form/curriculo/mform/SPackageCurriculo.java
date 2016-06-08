@@ -40,7 +40,7 @@ public class SPackageCurriculo extends SPackage {
             informacoesPessoais
                 .asAtr().label("Informações Pessoais");
             nome
-                .asAtr().label("Nome").subtitle("nome completo").tamanhoMaximo(50)
+                .asAtr().label("Nome").subtitle("nome completo").maxLength(50)
                 .asAtrBootstrap().colPreference(7);
             cpf
                 .asAtrBootstrap().colPreference(3);
@@ -115,7 +115,7 @@ public class SPackageCurriculo extends SPackage {
                 .asAtrBootstrap().colPreference(3);
             academicoCargaHoraria
                 .asAtr().label("Carga Horária (h)")
-                .asAtr().tamanhoMaximo(5)
+                .asAtr().maxLength(5)
                 .asAtrBootstrap().colPreference(2);
             academicoMesConclusao
                 .asAtr().label("Mês de Conclusão")

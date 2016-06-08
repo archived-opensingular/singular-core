@@ -18,6 +18,6 @@ public class STypeCPF extends STypeString {
     @Override
     protected void onLoadType(TypeBuilder tb) {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.cpf());
-        asAtr().label("CPF").basicMask("CPF").tamanhoMaximo(null);
+        asAtr().label("CPF").basicMask("CPF").maxLength(null);
     }
 }
