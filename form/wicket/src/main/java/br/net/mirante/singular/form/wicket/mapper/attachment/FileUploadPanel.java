@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
@@ -24,15 +25,18 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
 import org.apache.wicket.util.time.Duration;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
+import java.util.UUID;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -50,7 +54,7 @@ public class FileUploadPanel extends Panel {
     private final HiddenField nameField, hashField, sizeField, idField;
     private final WebMarkupContainer filesContainer, progressBar;
     private final DownloadBehavior downloader;
-    private final UploadBehavior uploader;
+//    private final UploadBehavior uploader;
 
     private final Label fileName = new Label("fileName", new AbstractReadOnlyModel<String>() {
         @Override
@@ -196,8 +200,9 @@ public class FileUploadPanel extends Panel {
                 progressBar = new WebMarkupContainer("progress")
         );
         add(
-            downloader = new DownloadBehavior(model.getObject()),
-            uploader = new UploadBehavior(model.getObject())
+            downloader = new DownloadBehavior(model.getObject())
+                /*,
+            uploader = new UploadBehavior(model.getObject())*/
         );
     }
 
@@ -233,6 +238,14 @@ public class FileUploadPanel extends Panel {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("FileUploadPanel.js")));
+        String contextPath = getWebApplication().getServletContext().getContextPath();
+        String uploadUrl = contextPath + FileUploadServlet.UPLOAD_URL;
+
+        IAttachmentPersistenceHandler service = ((SIAttachment) model.getObject()).getDocument().getAttachmentPersistenceTemporaryHandler();
+        HttpSession session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
+
+        UUID serviceId = FileUploadServlet.registerService(session, service);
+
         response.render(OnDomReadyHeaderItem.forScript(
                 " $(function () { \n" +
                 "     var params = { \n" +
@@ -246,7 +259,9 @@ public class FileUploadPanel extends Panel {
                 "             size_id: '"+sizeField.getMarkupId()+"', \n" +
                 "  \n" +
                 "             param_name : '"+PARAM_NAME+"', \n" +
-                "             upload_url : '"+uploader.getUrl()+"', \n" +
+//                "             upload_url : '"+uploader.getUrl()+"', \n" +
+                "             upload_url : '"+uploadUrl+"', \n" +
+                "             upload_id : '"+serviceId.toString()+"', \n" +
                 "             download_url : '"+downloader.getUrl()+"', \n" +
                 "  \n" +
                 "     }; \n" +
