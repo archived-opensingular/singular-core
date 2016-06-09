@@ -130,7 +130,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .label("Descrição")
                 .required()
                 .asAtrBootstrap()
-                .colPreference(6);
+                .colPreference(5);
 
         descricaoDinamizada.autocompleteOf(Triple.class)
                 .id("${left}")
@@ -140,11 +140,13 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         final STypeInteger potencia = formulaHomeopatica.addFieldInteger("potencia");
         potencia
-                .asAtr().label("Potência");
+                .asAtr().label("Potência")
+                .asAtrBootstrap().colPreference(3);
 
         final STypeString escala = formulaHomeopatica.addFieldString("escala");
         escala
-                .asAtr().label("Escala");
+                .asAtr().label("Escala")
+                .asAtrBootstrap().colPreference(3);
 
         potencia.addInstanceValidator(validatable -> {
             Integer       idDescricao = validatable.getInstance().findNearest(descricaoDinamizada).get().findNearest(idDescricaoDinamizada).get().getValue();
