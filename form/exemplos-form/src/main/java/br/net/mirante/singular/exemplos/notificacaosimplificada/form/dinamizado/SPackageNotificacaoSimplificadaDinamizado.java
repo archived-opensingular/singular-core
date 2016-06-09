@@ -84,11 +84,10 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     }
 
     private void addCaracteristicas(STypeComposite<?> notificacaoSimplificada) {
-        STypeComposite<SIComposite> caracteristicas = notificacaoSimplificada.addFieldComposite("caracteristicas");
-        caracteristicas.addField("classe", STypeCategoriaRegulatoria.class);
 
-        final STypeLinhaProducaoDinamizado                        linhaProducao        = caracteristicas.addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
-        final STypeList<STypeComposite<SIComposite>, SIComposite> formulasHomeopaticas = caracteristicas.addFieldListOfComposite("formulasHomeopaticas", "formulaHomeopatica");
+        final STypeCategoriaRegulatoria                           classe               = notificacaoSimplificada.addField("classe", STypeCategoriaRegulatoria.class);
+        final STypeLinhaProducaoDinamizado                        linhaProducao        = notificacaoSimplificada.addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
+        final STypeList<STypeComposite<SIComposite>, SIComposite> formulasHomeopaticas = notificacaoSimplificada.addFieldListOfComposite("formulasHomeopaticas", "formulaHomeopatica");
 
         formulasHomeopaticas
                 .withMiniumSizeOf(1)
@@ -101,7 +100,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeComposite<?>           formulaHomeopatica                             = formulasHomeopaticas.getElementsType();
         final STypeComposite<SIComposite> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
         final STypeInteger                idDescricaoDinamizada                          = descricaoDinamizada.addFieldInteger("id");
-        final STypeInteger                 idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
+        final STypeInteger                idConfiguracaoLinhaProducaoDescricaoDinamizada = descricaoDinamizada.addFieldInteger("configuracaoLinhaProducao");
         final STypeString                 descricaoDescricaoDinamizada                   = descricaoDinamizada.addFieldString("descricao");
 
         descricaoDinamizada
@@ -148,7 +147,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .withSelectView()
                 .selectionOf("CH", "DH");
 
-        final STypeComposite formaFarmaceutica = caracteristicas.addFieldComposite("formaFarmaceutica");
+        final STypeComposite formaFarmaceutica = notificacaoSimplificada.addFieldComposite("formaFarmaceutica");
 
         {
 
@@ -168,7 +167,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                                 .map(ins -> ins.findNearest(descricaoDinamizada))
                                 .filter(ins -> ins.isPresent() && Value.notNull(ins.get(), idDescricaoDinamizada))
                                 .findFirst().isPresent();
-                        return !(list == null || list.isEmpty()) && hasIdDescricaoDinamizadaPresent;
+                        return !list.isEmpty() && hasIdDescricaoDinamizadaPresent;
                     })
                     .displayString("${descricao}")
                     .asAtrBootstrap()
@@ -204,7 +203,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     private void addAcondicionamentos(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> listaAcondicionamentos = notificacaoSimplificada.addFieldComposite("listaAcondicionamento");
         listaAcondicionamentos
-                .asAtr().label("Acondicionamentos")
                 .asAtrAnnotation().setAnnotated();
         final STypeList<STypeAcondicionamento, SIComposite> acondicionamentos =
                 listaAcondicionamentos.addFieldListOf("acondicionamentos", STypeAcondicionamento.class);
@@ -223,9 +221,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     }
 
     private void addNomeComercial(STypeComposite<?> notificacaoSimplificada) {
-        STypeComposite<SIComposite> nomeComercialComposto = notificacaoSimplificada.addFieldComposite("nomeComercial");
-
-        final STypeString nomeComercial = nomeComercialComposto.addFieldString("nomeComercial");
+        final STypeString nomeComercial = notificacaoSimplificada.addFieldString("nomeComercial");
         nomeComercial
                 .asAtr()
                 .required()
@@ -237,7 +233,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     private void addListaFormulaProduto(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> listaFormulaProduto = notificacaoSimplificada.addFieldComposite("listaFormulaProduto");
         listaFormulaProduto
-                .asAtr().label("Fórmulas do produto")
                 .asAtrAnnotation().setAnnotated();
         final STypeAttachmentList formulasProduto =
                 listaFormulaProduto.addFieldListOfAttachment("formulasProduto", "formulaProduto");
@@ -251,7 +246,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     private void addListaLayoutFolheto(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> listaLayoutFolheto = notificacaoSimplificada.addFieldComposite("listaLayoutFolheto");
         listaLayoutFolheto
-                .asAtr().label("Layout dos folhetos")
                 .asAtrAnnotation().setAnnotated();
         final STypeAttachmentList layoutsBula =
                 listaLayoutFolheto.addFieldListOfAttachment("layoutsfolheto", "layoutfolheto");
@@ -264,7 +258,6 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
     private void addListaReferencias(STypeComposite<?> notificacaoSimplificada) {
         STypeComposite<SIComposite> listaReferencias = notificacaoSimplificada.addFieldComposite("listaReferencias");
         listaReferencias
-                .asAtr().label("Referências das indicações propostas")
                 .asAtrAnnotation().setAnnotated();
         final STypeAttachmentList indicacoesPropostas =
                 listaReferencias.addFieldListOfAttachment("indicacoesPropostas", "indicacaoProposta");
@@ -302,7 +295,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .withView(SViewTextArea::new)
                 .asAtr()
                 .required()
-                .tamanhoMaximo(600)
+                .maxLength(600)
                 .label("Outra indicação terapêutica")
                 .dependsOn(informarOutraIndicacaoTerapeutica)
                 .visible(i -> BooleanUtils.isTrue(Value.of(i, informarOutraIndicacaoTerapeutica)));
@@ -319,7 +312,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
 class FormaFarmaceuticaProvider implements FilteredPagedProvider<FormaFarmaceuticaBasica> {
 
-    List<Integer> getIds(SInstance root) {return Collections.emptyList();}
+    List<Integer> getIds(SInstance root) {
+        return Collections.emptyList();
+    }
 
     @Override
     public void configureProvider(Config cfg) {

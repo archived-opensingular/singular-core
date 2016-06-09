@@ -66,11 +66,11 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
         letter = testForm.addFieldString("letter");
         word = testForm.addFieldString("word");
 
-        letter.as(SPackageBasic.aspect())
+        letter.asAtr()
             .label("Letter");
         letter.selectionOf("a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z".split(","));
 
-        word.as(SPackageBasic.aspect())
+        word.asAtr()
             .label("Word")
             .dependsOn(letter);
 

@@ -126,7 +126,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
 
         final IModel<SIList<SInstance>> listModel    = $m.get(ctx::getCurrentInstance);
         final SIList<?>                 listInstance = listModel.getObject();
-        final IModel<String>            label        = $m.ofValue(trimToEmpty(listInstance.as(SPackageBasic.aspect()).getLabel()));
+        final IModel<String>            label        = $m.ofValue(trimToEmpty(listInstance.asAtr().getLabel()));
 
         MetronicPanel panel = new MetronicPanel("metronicPanel") {
 

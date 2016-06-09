@@ -105,6 +105,10 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             grid.add(DisabledClassBehavior.getInstance());
             grid.setDefaultModel(model);
 
+            if (ctx.getCurrentInstance().getParent() != null) {
+                grid.setCssClass("composite-box-grid");
+            }
+
             return grid;
         }
 
@@ -151,21 +155,6 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
             final BSCol col = row.newCol();
             configureColspan(ctx, iCampo, col);
-
-            /**
-             * Faz um Wrapper com composite-box-grid, para campos que não são filhos de um grid
-             */
-            final Boolean alreadyWrapped = col.visitParents(BSCol.class, (IVisitor<BSCol, Boolean>) (c, v) -> {
-                Boolean isWrapped = c.getMetaData(BSGrid.WRAPPED_BY_BOXED_GRID);
-                if (isWrapped != null && isWrapped) {
-                    v.stop(true);
-                }
-            });
-
-            if (alreadyWrapped == null || !alreadyWrapped) {
-                col.setCssClass("composite-box-grid");
-                col.setMetaData(BSGrid.WRAPPED_BY_BOXED_GRID, true);
-            }
 
             if (iCampo instanceof SIComposite) {
                 wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true, mCampo), viewMode);

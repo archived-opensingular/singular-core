@@ -34,7 +34,7 @@ import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 @SuppressWarnings("serial")
-class ListContent extends Content implements SingularWicketContainer<ListContent, Void> {
+public class ListContent extends Content implements SingularWicketContainer<ListContent, Void> {
 
     private List<FormVO> formTypes;
 
@@ -54,7 +54,7 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
     }
 
     private boolean verificarTipo(ShowcaseTypeLoader.TemplateEntry templateEntry) {
-        final StringValue tipoValue = getPage().getPageParameters().get(ListPage.PARAM_TIPO);
+        final StringValue tipoValue = getPage().getPageParameters().get(ShowCaseType.SHOWCASE_TYPE_PARAM);
         ShowCaseType tipo;
         if (tipoValue.isNull() || tipoValue.toString().equals(ShowCaseType.FORM.toString())) {
             tipo = ShowCaseType.FORM;

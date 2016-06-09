@@ -23,7 +23,7 @@ public class IntegerMapper extends StringMapper {
     @Override
     public Component appendInput() {
         Optional<Integer> size = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
         TextField<Integer> comp = new TextField<>(model.getObject().getName(),
                 new MInstanciaValorModel<>(model), Integer.class);
         formGroup.appendInputText(comp.setLabel(labelModel).setOutputMarkupId(true)

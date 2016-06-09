@@ -9,6 +9,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import br.net.mirante.singular.showcase.component.ShowCaseType;
+import br.net.mirante.singular.showcase.view.page.studio.StudioHomePage;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -54,9 +55,7 @@ public class Header extends Panel {
         dropdownMenu.adicionarMenu(i -> new Link<String>(i) {
             @Override
             public void onClick() {
-                PageParameters pp = new PageParameters();
-                pp.add(ListPage.PARAM_TIPO, ShowCaseType.FORM);
-                setResponsePage(ListPage.class, pp);
+                setResponsePage(ListPage.class, ShowCaseType.buildPageParameters(ShowCaseType.FORM));
             }
 
             @Override
@@ -67,9 +66,7 @@ public class Header extends Panel {
         dropdownMenu.adicionarMenu(i -> new Link<String>(i) {
             @Override
             public void onClick() {
-                PageParameters pp = new PageParameters();
-                pp.add(ListPage.PARAM_TIPO, ShowCaseType.STUDIO);
-                setResponsePage(ListPage.class, pp);
+                setResponsePage(StudioHomePage.class, ShowCaseType.buildPageParameters(ShowCaseType.STUDIO));
             }
 
             @Override

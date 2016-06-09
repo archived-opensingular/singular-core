@@ -45,7 +45,7 @@ public class DecimalMapper extends StringMapper {
 
     private Map<String, Object> withOptionsOf(IModel<? extends SInstance> model) {
         Optional<Integer> inteiroMaximo = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_INTEGER_MAX_LENGTH));
         Integer decimal = getDecimalMaximo(model);
         Map<String, Object> options = defaultOptions();
         options.put("integerDigits", inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS));
@@ -55,7 +55,7 @@ public class DecimalMapper extends StringMapper {
 
     private Integer getDecimalMaximo(IModel<? extends SInstance> model) {
         Optional<Integer> decimalMaximo = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_DECIMAL_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_FRACTIONAL_MAX_LENGTH));
         return (Integer) decimalMaximo.orElse(DEFAULT_DIGITS);
     }
 

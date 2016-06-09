@@ -388,7 +388,7 @@ public abstract class SInstance implements SAttributeEnabled {
         setAttributeValue(SPackageBasic.ATR_REQUIRED, value);
     }
     public void updateRequired() {
-        SInstances.updateBooleanAttribute(this, SPackageBasic.ATR_REQUIRED, SPackageBasic.ATR_OBRIGATORIO_FUNCTION);
+        SInstances.updateBooleanAttribute(this, SPackageBasic.ATR_REQUIRED, SPackageBasic.ATR_REQUIRED_FUNCTION);
     }
     public boolean exists() {
         return SInstances.attributeValue(this, SPackageBasic.ATR_EXISTS, true);

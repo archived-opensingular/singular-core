@@ -31,7 +31,7 @@ public class CaseUpdateListenerPackage extends SPackage {
         final STypeComposite<SIComposite> testForm = pb.createCompositeType("testForm");
         testForm.asAtr().label("Endereço");
         cep = testForm.addFieldString("cep");
-        cep.asAtr().tamanhoMaximo(8).label("CEP (Use os valores 70863520 ou 70070120)");
+        cep.asAtr().maxLength(8).label("CEP (Use os valores 70863520 ou 70070120)");
         final STypeString logradouro = testForm.addFieldString("logradouro");
         logradouro
                 .asAtr().enabled(false)

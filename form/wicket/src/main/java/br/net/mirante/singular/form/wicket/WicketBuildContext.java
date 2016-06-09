@@ -242,7 +242,7 @@ public class WicketBuildContext implements Serializable {
         IModel<?> model = formComponent.getModel();
         if (model instanceof IMInstanciaAwareModel<?>) {
             SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
-            return instancia.as(SPackageBasic.aspect()).getLabel();
+            return instancia.asAtr().getLabel();
         }
         return "[" + formComponent.getId() + "]";
     }
@@ -258,7 +258,7 @@ public class WicketBuildContext implements Serializable {
             SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
             List<String> labels = new ArrayList<>();
             while (instancia != null) {
-                labels.add(instancia.as(SPackageBasic.aspect()).getLabel());
+                labels.add(instancia.asAtr().getLabel());
                 instancia = instancia.getParent();
             }
             labels.removeIf(it -> Strings.defaultIfEmpty(it, "").trim().isEmpty());
