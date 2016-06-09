@@ -12,8 +12,10 @@ import static java.util.stream.Collectors.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapper;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
@@ -82,6 +84,16 @@ public class TabMapper extends DefaultCompositeMapper {
                 })));
             }
         };
+
+        if (ctx.getCurrentInstance().getParent() == null) {
+            panel.add(new ClassAttributeModifier() {
+                @Override
+                protected Set<String> update(Set<String> set) {
+                    set.add("singular-container");
+                    return set;
+                }
+            });
+        }
 
         for (SViewTab.STab tab : tabView.getTabs()) {
             defineTabIconCss(ctx, instance, tab.getTypesName());
