@@ -92,14 +92,12 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
                     .addNewBlock("Fórmula do produto")
                     .addToBlock("listaFormulaProduto")
-                    .addToBlock("OutraFormula")
+//                    .addToBlock("OutraFormula")
 
-                    .addNewBlock()
+                    .addNewBlock("Indicação Terapeutica")
                     .addToBlock("indicacaoTerapeutica")
                     .addToBlock("informarOutraIndicacaoTerapeutica")
                     .addToBlock("outraIndicacaoTerapeutica")
-
-                    .addNewBlock("Referências das indicações propostas")
                     .addToBlock("listaReferencias")
 
                     .addNewBlock("Layout folheto")
@@ -260,7 +258,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 listaFormulaProduto.addFieldListOfAttachment("formulasProduto", "formulaProduto");
         formulasProduto
                 .withMiniumSizeOf(1);
-        notificacaoSimplificada.addField("OutraFormula", STypeAttachment.class).asAtr().label("Outra Formula");
+//        notificacaoSimplificada.addField("OutraFormula", STypeAttachment.class).asAtr().label("Outra Formula");
 
     }
 
@@ -281,6 +279,8 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeAttachmentList indicacoesPropostas =
                 listaReferencias.addFieldListOfAttachment("indicacoesPropostas", "indicacaoProposta");
         indicacoesPropostas
+                .asAtr().label("Referências da indicação proposta");
+        indicacoesPropostas
                 .withMiniumSizeOf(1);
     }
 
@@ -290,7 +290,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeSimple                 descricaoIndicacaoTerapeutica = indicacaoTerapeutica.addFieldString("descricao");
         indicacaoTerapeutica
                 .asAtr()
-                .label("Indicação terapêutica")
+                .label("Indicação")
                 .required()
                 .asAtrBootstrap()
                 .colPreference(6);
@@ -315,7 +315,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .maxLength(600)
                 .label("Outra indicação terapêutica")
                 .dependsOn(informarOutraIndicacaoTerapeutica)
-                .visible(i -> BooleanUtils.isTrue(Value.of(i, informarOutraIndicacaoTerapeutica)));
+                .enabled(i -> BooleanUtils.isTrue(Value.of(i, informarOutraIndicacaoTerapeutica)));
 
         indicacaoTerapeutica
                 .asAtr()
