@@ -8,7 +8,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -39,7 +41,15 @@ public class FormEntity extends BaseEntity<Long> {
     @Lob
     @Column(name = "DS_XML_ANOTACAO")
     private String xmlAnnotations;
-    
+
+    @ManyToOne
+    @JoinColumn(name = "CO_TIPO_FORMULARIO")
+    private FormTypeEntity formType;
+
+    @ManyToOne
+    @JoinColumn(name = "CO_COLECAO")
+    private CollectionEntiry collection;
+
     public Long getCod() {
         return cod;
     }
@@ -64,4 +74,19 @@ public class FormEntity extends BaseEntity<Long> {
         this.xmlAnnotations = xmlAnnotations;
     }
 
+    public FormTypeEntity getFormType() {
+        return formType;
+    }
+
+    public void setFormType(FormTypeEntity formType) {
+        this.formType = formType;
+    }
+
+    public CollectionEntiry getCollection() {
+        return collection;
+    }
+
+    public void setCollection(CollectionEntiry collection) {
+        this.collection = collection;
+    }
 }

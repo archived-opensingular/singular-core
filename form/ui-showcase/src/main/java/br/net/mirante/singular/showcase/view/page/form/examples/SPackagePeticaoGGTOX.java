@@ -217,7 +217,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
                 STypeString field = sinonimia.addFieldString("nomeSinonimia", true);
 
-                field.asAtr().label("Sinonímia sugerida").tamanhoMaximo(100);
+                field.asAtr().label("Sinonímia sugerida").maxLength(100);
 
                 return field;
             }
@@ -268,7 +268,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 type = root.getElementsType();
 
                 nome = type.addFieldString("nome", true);
-                nome.asAtr().label("Nome comercial").tamanhoMaximo(80);
+                nome.asAtr().label("Nome comercial").maxLength(80);
 
                 fabricante = new Fabricante(pb);
             }
@@ -360,7 +360,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             private STypeInteger createFieldCapacidade() {
                 STypeInteger field = type.addFieldInteger("capacidade", true);
                 field.asAtr().label("Capacidade")
-                        .tamanhoMaximo(15)
+                        .maxLength(15)
                         .asAtrBootstrap().colPreference(4);
                 return field;
             }
@@ -480,7 +480,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             private STypeString createAspectoField() {
                 STypeString f = type.addFieldString("aspecto", true);
                 f.asAtr().label("Aspecto")
-                        .tamanhoMaximo(50)
+                        .maxLength(50)
                         .asAtrBootstrap().colPreference(4);
                 return f;
             }
@@ -488,7 +488,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             private STypeString createCorField() {
                 STypeString f = type.addFieldString("cor", true);
                 f.asAtr().label("Cor")
-                        .tamanhoMaximo(40)
+                        .maxLength(40)
                         .asAtrBootstrap().colPreference(3);
                 return f;
             }
@@ -496,7 +496,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             private STypeString createOdorField() {
                 STypeString f = type.addFieldString("odor");
                 f.asAtr().label("Odor")
-                        .tamanhoMaximo(40)
+                        .maxLength(40)
                         .asAtrBootstrap().colPreference(3);
                 return f;
             }
@@ -724,7 +724,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             private STypeString createStringField(String fieldname, String label, Integer maxSize, Integer colPreference) {
                 STypeString f = type.addFieldString(fieldname);
-                f.asAtr().label(label).tamanhoMaximo(maxSize)
+                f.asAtr().label(label).maxLength(maxSize)
                         .asAtrBootstrap().colPreference(colPreference);
                 return f;
             }

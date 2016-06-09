@@ -51,7 +51,7 @@ public class TableListMapper extends AbstractListaMapper {
     public void buildView(WicketBuildContext ctx) {
 
         if (!(ctx.getView() instanceof SViewListByTable)) {
-            throw new SingularFormException("TableListMapper deve ser utilizado com MTableListaView", ctx.getCurrentInstance());
+            throw new SingularFormException("TableListMapper deve ser utilizado com SViewListByTable", ctx.getCurrentInstance());
         }
 
         if (!(ctx.getCurrentInstance() instanceof SIList)) {
@@ -87,10 +87,6 @@ public class TableListMapper extends AbstractListaMapper {
         ctx.configureContainer(label);
         header.appendTag("span", title);
 //        header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
-
-//        if (view.isNewEnabled() && isEdition) {
-//            appendAddButton(list, form, header, false);
-//        }
 
         final SType<SInstance> elementsType = list.getObject().getElementsType();
 

@@ -22,7 +22,7 @@ public class UpdateListenerTest extends SingularFormBaseTest {
 
         baseType.asAtr().label("Endereço");
         cep = baseType.addFieldString("cep");
-        cep.asAtr().tamanhoMaximo(8).label("CEP (Use os valores 70863520 ou 70070120)");
+        cep.asAtr().maxLength(8).label("CEP (Use os valores 70863520 ou 70070120)");
         logradouro = baseType.addFieldString("logradouro");
         logradouro
                 .asAtr().enabled(false)

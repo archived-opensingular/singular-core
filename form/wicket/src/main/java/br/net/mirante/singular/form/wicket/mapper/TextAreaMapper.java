@@ -32,7 +32,7 @@ public class TextAreaMapper extends StringMapper {
             textArea.setLabel(labelModel);
             formGroup.appendTextarea(textArea, mTextAreaView.getLines());
 
-            Optional<Integer> maxSize = Optional.ofNullable(mi.getAttributeValue(SPackageBasic.ATR_TAMANHO_MAXIMO));
+            Optional<Integer> maxSize = Optional.ofNullable(mi.getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
 
             if (maxSize.isPresent()) {
                 textArea.add(StringValidator.maximumLength(maxSize.get()));
