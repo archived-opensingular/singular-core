@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.form.view.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -43,10 +44,6 @@ import br.net.mirante.singular.form.type.core.STypeBoolean;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.view.SViewListByTable;
-import br.net.mirante.singular.form.view.SViewSearchModal;
-import br.net.mirante.singular.form.view.SViewTextArea;
 
 public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
@@ -80,6 +77,32 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         addListaReferencias(notificacaoSimplificada);
         addListaLayoutFolheto(notificacaoSimplificada);
 
+
+        notificacaoSimplificada.withView(new SViewByBlock("Medicamento Dinamizado"), view -> {
+            view
+                    .addNewBlock()
+                    .addToBlock("nomeComercial")
+                    .addToBlock("classe")
+                    .addToBlock("linhaProducao")
+                    .addToBlock("formulasHomeopaticas")
+
+                    .addNewBlock("Acondicionamento")
+                    .addToBlock("listaAcondicionamento")
+
+                    .addNewBlock("Fórmula do produto")
+                    .addToBlock("listaFormulaProduto")
+
+                    .addNewBlock()
+                    .addToBlock("indicacaoTerapeutica")
+                    .addToBlock("informarOutraIndicacaoTerapeutica")
+                    .addToBlock("outraIndicacaoTerapeutica")
+
+                    .addNewBlock("Referências das indicações propostas")
+                    .addToBlock("listaReferencias")
+
+                    .addNewBlock("Layout folheto")
+                    .addToBlock("listaLayoutFolheto");
+        });
     }
 
     private void addCaracteristicas(STypeComposite<?> notificacaoSimplificada) {
@@ -93,8 +116,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .withView(SViewListByTable::new)
                 .asAtr()
                 .dependsOn(linhaProducao)
-                .visible(i -> Value.notNull(i, linhaProducao.id))
-                .label("Insumo ativo");
+                .visible(i -> Value.notNull(i, linhaProducao.id));
 
         final STypeComposite<?>           formulaHomeopatica                             = formulasHomeopaticas.getElementsType();
         final STypeComposite<SIComposite> descricaoDinamizada                            = formulaHomeopatica.addFieldComposite("descricaoDinamizada");
@@ -214,8 +236,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                         .col(acondicionamento.quantidade)
                         .col(acondicionamento.unidadeMedida.sigla, "Unidade de medida")
                         .col(acondicionamento.estudosEstabilidade, "Estudo de estabilidade")
-                        .col(acondicionamento.prazoValidade))
-                .asAtr().label("Acondicionamento");
+                        .col(acondicionamento.prazoValidade));
         acondicionamento.laudosControle.asAtr().visible(true);
     }
 
@@ -237,8 +258,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 listaFormulaProduto.addFieldListOfAttachment("formulasProduto", "formulaProduto");
         formulasProduto
                 .withMiniumSizeOf(1)
-                .asAtr()
-                .label("Fórmula do produto");
+                .asAtr();
     }
 
     private void addListaLayoutFolheto(STypeComposite<?> notificacaoSimplificada) {
@@ -248,9 +268,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeAttachmentList layoutsBula =
                 listaLayoutFolheto.addFieldListOfAttachment("layoutsfolheto", "layoutfolheto");
         layoutsBula
-                .withMiniumSizeOf(1)
-                .asAtr()
-                .label("Layout folheto");
+                .withMiniumSizeOf(1);
     }
 
     private void addListaReferencias(STypeComposite<?> notificacaoSimplificada) {
@@ -260,9 +278,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeAttachmentList indicacoesPropostas =
                 listaReferencias.addFieldListOfAttachment("indicacoesPropostas", "indicacaoProposta");
         indicacoesPropostas
-                .withMiniumSizeOf(1)
-                .asAtr()
-                .label("Referências das indicações propostas");
+                .withMiniumSizeOf(1);
     }
 
     private void addIndicacaoTerapeutica(STypeComposite<?> notificacaoSimplificada) {

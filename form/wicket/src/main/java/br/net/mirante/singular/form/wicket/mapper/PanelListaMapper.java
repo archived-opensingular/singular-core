@@ -54,7 +54,7 @@ public class PanelListaMapper extends AbstractListaMapper {
         MetronicPanel panel = MetronicPanel.MetronicPanelBuilder.build(id,
                 (heading, form) -> {
                     heading.appendTag("span", new Label("_title", label));
-                    heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
+//                    heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
                 },
                 (content, form) -> {
 

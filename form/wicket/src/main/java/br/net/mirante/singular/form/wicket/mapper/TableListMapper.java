@@ -86,7 +86,7 @@ public class TableListMapper extends AbstractListaMapper {
 
         ctx.configureContainer(label);
         header.appendTag("span", title);
-        header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
+//        header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
 //        if (view.isNewEnabled() && isEdition) {
 //            appendAddButton(list, form, header, false);
