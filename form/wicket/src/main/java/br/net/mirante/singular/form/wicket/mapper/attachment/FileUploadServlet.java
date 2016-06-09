@@ -72,7 +72,6 @@ public class FileUploadServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         validadeMultpart(request);
-//        handleFiles(request, createUploadHandler(), response.getWriter());
         handleFiles(request, response);
     }
 

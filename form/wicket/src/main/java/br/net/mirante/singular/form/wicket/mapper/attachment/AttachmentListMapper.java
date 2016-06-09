@@ -151,16 +151,26 @@ public class AttachmentListMapper extends AbstractListaMapper {
 
             @Override
             protected void buildFooter(BSContainer<?> footer, Form<?> form) {
-                final String markup = "" +
-                        "<button wicket:id=\"_add\" " +
-                        "       class=\"btn btn-add\" type=\"button\" " +
-                        "       title=\"Adicionar item\">" +
-                        "       <i class=\"fa fa-plus\"></i>" +
-                        "           Adicionar item" +
-                        "</button>";
-                final TemplatePanel template = footer.newTemplateTag(tp -> markup);
+//                final String markup = "" +
+//                        "<button wicket:id=\"_add\" " +
+//                        "       class=\"btn btn-add\" type=\"button\" " +
+//                        "       title=\"Carregar Arquivo\">" +
+//                        "       <i class=\"fa fa-upload\"></i>" +
+//                        "           Carregar Arquivo" +
+//                        "</button>";
+//                final TemplatePanel template = footer.newTemplateTag(tp -> markup);
                 if (ctx.getViewMode().isEdition()) {
-                    template.add(appendAddButton(footer, multipleFileUploadHiddenField));
+//                    template.add(appendAddButton(footer, multipleFileUploadHiddenField));
+//                    AddButton btnAdd = new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
+
+//                    final WebMarkupContainer btnAdd = new WebMarkupContainer("_add");
+
+//                    template.add(btnAdd);
+//                    btnAdd.add($b.onReadyScript(() -> {
+//                        return String.format(CLICK_DELEGATE_SCRIPT_TEMPLATE,
+//                                template.getMarkupId(true), multipleFileUploadHiddenField.getMarkupId(true));
+//                    }));
+                    appendAddButton(footer, multipleFileUploadHiddenField);
                 }else{
                     footer.setVisible(false);
                 }
@@ -203,10 +213,10 @@ public class AttachmentListMapper extends AbstractListaMapper {
     private WebMarkupContainer appendAddButton(BSContainer<?> container, FileUploadField multipleFileUploadHiddenField) {
         final WebMarkupContainer addButton = new WebMarkupContainer("_add");
         container.newTemplateTag(t -> ""
-                + "<button type='button' title='Adicionar Arquivo'"
-                + " wicket:id='_add' class='btn blue btn-sm pull-right'"
-                + " style='" + MapperCommons.BUTTON_STYLE + "'>"
-                + " <i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
+                + "<button type='button' title='Carregar Arquivo'"
+                + " wicket:id='_add' class=\"btn btn-add\" >"
+                + " <i class=\"fa fa-upload\"></i>"
+                + "           Carregar Arquivo"
                 + "</button>"
         ).add(addButton);
 
