@@ -20,7 +20,6 @@ public class CaseValidationPartialCustomizer implements CaseCustomizer {
             final AjaxButton aj = new PartialValidationButton(id, currentInstance);
 
             aj.add($b.attr("value", "Validação Parcial"));
-            aj.add($b.classAppender("grey"));
 
             return aj;
         });

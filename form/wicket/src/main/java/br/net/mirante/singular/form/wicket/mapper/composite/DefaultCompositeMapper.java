@@ -8,6 +8,8 @@ package br.net.mirante.singular.form.wicket.mapper.composite;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 @SuppressWarnings("serial")
 public class DefaultCompositeMapper extends AbstractCompositeMapper {
 
@@ -25,6 +27,8 @@ public class DefaultCompositeMapper extends AbstractCompositeMapper {
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
             if (ctx.getCurrentInstance().getParent() == null) {
                 grid.setCssClass("singular-container");
+                //TEMPORARIO
+                grid.add($b.attrAppender("style", "padding-top:15px", ";"));
             }
             super.buildFields(ctx, grid);
         }

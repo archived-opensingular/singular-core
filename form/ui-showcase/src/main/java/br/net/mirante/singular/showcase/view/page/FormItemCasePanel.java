@@ -167,7 +167,6 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
             };
 
             bsb.add($b.attr("value", getString("label.button.validate")));
-            bsb.add($b.classAppender("red"));
 
             return bsb;
         };
@@ -190,7 +189,6 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
             };
 
             ab.add($b.attr("value", getString("label.button.view.mode")));
-            ab.add($b.classAppender("yellow"));
 
             return ab;
         };
@@ -206,7 +204,7 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
             };
 
             bsb.add($b.attr("value", getString("label.button.save")));
-            bsb.add($b.classAppender("blue"));
+            bsb.add($b.classAppender("send-btn"));
 
             return bsb;
         };
@@ -229,7 +227,6 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
             };
 
             ab.add($b.attr("value", getString("label.button.edit.mode")));
-            ab.add($b.classAppender("yellow"));
 
             return ab;
         };
