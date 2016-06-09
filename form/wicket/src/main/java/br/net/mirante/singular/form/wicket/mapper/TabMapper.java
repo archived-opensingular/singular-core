@@ -89,7 +89,7 @@ public class TabMapper extends DefaultCompositeMapper {
             panel.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> set) {
-                    set.add("singular-container");
+                    set.add("singular-container-tab");
                     return set;
                 }
             });

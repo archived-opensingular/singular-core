@@ -115,6 +115,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
                 .withMiniumSizeOf(1)
                 .withView(SViewListByTable::new)
                 .asAtr()
+                .label("Insumo Ativo")
                 .dependsOn(linhaProducao)
                 .visible(i -> Value.notNull(i, linhaProducao.id));
 
