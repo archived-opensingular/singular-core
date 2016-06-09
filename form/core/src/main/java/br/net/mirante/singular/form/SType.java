@@ -406,7 +406,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     public SType<I> withInitialValue(Object value) {
-        return with(SPackageBasic.ATR_VALOR_INICIAL, value);
+        return with(SPackageBasic.ATR_INITIAL_VALUE, value);
 
     }
 
@@ -429,7 +429,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     public Object getAttributeValueInitialValue() {
-        return getAttributeValue(SPackageBasic.ATR_VALOR_INICIAL);
+        return getAttributeValue(SPackageBasic.ATR_INITIAL_VALUE);
     }
 
     public SType<I> withRequired(Boolean value) {
@@ -838,7 +838,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     public boolean hasValidation() {
         return isRequired() ||
-                getAttributeValue(SPackageBasic.ATR_OBRIGATORIO_FUNCTION) != null ||
+                getAttributeValue(SPackageBasic.ATR_REQUIRED_FUNCTION) != null ||
                 !hasValidationInternal();
     }
 

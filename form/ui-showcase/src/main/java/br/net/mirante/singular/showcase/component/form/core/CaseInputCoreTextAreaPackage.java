@@ -31,12 +31,12 @@ public class CaseInputCoreTextAreaPackage extends SPackage {
             .withTextAreaView(view->view.setLines(2))
             .asAtr()
             .label("Observação (2 linhas e 500 de limite)")
-            .tamanhoMaximo(500);
+            .maxLength(500);
 
         tipoMyForm.addFieldString("observacao3")
                 .withTextAreaView(view->view.setLines(10))
                 .asAtr()
                 .label("Observação (10 linhas e 5000 de limite)")
-                .tamanhoMaximo(5000);
+                .maxLength(5000);
     }
 }

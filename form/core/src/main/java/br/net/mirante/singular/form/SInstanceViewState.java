@@ -41,7 +41,7 @@ public enum SInstanceViewState {
             return SInstanceViewState.HIDDEN;
 
         final boolean exists = instance.exists();
-        final Boolean visible = SInstances.attributeValue(instance, SPackageBasic.ATR_VISIVEL, null);
+        final Boolean visible = SInstances.attributeValue(instance, SPackageBasic.ATR_VISIBLE, null);
         final Boolean enabled = SInstances.attributeValue(instance, SPackageBasic.ATR_ENABLED, null);
 
         if (exists) {

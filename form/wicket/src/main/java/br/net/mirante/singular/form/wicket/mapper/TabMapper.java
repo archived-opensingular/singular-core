@@ -12,7 +12,10 @@ import static java.util.stream.Collectors.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapper;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
@@ -30,7 +33,7 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.panel.BSPanelGrid;
 
-public class TabMapper extends DefaultCompostoMapper {
+public class TabMapper extends DefaultCompositeMapper {
 
     @Override
     @SuppressWarnings("unchecked")
@@ -81,6 +84,16 @@ public class TabMapper extends DefaultCompostoMapper {
                 })));
             }
         };
+
+        if (ctx.getCurrentInstance().getParent() == null) {
+            panel.add(new ClassAttributeModifier() {
+                @Override
+                protected Set<String> update(Set<String> set) {
+                    set.add("singular-container-tab");
+                    return set;
+                }
+            });
+        }
 
         for (SViewTab.STab tab : tabView.getTabs()) {
             defineTabIconCss(ctx, instance, tab.getTypesName());

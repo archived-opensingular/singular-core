@@ -27,8 +27,8 @@ public class CaseInputCoreMoneyPackage extends SPackage {
 
         tipoMyForm.addFieldMonetary("monetarioLongo")
                 .asAtr().label("Monetário com 15 inteiros e 3 decimais")
-                .tamanhoInteiroMaximo(15)
-                .tamanhoDecimalMaximo(3);
+                .integerMaxLength(15)
+                .fractionalMaxLength(3);
 
         super.onLoadPackage(pb);
     }

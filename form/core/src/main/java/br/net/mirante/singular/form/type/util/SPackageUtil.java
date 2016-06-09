@@ -21,6 +21,6 @@ public class SPackageUtil extends SPackage {
         pb.createType(STypePersonName.class);
         pb.createType(STypeLatitudeLongitude.class);
 
-        pb.addAttribute(STypeYearMonth.class, SPackageBasic.ATR_TAMANHO_EDICAO, 7);
+        pb.addAttribute(STypeYearMonth.class, SPackageBasic.ATR_EDIT_SIZE, 7);
     }
 }
