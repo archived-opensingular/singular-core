@@ -68,7 +68,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         final STypeComposite<?> notificacaoSimplificada = pb.createCompositeType(TIPO);
         notificacaoSimplificada.asAtr().label("Medicamento Dinamizado");
-        notificacaoSimplificada.asAtr().displayString("${nomeComercial.nomeComercial} - ${caracteristicas.linhaProducao.descricao} (<#list caracteristicas.formulasHomeopaticas as c>${c.descricaoDinamizada.descricao}<#sep>, </#sep></#list>) ");
+        notificacaoSimplificada.asAtr().displayString("${nomeComercial} - ${linhaProducao.descricao} (<#list formulasHomeopaticas as c>${c.descricaoDinamizada.descricao}<#sep>, </#sep></#list>) ");
 
         addNomeComercial(notificacaoSimplificada);
         addCaracteristicas(notificacaoSimplificada);
