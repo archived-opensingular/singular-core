@@ -81,58 +81,6 @@ public class FileUploadServlet extends HttpServlet {
         }
     }
 
-//    private void handleFiles(HttpServletRequest request, ServletFileUpload uploadHandler, PrintWriter writer) {
-//        JSONArray filesJson = new JSONArray();
-//        try {
-//            processFiles(filesJson, uploadHandler.parseRequest(request));
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        } finally {
-//            JSONObject answer = new JSONObject();
-//            answer.put("files", filesJson);
-//            writer.write(answer.toString());
-//            writer.close();
-//        }
-//    }
-
-//    private void processFiles(JSONArray fileGroup, List<FileItem> items) throws Exception {
-//        for (FileItem item : items) {
-//            processFileItem(fileGroup, item);
-//        }
-//    }
-//
-//    private void processFileItem(JSONArray fileGroup, FileItem item) throws Exception {
-//        if (!item.isFormField()) {
-//            writeFile(item);
-//            fileGroup.put(createJsonFile(item));
-//        }
-//    }
-//
-//    private void writeFile(FileItem item) throws Exception {
-//        item.write(new File(BASE_PATH, item.getName()));
-//    }
-//
-//    private JSONObject createJsonFile(FileItem item) {
-//        try {
-//            JSONObject jsonFile = new JSONObject();
-//            jsonFile.put("name", item.getName());
-//            jsonFile.put("fileId", item.getName());
-//            jsonFile.put("hashSHA1", calculateSha1(item));
-//            jsonFile.put("size", item.getSize());
-//            return jsonFile;
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    private String calculateSha1(FileItem item) throws IOException, NoSuchAlgorithmException {
-//        try (DigestInputStream shaStream = new DigestInputStream(
-//                item.getInputStream(), MessageDigest.getInstance("SHA-1"))) {
-//            byte[] sha1 = shaStream.getMessageDigest().digest();
-//            return HashUtil.toSHA1Base16(sha1);
-//        }
-//    }
-
     private ServletFileUpload createUploadHandler() {
         return new ServletFileUpload(new DiskFileItemFactory());
     }
@@ -141,14 +89,6 @@ public class FileUploadServlet extends HttpServlet {
         ServletFileUpload handler = createUploadHandler();
         JSONArray filesJson = new JSONArray();
         try {
-            /*synchronized(temporaryIds){
-                for(String id: temporaryIds){
-                    temporaryHandler().deleteAttachment(id);
-                }
-                temporaryIds.clear();
-            }*/
-//            processFiles(filesJson, request.getFile(FileUploadPanel.PARAM_NAME));
-
             Map<String, List<FileItem>> params = handler.parseParameterMap(request);
 
             List<FileItem> upload_id = params.get("upload_id");
@@ -177,18 +117,8 @@ public class FileUploadServlet extends HttpServlet {
                                  IAttachmentPersistenceHandler service,
                                  FileItem item) throws Exception {
         if (!item.isFormField()) {
-//            IAttachmentRef ref = temporaryHandler().addAttachment(item.getInputStream());
             IAttachmentRef ref = service.addAttachment(item.getInputStream());
-
             fileGroup.put(createJsonFile(item, ref));
-            /*instance.setFileName(item.getName());
-            instance.setFileId(ref.getId());
-            instance.setFileHashSHA1(ref.getHashSHA1());
-            instance.setFileSize(ref.getSize());
-//            instance.setTemporary();
-            synchronized(temporaryIds){
-                temporaryIds.add(ref.getId());
-            }*/
         }
     }
 

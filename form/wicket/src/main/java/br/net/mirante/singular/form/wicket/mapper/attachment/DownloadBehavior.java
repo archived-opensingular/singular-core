@@ -33,10 +33,6 @@ public class DownloadBehavior extends Behavior implements IResourceListener {
         this.instance = instance;
     }
 
-    public void setWebWrapper(WebWrapper w) {
-        this.w = w;
-    }
-
     @Override
     public void bind(Component component) {
         this.component = component;
@@ -57,20 +53,7 @@ public class DownloadBehavior extends Behavior implements IResourceListener {
         IRequestParameters parameters = request.getRequestParameters();
         StringValue id = parameters.getParameterValue("fileId");
         StringValue name = parameters.getParameterValue("fileName");
-//        if ((id.isEmpty() || name.isEmpty() )&& !attachment.isTemporary()) {
-//            writeFileFromPersistent(attachment, document);
-//        }else if(attachment.isTemporary()){
-//            writeFileFromTemporary(document, attachment.getFileId(), attachment.getFileName());
-//        } else {
-            writeFileFromTemporary(document, id.toString(), name.toString());
-//        }
-    }
-
-    private void writeFileFromPersistent(SIAttachment attachment, SDocument document) throws IOException {
-//        IAttachmentPersistenceHandler handler = document.getAttachmentPersistencePermanentHandler();
-//        IAttachmentRef data = handler.getAttachment(attachment.getFileId());
-//        writeFileToResponse(attachment.getFileName(), data, w.response());
-        writeFileToResponse(attachment.getFileName(),  attachment.getContentAsByteArray(), w.response());
+        writeFileFromTemporary(document, id.toString(), name.toString());
     }
 
     private void writeFileFromTemporary(SDocument document, String fileId, String fileName) throws IOException {
