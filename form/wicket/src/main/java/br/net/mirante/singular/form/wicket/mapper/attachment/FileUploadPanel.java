@@ -45,7 +45,8 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
  * Created by nuk on 27/05/16.
  */
 public class FileUploadPanel extends Panel {
-    public static String PARAM_NAME = "FILE-UPLOAD";
+    public static String PARAM_NAME = "FILE-UPLOAD",
+                   UPLOAD_ID_KEY = "upload_id";
 
     private final IModel<SIAttachment> model;
     private final ViewMode viewMode;
@@ -54,7 +55,6 @@ public class FileUploadPanel extends Panel {
     private final HiddenField nameField, hashField, sizeField, idField;
     private final WebMarkupContainer filesContainer, progressBar;
     private final DownloadBehavior downloader;
-//    private final UploadBehavior uploader;
 
     private final Label fileName = new Label("fileName", new AbstractReadOnlyModel<String>() {
         @Override
@@ -199,34 +199,7 @@ public class FileUploadPanel extends Panel {
                 nameField, hashField, sizeField, idField,
                 progressBar = new WebMarkupContainer("progress")
         );
-        add(
-            downloader = new DownloadBehavior(model.getObject())
-                /*,
-            uploader = new UploadBehavior(model.getObject())*/
-        );
-    }
-
-    private WebMarkupContainer buildFileDummyField(String id) {
-        WebMarkupContainer markup;
-        if (viewMode.isEdition()) {
-            markup = new WebMarkupContainer(id);
-            markup.add($b.classAppender("form-control"));
-            markup.add($b.classAppender("fileDummyField"));
-            return markup;
-        } else {
-            markup = BSWellBorder.small(id);
-        }
-        return markup;
-    }
-
-    public WebMarkupContainer buildAttachmentShadow() {
-        WebMarkupContainer attachmentShadow = new WebMarkupContainer("attachmentShadow");
-        if (viewMode.isEdition()) {
-            attachmentShadow.add($b.classAppender("attachmentShadow"));
-        } else {
-            attachmentShadow.add($b.attr("style", "display:none;"));
-        }
-        return attachmentShadow;
+        add(downloader = new DownloadBehavior(model.getObject()));
     }
 
     @Override
@@ -238,41 +211,46 @@ public class FileUploadPanel extends Panel {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("FileUploadPanel.js")));
-        String contextPath = getWebApplication().getServletContext().getContextPath();
-        String uploadUrl = contextPath + FileUploadServlet.UPLOAD_URL;
+        response.render(OnDomReadyHeaderItem.forScript(generateInitJS()));
+    }
 
-        IAttachmentPersistenceHandler service = ((SIAttachment) model.getObject()).getDocument().getAttachmentPersistenceTemporaryHandler();
-        HttpSession session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
-
-        UUID serviceId = FileUploadServlet.registerService(session, service);
-
-        response.render(OnDomReadyHeaderItem.forScript(
-                " $(function () { \n" +
-                "     var params = { \n" +
-                "             file_field_id: '"+fileField.getMarkupId()+"', \n" +
-                "             files_id : '"+ filesContainer.getMarkupId()+"', \n" +
-                "             progress_bar_id : '"+progressBar.getMarkupId()+"', \n" +
-                "  \n" +
-                "             name_id: '"+nameField.getMarkupId()+"', \n" +
-                "             id_id: '"+idField.getMarkupId()+"', \n" +
-                "             hash_id: '"+hashField.getMarkupId()+"', \n" +
-                "             size_id: '"+sizeField.getMarkupId()+"', \n" +
-                "  \n" +
-                "             param_name : '"+PARAM_NAME+"', \n" +
-//                "             upload_url : '"+uploader.getUrl()+"', \n" +
-                "             upload_url : '"+uploadUrl+"', \n" +
-                "             upload_id : '"+serviceId.toString()+"', \n" +
-                "             download_url : '"+downloader.getUrl()+"', \n" +
-                "  \n" +
-                "     }; \n" +
-                "  \n" +
-                "     window.FileUploadPanel.setup(params); \n" +
-                " });"
-        ));
+    private String generateInitJS() {
+        return " $(function () { \n" +
+        "     var params = { \n" +
+        "             file_field_id: '"+fileField.getMarkupId()+"', \n" +
+        "             files_id : '"+ filesContainer.getMarkupId()+"', \n" +
+        "             progress_bar_id : '"+progressBar.getMarkupId()+"', \n" +
+        "  \n" +
+        "             name_id: '"+nameField.getMarkupId()+"', \n" +
+        "             id_id: '"+idField.getMarkupId()+"', \n" +
+        "             hash_id: '"+hashField.getMarkupId()+"', \n" +
+        "             size_id: '"+sizeField.getMarkupId()+"', \n" +
+        "  \n" +
+        "             param_name : '"+PARAM_NAME+"', \n" +
+        "             upload_url : '"+ uploadUrl() +"', \n" +
+        "             upload_id : '"+ serviceId().toString()+"', \n" +
+        "             download_url : '"+downloader.getUrl()+"', \n" +
+        "  \n" +
+        "     }; \n" +
+        "  \n" +
+        "     window.FileUploadPanel.setup(params); \n" +
+        " });";
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
         return new PackageResourceReference(getClass(), resourceName);
+    }
+
+    private String uploadUrl() {
+        String contextPath = getWebApplication().getServletContext().getContextPath();
+        return contextPath + FileUploadServlet.UPLOAD_URL;
+    }
+
+    private UUID serviceId() {
+        IAttachmentPersistenceHandler service = ((SIAttachment) model.getObject()).getDocument().getAttachmentPersistenceTemporaryHandler();
+        HttpSession session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
+
+        return FileUploadServlet.registerService(session, service);
     }
 
     public FileUploadField getUploadField() {

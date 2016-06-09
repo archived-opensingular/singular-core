@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.attachment;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,18 +21,20 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.request.http.WebResponse;
 
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
+import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.UPLOAD_ID_KEY;
 import static java.util.Collections.synchronizedList;
 
 /**
- * Created by nuk on 07/06/16.
+ * Servlet responsável pelo upload de arquivos de forma assíncrona.
+ * Observer que é necessário cadastrar o serviço de persistência através do
+ * FileUploadServlet.registerService o UUID retornado deve ser usado no
+ * parâmetro UPLOAD_ID_KEY do request.
  */
 @WebServlet(urlPatterns = { FileUploadServlet.UPLOAD_URL+"/*" })
 public class FileUploadServlet extends HttpServlet {
     public final static String UPLOAD_URL = "/fileUpload";
-    private final static String BASE_PATH = "/tmp/";
 
     private final static
     String SERVICE_MAP_KEY = "FileUploadServlet-ServiceMap",
@@ -45,9 +48,15 @@ public class FileUploadServlet extends HttpServlet {
         Map<IAttachmentPersistenceHandler, UUID> uuids =
                 createOfGetSessionMap(session, UUID_MAP_KEY);
 
-        if(uuids.containsKey(service)){
-            return uuids.get(service);
-        }
+        return regsterOrReturnKnownId(service, services, uuids);
+    }
+
+    private static UUID regsterOrReturnKnownId(IAttachmentPersistenceHandler service, Map<UUID, IAttachmentPersistenceHandler> services, Map<IAttachmentPersistenceHandler, UUID> uuids) {
+        if(uuids.containsKey(service)){ return uuids.get(service);  }
+        return registerNewService(service, services, uuids);
+    }
+
+    private static UUID registerNewService(IAttachmentPersistenceHandler service, Map<UUID, IAttachmentPersistenceHandler> services, Map<IAttachmentPersistenceHandler, UUID> uuids) {
         UUID id = UUID.randomUUID();
         services.put(id, service);
         uuids.put(service, id);
@@ -58,8 +67,7 @@ public class FileUploadServlet extends HttpServlet {
         if(session.getAttribute(mapKey) == null){
             session.setAttribute(mapKey, new HashMap<>());
         }
-        return (Map<UUID, IAttachmentPersistenceHandler>)
-                session.getAttribute(mapKey);
+        return (Map<UUID, IAttachmentPersistenceHandler>) session.getAttribute(mapKey);
     }
 
     private static IAttachmentPersistenceHandler getService(HttpSession session,
@@ -72,7 +80,10 @@ public class FileUploadServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         validadeMultpart(request);
-        handleFiles(request, response);
+        FileUploadProcessor processor = new FileUploadProcessor(
+                request, response,
+                (id)-> getService(request.getSession(),id));
+        processor.handleFiles();
     }
 
     private void validadeMultpart(HttpServletRequest request) {
@@ -81,28 +92,64 @@ public class FileUploadServlet extends HttpServlet {
         }
     }
 
-    private ServletFileUpload createUploadHandler() {
+}
+
+class FileUploadProcessor {
+
+    private JSONArray filesJson;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+
+    private ServletFileUpload handler() {
         return new ServletFileUpload(new DiskFileItemFactory());
     }
 
-    private void handleFiles(HttpServletRequest request, HttpServletResponse response) {
-        ServletFileUpload handler = createUploadHandler();
-        JSONArray filesJson = new JSONArray();
-        try {
-            Map<String, List<FileItem>> params = handler.parseParameterMap(request);
+    private Function<UUID, IAttachmentPersistenceHandler> getService;
 
-            List<FileItem> upload_id = params.get("upload_id");
-            if(!upload_id.isEmpty() && upload_id.get(0).isFormField()){
-                FileItem id_field = upload_id.get(0);
-                UUID id = UUID.fromString(id_field.getString());
-                IAttachmentPersistenceHandler service = getService(request.getSession(), id);//TODO: FIX THiS, it can be null
-                processFiles(filesJson, service, params.get(PARAM_NAME));
+    FileUploadProcessor(
+            HttpServletRequest request, HttpServletResponse response,
+            Function<UUID, IAttachmentPersistenceHandler> getService){
+        this.request = request;
+        this.response = response;
+        this.getService = getService;
+        filesJson = new JSONArray();
+    }
+
+    public void handleFiles() {
+        try {
+            Map<String, List<FileItem>> params = handler().parseParameterMap(request);
+            UUID serviceId = serviceId(params);
+            if(serviceId != null){
+                addFileToService(params.get(PARAM_NAME), service(serviceId));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            writeResponseAnswer(response, filesJson);
+            writeResponseAnswer();
         }
+    }
+
+    private UUID serviceId(Map<String, List<FileItem>> params) {
+        List<FileItem> upload_id = params.get(UPLOAD_ID_KEY);
+        if(!upload_id.isEmpty() && upload_id.get(0).isFormField()){
+            return idFromField(upload_id.get(0));
+        }
+        return null;
+    }
+
+    private IAttachmentPersistenceHandler service(UUID id) {
+        return getService.apply(id);
+    }
+
+    private void addFileToService(List<FileItem> files,
+                                  IAttachmentPersistenceHandler service) throws Exception {
+        if(service != null){
+            processFiles(filesJson, service, files);
+        }
+    }
+
+    private UUID idFromField(FileItem id_field) {
+        return UUID.fromString(id_field.getString());
     }
 
     private void processFiles(JSONArray fileGroup,
@@ -136,7 +183,7 @@ public class FileUploadServlet extends HttpServlet {
         }
     }
 
-    private void writeResponseAnswer(HttpServletResponse response, JSONArray filesJson) {
+    private void writeResponseAnswer() {
         JSONObject answer = new JSONObject();
         answer.put("files", filesJson);
 
@@ -150,5 +197,4 @@ public class FileUploadServlet extends HttpServlet {
                     "Not possible to perform upload response.",e);
         }
     }
-
 }
