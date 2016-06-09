@@ -92,6 +92,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
                     .addNewBlock("Fórmula do produto")
                     .addToBlock("listaFormulaProduto")
+                    .addToBlock("OutraFormula")
 
                     .addNewBlock()
                     .addToBlock("indicacaoTerapeutica")
@@ -258,11 +259,9 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeAttachmentList formulasProduto =
                 listaFormulaProduto.addFieldListOfAttachment("formulasProduto", "formulaProduto");
         formulasProduto
-                .withMiniumSizeOf(1)
-                .asAtr()
-                .label("Fórmula do produto");
+                .withMiniumSizeOf(1);
         notificacaoSimplificada.addField("OutraFormula", STypeAttachment.class).asAtr().label("Outra Formula");
-                .asAtr();
+
     }
 
     private void addListaLayoutFolheto(STypeComposite<?> notificacaoSimplificada) {
