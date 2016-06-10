@@ -16,12 +16,7 @@ import br.net.mirante.singular.showcase.view.template.Template;
 @SuppressWarnings("serial")
 public class ListPage extends Template {
 
-    public static final String PARAM_TIPO = "tp";
 
-    public static enum Tipo {
-        FORM,
-        STUDIO;
-    }
 
     protected Content getContent(String id) {
         return new ListContent(id);

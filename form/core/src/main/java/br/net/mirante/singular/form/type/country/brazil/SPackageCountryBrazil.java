@@ -16,7 +16,7 @@ public class SPackageCountryBrazil extends SPackage {
         pb.createType(STypeTelefoneNacional.class);
 
         STypeComposite<?> endereco = pb.createCompositeType("Endereco");
-        endereco.addFieldString("rua").asAtr().tamanhoMaximo(50);
+        endereco.addFieldString("rua").asAtr().maxLength(50);
         endereco.addFieldString("bairro");
         endereco.addField("cep", STypeCEP.class);
     }

@@ -67,7 +67,7 @@ public class ShowCaseTable {
             .addCase(new XsdCaseSimple())
             .addCase(new XsdCaseSimple2());
 
-        addGroup(Group.STUDIO);
+        addGroup(Group.STUDIO_SAMPLES);
         //@formatter:on
     }
 

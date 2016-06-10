@@ -14,11 +14,11 @@ import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.*;
 import br.net.mirante.singular.showcase.component.CaseBaseForm;
 import br.net.mirante.singular.showcase.component.ShowCaseType;
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado.SPackageNotificacaoSimplificadaDinamizado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.SPackageNotificacaoSimplificadaGasMedicinal;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.habilitacao.SPackageHabilitacaoEmpresa;
@@ -47,7 +47,11 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO, ShowCaseType.FORM);
         add(ExamplePackage.class, ExamplePackage.Types.ORDER.name, ShowCaseType.FORM);
         add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO, ShowCaseType.FORM);
-        add(SPackageNotificacaoSimplificadaBaixoRisco.class, SPackageNotificacaoSimplificadaBaixoRisco.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackagePeticaoPrimariaSimplificada.class, SPackagePeticaoPrimariaSimplificada.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackagePeticaoPrimariaSimplificadaNivelI.class, SPackagePeticaoPrimariaSimplificadaNivelI.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackagePeticaoPrimariaSimplificadaNivelII.class, SPackagePeticaoPrimariaSimplificadaNivelII.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackagePeticaoPrimariaSimplificadaNivelIII.class, SPackagePeticaoPrimariaSimplificadaNivelIII.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackagePeticaoPrimariaSimplificadaNivelIV.class, SPackagePeticaoPrimariaSimplificadaNivelIV.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageNotificacaoSimplificadaDinamizado.class, SPackageNotificacaoSimplificadaDinamizado.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageNotificacaoSimplificadaGasMedicinal.class, SPackageNotificacaoSimplificadaGasMedicinal.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO, ShowCaseType.FORM);

@@ -106,7 +106,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
         justificativa
                 .asAtr().dependsOn(tipoReferencia)
                 .label("Justificativa").visible(i -> TipoReferencia.NAO_SE_APLICA.getId().equals(Value.of(i, idTipoReferencia)))
-                .tamanhoMaximo(600)
+                .maxLength(600)
                 .getTipo().withView(SViewTextArea::new);
 
         resultadosControleQualidade = this.addFieldListOfAttachment("resultadosControleQualidade", "resultado");

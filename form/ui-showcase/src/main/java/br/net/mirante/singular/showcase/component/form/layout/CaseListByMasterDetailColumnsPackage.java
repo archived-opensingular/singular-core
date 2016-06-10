@@ -40,7 +40,8 @@ public class CaseListByMasterDetailColumnsPackage extends SPackage {
             experiencias.withView(new SViewListByMasterDetail()
                     .col(empresa, "Empresa em que trabalhou") // Desta forma, será utilizado rótulo personalizado para esta coluna.
                     .col(dtInicioExperiencia) //Nos demais, a coluna terá o mesmo rótulo do tipo que a define.
-                    .col(dtFimExperiencia))
+                    .col(dtFimExperiencia)
+                    .label("Informar Experiência Anterior"))
             //@destacar:fim
                     .asAtr().label("Experiências profissionais");
             dtInicioExperiencia

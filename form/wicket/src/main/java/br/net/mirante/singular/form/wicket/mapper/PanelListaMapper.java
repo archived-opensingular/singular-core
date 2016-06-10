@@ -9,6 +9,7 @@ import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.view.AbstractSViewListWithControls;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
@@ -40,7 +41,7 @@ public class PanelListaMapper extends AbstractListaMapper {
     public MetronicPanel newpanel(String id, WicketBuildContext ctx) {
         final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
         final SIList<?> iLista = listaModel.getObject();
-        final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
+        final IModel<String> label = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
         final SView view = ctx.getView();
 
         final ViewMode viewMode = ctx.getViewMode();
@@ -52,15 +53,8 @@ public class PanelListaMapper extends AbstractListaMapper {
 
         MetronicPanel panel = MetronicPanel.MetronicPanelBuilder.build(id,
                 (heading, form) -> {
-
                     heading.appendTag("span", new Label("_title", label));
-                    heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
-
-//                    if ((view instanceof SViewListByForm)
-//                            && ((SViewListByForm) view).isNewEnabled()
-//                            && viewMode.isEdition()) {
-//                        appendAddButton(listaModel, form, heading, false);
-//                    }
+//                    heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
                 },
                 (content, form) -> {
 
@@ -75,30 +69,8 @@ public class PanelListaMapper extends AbstractListaMapper {
                     content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
                     content.getParent().add(dependsOnModifier(listaModel));
                 },
-                (footer, form) -> {
-//                    footer.setVisible(false);
-                    final String markup = "" +
-                            "<button wicket:id=\"_add\" " +
-                            "       class=\"btn btn-add\" type=\"button\" " +
-                            "       title=\"Adicionar item\">" +
-                            "       <i class=\"fa fa-plus\"></i>" +
-                            "           Adicionar item" +
-                            "</button>";
-                    final TemplatePanel template = footer.newTemplateTag(tp -> markup);
-                    if (((SViewListByForm) view).isNewEnabled() && viewMode.isEdition()) {
-                        AddButton btn = new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
-                        template.add(btn);
-                    }else{
-                        footer.setVisible(false);
-                    }
-
-                    footer.add(new ClassAttributeModifier(){
-                        protected Set<String> update(Set<String> oldClasses) {
-                            oldClasses.remove("text-right");
-                            return oldClasses;
-                        }
-                    });
-                });
+                (f, form) -> buildFooter(f, form, ctx)
+        );
 
         return panel;
     }

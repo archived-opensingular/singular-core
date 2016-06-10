@@ -179,10 +179,10 @@ public class DependsOnTest {
             category = baseCompositeField.addFieldString("category");
             element = baseCompositeField.addFieldString("element");
 
-            category.as(SPackageBasic.aspect()).label("category");
+            category.asAtr().label("category");
             category.selectionOf(OPTIONS.keySet().toArray(new String[]{}));
 
-            element.as(SPackageBasic.aspect())
+            element.asAtr()
                     .label("Word")
                     .dependsOn(category);
             element.selectionOf(String.class)

@@ -108,13 +108,13 @@ public class MoneyMapper extends ControlsFieldComponentAbstractMapper {
 
     private Integer getDecimalMaximo(IModel<? extends SInstance> model) {
         Optional<Integer> decimalMaximo = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_DECIMAL_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_FRACTIONAL_MAX_LENGTH));
         return decimalMaximo.orElse(DEFAULT_DIGITS);
     }
 
     private Integer getInteiroMaximo(IModel<? extends SInstance> model) {
         Optional<Integer> inteiroMaximo = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_INTEGER_MAX_LENGTH));
         return inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS);
     }
 

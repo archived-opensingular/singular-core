@@ -24,6 +24,9 @@ if(window.FileUploadPanel == undefined){
             paramName: params.param_name,
             singleFileUploads: true,
             dataType: 'json',
+            formData:{
+                'upload_id' : params.upload_id,
+            },
             start: function (e, data) {
                 // console.log($('#files_" + fieldId + "'));
                 $('#' + params.files_id ).html('');

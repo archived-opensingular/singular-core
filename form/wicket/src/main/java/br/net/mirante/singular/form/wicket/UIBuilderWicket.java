@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.context.UIComponentMapper;
 import br.net.mirante.singular.form.type.core.*;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
+import br.net.mirante.singular.form.type.util.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.*;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -18,6 +19,8 @@ import br.net.mirante.singular.form.wicket.mapper.*;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentListMapper;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
+import br.net.mirante.singular.form.wicket.mapper.composite.BlocksCompositeMapper;
+import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.*;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
@@ -105,8 +108,9 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeMonetary.class,                                          MoneyMapper::new)
                 .register(STypeAttachment.class,                                        AttachmentMapper::new)
                 .register(STypeLatitudeLongitude.class,                                 LatitudeLongitudeMapper::new)
-                .register(STypeComposite.class,                                         DefaultCompostoMapper::new)
+                .register(STypeComposite.class,                                         DefaultCompositeMapper::new)
                 .register(STypeComposite.class,   SViewTab.class,                       TabMapper::new)
+                .register(STypeComposite.class,   SViewByBlock.class,                   BlocksCompositeMapper::new)
                 .register(STypeComposite.class,   SViewSelectionByRadio.class,          RadioMapper::new)
                 .register(STypeComposite.class,   SViewSelectionBySelect.class,         SelectMapper::new)
                 .register(STypeComposite.class,   SViewSearchModal.class,               SearchModalMapper::new)

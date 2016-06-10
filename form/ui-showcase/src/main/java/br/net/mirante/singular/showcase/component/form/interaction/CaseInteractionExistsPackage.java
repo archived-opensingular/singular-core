@@ -40,7 +40,7 @@ public class CaseInteractionExistsPackage extends SPackage {
         recordText = record.addFieldString("text");
         recordDate = record.addFieldDate("date");
 
-        exists.as(SPackageBasic.aspect()).label("Exists");
+        exists.asAtr().label("Exists");
 
         record
                 .withExists(ins -> ins.findNearestValue(exists, Boolean.class).orElse(false))

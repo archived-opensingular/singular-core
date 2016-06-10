@@ -27,8 +27,8 @@ public class CaseInputCoreDecimalPackage extends SPackage {
 
         tipoMyForm.addFieldDecimal("decimalLongo")
                 .asAtr().label("Decimal com 15 inteiros e 10 dígitos")
-                .tamanhoInteiroMaximo(15)
-                .tamanhoDecimalMaximo(10);
+                .integerMaxLength(15)
+                .fractionalMaxLength(10);
 
         super.onLoadPackage(pb);
     }

@@ -88,7 +88,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
     private IModel<String> newLabelModel(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         IModel<SIList<SInstance>> listaModel = $m.get(() -> (SIList<SInstance>) model.getObject());
         SIList<?> iLista = listaModel.getObject();
-        IModel<String> labelModel = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
+        IModel<String> labelModel = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
         ctx.configureContainer(labelModel);
         return labelModel;
     }

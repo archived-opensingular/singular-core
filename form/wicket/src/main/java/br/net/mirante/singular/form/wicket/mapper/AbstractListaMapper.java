@@ -7,10 +7,13 @@ package br.net.mirante.singular.form.wicket.mapper;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
+import br.net.mirante.singular.form.view.AbstractSViewListWithControls;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import org.apache.commons.collections.Factory;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
@@ -37,12 +40,12 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                                                final BSContainer<?> cell, boolean footer) {
         AddButton btn = new AddButton("_add", form, mLista);
         cell.newTemplateTag(t -> ""
-                        + "<button"
-                        + " wicket:id='_add'"
-                        + " class='btn blue btn-sm " + (footer ? "" : "pull-right") + "'"
-                        + " style='" + MapperCommons.BUTTON_STYLE +";"
-                        + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='"+MapperCommons.ICON_STYLE+"' class='" + Icone.PLUS + "'></i>"
-                        + "</button>"
+                + "<button"
+                + " wicket:id='_add'"
+                + " class='btn blue btn-sm " + (footer ? "" : "pull-right") + "'"
+                + " style='" + MapperCommons.BUTTON_STYLE + ";"
+                + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
+                + "</button>"
         ).add(btn);
 
         return btn;
@@ -55,9 +58,9 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                         + "<button"
                         + " wicket:id='_inserir_'"
                         + " class='btn btn-success btn-sm'"
-                        + " style='"+ MapperCommons.BUTTON_STYLE +";margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+"' class='" + Icone.PLUS + "'></i>"
+                        + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
                         + "</button>")
-        .add(btn);
+                .add(btn);
         return btn;
     }
 
@@ -65,11 +68,9 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
         cell
                 .newTemplateTag(tp -> ""
-                        + "<button"
+                        + "<i"
                         + " wicket:id='_remover_'"
-                        + " class='btn btn-danger btn-sm'"
-                        + " style='padding:5px 3px 1px;margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+" 'class='" + Icone.REMOVE + "'></i>"
-                        + "</button>")
+                        + " style='" + MapperCommons.ICON_STYLE + " 'class='singular-remove-btn " + Icone.REMOVE + "' />")
                 .add(btn);
         return btn;
     }
@@ -83,8 +84,8 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
         @Override
         protected Iterator<IModel<SInstance>> getItemModels() {
-            List<IModel<SInstance>> list = new ArrayList<>();
-            SIList<SInstance> sList = getModelObject();
+            List<IModel<SInstance>> list  = new ArrayList<>();
+            SIList<SInstance>       sList = getModelObject();
             for (int i = 0; i < sList.size(); i++)
                 list.add(new SInstanceItemListaModel<>(getDefaultModel(), i));
             return list.iterator();
@@ -116,8 +117,8 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
     protected static class InserirButton extends ActionAjaxButton {
         private final IModel<SIList<SInstance>> modelLista;
-        private final Item<SInstance> item;
-        private final ElementsView elementsView;
+        private final Item<SInstance>           item;
+        private final ElementsView              elementsView;
 
         protected InserirButton(String id, ElementsView elementsView, Form<?> form, IModel<SIList<SInstance>> mLista, Item<SInstance> item) {
             super(id, form);
@@ -130,7 +131,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
-            final int index = item.getIndex();
+            final int         index = item.getIndex();
             SIList<SInstance> lista = modelLista.getObject();
             lista.addNewAt(index);
             List<SInstanceItemListaModel<?>> itemModels = new ArrayList<>();
@@ -148,7 +149,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     }
 
     protected static class RemoverButton extends ActionAjaxButton {
-        private final ElementsView elementsView;
+        private final ElementsView    elementsView;
         private final Item<SInstance> item;
 
         protected RemoverButton(String id, Form<?> form, ElementsView elementsView, Item<SInstance> item) {
@@ -161,7 +162,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
-            final int index = item.getIndex();
+            final int         index = item.getIndex();
             SIList<SInstance> lista = elementsView.getModelObject();
             lista.remove(index);
             List<SInstanceItemListaModel<?>> itemModels = new ArrayList<>();
@@ -182,7 +183,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     protected static final class AddButton extends ActionAjaxButton {
         private final IModel<SIList<SInstance>> modelLista;
 
-        protected AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mLista) {
+        public AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mLista) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             modelLista = mLista;
@@ -212,5 +213,63 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                 }
             }
         }
+    }
+
+
+    protected static void buildFooter(BSContainer<?> footer,
+                                      Form<?> form,
+                                      WicketBuildContext ctx) {
+        Factory createAddButton = () -> new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
+        buildFooter(footer, ctx, createAddButton);
+    }
+
+    protected static void buildFooter(BSContainer<?> footer, WicketBuildContext ctx, Factory createAddButton) {
+        if (canAddItems(ctx)) {
+            final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
+            template.add((Component) createAddButton.create());
+        } else {
+            footer.setVisible(false);
+        }
+
+        personalizeCSS(footer);
+    }
+
+    protected static boolean canAddItems(WicketBuildContext ctx) {
+        return ((AbstractSViewListWithControls) ctx.getView()).isNewEnabled()
+                && ctx.getViewMode().isEdition();
+    }
+
+    protected static String definirLabel(WicketBuildContext ctx) {
+        SType<?>                      type = ctx.getCurrentInstance().getType();
+        AbstractSViewListWithControls view = (AbstractSViewListWithControls) ctx.getView();
+        return (String) view.label().orElse(
+                Optional.ofNullable(type.asAtr().getLabel())
+                        .map((x) -> {
+                            String[] parts = x.trim().split(" ");
+                            return "Adicionar " + parts[0];
+                        })
+                        .orElse("Adicionar item")
+        );
+    }
+
+    protected static String createButtonMarkup(WicketBuildContext ctx) {
+        String label = definirLabel(ctx);
+
+        return "" +
+                "<button wicket:id=\"_add\" " +
+                "       class=\"btn btn-add\" type=\"button\" " +
+                "       title=\"" + label + "\">" +
+                "       <i class=\"fa fa-plus\"></i>" +
+                "           " + label +
+                "</button>";
+    }
+
+    protected static void personalizeCSS(BSContainer<?> footer) {
+        footer.add(new ClassAttributeModifier() {
+            protected Set<String> update(Set<String> oldClasses) {
+                oldClasses.remove("text-right");
+                return oldClasses;
+            }
+        });
     }
 }

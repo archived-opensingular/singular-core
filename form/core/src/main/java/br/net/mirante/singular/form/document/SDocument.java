@@ -168,9 +168,7 @@ public class SDocument {
             final Supplier<Collection<SType<?>>> func = tipo.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
                 for (SType<?> dependency : func.get()) {
-                    if (!dependency.getDependentTypes().contains(tipo)) {
-                        dependency.getDependentTypes().add(tipo);
-                    }
+                    dependency.addDependentType(tipo);
                 }
             }
         });
@@ -284,7 +282,7 @@ public class SDocument {
                 instance.updateExists();
                 instance.updateRequired();
                 SInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_ENABLED, SPackageBasic.ATR_ENABLED_FUNCTION);
-                SInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_VISIVEL, SPackageBasic.ATR_VISIBLE_FUNCTION);
+                SInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_VISIBLE, SPackageBasic.ATR_VISIBLE_FUNCTION);
             });
         } finally {
             getInstanceListeners().remove(SInstanceEventType.ATTRIBUTE_CHANGED, listener);

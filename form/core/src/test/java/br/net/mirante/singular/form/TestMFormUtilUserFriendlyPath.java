@@ -33,10 +33,14 @@ public class TestMFormUtilUserFriendlyPath extends TestCaseForm {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         _evento = pb.createCompositeType("evento");
+        _evento.asAtr().label("Evento");
         _descricao = _evento.addField("descricao", STypeString.class);
+        _descricao.asAtr().label("Descrição");
         _periodo = _evento.addFieldComposite("periodo");
         _dataInicial = _periodo.addField("dataInicia", STypeDate.class);
+        _dataInicial.asAtr().label("Data inicial");
         _dataFinal = _periodo.addField("dataFinal", STypeDate.class);
+        _dataFinal.asAtr().label("Data final");
         _alertas = _periodo.addFieldListOfComposite("alertas", "alerta");
         _alerta = _alertas.getElementsType();
         _alerta_data = _alerta.addField("data", STypeDate.class);
@@ -69,9 +73,6 @@ public class TestMFormUtilUserFriendlyPath extends TestCaseForm {
         Assert.assertEquals("Evento"                                , SFormUtil.generateUserFriendlyPath(evento.findNearest(_periodo    ).get()));
         Assert.assertEquals("Evento > Data inicial"                 , SFormUtil.generateUserFriendlyPath(evento.findNearest(_dataInicial).get()));
         Assert.assertEquals("Evento > Data final"                   , SFormUtil.generateUserFriendlyPath(evento.findNearest(_dataFinal  ).get()));
-        Assert.assertEquals("Evento > Alertas"                      , SFormUtil.generateUserFriendlyPath(evento.findNearest(_alertas    ).get()));
-        Assert.assertEquals("Evento > Alertas [1] > Alerta"         , SFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta     ).get()));
-        Assert.assertEquals("Evento > Alertas [1] > Alerta > Data"  , SFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta_data).get()));
         //@formatter:on
     }
 
