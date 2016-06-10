@@ -24,6 +24,8 @@ import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
@@ -42,30 +44,56 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
         @Override
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
-            final SViewByBlock view = (SViewByBlock) ctx.getView();
+
+            final List<String> remainingTypes = new ArrayList<>();
+            final List<String> addedTypes     = new ArrayList<>();
+            final SViewByBlock view           = (SViewByBlock) ctx.getView();
 
             for (int i = 0; i < view.getBlocks().size(); i++) {
-
                 final Block        block   = view.getBlocks().get(i);
                 final PortletPanel portlet = new PortletPanel("_portlet" + i, block);
-                final BSGrid       newGrid = portlet.getNewGrid();
-                BSRow              row     = newGrid.newRow();
-
-                grid.appendTag("div", portlet);
-
-                for (String typeName : block.getTypes()) {
-                    final SType<?>                       field  = type.getField(typeName);
-                    final Boolean                        newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
-                    final SInstanceCampoModel<SInstance> im     = fieldModel(field);
-                    if (newRow != null && newRow) {
-                        row = newGrid.newRow();
-                    }
-                    buildField(ctx.getUiBuilderWicket(), row, im);
-                }
-
-                portlet.add(new ConfigurePortletVisibilityBehaviour(block));
+                addedTypes.addAll(block.getTypes());
+                appendBlock(grid, block, portlet);
             }
 
+            for (SType f : type.getFields()) {
+                if (!addedTypes.contains(f.getNameSimple())) {
+                    remainingTypes.add(f.getNameSimple());
+                }
+            }
+
+            if (!remainingTypes.isEmpty()) {
+                final Block        block   = new Block();
+                final PortletPanel portlet = new PortletPanel("_portletForRemaining", block);
+                block.setTypes(remainingTypes);
+                appendBlock(grid, block, portlet);
+            }
+
+        }
+
+
+        private void appendBlock(BSGrid grid, Block block, PortletPanel portlet) {
+
+            final BSGrid newGrid = portlet.getNewGrid();
+            BSRow        row     = newGrid.newRow();
+
+            grid.appendTag("div", portlet);
+
+            for (String typeName : block.getTypes()) {
+                row = buildBlockAndGetCurrentRow(type.getField(typeName), newGrid, row);
+            }
+
+            portlet.add(new ConfigurePortletVisibilityBehaviour(block));
+        }
+
+        private BSRow buildBlockAndGetCurrentRow(SType<?> field, BSGrid grid, BSRow row) {
+            final Boolean                        newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
+            final SInstanceCampoModel<SInstance> im     = fieldModel(field);
+            if (newRow != null && newRow) {
+                row = grid.newRow();
+            }
+            buildField(ctx.getUiBuilderWicket(), row, im);
+            return row;
         }
     }
 
