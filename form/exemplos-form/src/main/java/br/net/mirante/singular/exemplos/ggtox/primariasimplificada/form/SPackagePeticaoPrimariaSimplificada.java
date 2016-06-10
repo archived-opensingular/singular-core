@@ -59,14 +59,14 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
 
         peticaoSimplificada.withView(new SViewByBlock(), view -> {
             view
-                    .addNewBlock("Dados Gerais")
-                    .addToBlock(nivel)
-                    .addToBlock(dadosGerais)
-                    .addNewBlock("Documentação")
-                    .addToBlock(documentacaoI)
-                    .addToBlock(documentacaoII)
-                    .addToBlock(documentacaoIII)
-                    .addToBlock(documentacaoIV);
+                    .newBlock("Dados Gerais")
+                    .add(nivel)
+                    .add(dadosGerais)
+                    .newBlock("Documentação")
+                    .add(documentacaoI)
+                    .add(documentacaoII)
+                    .add(documentacaoIII)
+                    .add(documentacaoIV);
         });
     }
 

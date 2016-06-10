@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.view.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -81,27 +80,27 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
         notificacaoSimplificada.withView(new SViewByBlock("Medicamento Dinamizado"), view -> {
             view
-                    .addNewBlock()
-                    .addToBlock("nomeComercial")
-                    .addToBlock("classe")
-                    .addToBlock("linhaProducao")
-                    .addToBlock("formulasHomeopaticas")
+                    .newBlock()
+                    .add("nomeComercial")
+                    .add("classe")
+                    .add("linhaProducao")
+                    .add("formulasHomeopaticas")
 
-                    .addNewBlock("Acondicionamento")
-                    .addToBlock("listaAcondicionamento")
+                    .newBlock("Acondicionamento")
+                    .add("listaAcondicionamento")
 
-                    .addNewBlock("Fórmula do produto")
-                    .addToBlock("listaFormulaProduto")
-//                    .addToBlock("OutraFormula")
+                    .newBlock("Fórmula do produto")
+                    .add("listaFormulaProduto")
+//                    .add("OutraFormula")
 
-                    .addNewBlock("Indicação Terapeutica")
-                    .addToBlock("indicacaoTerapeutica")
-                    .addToBlock("informarOutraIndicacaoTerapeutica")
-                    .addToBlock("outraIndicacaoTerapeutica")
-                    .addToBlock("listaReferencias")
+                    .newBlock("Indicação Terapeutica")
+                    .add("indicacaoTerapeutica")
+                    .add("informarOutraIndicacaoTerapeutica")
+                    .add("outraIndicacaoTerapeutica")
+                    .add("listaReferencias")
 
-                    .addNewBlock("Layout folheto")
-                    .addToBlock("listaLayoutFolheto");
+                    .newBlock("Layout folheto")
+                    .add("listaLayoutFolheto");
         });
     }
 
