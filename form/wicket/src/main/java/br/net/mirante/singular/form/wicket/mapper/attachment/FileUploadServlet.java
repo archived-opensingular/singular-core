@@ -40,7 +40,7 @@ public class FileUploadServlet extends HttpServlet {
     String SERVICE_MAP_KEY = "FileUploadServlet-ServiceMap",
             UUID_MAP_KEY = "FileUploadServlet-UUIDMap";
 
-    private List<String> temporaryIds = synchronizedList(new LinkedList<>());
+    private static List<String> temporaryIds = synchronizedList(new LinkedList<>());
 
     public static UUID registerService(HttpSession session, IAttachmentPersistenceHandler service){
         Map<UUID, IAttachmentPersistenceHandler> services =

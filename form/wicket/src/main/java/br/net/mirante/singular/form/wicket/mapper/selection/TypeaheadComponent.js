@@ -80,6 +80,7 @@
             function onClear(e) {
             	clearCalled = true;
                 $('#' + container + '_clear').remove();
+                $('#'+container+' > span > .fa-chevron-down').show();
                 $typeaheadField.removeAttr('readonly');
                 $typeaheadField.typeahead('val', '');
                 Typeahead_.enable();
@@ -101,6 +102,7 @@
                 $typeaheadField.attr('readonly', true);
                 $typeaheadField.after(clear);
                 $('#' + container + '_clear').on('click', onClear);
+                $('#'+container+' > span > .fa-chevron-down').hide();
                 Typeahead_.disable();
             }
 

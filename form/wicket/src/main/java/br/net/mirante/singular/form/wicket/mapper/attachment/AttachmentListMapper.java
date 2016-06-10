@@ -135,7 +135,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
             @Override
             protected void buildHeading(BSContainer<?> heading, Form<?> form) {
                 heading.appendTag("span", new Label("_title", label));
-                heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
+//                heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
 //                if (ctx.getViewMode().isEdition()) {
 //                    appendAddButton(heading, multipleFileUploadHiddenField);
