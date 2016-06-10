@@ -91,24 +91,10 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
 
     private FileSystemAttachmentRef toRef(File file) throws Exception {
         FileInputStream in = new FileInputStream(file);
-        return new FileSystemAttachmentRef(file.getName(), toSha1HexString(in), 
+        return new FileSystemAttachmentRef(file.getName(), HashUtil.toSHA1Base16(in),
             file.getAbsolutePath(), (int) file.length());
     }
 
-    private String toSha1HexString(InputStream inflated) throws NoSuchAlgorithmException, IOException {
-        MessageDigest md = MessageDigest.getInstance("SHA1");
-        byte[] hexSha1 = md.digest(ByteStreams.toByteArray(inflated));
-        return byteArray2Hex(hexSha1);
-    }
-
-    private static String byteArray2Hex(final byte[] hash) {
-        try (Formatter formatter = new Formatter()) {
-            for (byte b : hash) {
-                formatter.format("%02x", b);
-            }
-            return formatter.toString();
-        }
-    }
 
     @Override
     public void deleteAttachment(String hashId) {
