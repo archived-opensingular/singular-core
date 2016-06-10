@@ -2,7 +2,6 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeDadosGeraisPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeDocumentacaoPeticaoPrimariaSimplificadaNivelI;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeDocumentacaoPeticaoPrimariaSimplificadaNivelII;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.view.SViewByBlock;
@@ -29,10 +28,10 @@ public class SPackagePeticaoPrimariaSimplificadaNivelII extends SPackage {
 
         peticaoSimplificada.withView(new SViewByBlock(), view -> {
             view
-                    .addNewBlock("Dados Gerais")
-                    .addToBlock(dadosGerais)
-                    .addNewBlock("Documentação")
-                    .addToBlock(documentacao);
+                    .newBlock("Dados Gerais")
+                    .add(dadosGerais)
+                    .newBlock("Documentação")
+                    .add(documentacao);
         });
 
     }
