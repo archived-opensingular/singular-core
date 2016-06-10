@@ -34,7 +34,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             templatePortlet += " <div class='portlet light'>                         ";
             templatePortlet += "     <div class='portlet-title' wicket:id='title' /> ";
             templatePortlet += "     <div class='portlet-body'>                      ";
-            templatePortlet += " 		<div wicket:id='grid' />                     ";
+            templatePortlet += "         <div wicket:id='grid' />                     ";
             templatePortlet += "     </div>                                          ";
             templatePortlet += " </div>                                              ";
 
@@ -49,8 +49,8 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         private TemplatePanel buildPortletTitle(Block block) {
             String templateTitle = "";
             templateTitle += "  <div class='caption'>                ";
-            templateTitle += " 	    <span wicket:id='name'           ";
-            templateTitle += " 		      class='caption-subject' /> ";
+            templateTitle += "         <span wicket:id='name'           ";
+            templateTitle += "               class='caption-subject' /> ";
             templateTitle += "  </div>                               ";
             final TemplatePanel portletTitle = new TemplatePanel("title", templateTitle);
             portletTitle.add($b.onConfigure(c -> c.setVisible(StringUtils.isNotEmpty(block.getName()))));
