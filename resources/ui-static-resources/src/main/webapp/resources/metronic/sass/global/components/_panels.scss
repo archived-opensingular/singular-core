@@ -3,7 +3,6 @@ Customized Bootstrap Panels
 ***/
 
 .panel {
-    background-color: #fafbfc;
 
     @if $theme-type == "default" {
         -webkit-box-shadow: none !important;

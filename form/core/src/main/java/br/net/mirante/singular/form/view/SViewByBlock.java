@@ -20,6 +20,10 @@ public class SViewByBlock extends AbstractSViewByBlock {
         this.name = name;
     }
 
+    public SViewByBlock() {
+        this(null);
+    }
+
     public SViewByBlock addNewBlock() {
         return addNewBlock(StringUtils.EMPTY);
     }

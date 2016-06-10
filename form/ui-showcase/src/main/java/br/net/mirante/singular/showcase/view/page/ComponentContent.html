@@ -1,12 +1,8 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:extend>
-    <div class="portlet light bordered">
-        <div class="portlet-body">
-            <div wicket:id="casesContainer" class="panel-group">
-                <div class="tabbable-custom">
-                    <wicket:fragment wicket:id="cases"></wicket:fragment>
-                </div>
-            </div>
+    <div wicket:id="casesContainer" class="panel-group">
+        <div class="tabbable-line boxless tabbable-reversed">
+            <wicket:fragment wicket:id="cases"></wicket:fragment>
         </div>
     </div>
     <wicket:fragment wicket:id="breadcrumbShowCase">

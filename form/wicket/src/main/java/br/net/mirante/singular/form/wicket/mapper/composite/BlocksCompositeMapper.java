@@ -29,57 +29,53 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             super(ctx);
         }
 
+        private BSGrid buildPortletPanel(BSGrid grid, String id, Block block) {
+            String templatePortlet = "";
+            templatePortlet += " <div class='portlet light'>                         ";
+            templatePortlet += "     <div class='portlet-title' wicket:id='title' /> ";
+            templatePortlet += "     <div class='portlet-body'>                      ";
+            templatePortlet += " 		<div wicket:id='grid' />                     ";
+            templatePortlet += "     </div>                                          ";
+            templatePortlet += " </div>                                              ";
+
+            final TemplatePanel portlet = new TemplatePanel(id, templatePortlet);
+            final BSGrid        newGrid = new BSGrid("grid");
+
+            portlet.add(newGrid, buildPortletTitle(block));
+            grid.appendTag("div", portlet);
+            return newGrid;
+        }
+
+        private TemplatePanel buildPortletTitle(Block block) {
+            String templateTitle = "";
+            templateTitle += "  <div class='caption'>                ";
+            templateTitle += " 	    <span wicket:id='name'           ";
+            templateTitle += " 		      class='caption-subject' /> ";
+            templateTitle += "  </div>                               ";
+            final TemplatePanel portletTitle = new TemplatePanel("title", templateTitle);
+            portletTitle.add($b.onConfigure(c -> c.setVisible(StringUtils.isNotEmpty(block.getName()))));
+            portletTitle.add(new Label("name", Model.of(block.getName())));
+            return portletTitle;
+        }
+
         @Override
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
-
             final SViewByBlock view = (SViewByBlock) ctx.getView();
 
             for (int i = 0; i < view.getBlocks().size(); i++) {
 
                 final Block block = view.getBlocks().get(i);
-
-                String templatePortlet = "";
-                templatePortlet += " <div class='portlet light'>                         ";
-                templatePortlet += "     <div class='portlet-title' wicket:id='title' /> ";
-                templatePortlet += "     <div class='portlet-body'>                      ";
-                templatePortlet += " 		<div wicket:id='grid' />                     ";
-                templatePortlet += "     </div>                                          ";
-                templatePortlet += " </div>                                              ";
-
-                final TemplatePanel portlet = new TemplatePanel("_portlet" + i, templatePortlet);
-
-                String templateTitle = "";
-                templateTitle += "  <div class='caption'>                               ";
-                templateTitle += " 	    <span wicket:id='name'                          ";
-                templateTitle += " 		      class='caption-subject bold uppercase' /> ";
-                templateTitle += "  </div>                                              ";
-
-                final TemplatePanel portletTitle = new TemplatePanel("title", templateTitle);
-
-                portletTitle.add($b.onConfigure(c -> c.setVisible(StringUtils.isNotEmpty(block.getName()))));
-                portletTitle.add(new Label("name", Model.of(block.getName())));
-
-                final BSGrid newGrid = new BSGrid("grid");
-
-                portlet.add(newGrid, portletTitle);
-
-                grid.appendTag("div", portlet);
-
-                BSRow row = newGrid.newRow();
+                BSRow       row   = buildPortletPanel(grid, "_portlet" + i, block).newRow();
 
                 for (String typeName : block.getTypes()) {
-
                     final SType<?>                       field  = type.getField(typeName);
                     final Boolean                        newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
                     final SInstanceCampoModel<SInstance> im     = fieldModel(field);
-
                     if (newRow != null && newRow) {
                         row = grid.newRow();
                     }
-
                     buildField(ctx.getUiBuilderWicket(), row, im);
                 }
-
             }
         }
     }

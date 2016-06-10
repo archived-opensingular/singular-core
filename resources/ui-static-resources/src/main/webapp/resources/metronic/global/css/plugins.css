@@ -126,11 +126,11 @@ Bootstrap Daterangepicker
 .daterangepicker .ranges {
   width: 170px; }
   .daterangepicker .ranges ul > li.active {
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    -ms-border-radius: 4px;
-    -o-border-radius: 4px;
-    border-radius: 4px; }
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+    border-radius: 10px; }
 
 .daterangepicker .ranges .btn {
   margin-top: 10px; }
@@ -220,25 +220,25 @@ Bootstrap Markdown
 .md-input {
   padding: 5px !important;
   border-bottom: 0 !important;
-  -webkit-border-radius: 0 0 4px 4px;
-  -moz-border-radius: 0 0 4px 4px;
-  -ms-border-radius: 0 0 4px 4px;
-  -o-border-radius: 0 0 4px 4px;
-  border-radius: 0 0 4px 4px; }
+  -webkit-border-radius: 0 0 10px 10px;
+  -moz-border-radius: 0 0 10px 10px;
+  -ms-border-radius: 0 0 10px 10px;
+  -o-border-radius: 0 0 10px 10px;
+  border-radius: 0 0 10px 10px; }
 
 .md-editor {
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -o-border-radius: 4px;
-  border-radius: 4px; }
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  border-radius: 10px; }
   .md-editor .btn-toolbar {
     margin-left: 0px;
-    -webkit-border-radius: 4px 4px 0 0;
-    -moz-border-radius: 4px 4px 0 0;
-    -ms-border-radius: 4px 4px 0 0;
-    -o-border-radius: 4px 4px 0 0;
-    border-radius: 4px 4px 0 0; }
+    -webkit-border-radius: 10px 10px 0 0;
+    -moz-border-radius: 10px 10px 0 0;
+    -ms-border-radius: 10px 10px 0 0;
+    -o-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0; }
     .md-editor .btn-toolbar .btn-group .btn-sm.btn {
       padding-bottom: 3px; }
     .md-editor .btn-toolbar .btn-group .btn-primary {
@@ -575,24 +575,24 @@ Error state for WYSIWYG Editors
 ***/
 .note-editor {
   border: 1px solid #D5D9E3;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -o-border-radius: 4px;
-  border-radius: 4px; }
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  border-radius: 10px; }
   .note-editor .note-toolbar {
     border-bottom: 1px solid #D5D9E3;
-    -webkit-border-radius: 4px 4px 0 0;
-    -moz-border-radius: 4px 4px 0 0;
-    -ms-border-radius: 4px 4px 0 0;
-    -o-border-radius: 4px 4px 0 0;
-    border-radius: 4px 4px 0 0; }
+    -webkit-border-radius: 10px 10px 0 0;
+    -moz-border-radius: 10px 10px 0 0;
+    -ms-border-radius: 10px 10px 0 0;
+    -o-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0; }
   .note-editor .note-statusbar {
-    -webkit-border-radius: 0 0 4px 4px;
-    -moz-border-radius: 0 0 4px 4px;
-    -ms-border-radius: 0 0 4px 4px;
-    -o-border-radius: 0 0 4px 4px;
-    border-radius: 0 0 4px 4px; }
+    -webkit-border-radius: 0 0 10px 10px;
+    -moz-border-radius: 0 0 10px 10px;
+    -ms-border-radius: 0 0 10px 10px;
+    -o-border-radius: 0 0 10px 10px;
+    border-radius: 0 0 10px 10px; }
     .note-editor .note-statusbar .note-resizebar {
       border-top: 1px solid #D5D9E3; }
   .note-editor.note-frame.fullscreen {
@@ -792,23 +792,23 @@ Bootbox
 CKEditor css changes
 ***/
 .cke {
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -o-border-radius: 4px;
-  border-radius: 4px; }
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  border-radius: 10px; }
   .cke .cke-top {
-    -webkit-border-radius: 4px 4px 0 0;
-    -moz-border-radius: 4px 4px 0 0;
-    -ms-border-radius: 4px 4px 0 0;
-    -o-border-radius: 4px 4px 0 0;
-    border-radius: 4px 4px 0 0; }
+    -webkit-border-radius: 10px 10px 0 0;
+    -moz-border-radius: 10px 10px 0 0;
+    -ms-border-radius: 10px 10px 0 0;
+    -o-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0; }
   .cke .cke-bottom {
-    -webkit-border-radius: 0 0 4px 4px;
-    -moz-border-radius: 0 0 4px 4px;
-    -ms-border-radius: 0 0 4px 4px;
-    -o-border-radius: 0 0 4px 4px;
-    border-radius: 0 0 4px 4px; }
+    -webkit-border-radius: 0 0 10px 10px;
+    -moz-border-radius: 0 0 10px 10px;
+    -ms-border-radius: 0 0 10px 10px;
+    -o-border-radius: 0 0 10px 10px;
+    border-radius: 0 0 10px 10px; }
 
 .cke_bottom,
 .cke_inner,
@@ -1236,10 +1236,10 @@ FuelUX Spinners
   padding-top: 0px; }
   .page-style-rounded .spinner-buttons.btn-group-vertical .btn.spinner-up {
     border-radius: 0;
-    border-top-right-radius: 4px !important; }
+    border-top-right-radius: 10px !important; }
   .page-style-rounded .spinner-buttons.btn-group-vertical .btn.spinner-down {
     border-radius: 0;
-    border-bottom-right-radius: 4px; }
+    border-bottom-right-radius: 10px; }
 
 /***
 Fullcalendar
@@ -1282,11 +1282,11 @@ Fullcalendar
   color: #fff;
   top: -48px;
   outline: none !important;
-  -webkit-border-radius: 4px 4px 0 0;
-  -moz-border-radius: 4px 4px 0 0;
-  -ms-border-radius: 4px 4px 0 0;
-  -o-border-radius: 4px 4px 0 0;
-  border-radius: 4px 4px 0 0; }
+  -webkit-border-radius: 10px 10px 0 0;
+  -moz-border-radius: 10px 10px 0 0;
+  -ms-border-radius: 10px 10px 0 0;
+  -o-border-radius: 10px 10px 0 0;
+  border-radius: 10px 10px 0 0; }
 
 .portlet.calendar .fc-toolbar {
   margin-bottom: 0px; }
@@ -1950,11 +1950,11 @@ Morris Charts
   margin-left: -20px;
   margin-bottom: -15px; }
   .portlet-body-morris-fit > svg {
-    -webkit-border-radius: 0 0 4px 4px;
-    -moz-border-radius: 0 0 4px 4px;
-    -ms-border-radius: 0 0 4px 4px;
-    -o-border-radius: 0 0 4px 4px;
-    border-radius: 0 0 4px 4px; }
+    -webkit-border-radius: 0 0 10px 10px;
+    -moz-border-radius: 0 0 10px 10px;
+    -ms-border-radius: 0 0 10px 10px;
+    -o-border-radius: 0 0 10px 10px;
+    border-radius: 0 0 10px 10px; }
 
 .morris-hover.morris-default-style .morris-hover-row-label {
   text-align: left;
