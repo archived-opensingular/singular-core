@@ -52,7 +52,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
 
     @Override
     public void buildView(WicketBuildContext ctx) {
-
+/*
         final SIList<SIAttachment> attachments = (SIList<SIAttachment>) ctx.getModel().getObject();
 
         if (!STypeAttachmentList.class.isAssignableFrom(attachments.getType().getClass())) {
@@ -65,7 +65,9 @@ public class AttachmentListMapper extends AbstractListaMapper {
 
         ctx.getContainer().appendTag("input", true, "type='file' style='display:none' multiple", multipleFileUploadHiddenField);
         ctx.getContainer().appendTag("div",
-                buildMetronicPanel(ctx, multipleFileUploadHiddenField));
+                buildMetronicPanel(ctx, multipleFileUploadHiddenField));*/
+
+        ctx.getContainer().appendTag("div", new FileListUploadPanel("up-list", ctx.getModel()));
 
     }
 
