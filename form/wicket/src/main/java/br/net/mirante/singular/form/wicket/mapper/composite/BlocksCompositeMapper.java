@@ -111,22 +111,24 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
     private static class PortletPanel extends TemplatePanel {
 
-        private static final String templatePortlet = ""
-                + " <div class='portlet light'>                          "
-                + "     <div class='portlet-title' wicket:id='title' />  "
-                + "     <div class='portlet-body'>                       "
-                + "         <div wicket:id='grid' />                     "
-                + "     </div>                                           "
-                + " </div>                                               ";
+        private static final String TITLE_ID = "title";
+        private static final String GRID_ID  = "grid";
+
+        private static final String PORTLET_MARKUP = ""
+                + " <div class='portlet light'>                                    "
+                + "     <div class='portlet-title' wicket:id='" + TITLE_ID + "' /> "
+                + "     <div class='portlet-body'>                                 "
+                + "         <div wicket:id='" + GRID_ID + "' />                    "
+                + "     </div>                                                     "
+                + " </div>                                                         ";
 
         private final Block  block;
         private final BSGrid newGrid;
 
-
-        protected PortletPanel(String id, Block block) {
-            super(id, templatePortlet);
+        PortletPanel(String id, Block block) {
+            super(id, PORTLET_MARKUP);
             this.block = block;
-            this.newGrid = new BSGrid("grid");
+            this.newGrid = new BSGrid(GRID_ID);
             add(newGrid, buildPortletTitle(block));
         }
 
@@ -141,18 +143,23 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         }
 
         private TemplatePanel buildPortletTitle(Block block) {
-            String templateTitle = "";
-            templateTitle += "  <div class='caption'>                ";
-            templateTitle += "         <span wicket:id='name'           ";
-            templateTitle += "               class='caption-subject' /> ";
-            templateTitle += "  </div>                               ";
-            final TemplatePanel portletTitle = new TemplatePanel("title", templateTitle);
+
+            final String name = "name";
+            final String titleMarkup = ""
+                    + "  <div class='caption'>                   "
+                    + "         <span wicket:id='" + name + "'   "
+                    + "               class='caption-subject' /> "
+                    + "  </div>                                  ";
+
+            final TemplatePanel portletTitle = new TemplatePanel(TITLE_ID, titleMarkup);
+
             portletTitle.add($b.onConfigure(c -> c.setVisible(StringUtils.isNotEmpty(block.getName()))));
-            portletTitle.add(new Label("name", Model.of(block.getName())));
+            portletTitle.add(new Label(name, Model.of(block.getName())));
+
             return portletTitle;
         }
 
-        public BSGrid getNewGrid() {
+        BSGrid getNewGrid() {
             return newGrid;
         }
     }
