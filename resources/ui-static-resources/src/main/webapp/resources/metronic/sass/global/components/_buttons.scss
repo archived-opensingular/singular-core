@@ -129,7 +129,6 @@ Custom color buttons
     .btn:not(.md-skip) {
         font-size: 12px;
         font-weight: 600;
-        text-transform: uppercase;
         @include border-radius($general-border-radius);
         overflow: hidden;
         position: relative;

@@ -9,7 +9,7 @@
 
 // Main settings
 $theme-name:                                                    		"default";
-$brand-main-color:                                               		#5b9bd1 !default;
+$brand-main-color:                                               		#40baa7 !default;
 $brand-main-font-color:													#ffffff !default;
 
 // Body and header
@@ -76,7 +76,7 @@ $header-top-menu-dropdown-border-color:                                 lighten(
 // Sidebar menu
 $sidebar-bg-color:                                                      #ffffff !default;
 
-$sidebar-menu-heading-font-color:                                       #5C9ACF !default;
+$sidebar-menu-heading-font-color:                                       $brand-main-color !default;
 
 $sidebar-menu-link-font-color:                                  		darken(#768da2, 5%) !default;
 $sidebar-menu-link-font-color-on-hover:                         		$brand-main-color !default;
