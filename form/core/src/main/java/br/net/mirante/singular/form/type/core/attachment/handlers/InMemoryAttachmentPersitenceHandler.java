@@ -5,12 +5,6 @@
 
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.io.HashUtil;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.CountingInputStream;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
@@ -18,6 +12,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CountingInputStream;
+
+import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.io.HashUtil;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
 /**
  * <p>
