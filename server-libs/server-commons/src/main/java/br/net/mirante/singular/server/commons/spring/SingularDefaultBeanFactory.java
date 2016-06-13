@@ -4,13 +4,14 @@ import org.springframework.context.annotation.Bean;
 
 import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.form.document.SDocument;
+import br.net.mirante.singular.form.persistence.dao.FileDao;
 import br.net.mirante.singular.form.persistence.dao.FormDAO;
 import br.net.mirante.singular.form.service.FormService;
 import br.net.mirante.singular.form.service.IFormService;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
-import br.net.mirante.singular.server.commons.persistence.dao.form.FileDao;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
@@ -50,7 +51,7 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean(name = SDocument.FILE_PERSISTENCE_SERVICE)
-    public FileDao fileDao() {
+    public IAttachmentPersistenceHandler filePersistenceService() {
         return new FileDao();
     }
 
