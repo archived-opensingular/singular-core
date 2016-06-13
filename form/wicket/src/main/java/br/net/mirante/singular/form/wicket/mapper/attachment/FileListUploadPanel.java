@@ -5,6 +5,9 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import org.apache.wicket.Component;
+import org.apache.wicket.IResourceListener;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -12,12 +15,19 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.string.StringValue;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.UUID;
 
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
+import static java.lang.Integer.*;
 import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.*;
 
 /**
@@ -28,6 +38,7 @@ public class FileListUploadPanel extends Panel {
     private final FileUploadField fileField;
     private final WebMarkupContainer fileList;
     private final DownloadBehavior downloader;
+    private final AddFileBehavior adder;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model) {
         super(id, model);
@@ -35,6 +46,7 @@ public class FileListUploadPanel extends Panel {
         add(fileList = new WebMarkupContainer("fileList"));
         add(downloader = new DownloadBehavior(model.getObject().getDocument()
                 .getAttachmentPersistenceTemporaryHandler()));
+        add(adder = new AddFileBehavior());
     }
 
     @Override
@@ -66,6 +78,7 @@ public class FileListUploadPanel extends Panel {
                 "             upload_url : '"+ uploadUrl() +"', \n" +
                 "             upload_id : '"+ serviceId().toString()+"', \n" +
                 "             download_url : '"+downloader.getUrl()+"', \n" +
+                "             add_url : '"+adder.getUrl()+"', \n" +
                 "  \n" +
                 "     }; \n" +
                 "  \n" +
@@ -106,4 +119,40 @@ public class FileListUploadPanel extends Panel {
             }
         };
     }
+
+    private class AddFileBehavior extends Behavior implements IResourceListener {
+        transient protected WebWrapper w = new WebWrapper();
+        private Component component;
+
+        @Override
+        public void onResourceRequested() {
+            try {
+                ServletWebRequest request = w.request();
+                IRequestParameters parameters = request.getRequestParameters();
+                StringValue id = parameters.getParameterValue("fileId");
+                StringValue name = parameters.getParameterValue("name");
+                StringValue hashSHA1 = parameters.getParameterValue("hashSHA1");
+                StringValue size = parameters.getParameterValue("size");
+                IModel<?> model = FileListUploadPanel.this.getDefaultModel();
+                SIList<SIAttachment> list = (SIList<SIAttachment>) model.getObject();
+                SIAttachment siAttachment = list.addNew();
+                siAttachment.setFileId(id.toString());
+                siAttachment.setFileName(name.toString());
+                siAttachment.setFileHashSHA1(hashSHA1.toString());
+                siAttachment.setFileSize(parseInt(size.toString()));
+            } catch (Exception e) {
+                throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        @Override
+        public void bind(Component component) {
+            this.component = component;
+        }
+
+        public String getUrl() {
+            return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
+        }
+    }
+
 }

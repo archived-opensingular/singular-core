@@ -44,7 +44,7 @@ if(window.FileListUploadPanel == undefined){
                     .append(
                         $('<div>').addClass('list-item-icon')
                             .append(
-                                $('<a>').attr('href','#')
+                                $('<a class="list-item-uploaded">').attr('href','#')
                                     .append(
                                         $('<i class="fa fa-file-text"></i>')
                                     )
@@ -74,13 +74,24 @@ if(window.FileListUploadPanel == undefined){
                 console.log('done',e,data);
                 $.each(data.result.files, function (index, file) {
                     var fake_id = data.files[index].fake_id;
-                    $('#progress_bar_'+fake_id).hide();
-                    console.log($('#upload-box-'+fake_id))
-                    console.log($('#upload-box-'+fake_id).find('.download-link'))
-                    $('#upload-box-'+fake_id).find('.download-link')
-                        .attr('href',params.download_url +
-                                    '&fileId='+file.fileId+
-                                    '&fileName='+file.name);
+                        $.getJSON(params.add_url,
+                            {
+                                name: file.name,
+                                fileId: file.fileId,
+                                hashSHA1: file.hashSHA1,
+                                size: file.size,
+
+                            }, function (data, status, jqXHR) {
+                                if (status == 'success'){
+                                    $('#progress_bar_'+fake_id).hide();
+                                    $('#upload-box-'+fake_id).find('.fa-file-text')
+                                        .removeClass('fa-file-text').addClass('fa-check');
+                                    $('#upload-box-'+fake_id).find('.download-link')
+                                        .attr('href',params.download_url +
+                                            '&fileId='+file.fileId+
+                                            '&fileName='+file.name);
+                                }
+                            });
                 //     console.log('f',file, $('#' + params.files_id ));
                 //     $('#' + params.files_id ).append(
                 //         $('<p/>').append(
