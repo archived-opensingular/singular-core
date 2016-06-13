@@ -5,9 +5,8 @@
             <div class="panel-body">
                 <div class="upload-list">
                     <div class="upload-list-container">
-                        <ul>
-                            ​
-                            <li class="upload-list-item">
+                        <ul wicket:id="fileList">
+                            <!--li class="upload-list-item">
                                 <div class="list-item-icon">
                                     <a href="#" class="list-item-uploading">
                                         <i class="fa fa-file-text"></i>
@@ -24,7 +23,7 @@
                                         <i class="fa fa-close"></i>
                                     </a>
                                 </div>
-                            </li>
+                            </--li>
                             ​
                             ​
                             <li class="upload-list-item">
@@ -63,10 +62,18 @@
                                         <i class="fa fa-close"></i>
                                     </a>
                                 </div>
-                            </li>
+                            </li-->
                         </ul>
                     </div>
                 </div>
+            </div>
+            <div class="panel-footer" id="id__ft9dc">
+                <span class="btn btn-add fileinput-button file-choose-button"
+                        title="Carregar Arquivo">
+                    <i class="fa fa-upload"></i>
+                    Carregar Arquivo
+                    <input type="file" wicket:id="fileUpload" />
+                </span>
             </div>
         </wicket:panel>
     </body>

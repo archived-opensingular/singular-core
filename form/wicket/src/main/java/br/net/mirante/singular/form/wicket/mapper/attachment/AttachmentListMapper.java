@@ -67,7 +67,9 @@ public class AttachmentListMapper extends AbstractListaMapper {
         ctx.getContainer().appendTag("div",
                 buildMetronicPanel(ctx, multipleFileUploadHiddenField));*/
 
-        ctx.getContainer().appendTag("div", new FileListUploadPanel("up-list", ctx.getModel()));
+        ctx.getContainer().appendTag("div",
+                new FileListUploadPanel("up-list",
+                        (IModel<SIList<SIAttachment>>) ctx.getModel()));
 
     }
 

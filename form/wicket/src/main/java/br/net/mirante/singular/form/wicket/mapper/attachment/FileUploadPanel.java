@@ -168,21 +168,7 @@ public class FileUploadPanel extends Panel {
         this.model = model;
         this.viewMode = viewMode;
 
-        fileField = new FileUploadField("fileUpload", new IMInstanciaAwareModel() {
-            @Override
-            public Object getObject() {return null;}
-
-            @Override
-            public void setObject(Object object) {}
-
-            @Override
-            public void detach() {}
-
-            @Override
-            public SInstance getMInstancia() {
-                return model.getObject();
-            }
-        });
+        fileField = new FileUploadField("fileUpload", dummyModel(model));
         nameField = new HiddenField("file_name",
                 new PropertyModel<>(model, "fileName"));
         hashField = new HiddenField("file_hash",
@@ -200,6 +186,24 @@ public class FileUploadPanel extends Panel {
                 progressBar = new WebMarkupContainer("progress")
         );
         add(downloader = new DownloadBehavior(model.getObject()));
+    }
+
+    private IMInstanciaAwareModel dummyModel(final IModel<SIAttachment> model) {
+        return new IMInstanciaAwareModel() {
+            @Override
+            public Object getObject() {return null;}
+
+            @Override
+            public void setObject(Object object) {}
+
+            @Override
+            public void detach() {}
+
+            @Override
+            public SInstance getMInstancia() {
+                return model.getObject();
+            }
+        };
     }
 
     @Override
