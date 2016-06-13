@@ -44,7 +44,7 @@ if(window.FileListUploadPanel == undefined){
                     .append(
                         $('<div>').addClass('list-item-icon')
                             .append(
-                                $('<a class="list-item-uploaded">').attr('href','#')
+                                $('<a class="list-item-uploading">').attr('href','#')
                                     .append(
                                         $('<i class="fa fa-file-text"></i>')
                                     )
@@ -86,10 +86,24 @@ if(window.FileListUploadPanel == undefined){
                                     $('#progress_bar_'+fake_id).hide();
                                     $('#upload-box-'+fake_id).find('.fa-file-text')
                                         .removeClass('fa-file-text').addClass('fa-check');
+                                    $('#upload-box-'+fake_id).find('.list-item-uploading')
+                                        .removeClass('list-item-uploading')
+                                        .addClass('list-item-uploaded');
                                     $('#upload-box-'+fake_id).find('.download-link')
                                         .attr('href',params.download_url +
                                             '&fileId='+file.fileId+
                                             '&fileName='+file.name);
+                                    $('#upload-box-'+fake_id).find('.list-action-remove')
+                                        .click(function (e) {
+                                            $.getJSON(params.remove_url,
+                                                {   fileId: file.fileId,
+                                                }, function (data, status, jqXHR) {
+                                                    if (status == 'success'){
+                                                        $('#upload-box-'+fake_id).remove();
+                                                    }
+                                                }
+                                            );
+                                        });
                                 }
                             });
                 //     console.log('f',file, $('#' + params.files_id ));

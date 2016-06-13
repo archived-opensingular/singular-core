@@ -39,6 +39,7 @@ public class FileListUploadPanel extends Panel {
     private final WebMarkupContainer fileList;
     private final DownloadBehavior downloader;
     private final AddFileBehavior adder;
+    private final RemoveFileBehavior remover;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model) {
         super(id, model);
@@ -47,6 +48,7 @@ public class FileListUploadPanel extends Panel {
         add(downloader = new DownloadBehavior(model.getObject().getDocument()
                 .getAttachmentPersistenceTemporaryHandler()));
         add(adder = new AddFileBehavior());
+        add(remover = new RemoveFileBehavior());
     }
 
     @Override
@@ -79,6 +81,7 @@ public class FileListUploadPanel extends Panel {
                 "             upload_id : '"+ serviceId().toString()+"', \n" +
                 "             download_url : '"+downloader.getUrl()+"', \n" +
                 "             add_url : '"+adder.getUrl()+"', \n" +
+                "             remove_url : '"+remover.getUrl()+"', \n" +
                 "  \n" +
                 "     }; \n" +
                 "  \n" +
@@ -127,22 +130,78 @@ public class FileListUploadPanel extends Panel {
         @Override
         public void onResourceRequested() {
             try {
-                ServletWebRequest request = w.request();
-                IRequestParameters parameters = request.getRequestParameters();
-                StringValue id = parameters.getParameterValue("fileId");
-                StringValue name = parameters.getParameterValue("name");
-                StringValue hashSHA1 = parameters.getParameterValue("hashSHA1");
-                StringValue size = parameters.getParameterValue("size");
-                IModel<?> model = FileListUploadPanel.this.getDefaultModel();
-                SIList<SIAttachment> list = (SIList<SIAttachment>) model.getObject();
-                SIAttachment siAttachment = list.addNew();
-                siAttachment.setFileId(id.toString());
-                siAttachment.setFileName(name.toString());
-                siAttachment.setFileHashSHA1(hashSHA1.toString());
-                siAttachment.setFileSize(parseInt(size.toString()));
+                populateFromParams(currentInstance().addNew());
             } catch (Exception e) {
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+        }
+
+        private SIList<SIAttachment> currentInstance() {
+            IModel<?> model = FileListUploadPanel.this.getDefaultModel();
+            return (SIList<SIAttachment>) model.getObject();
+        }
+
+        private void populateFromParams(SIAttachment siAttachment) {
+            siAttachment.setFileId(getParamFileId("fileId").toString());
+            siAttachment.setFileName(getParamFileId("name").toString());
+            siAttachment.setFileHashSHA1(getParamFileId("hashSHA1").toString());
+            siAttachment.setFileSize(parseInt(getParamFileId("size").toString()));
+        }
+
+        private StringValue getParamFileId(String fileId) {
+            return params().getParameterValue(fileId);
+        }
+
+        private IRequestParameters params() {
+            ServletWebRequest request = w.request();
+            return request.getRequestParameters();
+        }
+
+        @Override
+        public void bind(Component component) {
+            this.component = component;
+        }
+
+        public String getUrl() {
+            return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
+        }
+    }
+
+    private class RemoveFileBehavior extends Behavior implements IResourceListener {
+        transient protected WebWrapper w = new WebWrapper();
+        private Component component;
+
+        @Override
+        public void onResourceRequested() {
+            try {
+                SIAttachment file = null;
+                for(SIAttachment a :currentInstance()){
+                    String fileId = getParamFileId("fileId").toString();
+                    if(fileId.equals(a.getFileId())){
+                        file = a;
+                        break;
+                    }
+                }
+                if(file != null){
+                    currentInstance().remove(file);
+                }
+            } catch (Exception e) {
+                throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        private SIList<SIAttachment> currentInstance() {
+            IModel<?> model = FileListUploadPanel.this.getDefaultModel();
+            return (SIList<SIAttachment>) model.getObject();
+        }
+
+        private StringValue getParamFileId(String fileId) {
+            return params().getParameterValue(fileId);
+        }
+
+        private IRequestParameters params() {
+            ServletWebRequest request = w.request();
+            return request.getRequestParameters();
         }
 
         @Override
