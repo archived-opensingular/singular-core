@@ -6,13 +6,26 @@ import br.net.mirante.singular.form.type.core.SPackageBootstrap;
 import br.net.mirante.singular.form.view.Block;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
@@ -29,55 +42,155 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             super(ctx);
         }
 
-        private BSGrid buildPortletPanel(BSGrid grid, String id, Block block) {
-            String templatePortlet = "";
-            templatePortlet += " <div class='portlet light'>                         ";
-            templatePortlet += "     <div class='portlet-title' wicket:id='title' /> ";
-            templatePortlet += "     <div class='portlet-body'>                      ";
-            templatePortlet += "         <div wicket:id='grid' />                     ";
-            templatePortlet += "     </div>                                          ";
-            templatePortlet += " </div>                                              ";
+        @Override
+        protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
 
-            final TemplatePanel portlet = new TemplatePanel(id, templatePortlet);
-            final BSGrid        newGrid = new BSGrid("grid");
+            final List<String> remainingTypes = new ArrayList<>();
+            final List<String> addedTypes     = new ArrayList<>();
+            final SViewByBlock view           = (SViewByBlock) ctx.getView();
 
-            portlet.add(newGrid, buildPortletTitle(block));
-            grid.appendTag("div", portlet);
-            return newGrid;
+            for (int i = 0; i < view.getBlocks().size(); i++) {
+                final Block        block   = view.getBlocks().get(i);
+                final PortletPanel portlet = new PortletPanel("_portlet" + i, block);
+                addedTypes.addAll(block.getTypes());
+                appendBlock(grid, block, portlet);
+            }
+
+            for (SType f : type.getFields()) {
+                if (!addedTypes.contains(f.getNameSimple())) {
+                    remainingTypes.add(f.getNameSimple());
+                }
+            }
+
+            if (!remainingTypes.isEmpty()) {
+                final Block        block   = new Block();
+                final PortletPanel portlet = new PortletPanel("_portletForRemaining", block);
+                block.setTypes(remainingTypes);
+                appendBlock(grid, block, portlet);
+            }
+
         }
 
-        private TemplatePanel buildPortletTitle(Block block) {
-            String templateTitle = "";
-            templateTitle += "  <div class='caption'>                ";
-            templateTitle += "         <span wicket:id='name'           ";
-            templateTitle += "               class='caption-subject' /> ";
-            templateTitle += "  </div>                               ";
-            final TemplatePanel portletTitle = new TemplatePanel("title", templateTitle);
-            portletTitle.add($b.onConfigure(c -> c.setVisible(StringUtils.isNotEmpty(block.getName()))));
-            portletTitle.add(new Label("name", Model.of(block.getName())));
-            return portletTitle;
+
+        private void appendBlock(BSGrid grid, Block block, PortletPanel portlet) {
+
+            final BSGrid newGrid = portlet.getNewGrid();
+            BSRow        row     = newGrid.newRow();
+
+            grid.appendTag("div", portlet);
+
+            for (String typeName : block.getTypes()) {
+                row = buildBlockAndGetCurrentRow(type.getField(typeName), newGrid, row);
+            }
+
+            portlet.add(new ConfigurePortletVisibilityBehaviour(block));
+        }
+
+        private BSRow buildBlockAndGetCurrentRow(SType<?> field, BSGrid grid, BSRow row) {
+            final Boolean                        newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
+            final SInstanceCampoModel<SInstance> im     = fieldModel(field);
+            if (newRow != null && newRow) {
+                row = grid.newRow();
+            }
+            buildField(ctx.getUiBuilderWicket(), row, im);
+            return row;
+        }
+    }
+
+    private static class ConfigurePortletVisibilityBehaviour extends Behavior {
+
+        private final Block block;
+
+        private ConfigurePortletVisibilityBehaviour(Block block) {
+            this.block = block;
         }
 
         @Override
-        protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
-            final SViewByBlock view = (SViewByBlock) ctx.getView();
+        public void onConfigure(Component c) {
+            super.onConfigure(c);
+            final MarkupContainer container    = (MarkupContainer) c;
+            final Boolean         isAnyVisible = container.visitChildren(Component.class, new VisibilityVisitor(block));
+            container.setVisible(isAnyVisible != null && isAnyVisible);
+        }
 
-            for (int i = 0; i < view.getBlocks().size(); i++) {
+    }
 
-                final Block block = view.getBlocks().get(i);
-                BSRow       row   = buildPortletPanel(grid, "_portlet" + i, block).newRow();
+    private static class VisibilityVisitor implements IVisitor<Component, Boolean>, Serializable {
 
-                for (String typeName : block.getTypes()) {
-                    final SType<?>                       field  = type.getField(typeName);
-                    final Boolean                        newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
-                    final SInstanceCampoModel<SInstance> im     = fieldModel(field);
-                    if (newRow != null && newRow) {
-                        row = grid.newRow();
+        private final Block block;
+
+        private VisibilityVisitor(Block block) {
+            this.block = block;
+        }
+
+        @Override
+        public void component(Component component, IVisit<Boolean> visit) {
+            IModel<?> model = component.getDefaultModel();
+            if (model != null && IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
+                SInstance si = ((IMInstanciaAwareModel) model).getMInstancia();
+                if (block.getTypes().contains(si.getType().getNameSimple())) {
+                    if (si.asAtr().isVisible()) {
+                        visit.stop(true);
                     }
-                    buildField(ctx.getUiBuilderWicket(), row, im);
                 }
             }
         }
     }
+
+    private static class PortletPanel extends TemplatePanel {
+
+        private static final String TITLE_ID = "title";
+        private static final String GRID_ID  = "grid";
+
+        private static final String PORTLET_MARKUP = ""
+                + " <div class='portlet light'>                                    "
+                + "     <div class='portlet-title' wicket:id='" + TITLE_ID + "' /> "
+                + "     <div class='portlet-body'>                                 "
+                + "         <div wicket:id='" + GRID_ID + "' />                    "
+                + "     </div>                                                     "
+                + " </div>                                                         ";
+
+        private final Block  block;
+        private final BSGrid newGrid;
+
+        PortletPanel(String id, Block block) {
+            super(id, PORTLET_MARKUP);
+            this.block = block;
+            this.newGrid = new BSGrid(GRID_ID);
+            add(newGrid, buildPortletTitle(block));
+        }
+
+        @Override
+        public void onEvent(IEvent<?> event) {
+            super.onEvent(event);
+            final Boolean isAnyVisible = visitChildren(Component.class, new VisibilityVisitor(block));
+            setVisible(isAnyVisible != null && isAnyVisible);
+            if (AjaxRequestTarget.class.isAssignableFrom(event.getPayload().getClass())) {
+                ((AjaxRequestTarget) event.getPayload()).add(this);
+            }
+        }
+
+        private TemplatePanel buildPortletTitle(Block block) {
+
+            final String name = "name";
+            final String titleMarkup = ""
+                    + "  <div class='caption'>                   "
+                    + "         <span wicket:id='" + name + "'   "
+                    + "               class='caption-subject' /> "
+                    + "  </div>                                  ";
+
+            final TemplatePanel portletTitle = new TemplatePanel(TITLE_ID, titleMarkup);
+
+            portletTitle.add($b.onConfigure(c -> c.setVisible(StringUtils.isNotEmpty(block.getName()))));
+            portletTitle.add(new Label(name, Model.of(block.getName())));
+
+            return portletTitle;
+        }
+
+        BSGrid getNewGrid() {
+            return newGrid;
+        }
+    }
+
 
 }
