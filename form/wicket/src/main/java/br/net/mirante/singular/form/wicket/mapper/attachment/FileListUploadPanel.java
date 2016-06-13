@@ -8,11 +8,14 @@ import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import com.google.common.collect.ImmutableMap;
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -28,11 +31,7 @@ import org.apache.wicket.util.string.StringValue;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
@@ -64,6 +63,16 @@ public class FileListUploadPanel extends Panel {
                 protected void populateItem(ListItem item) {
                     Map<String, String> file = (Map) item.getModelObject();
                     item.add(new Label("file_name", Model.of(file.get("name"))));
+                    item.add( new AjaxButton("remove_btn") {
+
+                        @Override
+                        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                            super.onSubmit(target, form);
+                            removeFileFrom(model.getObject(), file.get("id"));
+                                target.add(FileListUploadPanel.this);
+                        }
+
+                    });
                 }
             }
         );
@@ -145,6 +154,22 @@ public class FileListUploadPanel extends Panel {
         };
     }
 
+    private static void removeFileFrom(SIList<SIAttachment> list, String fileId) {
+        SIAttachment file = findFileByID(list, fileId);
+        if(file != null){   list.remove(file);  }
+    }
+
+    private static SIAttachment findFileByID(SIList<SIAttachment> list, String fileId) {
+        SIAttachment file = null;
+        for(SIAttachment a : list){
+            if(fileId.equals(a.getFileId())){
+                file = a;
+                break;
+            }
+        }
+        return file;
+    }
+
     private class AddFileBehavior extends Behavior implements IResourceListener {
         transient protected WebWrapper w = new WebWrapper();
         private Component component;
@@ -196,17 +221,8 @@ public class FileListUploadPanel extends Panel {
         @Override
         public void onResourceRequested() {
             try {
-                SIAttachment file = null;
-                for(SIAttachment a :currentInstance()){
-                    String fileId = getParamFileId("fileId").toString();
-                    if(fileId.equals(a.getFileId())){
-                        file = a;
-                        break;
-                    }
-                }
-                if(file != null){
-                    currentInstance().remove(file);
-                }
+                String fileId = getParamFileId("fileId").toString();
+                removeFileFrom(currentInstance(), fileId);
             } catch (Exception e) {
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
