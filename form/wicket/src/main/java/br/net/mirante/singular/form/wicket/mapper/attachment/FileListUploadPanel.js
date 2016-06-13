@@ -64,9 +64,6 @@ if(window.FileListUploadPanel == undefined){
 
                 fileList.append(fileElement);
                 $('#progress_bar_'+data.files[0].fake_id).hide();
-                // $('#' + params.files_id ).html('');
-                // $('#' + params.progress_bar_id).hide();
-                // $('#' + params.progress_bar_id + ' .progress-bar').css('width','0%');
 
                 return true;
             },
@@ -84,16 +81,17 @@ if(window.FileListUploadPanel == undefined){
                             }, function (data, status, jqXHR) {
                                 if (status == 'success'){
                                     $('#progress_bar_'+fake_id).hide();
-                                    $('#upload-box-'+fake_id).find('.fa-file-text')
+                                    var box = $('#upload-box-'+fake_id);
+                                    box.find('.fa-file-text')
                                         .removeClass('fa-file-text').addClass('fa-check');
-                                    $('#upload-box-'+fake_id).find('.list-item-uploading')
+                                    box.find('.list-item-uploading')
                                         .removeClass('list-item-uploading')
                                         .addClass('list-item-uploaded');
-                                    $('#upload-box-'+fake_id).find('.download-link')
+                                    box.find('.download-link')
                                         .attr('href',params.download_url +
                                             '&fileId='+file.fileId+
                                             '&fileName='+file.name);
-                                    $('#upload-box-'+fake_id).find('.list-action-remove')
+                                    box.find('.list-action-remove')
                                         .click(function (e) {
                                             $.getJSON(params.remove_url,
                                                 {   fileId: file.fileId,
@@ -106,21 +104,6 @@ if(window.FileListUploadPanel == undefined){
                                         });
                                 }
                             });
-                //     console.log('f',file, $('#' + params.files_id ));
-                //     $('#' + params.files_id ).append(
-                //         $('<p/>').append(
-                //             $('<a />')
-                //                 .attr('href',params.download_url + '&fileId='+file.fileId+'&fileName='+file.name)
-                //                 .text(file.name)
-                //         )
-                //     );
-                //     $('#' + params.progress_bar_id).hide();
-                //     $('#' + params.name_id).val(file.name);
-                //     $('#' + params.id_id).val(file.fileId);
-                //     $('#' + params.hash_id).val(file.hashSHA1);
-                //     $('#' + params.size_id).val(file.size);
-                //
-                //     update_action_buttons();
                 });
             },
             progress: function (e, data) {
@@ -129,13 +112,6 @@ if(window.FileListUploadPanel == undefined){
                 $('#progress_bar_'+data.files[0].fake_id).show();
                 $('#progress_bar_'+data.files[0].fake_id+' .progress-bar')
                     .css( 'width', progress + '%' );
-            },
-            progressall: function (e, data) {
-                console.log('progressall',data.loaded , data.total);
-                // var progress = parseInt(data.loaded / data.total * 100, 10);
-                // $('#' + params.progress_bar_id).show();
-                // $('#' + params.progress_bar_id + ' .progress-bar').css( 'width',
-                //     progress + '%' );
             }
         }).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');

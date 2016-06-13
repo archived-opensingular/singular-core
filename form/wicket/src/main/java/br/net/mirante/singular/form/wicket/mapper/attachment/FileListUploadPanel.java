@@ -5,15 +5,20 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import com.google.common.collect.ImmutableMap;
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
@@ -24,9 +29,14 @@ import org.apache.wicket.util.string.StringValue;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Integer.*;
 import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.*;
 
@@ -44,7 +54,19 @@ public class FileListUploadPanel extends Panel {
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model) {
         super(id, model);
         add(fileField = new FileUploadField("fileUpload", dummyModel()));
-        add(fileList = new WebMarkupContainer("fileList"));
+        add(fileList = new WebMarkupContainer("fileList")
+        );
+        List<ImmutableMap<String, String>> collect = ((SIList<SIAttachment>) model.getObject()).stream()
+                .map((f) -> ImmutableMap.of("name", f.getFileName(), "id", f.getFileId()))
+                .collect(Collectors.toList());
+        fileList.add(
+            new ListView("fileItem", collect){
+                protected void populateItem(ListItem item) {
+                    Map<String, String> file = (Map) item.getModelObject();
+                    item.add(new Label("file_name", Model.of(file.get("name"))));
+                }
+            }
+        );
         add(downloader = new DownloadBehavior(model.getObject().getDocument()
                 .getAttachmentPersistenceTemporaryHandler()));
         add(adder = new AddFileBehavior());
