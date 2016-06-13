@@ -6,7 +6,6 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceH
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -18,6 +17,7 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
+import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
 import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.*;
 
 /**
@@ -27,11 +27,14 @@ public class FileListUploadPanel extends Panel {
 
     private final FileUploadField fileField;
     private final WebMarkupContainer fileList;
+    private final DownloadBehavior downloader;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model) {
         super(id, model);
         add(fileField = new FileUploadField("fileUpload", dummyModel()));
         add(fileList = new WebMarkupContainer("fileList"));
+        add(downloader = new DownloadBehavior(model.getObject().getDocument()
+                .getAttachmentPersistenceTemporaryHandler()));
     }
 
     @Override
@@ -59,10 +62,10 @@ public class FileListUploadPanel extends Panel {
 //                "             hash_id: '"+hashField.getMarkupId()+"', \n" +
 //                "             size_id: '"+sizeField.getMarkupId()+"', \n" +
 //                "  \n" +
-//                "             param_name : '"+PARAM_NAME+"', \n" +
+                "             param_name : '"+PARAM_NAME+"', \n" +
                 "             upload_url : '"+ uploadUrl() +"', \n" +
                 "             upload_id : '"+ serviceId().toString()+"', \n" +
-//                "             download_url : '"+downloader.getUrl()+"', \n" +
+                "             download_url : '"+downloader.getUrl()+"', \n" +
                 "  \n" +
                 "     }; \n" +
                 "  \n" +

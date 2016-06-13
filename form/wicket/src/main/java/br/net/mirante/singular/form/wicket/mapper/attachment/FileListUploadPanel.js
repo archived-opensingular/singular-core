@@ -19,6 +19,9 @@ if(window.FileListUploadPanel == undefined){
 
         // update_action_buttons();
 
+        var self = this;
+        self.last_id = 1;
+
         console.log('setup',params);
 
         $('#' + params.file_field_id).fileupload({
@@ -29,24 +32,29 @@ if(window.FileListUploadPanel == undefined){
             formData:{
                 'upload_id' : params.upload_id,
             },
-            start: function (e, data) {
-                console.log('start',e,data);
+            send: function (e, data) {
+                console.log('send',e,data);
+                var name = '?', fake_id = -1;
+                $.each(data.files, function (index, file) {
+                    file['fake_id'] = fake_id = self.last_id ++;
+                    name = file.name;
+                });
                 var fileList = $('#' + params.fileList_id);
-                var fileElement = $('<li>').addClass('upload-list-item')
+                var fileElement = $('<li id="upload-box-'+fake_id+'">').addClass('upload-list-item')
                     .append(
                         $('<div>').addClass('list-item-icon')
                             .append(
-                                $('<a>').attr('href','#').addClass('list-item-uploading')
+                                $('<a>').attr('href','#')
                                     .append(
                                         $('<i class="fa fa-file-text"></i>')
                                     )
                             ),
                         $('<div>').addClass('list-item-content')
-                            .append(
-                                $('<span>').text(data)
+                            .append($('<a>').attr('href','#').addClass('download-link')
+                                .append($('<span>').text(name))
                             ),
-                        $('<div class="list-item-progress">')
-                            .append($('<div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"></div>')),
+                        $('<div class="list-item-progress" id="progress_bar_'+fake_id+'">')
+                            .append($('<div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>')),
 
                         $('<div class="list-item-action">')
                             .append($('<a href="#" class="list-action-remove">')
@@ -55,13 +63,24 @@ if(window.FileListUploadPanel == undefined){
                         );
 
                 fileList.append(fileElement);
+                $('#progress_bar_'+data.files[0].fake_id).hide();
                 // $('#' + params.files_id ).html('');
                 // $('#' + params.progress_bar_id).hide();
                 // $('#' + params.progress_bar_id + ' .progress-bar').css('width','0%');
+
+                return true;
             },
             done: function (e, data) {
                 console.log('done',e,data);
-                // $.each(data.result.files, function (index, file) {
+                $.each(data.result.files, function (index, file) {
+                    var fake_id = data.files[index].fake_id;
+                    $('#progress_bar_'+fake_id).hide();
+                    console.log($('#upload-box-'+fake_id))
+                    console.log($('#upload-box-'+fake_id).find('.download-link'))
+                    $('#upload-box-'+fake_id).find('.download-link')
+                        .attr('href',params.download_url +
+                                    '&fileId='+file.fileId+
+                                    '&fileName='+file.name);
                 //     console.log('f',file, $('#' + params.files_id ));
                 //     $('#' + params.files_id ).append(
                 //         $('<p/>').append(
@@ -77,15 +96,14 @@ if(window.FileListUploadPanel == undefined){
                 //     $('#' + params.size_id).val(file.size);
                 //
                 //     update_action_buttons();
-                // });
+                });
             },
             progress: function (e, data) {
                 console.log('progress',data, data.loaded , data.total);
-                files[0].lastModified +"-"+ files[0].size
-                // var progress = parseInt(data.loaded / data.total * 100, 10);
-                // $('#' + params.progress_bar_id).show();
-                // $('#' + params.progress_bar_id + ' .progress-bar').css( 'width',
-                //     progress + '%' );
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress_bar_'+data.files[0].fake_id).show();
+                $('#progress_bar_'+data.files[0].fake_id+' .progress-bar')
+                    .css( 'width', progress + '%' );
             },
             progressall: function (e, data) {
                 console.log('progressall',data.loaded , data.total);

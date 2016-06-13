@@ -185,7 +185,8 @@ public class FileUploadPanel extends Panel {
                 nameField, hashField, sizeField, idField,
                 progressBar = new WebMarkupContainer("progress")
         );
-        add(downloader = new DownloadBehavior(model.getObject()));
+        add(downloader = new DownloadBehavior(model.getObject().getDocument()
+                .getAttachmentPersistenceTemporaryHandler()));
     }
 
     private IMInstanciaAwareModel dummyModel(final IModel<SIAttachment> model) {
