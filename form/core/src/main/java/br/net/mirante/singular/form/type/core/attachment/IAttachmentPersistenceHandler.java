@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author Daniel C. Bordin
  */
-public interface IAttachmentPersistenceHandler extends Serializable {
+public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends Serializable {
 
     /**
      * Salvo os dados informado e associa-o ao documento (formulário) atual.
@@ -67,7 +67,7 @@ public interface IAttachmentPersistenceHandler extends Serializable {
      * Recuperar os anexos associados ao contexto atual (provavelmente contexto
      * será um Documento).
      */
-    Collection<? extends IAttachmentRef> getAttachments();
+    Collection<T> getAttachments();
     /**
      * Recuperar os anexos associados ao contexto atual (provavelmente contexto
      * será um Documento).
