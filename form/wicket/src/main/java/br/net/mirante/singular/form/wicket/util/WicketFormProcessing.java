@@ -58,7 +58,7 @@ public class WicketFormProcessing {
             if (c instanceof FeedbackPanel && ((FeedbackPanel) c).anyMessage())
                 target.ifPresent(t -> t.add(c));
             else if (c.hasFeedbackMessage())
-                refresh(target, c, false);
+                refresh(target, c, true);
         });
     }
 
@@ -171,7 +171,7 @@ public class WicketFormProcessing {
 
         final String indexsKey = getIndexsKey(((IMInstanciaAwareModel<?>) fieldInstance).getMInstancia().getPathFull());
 
-        refresh(target, component, false);
+        refresh(target, component, validationOnly);
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
@@ -223,8 +223,10 @@ public class WicketFormProcessing {
             if (validationOnly) {
                 SValidationFeedbackHandler.findNearest(component)
                     .ifPresent(it -> it.updateValidationMessages(target));
+            } else {
+                target.get()
+                    .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
             }
-            target.get().add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
         }
     }
 

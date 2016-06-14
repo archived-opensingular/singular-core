@@ -86,7 +86,8 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
                 @Override
                 public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
                     if (target.isPresent())
-                        feedbackComponents.forEach(target.get()::add);
+                        for (Component comp : feedbackComponents)
+                            target.get().add(comp);
                 }
             });
         label.add(DisabledClassBehavior.getInstance());
