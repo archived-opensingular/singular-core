@@ -1467,12 +1467,19 @@ Theme Panel
     border-radius: 50%;
     margin-left: 6px; }
 
+.singular-remove-btn {
+  color: #65697C;
+  cursor: pointer; }
+
+.singular-form-table-row .form-group {
+  margin-bottom: 0px; }
+
 .tt-input[readonly] {
   background-color: #fff; }
 
 .twitter-typeahead .fa.fa-chevron-down {
   z-index: 1;
-  color: #40baa7; }
+  color: #40BAA7; }
 
 .tt-clear-icon {
   z-index: 3; }
@@ -1535,8 +1542,8 @@ Theme Panel
   .form-actions .save-btn:before {
     background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a 	 viewBox="0 0 370.571 370.571" style="fill: #65697C ;fill-rule:nonzero;" xml:space="preserve">\a<path d="M291.785,0H0v370.571h370.571V78.787L291.785,0z M100,30h170.571v50H100V30z M270.571,340.571H100V200.286h170.571V340.571z\a 	 M340.571,340.571h-40V170.286H70v170.286H30V30h40v80h230.571V51.213l40,40V340.571z"/>\a<g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>'); }
   .form-actions .send-btn {
-    background-color: #40baa7;
-    border-color: #40baa7;
+    background-color: #40BAA7;
+    border-color: #40BAA7;
     color: white; }
     .form-actions .send-btn:before {
       background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" viewBox="0 0 96 83" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">\a     <g transform="matrix(1,0,0,1,-745,-1751)">\a         <g transform="matrix(4.16667,0,0,4.16667,0,0)">\a             <path d="M178.828,439.926L201.651,430.14L178.828,420.354L178.817,427.965L195.128,430.14L178.817,432.315L178.828,439.926Z" style="fill: white ;fill-rule:nonzero;"/>\a         </g>\a     </g>\a</svg>'); }
@@ -1554,6 +1561,33 @@ Theme Panel
   .btn.btn-danger i {
     position: relative;
     top: -2px; }
+
+.list-table-heading {
+  margin: 1px 0 5px 0; }
+
+.list-table-body {
+  margin-bottom: 15px;
+  background-color: #eaeef2;
+  padding: 10px 10px 5px; }
+
+.list-table-empty {
+  display: block;
+  background-color: #eaeef2;
+  height: 30px;
+  color: #BBBFCD;
+  vertical-align: middle;
+  border: 1px dashed currentColor;
+  margin: -10px -10px -5px; }
+  .list-table-empty .list-table-empty-message {
+    text-align: center;
+    line-height: 30px;
+    height: 30px;
+    font-size: 14px; }
+  .list-table-empty .list-table-empty-link {
+    text-decoration: underline;
+    color: #65697C; }
+    .list-table-empty .list-table-empty-link:hover {
+      color: #4e5160; }
 
 .upload-list {
   color: currentColor; }
@@ -1581,7 +1615,7 @@ Theme Panel
     .upload-list-item .list-item-icon .list-item-uploading {
       color: #BBBFCD; }
     .upload-list-item .list-item-icon .list-item-uploaded {
-      color: #40baa7; }
+      color: #40BAA7; }
   .upload-list-item .list-item-content {
     width: 26%;
     margin: 0 2%;
@@ -1600,7 +1634,7 @@ Theme Panel
     margin: 10px 2%;
     border-radius: 15px; }
     .upload-list-item .list-item-progress .progress-bar {
-      background-color: #40baa7;
+      background-color: #40BAA7;
       border-radius: 15px; }
   .upload-list-item .list-item-action {
     float: right;
@@ -1609,6 +1643,40 @@ Theme Panel
       color: #BBBFCD; }
       .upload-list-item .list-item-action .list-action-remove:hover {
         color: #8088a2; }
+
+.upload-single .upload-single-choose:hover {
+  background-color: #339485; }
+
+.upload-single .upload-single-remove {
+  background-color: #ed6b75;
+  display: none; }
+  .upload-single .upload-single-remove:hover {
+    background-color: #e73d4a;
+    z-index: unset; }
+
+.upload-single-progress {
+  display: none;
+  position: relative;
+  height: 18px;
+  width: calc(100% - 14px);
+  top: -100%;
+  left: 14px;
+  background-color: #e9ebf4;
+  border-radius: 15px; }
+  .upload-single-progress .progress-bar {
+    background-color: #40BAA7; }
+
+.upload-single.upload-single-uploaded .upload-single-choose {
+  display: none; }
+
+.upload-single.upload-single-uploaded .upload-single-remove {
+  display: block; }
+
+.upload-single.upload-single-uploading .upload-single-choose {
+  display: none; }
+
+.upload-single.upload-single-uploading .upload-single-remove, .upload-single.upload-single-uploading .upload-single-progress {
+  display: block; }
 
 /* Page Portlet Fullscreen */
 .page-portlet-fullscreen .page-quick-sidebar-wrapper,
