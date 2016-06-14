@@ -6,9 +6,7 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceH
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.model.MICompostoModel;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import com.google.common.collect.ImmutableMap;
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -38,7 +36,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
-import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Integer.*;
 import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.*;
 
@@ -53,6 +50,7 @@ public class FileListUploadPanel extends Panel {
     private final AddFileBehavior adder;
     private final RemoveFileBehavior remover;
     private final WicketBuildContext ctx;
+    private final List<MInstanceRootModel> listOfFileModels;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
                                WicketBuildContext ctx) {
@@ -61,39 +59,18 @@ public class FileListUploadPanel extends Panel {
         add(fileField = new FileUploadField("fileUpload", dummyModel()));
         add(fileList = new WebMarkupContainer("fileList")
         );
-        List<ImmutableMap> collect = ((SIList<SIAttachment>) model.getObject()).stream()
-                .map((f) -> ImmutableMap.of(
-                        "name", f.getFileName(),
-                        "id", f.getFileId(),
-                        "model", new MInstanceRootModel(f)))
-                .collect(Collectors.toList());
-        fileList.add(
-            new ListView("fileItem", collect){
-                protected void populateItem(ListItem item) {
-                    Map<String, Object> file = (Map) item.getModelObject();
-                    item.add((new DownloadLink((IModel<SIAttachment>) file.get("model")))
-                            .add(new Label("file_name", Model.of((String)file.get("name"))))
-                    );
-                    item.add( new AjaxButton("remove_btn") {
-                        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                            super.onSubmit(target, form);
-                            removeFileFrom(model.getObject(), (String) file.get("id"));
-                            target.add(FileListUploadPanel.this);
-                            target.add(fileList);
-                        }
-
-                        @Override
-                        public boolean isVisible() {
-                            return ctx.getViewMode().isEdition();
-                        }
-                    });
-                }
-            }
+        fileList.add(new FilesListView(listOfFileModels = toModelList(model), model, ctx)
         );
         add(downloader = new DownloadBehavior(model.getObject().getDocument()
                 .getAttachmentPersistenceTemporaryHandler()));
         add(adder = new AddFileBehavior());
         add(remover = new RemoveFileBehavior());
+    }
+
+    private List<MInstanceRootModel> toModelList(IModel<SIList<SIAttachment>> model) {
+        return ((SIList<SIAttachment>) model.getObject()).stream()
+                    .map((f) -> new MInstanceRootModel(f))
+                    .collect(Collectors.toList());
     }
 
     @Override
@@ -113,14 +90,7 @@ public class FileListUploadPanel extends Panel {
                 "     var params = { \n" +
                 "             file_field_id: '"+fileField.getMarkupId()+"', \n" +
                 "             fileList_id: '"+fileList.getMarkupId()+"', \n" +
-//                "             files_id : '"+ filesContainer.getMarkupId()+"', \n" +
-//                "             progress_bar_id : '"+progressBar.getMarkupId()+"', \n" +
                 "  \n" +
-//                "             name_id: '"+nameField.getMarkupId()+"', \n" +
-//                "             id_id: '"+idField.getMarkupId()+"', \n" +
-//                "             hash_id: '"+hashField.getMarkupId()+"', \n" +
-//                "             size_id: '"+sizeField.getMarkupId()+"', \n" +
-//                "  \n" +
                 "             param_name : '"+PARAM_NAME+"', \n" +
                 "             upload_url : '"+ uploadUrl() +"', \n" +
                 "             upload_id : '"+ serviceId().toString()+"', \n" +
@@ -245,4 +215,57 @@ public class FileListUploadPanel extends Panel {
         }
     }
 
+    private class FilesListView extends ListView {
+        private final IModel<SIList<SIAttachment>> model;
+        private final WicketBuildContext ctx;
+
+        public FilesListView(List<MInstanceRootModel> collect, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
+            super("fileItem", collect);
+            this.model = model;
+            this.ctx = ctx;
+        }
+
+        protected void populateItem(ListItem item) {
+            MInstanceRootModel itemModel = (MInstanceRootModel) item.getModelObject();
+            SIAttachment file = (SIAttachment) itemModel.getObject();
+            item.add(
+                new DownloadLink((IModel<SIAttachment>) itemModel)
+                    .add(new Label("file_name", Model.of(file.getFileName())))
+            );
+            item.add(new RemoveButton(itemModel));
+        }
+
+        private class RemoveButton extends AjaxButton {
+            private final MInstanceRootModel itemModel;
+
+            public RemoveButton(MInstanceRootModel itemModel) {
+                super("remove_btn");
+                this.itemModel = itemModel;
+            }
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                super.onSubmit(target, form);
+                SIAttachment file = (SIAttachment) itemModel.getObject();
+
+                Iterator<MInstanceRootModel> it = listOfFileModels.iterator();
+                while(it.hasNext()){
+                    MInstanceRootModel m = it.next();
+                    SIAttachment f = (SIAttachment) m.getObject();
+                    if(file.getFileId().equals(f.getFileId())){
+                        it.remove();
+                        break;
+                    }
+                }
+
+                removeFileFrom(model.getObject(), file.getFileId());
+
+                target.add(FileListUploadPanel.this);
+                target.add(fileList);
+            }
+
+            @Override
+            public boolean isVisible() {
+                return ctx.getViewMode().isEdition();
+            }
+        }
+    }
 }
