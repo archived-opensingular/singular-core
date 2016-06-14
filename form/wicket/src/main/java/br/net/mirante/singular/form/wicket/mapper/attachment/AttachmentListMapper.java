@@ -69,7 +69,7 @@ public class AttachmentListMapper extends AbstractListaMapper {
 
         ctx.getContainer().appendTag("div",
                 new FileListUploadPanel("up-list",
-                        (IModel<SIList<SIAttachment>>) ctx.getModel()));
+                        (IModel<SIList<SIAttachment>>) ctx.getModel(), ctx));
 
     }
 

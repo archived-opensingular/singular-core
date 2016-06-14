@@ -4,7 +4,10 @@ import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.MICompostoModel;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import com.google.common.collect.ImmutableMap;
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
@@ -49,29 +52,40 @@ public class FileListUploadPanel extends Panel {
     private final DownloadBehavior downloader;
     private final AddFileBehavior adder;
     private final RemoveFileBehavior remover;
+    private final WicketBuildContext ctx;
 
-    public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model) {
+    public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
+                               WicketBuildContext ctx) {
         super(id, model);
+        this.ctx = ctx;
         add(fileField = new FileUploadField("fileUpload", dummyModel()));
         add(fileList = new WebMarkupContainer("fileList")
         );
-        List<ImmutableMap<String, String>> collect = ((SIList<SIAttachment>) model.getObject()).stream()
-                .map((f) -> ImmutableMap.of("name", f.getFileName(), "id", f.getFileId()))
+        List<ImmutableMap> collect = ((SIList<SIAttachment>) model.getObject()).stream()
+                .map((f) -> ImmutableMap.of(
+                        "name", f.getFileName(),
+                        "id", f.getFileId(),
+                        "model", new MInstanceRootModel(f)))
                 .collect(Collectors.toList());
         fileList.add(
             new ListView("fileItem", collect){
                 protected void populateItem(ListItem item) {
-                    Map<String, String> file = (Map) item.getModelObject();
-                    item.add(new Label("file_name", Model.of(file.get("name"))));
+                    Map<String, Object> file = (Map) item.getModelObject();
+                    item.add((new DownloadLink((IModel<SIAttachment>) file.get("model")))
+                            .add(new Label("file_name", Model.of((String)file.get("name"))))
+                    );
                     item.add( new AjaxButton("remove_btn") {
-
-                        @Override
                         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                             super.onSubmit(target, form);
-                            removeFileFrom(model.getObject(), file.get("id"));
-                                target.add(FileListUploadPanel.this);
+                            removeFileFrom(model.getObject(), (String) file.get("id"));
+                            target.add(FileListUploadPanel.this);
+                            target.add(fileList);
                         }
 
+                        @Override
+                        public boolean isVisible() {
+                            return ctx.getViewMode().isEdition();
+                        }
                     });
                 }
             }
@@ -170,36 +184,21 @@ public class FileListUploadPanel extends Panel {
         return file;
     }
 
-    private class AddFileBehavior extends Behavior implements IResourceListener {
+    protected abstract class BaseJQueryFileUploadBehavior
+            extends Behavior implements IResourceListener{
         transient protected WebWrapper w = new WebWrapper();
         private Component component;
 
-        @Override
-        public void onResourceRequested() {
-            try {
-                populateFromParams(currentInstance().addNew());
-            } catch (Exception e) {
-                throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        private SIList<SIAttachment> currentInstance() {
+        protected SIList<SIAttachment> currentInstance() {
             IModel<?> model = FileListUploadPanel.this.getDefaultModel();
             return (SIList<SIAttachment>) model.getObject();
         }
 
-        private void populateFromParams(SIAttachment siAttachment) {
-            siAttachment.setFileId(getParamFileId("fileId").toString());
-            siAttachment.setFileName(getParamFileId("name").toString());
-            siAttachment.setFileHashSHA1(getParamFileId("hashSHA1").toString());
-            siAttachment.setFileSize(parseInt(getParamFileId("size").toString()));
-        }
-
-        private StringValue getParamFileId(String fileId) {
+        protected StringValue getParamFileId(String fileId) {
             return params().getParameterValue(fileId);
         }
 
-        private IRequestParameters params() {
+        protected IRequestParameters params() {
             ServletWebRequest request = w.request();
             return request.getRequestParameters();
         }
@@ -214,9 +213,26 @@ public class FileListUploadPanel extends Panel {
         }
     }
 
-    private class RemoveFileBehavior extends Behavior implements IResourceListener {
-        transient protected WebWrapper w = new WebWrapper();
-        private Component component;
+    private class AddFileBehavior extends BaseJQueryFileUploadBehavior {
+        @Override
+        public void onResourceRequested() {
+            try {
+                populateFromParams(currentInstance().addNew());
+            } catch (Exception e) {
+                throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        private void populateFromParams(SIAttachment siAttachment) {
+            siAttachment.setFileId(getParamFileId("fileId").toString());
+            siAttachment.setFileName(getParamFileId("name").toString());
+            siAttachment.setFileHashSHA1(getParamFileId("hashSHA1").toString());
+            siAttachment.setFileSize(parseInt(getParamFileId("size").toString()));
+        }
+
+    }
+
+    private class RemoveFileBehavior extends BaseJQueryFileUploadBehavior {
 
         @Override
         public void onResourceRequested() {
@@ -226,29 +242,6 @@ public class FileListUploadPanel extends Panel {
             } catch (Exception e) {
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-        }
-
-        private SIList<SIAttachment> currentInstance() {
-            IModel<?> model = FileListUploadPanel.this.getDefaultModel();
-            return (SIList<SIAttachment>) model.getObject();
-        }
-
-        private StringValue getParamFileId(String fileId) {
-            return params().getParameterValue(fileId);
-        }
-
-        private IRequestParameters params() {
-            ServletWebRequest request = w.request();
-            return request.getRequestParameters();
-        }
-
-        @Override
-        public void bind(Component component) {
-            this.component = component;
-        }
-
-        public String getUrl() {
-            return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
         }
     }
 

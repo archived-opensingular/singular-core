@@ -83,10 +83,13 @@ if(window.FileListUploadPanel == undefined){
                                     $('#progress_bar_'+fake_id).hide();
                                     var box = $('#upload-box-'+fake_id);
                                     box.find('.fa-file-text')
-                                        .removeClass('fa-file-text').addClass('fa-check');
+                                        .removeClass('fa-file-text')
+                                        .addClass('fa-check');
                                     box.find('.list-item-uploading')
                                         .removeClass('list-item-uploading')
                                         .addClass('list-item-uploaded');
+                                    box.find('.list-item-content')
+                                        .css("width","80%");
                                     box.find('.download-link')
                                         .attr('href',params.download_url +
                                             '&fileId='+file.fileId+

@@ -72,50 +72,7 @@ public class FileUploadPanel extends Panel {
         }
     };
 
-    private final Link<Void> downloadLink = new Link<Void>("downloadLink") {
-
-        private static final String SELF = "_self", BLANK = "_blank";
-        private IModel<String> target = $m.ofValue(SELF);
-
-        @Override
-        public void onClick() {
-            final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
-                @Override
-                public void write(OutputStream outputStream) throws IOException {
-                    outputStream.write(model.getObject().getContentAsByteArray());
-                }
-            };
-
-            final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
-
-            requestHandler.setFileName(model.getObject().getFileName());
-            requestHandler.setCacheDuration(Duration.NONE);
-
-            if (model.getObject().isContentTypeBrowserFriendly()) {
-                requestHandler.setContentDisposition(ContentDisposition.INLINE);
-            } else {
-                requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
-            }
-
-            getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
-        }
-
-        @Override
-        protected void onInitialize() {
-            super.onInitialize();
-            add(new AttributeModifier("target", target));
-        }
-
-        @Override
-        protected void onConfigure() {
-            super.onConfigure();
-            if (model.getObject().isContentTypeBrowserFriendly()) {
-                target.setObject(BLANK);
-            } else {
-                target.setObject(SELF);
-            }
-        }
-    };
+    private final Link<Void> downloadLink;
 
     private final AjaxButton removeFileButton = new AjaxButton("remove_btn") {
 
@@ -167,7 +124,7 @@ public class FileUploadPanel extends Panel {
         super(id, model);
         this.model = model;
         this.viewMode = viewMode;
-
+        downloadLink = new DownloadLink(model);
         fileField = new FileUploadField("fileUpload", dummyModel(model));
         nameField = new HiddenField("file_name",
                 new PropertyModel<>(model, "fileName"));
@@ -260,5 +217,56 @@ public class FileUploadPanel extends Panel {
 
     public FileUploadField getUploadField() {
         return fileField;
+    }
+
+}
+class DownloadLink extends Link<Void> {
+
+    private static final String SELF = "_self", BLANK = "_blank";
+    private IModel<String> target = $m.ofValue(SELF);
+    private IModel<SIAttachment> model;
+
+    public DownloadLink(IModel<SIAttachment> model) {
+        super("downloadLink");
+        this.model = model;
+    }
+
+    @Override
+    public void onClick() {
+        final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
+            @Override
+            public void write(OutputStream outputStream) throws IOException {
+                outputStream.write(model.getObject().getContentAsByteArray());
+            }
+        };
+
+        final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
+
+        requestHandler.setFileName(model.getObject().getFileName());
+        requestHandler.setCacheDuration(Duration.NONE);
+
+        if (model.getObject().isContentTypeBrowserFriendly()) {
+            requestHandler.setContentDisposition(ContentDisposition.INLINE);
+        } else {
+            requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+        }
+
+        getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        add(new AttributeModifier("target", target));
+    }
+
+    @Override
+    protected void onConfigure() {
+        super.onConfigure();
+        if (model.getObject().isContentTypeBrowserFriendly()) {
+            target.setObject(BLANK);
+        } else {
+            target.setObject(SELF);
+        }
     }
 }
