@@ -5,19 +5,20 @@
 
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.io.HashUtil;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import com.google.common.io.CountingInputStream;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.util.zip.InflaterInputStream;
 
+import com.google.common.io.CountingInputStream;
+
+import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.io.HashUtil;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+
 @SuppressWarnings("serial")
-abstract class AbstractAttachmentPersistenceHandler implements IAttachmentPersistenceHandler {
+abstract class AbstractAttachmentPersistenceHandler<T> implements IAttachmentPersistenceHandler {
 
     @Override
     public final IAttachmentRef addAttachment(byte[] content) {

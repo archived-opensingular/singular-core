@@ -1573,15 +1573,24 @@ Theme Panel
 .list-table-empty {
   display: block;
   background-color: #eaeef2;
+<<<<<<< HEAD
   height: 30px;
+=======
+  height: 90px;
+>>>>>>> develop
   color: #BBBFCD;
   vertical-align: middle;
   border: 1px dashed currentColor;
   margin: -10px -10px -5px; }
   .list-table-empty .list-table-empty-message {
     text-align: center;
+<<<<<<< HEAD
     line-height: 30px;
     height: 30px;
+=======
+    line-height: 90px;
+    height: 90px;
+>>>>>>> develop
     font-size: 14px; }
   .list-table-empty .list-table-empty-link {
     text-decoration: underline;

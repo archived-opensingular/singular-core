@@ -50,4 +50,6 @@
         <constructor-arg ref="showcaseDocumentFactory"/>
     </bean>
 
+    <bean id="filePersistence" class="br.net.mirante.singular.form.persistence.dao.FileDao" />
+
 </beans>

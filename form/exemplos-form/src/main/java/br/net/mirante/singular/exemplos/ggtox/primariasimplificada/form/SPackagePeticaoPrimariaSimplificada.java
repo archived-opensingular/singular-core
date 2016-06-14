@@ -40,7 +40,9 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                 .selectionOf("I", "II", "III", "IV").withRadioView();
 
         nivel
-                .asAtr().label("Nivel");
+                .asAtr()
+                .required()
+                .label("Nível");
 
         documentacaoI
                 .asAtr()

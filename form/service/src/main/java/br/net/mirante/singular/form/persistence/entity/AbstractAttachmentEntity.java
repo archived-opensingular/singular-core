@@ -3,30 +3,47 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.showcase.dao.form;
+package br.net.mirante.singular.form.persistence.entity;
 
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.Serializable;
 
-@Entity
-@Table(name = "EXAMPLE_FILE")
-public class ExampleFile implements IAttachmentRef, Serializable{
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
 
-    @Id String id;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.util.Constants;
+
+@MappedSuperclass
+@Table(schema = Constants.SCHEMA, name = "TB_ARQUIVO_PETICAO")
+public class AbstractAttachmentEntity extends BaseEntity<String> implements IAttachmentRef {
+
+    @Id
+    @Column(name = "CO_ARQUIVO_PETICAO")
+    private String id;
+
+    @Column(name = "DS_SHA1")
     private String hashSha1;
-    @Lob private byte[] rawContent;
+
+    @Lob
+    @Column(name = "BL_ARQUIVO_PETICAO")
+    private byte[] rawContent;
+
+    @Column(name = "NU_TAMANHO")
     private int size;
     
-    public ExampleFile() {}
+    public AbstractAttachmentEntity() {}
     
-    public ExampleFile(String id) { this.id = id;   }
+    public AbstractAttachmentEntity(String id) { this.id = id;   }
+
+    @Override
+    public String getCod() {
+        return getId();
+    }
 
     public String getId() {
         return id;
@@ -85,7 +102,7 @@ public class ExampleFile implements IAttachmentRef, Serializable{
         if (this == obj)    return true;
         if (obj == null)    return false;
         if (getClass() != obj.getClass())   return false;
-        ExampleFile other = (ExampleFile) obj;
+        AbstractAttachmentEntity other = (AbstractAttachmentEntity) obj;
         if (hashSha1 == null) {
             if (other.hashSha1 != null) return false;
         } else if (!hashSha1.equals(other.hashSha1))    return false;
@@ -96,5 +113,5 @@ public class ExampleFile implements IAttachmentRef, Serializable{
         return true;
     }
     
-    
+
 }
