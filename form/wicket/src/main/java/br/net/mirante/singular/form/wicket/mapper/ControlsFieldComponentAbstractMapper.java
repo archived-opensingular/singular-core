@@ -81,14 +81,15 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         this.formGroup = container.newFormGroup();
         formGroup.setFeedbackPanelFactory((id, fence, filter) -> new SValidationFeedbackPanel(id, fence));
         SValidationFeedbackHandler.bindTo(ctx.getContainer())
-                .addInstanceModel(this.model)
-                .addListener(new ISValidationFeedbackHandlerListener() {
-                    @Override
-                    public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
-                        if (target.isPresent())
-                            feedbackComponents.forEach(target.get()::add);
-                    }
-                });
+            .addInstanceModel(this.model)
+            .addListener(new ISValidationFeedbackHandlerListener() {
+                @Override
+                public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
+                    if (target.isPresent())
+                        for (Component comp : feedbackComponents)
+                            target.get().add(comp);
+                }
+            });
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
         label.add($b.onConfigure(c -> {
