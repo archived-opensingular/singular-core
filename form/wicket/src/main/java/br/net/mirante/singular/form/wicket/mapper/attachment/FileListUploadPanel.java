@@ -50,7 +50,7 @@ public class FileListUploadPanel extends Panel {
     private final AddFileBehavior adder;
     private final RemoveFileBehavior remover;
     private final WicketBuildContext ctx;
-    private final List<MInstanceRootModel> listOfFileModels;
+    private List<MInstanceRootModel> listOfFileModels;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
                                WicketBuildContext ctx) {
@@ -59,16 +59,20 @@ public class FileListUploadPanel extends Panel {
         add(fileField = new FileUploadField("fileUpload", dummyModel()));
         add(fileList = new WebMarkupContainer("fileList")
         );
-        fileList.add(new FilesListView(listOfFileModels = toModelList(model), model, ctx)
-        );
+        updateListOfFileModels((SIList<SIAttachment>) model.getObject());
+        fileList.add(new FilesListView(listOfFileModels, model, ctx));
         add(downloader = new DownloadBehavior(model.getObject().getDocument()
                 .getAttachmentPersistenceTemporaryHandler()));
         add(adder = new AddFileBehavior());
         add(remover = new RemoveFileBehavior());
     }
 
-    private List<MInstanceRootModel> toModelList(IModel<SIList<SIAttachment>> model) {
-        return ((SIList<SIAttachment>) model.getObject()).stream()
+    private List<MInstanceRootModel> updateListOfFileModels(SIList<SIAttachment> fileList) {
+        return listOfFileModels = toModelList(fileList);
+    }
+
+    private List<MInstanceRootModel> toModelList(SIList<SIAttachment> fileList) {
+        return fileList.stream()
                     .map((f) -> new MInstanceRootModel(f))
                     .collect(Collectors.toList());
     }
@@ -188,6 +192,7 @@ public class FileListUploadPanel extends Panel {
         public void onResourceRequested() {
             try {
                 populateFromParams(currentInstance().addNew());
+                updateListOfFileModels(currentInstance());
             } catch (Exception e) {
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -246,6 +251,14 @@ public class FileListUploadPanel extends Panel {
                 super.onSubmit(target, form);
                 SIAttachment file = (SIAttachment) itemModel.getObject();
 
+                removeFromListOfModels(file);
+                removeFileFrom(model.getObject(), file.getFileId());
+
+                target.add(FileListUploadPanel.this);
+                target.add(fileList);
+            }
+
+            private void removeFromListOfModels(SIAttachment file) {
                 Iterator<MInstanceRootModel> it = listOfFileModels.iterator();
                 while(it.hasNext()){
                     MInstanceRootModel m = it.next();
@@ -255,11 +268,6 @@ public class FileListUploadPanel extends Panel {
                         break;
                     }
                 }
-
-                removeFileFrom(model.getObject(), file.getFileId());
-
-                target.add(FileListUploadPanel.this);
-                target.add(fileList);
             }
 
             @Override
