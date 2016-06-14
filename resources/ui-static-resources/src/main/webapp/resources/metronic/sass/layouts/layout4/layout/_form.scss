@@ -170,11 +170,7 @@
 .list-table-empty {
   display: block;
   background-color: darken($color-background-dependant, 5%);
-<<<<<<< HEAD
   height: 30px;
-=======
-  height: 90px;
->>>>>>> develop
   color: $input-color-placeholder;
   vertical-align: middle;
   border: 1px dashed currentColor;
@@ -182,13 +178,8 @@
 
   .list-table-empty-message {
     text-align:center;
-<<<<<<< HEAD
     line-height:30px;
     height:30px;
-=======
-    line-height:90px;
-    height:90px;
->>>>>>> develop
     font-size:14px;
   }
 
