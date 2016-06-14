@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.view.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -44,6 +43,11 @@ import br.net.mirante.singular.form.type.core.STypeBoolean;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.view.SViewByBlock;
+import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.view.SViewListByTable;
+import br.net.mirante.singular.form.view.SViewSearchModal;
+import br.net.mirante.singular.form.view.SViewTextArea;
 
 public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
@@ -140,7 +144,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
         final STypeInteger potencia = formulaHomeopatica.addFieldInteger("potencia");
         potencia
                 .asAtr().label("Potência")
-                .asAtrBootstrap().colPreference(3);
+                .asAtrBootstrap().colPreference(3).newRow();
 
         final STypeString escala = formulaHomeopatica.addFieldString("escala");
         escala

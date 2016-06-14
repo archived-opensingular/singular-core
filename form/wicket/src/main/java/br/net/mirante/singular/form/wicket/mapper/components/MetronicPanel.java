@@ -75,7 +75,7 @@ public abstract class MetronicPanel extends TemplatePanel {
         form.replace(content);
     }
 
-    private IFunction<TemplatePanel, String> getTemplate(boolean withForm) {
+    protected IFunction<TemplatePanel, String> getTemplate(boolean withForm) {
         String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";
         return (tp) -> String.format(wrapper, ""
                 + "  <div class='panel panel-default'>"
