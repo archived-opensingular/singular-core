@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
@@ -45,7 +46,7 @@ public class BooleanMapper implements IWicketComponentMapper {
         final CheckBox input = new CheckBox(model.getObject().getName(), new MInstanciaValorModel<>(model));
         formGroup.appendCheckbox(input, buildLabel("_", labelModel));
         input.add(DisabledClassBehavior.getInstance());
-        formGroup.appendFeedback(formGroup, new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING));
+        formGroup.appendFeedback(formGroup, new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING), IConsumer.noop());
         ctx.configure(this, input);
     }
 
@@ -72,6 +73,6 @@ public class BooleanMapper implements IWicketComponentMapper {
 
     protected Label buildLabel(String id, AtributoModel<String> labelModel) {
         return (Label) new Label(id, labelModel.getObject())
-                .setEscapeModelStrings(false);
+            .setEscapeModelStrings(false);
     }
 }

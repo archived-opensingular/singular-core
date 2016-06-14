@@ -76,6 +76,7 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         final AtributoModel<String> subtitle = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
         final ViewMode viewMode = ctx.getViewMode();
         final BSLabel label = new BSLabel("label", labelModel);
+        final List<Component> feedbackComponents = new ArrayList<>();
 
         this.formGroup = container.newFormGroup();
         formGroup.setFeedbackPanelFactory((id, fence, filter) -> new SValidationFeedbackPanel(id, fence));
@@ -85,7 +86,7 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
                 @Override
                 public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
                     if (target.isPresent())
-                        target.get().add(formGroup);
+                        feedbackComponents.forEach(target.get()::add);
                 }
             });
         label.add(DisabledClassBehavior.getInstance());
@@ -107,11 +108,11 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
 
         if (viewMode.isEdition()) {
             input = appendInput();
-            formGroup.appendFeedback(ctx.getContainer(), IFeedbackMessageFilter.ALL);
+            formGroup.appendFeedback(ctx.getContainer(), IFeedbackMessageFilter.ALL, feedbackComponents::add);
             formGroup.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
-                    if(model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null){
+                    if (model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null) {
                         oldClasses.add("dependant-input-group");
                     }
                     return oldClasses;

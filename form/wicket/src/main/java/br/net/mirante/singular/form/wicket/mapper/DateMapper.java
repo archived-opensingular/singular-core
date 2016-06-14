@@ -5,6 +5,23 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.ConversionException;
+import org.apache.wicket.util.convert.IConverter;
+
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
@@ -13,20 +30,6 @@ import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.convert.ConversionException;
-import org.apache.wicket.util.convert.IConverter;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class DateMapper extends ControlsFieldComponentAbstractMapper {
@@ -34,7 +37,6 @@ public class DateMapper extends ControlsFieldComponentAbstractMapper {
     private static final Logger LOGGER = Logger.getLogger(DateMapper.class.getName());
 
     @Override
-    @SuppressWarnings("rawtypes")
     public Component appendInput() {
         @SuppressWarnings("unchecked")
         TextField<?> comp = new TextField<Date>(model.getObject().getName(),
@@ -72,7 +74,8 @@ public class DateMapper extends ControlsFieldComponentAbstractMapper {
 
     @Override
     public void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
-        component.add(new BSDatepickerAjaxUpdateBehavior(model, listener));
+        component.add(new BSDatepickerAjaxUpdateBehavior(model, true, listener));
+        component.add(new BSDatepickerAjaxUpdateBehavior(model, false, listener));
     }
 
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
@@ -91,8 +94,8 @@ public class DateMapper extends ControlsFieldComponentAbstractMapper {
 
         private transient boolean flag;
 
-        private BSDatepickerAjaxUpdateBehavior(IModel<SInstance> model, IAjaxUpdateListener listener) {
-            super(BSDatepickerConstants.JS_CHANGE_EVENT, model, listener);
+        private BSDatepickerAjaxUpdateBehavior(IModel<SInstance> model, boolean validateOnly, IAjaxUpdateListener listener) {
+            super((validateOnly) ? SINGULAR_VALIDATE_EVENT : SINGULAR_PROCESS_EVENT, model, validateOnly, listener);
         }
 
         @Override
@@ -110,6 +113,14 @@ public class DateMapper extends ControlsFieldComponentAbstractMapper {
             } finally {
                 flag = false;
             }
+        }
+
+        @Override
+        public void renderHead(Component component, IHeaderResponse response) {
+            super.renderHead(component, response);
+            response.render(OnDomReadyHeaderItem.forScript(JQuery.$(getComponent())
+                + ".on('" + BSDatepickerConstants.JS_CHANGE_EVENT + "', function(){ $(this).trigger('" + SINGULAR_VALIDATE_EVENT + "'); })"
+                + ".on('hide', function(){ $(this).trigger('" + SINGULAR_PROCESS_EVENT + "'); });"));
         }
     }
 }

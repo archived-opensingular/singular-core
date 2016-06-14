@@ -28,6 +28,7 @@ import br.net.mirante.singular.form.SInstances;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class SValidationFeedbackHandler implements Serializable {
 
@@ -62,6 +63,15 @@ public class SValidationFeedbackHandler implements Serializable {
 
     public static SValidationFeedbackHandler get(Component component) {
         return component.getMetaData(MDK);
+    }
+    public static Optional<SValidationFeedbackHandler> findNearest(Component component) {
+        List<Component> list = new ArrayList<>();
+        list.add(component);
+        WicketUtils.appendListOfParents(list, component, null);
+        return list.stream()
+            .filter(it -> isBound(it))
+            .map(it -> get(it))
+            .findFirst();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

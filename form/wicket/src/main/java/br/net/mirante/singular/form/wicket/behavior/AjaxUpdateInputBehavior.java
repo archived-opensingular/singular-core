@@ -14,17 +14,22 @@ import org.apache.wicket.model.IModel;
 public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
 
     private final IAjaxUpdateListener listener;
-    private final IModel<SInstance>  model;
+    private final IModel<SInstance>   model;
+    private final boolean             validateOnly;
 
-    public AjaxUpdateInputBehavior(String event, IModel<SInstance> model, IAjaxUpdateListener listener) {
+    public AjaxUpdateInputBehavior(String event, IModel<SInstance> model, boolean validateOnly, IAjaxUpdateListener listener) {
         super(event);
-        this.listener = listener;
         this.model = model;
+        this.validateOnly = validateOnly;
+        this.listener = listener;
     }
 
     @Override
     public void onUpdate(AjaxRequestTarget target) {
-        listener.onUpdate(this.getComponent(), target, model);
+        if (validateOnly)
+            listener.onValidate(this.getComponent(), target, model);
+        else
+            listener.onProcess(this.getComponent(), target, model);
     }
 
 }

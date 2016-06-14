@@ -22,15 +22,12 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.CssReferenceHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.ViewResolver;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
@@ -209,11 +206,11 @@ public class WicketBuildContext implements Serializable {
             final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
             // final SType<?> tipo = model.getMInstancia().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
-            if(mapper.updateOnChange()){
+            if (mapper.updateOnChange()) {
                 mapper.addAjaxUpdate(
-                        formComponent,
-                        IMInstanciaAwareModel.getInstanceModel(model),
-                        new OnFieldUpdatedListener());
+                    formComponent,
+                    IMInstanciaAwareModel.getInstanceModel(model),
+                    new OnFieldUpdatedListener());
             }
         }
     }
@@ -352,17 +349,18 @@ public class WicketBuildContext implements Serializable {
     }
 
     private static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
-
         @Override
-        public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
-            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m);
+        public void onValidate(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
+            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m, true);
         }
-
+        @Override
+        public void onProcess(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
+            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m, false);
+        }
         @Override
         public void onError(Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel) {
             WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel);
         }
-
     }
 
     public UIBuilderWicket getUiBuilderWicket() {

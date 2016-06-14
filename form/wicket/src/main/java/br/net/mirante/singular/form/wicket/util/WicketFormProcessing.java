@@ -58,7 +58,7 @@ public class WicketFormProcessing {
             if (c instanceof FeedbackPanel && ((FeedbackPanel) c).anyMessage())
                 target.ifPresent(t -> t.add(c));
             else if (c.hasFeedbackMessage())
-                refresh(target, c);
+                refresh(target, c, false);
         });
     }
 
@@ -91,7 +91,7 @@ public class WicketFormProcessing {
                 validationContext.validateAll(baseInstance);
                 if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
                     hasErrors = true;
-                    refresh(target, container);
+                    refresh(target, container, false);
                 }
             }
 
@@ -103,12 +103,12 @@ public class WicketFormProcessing {
 
             if (hasErrors)
                 return setAndReturn.apply(false);
-            
+
             // atualizar documento e recuperar instancias com atributos alterados
             document.updateAttributes(baseInstance, null);
 
             // re-renderizar form
-            refresh(target, container);
+            refresh(target, container, false);
         }
         return setAndReturn.apply(true);
     }
@@ -134,7 +134,7 @@ public class WicketFormProcessing {
         return key.toString();
     }
 
-    public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance) {
+    public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance, boolean validationOnly) {
 
         if (fieldInstance == null || fieldInstance.getObject() == null) {
             return;
@@ -144,7 +144,7 @@ public class WicketFormProcessing {
          * A ordem foi alterada para garantir que os componentes dependentes serão atualizados,
          * já que o valor é submetido.
          */
-        refreshComponents(formComponent, target, fieldInstance);
+        refreshComponents(formComponent, target, fieldInstance, validationOnly);
 
         if (RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST) == null || !RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST)) {
             // Validação do valor do componente
@@ -157,7 +157,7 @@ public class WicketFormProcessing {
 
     }
 
-    private static void refreshComponents(Component component, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance) {
+    private static void refreshComponents(Component component, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance, boolean validationOnly) {
 
         // atualizar documento e recuperar os IDs das instancias com atributos alterados
         final ISInstanceListener.EventCollector eventCollector = new ISInstanceListener.EventCollector();
@@ -171,7 +171,7 @@ public class WicketFormProcessing {
 
         final String indexsKey = getIndexsKey(((IMInstanciaAwareModel<?>) fieldInstance).getMInstancia().getPathFull());
 
-        refresh(target, component);
+        refresh(target, component, false);
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
@@ -205,20 +205,25 @@ public class WicketFormProcessing {
                     || (childrenDepends || dependsOnType) && isInTheSameIndexOfList;
             };
 
-            component.getPage().visitChildren(Component.class, (c, visit) -> {
-                IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
-                    if (predicate.test(model.getMInstancia())) {
-                        model.getMInstancia().clearInstance();
-                        refreshComponents(c, target, IMInstanciaAwareModel.getInstanceModel(model));
-                    }
+            if (!validationOnly) {
+                component.getPage().visitChildren(Component.class, (c, visit) -> {
+                    IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
+                        if (predicate.test(model.getMInstancia())) {
+                            model.getMInstancia().clearInstance();
+                            refreshComponents(c, target, IMInstanciaAwareModel.getInstanceModel(model), validationOnly);
+                        }
+                    });
                 });
-            });
-
+            }
         });
     }
 
-    private static void refresh(Optional<AjaxRequestTarget> target, Component component) {
+    private static void refresh(Optional<AjaxRequestTarget> target, Component component, boolean validationOnly) {
         if (target.isPresent() && component != null) {
+            if (validationOnly) {
+                SValidationFeedbackHandler.findNearest(component)
+                    .ifPresent(it -> it.updateValidationMessages(target));
+            }
             target.get().add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
         }
     }
