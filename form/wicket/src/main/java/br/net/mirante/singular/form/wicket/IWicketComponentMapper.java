@@ -25,6 +25,7 @@ import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateChoiceBehavior;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateSingularFormComponentPanel;
 import br.net.mirante.singular.form.wicket.component.SingularFormComponentPanel;
+import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
 
 @FunctionalInterface
@@ -75,24 +76,24 @@ public interface IWicketComponentMapper extends UIComponentMapper {
             (component instanceof RadioGroup) ||
             (component instanceof CheckGroup)) {
             component.add(new AjaxUpdateChoiceBehavior(model, listener));
-            //            component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);
+            //component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);
 
         } else if (component instanceof SingularFormComponentPanel) {
             component.add(new AjaxUpdateSingularFormComponentPanel(model, listener));
 
         } else if (!(component instanceof FormComponentPanel<?>)) {
-//            component.add(SINGULAR_BLUR_CHANGE_DEBOUNCER);
+            //component.add(SINGULAR_BLUR_CHANGE_DEBOUNCER);
             component.add(new AjaxUpdateInputBehavior(SINGULAR_VALIDATE_EVENT, model, true, listener));
             component.add(new AjaxUpdateInputBehavior(SINGULAR_PROCESS_EVENT, model, false, listener));
-            //            component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);
+            //component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);
         } else {
             LoggerFactory.getLogger(WicketBuildContext.class).warn("Atualização ajax não suportada para " + component);
         }
     }
 
     default void adjustJSEvents(Component comp) {
-        comp.add($b.onReadyScript(c -> JQuery.redirectEvent(c, "blur", c, SINGULAR_VALIDATE_EVENT)));
-        comp.add($b.onReadyScript(c -> JQuery.redirectEvent(c, "change", c, SINGULAR_PROCESS_EVENT)));
+        comp.add(new SingularEventsHandlers());
+        comp.add($b.onReadyScript(c -> "SEH.addTextFieldHandlers(" + c.getMarkupId(true) + ")"));
     }
 
     default boolean updateOnChange() {

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -60,7 +59,6 @@ public class WicketBuildContext implements Serializable {
     private final HashMap<HintKey<?>, Serializable> hints    = new HashMap<>();
     private final boolean                           hintsInherited;
     private final BSContainer                       externalContainer;
-    private final BSContainer                       rootContainer;
 
     private IModel<? extends SInstance>           model;
     private UIBuilderWicket                       uiBuilderWicket;
@@ -145,10 +143,10 @@ public class WicketBuildContext implements Serializable {
         this.container = container;
         this.hintsInherited = hintsInherited;
         this.externalContainer = externalContainer;
-        this.rootContainer = ObjectUtils.defaultIfNull((parent == null) ? null : parent.getRootContainer(), container);
         this.model = model;
         WicketFormUtils.markAsCellContainer(container);
         container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
+        container.setMetaData(METADATA_KEY, this);
     }
 
     public WicketBuildContext init(UIBuilderWicket uiBuilderWicket, ViewMode viewMode) {
@@ -231,8 +229,20 @@ public class WicketBuildContext implements Serializable {
     //        return Boolean.TRUE.equals(getHint(RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY));
     //    }
 
-    public static Optional<WicketBuildContext> get(Component comp) {
+    public static Optional<WicketBuildContext> find(Component comp) {
         return Optional.ofNullable(comp.getMetaData(METADATA_KEY));
+    }
+    public static Optional<WicketBuildContext> findNearest(Component comp) {
+        do {
+            Optional<WicketBuildContext> ctx = find(comp);
+            if (ctx.isPresent())
+                return ctx;
+            comp = comp.getParent();
+        } while (comp != null);
+        return Optional.empty();
+    }
+    public static Optional<WicketBuildContext> findTopLevel(Component comp) {
+        return findNearest(comp).map(it -> it.getRootContext());
     }
 
     protected static <T> String resolveSimpleLabel(FormComponent<?> formComponent) {
@@ -281,7 +291,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public BSContainer getRootContainer() {
-        return rootContainer;
+        return getRootContext().getContainer();
     }
 
     public WicketBuildContext getParent() {
@@ -351,11 +361,12 @@ public class WicketBuildContext implements Serializable {
     private static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
         @Override
         public void onValidate(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
-            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m, true);
+            Optional<AjaxRequestTarget> optTarget = Optional.of(t);
+            WicketFormProcessing.onFieldValidate((FormComponent<?>) s, optTarget, m);
         }
         @Override
         public void onProcess(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
-            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m, false);
+            WicketFormProcessing.onFieldProcess((FormComponent<?>) s, Optional.of(t), m);
         }
         @Override
         public void onError(Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel) {

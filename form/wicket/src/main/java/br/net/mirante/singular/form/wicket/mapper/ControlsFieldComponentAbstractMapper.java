@@ -80,7 +80,8 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
 
         this.formGroup = container.newFormGroup();
         formGroup.setFeedbackPanelFactory((id, fence, filter) -> new SValidationFeedbackPanel(id, fence));
-        SValidationFeedbackHandler.bindTo(ctx.getContainer())
+        BSContainer<?> ctxContainer = ctx.getContainer();
+        SValidationFeedbackHandler.bindTo(ctxContainer)
                 .addInstanceModel(this.model)
                 .addListener(new ISValidationFeedbackHandlerListener() {
                     @Override

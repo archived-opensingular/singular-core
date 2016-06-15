@@ -7,6 +7,8 @@ package br.net.mirante.singular.form.wicket.behavior;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.model.IModel;
@@ -26,10 +28,11 @@ public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
 
     @Override
     public void onUpdate(AjaxRequestTarget target) {
-        if (validateOnly)
-            listener.onValidate(this.getComponent(), target, model);
-        else
-            listener.onProcess(this.getComponent(), target, model);
+        Component comp = this.getComponent();
+        if (validateOnly) {
+            listener.onValidate(comp, target, model);
+        } else
+            listener.onProcess(comp, target, model);
     }
 
 }
