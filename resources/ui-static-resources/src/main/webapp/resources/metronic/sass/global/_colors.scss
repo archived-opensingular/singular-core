@@ -1,12 +1,15 @@
 //Component colors
 
 $color-primary: #40BAA7;
+$color-primary-bg: #f4fffd;
 $color-button: #65697C;
 $color-text: #65697C;
 $color-background-button: #D5D9E3;
 $color-background-cancel-button: #EDEFF3;
-$color-background-dependant: #FAFBFC;
 
+$color-grey-01: darken(#FAFBFC, 5%);
+$color-grey-03: darken(#BBBFCD, 5%);
+$color-grey-09: darken(#3B3F51, 5%);
 
 $component-colors: (
 	white:				(base:#ffffff, font: #666),
