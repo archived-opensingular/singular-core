@@ -2,23 +2,6 @@ if(window.FileListUploadPanel == undefined){
     window.FileListUploadPanel = function(){};
 
     window.FileListUploadPanel.setup = function(params) {
-        // $('#' + params.progress_bar_id).hide();
-
-        var update_action_buttons = function () {
-            /*var choose_btn = $('#' + params.name_id).parent().find('.file-choose-button');
-            var trash_btn = $('#' + params.name_id).parent().find('.file-trash-button');
-
-            if($('#' + params.id_id).val()){
-                trash_btn.css('display','block').css('width','35px'); // Somewhat, we need this in order to not destroy the layout
-                choose_btn.hide();
-            }else{
-                choose_btn.show();
-                trash_btn.hide();
-            }*/
-        }
-
-        // update_action_buttons();
-
         var self = this;
         self.last_id = 1;
 

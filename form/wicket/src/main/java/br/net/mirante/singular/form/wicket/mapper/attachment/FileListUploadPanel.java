@@ -62,7 +62,7 @@ public class FileListUploadPanel extends Panel {
                 return model.getObject().isEmpty();
             }
         }
-            .add(new Label("empty-message","Nenhum item foi adicionado.")));
+            .add(new Label("empty-message","Nenhum arquivo foi adicionado.")));
         add(fileField = new FileUploadField("fileUpload", dummyModel()));
         add(fileList = new WebMarkupContainer("fileList")
         );
