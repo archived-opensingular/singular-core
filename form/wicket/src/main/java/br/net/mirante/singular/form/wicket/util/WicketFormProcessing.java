@@ -50,8 +50,10 @@ import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
  */
 public class WicketFormProcessing {
 
-    public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {};
-    public final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {};
+    public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
+    };
+    public final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {
+    };
 
     public static void onFormError(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance) {
         container.visitChildren((c, v) -> {
@@ -82,7 +84,7 @@ public class WicketFormProcessing {
                 return setAndReturn.apply(false);
 
             final SInstance baseInstance = baseInstanceModel.getObject();
-            final SDocument document = baseInstance.getDocument();
+            final SDocument document     = baseInstance.getDocument();
 
             // Validação do valor do componente
             boolean hasErrors = false;
@@ -96,10 +98,10 @@ public class WicketFormProcessing {
             }
 
             associateErrorsToComponents(
-                target,
-                container,
-                baseInstanceModel,
-                document.getValidationErrorsByInstanceId());
+                    target,
+                    container,
+                    baseInstanceModel,
+                    document.getValidationErrorsByInstanceId());
 
             if (hasErrors)
                 return setAndReturn.apply(false);
@@ -121,11 +123,11 @@ public class WicketFormProcessing {
      */
     protected static String getIndexsKey(String path) {
 
-        final Pattern indexFinder = Pattern.compile("(\\[\\d\\])");
+        final Pattern indexFinder    = Pattern.compile("(\\[\\d\\])");
         final Pattern bracketsFinder = Pattern.compile("[\\[\\]]");
 
-        final Matcher matcher = indexFinder.matcher(path);
-        final StringBuilder key = new StringBuilder();
+        final Matcher       matcher = indexFinder.matcher(path);
+        final StringBuilder key     = new StringBuilder();
 
         while (matcher.find()) {
             key.append(bracketsFinder.matcher(matcher.group()).replaceAll(StringUtils.EMPTY));
@@ -172,12 +174,17 @@ public class WicketFormProcessing {
         final String indexsKey = getIndexsKey(((IMInstanciaAwareModel<?>) fieldInstance).getMInstancia().getPathFull());
 
         refresh(target, component, validationOnly);
+
+        if (validationOnly) {
+            return;
+        }
+
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
-                .map(SInstanceEvent::getSource)
-                .map(SInstance::getId)
-                .collect(toSet());
+                    .map(SInstanceEvent::getSource)
+                    .map(SInstance::getId)
+                    .collect(toSet());
 
             final Function<SType<?>, Boolean> depends = (type) -> fieldInstance.getObject().getType().isDependentType(type);
 
@@ -186,35 +193,35 @@ public class WicketFormProcessing {
                     return false;
                 }
 
-                final SType<?> type = ins.getType();
-                final Optional<SInstance> thisAncestor = SInstances.findAncestor(ins, STypeList.class);
+                final SType<?>            type          = ins.getType();
+                final Optional<SInstance> thisAncestor  = SInstances.findAncestor(ins, STypeList.class);
                 final Optional<SInstance> otherAncestor = SInstances.findAncestor(((IMInstanciaAwareModel<?>) fieldInstance).getMInstancia(), STypeList.class);
 
-                boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
-                boolean dependsOnType = depends.apply(type);
-                boolean isBothInList = thisAncestor.map(SInstance::getPathFull).map(path -> path.equals(otherAncestor.map(SInstance::getPathFull).orElse(null))).orElse(false);
+                boolean wasUpdated             = updatedInstanceIds.contains(ins.getId());
+                boolean dependsOnType          = depends.apply(type);
+                boolean isBothInList           = thisAncestor.map(SInstance::getPathFull).map(path -> path.equals(otherAncestor.map(SInstance::getPathFull).orElse(null))).orElse(false);
                 boolean isInTheSameIndexOfList = indexsKey.equals(getIndexsKey(ins.getPathFull()));
-                boolean childrenDepends = false;
+                boolean childrenDepends        = false;
 
                 if (type instanceof STypeList) {
                     childrenDepends = depends.apply(((STypeList<?, ?>) type).getElementsType());
                 }
 
                 return wasUpdated
-                    || (childrenDepends || dependsOnType) && !isBothInList
-                    || (childrenDepends || dependsOnType) && isInTheSameIndexOfList;
+                        || (childrenDepends || dependsOnType) && !isBothInList
+                        || (childrenDepends || dependsOnType) && isInTheSameIndexOfList;
             };
 
-            if (!validationOnly) {
-                component.getPage().visitChildren(Component.class, (c, visit) -> {
-                    IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
-                        if (predicate.test(model.getMInstancia())) {
-                            model.getMInstancia().clearInstance();
-                            refreshComponents(c, target, IMInstanciaAwareModel.getInstanceModel(model), validationOnly);
-                        }
-                    });
+
+            component.getPage().visitChildren(Component.class, (c, visit) -> {
+                IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
+                    if (predicate.test(model.getMInstancia())) {
+                        model.getMInstancia().clearInstance();
+                        refreshComponents(c, target, IMInstanciaAwareModel.getInstanceModel(model), validationOnly);
+                    }
                 });
-            }
+            });
+
         });
     }
 
@@ -222,10 +229,10 @@ public class WicketFormProcessing {
         if (target.isPresent() && component != null) {
             if (validationOnly) {
                 SValidationFeedbackHandler.findNearest(component)
-                    .ifPresent(it -> it.updateValidationMessages(target));
+                        .ifPresent(it -> it.updateValidationMessages(target));
             } else {
                 target.get()
-                    .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
+                        .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
             }
         }
     }
@@ -288,8 +295,8 @@ public class WicketFormProcessing {
     //    }
 
     protected static String prependFullPathToMessage(SInstance instance, IValidationError error) {
-        String message;
-        StringBuilder sb = new StringBuilder();
+        String              message;
+        StringBuilder       sb            = new StringBuilder();
         Optional<SInstance> childInstance = instance.getDocument().findInstanceById(error.getInstanceId());
         if (childInstance.isPresent()) {
             final String labelPath = SFormUtil.generateUserFriendlyPath(childInstance.get(), instance);

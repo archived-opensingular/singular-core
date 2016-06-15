@@ -81,15 +81,15 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         this.formGroup = container.newFormGroup();
         formGroup.setFeedbackPanelFactory((id, fence, filter) -> new SValidationFeedbackPanel(id, fence));
         SValidationFeedbackHandler.bindTo(ctx.getContainer())
-            .addInstanceModel(this.model)
-            .addListener(new ISValidationFeedbackHandlerListener() {
-                @Override
-                public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
-                    if (target.isPresent())
-                        for (Component comp : feedbackComponents)
-                            target.get().add(comp);
-                }
-            });
+                .addInstanceModel(this.model)
+                .addListener(new ISValidationFeedbackHandlerListener() {
+                    @Override
+                    public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
+                        if (target.isPresent())
+                            for (Component comp : feedbackComponents)
+                                target.get().add(comp);
+                    }
+                });
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
         label.add($b.onConfigure(c -> {
@@ -169,59 +169,18 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
 
     /**
      * Filtra os eventos, disparando somente um
-     *
+     * <p>
      * quando um blur acontecer, verifica se um change está agendado se não agenda um blur
      * quando um change acontecer, verifica se um blur está agendado e renive dando prioridade ao change
-     *
+     * <p>
      * a verificação é adicionada nas 2 pontas porque quando exite mascara o blur acontece antes do change
      * quando não tem, acontece o contrario.
-          *
+     *
      * @param comp
      */
     @Override
     public void adjustJSEvents(Component comp) {
-        comp.add($b.onReadyScript(c -> {
-                    String js = "";
-                    js += ";(function(){                                                                ";
-                    js += "	'use strict';                                                               ";
-                    js += "	                                                                            ";
-                    js += "	var SINGULAR_BLUR_KEY = 'SingularBlurKey';                                  ";
-                    js += "	var SINGULAR_CHANGE_KEY = 'SingularChangeKey';                              ";
-                    js += "	var SINGULAR_PROCESS = 'singular:process';                                  ";
-                    js += "	var SINGULAR_VALIDATE = 'singular:validate';                                ";
-                    js += "                                                                             ";
-                    js += "	$('#" + c.getMarkupId() + "').on('blur', function(event){                   ";
-                    js += "		var jQueryRef = $(this);                                                ";
-                    js += "		if(!jQueryRef.data(SINGULAR_CHANGE_KEY)){                               ";
-                    js += "			jQueryRef.data(SINGULAR_BLUR_KEY, window.setTimeout(function(){     ";
-                    js += "				jQueryRef.trigger(SINGULAR_VALIDATE);	                        ";
-                    js += "				jQueryRef.removeData(SINGULAR_BLUR_KEY);                        ";
-                    js += "			}, 50));                                                            ";
-                    js += "		}                                                                       ";
-                    js += "	});                                                                         ";
-                    js += "                                                                             ";
-                    js += "	$('#" + c.getMarkupId() + "').on('change', function(event){                 ";
-                    js += "		var jQueryRef = $(this);                                                ";
-                    js += "  	if(jQueryRef.data(SINGULAR_BLUR_KEY)){                                  ";
-                    js += "  		window.clearTimeout(jQueryRef.data(SINGULAR_BLUR_KEY));             ";
-                    js += "  		jQueryRef.removeData(SINGULAR_BLUR_KEY);                            ";
-                    js += "  	}                                                                       ";
-                    js += "  	jQueryRef.data(SINGULAR_CHANGE_KEY, window.setTimeout(function(){       ";
-                    js += "  		jQueryRef.trigger(SINGULAR_PROCESS);	                            ";
-                    js += "  		jQueryRef.removeData(SINGULAR_CHANGE_KEY);                          ";
-                    js += "  	}, 50));                                                                ";
-                    js += " });                                                                         ";
-                    js += "                                                                             ";
-                    js += "	$('#" + c.getMarkupId() + "').on(SINGULAR_VALIDATE, function(){             ";
-                    js += "		console.log('validated' + this);                                        ";
-                    js += "	});                                                                         ";
-                    js += "                                                                             ";
-                    js += "	$('#" + c.getMarkupId() + "').on(SINGULAR_PROCESS, function(){              ";
-                    js += "		console.log('processed' + this);                                        ";
-                    js += "	});                                                                         ";
-                    js += "}());                                                                        ";
-                    return js;
-                }
-        ));
+        comp.add(new SingularEventsHandlers());
+        comp.add($b.onReadyScript(c -> "SEH.addTextFieldHandlers(" + c.getMarkupId(true) + ")"));
     }
 }

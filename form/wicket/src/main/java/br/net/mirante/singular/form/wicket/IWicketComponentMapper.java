@@ -81,7 +81,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
             component.add(new AjaxUpdateSingularFormComponentPanel(model, listener));
 
         } else if (!(component instanceof FormComponentPanel<?>)) {
-            component.add(SINGULAR_BLUR_CHANGE_DEBOUNCER);
+//            component.add(SINGULAR_BLUR_CHANGE_DEBOUNCER);
             component.add(new AjaxUpdateInputBehavior(SINGULAR_VALIDATE_EVENT, model, true, listener));
             component.add(new AjaxUpdateInputBehavior(SINGULAR_PROCESS_EVENT, model, false, listener));
             //            component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);

@@ -164,9 +164,11 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         public void onEvent(IEvent<?> event) {
             super.onEvent(event);
             final Boolean isAnyVisible = visitChildren(Component.class, new VisibilityVisitor(block));
-            setVisible(isAnyVisible != null && isAnyVisible);
-            if (AjaxRequestTarget.class.isAssignableFrom(event.getPayload().getClass())) {
-                ((AjaxRequestTarget) event.getPayload()).add(this);
+            if(isAnyVisible != null && isAnyVisible != isVisible()) {
+                setVisible(isAnyVisible);
+                if (AjaxRequestTarget.class.isAssignableFrom(event.getPayload().getClass())) {
+                    ((AjaxRequestTarget) event.getPayload()).add(this);
+                }
             }
         }
 

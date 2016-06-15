@@ -23,7 +23,7 @@
     "use strict";
     window.SingularTypeahead = {
         configure: function (container, valueField) {
-            console.log(container);
+            //console.log(container);
             $('#'+container+' span').first()
                 .addClass("input-icon input-icon-sm right")
                 .prepend('<i class="fa fa-chevron-down"></i>');
