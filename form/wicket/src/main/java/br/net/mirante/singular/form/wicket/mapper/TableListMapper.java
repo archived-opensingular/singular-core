@@ -95,9 +95,7 @@ public class TableListMapper extends AbstractListaMapper {
 
         final String markup = ""
                 + " <div class='list-table-empty' wicket:id='empty-content'>                                             "
-                + "     <p class='list-table-empty-message'>Nenhum item foi adicionado.                                  "
-                + "         <a class='list-table-empty-link' wicket:id='_add'>Adicionar item</a>                                 "
-                + "     </p>                                                                                             "
+                + "     <p class='list-table-empty-message'>Nenhum item foi adicionado. </p>                             "
                 + " </div>                                                                                               "
                 + " <div wicket:id='not-empty-content'>                                                                  "
                 + "     <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
@@ -119,7 +117,6 @@ public class TableListMapper extends AbstractListaMapper {
                 component.setVisible(list.getObject().isEmpty());
             }
         });
-        emptyContent.add(new AddButton("_add", form, list));
         template.add(emptyContent);
 
         final WebMarkupContainer notEmptyContent = new WebMarkupContainer("not-empty-content");
