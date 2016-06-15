@@ -18,7 +18,7 @@ $brand-danger:          		lighten(#eb5d68, 3%);
 //** `<input>` background color
 $input-bg:                       #fff ;
 //** `<input disabled>` background color
-$input-bg-disabled:              darken(#f1f4f7, 1%);
+$input-bg-disabled:              $color-grey-01;
 
 //** Text color for `<input>`s
 $input-color:                    #65697C;
@@ -29,7 +29,7 @@ $input-border:                   #D5D9E3;
 $input-border-focus:             #3FB9A7;
 
 //** Placeholder text color
-$input-color-placeholder:        #BBBFCD;
+$input-color-placeholder:        $color-grey-03;
 
 $legend-color:                   $gray-dark;
 $legend-border-color:            #e5e5e5 ;

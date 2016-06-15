@@ -13,7 +13,7 @@ $brand-main-color:                                               		#40baa7 !defa
 $brand-main-font-color:													#ffffff !default;
 
 // Body and header
-$bg-color:                                                         		darken(#F0F2F7, 2%) !default;
+$bg-color:                                                         		darken(#eeeff4, 2%) !default;
 $header-bg-color:														#FFFFFF !default;
 $header-top-shadow:                                                     0px 1px 10px 0px rgba(50, 50, 50, 0.2);
 $header-mobile-menu-border:                                             lighten($header-bg-color, 3%);
@@ -78,11 +78,11 @@ $sidebar-bg-color:                                                      #ffffff 
 
 $sidebar-menu-heading-font-color:                                       $brand-main-color !default;
 
-$sidebar-menu-link-font-color:                                  		darken(#768da2, 5%) !default;
+$sidebar-menu-link-font-color:                                  		darken(#768DA2, 5%) !default;
 $sidebar-menu-link-font-color-on-hover:                         		$brand-main-color !default;
 $sidebar-menu-link-font-color-on-active:                        		$brand-main-color !default;
 
-$sidebar-menu-link-icon-font-color:                             		darken(#b7c9d6, 5%) !default;
+$sidebar-menu-link-icon-font-color:                             		darken(#768DA2, 5%) !default;
 $sidebar-menu-link-icon-font-color-on-active:                   		$brand-main-color !default;
 $sidebar-menu-link-icon-font-color-on-hover:                            $brand-main-color !default;
 
