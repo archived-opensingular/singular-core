@@ -1,34 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
-<wicket:panel>
+<wicket:panel >
     <style>
-        .fileDummyField {
-            position: absolute !important;
-        }
-
-        .wupb-container{
-            padding-bottom: 5px;
-        }
-
-        .progress{
-            margin-left: 30px;
-            position: relative;
-        }
-
-        .file-trash-button {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-        }
-
         .file-trash-button-hidden{
             display: none;
         }
-
-        .files p {
-            margin: 0px;
-        }
-
     </style>
 
     <input type="hidden" wicket:id="file_name" />
@@ -36,31 +13,31 @@
     <input type="hidden" wicket:id="file_size" />
     <input type="hidden" wicket:id="file_id" />
 
-    <div style="width: 100%;">
-        <div style="white-space: nowrap;">
-            <div class="form-control fileDummyField"
-                 style="overflow: hidden !important; width: 80%;">
-                <i class="fa fa-file" style="float: left;"></i>&nbsp;
-                <div class="files" wicket:id="files" style="float: left;padding-left: 7px;">
-                    <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>
-                </div>
+    <div class="input-group">
+        <div class="form-control" >
+            <i class="fa fa-file"></i>
+            <span wicket:id="files" class="fileinput-filename">
+                <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>
+            </span>
+
+            <div wicket:id="progress" class="upload-single-progress progress">
+                <div class="progress-bar" style="width: 100%;"></div>
             </div>
+
         </div>
-        <span class="input-group-btn" style="float: right; padding-left: 7px;width: 20%;">
-            <span wicket:id="upload_btn"
-                  class="btn btn-sm blue fileinput-button file-choose-button" >
-                <span class="glyphicon glyphicon-plus"></span>
-                <span style="padding: 7px 5px;" > Escolher</span>
-                <input type="file" wicket:id="fileUpload" />
+            <span class="input-group-btn">
+                <span wicket:id="upload_btn"
+                        class="btn btn-sm file-choose-button fileinput-button upload-single-choose">
+                    <i class="fa fa-upload"></i>
+                    <span>Escolher</span>
+                    <input type="file" wicket:id="fileUpload" />
+                </span>
+
+                <span wicket:id="remove_btn"
+                      class="btn btn-sm upload-single-remove file-trash-button">
+                    <i class="fa fa-remove"></i>
+                </span>
             </span>
-            <span wicket:id="remove_btn" class="btn btn-sm red file-trash-button" >
-                <span class="glyphicon glyphicon-trash"></span>
-            </span>
-        </span>
-    </div>
-    <br />
-    <div class="progress" wicket:id="progress" style="display: none;">
-        <div class="progress-bar progress-bar-success" ></div>
     </div>
 </wicket:panel>
 </body>

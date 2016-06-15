@@ -144,6 +144,14 @@ public class FileUploadPanel extends Panel {
         );
         add(downloader = new DownloadBehavior(model.getObject().getDocument()
                 .getAttachmentPersistenceTemporaryHandler()));
+        add(new ClassAttributeModifier(){
+
+            @Override
+            protected Set<String> update(Set<String> oldClasses) {
+                oldClasses.add("fileinput fileinput-new upload-single upload-single-uploaded");
+                return oldClasses;
+            }
+        });
     }
 
     private IMInstanciaAwareModel dummyModel(final IModel<SIAttachment> model) {
