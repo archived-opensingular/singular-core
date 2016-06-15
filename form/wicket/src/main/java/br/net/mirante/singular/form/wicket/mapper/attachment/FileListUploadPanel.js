@@ -22,8 +22,6 @@ if(window.FileListUploadPanel == undefined){
         var self = this;
         self.last_id = 1;
 
-        console.log('setup',params);
-
         $('#' + params.file_field_id).fileupload({
             url: params.upload_url,
             paramName: params.param_name,
@@ -33,7 +31,6 @@ if(window.FileListUploadPanel == undefined){
                 'upload_id' : params.upload_id,
             },
             send: function (e, data) {
-                console.log('send',e,data);
                 var name = '?', fake_id = -1;
                 $.each(data.files, function (index, file) {
                     file['fake_id'] = fake_id = self.last_id ++;
@@ -62,13 +59,13 @@ if(window.FileListUploadPanel == undefined){
                             )
                         );
 
+                $('#'+params.component_id).find('.list-detail-empty').hide();
                 fileList.append(fileElement);
                 $('#progress_bar_'+data.files[0].fake_id).hide();
 
                 return true;
             },
             done: function (e, data) {
-                console.log('done',e,data);
                 $.each(data.result.files, function (index, file) {
                     var fake_id = data.files[index].fake_id;
                         $.getJSON(params.add_url,
@@ -101,6 +98,10 @@ if(window.FileListUploadPanel == undefined){
                                                 }, function (data, status, jqXHR) {
                                                     if (status == 'success'){
                                                         $('#upload-box-'+fake_id).remove();
+                                                        var fileList = $('#' + params.fileList_id).find('li');
+                                                        if(fileList.length == 0){
+                                                            $('#'+params.component_id).find('.list-detail-empty').show();
+                                                        }
                                                     }
                                                 }
                                             );
@@ -110,7 +111,6 @@ if(window.FileListUploadPanel == undefined){
                 });
             },
             progress: function (e, data) {
-                console.log('progress',data, data.loaded , data.total);
                 var progress = parseInt(data.loaded / data.total * 100, 10);
                 $('#progress_bar_'+data.files[0].fake_id).show();
                 $('#progress_bar_'+data.files[0].fake_id+' .progress-bar')

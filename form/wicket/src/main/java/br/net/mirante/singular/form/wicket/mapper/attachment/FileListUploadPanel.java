@@ -56,6 +56,13 @@ public class FileListUploadPanel extends Panel {
                                WicketBuildContext ctx) {
         super(id, model);
         this.ctx = ctx;
+        add(new WebMarkupContainer("empty-box"){
+            @Override
+            public boolean isVisible() {
+                return model.getObject().isEmpty();
+            }
+        }
+            .add(new Label("empty-message","Nenhum item foi adicionado.")));
         add(fileField = new FileUploadField("fileUpload", dummyModel()));
         add(fileList = new WebMarkupContainer("fileList")
         );
@@ -94,6 +101,7 @@ public class FileListUploadPanel extends Panel {
                 "     var params = { \n" +
                 "             file_field_id: '"+fileField.getMarkupId()+"', \n" +
                 "             fileList_id: '"+fileList.getMarkupId()+"', \n" +
+                "             component_id: '"+this.getMarkupId()+"', \n" +
                 "  \n" +
                 "             param_name : '"+PARAM_NAME+"', \n" +
                 "             upload_url : '"+ uploadUrl() +"', \n" +
