@@ -188,7 +188,7 @@ $btn-border-radius-small:        $border-radius-small !default;
 //** `<input>` background color
 $input-bg:                       #fff !default;
 //** `<input disabled>` background color
-$input-bg-disabled:              $gray-lighter !default;
+$input-bg-disabled:              darken(#FAFBFC, 5%);
 
 //** Text color for `<input>`s
 $input-color:                    $gray !default;

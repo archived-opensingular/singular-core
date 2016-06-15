@@ -671,8 +671,7 @@ Page container
 
 .singular-container {
   background-color: #ffffff;
-  padding-left: 30px;
-  padding-right: 30px;
+  padding: 12px 20px 15px 20px;
   margin-bottom: 15px;
   box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.03); }
 
@@ -1561,33 +1560,6 @@ Theme Panel
   .btn.btn-danger i {
     position: relative;
     top: -2px; }
-
-.list-table-heading {
-  margin: 1px 0 5px 0; }
-
-.list-table-body {
-  margin-bottom: 15px;
-  background-color: #eaeef2;
-  padding: 10px 10px 5px; }
-
-.list-table-empty {
-  display: block;
-  background-color: #eaeef2;
-  height: 90px;
-  color: #BBBFCD;
-  vertical-align: middle;
-  border: 1px dashed currentColor;
-  margin: -10px -10px -5px; }
-  .list-table-empty .list-table-empty-message {
-    text-align: center;
-    line-height: 90px;
-    height: 90px;
-    font-size: 14px; }
-  .list-table-empty .list-table-empty-link {
-    text-decoration: underline;
-    color: #65697C; }
-    .list-table-empty .list-table-empty-link:hover {
-      color: #4e5160; }
 
 /* Page Portlet Fullscreen */
 .page-portlet-fullscreen .page-quick-sidebar-wrapper,

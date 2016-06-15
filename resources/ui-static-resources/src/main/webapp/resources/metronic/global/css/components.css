@@ -183,12 +183,12 @@ body {
     padding-right: 0;
     font-size: 14px; }
     .form-group.form-md-line-input .form-control::-moz-placeholder {
-      color: #BBBFCD;
+      color: #acb1c2;
       opacity: 1; }
     .form-group.form-md-line-input .form-control:-ms-input-placeholder {
-      color: #BBBFCD; }
+      color: #acb1c2; }
     .form-group.form-md-line-input .form-control::-webkit-input-placeholder {
-      color: #BBBFCD; }
+      color: #acb1c2; }
     .form-group.form-md-line-input .form-control.form-control-static {
       border-bottom: 0; }
     .form-group.form-md-line-input .form-control.input-sm {
@@ -263,7 +263,7 @@ body {
     font-size: 16px;
     top: 25px;
     transition: 0.2s ease all;
-    color: #BBBFCD; }
+    color: #acb1c2; }
   .form-group.form-md-line-input.form-md-floating-label .form-control[readonly] ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control.edited ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control.form-control-static ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control:focus:not([readonly]) ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control.focus:not([readonly]) ~ label {
     top: 0;
     font-size: 13px; }
@@ -11985,7 +11985,7 @@ Light Table
   .table.table-light > thead > tr > th {
     font-weight: 600;
     font-size: 13px;
-    color: #93a2a9;
+    color: #acb1c2;
     font-family: "Open Sans", sans-serif;
     border: 0;
     border-bottom: 1px solid #F2F5F8; }
@@ -11994,7 +11994,7 @@ Light Table
   .table.table-light > tbody > tr > td {
     border: 0;
     border-bottom: 1px solid #F2F5F8;
-    color: #8896a0;
+    color: #303442;
     vertical-align: middle; }
     .table.table-light > tbody > tr > td.fit {
       width: 1px;
@@ -12012,7 +12012,7 @@ Light Table
   .table.table-light.table-hover > tbody > tr > th:hover,
   .table.table-light.table-hover > tbody > tr:hover > td,
   .table.table-light.table-hover > tbody > tr:hover > th {
-    background: #f9fafb; }
+    background: #eef1f5; }
 
 /***
 Customized Bootstrap Tabs 
