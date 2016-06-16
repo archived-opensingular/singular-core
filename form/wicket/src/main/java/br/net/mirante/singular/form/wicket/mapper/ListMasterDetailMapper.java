@@ -94,7 +94,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             }
 
             protected String getPanelHeadingClass() {
-                return "";
+                return "list-table-heading";
             }
 
             protected String getPanelBodyClass() {
