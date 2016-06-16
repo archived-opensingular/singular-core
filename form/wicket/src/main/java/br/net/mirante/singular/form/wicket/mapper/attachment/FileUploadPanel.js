@@ -15,6 +15,7 @@ if(window.FileUploadPanel == undefined){
                 choose_btn.hide();
             }else{
                 choose_btn.show();
+                choose_btn.css('display','block')
                 trash_btn.hide();
                 trash_btn.css('display','none')
             }

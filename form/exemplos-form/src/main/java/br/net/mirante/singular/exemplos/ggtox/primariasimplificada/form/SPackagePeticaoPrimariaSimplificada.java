@@ -41,7 +41,8 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         final STypeString                                      descricaoTipoPeticao = tipoPeticao.addFieldString("nome");
         final STypeString                                      nivel                = peticaoSimplificada.addFieldString("nivel");
         final STypeDadosGeraisPeticaoPrimariaSimplificada      dadosGerais          = peticaoSimplificada.addField("dadosGerais", STypeDadosGeraisPeticaoPrimariaSimplificada.class);
-        final STypeEntidadesPeticaoPrimariaSimplificada        entidades            = peticaoSimplificada.addField("entidades", STypeEntidadesPeticaoPrimariaSimplificada.class);
+        final STypeRequerente                                  requerente           = peticaoSimplificada.addField("requerente", STypeRequerente.class);
+        final STypeRepresentanteLegal                          representanteLegal   = peticaoSimplificada.addField("representanteLegal", STypeRepresentanteLegal.class);
         final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnico       = peticaoSimplificada.addField("produtoTecnico", STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
         final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado     = peticaoSimplificada.addField("produtoFormulado", STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
         final STypeAnexosPeticaoPrimariaSimplificada           anexos               = peticaoSimplificada.addField("anexos", STypeAnexosPeticaoPrimariaSimplificada.class);
@@ -165,13 +166,14 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
             blocks
                     .newBlock().add(tipoPeticao).add(nivel)
                     .newBlock().add(dadosGerais)
-                    .newBlock().add(entidades)
+                    .newBlock().add(requerente)
+                    .newBlock().add(representanteLegal)
                     .newBlock().add(produtoTecnico)
                     .newBlock().add(produtoFormulado)
                     .newBlock().add(anexos);
 
         });
-        
+
     }
 
 }

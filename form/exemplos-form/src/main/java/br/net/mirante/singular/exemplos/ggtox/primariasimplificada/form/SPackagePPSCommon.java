@@ -27,6 +27,5 @@ public class SPackagePPSCommon extends SPackage {
         pb.createType(STypeFormulador.class);
         pb.createType(STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
         pb.createType(STypeRepresentanteLegal.class);
-        pb.createType(STypeEntidadesPeticaoPrimariaSimplificada.class);
     }
 }
