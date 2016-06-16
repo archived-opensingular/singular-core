@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.provider.SSimpleProvider;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.view.SViewByBlock;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -159,6 +160,18 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                 .dependsOn(nivel)
                 .visible(si -> "IV".equals(Value.of(si, nivel)));
 
+
+        peticaoSimplificada.withView(new SViewByBlock(), blocks -> {
+            blocks
+                    .newBlock().add(tipoPeticao).add(nivel)
+                    .newBlock().add(dadosGerais)
+                    .newBlock().add(entidades)
+                    .newBlock().add(produtoTecnico)
+                    .newBlock().add(produtoFormulado)
+                    .newBlock().add(anexos);
+
+        });
+        
     }
 
 }
