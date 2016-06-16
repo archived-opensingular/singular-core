@@ -32,7 +32,7 @@ jQuery(document).ready(function () {
 
                 for (var j = 0; j < fieldsList.length && maxFieldHeight > 0; j++) {
                     var field = fieldsList[j];
-                    field.height(maxFieldHeight);
+                    $(field).css('min-height', maxFieldHeight);
                 }
             }
         }

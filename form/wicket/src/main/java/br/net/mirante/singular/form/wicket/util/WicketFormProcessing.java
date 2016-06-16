@@ -161,25 +161,25 @@ public class WicketFormProcessing {
         ISInstanceListener.EventCollector eventCollector = new ISInstanceListener.EventCollector();
         updateAttributes(fieldInstance, eventCollector);
 
-        if (isSkipValidationOnRequest())
-            return;
+        if (!isSkipValidationOnRequest()) {
 
-        // Validação do valor do componente
-        final InstanceValidationContext validationContext = new InstanceValidationContext();
-        validationContext.validateSingle(fieldInstance);
+            // Validação do valor do componente
+            final InstanceValidationContext validationContext = new InstanceValidationContext();
+            validationContext.validateSingle(fieldInstance);
 
-        // limpa erros de instancias dependentes
-        for (SType<?> dependentType : fieldInstance.getType().getDependentTypes()) {
-            fieldInstance.findNearest(dependentType)
-                .ifPresent(it -> it.getDocument().clearValidationErrors(it.getId()));
+            // limpa erros de instancias dependentes
+            for (SType<?> dependentType : fieldInstance.getType().getDependentTypes()) {
+                fieldInstance.findNearest(dependentType)
+                        .ifPresent(it -> it.getDocument().clearValidationErrors(it.getId()));
+            }
+
+            BSContainer<?> nearestContainer = WicketBuildContext.findNearest(formComponent).get().getRootContainer();
+            updateValidationFeedbackOnDescendants(
+                    target,
+                    nearestContainer,
+                    fieldInstanceModel,
+                    validationContext.getErrorsByInstanceId());
         }
-
-        BSContainer<?> nearestContainer = WicketBuildContext.findNearest(formComponent).get().getRootContainer();
-        updateValidationFeedbackOnDescendants(
-            target,
-            nearestContainer,
-            fieldInstanceModel,
-            validationContext.getErrorsByInstanceId());
 
         /**
          * A ordem foi alterada para garantir que os componentes dependentes serão atualizados,
