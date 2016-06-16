@@ -57,6 +57,7 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypePhraseBreak, SIPhraseBreak, PhraseBreak>      ATR_PHRASE_BREAK          = new AtrRef<>(SPackageBasic.class, "phraseBreak", STypePhraseBreak.class, SIPhraseBreak.class, PhraseBreak.class);
     public static final AtrRef<STypeString, SIString, String>                     ATR_ITEM_LABEL            = new AtrRef<>(SPackageBasic.class, "itemLabel", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeConsumer, SIConsumer, IConsumer>              ATR_INIT_LISTENER         = new AtrRef<>(SPackageBasic.class, "initListener", STypeConsumer.class, SIConsumer.class, IConsumer.class);
+    public static final AtrRef<STypeConsumer, SIConsumer, IConsumer>              ATR_UPDATE_LISTENER       = new AtrRef<>(SPackageBasic.class, "updateListener", STypeConsumer.class, SIConsumer.class, IConsumer.class);
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<SType<?>>>>
             ATR_DEPENDS_ON_FUNCTION = new AtrRef(SPackageBasic.class, "dependsOnFunction", STypeSupplier.class, SISupplier.class, Supplier.class);
@@ -107,6 +108,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_ANNOTATED);
         pb.createAttributeIntoType(SType.class, ATR_ANNOTATION_LABEL);
         pb.createAttributeIntoType(SType.class, ATR_INIT_LISTENER);
+        pb.createAttributeIntoType(SType.class, ATR_UPDATE_LISTENER);
 
         pb.createAttributeIntoType(SType.class, ATR_DISPLAY_STRING);
 

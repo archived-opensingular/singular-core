@@ -31,6 +31,8 @@ import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewSelectionBySelect;
 
+import static br.net.mirante.singular.form.type.basic.SPackageBasic.ATR_UPDATE_LISTENER;
+
 @SInfoType(name = "SType", spackage = SPackageCore.class)
 public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled {
 
@@ -83,8 +85,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     private SView view;
 
     private UIComponentMapper customMapper;
-
-    private Consumer<SInstance> updateListener;
 
     /** Indica se o tipo está no meio da execução do seu método {@link #onLoadType(TypeBuilder)}. */
     private boolean callingOnLoadType;
@@ -503,8 +503,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
-    public SType<I> withUpdateListener(Consumer<I> consumer) {
-        this.updateListener = (Consumer<SInstance>) consumer;
+    public SType<I> withUpdateListener(IConsumer<I> consumer) {
+        asAtr().setAttributeValue(ATR_UPDATE_LISTENER, consumer);
         return this;
     }
 
@@ -861,8 +861,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return customMapper;
     }
 
-    public Consumer<SInstance> getUpdateListener() {
-        return updateListener;
+    public IConsumer<SInstance> getUpdateListener() {
+        return asAtr().getAttributeValue(ATR_UPDATE_LISTENER);
     }
 
     public void withInitListener(IConsumer<I> initListener) {

@@ -69,7 +69,6 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         tipoPeticao
                 .withUpdateListener(sic -> sic.findNearest(nivel).ifPresent(i -> {
                     if (!apenasNivel1.contains(Value.of(sic, idTipoPeticao))) {
-                        i.asAtr().enabled(true);
                         i.clearInstance();
                     }
                 }))
@@ -86,12 +85,11 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         nivel
                 .withUpdateListener(si -> {
                     if (apenasNivel1.contains(Value.of(si, idTipoPeticao))) {
-                        si.clearInstance();
-                        si.asAtr().enabled(false);
                         si.setValue("I");
                     }
                 })
                 .asAtr()
+                .enabled(si -> !apenasNivel1.contains(Value.of(si, idTipoPeticao)))
                 .required()
                 .label("Nível");
 

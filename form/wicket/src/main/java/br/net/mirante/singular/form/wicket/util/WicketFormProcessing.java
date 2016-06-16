@@ -230,6 +230,9 @@ public class WicketFormProcessing {
                     if (shouldRefreshPredicate.test(model.getMInstancia())) {
                         model.getMInstancia().clearInstance();
                         refreshComponentOrCellContainer(target, c);
+                        if (model.getMInstancia().getType().getUpdateListener() != null) {
+                            model.getMInstancia().getType().getUpdateListener().accept(model.getMInstancia());
+                        }
                     }
                 });
             });
@@ -246,9 +249,6 @@ public class WicketFormProcessing {
         final SDocument document = fieldInstance.getDocument();
 
         document.updateAttributes(eventCollector);
-
-        if (fieldType.getUpdateListener() != null)
-            fieldType.getUpdateListener().accept(fieldInstance);
     }
 
     private static void refreshComponentOrCellContainer(Optional<AjaxRequestTarget> target, Component component) {
