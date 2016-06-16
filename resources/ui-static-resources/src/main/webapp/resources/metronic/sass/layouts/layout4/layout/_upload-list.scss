@@ -25,6 +25,7 @@
     }
     .list-item-uploaded {
       color: $color-primary;
+      -webkit-text-stroke: 4px white;
     }
   }
 
@@ -56,7 +57,7 @@
 
   .list-item-action {
     float: right;
-    font-size: 26px;
+    font-size: 14px;
     .list-action-remove {
       color: $input-color-placeholder;
       &:hover {

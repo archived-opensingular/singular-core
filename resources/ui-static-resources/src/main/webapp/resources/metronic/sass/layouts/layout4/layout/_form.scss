@@ -48,6 +48,14 @@
   z-index: 3;
 }
 
+.control-label {
+  color: $label-color;
+}
+
+.checkbox {
+  color: $label-color;
+}
+
 .has-error {
   input {
     background: url('data:image/svg+xml;utf8,#{($svg-alert)}') no-repeat calc(100% - 10px) 50%;
@@ -60,7 +68,7 @@
   }
 
   .control-label {
-    color: $text-color;
+    color: $label-color;
   }
 }
 
@@ -78,7 +86,7 @@
 
 .form-actions {
   @include clearfix;
-  margin: 0 0 $form-group-margin-bottom*2;
+  margin: 0 0;
   padding: 15px 20px 20px 20px;
   background-color: #fff;
 }
@@ -154,5 +162,22 @@
   i {
     position: relative;
     top: -2px;
+  }
+}
+
+.panel-heading {
+  color: $label-color;
+}
+
+.form-body .singular-container {
+  margin-bottom: 0;
+}
+
+.portlet-body {
+  .panel {
+    margin-bottom: 0;
+  }
+  .panel-body, .panel-footer {
+    padding: 10px 0 0;
   }
 }

@@ -23,7 +23,10 @@ $general-text-color:  				darken(#677581, 5%);
 $general-transition:				all 0.3s;
 
 // Global text color on <body>
-$text-color:            			#333333 !default;
+$text-color:                  #333333 !default;
+
+// Global label color on <body>
+$label-color:            			#65697c;
 
 // Global light text color on <body>
 $text-light-color:     	 			#ffffff !default;
