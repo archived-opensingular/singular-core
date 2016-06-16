@@ -9,11 +9,14 @@ if(window.FileUploadPanel == undefined){
             var trash_btn = $('#' + params.name_id).parent().find('.file-trash-button');
 
             if($('#' + params.id_id).val()){
-                trash_btn.css('display','block').css('width','35px'); // Somewhat, we need this in order to not destroy the layout
+                // trash_btn.css('display','block').css('width','35px'); // Somewhat, we need this in order to not destroy the layout
+                trash_btn.show()
+                trash_btn.css('display','block')
                 choose_btn.hide();
             }else{
                 choose_btn.show();
                 trash_btn.hide();
+                trash_btn.css('display','none')
             }
         }
 
@@ -38,11 +41,12 @@ if(window.FileUploadPanel == undefined){
                 $.each(data.result.files, function (index, file) {
                     console.log('f',file, $('#' + params.files_id ));
                     $('#' + params.files_id ).append(
-                        $('<p/>').append(
-                            $('<a />')
-                                .attr('href',params.download_url + '&fileId='+file.fileId+'&fileName='+file.name)
-                                .text(file.name)
-                        )
+                        $('<a />')
+                            .attr('href',
+                                    params.download_url +
+                                    '&fileId='+file.fileId+
+                                    '&fileName='+file.name)
+                            .text(file.name)
                     );
                     $('#' + params.progress_bar_id).hide();
                     $('#' + params.name_id).val(file.name);
@@ -55,6 +59,7 @@ if(window.FileUploadPanel == undefined){
             },
             progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
+                console.log($('#' + params.progress_bar_id));
                 $('#' + params.progress_bar_id).show();
                 $('#' + params.progress_bar_id + ' .progress-bar').css( 'width',
                     progress + '%' );

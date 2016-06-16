@@ -320,4 +320,22 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     public String toString() {
         return String.format("%s(%s)", getClass().getSimpleName(), getAllChildren());
     }
+
+    public E first() {
+        if(hasValues()) return values.get(0);
+        return null;
+    }
+
+    public boolean hasValues() {
+        return values != null && !values.isEmpty();
+    }
+
+    public E last() {
+        if(hasValues()) return values.get(values.size()-1);
+        return null;
+    }
+
+    public E remove(E e) {
+        return (E) remove(values.indexOf(e));
+    }
 }

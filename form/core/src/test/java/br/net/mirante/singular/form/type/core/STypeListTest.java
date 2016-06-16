@@ -32,8 +32,7 @@ public class STypeListTest extends TestCaseForm {
         content = listType.getElementsType().addFieldString("content");
     }
 
-    @Test
-    public void setCompositeValue() throws Exception{
+    @Test public void setCompositeValue() throws Exception{
         SIComposite original = baseType.newInstance();
         original.getDescendant(name).setValue("My first name");
         SIComposite e1 = original.getDescendant(listType).addNew();
@@ -59,5 +58,25 @@ public class STypeListTest extends TestCaseForm {
 
     private String xml(SInstance original) {
         return MformPersistenciaXML.toXML(original).toString();
+    }
+
+    @Test public void aNewListIsEmpty() throws Exception{
+        SIList<SIComposite> list = listType.newInstance();
+        assertThat(list.size()).isEqualTo(0);
+    }
+
+    @Test public void listHelpers() throws Exception{
+        SIList<SIComposite> list = listType.newInstance();
+        SIComposite e1 = list.addNew();
+        e1.setValue(content,"abacate");
+        SIComposite e2 = list.addNew();
+        e2.setValue(content,"avocado");
+        SIComposite e3 = list.addNew();
+        e3.setValue(content,"guaca");
+
+        assertThat(list.first()).isEqualTo(e1);
+        assertThat(list.last()).isEqualTo(e3);
+        list.remove(e1);
+        assertThat(list.first()).isEqualTo(e2);
     }
 }

@@ -27,10 +27,10 @@ import org.apache.wicket.util.string.StringValue;
 public class DownloadBehavior extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper();
     private Component component;
-    transient private SInstance instance;
+    private IAttachmentPersistenceHandler service;
 
-    public DownloadBehavior(SInstance instance) {
-        this.instance = instance;
+    public DownloadBehavior(IAttachmentPersistenceHandler service) {
+        this.service = service;
     }
 
     @Override
@@ -41,24 +41,23 @@ public class DownloadBehavior extends Behavior implements IResourceListener {
     @Override
     public void onResourceRequested() {
         try {
-            handleRequest((SIAttachment) instance, instance.getDocument());
+            handleRequest();
         } catch (IOException e) {
             throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    private void handleRequest(SIAttachment attachment, SDocument document) throws IOException {
+    private void handleRequest() throws IOException {
         ServletWebRequest request = w.request();
         IRequestParameters parameters = request.getRequestParameters();
         StringValue id = parameters.getParameterValue("fileId");
         StringValue name = parameters.getParameterValue("fileName");
-        writeFileFromTemporary(document, id.toString(), name.toString());
+        writeFileFromTemporary(id.toString(), name.toString());
     }
 
-    private void writeFileFromTemporary(SDocument document, String fileId, String fileName) throws IOException {
-        IAttachmentPersistenceHandler handler = document.getAttachmentPersistenceTemporaryHandler();
-        IAttachmentRef data = handler.getAttachment(fileId);
+    private void writeFileFromTemporary(String fileId, String fileName) throws IOException {
+        IAttachmentRef data = service.getAttachment(fileId);
         writeFileToResponse(fileName, data.getContentAsByteArray(), w.response());
     }
 
