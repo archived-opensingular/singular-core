@@ -6723,7 +6723,7 @@ Portlets
 /* Basic portlet */
 .portlet {
   margin-top: 0px;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   padding: 0px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -7095,7 +7095,7 @@ Portlets
     display: none; } }
 
 /***
-Custom colored portlets 
+Custom colored portlets
 ***/
 .portlet > .portlet-body.white,
 .portlet.white {
