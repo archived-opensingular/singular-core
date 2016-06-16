@@ -1,3 +1,5 @@
+@import '../../../_overrides_theme_01';
+
 .singular-form-required{
   position: relative;
 
@@ -46,6 +48,7 @@
 
 .tt-clear-icon {
   z-index: 3;
+  color: $color-text;
 }
 
 .control-label {
@@ -82,6 +85,10 @@
   background-color: #fff;
   border-radius: 3px;
   border: 1px solid $input-border;
+}
+
+.form-control:focus {
+  border-color: $input-focus-color;
 }
 
 .form-actions {

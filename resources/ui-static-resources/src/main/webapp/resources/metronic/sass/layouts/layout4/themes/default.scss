@@ -114,4 +114,7 @@ $footer-default-go-top-bg-color:                                		darken(#94A0B2
 $footer-default-go-top-icon-font-color:                          		lighten(#94A0B2, 40%) !default;
 $footer-fixed-bg-color: 												$bg-color !default;
 
+@import '../../../_overrides_theme_01';
+
 @import '_base';
+

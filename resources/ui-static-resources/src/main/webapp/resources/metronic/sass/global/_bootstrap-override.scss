@@ -5,7 +5,7 @@ $gray-dark:              		lighten($gray-base, 20%);
 $gray:                   		lighten($gray-base, 33.5%);
 $gray-light:             		lighten($gray-base, 46.7%);
 
-$brand-primary:         		darken(#428bca, 6.5%);
+$brand-primary:         		darken(#428bca, 6.5%) !default;
 $brand-success:         		lighten(#32c5d2, 1%);
 $brand-info:            		lighten(#5893dd, 3%);
 $brand-warning:        			#F1C40F;

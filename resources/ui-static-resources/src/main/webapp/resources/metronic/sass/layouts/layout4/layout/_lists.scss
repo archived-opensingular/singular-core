@@ -1,5 +1,5 @@
 
-.list-table-heading {
+.list-table-heading , .upload-panel-heading {
   margin: 1px 0 5px 0;
 }
 
@@ -55,14 +55,14 @@
     > th:hover,
     &:hover > td,
     &:hover > th {
-        background: darken($color-primary-bg, 2%) !important;
+        background: darken($table-hover-color, 2%) !important;
     }
   }
 
 
   .table-striped {
     > tbody > tr:nth-of-type(odd) {
-      background-color: $color-primary-bg;
+      background-color: $table-striped-bg-color;
     }
   }
 
@@ -79,10 +79,9 @@
   }
 }
 
-.list-detail-body {
+.list-detail-body, .upload-panel-body {
   margin-bottom: 15px;
 }
-
 
 
 .list-detail-remove {
@@ -112,11 +111,16 @@
   vertical-align: middle;
   border: 1px dashed currentColor;
 
-  .list-detail-empty-message {
+.list-detail-empty-message {
     text-align:center;
     line-height:30px;
     height:30px;
     font-size:14px;
+    margin: 0;
   }
 
+}
+
+.list-detail-footer {
+  margin-bottom: 15px;
 }

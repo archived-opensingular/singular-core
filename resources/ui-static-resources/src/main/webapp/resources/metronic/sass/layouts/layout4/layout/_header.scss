@@ -2,6 +2,8 @@
 Page Header
 ***/
 
+@import '../../../_overrides_theme_01';
+
 .page-header.navbar {
 	width: 100%;
 	padding: 0 20px 0 20px;
@@ -44,10 +46,11 @@ Page Header
 		}
 
 		.logo-default {
-      background-image: url("/singular-static/resources/singular/img/logo_singular.svg");
+      background-image: url($brand-logo-url);
       height: 25px;
       width: 200px;
       background-repeat: no-repeat;
+      background-size: contain;
 		}
 
 		.logo-mini {
