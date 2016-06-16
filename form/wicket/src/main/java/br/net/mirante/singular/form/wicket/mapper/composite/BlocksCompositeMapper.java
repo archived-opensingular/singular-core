@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.composite;
 
+import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.type.core.SPackageBootstrap;
@@ -50,7 +51,13 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             final SViewByBlock view           = (SViewByBlock) ctx.getView();
 
             for (int i = 0; i < view.getBlocks().size(); i++) {
-                final Block        block   = view.getBlocks().get(i);
+                final Block block = view.getBlocks().get(i);
+                if (StringUtils.isEmpty(block.getName()) && block.getTypes().size() == 1 && ctx.getCurrentInstance() instanceof SIComposite) {
+                    final SIComposite sic        = ctx.getCurrentInstance();
+                    final SInstance   firstChild = sic.getField(block.getTypes().get(0));
+                    block.setName(firstChild.asAtr().getLabel());
+                    ctx.setTitleInBlock(true);
+                }
                 final PortletPanel portlet = new PortletPanel("_portlet" + i, block);
                 addedTypes.addAll(block.getTypes());
                 appendBlock(grid, block, portlet);
