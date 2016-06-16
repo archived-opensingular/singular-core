@@ -6,24 +6,12 @@
 package br.net.mirante.singular.form.type.basic;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import br.net.mirante.singular.form.AtrRef;
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIPredicate;
-import br.net.mirante.singular.form.SISupplier;
-import br.net.mirante.singular.form.SInfoPackage;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeBehavior;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.STypePredicate;
-import br.net.mirante.singular.form.STypeSimple;
-import br.net.mirante.singular.form.STypeSupplier;
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.type.core.SIBoolean;
 import br.net.mirante.singular.form.type.core.SIInteger;
@@ -35,39 +23,40 @@ import br.net.mirante.singular.form.type.core.STypeFormula;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 @SInfoPackage(name = SPackageBasic.NAME)
 public class SPackageBasic extends SPackage {
 
     public static final String NAME = SDictionary.SINGULAR_PACKAGES_PREFIX + "basic";
 
     //@formatter:off
-    public static final AtrRef<?, ?, Object>                                          ATR_DEFAULT_IF_NULL        = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
-    public static final AtrRef<?, ?, Object>                                          ATR_INITIAL_VALUE          = AtrRef.ofSelfReference(SPackageBasic.class, "initialValue");
-    public static final AtrRef<STypeString,      SIString,      String>               ATR_LABEL                  = new AtrRef<>(SPackageBasic.class, "label",               STypeString.class,      SIString.class,      String.class);
-    public static final AtrRef<STypeBoolean,     SIBoolean,     Boolean>              ATR_TRIM                   = new AtrRef<>(SPackageBasic.class, "trim",                STypeBoolean.class,     SIBoolean.class,     Boolean.class);
-    public static final AtrRef<STypeFormula,     SIComposite,   Object>               ATR_FORMULA                = new AtrRef<>(SPackageBasic.class, "formula",             STypeFormula.class,     SIComposite.class,   Object.class);
-    public static final AtrRef<STypeBoolean,     SIBoolean,     Boolean>              ATR_EMPTY_TO_NULL          = new AtrRef<>(SPackageBasic.class, "emptyToNull",         STypeBoolean.class,     SIBoolean.class,     Boolean.class);
-    public static final AtrRef<STypeString,      SIString,      String>               ATR_SUBTITLE               = new AtrRef<>(SPackageBasic.class, "subtitle",            STypeString.class,      SIString.class,      String.class);
-    public static final AtrRef<STypeString,      SIString,      String>               ATR_BASIC_MASK             = new AtrRef<>(SPackageBasic.class, "basicMask",           STypeString.class,      SIString.class,      String.class);
-    public static final AtrRef<STypeInteger,     SIInteger,     Integer>              ATR_MAX_LENGTH             = new AtrRef<>(SPackageBasic.class, "maxLength",           STypeInteger.class,     SIInteger.class,     Integer.class);
-    public static final AtrRef<STypeInteger,     SIInteger,     Integer>              ATR_INTEGER_MAX_LENGTH     = new AtrRef<>(SPackageBasic.class, "integerMaxLength",    STypeInteger.class,     SIInteger.class,     Integer.class);
-    public static final AtrRef<STypeInteger,     SIInteger,     Integer>              ATR_FRACTIONAL_MAX_LENGTH  = new AtrRef<>(SPackageBasic.class, "fractionalMaxLength", STypeInteger.class,     SIInteger.class,     Integer.class);
-    public static final AtrRef<STypeInteger,     SIInteger,     Integer>              ATR_EDIT_SIZE              = new AtrRef<>(SPackageBasic.class, "editSize",            STypeInteger.class,     SIInteger.class,     Integer.class);
-    public static final AtrRef<STypeString,      SIString,      String>               ATR_DISPLAY_STRING         = new AtrRef<>(SPackageBasic.class, "displayString",       STypeString.class,      SIString.class,      String.class);
-    public static final AtrRef<STypeInteger,     SIInteger,     Integer>              ATR_DISPLAY_ORDER          = new AtrRef<>(SPackageBasic.class, "displayOrder",        STypeInteger.class,     SIInteger.class,     Integer.class);
-    public static final AtrRef<STypeBoolean,     SIBoolean,     Boolean>              ATR_ANNOTATED              = new AtrRef<>(SPackageBasic.class, "anotated",            STypeBoolean.class,     SIBoolean.class,     Boolean.class);
-    public static final AtrRef<STypeString,      SIString,      String>               ATR_ANNOTATION_LABEL       = new AtrRef<>(SPackageBasic.class, "annotation_label",    STypeString.class,      SIString.class,      String.class);
-    public static final AtrRef<STypeBoolean,     SIBoolean,     Boolean>              ATR_VISIBLE                = new AtrRef<>(SPackageBasic.class, "visible",             STypeBoolean.class,     SIBoolean.class,     Boolean.class);
-    public static final AtrRef<STypePredicate,   SIPredicate,   Predicate<SInstance>> ATR_VISIBLE_FUNCTION       = new AtrRef  (SPackageBasic.class, "visibleFunction",     STypePredicate.class,   SIPredicate.class,   Predicate.class);
-    public static final AtrRef<STypeBoolean,     SIBoolean,     Boolean>              ATR_ENABLED                = new AtrRef<>(SPackageBasic.class, "enabled",             STypeBoolean.class,     SIBoolean.class,     Boolean.class);
-    public static final AtrRef<STypePredicate,   SIPredicate,   Predicate<SInstance>> ATR_ENABLED_FUNCTION       = new AtrRef  (SPackageBasic.class, "enabledFunction",     STypePredicate.class,   SIPredicate.class,   Predicate.class);
-    public static final AtrRef<STypeBoolean,     SIBoolean,     Boolean>              ATR_REQUIRED               = new AtrRef<>(SPackageBasic.class, "required",            STypeBoolean.class,     SIBoolean.class,     Boolean.class);
-    public static final AtrRef<STypePredicate,   SIPredicate,   Predicate<SInstance>> ATR_REQUIRED_FUNCTION      = new AtrRef  (SPackageBasic.class, "requiredFunction",    STypePredicate.class,   SIPredicate.class,   Predicate.class);
-    public static final AtrRef<STypeBoolean,     SIBoolean,     Boolean>              ATR_EXISTS                 = new AtrRef<>(SPackageBasic.class, "exists",              STypeBoolean.class,     SIBoolean.class,     Boolean.class);
-    public static final AtrRef<STypePredicate,   SIPredicate,   Predicate<SInstance>> ATR_EXISTS_FUNCTION        = new AtrRef  (SPackageBasic.class, "existsFunction",      STypePredicate.class,   SIPredicate.class,   Predicate.class);
-    public static final AtrRef<STypePhraseBreak, SIPhraseBreak, PhraseBreak>          ATR_PHRASE_BREAK           = new AtrRef<>(SPackageBasic.class, "phraseBreak",         STypePhraseBreak.class, SIPhraseBreak.class, PhraseBreak.class);
-    public static final AtrRef<STypeString,      SIString,      String>               ATR_ITEM_LABEL             = new AtrRef<>(SPackageBasic.class, "itemLabel",           STypeString.class,      SIString.class,      String.class);
+    public static final AtrRef<?, ?, Object>                                      ATR_DEFAULT_IF_NULL       = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
+    public static final AtrRef<?, ?, Object>                                      ATR_INITIAL_VALUE         = AtrRef.ofSelfReference(SPackageBasic.class, "initialValue");
+    public static final AtrRef<STypeString, SIString, String>                     ATR_LABEL                 = new AtrRef<>(SPackageBasic.class, "label", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_TRIM                  = new AtrRef<>(SPackageBasic.class, "trim", STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypeFormula, SIComposite, Object>                 ATR_FORMULA               = new AtrRef<>(SPackageBasic.class, "formula", STypeFormula.class, SIComposite.class, Object.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_EMPTY_TO_NULL         = new AtrRef<>(SPackageBasic.class, "emptyToNull", STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_SUBTITLE              = new AtrRef<>(SPackageBasic.class, "subtitle", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_BASIC_MASK            = new AtrRef<>(SPackageBasic.class, "basicMask", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_MAX_LENGTH            = new AtrRef<>(SPackageBasic.class, "maxLength", STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_INTEGER_MAX_LENGTH    = new AtrRef<>(SPackageBasic.class, "integerMaxLength", STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_FRACTIONAL_MAX_LENGTH = new AtrRef<>(SPackageBasic.class, "fractionalMaxLength", STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_EDIT_SIZE             = new AtrRef<>(SPackageBasic.class, "editSize", STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_DISPLAY_STRING        = new AtrRef<>(SPackageBasic.class, "displayString", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_DISPLAY_ORDER         = new AtrRef<>(SPackageBasic.class, "displayOrder", STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_ANNOTATED             = new AtrRef<>(SPackageBasic.class, "anotated", STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_ANNOTATION_LABEL      = new AtrRef<>(SPackageBasic.class, "annotation_label", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_VISIBLE               = new AtrRef<>(SPackageBasic.class, "visible", STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_VISIBLE_FUNCTION      = new AtrRef(SPackageBasic.class, "visibleFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_ENABLED               = new AtrRef<>(SPackageBasic.class, "enabled", STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_ENABLED_FUNCTION      = new AtrRef(SPackageBasic.class, "enabledFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_REQUIRED              = new AtrRef<>(SPackageBasic.class, "required", STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_REQUIRED_FUNCTION     = new AtrRef(SPackageBasic.class, "requiredFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_EXISTS                = new AtrRef<>(SPackageBasic.class, "exists", STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_EXISTS_FUNCTION       = new AtrRef(SPackageBasic.class, "existsFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
+    public static final AtrRef<STypePhraseBreak, SIPhraseBreak, PhraseBreak>      ATR_PHRASE_BREAK          = new AtrRef<>(SPackageBasic.class, "phraseBreak", STypePhraseBreak.class, SIPhraseBreak.class, PhraseBreak.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_ITEM_LABEL            = new AtrRef<>(SPackageBasic.class, "itemLabel", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeConsumer, SIConsumer, IConsumer>              ATR_INIT_LISTENER         = new AtrRef<>(SPackageBasic.class, "initListener", STypeConsumer.class, SIConsumer.class, IConsumer.class);
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<SType<?>>>>
             ATR_DEPENDS_ON_FUNCTION = new AtrRef(SPackageBasic.class, "dependsOnFunction", STypeSupplier.class, SISupplier.class, Supplier.class);
@@ -80,6 +69,7 @@ public class SPackageBasic extends SPackage {
 
         pb.createType(STypeBehavior.class);
         pb.createType(STypeSupplier.class);
+        pb.createType(STypeConsumer.class);
         pb.createType(STypePhraseBreak.class);
 
         pb.createAttributeIntoType(SType.class, ATR_DEFAULT_IF_NULL);
@@ -116,6 +106,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_DISPLAY_ORDER);
         pb.createAttributeIntoType(SType.class, ATR_ANNOTATED);
         pb.createAttributeIntoType(SType.class, ATR_ANNOTATION_LABEL);
+        pb.createAttributeIntoType(SType.class, ATR_INIT_LISTENER);
 
         pb.createAttributeIntoType(SType.class, ATR_DISPLAY_STRING);
 
@@ -137,21 +128,21 @@ public class SPackageBasic extends SPackage {
 
         // defina o meta dado do meta dado
         //@formatter:off
-        pb.getAttribute(ATR_LABEL                   ).asAtr().label("Label"                     ).editSize(30).maxLength(50);
-        pb.getAttribute(ATR_SUBTITLE                ).asAtr().label("Subtitle"                  ).editSize(30).maxLength(50);
-        pb.getAttribute(ATR_BASIC_MASK              ).asAtr().label("Basic mask"                ).editSize(10).maxLength(20);
-        pb.getAttribute(ATR_MAX_LENGTH              ).asAtr().label("Maximum length"            ).editSize( 3).maxLength( 4);
-        pb.getAttribute(ATR_INTEGER_MAX_LENGTH      ).asAtr().label("Integer maximum length"    ).editSize( 3).maxLength( 4);
-        pb.getAttribute(ATR_FRACTIONAL_MAX_LENGTH   ).asAtr().label("Fractional maximum length" ).editSize( 3).maxLength( 4);
-        pb.getAttribute(ATR_EDIT_SIZE               ).asAtr().label("Edit size"                 ).editSize( 3).maxLength( 3);
-        pb.getAttribute(ATR_VISIBLE                 ).asAtr().label("Visible"                   );
-        pb.getAttribute(ATR_VISIBLE_FUNCTION        ).asAtr().label("Visible (function)"        );
-        pb.getAttribute(ATR_ENABLED                 ).asAtr().label("Enabled"                   );
-        pb.getAttribute(ATR_ENABLED_FUNCTION        ).asAtr().label("Enabled (function)"        );
-        pb.getAttribute(ATR_DEPENDS_ON_FUNCTION     ).asAtr().label("Depends on (function)"     );
-      //pb.getAtributo(ATR_ONCHANGE_BEHAVIOR        ).asAtr().label("On change (behavior)"      );
-        pb.getAttribute(ATR_DISPLAY_ORDER           ).asAtr().label("Display order"             );
-        pb.getAttribute(ATR_ITEM_LABEL              ).asAtr().label("Item label"                ).editSize(30).maxLength(50);
+        pb.getAttribute(ATR_LABEL).asAtr().label("Label").editSize(30).maxLength(50);
+        pb.getAttribute(ATR_SUBTITLE).asAtr().label("Subtitle").editSize(30).maxLength(50);
+        pb.getAttribute(ATR_BASIC_MASK).asAtr().label("Basic mask").editSize(10).maxLength(20);
+        pb.getAttribute(ATR_MAX_LENGTH).asAtr().label("Maximum length").editSize(3).maxLength(4);
+        pb.getAttribute(ATR_INTEGER_MAX_LENGTH).asAtr().label("Integer maximum length").editSize(3).maxLength(4);
+        pb.getAttribute(ATR_FRACTIONAL_MAX_LENGTH).asAtr().label("Fractional maximum length").editSize(3).maxLength(4);
+        pb.getAttribute(ATR_EDIT_SIZE).asAtr().label("Edit size").editSize(3).maxLength(3);
+        pb.getAttribute(ATR_VISIBLE).asAtr().label("Visible");
+        pb.getAttribute(ATR_VISIBLE_FUNCTION).asAtr().label("Visible (function)");
+        pb.getAttribute(ATR_ENABLED).asAtr().label("Enabled");
+        pb.getAttribute(ATR_ENABLED_FUNCTION).asAtr().label("Enabled (function)");
+        pb.getAttribute(ATR_DEPENDS_ON_FUNCTION).asAtr().label("Depends on (function)");
+        //pb.getAtributo(ATR_ONCHANGE_BEHAVIOR        ).asAtr().label("On change (behavior)"      );
+        pb.getAttribute(ATR_DISPLAY_ORDER).asAtr().label("Display order");
+        pb.getAttribute(ATR_ITEM_LABEL).asAtr().label("Item label").editSize(30).maxLength(50);
         //@formatter:on
     }
 }

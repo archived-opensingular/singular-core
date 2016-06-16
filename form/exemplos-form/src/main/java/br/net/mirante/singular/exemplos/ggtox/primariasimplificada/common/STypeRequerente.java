@@ -18,28 +18,27 @@ public class STypeRequerente extends STypeEntidade {
                 .label("Requerente")
                 .enabled(false);
 
-        withInitListener( si -> {
-            final SIComposite composite = (SIComposite) si;
-            composite.setValue(STypeEntidade.TIPO_PESSOA         , "Juridica");
-            composite.setValue(STypeEntidade.CNPJ                , "91.725.509/0001-57");
-            composite.setValue(STypeEntidade.NOME                , "Cecília e Mirella Limpeza ME");
-            composite.setValue(STypeEntidade.ENDERECO_ELETRONICO , "representantes@ceciliamirella.com.br");
-            composite.setValue(STypeEntidade.CEP                 , "19042-070");
-            composite.setValue(STypeEntidade.ENDERECO            , "Rua Alexandre Bacarin");
+        withInitListener(si -> {
+            si.setValue(STypeEntidade.TIPO_PESSOA, "Juridica");
+            si.setValue(STypeEntidade.CNPJ, "91.725.509/0001-57");
+            si.setValue(STypeEntidade.NOME, "Cecília e Mirella Limpeza ME");
+            si.setValue(STypeEntidade.ENDERECO_ELETRONICO, "representantes@ceciliamirella.com.br");
+            si.setValue(STypeEntidade.CEP, "19042-070");
+            si.setValue(STypeEntidade.ENDERECO, "Rua Alexandre Bacarin");
 
-            final SIComposite estado = (SIComposite) composite.getField(STypeEntidade.ESTADO);
+            final SIComposite estado = (SIComposite) si.getField(STypeEntidade.ESTADO);
             estado.setValue(STypeEntidade.SIGLA_UF, "SP");
-            estado.setValue(STypeEntidade.NOME_UF , "São Paulo");
+            estado.setValue(STypeEntidade.NOME_UF, "São Paulo");
 
-            final SIComposite cidade = (SIComposite) composite.getField(STypeEntidade.CIDADE);
+            final SIComposite cidade = (SIComposite) si.getField(STypeEntidade.CIDADE);
             cidade.setValue(STypeEntidade.UF_CIDADE, "SP");
-            cidade.setValue(STypeEntidade.NOME_CIDADE , "Presidente Prudente");
-            cidade.setValue(STypeEntidade.ID_CIDADE , 3541406);
+            cidade.setValue(STypeEntidade.NOME_CIDADE, "Presidente Prudente");
+            cidade.setValue(STypeEntidade.ID_CIDADE, 3541406);
 
-            composite.setValue(STypeEntidade.BAIRRO  , "Parque Alvorada");
-            composite.setValue(STypeEntidade.TELEFONE, "(18) 2583-6223");
-            composite.setValue(STypeEntidade.FAX     , "4052 1282");
-            composite.setValue(STypeEntidade.CELULAR , "(18) 99244-3094");
+            si.setValue(STypeEntidade.BAIRRO, "Parque Alvorada");
+            si.setValue(STypeEntidade.TELEFONE, "(18) 2583-6223");
+            si.setValue(STypeEntidade.FAX, "4052 1282");
+            si.setValue(STypeEntidade.CELULAR, "(18) 99244-3094");
         });
 
         final STypeAttachment comprovanteRegistroEstado = addField("comprovanteRegistroEstado", STypeAttachment.class);

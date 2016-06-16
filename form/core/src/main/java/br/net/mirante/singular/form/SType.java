@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -58,8 +59,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators;
 
     private Set<SType<?>> dependentTypes;
-
-    private Consumer<SInstance> initListener;
 
     private AttributeDefinitionInfo attributeDefinitionInfo;
 
@@ -704,6 +703,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * @param newInstance Instance recently created.
      */
     public void init(I newInstance) {
+        IConsumer<I> initListener = asAtr().getAttributeValue(SPackageBasic.ATR_INIT_LISTENER);
         if (initListener != null) {
             initListener.accept(newInstance);
         }
@@ -865,8 +865,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return updateListener;
     }
 
-    public void withInitListener(Consumer<SInstance> initListener) {
-        this.initListener = initListener;
+    public void withInitListener(IConsumer<I> initListener) {
+        this.asAtr().setAttributeValue(SPackageBasic.ATR_INIT_LISTENER, initListener);
     }
 
     public SelectionBuilder typelessSelection() {
