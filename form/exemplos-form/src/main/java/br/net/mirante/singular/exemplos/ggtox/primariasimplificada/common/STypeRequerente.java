@@ -15,8 +15,21 @@ public class STypeRequerente extends STypeEntidade {
         super.onLoadType(tb);
 
         asAtr()
-                .label("Requerente")
-                .enabled(false);
+                .label("Requerente");
+
+        getField(TIPO_PESSOA).asAtr().enabled(false);
+        getField(CNPJ).asAtr().enabled(false);
+        getField(CPF).asAtr().enabled(false);
+        getField(NOME).asAtr().enabled(false);
+        getField(ENDERECO_ELETRONICO).asAtr().enabled(false);
+        getField(CEP).asAtr().enabled(false);
+        getField(ENDERECO).asAtr().enabled(false);
+        getField(ESTADO).asAtr().enabled(false);
+        getField(CIDADE).asAtr().enabled(false);
+        getField(BAIRRO).asAtr().enabled(false);
+        getField(TELEFONE).asAtr().enabled(false);
+        getField(FAX).asAtr().enabled(false);
+        getField(CELULAR).asAtr().enabled(false);
 
         withInitListener(si -> {
             si.setValue(STypeEntidade.TIPO_PESSOA, "Juridica");
