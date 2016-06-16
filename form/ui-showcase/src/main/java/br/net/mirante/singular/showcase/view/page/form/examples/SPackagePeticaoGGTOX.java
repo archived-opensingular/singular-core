@@ -232,7 +232,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 root.asAtr().label("Finalidades")
                         .asAtrBootstrap().colPreference(4);
 
-                STypeString finalidade = pb.createType("finalidade", STypeString.class);
+                STypeString finalidade = pb.createType("finalidadeConformeMatriz", STypeString.class);
                 final STypeList<STypeString, SIString> finalidades = root.addFieldListOf("finalidades", finalidade);
                 finalidades.selectionOf("Produção", "Importação", "Exportação", "Comercialização", "Utilização").cast();
                 finalidades.withView(SMultiSelectionByCheckboxView::new);

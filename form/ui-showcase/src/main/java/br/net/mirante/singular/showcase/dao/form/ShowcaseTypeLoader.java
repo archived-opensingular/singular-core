@@ -48,10 +48,6 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(ExamplePackage.class, ExamplePackage.Types.ORDER.name, ShowCaseType.FORM);
         add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackagePeticaoPrimariaSimplificada.class, SPackagePeticaoPrimariaSimplificada.NOME_COMPLETO, ShowCaseType.FORM);
-        add(SPackagePeticaoPrimariaSimplificadaNivelI.class, SPackagePeticaoPrimariaSimplificadaNivelI.NOME_COMPLETO, ShowCaseType.FORM);
-        add(SPackagePeticaoPrimariaSimplificadaNivelII.class, SPackagePeticaoPrimariaSimplificadaNivelII.NOME_COMPLETO, ShowCaseType.FORM);
-        add(SPackagePeticaoPrimariaSimplificadaNivelIII.class, SPackagePeticaoPrimariaSimplificadaNivelIII.NOME_COMPLETO, ShowCaseType.FORM);
-        add(SPackagePeticaoPrimariaSimplificadaNivelIV.class, SPackagePeticaoPrimariaSimplificadaNivelIV.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageNotificacaoSimplificadaDinamizado.class, SPackageNotificacaoSimplificadaDinamizado.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageNotificacaoSimplificadaGasMedicinal.class, SPackageNotificacaoSimplificadaGasMedicinal.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO, ShowCaseType.FORM);

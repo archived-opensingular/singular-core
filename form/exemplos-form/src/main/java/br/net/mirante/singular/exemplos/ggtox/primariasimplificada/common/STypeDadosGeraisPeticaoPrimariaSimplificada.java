@@ -1,7 +1,7 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 
+
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePeticaoPrimariaSimplificada;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
@@ -17,15 +17,21 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypeComposite<
     protected void onLoadType(TypeBuilder builder) {
         super.onLoadType(builder);
 
-        final STypeAttachment guiaRecolhimentoUniao          = addField("guiaRecolhimentoUniao", STypeAttachment.class);
+        final STypeString     numeroProcesso                 = addField("numeroProcessoPeticaoMatriz", STypeAnvisaNumeroProcesso.class);
         final STypeAttachment declaracaoVinculoPeticaoMatriz = addField("declaracaoVinculoPeticaoMatriz", STypeAttachment.class);
         final STypeString     justificativa                  = addFieldString("justificativa");
 
-        guiaRecolhimentoUniao
+        this
                 .asAtr()
-                .label("Guia de Recolhimento da União")
+                .label("Petição Matriz");
+
+        numeroProcesso
+                .asAtr()
+                .required()
+                .label("Número do processo da petição matriz")
+                //TODO vincius help para dizer que o número do processo é anvisa
                 .asAtrBootstrap()
-                .colPreference(12);
+                .colPreference(4);
 
         declaracaoVinculoPeticaoMatriz
                 .asAtr()
