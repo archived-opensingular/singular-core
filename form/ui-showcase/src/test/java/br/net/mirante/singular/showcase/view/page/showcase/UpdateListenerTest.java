@@ -50,12 +50,12 @@ public class UpdateListenerTest extends SingularFormBaseTest {
         final FormComponent cep = findFirstFormComponentsByType(page.getForm(), this.cep);
 
         form.setValue(cep, "70863520");
-        tester.executeAjaxEvent(cep, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+        tester.executeAjaxEvent(cep, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
         assertEquals("Logradouro incorreto",
                 logradouro.getDefaultModelObjectAsString(), "CLN 211 Bloco 'B' Subsolo");
 
         form.setValue(cep, "70070120");
-        tester.executeAjaxEvent(cep, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+        tester.executeAjaxEvent(cep, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
         assertEquals("Logradouro incorreto",
                 logradouro.getDefaultModelObjectAsString(), "SBS - Qd. 02 - Bl. Q - Centro Empresarial João Carlos Saad 12° andar");
     }
@@ -67,7 +67,7 @@ public class UpdateListenerTest extends SingularFormBaseTest {
         final FormComponent cep = findFirstFormComponentsByType(page.getForm(), this.cep);
 
         form.setValue(cep, "12345678");
-        tester.executeAjaxEvent(cep, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+        tester.executeAjaxEvent(cep, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
         assertEquals("Logradouro incorreto",
                 logradouro.getDefaultModelObjectAsString(), "Não encontrado");
     }

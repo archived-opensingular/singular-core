@@ -154,7 +154,7 @@ public class DependsOnTest {
             final DropDownChoice categoryChoice = options().get(0);
             final DropDownChoice elementChoice  = options().get(1);
             form.select(getFormRelativePath(categoryChoice), 2);
-            tester.executeAjaxEvent(categoryChoice, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+            tester.executeAjaxEvent(categoryChoice, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
             List<Object> displayArray = new ArrayList<>();
             for (Object choice : elementChoice.getChoices()) {
                 displayArray.add(elementChoice.getChoiceRenderer().getDisplayValue(choice));
