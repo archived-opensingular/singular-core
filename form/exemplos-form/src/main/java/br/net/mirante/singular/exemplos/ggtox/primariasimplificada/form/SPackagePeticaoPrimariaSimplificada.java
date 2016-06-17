@@ -79,8 +79,8 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                 .selectionOf("I", "II", "III", "IV")
                 .withRadioView()
                 .asAtr()
-                .dependsOn(tipoPeticao)
-                .visible(si -> Value.notNull(si, tipoPeticao));
+                .exists(si -> Value.notNull(si, tipoPeticao))
+                .dependsOn(tipoPeticao);
 
         nivel
                 .withUpdateListener(si -> {
@@ -96,68 +96,68 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         dadosGerais
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .visible(si -> Value.notNull(si, tipoPeticao));
+                .exists(si -> Value.notNull(si, tipoPeticao));
 
         produtoTecnico
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> StringUtils.isNotEmpty(Value.of(si, nivel)));
+                .exists(si -> StringUtils.isNotEmpty(Value.of(si, nivel)));
 
         produtoTecnico
                 .fabricante
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
+                .exists(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
 
         produtoTecnico
                 .fabricantes
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
+                .exists(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
 
         produtoFormulado
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> StringUtils.isNotEmpty(Value.of(si, nivel)) && !peticaoProdutoTecnicos.contains(Value.of(si, idTipoPeticao)));
+                .exists(si -> StringUtils.isNotEmpty(Value.of(si, nivel)) && !peticaoProdutoTecnicos.contains(Value.of(si, idTipoPeticao)));
 
         produtoFormulado
                 .formulador
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "I".equals(Value.of(si, nivel)));
+                .exists(si -> "I".equals(Value.of(si, nivel)));
 
         produtoFormulado
                 .formuladores
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> !"I".equals(Value.of(si, nivel)));
+                .exists(si -> !"I".equals(Value.of(si, nivel)));
 
         anexos
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> Value.notNull(si, nivel));
+                .exists(si -> Value.notNull(si, nivel));
         anexos
                 .documentacaoI
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "I".equals(Value.of(si, nivel)));
+                .exists(si -> "I".equals(Value.of(si, nivel)));
         anexos
                 .documentacaoII
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "II".equals(Value.of(si, nivel)));
+                .exists(si -> "II".equals(Value.of(si, nivel)));
 
         anexos
                 .documentacaoIII
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "III".equals(Value.of(si, nivel)));
+                .exists(si -> "III".equals(Value.of(si, nivel)));
 
         anexos
                 .documentacaoIV
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "IV".equals(Value.of(si, nivel)));
+                .exists(si -> "IV".equals(Value.of(si, nivel)));
 
 
         peticaoSimplificada.withView(new SViewByBlock(), blocks -> {
