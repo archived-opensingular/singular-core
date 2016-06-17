@@ -135,7 +135,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             IModel<?> model = component.getDefaultModel();
             if (model != null && IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
                 SInstance si = ((IMInstanciaAwareModel) model).getMInstancia();
-                if (block.getTypes().contains(si.getType().getNameSimple())) {
+                if (si != null && block.getTypes().contains(si.getType().getNameSimple())) {
                     if (si.asAtr().isVisible()) {
                         visit.stop(true);
                     }
