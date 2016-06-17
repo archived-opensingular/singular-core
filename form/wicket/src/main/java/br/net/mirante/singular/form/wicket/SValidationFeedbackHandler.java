@@ -273,9 +273,9 @@ public class SValidationFeedbackHandler implements Serializable {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static Collection<SInstance> resolveRootInstances(Component rootContainer) {
-        final SValidationFeedbackHandler rootHandler = get(rootContainer);
 
-        List<SInstance> rootInstance = new ArrayList<>();
+        final SValidationFeedbackHandler rootHandler  = get(rootContainer);
+        final List<SInstance>            rootInstance = new ArrayList<>();
 
         if (rootHandler != null) {
             rootHandler
@@ -291,14 +291,6 @@ public class SValidationFeedbackHandler implements Serializable {
                     .optionalCast(rootContainer.getDefaultModel())
                     .map(IMInstanciaAwareModel::getMInstancia)
                     .ifPresent(rootInstance::add);
-        }
-
-        if (rootInstance.isEmpty()) {
-            throw new IllegalArgumentException("Could not resolve the root instance");
-        }
-
-        if (rootInstance.contains(null)) {
-            throw new IllegalStateException();
         }
 
         return rootInstance;

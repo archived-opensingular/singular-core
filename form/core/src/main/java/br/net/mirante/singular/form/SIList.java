@@ -18,7 +18,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     private SType<E> elementsType;
 
-    public SIList() {}
+    public SIList() {
+    }
 
     static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
         //        MILista<I> lista = new MILista<>();
@@ -52,8 +53,9 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     @Override
     public void clearInstance() {
         if (values != null) {
-            values.forEach(SInstance::clearInstance);
-            values.clear();
+            for (int i = 0; i < values.size(); i++) {
+                remove(i);
+            }
         }
     }
 
@@ -180,7 +182,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     private SInstance getChecking(int index, PathReader pathReader) {
         if (index < 0 || index + 1 > size()) {
-            String msg = "índice inválido: " + index + ((index < 0) ? " < 0" : " > que a lista (size= " + size() +")");
+            String msg = "índice inválido: " + index + ((index < 0) ? " < 0" : " > que a lista (size= " + size() + ")");
             if (pathReader == null) {
                 throw new SingularFormException(msg, this);
             }
@@ -202,15 +204,16 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public void setValue(Object obj) {
-        if(obj instanceof SIList){
+        if (obj instanceof SIList) {
             clearInstance();
-            values = newArrayList(((SIList)obj).getValues());
-            elementsType = ((SIList)obj).getElementsType();
+            values = newArrayList(((SIList) obj).getValues());
+            elementsType = ((SIList) obj).getElementsType();
             ((SIList) obj).getValue().clear();
-        }else{
+        } else {
             throw new SingularFormException("SList só suporta valores de mesmo tipo da lista", this);
         }
     }
+
     @Override
     public final void setValue(String fieldPath, Object value) {
         setValue(new PathReader(fieldPath), value);
@@ -285,8 +288,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
+        final int prime  = 31;
+        int       result = 1;
         result = prime * result + ((elementsType == null) ? 0 : elementsType.hashCode());
         for (E e : this)
             result = prime * result + (e == null ? 0 : e.hashCode());
@@ -322,7 +325,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public E first() {
-        if(hasValues()) return values.get(0);
+        if (hasValues()) return values.get(0);
         return null;
     }
 
@@ -331,7 +334,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public E last() {
-        if(hasValues()) return values.get(values.size()-1);
+        if (hasValues()) return values.get(values.size() - 1);
         return null;
     }
 
