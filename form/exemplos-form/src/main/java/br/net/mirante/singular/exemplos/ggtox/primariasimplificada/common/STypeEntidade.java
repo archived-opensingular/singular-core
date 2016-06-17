@@ -43,8 +43,8 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
         super.onLoadType(tb);
 
         final STypeString           tipoPessoa         = addField(TIPO_PESSOA, STypeString.class);
-        final STypeCPF              cnpj               = addField(CNPJ, STypeCPF.class);
-        final STypeCNPJ             cpf                = addField(CPF, STypeCNPJ.class);
+        final STypeCNPJ             cnpj               = addField(CNPJ, STypeCNPJ.class);
+        final STypeCPF              cpf                = addField(CPF, STypeCPF.class);
         final STypeString           nome               = addField(NOME, STypeString.class);
         final STypeEMail            enderecoEletronico = addField(ENDERECO_ELETRONICO, STypeEMail.class);
         final STypeCEP              cep                = addField(CEP, STypeCEP.class);
