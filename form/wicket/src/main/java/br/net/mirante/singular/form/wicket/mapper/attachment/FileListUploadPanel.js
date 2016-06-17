@@ -37,7 +37,7 @@ if(window.FileListUploadPanel == undefined){
                             .append($('<div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>')),
 
                         $('<div class="list-item-action">')
-                            .append($('<a href="#" class="list-action-remove">')
+                            .append($('<a href="javascript:void(0);" class="list-action-remove">')
                                 .append($('<i class="fa fa-close">'))
                             )
                         );
@@ -80,10 +80,10 @@ if(window.FileListUploadPanel == undefined){
                                                 {   fileId: file.fileId,
                                                 }, function (data, status, jqXHR) {
                                                     if (status == 'success'){
-                                                        $('#upload-box-'+fake_id).remove();
+                                                        $('#upload-box-' + fake_id).remove();
                                                         var fileList = $('#' + params.fileList_id).find('li');
-                                                        if(fileList.length == 0){
-                                                            $('#'+params.component_id).find('.list-detail-empty').show();
+                                                        if (fileList.length == 0) {
+                                                            $('#' + params.component_id).find('.list-detail-empty').show();
                                                         }
                                                     }
                                                 }
