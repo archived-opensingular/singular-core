@@ -168,7 +168,7 @@ public class WicketFormProcessing {
             final InstanceValidationContext validationContext = new InstanceValidationContext();
             validationContext.validateSingle(fieldInstance);
 
-            // limpa erros de instancias dependentes
+            // limpa erros de instancias dependentes, e limpa o valor caso de este não seja válido para o provider
             for (SType<?> dependentType : fieldInstance.getType().getDependentTypes()) {
                 fieldInstance.findNearest(dependentType)
                     .ifPresent(it -> it.getDocument().clearValidationErrors(it.getId()));
@@ -226,6 +226,8 @@ public class WicketFormProcessing {
             final Consumer<MarkupContainer> refreshDependentComponentsConsumer = rc -> rc.visitChildren(Component.class, (c, visit) -> {
                 IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
                     if (shouldRefreshPredicate.test(model.getMInstancia())) {
+                        //SInstance inst = model.getMInstancia();
+                        //inst.clearInstance();
                         refreshComponentOrCellContainer(target, c);
                         if (model.getMInstancia().getType().getUpdateListener() != null) {
                             model.getMInstancia().getType().getUpdateListener().accept(model.getMInstancia());
