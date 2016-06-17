@@ -9,11 +9,28 @@ import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeFormulador extends STypeEntidade {
 
+
+    public STypeAttachment comprovanteRegistroEstado;
+    public STypeAttachment laudoLaboratorial;
+
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        final STypeAttachment laudoLaboratorial = addField("laudoLaboratorial", STypeAttachment.class);
+        tipoPessoa
+                .asAtr()
+                .visible(false);
+
+        withInitListener(si -> si.findNearest(tipoPessoa)
+                .get()
+                .setValue("Juridica")
+        );
+
+        cnpj
+                .asAtr()
+                .visible(si -> true);
+
+        laudoLaboratorial = addField("laudoLaboratorial", STypeAttachment.class);
 
         laudoLaboratorial
                 .asAtr()
@@ -22,7 +39,7 @@ public class STypeFormulador extends STypeEntidade {
                 .colPreference(12);
 
 
-        final STypeAttachment comprovanteRegistroEstado = addField("comprovanteRegistroEstado", STypeAttachment.class);
+        comprovanteRegistroEstado = addField("comprovanteRegistroEstado", STypeAttachment.class);
 
         comprovanteRegistroEstado
                 .asAtr()

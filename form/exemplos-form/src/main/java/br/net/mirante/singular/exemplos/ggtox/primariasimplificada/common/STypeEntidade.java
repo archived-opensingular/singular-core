@@ -11,16 +11,14 @@ import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
 import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.type.util.STypeEMail;
-import br.net.mirante.singular.form.util.transformer.SCompositeListBuilder;
 import br.net.mirante.singular.form.util.transformer.Value;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeEntidade extends STypeComposite<SIComposite> {
 
-
     public static final String TIPO_PESSOA         = "tipoPessoa";
-    public static final String CNPJ                = "CNPJ";
-    public static final String CPF                 = "CPF";
+    public static final String CNPJ                = "cnpj";
+    public static final String CPF                 = "cpf";
     public static final String NOME                = "nome";
     public static final String ENDERECO_ELETRONICO = "enderecoEletronico";
     public static final String CEP                 = "cep";
@@ -37,29 +35,48 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
     public static final String FAX                 = "fax";
     public static final String CELULAR             = "celular";
 
+    public STypeString           tipoPessoa;
+    public STypeCNPJ             cnpj;
+    public STypeCPF              cpf;
+    public STypeString           nome;
+    public STypeEMail            enderecoEletronico;
+    public STypeCEP              cep;
+    public STypeComposite<?>     estado;
+    public STypeString           sigla;
+    public STypeString           nomeUF;
+    public STypeComposite<?>     cidade;
+    public STypeString           idCidade;
+    public STypeString           nomeCidade;
+    public STypeString           ufCidade;
+    public STypeString           bairro;
+    public STypeString           endereco;
+    public STypeTelefoneNacional telefone;
+    public STypeString           fax;
+    public STypeTelefoneNacional celular;
+
     @Override
     protected void onLoadType(TypeBuilder tb) {
 
         super.onLoadType(tb);
 
-        final STypeString           tipoPessoa         = addField(TIPO_PESSOA, STypeString.class);
-        final STypeCNPJ             cnpj               = addField(CNPJ, STypeCNPJ.class);
-        final STypeCPF              cpf                = addField(CPF, STypeCPF.class);
-        final STypeString           nome               = addField(NOME, STypeString.class);
-        final STypeEMail            enderecoEletronico = addField(ENDERECO_ELETRONICO, STypeEMail.class);
-        final STypeCEP              cep                = addField(CEP, STypeCEP.class);
-        final STypeComposite<?>     estado             = addFieldComposite(ESTADO);
-        final STypeString           siglaUF            = estado.addFieldString(SIGLA_UF);
-        final STypeString           nomeUF             = estado.addFieldString(NOME_UF);
-        final STypeComposite<?>     cidade             = addFieldComposite(CIDADE);
-        final STypeString           idCidade           = cidade.addFieldString(ID_CIDADE);
-        final STypeString           nomeCidade         = cidade.addFieldString(NOME_CIDADE);
-        final STypeString           ufCidade           = cidade.addFieldString(UF_CIDADE);
-        final STypeString           bairro             = addField(BAIRRO, STypeString.class);
-        final STypeString           endereco           = addField(ENDERECO, STypeString.class);
-        final STypeTelefoneNacional telefone           = addField(TELEFONE, STypeTelefoneNacional.class);
-        final STypeString           fax                = addField(FAX, STypeString.class);
-        final STypeTelefoneNacional celular            = addField(CELULAR, STypeTelefoneNacional.class);
+        tipoPessoa = addField(TIPO_PESSOA, STypeString.class);
+        cnpj = addField(CNPJ, STypeCNPJ.class);
+        cpf = addField(CPF, STypeCPF.class);
+        nome = addField(NOME, STypeString.class);
+        enderecoEletronico = addField(ENDERECO_ELETRONICO, STypeEMail.class);
+        cep = addField(CEP, STypeCEP.class);
+        estado = addFieldComposite(ESTADO);
+        sigla = estado.addFieldString(SIGLA_UF);
+        nomeUF = estado.addFieldString(NOME_UF);
+        cidade = addFieldComposite(CIDADE);
+        idCidade = cidade.addFieldString(ID_CIDADE);
+        nomeCidade = cidade.addFieldString(NOME_CIDADE);
+        ufCidade = cidade.addFieldString(UF_CIDADE);
+        bairro = addField(BAIRRO, STypeString.class);
+        endereco = addField(ENDERECO, STypeString.class);
+        telefone = addField(TELEFONE, STypeTelefoneNacional.class);
+        fax = addField(FAX, STypeString.class);
+        celular = addField(CELULAR, STypeTelefoneNacional.class);
 
         tipoPessoa
                 .selectionOf("Fisica", "Juridica")
@@ -115,14 +132,14 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
 
         estado
                 .selection()
-                .id(siglaUF)
+                .id(sigla)
                 .display(nomeUF)
                 .simpleProvider((SSimpleProvider) builder -> {
                     SelectBuilder
                             .buildEstados()
                             .forEach(estadoDTO -> {
                                 builder.add()
-                                        .set(siglaUF, estadoDTO.getSigla())
+                                        .set(sigla, estadoDTO.getSigla())
                                         .set(nomeUF, estadoDTO.getNome());
                             });
                 });
@@ -144,11 +161,11 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
 
         cidade
                 .asAtr()
-                .required(inst -> Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
+                .required(inst -> Value.notNull(inst, (STypeSimple) estado.getField(sigla.getNameSimple())))
                 .asAtr()
                 .label("Cidade")
                 .enabled(inst -> inst.findNearest(estado).get().asAtr().isEnabled()
-                        && Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
+                        && Value.notNull(inst, (STypeSimple) estado.getField(sigla.getNameSimple())))
                 .dependsOn(estado)
                 .asAtrBootstrap()
                 .colPreference(3);
@@ -159,7 +176,7 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
                 .display(nomeCidade)
                 .simpleProvider((SSimpleProvider) builder -> {
                     SelectBuilder
-                            .buildMunicipiosFiltrado(Value.of(builder.getCurrentInstance(), siglaUF))
+                            .buildMunicipiosFiltrado(Value.of(builder.getCurrentInstance(), sigla))
                             .forEach(cidadeDTO -> {
                                 builder.add()
                                         .set(idCidade, cidadeDTO.getId())

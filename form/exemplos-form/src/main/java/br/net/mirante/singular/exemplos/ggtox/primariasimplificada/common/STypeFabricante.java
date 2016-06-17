@@ -9,11 +9,32 @@ import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeFabricante extends STypeEntidade {
 
+    public STypeAttachment comprovanteRegistroEstado;
+
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        final STypeAttachment comprovanteRegistroEstado = addField("comprovanteRegistroEstado", STypeAttachment.class);
+        tipoPessoa
+                .asAtr()
+                .visible(false);
+
+        withInitListener(si -> si.findNearest(tipoPessoa)
+                        .get()
+                        .setValue("Juridica")
+        );
+
+        withUpdateListener(si -> si.findNearest(tipoPessoa)
+                        .get()
+                        .setValue("Juridica")
+        );
+
+        cnpj
+                .asAtr()
+                .visible( si -> true);
+
+
+        comprovanteRegistroEstado = addField("comprovanteRegistroEstado", STypeAttachment.class);
 
         comprovanteRegistroEstado
                 .asAtr()

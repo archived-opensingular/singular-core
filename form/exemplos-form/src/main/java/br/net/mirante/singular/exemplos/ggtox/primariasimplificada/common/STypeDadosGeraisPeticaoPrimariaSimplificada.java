@@ -20,6 +20,7 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypeComposite<
         final STypeString     numeroProcesso                 = addField("numeroProcessoPeticaoMatriz", STypeAnvisaNumeroProcesso.class);
         final STypeAttachment declaracaoVinculoPeticaoMatriz = addField("declaracaoVinculoPeticaoMatriz", STypeAttachment.class);
         final STypeString     justificativa                  = addFieldString("justificativa");
+        final STypeAttachment anexoJustificativa = addField("anexoJustificativa", STypeAttachment.class);
 
         this
                 .asAtr()
@@ -47,6 +48,12 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypeComposite<
                 .label("Justificativa da solicitação")
                 .asAtrBootstrap()
                 .colPreference(12);
+
+        anexoJustificativa
+                .asAtrBootstrap()
+                .colPreference(12)
+                .asAtr()
+                .label("Anexo da justificativa (opcional)");
 
     }
 }
