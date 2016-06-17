@@ -282,7 +282,8 @@ public class SValidationFeedbackHandler implements Serializable {
                     .instanceModels
                     .stream()
                     .filter(it -> it != null && it.getObject() != null)
-                    .forEach(it -> rootInstance.add(it.getObject()));
+                    .map(IModel::getObject)
+                    .forEach(rootInstance::add);
         }
 
         if (rootInstance.isEmpty()) {
