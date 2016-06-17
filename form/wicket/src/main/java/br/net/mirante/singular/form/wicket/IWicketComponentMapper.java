@@ -49,7 +49,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
         + "  clearTimeout($(this).data('blurChangeTimeout'));                               \n"
         + "  $(this).data('blurChangeTimeout', setTimeout(                                  \n"
         + "    function() {                                                                 \n"
-        + "    " + JQuery.$(comp) + ".trigger('" + SINNGULAR_BLUR_CHANGE_EVENT + "', e)" + "\n"
+        + "    " + JQuery.$(comp) + ".trigger('" + SINGULAR_PROCESS_EVENT + "', e)" + "\n"
         + "    }                                                                            \n"
         + "  , 100));//100 ms para debounce                                                 \n"
         + "});");

@@ -66,7 +66,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
         final FormComponent input         = findFirstFormComponentsByType(page.getForm(), pessoa);
         tester.assertInvisible(input.getPageRelativePath());
         form.select(getFormRelativePath(selecaoGenero), 0);
-        tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+        tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
         tester.assertVisible(input.getPageRelativePath());
     }
 
@@ -78,13 +78,13 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
         {
             form.select(getFormRelativePath(selecaoGenero), 1);
-            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
             setAndCheckValue(input);
         }
 
         {
             form.select(getFormRelativePath(selecaoGenero), 0);
-            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
             setAndCheckValue(input);
         }
 
@@ -98,13 +98,13 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
         {
             form.select(getFormRelativePath(selecaoGenero), 1);
-            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
             setAndCheckValue(input);
         }
 
         {
             form.select(getFormRelativePath(selecaoGenero), 0);
-            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
             setAndCheckValue(input);
         }
 
@@ -113,7 +113,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
     private void setAndCheckValue(FormComponent input) {
         form.setValue(input, "Danilo");
-        tester.executeAjaxEvent(input, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+        tester.executeAjaxEvent(input, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
         assertThat(input.getModel().getObject()).isNotNull();
     }
 
