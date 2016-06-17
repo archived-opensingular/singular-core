@@ -172,6 +172,10 @@ public class AtrBasic extends STranslatorForAttribute {
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_VISIBLE));
     }
 
+    public boolean isExists() {
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
+    }
+
     public boolean isEnabled() {
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_ENABLED));
     }
