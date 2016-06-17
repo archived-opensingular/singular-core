@@ -10,6 +10,8 @@ import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeRequerente extends STypeEntidade {
 
+    public STypeAttachment comprovanteRegistroEstado;
+
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
@@ -54,7 +56,7 @@ public class STypeRequerente extends STypeEntidade {
             si.setValue(STypeEntidade.CELULAR, "(18) 99244-3094");
         });
 
-        final STypeAttachment comprovanteRegistroEstado = addField("comprovanteRegistroEstado", STypeAttachment.class);
+        comprovanteRegistroEstado = addField("comprovanteRegistroEstado", STypeAttachment.class);
 
         comprovanteRegistroEstado
                 .asAtr()

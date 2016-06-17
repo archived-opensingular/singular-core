@@ -13,6 +13,16 @@ public class STypeRepresentanteLegal extends STypeEntidade {
         super.onLoadType(tb);
         asAtr()
                 .label("Representante Legal");
+
+        tipoPessoa
+                .asAtr()
+                .visible(false);
+
+        tipoPessoa.withInitListener(si -> si.setValue("Fisica"));
+        tipoPessoa.withUpdateListener(si -> {
+            System.out.println(si.getValue());
+        });
+
     }
 
 }

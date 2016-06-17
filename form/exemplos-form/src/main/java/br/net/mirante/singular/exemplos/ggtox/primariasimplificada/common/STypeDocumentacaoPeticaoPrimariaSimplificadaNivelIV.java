@@ -26,23 +26,28 @@ public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV extends STypeDo
                 .asAtrBootstrap()
                 .colPreference(12);
 
-        adicionarAnexosGerais();
+        adicionarAnexosNaturezaQuimicaBiomquimica();
         adicionarAnexosOrgaoRegistrante();
         adicionarAnexosMinisterioSaude();
         adicionarAnexosMInisterioMeioAmbiente();
     }
 
-    private void adicionarAnexosGerais() {
-        final STypeAttachmentList unidadesImpressasRotuloBula = addFieldListOfAttachment("unidadesImpressasRotuloBula", "unidadeImpressaRotuloBula");
-        final STypeAttachmentList indicacoesUso = addFieldListOfAttachment("indicacoesUso", "indicacaoUso");
-        final STypeAttachmentList restricoesUso = addFieldListOfAttachment("restricoesUso", "restricaoUso");
-        final STypeAttachmentList intervalosSeguranca = addFieldListOfAttachment("intervalosSeguranca", "intervaloSeguranca");
-        final STypeAttachmentList intervalosReentrada = addFieldListOfAttachment("intervalosReentrada", "intervaloReentrada");
-        final STypeAttachmentList especificacoesEPI = addFieldListOfAttachment("especificacoesEPI", "especificacaoEPI");
-        final STypeAttachmentList procedimentosDescontaminacao = addFieldListOfAttachment("procedimentosDescontaminacao", "procedimentoDescontaminacao");
-        final STypeAttachmentList sistemasRecolhimentoRestos = addFieldListOfAttachment("sistemasRecolhimentoRestos", "sistemaRecolhimento");
+    private void adicionarAnexosNaturezaQuimicaBiomquimica(){
+        final STypeComposite<SIComposite> quimicaBioquimica = addFieldComposite("quimicaBioquimica");
+        final STypeAttachmentList unidadesImpressasRotuloBula = quimicaBioquimica.addFieldListOfAttachment("unidadesImpressasRotuloBula", "unidadeImpressaRotuloBula");
+        final STypeAttachmentList indicacoesUso = quimicaBioquimica.addFieldListOfAttachment("indicacoesUso", "indicacaoUso");
+        final STypeAttachmentList restricoesUso = quimicaBioquimica.addFieldListOfAttachment("restricoesUso", "restricaoUso");
+        final STypeAttachmentList intervalosSeguranca = quimicaBioquimica.addFieldListOfAttachment("intervalosSeguranca", "intervaloSeguranca");
+        final STypeAttachmentList intervalosReentrada = quimicaBioquimica.addFieldListOfAttachment("intervalosReentrada", "intervaloReentrada");
+        final STypeAttachmentList especificacoesEPI = quimicaBioquimica.addFieldListOfAttachment("especificacoesEPI", "especificacaoEPI");
+        final STypeAttachmentList procedimentosDescontaminacao = quimicaBioquimica.addFieldListOfAttachment("procedimentosDescontaminacao", "procedimentoDescontaminacao");
+        final STypeAttachmentList sistemasRecolhimentoRestos = quimicaBioquimica.addFieldListOfAttachment("sistemasRecolhimentoRestos", "sistemaRecolhimento");
 //        final STypeAttachmentList modelosRotuloBula = addFieldListOfAttachment("modelosRotuloBula", "modeloRotuloBula");
-        final STypeAttachmentList comprovantesProtocoloComponente = addFieldListOfAttachment("comprovantesProtocoloComponente", "comprovanteProtocoloComponente");
+        final STypeAttachmentList comprovantesProtocoloComponente = quimicaBioquimica.addFieldListOfAttachment("comprovantesProtocoloComponente", "comprovanteProtocoloComponente");
+
+        quimicaBioquimica
+                .asAtr()
+                .label("Produtos formulados e pré-misturas de natureza química ou bioquímica");
 
         unidadesImpressasRotuloBula
                 .asAtr()
