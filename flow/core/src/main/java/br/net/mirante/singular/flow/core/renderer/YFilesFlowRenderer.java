@@ -19,14 +19,14 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import com.google.common.base.Throwables;
-import com.yworks.yfiles.bpmn.layout.BpmnLayouter;
+/*import com.yworks.yfiles.bpmn.layout.BpmnLayouter;
 import com.yworks.yfiles.bpmn.view.ActivityTypeEnum;
 import com.yworks.yfiles.bpmn.view.BpmnLayoutConfigurator;
 import com.yworks.yfiles.bpmn.view.BpmnRealizerFactory;
 import com.yworks.yfiles.bpmn.view.BpmnTypeEnum;
 import com.yworks.yfiles.bpmn.view.EventCharEnum;
 import com.yworks.yfiles.bpmn.view.EventPortSupport;
-import com.yworks.yfiles.bpmn.view.TaskTypeEnum;
+import com.yworks.yfiles.bpmn.view.TaskTypeEnum;*/
 
 import br.net.mirante.singular.flow.core.EventType;
 import br.net.mirante.singular.flow.core.FlowMap;
@@ -34,7 +34,7 @@ import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskEnd;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import y.base.Edge;
+/*import y.base.Edge;
 import y.base.Node;
 import y.base.NodeCursor;
 import y.io.IOHandler;
@@ -51,14 +51,22 @@ import y.view.NodePort;
 import y.view.NodePortLayoutConfigurator;
 import y.view.NodeRealizer;
 import y.view.NodeScaledPortLocationModel;
-import y.view.tabular.TableGroupNodeRealizer;
+import y.view.tabular.TableGroupNodeRealizer;*/
 
 /**
  * https://www.yworks.com/en/products_yfiles_about.html
  */
-public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
+public class YFilesFlowRenderer /*extends LayoutModule */implements IFlowRenderer {
+    @Override
+    public byte[] generateImage(ProcessDefinition<?> definicao) {
+        return new byte[0];
+    }
 
-    private static final String MINIMUM_NODE_DISTANCE = "Minimum Node Distance";
+    public static YFilesFlowRenderer getInstance() {
+        return null;
+    }
+
+    /*private static final String MINIMUM_NODE_DISTANCE = "Minimum Node Distance";
     private static final String MINIMUM_EDGE_DISTANCE = "Minimum Edge Distance";
     private static final String MINIMUM_LABEL_MARGIN = "Minimum Label Margin";
     private static final String MINIMUM_ICON_MARGIN = "Minimum Icon Margin";
@@ -376,5 +384,5 @@ public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
         }
         graph.getRealizer(node).addPort(port);
         port.bindSourcePort(edge);
-    }
+    }*/
 }
