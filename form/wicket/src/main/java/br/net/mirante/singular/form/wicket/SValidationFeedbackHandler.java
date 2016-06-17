@@ -287,7 +287,10 @@ public class SValidationFeedbackHandler implements Serializable {
         }
 
         if (rootInstance.isEmpty()) {
-            IMInstanciaAwareModel.optionalCast(rootContainer.getDefaultModel()).ifPresent(m -> rootInstance.add(m.getMInstancia()));
+            IMInstanciaAwareModel
+                    .optionalCast(rootContainer.getDefaultModel())
+                    .map(IMInstanciaAwareModel::getMInstancia)
+                    .ifPresent(rootInstance::add);
         }
 
         if (rootInstance.isEmpty()) {
