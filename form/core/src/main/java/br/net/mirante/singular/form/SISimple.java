@@ -144,7 +144,7 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
     }
 
     @Override
-    public String toString() {
-        return getClass().getSimpleName() + '(' + getValue() + ')';
+    StringBuilder toStringInternal() {
+        return super.toStringInternal().append("; value=").append(getValue());
     }
 }

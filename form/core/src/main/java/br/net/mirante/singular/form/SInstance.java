@@ -540,4 +540,31 @@ public abstract class SInstance implements SAttributeEnabled {
         SInstances.visit(this, (i, v) -> errors.addAll(i.getValidationErrors()));
         return errors;
     }
+
+    @Override
+    public String toString() {
+        return toStringInternal().append(')').toString();
+    }
+
+    /**
+     * Pre-monta o contéudo do toString() e dá a chance às classes derivadas de acrescentar mais informação sobre
+     * escrevendo-o.
+     */
+    StringBuilder toStringInternal() {
+        StringBuilder sb = new StringBuilder();
+        String name  = getClass().getName();
+        if(name.startsWith(SInstance.class.getPackage().getName())) {
+            sb.append(getClass().getSimpleName());
+        } else {
+            sb.append(getClass().getName());
+        }
+        sb.append('@').append(id);
+        sb.append('(');
+        sb.append("path=").append(getPathFull());
+        sb.append("; type=");
+        if (getType() != null) {
+            sb.append(getType().getClass().getSimpleName()).append('@').append(getType().getTypeId());
+        }
+        return sb;
+    }
 }
