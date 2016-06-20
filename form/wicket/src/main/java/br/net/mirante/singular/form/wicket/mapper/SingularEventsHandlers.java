@@ -6,25 +6,32 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
+import java.util.Arrays;
+
 import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
 
 public class SingularEventsHandlers extends Behavior {
 
-    private final FUNCTION function;
+    private final FUNCTION[] functions;
 
-    public SingularEventsHandlers(FUNCTION function) {
-        this.function = function;
+    public SingularEventsHandlers(FUNCTION... functions) {
+        this.functions = functions;
     }
 
     @Override
     public void renderHead(Component component, IHeaderResponse response) {
         super.renderHead(component, response);
         response.render(forReference(new PackageResourceReference(SingularEventsHandlers.class, "SingularEventsHandlers.js")));
-        response.render(OnDomReadyHeaderItem.forScript(function.getScript(component)));
+        Arrays
+                .stream(functions)
+                .forEach( f -> response.render(OnDomReadyHeaderItem.forScript(f.getScript(component))));
     }
 
     public enum FUNCTION {
 
+        /**
+         * Quando acontecer uma ação de clique, irá limpar um validar agendado
+         */
         ADD_MOUSEDOWN_HANDLERS {
             @Override
             String getScript(Component component) {

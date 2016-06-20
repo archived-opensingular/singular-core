@@ -17,11 +17,15 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
+
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 
 public class BooleanMapper implements IWicketComponentMapper {
 
@@ -43,8 +47,11 @@ public class BooleanMapper implements IWicketComponentMapper {
 
     private void buildForEdition(WicketBuildContext ctx, IModel<? extends SInstance> model, BSControls formGroup,
                                  AtributoModel<String> labelModel) {
+
         final CheckBox input = new CheckBox(model.getObject().getName(), new MInstanciaValorModel<>(model));
-        formGroup.appendCheckbox(input, buildLabel("_", labelModel));
+        final Label label = buildLabel("_", labelModel);
+        adjustJSEvents(label);
+        formGroup.appendCheckbox(input, label);
         input.add(DisabledClassBehavior.getInstance());
         formGroup.appendFeedback(formGroup, new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING), IConsumer.noop());
         ctx.configure(this, input);
@@ -75,4 +82,10 @@ public class BooleanMapper implements IWicketComponentMapper {
         return (Label) new Label(id, labelModel.getObject())
             .setEscapeModelStrings(false);
     }
+
+    @Override
+    public void adjustJSEvents(Component comp) {
+        comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS, ADD_MOUSEDOWN_HANDLERS));
+    }
+
 }

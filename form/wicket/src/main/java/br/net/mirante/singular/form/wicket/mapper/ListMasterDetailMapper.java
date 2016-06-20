@@ -362,6 +362,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             protected void onInitialize() {
                 super.onInitialize();
                 add(WicketUtils.$b.attr("title", "Adicionar"));
+                add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
             }
 
             @Override
@@ -572,4 +573,5 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             return displayValueFunction;
         }
     }
+
 }

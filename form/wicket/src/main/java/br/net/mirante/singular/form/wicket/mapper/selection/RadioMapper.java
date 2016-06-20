@@ -16,6 +16,9 @@ import org.apache.wicket.util.value.ValueMap;
 
 import java.io.Serializable;
 
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
+
 public class RadioMapper extends SelectMapper {
 
     @Override
@@ -63,9 +66,12 @@ public class RadioMapper extends SelectMapper {
         }
         formGroup.appendRadioChoice(rc);
 
-        rc.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
-
         return rc;
+    }
+
+    @Override
+    public void adjustJSEvents(Component comp) {
+        comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS, ADD_MOUSEDOWN_HANDLERS));
     }
 
 }

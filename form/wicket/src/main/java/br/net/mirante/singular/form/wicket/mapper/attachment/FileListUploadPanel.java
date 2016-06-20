@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import org.apache.commons.lang3.ObjectUtils;
@@ -81,6 +82,7 @@ public class FileListUploadPanel extends Panel {
                 .getAttachmentPersistenceTemporaryHandler()));
         add(adder = new AddFileBehavior());
         add(remover = new RemoveFileBehavior());
+        fileField.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
     }
 
     private List<MInstanceRootModel> updateListOfFileModels(SIList<SIAttachment> fileList) {
