@@ -54,6 +54,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -66,9 +67,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         @SuppressWarnings("unchecked")
         final IModel<SIList<SInstance>> model = $m.get(() -> (SIList<SInstance>) ctx.getModel().getObject());
-        ;
         final ViewMode viewMode = ctx.getViewMode();
-        final SView    view     = ctx.getView();
+        final SView view = ctx.getView();
 
         if (!(view instanceof SViewListByMasterDetail)) {
             throw new SingularFormException("Error: Mapper " + ListMasterDetailMapper.class.getSimpleName()
@@ -423,6 +423,12 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                     target.add(table);
                     MasterDetailModal.this.hide(target);
                 }
+
+                @Override
+                protected void onInitialize() {
+                    super.onInitialize();
+                    add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
+                }
             });
 
             if (viewMode.isEdition()) {
@@ -435,6 +441,12 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                         rollbackState();
                         target.add(table);
                         MasterDetailModal.this.hide(target);
+                    }
+
+                    @Override
+                    protected void onInitialize() {
+                        super.onInitialize();
+                        add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
                     }
                 });
             }

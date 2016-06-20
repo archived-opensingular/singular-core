@@ -181,7 +181,6 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
      */
     @Override
     public void adjustJSEvents(Component comp) {
-        comp.add(new SingularEventsHandlers());
-        comp.add($b.onReadyScript(c -> "SEH.addTextFieldHandlers(" + c.getMarkupId(true) + ")"));
+        comp.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS));
     }
 }

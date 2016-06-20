@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 
 import java.io.Serializable;
 
@@ -68,8 +68,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
     }
 
     default void adjustJSEvents(Component comp) {
-        comp.add(new SingularEventsHandlers());
-        comp.add($b.onReadyScript(c -> "SEH.addTextFieldHandlers(" + c.getMarkupId(true) + ")"));
+        comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
     }
 
     @FunctionalInterface
