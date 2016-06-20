@@ -33,19 +33,9 @@ public class STypeProdutoTecnicoPeticaoPrimariaSimplificada extends STypeComposi
         produtoTecnico
                 .asAtr()
                 .dependsOn(produtoTecnicoNaoSeAplica)
-                .visible(si -> {
-                    return !Value.notNull(si, produtoTecnicoNaoSeAplica) || !Value.of(si, produtoTecnicoNaoSeAplica);
-                });
+                .visible(si -> !Value.notNull(si, produtoTecnicoNaoSeAplica) || !Value.of(si, produtoTecnicoNaoSeAplica));
 
         produtosTecnicos = addFieldListOf("produtosTecnicos", STypeProdutoTecnico.class);
-
-        produtosTecnicos
-                .asAtr()
-                .label("Produtos técnicos");
-
-
-
-
 
     }
 }
