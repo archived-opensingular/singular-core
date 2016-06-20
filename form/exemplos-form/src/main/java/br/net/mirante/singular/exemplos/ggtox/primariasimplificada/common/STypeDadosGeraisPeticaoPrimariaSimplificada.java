@@ -12,21 +12,25 @@ import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypeComposite<SIComposite> {
 
+    public STypeAnvisaNumeroProcesso numeroProcessoPeticaoMatriz;
+    public STypeAttachment           declaracaoVinculoPeticaoMatriz;
+    public STypeString               justificativa;
+    public STypeAttachment           anexoJustificativa;
 
     @Override
     protected void onLoadType(TypeBuilder builder) {
         super.onLoadType(builder);
 
-        final STypeString     numeroProcesso                 = addField("numeroProcessoPeticaoMatriz", STypeAnvisaNumeroProcesso.class);
-        final STypeAttachment declaracaoVinculoPeticaoMatriz = addField("declaracaoVinculoPeticaoMatriz", STypeAttachment.class);
-        final STypeString     justificativa                  = addFieldString("justificativa");
-        final STypeAttachment anexoJustificativa = addField("anexoJustificativa", STypeAttachment.class);
+        numeroProcessoPeticaoMatriz = addField("numeroProcessoPeticaoMatriz", STypeAnvisaNumeroProcesso.class);
+        declaracaoVinculoPeticaoMatriz = addField("declaracaoVinculoPeticaoMatriz", STypeAttachment.class);
+        justificativa = addFieldString("justificativa");
+        anexoJustificativa = addField("anexoJustificativa", STypeAttachment.class);
 
         this
                 .asAtr()
                 .label("Petição Matriz");
 
-        numeroProcesso
+        numeroProcessoPeticaoMatriz
                 .asAtr()
                 .required()
                 .label("Número do processo da petição matriz")

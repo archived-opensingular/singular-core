@@ -13,6 +13,7 @@ public class SPackagePPSCommon extends SPackage {
         pb.createType(STypeAnvisaNumeroProcesso.class);
         pb.createType(STypeIngredienteAtivo.class);
         pb.createType(STypeDadosGeraisPeticaoPrimariaSimplificada.class);
+        pb.createType(STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
         pb.createType(STypeDocumentacaoPeticaoPrimariaSimplificadaNivelI.class);
         pb.createType(STypeDocumentacaoPeticaoPrimariaSimplificadaNivelII.class);
         pb.createType(STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIII.class);
@@ -23,6 +24,7 @@ public class SPackagePPSCommon extends SPackage {
         pb.createType(STypeFabricante.class);
         pb.createType(STypeFormuladorConformeMatriz.class);
         pb.createType(STypeFabricanteConformeMatriz.class);
+        pb.createType(STypeProdutoTecnico.class);
         pb.createType(STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
         pb.createType(STypeFormulador.class);
         pb.createType(STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);

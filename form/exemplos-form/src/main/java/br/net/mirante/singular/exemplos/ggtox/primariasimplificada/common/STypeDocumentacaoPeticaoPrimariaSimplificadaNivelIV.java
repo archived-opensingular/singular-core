@@ -7,12 +7,15 @@ import br.net.mirante.singular.form.*;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV extends STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIII {
 
+    public STypeAttachmentList informacoesSobreCulturaIndicacao;
+    public STypeAttachmentList pareceresTecnicosAvaliacoesDasEmpresas;
+
     @Override
     protected void onLoadType(TypeBuilder builder) {
         super.onLoadType(builder);
 
-        final STypeAttachmentList informacoesSobreCulturaIndicacao       = addFieldListOfAttachment("informacoesSobreCulturaIndicacao", "informacaoSobreCulturaIndicacao");
-        final STypeAttachmentList pareceresTecnicosAvaliacoesDasEmpresas = addFieldListOfAttachment("pareceresTecnicosAvaliacoesDasEmpresas", "parecerTecnicoAvaliacaoDaEmpresa");
+        informacoesSobreCulturaIndicacao = addFieldListOfAttachment("informacoesSobreCulturaIndicacao", "informacaoSobreCulturaIndicacao");
+        pareceresTecnicosAvaliacoesDasEmpresas = addFieldListOfAttachment("pareceresTecnicosAvaliacoesDasEmpresas", "parecerTecnicoAvaliacaoDaEmpresa");
 
         informacoesSobreCulturaIndicacao
                 .asAtr()
@@ -32,26 +35,33 @@ public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV extends STypeDo
         adicionarAnexosMInisterioMeioAmbiente();
     }
 
-    private void adicionarAnexosNaturezaQuimicaBiomquimica(){
-        final STypeComposite<SIComposite> quimicaBioquimica = addFieldComposite("quimicaBioquimica");
-        final STypeAttachmentList unidadesImpressasRotuloBula = quimicaBioquimica.addFieldListOfAttachment("unidadesImpressasRotuloBula", "unidadeImpressaRotuloBula");
-        final STypeAttachmentList indicacoesUso = quimicaBioquimica.addFieldListOfAttachment("indicacoesUso", "indicacaoUso");
-        final STypeAttachmentList restricoesUso = quimicaBioquimica.addFieldListOfAttachment("restricoesUso", "restricaoUso");
-        final STypeAttachmentList intervalosSeguranca = quimicaBioquimica.addFieldListOfAttachment("intervalosSeguranca", "intervaloSeguranca");
-        final STypeAttachmentList intervalosReentrada = quimicaBioquimica.addFieldListOfAttachment("intervalosReentrada", "intervaloReentrada");
-        final STypeAttachmentList especificacoesEPI = quimicaBioquimica.addFieldListOfAttachment("especificacoesEPI", "especificacaoEPI");
-        final STypeAttachmentList procedimentosDescontaminacao = quimicaBioquimica.addFieldListOfAttachment("procedimentosDescontaminacao", "procedimentoDescontaminacao");
-        final STypeAttachmentList sistemasRecolhimentoRestos = quimicaBioquimica.addFieldListOfAttachment("sistemasRecolhimentoRestos", "sistemaRecolhimento");
+    public STypeComposite<SIComposite> quimicaBioquimica;
+    public STypeAttachmentList         indicacoesUso;
+    public STypeAttachmentList         restricoesUso;
+    public STypeAttachmentList         intervalosSeguranca;
+    public STypeAttachmentList         intervalosReentrada;
+    public STypeAttachmentList         especificacoesEPI;
+    public STypeAttachmentList         procedimentosDescontaminacao;
+    public STypeAttachmentList         sistemasRecolhimentoRestos;
+    public STypeAttachmentList         comprovantesProtocoloComponente;
+
+    private void adicionarAnexosNaturezaQuimicaBiomquimica() {
+
+        quimicaBioquimica = addFieldComposite("quimicaBioquimica");
+        indicacoesUso = quimicaBioquimica.addFieldListOfAttachment("indicacoesUso", "indicacaoUso");
+        restricoesUso = quimicaBioquimica.addFieldListOfAttachment("restricoesUso", "restricaoUso");
+        intervalosSeguranca = quimicaBioquimica.addFieldListOfAttachment("intervalosSeguranca", "intervaloSeguranca");
+        intervalosReentrada = quimicaBioquimica.addFieldListOfAttachment("intervalosReentrada", "intervaloReentrada");
+        especificacoesEPI = quimicaBioquimica.addFieldListOfAttachment("especificacoesEPI", "especificacaoEPI");
+        procedimentosDescontaminacao = quimicaBioquimica.addFieldListOfAttachment("procedimentosDescontaminacao", "procedimentoDescontaminacao");
+        sistemasRecolhimentoRestos = quimicaBioquimica.addFieldListOfAttachment("sistemasRecolhimentoRestos", "sistemaRecolhimento");
 //        final STypeAttachmentList modelosRotuloBula = addFieldListOfAttachment("modelosRotuloBula", "modeloRotuloBula");
-        final STypeAttachmentList comprovantesProtocoloComponente = quimicaBioquimica.addFieldListOfAttachment("comprovantesProtocoloComponente", "comprovanteProtocoloComponente");
+        comprovantesProtocoloComponente = quimicaBioquimica.addFieldListOfAttachment("comprovantesProtocoloComponente", "comprovanteProtocoloComponente");
 
         quimicaBioquimica
                 .asAtr()
                 .label("Produtos formulados e pré-misturas de natureza química ou bioquímica");
 
-        unidadesImpressasRotuloBula
-                .asAtr()
-                .label("Unidades impressas do rótulo e da bula do produto, quando existentes no país de origem");
 
         indicacoesUso
                 .asAtr()
@@ -95,13 +105,21 @@ public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV extends STypeDo
                         "técnico");
     }
 
+    public STypeComposite<SIComposite> anexosOrgaoRegistrante;
+    public STypeAttachmentList         estudosEficiencia;
+    public STypeAttachmentList         informacoesCompatibilidade;
+    public STypeAttachmentList         informacoesDesenvolvimentoResistencia;
+    public STypeAttachmentList         relatoriosEstudo;
+    public STypeAttachmentList         metodosAnalitico;
+
     private void adicionarAnexosOrgaoRegistrante() {
-        final STypeComposite<SIComposite> anexosOrgaoRegistrante                = addFieldComposite("anexosOrgaoRegistrante");
-        final STypeAttachmentList         estudosEficiencia                     = anexosOrgaoRegistrante.addFieldListOfAttachment("estudosEficiencia", "estudoEficiencia");
-        final STypeAttachmentList         informacoesCompatibilidade            = anexosOrgaoRegistrante.addFieldListOfAttachment("informacoesCompatibilidade", "informacaoCompatibilidade");
-        final STypeAttachmentList         informacoesDesenvolvimentoResistencia = anexosOrgaoRegistrante.addFieldListOfAttachment("informacoesDesenvolvimentoResistencia", "informacaoDesenvolvimentoResistencia");
-        final STypeAttachmentList relatoriosEstudo = anexosOrgaoRegistrante.addFieldListOfAttachment("relatoriosEstudo", "relatorioEstudo");
-        final STypeAttachmentList metodosAnalitico = anexosOrgaoRegistrante.addFieldListOfAttachment("metodosAnalitico", "metodoAnalitico");
+
+        anexosOrgaoRegistrante = addFieldComposite("anexosOrgaoRegistrante");
+        estudosEficiencia = anexosOrgaoRegistrante.addFieldListOfAttachment("estudosEficiencia", "estudoEficiencia");
+        informacoesCompatibilidade = anexosOrgaoRegistrante.addFieldListOfAttachment("informacoesCompatibilidade", "informacaoCompatibilidade");
+        informacoesDesenvolvimentoResistencia = anexosOrgaoRegistrante.addFieldListOfAttachment("informacoesDesenvolvimentoResistencia", "informacaoDesenvolvimentoResistencia");
+        relatoriosEstudo = anexosOrgaoRegistrante.addFieldListOfAttachment("relatoriosEstudo", "relatorioEstudo");
+        metodosAnalitico = anexosOrgaoRegistrante.addFieldListOfAttachment("metodosAnalitico", "metodoAnalitico");
 
         anexosOrgaoRegistrante
                 .asAtr()
@@ -132,15 +150,25 @@ public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV extends STypeDo
                         "de monitoramento e fiscalização");
     }
 
+    public STypeComposite<SIComposite> anexosMinisterioSaude;
+    public STypeAttachmentList         relatoriosEstudoFisicoQuimico;
+    public STypeAttachmentList         relatoriosEstudoResiduos;
+    public STypeAttachmentList         metodosAnaliticosResiduo2;
+    public STypeAttachmentList         intervalosReentradaAreaTratada;
+    public STypeAttachmentList         estudosToxicologicosAgudos;
+    public STypeAttachmentList         antidotosIntoxicacaoHumana;
+    public STypeAttachmentList         informacoesCompatibilidade2;
+
     private void adicionarAnexosMinisterioSaude() {
-        final STypeComposite<SIComposite> anexosMinisterioSaude = addFieldComposite("anexosMinisterioSaude");
-        final STypeAttachmentList relatoriosEstudoFisicoQuimico = anexosMinisterioSaude.addFieldListOfAttachment("relatoriosEstudoFisicoQuimico", "relatorioEstudoFisicoQuimico");
-        final STypeAttachmentList relatoriosEstudoResiduos = anexosMinisterioSaude.addFieldListOfAttachment("relatoriosEstudoResiduos", "relatorioEstudoResiduos");
-        final STypeAttachmentList metodosAnaliticosResiduo = anexosMinisterioSaude.addFieldListOfAttachment("metodosAnaliticosResiduo", "metodoAnaliticoResiduo");
-        final STypeAttachmentList intervalosReentradaAreaTratada = anexosMinisterioSaude.addFieldListOfAttachment("intervalosReentradaAreaTratada", "intervaloReentradaAreaTratada");
-        final STypeAttachmentList estudosToxicologicosAgudos = anexosMinisterioSaude.addFieldListOfAttachment("estudosToxicologicosAgudos", "estudoToxicologicoAgudo");
-        final STypeAttachmentList antidotosIntoxicacaoHumana = anexosMinisterioSaude.addFieldListOfAttachment("antidotosIntoxicacaoHumana", "antidotoIntoxicacaoHumana");
-        final STypeAttachmentList informacoesCompatibilidade = anexosMinisterioSaude.addFieldListOfAttachment("informacoesCompatibilidade", "informacaoCompatibilidade");
+
+        anexosMinisterioSaude = addFieldComposite("anexosMinisterioSaude");
+        relatoriosEstudoFisicoQuimico = anexosMinisterioSaude.addFieldListOfAttachment("relatoriosEstudoFisicoQuimico", "relatorioEstudoFisicoQuimico");
+        relatoriosEstudoResiduos = anexosMinisterioSaude.addFieldListOfAttachment("relatoriosEstudoResiduos", "relatorioEstudoResiduos");
+        metodosAnaliticosResiduo2 = anexosMinisterioSaude.addFieldListOfAttachment("metodosAnaliticosResiduo2", "metodoAnaliticoResiduo");
+        intervalosReentradaAreaTratada = anexosMinisterioSaude.addFieldListOfAttachment("intervalosReentradaAreaTratada", "intervaloReentradaAreaTratada");
+        estudosToxicologicosAgudos = anexosMinisterioSaude.addFieldListOfAttachment("estudosToxicologicosAgudos", "estudoToxicologicoAgudo");
+        antidotosIntoxicacaoHumana = anexosMinisterioSaude.addFieldListOfAttachment("antidotosIntoxicacaoHumana", "antidotoIntoxicacaoHumana");
+        informacoesCompatibilidade2 = anexosMinisterioSaude.addFieldListOfAttachment("informacoesCompatibilidade2", "informacaoCompatibilidade");
 
         anexosMinisterioSaude
                 .asAtr()
@@ -155,7 +183,7 @@ public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV extends STypeDo
                 .label("Relatório de estudo de resíduos, intervalo de segurança e, quando for o caso, limite dos " +
                         "resíduos estranhos");
 
-        metodosAnaliticosResiduo
+        metodosAnaliticosResiduo2
                 .asAtr()
                 .label("Método analítico e sua sensibilidade para determinação de resíduos de agrotóxico, para fins " +
                         "de monitoramento e fiscalização");
@@ -172,19 +200,28 @@ public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV extends STypeDo
                 .asAtr()
                 .label("Antídoto ou tratamento disponível no país, para os casos de intoxicação humana");
 
-        informacoesCompatibilidade
+        informacoesCompatibilidade2
                 .asAtr()
                 .label("Informações referentes à sua compatibilidade com outros produtos");
     }
 
+    public STypeComposite<SIComposite> anexosMinisterioMeioAmbiente;
+    public STypeAttachmentList         relatoriosPropriedadesFisicoQuimicas;
+    public STypeAttachmentList         relatoriosEstudoToxicidade;
+    public STypeAttachmentList         relatoriosEstudoToxicidadeAnimaisSuperiores;
+    public STypeAttachmentList         relatoriosEstudoToxicidadePotencialMutagenico;
+    public STypeAttachmentList         metodosAnaliticosResiduo;
+    public STypeAttachmentList         informacoesCompatibilidade3;
+
     private void adicionarAnexosMInisterioMeioAmbiente() {
-        final STypeComposite<SIComposite> anexosMinisterioMeioAmbiente = addFieldComposite("anexosMinisterioMeioAmbiente");
-        final STypeAttachmentList relatoriosPropriedadesFisicoQuimicas = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("relatoriosPropriedadesFisicoQuimicas", "relatorioPropriedadesFisicoQuimicas");
-        final STypeAttachmentList relatoriosEstudoToxicidade = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("relatoriosEstudoToxicidade", "relatorioEstudoToxicidade");
-        final STypeAttachmentList relatoriosEstudoToxicidadeAnimaisSuperiores = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("relatoriosEstudoToxicidadeAnimaisSuperiores", "relatorioEstudoToxicidadeAnimaisSuperiores");
-        final STypeAttachmentList relatoriosEstudoToxicidadePotencialMutagenico = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("relatoriosEstudoToxicidadePotencialMutagenico", "relatorioEstudoToxicidadePotencialMutagenico");
-        final STypeAttachmentList metodosAnaliticosResiduo = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("metodosAnaliticosResiduo", "metodoAnaliticosResiduo");
-        final STypeAttachmentList informacoesCompatibilidade = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("informacoesCompatibilidade", "informacaoCompatibilidade");
+
+        anexosMinisterioMeioAmbiente = addFieldComposite("anexosMinisterioMeioAmbiente");
+        relatoriosPropriedadesFisicoQuimicas = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("relatoriosPropriedadesFisicoQuimicas", "relatorioPropriedadesFisicoQuimicas");
+        relatoriosEstudoToxicidade = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("relatoriosEstudoToxicidade", "relatorioEstudoToxicidade");
+        relatoriosEstudoToxicidadeAnimaisSuperiores = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("relatoriosEstudoToxicidadeAnimaisSuperiores", "relatorioEstudoToxicidadeAnimaisSuperiores");
+        relatoriosEstudoToxicidadePotencialMutagenico = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("relatoriosEstudoToxicidadePotencialMutagenico", "relatorioEstudoToxicidadePotencialMutagenico");
+        metodosAnaliticosResiduo = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("metodosAnaliticosResiduo", "metodoAnaliticosResiduo");
+        informacoesCompatibilidade3 = anexosMinisterioMeioAmbiente.addFieldListOfAttachment("informacoesCompatibilidade3", "informacaoCompatibilidade");
 
         anexosMinisterioMeioAmbiente
                 .asAtr()
@@ -212,7 +249,7 @@ public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV extends STypeDo
                 .label("Método analítico e sua sensibilidade para determinação de resíduos de agortóxico, para fins " +
                         "de monitoramento e fiscalização");
 
-        informacoesCompatibilidade
+        informacoesCompatibilidade3
                 .asAtr()
                 .label("Informações referentes à sua compatibilidade com outros produtos");
     }

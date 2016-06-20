@@ -35,17 +35,18 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
 
         pb.getDictionary().loadPackage(SPackagePPSCommon.class);
 
-        final STypeComposite<SIComposite>                      peticaoSimplificada  = pb.createCompositeType(TIPO);
-        final STypeComposite<SIComposite>                      tipoPeticao          = peticaoSimplificada.addFieldComposite("tipoPeticao");
-        final STypeInteger                                     idTipoPeticao        = tipoPeticao.addFieldInteger("id");
-        final STypeString                                      descricaoTipoPeticao = tipoPeticao.addFieldString("nome");
-        final STypeString                                      nivel                = peticaoSimplificada.addFieldString("nivel");
-        final STypeDadosGeraisPeticaoPrimariaSimplificada      dadosGerais          = peticaoSimplificada.addField("dadosGerais", STypeDadosGeraisPeticaoPrimariaSimplificada.class);
-        final STypeRequerente                                  requerente           = peticaoSimplificada.addField("requerente", STypeRequerente.class);
-        final STypeRepresentanteLegal                          representanteLegal   = peticaoSimplificada.addField("representanteLegal", STypeRepresentanteLegal.class);
-        final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnico       = peticaoSimplificada.addField("produtoTecnico", STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
-        final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado     = peticaoSimplificada.addField("produtoFormulado", STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
-        final STypeAnexosPeticaoPrimariaSimplificada           anexos               = peticaoSimplificada.addField("anexos", STypeAnexosPeticaoPrimariaSimplificada.class);
+        final STypeComposite<SIComposite>                      peticaoSimplificada     = pb.createCompositeType(TIPO);
+        final STypeComposite<SIComposite>                      tipoPeticao             = peticaoSimplificada.addFieldComposite("tipoPeticao");
+        final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger("id");
+        final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString("nome");
+        final STypeString                                      nivel                   = peticaoSimplificada.addFieldString("nivel");
+        final STypeDadosGeraisPeticaoPrimariaSimplificada      dadosGerais             = peticaoSimplificada.addField("dadosGerais", STypeDadosGeraisPeticaoPrimariaSimplificada.class);
+        final STypeRequerente                                  requerente              = peticaoSimplificada.addField("requerente", STypeRequerente.class);
+        final STypeRepresentanteLegal                          representanteLegal      = peticaoSimplificada.addField("representanteLegal", STypeRepresentanteLegal.class);
+        final STypeIngredienteAtivoPeticaoPrimariaSimplificada ingredienteAtivoPeticao = peticaoSimplificada.addField("ingredienteAtivoPeticao", STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
+        final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnicoPeticao   = peticaoSimplificada.addField("produtoTecnicoPeticao", STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
+        final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado        = peticaoSimplificada.addField("produtoFormulado", STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
+        final STypeAnexosPeticaoPrimariaSimplificada           anexos                  = peticaoSimplificada.addField("anexos", STypeAnexosPeticaoPrimariaSimplificada.class);
 
         tipoPeticao
                 .selection()
@@ -63,15 +64,23 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                 });
 
 
-        List<Integer> apenasNivel1           = Arrays.asList(3, 7, 8);
-        List<Integer> peticaoProdutoTecnicos = Arrays.asList(7, 8);
+        final List<Integer> apenasNivel1              = Arrays.asList(3, 7, 8);
+        final List<Integer> numeroProcessoIgualMatriz = Arrays.asList(7, 8);
+        final List<Integer> naoPossuiProdutoFormulado = Arrays.asList(7, 8);
+        final List<Integer> produtoTecnicoOpcional    = Arrays.asList(1, 3, 4);
+        final List<Integer> naoTemRotuloBula          = Arrays.asList(2, 7, 8);
+        final List<Integer> produtoTecnicoMultiplo    = Arrays.asList(5, 6);
 
         tipoPeticao
-                .withUpdateListener(sic -> sic.findNearest(nivel).ifPresent(i -> {
-                    if (!apenasNivel1.contains(Value.of(sic, idTipoPeticao))) {
-                        i.clearInstance();
-                    }
-                }))
+                .withUpdateListener(si -> {
+                    si.findNearest(nivel).ifPresent(i -> {
+                        if (!apenasNivel1.contains(Value.of(si, idTipoPeticao))) {
+                            i.clearInstance();
+                        }
+                    });
+                })
+                .asAtrBootstrap()
+                .colPreference(6)
                 .asAtr()
                 .label(" Tipo de Petição ");
 
@@ -96,69 +105,131 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         dadosGerais
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .exists(si -> Value.notNull(si, tipoPeticao));
+                .visible(si -> Value.notNull(si, tipoPeticao));
 
-        produtoTecnico
+
+        ingredienteAtivoPeticao
+                .asAtr()
+                .label("Ingrediente Ativo");
+
+
+        produtoTecnicoPeticao
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> StringUtils.isNotEmpty(Value.of(si, nivel)));
+                .visible(si -> StringUtils.isNotEmpty(Value.of(si, nivel)));
 
-        produtoTecnico
-                .fabricante
+        produtoTecnicoPeticao
+                .produtoTecnicoNaoSeAplica
                 .asAtr()
-                .dependsOn(nivel)
-                .exists(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
+                .dependsOn(tipoPeticao)
+                .visible(si -> produtoTecnicoOpcional.contains(Value.of(si, idTipoPeticao)));
 
-        produtoTecnico
-                .fabricantes
+        produtoTecnicoPeticao
+                .produtosTecnicos
                 .asAtr()
-                .dependsOn(nivel)
-                .exists(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
+                .dependsOn(tipoPeticao)
+                .visible(si -> produtoTecnicoMultiplo.contains(Value.of(si, idTipoPeticao)));
+
+        produtoTecnicoPeticao
+                .produtoTecnico
+                .asAtr()
+                .dependsOn(tipoPeticao, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)
+                .visible(si ->
+                        !produtoTecnicoMultiplo.contains(Value.of(si, idTipoPeticao))
+                                &&
+                                (!Value.notNull(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica) || !Value.of(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica))
+
+                );
+
+
+        final STypeProdutoTecnico[] tiposProdutoTecnicos = new STypeProdutoTecnico[]{produtoTecnicoPeticao.produtoTecnico, produtoTecnicoPeticao.produtosTecnicos.getElementsType()};
+
+        for (STypeProdutoTecnico pt : tiposProdutoTecnicos) {
+
+
+            pt
+                    .numeroProcessoProdutoTecnico
+                    .withUpdateListener(si -> {
+                        if (numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao))) {
+                            si.setValue(Value.of(si, dadosGerais.numeroProcessoPeticaoMatriz));
+                        }
+                    })
+                    .asAtr()
+                    .dependsOn(dadosGerais.numeroProcessoPeticaoMatriz, tipoPeticao)
+                    .enabled(si -> !numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao)));
+
+
+            pt
+                    .fabricante
+                    .asAtr()
+                    .dependsOn(nivel)
+                    .visible(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
+
+            pt
+                    .fabricantes
+                    .asAtr()
+                    .dependsOn(nivel)
+                    .visible(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
+        }
+
 
         produtoFormulado
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> StringUtils.isNotEmpty(Value.of(si, nivel)) && !peticaoProdutoTecnicos.contains(Value.of(si, idTipoPeticao)));
+                .visible(si -> StringUtils.isNotEmpty(Value.of(si, nivel)) && !naoPossuiProdutoFormulado.contains(Value.of(si, idTipoPeticao)));
 
         produtoFormulado
                 .formulador
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "I".equals(Value.of(si, nivel)));
+                .visible(si -> "I".equals(Value.of(si, nivel)));
 
         produtoFormulado
                 .formuladores
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> !"I".equals(Value.of(si, nivel)));
+                .visible(si -> !"I".equals(Value.of(si, nivel)));
 
         anexos
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> Value.notNull(si, nivel));
+                .visible(si -> Value.notNull(si, nivel));
         anexos
                 .documentacaoI
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "I".equals(Value.of(si, nivel)));
+                .visible(si -> "I".equals(Value.of(si, nivel)));
+
+        anexos.documentacaoI
+                .modelosBulas
+                .asAtr()
+                .dependsOn(tipoPeticao)
+                .visible(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
+
+        anexos.documentacaoI
+                .modelosRotulos
+                .asAtr()
+                .dependsOn(tipoPeticao)
+                .visible(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
+
+
         anexos
                 .documentacaoII
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "II".equals(Value.of(si, nivel)));
+                .visible(si -> "II".equals(Value.of(si, nivel)));
 
         anexos
                 .documentacaoIII
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "III".equals(Value.of(si, nivel)));
+                .visible(si -> "III".equals(Value.of(si, nivel)));
 
         anexos
                 .documentacaoIV
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "IV".equals(Value.of(si, nivel)));
-
+                .visible(si -> "IV".equals(Value.of(si, nivel)));
 
         peticaoSimplificada.withView(new SViewByBlock(), blocks -> {
             blocks
@@ -166,7 +237,7 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                     .newBlock().add(dadosGerais)
                     .newBlock().add(requerente)
                     .newBlock().add(representanteLegal)
-                    .newBlock().add(produtoTecnico)
+                    .newBlock().add(produtoTecnicoPeticao)
                     .newBlock().add(produtoFormulado)
                     .newBlock().add(anexos);
 
