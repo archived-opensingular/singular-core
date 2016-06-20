@@ -886,6 +886,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         this.typeId = typeId;
     }
 
+    /** Retorna um identificador único do tipo dentro de um mesmo dicionário. */
+    final int getTypeId() {
+        return this.typeId;
+    }
+
     @Override
     public String toString() {
         return nameFull + '(' + getClass().getSimpleName() + '@' + typeId + ')';
