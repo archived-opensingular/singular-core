@@ -6,6 +6,7 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.model.SelectMInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
 import org.apache.wicket.Component;
@@ -61,6 +62,8 @@ public class RadioMapper extends SelectMapper {
             rc.setSuffix("</span>");
         }
         formGroup.appendRadioChoice(rc);
+
+        rc.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
 
         return rc;
     }
