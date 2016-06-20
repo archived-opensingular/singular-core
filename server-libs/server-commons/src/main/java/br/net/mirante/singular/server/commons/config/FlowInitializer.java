@@ -1,15 +1,17 @@
 package br.net.mirante.singular.server.commons.config;
 
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.ServletContext;
+
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataREST;
 import br.net.mirante.singular.server.commons.flow.DefaultServerMetadataREST;
 import br.net.mirante.singular.server.commons.flow.SingularServerFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.service.IServerMetadataREST;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-
-import javax.servlet.ServletContext;
-import java.util.Map;
-import java.util.Optional;
 
 public abstract class FlowInitializer {
 
@@ -35,9 +37,9 @@ public abstract class FlowInitializer {
         applicationContext.register(singularFlowConfiguration());
         Optional
                 .ofNullable(flowMetadataProvider())
-                .ifPresent(f -> applicationContext.register(f));
+                .ifPresent(applicationContext::register);
         Optional
                 .ofNullable(serverMetadataProvider())
-                .ifPresent(f -> applicationContext.register(f));
+                .ifPresent(applicationContext::register);
     }
 }

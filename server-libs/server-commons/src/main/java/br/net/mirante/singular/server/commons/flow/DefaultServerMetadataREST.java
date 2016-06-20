@@ -1,5 +1,16 @@
 package br.net.mirante.singular.server.commons.flow;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
@@ -7,15 +18,6 @@ import br.net.mirante.singular.server.commons.service.IServerMetadataREST;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @AutoScanDisabled
 @RequestMapping("/rest/flow")
@@ -53,8 +55,13 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
             groupDTOs.add(menuGroupDTO);
         });
 
+        customizeMenu(groupDTOs);
 
         return groupDTOs;
+    }
+
+    protected void customizeMenu(List<MenuGroupDTO> groupDTOs) {
+
     }
 
 

@@ -11,6 +11,7 @@ import java.util.List;
 public class MenuGroupDTO implements Serializable {
 
     private String label;
+    private List<ItemBoxDTO> itemBoxes;
     private List<ProcessDTO> processes;
 
     public String getLabel() {
@@ -27,5 +28,13 @@ public class MenuGroupDTO implements Serializable {
 
     public void setProcesses(List<ProcessDTO> processes) {
         this.processes = processes;
+    }
+
+    public List<ItemBoxDTO> getItemBoxes() {
+        return itemBoxes;
+    }
+
+    public void setItemBoxes(List<ItemBoxDTO> itemBoxes) {
+        this.itemBoxes = itemBoxes;
     }
 }
