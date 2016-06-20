@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.*;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.showcase.component.CaseBaseForm;
 import br.net.mirante.singular.showcase.component.ShowCaseType;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +52,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(SPackageNotificacaoSimplificadaDinamizado.class, SPackageNotificacaoSimplificadaDinamizado.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageNotificacaoSimplificadaGasMedicinal.class, SPackageNotificacaoSimplificadaGasMedicinal.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO, ShowCaseType.FORM);
+        add(SPackageNotificacaoSimplificadaBaixoRisco.class, SPackageNotificacaoSimplificadaBaixoRisco.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageHabilitacaoEmpresa.class, SPackageHabilitacaoEmpresa.NOME_COMPLETO, ShowCaseType.FORM);
 
     }
