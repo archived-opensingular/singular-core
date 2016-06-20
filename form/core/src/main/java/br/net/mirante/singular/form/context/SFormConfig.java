@@ -17,13 +17,13 @@ import java.io.Serializable;
  *
  * @author Daniel C. Bordin
  */
-public interface SFormConfig<KEY extends Serializable> {
+public interface SFormConfig<TYPE_KEY extends Serializable> {
 
     /** Devolve o configurador para o setup inicia do documento. */
     public SDocumentFactory getDocumentFactory();
 
     /** Devolve o carregador de tipo. */
-    public TypeLoader<KEY> getTypeLoader();
+    public TypeLoader<TYPE_KEY> getTypeLoader();
 
     /** Devolve o registro de recursos adicionais. */
     public default ServiceRegistry getServiceRegistry() {

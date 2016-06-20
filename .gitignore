@@ -57,3 +57,4 @@ out/**
 # outros #
 buildall.sh
 _confHomol/
+flow/test/singulardb.trace.db.old
