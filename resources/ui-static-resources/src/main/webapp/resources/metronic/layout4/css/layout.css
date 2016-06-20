@@ -1617,8 +1617,7 @@ Theme Panel
     .upload-list-item .list-item-icon .list-item-uploading {
       color: #acb1c2; }
     .upload-list-item .list-item-icon .list-item-uploaded {
-      color: #40BAA7;
-      -webkit-text-stroke: 4px white; }
+      color: #40BAA7; }
   .upload-list-item .list-item-content {
     width: 26%;
     margin: 0 2%;
@@ -1643,6 +1642,7 @@ Theme Panel
     float: right;
     font-size: 14px; }
     .upload-list-item .list-item-action .list-action-remove {
+      margin-right: 10px;
       color: #acb1c2; }
       .upload-list-item .list-item-action .list-action-remove:hover {
         color: #727a97; }
@@ -1683,6 +1683,9 @@ Theme Panel
 
 .upload-panel-footer {
   padding-bottom: 15px; }
+
+.upload-list-container ul li:nth-child(even) {
+  background-color: #eafffb; }
 
 .list-table-heading, .upload-panel-heading {
   margin: 1px 0 5px 0; }
