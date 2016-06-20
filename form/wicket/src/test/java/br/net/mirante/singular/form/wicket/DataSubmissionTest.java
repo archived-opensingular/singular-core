@@ -126,7 +126,7 @@ public class DataSubmissionTest {
         protected void buildBaseType(STypeComposite<?> baseType) {
             super.buildBaseType(baseType);
             data2.asAtr().dependsOn(data1);
-            data2.asAtr().visible((x)->{
+            data2.asAtr().exists((x)->{
                 SIComposite parent = (SIComposite) x.getParent();
                 SInstance d1 =  parent.getField(data1.getNameSimple());
                 if(d1 == null || d1.getValue() == null) return false;
