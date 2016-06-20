@@ -20,9 +20,9 @@ public class STypeIngredienteAtivoPeticaoPrimariaSimplificada extends STypeCompo
                 .col(ingredientesAtivos.getElementsType().nomeQuimico, "Nome químico")
                 .col(ingredientesAtivos.getElementsType().grupoQuimico, "Grupo químico"));
 
-        ingredientesAtivos
-                .asAtr()
-                .label("Ingredientes Ativos");
+//        ingredientesAtivos
+//                .asAtr()
+//                .label("Ingredientes Ativos");
 
     }
 }

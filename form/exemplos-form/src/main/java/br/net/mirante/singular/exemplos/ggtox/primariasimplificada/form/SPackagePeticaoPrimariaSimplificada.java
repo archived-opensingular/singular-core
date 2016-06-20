@@ -237,6 +237,7 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                     .newBlock().add(dadosGerais)
                     .newBlock().add(requerente)
                     .newBlock().add(representanteLegal)
+                    .newBlock().add(ingredienteAtivoPeticao)
                     .newBlock().add(produtoTecnicoPeticao)
                     .newBlock().add(produtoFormulado)
                     .newBlock().add(anexos);
