@@ -26,7 +26,12 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypeCompo
                 .asAtr()
                 .label("Formuladores");
         formuladores
-                .withView(SViewListByMasterDetail::new);
+            .withView(new SViewListByMasterDetail()
+                            .col(formuladores.getElementsType().cnpj)
+                            .col(formuladores.getElementsType().nome)
+                            .col(formuladores.getElementsType().cidade)
+                            .col(formuladores.getElementsType().estado)
+        );
         formuladores
                 .withMiniumSizeOf(1);
 

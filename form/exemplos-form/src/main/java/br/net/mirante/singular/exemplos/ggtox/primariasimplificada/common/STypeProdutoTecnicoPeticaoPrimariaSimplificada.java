@@ -59,26 +59,31 @@ public class STypeProdutoTecnicoPeticaoPrimariaSimplificada extends STypeComposi
         fabricantes.withView(SViewListByForm::new);
         fabricantes.withMiniumSizeOf(1);
         fabricantes.asAtr().label("Fabricantes");
-        fabricantes.withView(SViewListByMasterDetail::new);
+        fabricantes.withView(new SViewListByMasterDetail()
+                .col(fabricantes.getElementsType().cnpj)
+                .col(fabricantes.getElementsType().nome)
+                .col(fabricantes.getElementsType().cidade)
+                .col(fabricantes.getElementsType().estado)
+        );
 
         fabricante = addField("fabricante", STypeFabricanteConformeMatriz.class);
 
         finalidadeConformeMatriz
                 .asAtr()
-                .label("Declaro que a finalidadeConformeMatriz está conforme a petição Matriz.")
+                .label("Declaro que a finalidade está conforme a petição Matriz.")
                 .asAtrBootstrap()
                 .colPreference(4);
 
         finalidadeConformeMatriz
                 .addInstanceValidator(validator -> {
                     if (!(validator.getInstance().getValue() != null && validator.getInstance().getValue())) {
-                        validator.error("É obrigatório declarar que a finalidadeConformeMatriz está conforme a matriz.");
+                        validator.error("É obrigatório declarar que a finalidade está conforme a matriz.");
                     }
                 });
 
         classeConformeMatriz
                 .asAtr()
-                .label("Declaro que a classeConformeMatriz está conforme a petição Matriz.")
+                .label("Declaro que a classe está conforme a petição Matriz.")
                 .asAtrBootstrap()
                 .colPreference(4)
                 .newRow();
@@ -86,7 +91,7 @@ public class STypeProdutoTecnicoPeticaoPrimariaSimplificada extends STypeComposi
         classeConformeMatriz
                 .addInstanceValidator(validator -> {
                     if (!(validator.getInstance().getValue() != null && validator.getInstance().getValue())) {
-                        validator.error("É obrigatório declarar que a classeConformeMatriz está conforme a matriz.");
+                        validator.error("É obrigatório declarar que a classe está conforme a matriz.");
                     }
                 });
 

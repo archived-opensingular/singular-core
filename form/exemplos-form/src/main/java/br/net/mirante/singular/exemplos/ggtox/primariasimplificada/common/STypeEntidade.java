@@ -125,7 +125,7 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
         estado
                 .asAtr()
                 .required()
-                .asAtr()
+                .displayString("${nome}")
                 .label("Estado")
                 .asAtrBootstrap()
                 .colPreference(3);
@@ -162,7 +162,7 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
         cidade
                 .asAtr()
                 .required(inst -> Value.notNull(inst, (STypeSimple) estado.getField(sigla.getNameSimple())))
-                .asAtr()
+                .displayString("${nome}")
                 .label("Cidade")
                 .enabled(inst -> inst.findNearest(estado).get().asAtr().isEnabled()
                         && Value.notNull(inst, (STypeSimple) estado.getField(sigla.getNameSimple())))
