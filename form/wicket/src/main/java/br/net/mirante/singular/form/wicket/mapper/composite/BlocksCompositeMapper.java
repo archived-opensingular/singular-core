@@ -174,7 +174,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             if (isAnyVisible == null) {
                 isAnyVisible = false;
             }
-            if (isAnyVisible != isVisible()) {
+            if (!isAnyVisible.equals(isVisible())) {
                 setVisible(isAnyVisible);
                 if (AjaxRequestTarget.class.isAssignableFrom(event.getPayload().getClass())) {
                     ((AjaxRequestTarget) event.getPayload()).add(this);
