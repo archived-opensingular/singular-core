@@ -65,11 +65,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
-    protected void resetValue() {
-        clear();
-    }
-
-    @Override
     public boolean isEmptyOfData() {
         return isEmpty() || values.stream().allMatch(SInstance::isEmptyOfData);
     }
@@ -131,12 +126,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         }
         values.add(index, instance);
         instance.setParent(this);
-    }
-
-    public void clear() {
-        if (values != null) {
-            values.clear();
-        }
     }
 
     public SInstance get(int index) {

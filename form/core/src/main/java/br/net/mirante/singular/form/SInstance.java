@@ -399,10 +399,8 @@ public abstract class SInstance implements SAttributeEnabled {
     public void updateExists() {
         SInstances.updateBooleanAttribute(this, SPackageBasic.ATR_EXISTS, SPackageBasic.ATR_EXISTS_FUNCTION);
         if (!exists())
-            SInstances.visitPostOrder(this, (i, v) -> i.resetValue());
+            SInstances.visitPostOrder(this, (i, v) -> i.clearInstance());
     }
-
-    protected void resetValue() {}
 
     public String getName() {
         return getType().getNameSimple();
