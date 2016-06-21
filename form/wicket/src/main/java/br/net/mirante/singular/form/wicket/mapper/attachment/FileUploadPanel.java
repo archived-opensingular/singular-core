@@ -5,8 +5,8 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ClassAttributeModifier;
@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -152,6 +153,10 @@ public class FileUploadPanel extends Panel {
                 return oldClasses;
             }
         });
+
+        uploadFileButton.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
+        downloadLink.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
+
     }
 
     private IMInstanciaAwareModel dummyModel(final IModel<SIAttachment> model) {
