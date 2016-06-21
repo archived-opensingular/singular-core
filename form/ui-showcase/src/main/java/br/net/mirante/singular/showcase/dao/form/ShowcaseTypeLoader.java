@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.STypeNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado.STypeNotificacaoSimplificadaDinamizado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.STypeNotificacaoSimplificadaGasMedicinal;
@@ -25,12 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.Preconditions;
 
 import br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeCredenciamentoEscolaGoverno;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado.SPackageNotificacaoSimplificadaDinamizado;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.SPackageNotificacaoSimplificadaGasMedicinal;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.habilitacao.SPackageHabilitacaoEmpresa;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal.SPackageNotificacaoSimplificadaFitoterapico;
 import br.net.mirante.singular.form.SDictionary;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.SPackage;
@@ -60,7 +55,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(STypeNotificacaoSimplificadaFitoterapico.class, ShowCaseType.FORM);
         add(STypeNotificacaoSimplificadaBaixoRisco.class, ShowCaseType.FORM);
         add(STypeHabilitacaoEmpresa.class, ShowCaseType.FORM);
-        add(SPackagePeticaoPrimariaSimplificada.class, SPackagePeticaoPrimariaSimplificada.NOME_COMPLETO, ShowCaseType.FORM);
+        add(STypePeticaoPrimariaSimplificada.class, ShowCaseType.FORM);
         add(STypeCredenciamentoEscolaGoverno.class, ShowCaseType.FORM);
 
     }
