@@ -34,6 +34,7 @@ import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskEnd;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
+import com.yworks.yfiles.view.GraphComponent;
 /*import y.base.Edge;
 import y.base.Node;
 import y.base.NodeCursor;
@@ -59,6 +60,10 @@ import y.view.tabular.TableGroupNodeRealizer;*/
 public class YFilesFlowRenderer /*extends LayoutModule */implements IFlowRenderer {
     @Override
     public byte[] generateImage(ProcessDefinition<?> definicao) {
+        GraphComponent graphComponent = new YFilesFlowConverter(definicao).build().toGraphComponent();
+
+
+
 
         return new byte[0];
     }
