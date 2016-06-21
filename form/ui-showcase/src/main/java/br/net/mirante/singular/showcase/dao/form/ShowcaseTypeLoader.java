@@ -14,24 +14,28 @@ import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.*;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
-import br.net.mirante.singular.showcase.component.CaseBaseForm;
-import br.net.mirante.singular.showcase.component.ShowCaseType;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.Preconditions;
+
+import br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeCredenciamentoEscolaGoverno;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado.SPackageNotificacaoSimplificadaDinamizado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.SPackageNotificacaoSimplificadaGasMedicinal;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.habilitacao.SPackageHabilitacaoEmpresa;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal.SPackageNotificacaoSimplificadaFitoterapico;
 import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.spring.SpringTypeLoader;
 import br.net.mirante.singular.showcase.component.CaseBase;
+import br.net.mirante.singular.showcase.component.CaseBaseForm;
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
+import br.net.mirante.singular.showcase.component.ShowCaseType;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackageCurriculo;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoGGTOX;
@@ -54,6 +58,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(SPackageNotificacaoSimplificadaFitoterapico.class, SPackageNotificacaoSimplificadaFitoterapico.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageNotificacaoSimplificadaBaixoRisco.class, SPackageNotificacaoSimplificadaBaixoRisco.NOME_COMPLETO, ShowCaseType.FORM);
         add(SPackageHabilitacaoEmpresa.class, SPackageHabilitacaoEmpresa.NOME_COMPLETO, ShowCaseType.FORM);
+        add(STypeCredenciamentoEscolaGoverno.class, ShowCaseType.FORM);
 
     }
 
@@ -74,6 +79,22 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
                 }
             }
         }
+    }
+
+    private <TYPE extends SType<?>> void add(Class<TYPE> typeClass, ShowCaseType tipo) {
+        Preconditions.checkArgument(typeClass.isAnnotationPresent(SInfoType.class));
+        
+        SDictionary d = SDictionary.create();
+        SType<?> sType = d.getType(typeClass);
+        
+        String typeName = sType.getName();
+        String simpleName = Optional.ofNullable(sType.asAtr().getLabel())
+            .orElseGet(()-> StringUtils.defaultIfBlank(StringUtils.substringAfterLast(typeName, "."), sType.getName()));
+        
+        add(sType.getName(), simpleName, () -> {
+            SDictionary dictionary = SDictionary.create();
+            return dictionary.getType(typeClass);
+        }, tipo);
     }
 
     private void add(Class<? extends SPackage> packageClass, String typeName, ShowCaseType tipo) {
