@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.model.IModel;
 
@@ -24,6 +25,13 @@ public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
         this.model = model;
         this.validateOnly = validateOnly;
         this.listener = listener;
+    }
+
+    @Override
+    protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+        super.updateAjaxAttributes(attributes);
+        if (validateOnly)
+            attributes.getExtraParameters().put("forceDisableAJAXPageBlock", true);
     }
 
     @Override

@@ -38,24 +38,28 @@ public class STypePDIProjetoPedagogico extends STypeComposite<SIComposite>{
         final STypeComposite<SIComposite> perfilCurso = this.addFieldComposite("perfilCurso");
         perfilCurso.asAtr().label("Perfil do Curso");
         perfilCurso.addFieldString("justificativaOfertaCurso", true)
-            .withTextAreaView().asAtr().label("Justificativa da Oferta do Curso");
+            .withTextAreaView().asAtr().label("Justificativa da Oferta do Curso")
+            .asAtrBootstrap().colPreference(12);
     }
 
     private void addAtividadesCurso() {
         final STypeComposite<SIComposite> atividadesCurso = this.addFieldComposite("atividadesCurso");
         atividadesCurso.asAtr().label("Atividades do Curso");
         atividadesCurso.addFieldString("atividadesComplementares")
-            .withTextAreaView().asAtr().label("Atividades Complementares");
+            .withTextAreaView().asAtr().label("Atividades Complementares")
+            .asAtrBootstrap().colPreference(12);
     }
 
     private void addPerfilEgresso() {
         this.addFieldString("perfilEgresso", true)
-            .withTextAreaView().asAtr().label("Perfil do Egresso");
+            .withTextAreaView().asAtr().label("Perfil do Egresso")
+            .asAtrBootstrap().colPreference(12);
     }
 
     private void addFormaAcessoCurso() {
         this.addFieldString("formaAcessoCurso", true)
-            .withTextAreaView().asAtr().label("Forma de Acesso ao Curso");
+            .withTextAreaView().asAtr().label("Forma de Acesso ao Curso")
+            .asAtrBootstrap().colPreference(12);
     }
 
     private void addRepresentacaoGraficaPerfilFormacao() {
@@ -65,19 +69,22 @@ public class STypePDIProjetoPedagogico extends STypeComposite<SIComposite>{
     
     private void addSistemaAvaliacaoProcessoEnsinoAprendizagem() {
         this.addFieldString("sistemaAvaliacaoProcessoEnsinoAprendizagem", true)
-            .withTextAreaView().asAtr().label("Sistema de Avaliação do processo de ensino e aprendizagem");
+            .withTextAreaView().asAtr().label("Sistema de Avaliação do processo de ensino e aprendizagem")
+            .asAtrBootstrap().colPreference(12);
     }
 
     private void addSistemaAvaliacaoProjetoCurso() {
         this.addFieldString("sistemaAvaliacaoProjetoCurso", true)
-        .withTextAreaView().asAtr().label("Sistema de Avaliação do Projeto de Curso");
+            .withTextAreaView().asAtr().label("Sistema de Avaliação do Projeto de Curso")
+            .asAtrBootstrap().colPreference(12);
     }
     
     private void addTrabalhoConclusaoCurso() {
         final STypeComposite<SIComposite> trabalhoConclusaoCurso = this.addFieldComposite("trabalhoConclusaoCurso");
         trabalhoConclusaoCurso.asAtr().label("Atividades de Conclusão de Curso (TCC)");
         trabalhoConclusaoCurso.addFieldString("atividadesConclusaoCurso")
-            .withTextAreaView().asAtr().label("Atividades de Conslusão de Curso");
+            .withTextAreaView().asAtr().label("Atividades de Conslusão de Curso")
+            .asAtrBootstrap().colPreference(12);
     }
     
     private void addAtoAutorizativoCriacao() {

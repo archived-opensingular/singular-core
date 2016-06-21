@@ -53,7 +53,8 @@ public class STypePDI extends STypeComposite<SIComposite>{
         final STypeComposite<SIComposite> projetoPedagogico = this.addFieldComposite("projetoPedagogico");
         projetoPedagogico.asAtr().label("Projeto Pedagógico");
         projetoPedagogico.addFieldString("projetoPedagogicoInstituicao", true)
-            .withTextAreaView().asAtr().label("Projeto Pedagógico da Instituição");
+            .withTextAreaView().asAtr().label("Projeto Pedagógico da Instituição")
+            .asAtrBootstrap().colPreference(12);
     }
 
     private void addImplantacaoInstituicao() {
@@ -71,7 +72,8 @@ public class STypePDI extends STypeComposite<SIComposite>{
         final STypeComposite<SIComposite> organizacaoDidaticopedagogica = this.addFieldComposite("organizacaoDidaticopedagogica");
         organizacaoDidaticopedagogica.asAtr().label("Organização didatico-pedagógica da Instituição");
         organizacaoDidaticopedagogica.addFieldString("organizacaoDidaticopedagogicaInstituicao", true)
-            .withTextAreaView().asAtr().label("Organização didatico-pedagógica da Instituição");
+            .withTextAreaView().asAtr().label("Organização didatico-pedagógica da Instituição")
+            .asAtrBootstrap().colPreference(12);
     }
 
     private void addPerfilCorpoDocente() {
@@ -162,7 +164,9 @@ public class STypePDI extends STypeComposite<SIComposite>{
     }
     
     private void addOutros() {
-        this.addFieldString("outros", true).asAtr().label("Outros");
+        this.addFieldString("outros", true)
+            .withTextAreaView().asAtr().label("Outros")
+            .asAtrBootstrap().colPreference(12);
     }
     
 }

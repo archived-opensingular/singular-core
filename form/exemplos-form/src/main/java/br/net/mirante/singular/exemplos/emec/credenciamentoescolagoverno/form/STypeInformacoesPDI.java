@@ -27,6 +27,7 @@ public class STypeInformacoesPDI extends STypeComposite<SIComposite>{
         regimentoEstatuto.asAtr().label("Regimento/Estatuto");
         //TODO - richtext
         regimentoEstatuto.addFieldString("textoRegimento", true)
-            .withTextAreaView().asAtr().label("Texto do Regimento");
+            .withTextAreaView().asAtr().label("Texto do Regimento")
+            .asAtrBootstrap().colPreference(12);
     }
 }
