@@ -1,10 +1,12 @@
 package br.net.mirante.singular.form.view;
 
-import br.net.mirante.singular.form.SType;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import br.net.mirante.singular.form.SType;
 
 /**
  * Created by Daniel on 08/06/2016.
@@ -31,7 +33,17 @@ public class SViewByBlock extends AbstractSViewByBlock {
         blocks.add(b);
         return new BlockBuilder(b, this);
     }
-
+    /**
+     * Cria um bloco para cada tipo informado
+     * 
+     * @param types
+     * @return this
+     */
+    public SViewByBlock newBlockPerType(Collection<SType<?>> types){
+        types.stream().forEach(field -> newBlock().add(field));
+        return this;
+    }
+    
     @Override
     public List<Block> getBlocks() {
         return blocks;

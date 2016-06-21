@@ -5,13 +5,12 @@
 
 package br.net.mirante.singular.form.view;
 
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
 
 public class SViewTab extends SView {
 
