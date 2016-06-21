@@ -9,6 +9,7 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewListByTable;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeIngredienteAtivo extends STypeComposite<SIComposite> {
@@ -85,8 +86,11 @@ public class STypeIngredienteAtivo extends STypeComposite<SIComposite> {
 
         sinonimias
                 .asAtr()
-                .label("Sinonímias")
-                .asAtrBootstrap();
+                .label("Sinonímias");
+        sinonimias
+                .withView(SViewListByTable::new);
+
+
 
         nomeSinonimia
                 .asAtr()

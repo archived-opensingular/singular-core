@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.provider.SSimpleProvider;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import org.apache.commons.lang3.StringUtils;
 
@@ -107,7 +108,6 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                 .dependsOn(tipoPeticao)
                 .visible(si -> Value.notNull(si, tipoPeticao));
 
-
         ingredienteAtivoPeticao
                 .asAtr()
                 .label("Ingrediente Ativo");
@@ -115,7 +115,7 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
 
         produtoTecnicoPeticao
                 .asAtr()
-                .dependsOn(nivel)
+                .dependsOn(nivel, tipoPeticao)
                 .visible(si -> StringUtils.isNotEmpty(Value.of(si, nivel)));
 
         produtoTecnicoPeticao
@@ -123,54 +123,91 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                 .asAtr()
                 .dependsOn(tipoPeticao)
                 .visible(si -> produtoTecnicoOpcional.contains(Value.of(si, idTipoPeticao)));
-
         produtoTecnicoPeticao
                 .produtosTecnicos
                 .asAtr()
-                .dependsOn(tipoPeticao)
-                .visible(si -> produtoTecnicoMultiplo.contains(Value.of(si, idTipoPeticao)));
-
-        produtoTecnicoPeticao
-                .produtoTecnico
-                .asAtr()
                 .dependsOn(tipoPeticao, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)
                 .visible(si ->
-                        !produtoTecnicoMultiplo.contains(Value.of(si, idTipoPeticao))
-                                &&
-                                (!Value.notNull(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica) || !Value.of(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica))
+                        !Value.notNull(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica) || !Value.of(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)
 
                 );
 
-
-        final STypeProdutoTecnico[] tiposProdutoTecnicos = new STypeProdutoTecnico[]{produtoTecnicoPeticao.produtoTecnico, produtoTecnicoPeticao.produtosTecnicos.getElementsType()};
-
-        for (STypeProdutoTecnico pt : tiposProdutoTecnicos) {
-
-
-            pt
-                    .numeroProcessoProdutoTecnico
-                    .withUpdateListener(si -> {
-                        if (numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao))) {
-                            si.setValue(Value.of(si, dadosGerais.numeroProcessoPeticaoMatriz));
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .addInstanceValidator(ValidationErrorLevel.ERROR, validatable -> {
+                    if (!produtoTecnicoMultiplo.contains(Value.of(validatable.getInstance(), idTipoPeticao))) {
+                        if (validatable.getInstance().size() > 1) {
+                            validatable.error("Apenas um produto técnico deve ser informado para o tipo de petição escolhido.");
                         }
-                    })
-                    .asAtr()
-                    .dependsOn(dadosGerais.numeroProcessoPeticaoMatriz, tipoPeticao)
-                    .enabled(si -> !numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao)));
+                    }
+                    if (!produtoTecnicoOpcional.contains(Value.of(validatable.getInstance(), idTipoPeticao))) {
+                        if (validatable.getInstance().size() < 1) {
+                            validatable.error("Nenhum produto técnico foi informado.");
+                        }
+                    }
+                });
 
 
-            pt
-                    .fabricante
-                    .asAtr()
-                    .dependsOn(nivel)
-                    .visible(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .getElementsType()
+                .numeroProcessoProdutoTecnico
+                .asAtr()
+                .dependsOn(dadosGerais.numeroProcessoPeticaoMatriz, tipoPeticao)
+                .enabled(si -> !numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao)));
 
-            pt
-                    .fabricantes
-                    .asAtr()
-                    .dependsOn(nivel)
-                    .visible(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
-        }
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .getElementsType()
+                .numeroProcessoProdutoTecnico
+                .withUpdateListener(si -> {
+                    if (numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao))) {
+                        si.setValue(Value.of(si, dadosGerais.numeroProcessoPeticaoMatriz));
+                    }
+                });
+
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .getElementsType()
+                .numeroProcessoProdutoTecnico
+                .withInitListener(si -> {
+                    if (numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao))) {
+                        si.setValue(Value.of(si, dadosGerais.numeroProcessoPeticaoMatriz));
+                    }
+                });
+
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .withUpdateListener(si -> {
+                    if (numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao))) {
+                        for (SIComposite composite : si.getValues()) {
+                            composite.findNearest(produtoTecnicoPeticao
+                                    .produtosTecnicos
+                                    .getElementsType()
+                                    .numeroProcessoProdutoTecnico).get().setValue(
+                                    Value.of(si, dadosGerais.numeroProcessoPeticaoMatriz));
+                        }
+                    }
+                })
+                .asAtr()
+                .dependsOn(dadosGerais.numeroProcessoPeticaoMatriz);
+
+
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .getElementsType()
+                .fabricante
+                .asAtr()
+                .dependsOn(nivel)
+                .visible(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
+
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .getElementsType()
+                .fabricantes
+                .asAtr()
+                .dependsOn(nivel)
+                .visible(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
 
 
         produtoFormulado
@@ -243,6 +280,7 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                     .newBlock().add(anexos);
 
         });
+
 
     }
 
