@@ -36,11 +36,11 @@ public class YFilesSpike {
         GraphComponent graphComponent = new GraphComponent();
         IGraph graph = graphComponent.getGraph();
 
-        /*IEdgeDefaults edgeDefaults = graph.getEdgeDefaults();
+        IEdgeDefaults edgeDefaults = graph.getEdgeDefaults();
         BpmnEdgeStyle bpmnEdgeStyle = new BpmnEdgeStyle();
         bpmnEdgeStyle.setType(EdgeType.SEQUENCE_FLOW);
         edgeDefaults.setStyle(bpmnEdgeStyle);
-        edgeDefaults.setStyleInstanceSharingEnabled(false);*/
+        edgeDefaults.setStyleInstanceSharingEnabled(false);
 
 //        edgeDefaults.getLabelDefaults().setLayoutParameter(
 //                new EdgeSegmentLabelModel(100, 0, 0, true, EdgeSides.ABOVE_EDGE)
@@ -50,8 +50,8 @@ public class YFilesSpike {
 /*        FoldingManager manager = new FoldingManager();
         IFoldingView foldingView = manager.createFoldingView();
 */
-        INodeDefaults nodeDefaults = graph.getNodeDefaults();
-        nodeDefaults.getPortDefaults().setAutoCleanupEnabled(false);
+//        INodeDefaults nodeDefaults = graph.getNodeDefaults();
+//        nodeDefaults.getPortDefaults().setAutoCleanupEnabled(false);
 
 
         // For nodes we use a CompositeLabelModel that combines label placements inside and outside of the node
@@ -90,13 +90,19 @@ public class YFilesSpike {
 
 
 
-//        HierarchicLayout bpmnLayout = new HierarchicLayout();
-//        LayoutUtilities.applyLayout(graph, bpmnLayout);
-        BpmnLayout bpmnLayout = new BpmnLayout();
+        HierarchicLayout bpmnLayout = new HierarchicLayout();
+        bpmnLayout.setEdgeToEdgeDistance(100);
+        bpmnLayout.setNodeToNodeDistance(100);
+        bpmnLayout.setNodeToEdgeDistance(100);
+        bpmnLayout.setMinimumLayerDistance(100);
+        bpmnLayout.setLayoutOrientation(com.yworks.yfiles.layout.LayoutOrientation.LEFT_TO_RIGHT);
+
+        /*BpmnLayout bpmnLayout = new BpmnLayout();
         bpmnLayout.setLayoutOrientation(LayoutOrientation.LEFT_TO_RIGHT);
         bpmnLayout.setMinimumNodeDistance(100);
         bpmnLayout.setLayoutMode(bpmn.layout.LayoutMode.FULL_LAYOUT);
-        bpmnLayout.setMinimumEdgeLength(20);
+        bpmnLayout.setMinimumEdgeLength(20);*/
+
         LayoutUtilities.applyLayout(graphComponent.getGraph(), bpmnLayout);
 
         JFrame frame = new JFrame();
@@ -172,7 +178,7 @@ public class YFilesSpike {
 
     private static void connect(IGraph graph, INode aguardando, INode analise, String s) {
         IEdge edge = graph.createEdge(aguardando, analise);
-        ILabel label = graph.addLabel(edge, s);
+        ILabel label = graph.addLabel(edge, s, NinePositionsEdgeLabelModel.CENTER_ABOVE);
     }
 
     private static INode addEnd(IGraph graph, String deferido2) {
@@ -181,14 +187,20 @@ public class YFilesSpike {
         endStyle.setCharacteristic(END);
         INode deferido = graph.createNode(new RectD(PointD.ORIGIN, new SizeD(80, 50)),
                 endStyle);
-        graph.addLabel(deferido, deferido2);
+        graph.addLabel(deferido, deferido2, ExteriorLabelModel.SOUTH);
         return deferido;
     }
 
     private static INode addActivity(IGraph graph, String s) {
-        INode aguardando = graph.createNode(new RectD(PointD.ORIGIN, new SizeD(80, 50)),
+        INode aguardando = graph.createNode(new RectD(PointD.ORIGIN, new SizeD(96, 60)),
                 new ActivityNodeStyle());
-        graph.addLabel(aguardando, s);
+//        graph.addLabel(aguardando, s, InteriorStretchLabelModel.CENTER);
+//        graph.addLabel(aguardando, s, InteriorStretchLabelModel.CENTER);
+//        InteriorStretchLabelModel model = new InteriorStretchLabelModel();
+//        graph.addLabel(aguardando, s, model.createDefaultParameter());
+        graph.addLabel(aguardando, s, ChoreographyLabelModel.TASK_NAME_BAND);
+//        EdgeSegmentLabelModel model = new EdgeSegmentLabelModel();
+//        graph.addLabel(aguardando, s, model.createDefaultParameter());
         return aguardando;
     }
 
