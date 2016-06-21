@@ -231,60 +231,62 @@ public class FileUploadPanel extends Panel {
         return fileField;
     }
 
-}
 
-class DownloadLink extends Link<Void> {
+    public static class DownloadLink extends Link<Void> {
 
-    private static final String SELF = "_self", BLANK = "_blank";
-    private IModel<String> target = $m.ofValue(SELF);
-    private IModel<SIAttachment> model;
+        private static final String SELF = "_self", BLANK = "_blank";
+        private IModel<String> target = $m.ofValue(SELF);
+        private IModel<SIAttachment> model;
 
-    public DownloadLink(IModel<SIAttachment> model) {
-        super("downloadLink");
-        this.model = model;
-    }
+        public DownloadLink(IModel<SIAttachment> model) {
+            super("downloadLink");
+            this.model = model;
+        }
 
-    @Override
-    public void onClick() {
+        @Override
+        public void onClick() {
 
-        if (model.getObject().getContent() != null) {
+            if (model.getObject().getContent() != null) {
 
-            final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
-                @Override
-                public void write(OutputStream outputStream) throws IOException {
-                    outputStream.write(model.getObject().getContentAsByteArray());
+                final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
+                    @Override
+                    public void write(OutputStream outputStream) throws IOException {
+                        outputStream.write(model.getObject().getContentAsByteArray());
+                    }
+                };
+
+                final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
+
+                requestHandler.setFileName(model.getObject().getFileName());
+                requestHandler.setCacheDuration(Duration.NONE);
+
+                if (model.getObject().isContentTypeBrowserFriendly()) {
+                    requestHandler.setContentDisposition(ContentDisposition.INLINE);
+                } else {
+                    requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
                 }
-            };
 
-            final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
-
-            requestHandler.setFileName(model.getObject().getFileName());
-            requestHandler.setCacheDuration(Duration.NONE);
-
-            if (model.getObject().isContentTypeBrowserFriendly()) {
-                requestHandler.setContentDisposition(ContentDisposition.INLINE);
-            } else {
-                requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+                getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
             }
+        }
 
-            getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new AttributeModifier("target", target));
+        }
+
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            setVisible(model.getObject().getContent() != null);
+            if (model.getObject().isContentTypeBrowserFriendly()) {
+                target.setObject(BLANK);
+            } else {
+                target.setObject(SELF);
+            }
         }
     }
 
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-        add(new AttributeModifier("target", target));
-    }
-
-    @Override
-    protected void onConfigure() {
-        super.onConfigure();
-        setVisible(model.getObject().getContent() != null);
-        if (model.getObject().isContentTypeBrowserFriendly()) {
-            target.setObject(BLANK);
-        } else {
-            target.setObject(SELF);
-        }
-    }
 }
+
