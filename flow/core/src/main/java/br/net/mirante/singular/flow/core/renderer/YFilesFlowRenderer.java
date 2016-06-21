@@ -59,6 +59,7 @@ import y.view.tabular.TableGroupNodeRealizer;*/
 public class YFilesFlowRenderer /*extends LayoutModule */implements IFlowRenderer {
     @Override
     public byte[] generateImage(ProcessDefinition<?> definicao) {
+
         return new byte[0];
     }
 
@@ -268,7 +269,7 @@ public class YFilesFlowRenderer /*extends LayoutModule */implements IFlowRendere
     }
 
     protected void adicionarStartNode(Graph2D graph, final MTask<?> task, final Map<String, Node> mapaVertice) {
-        Node start = graph.createNode(BpmnRealizerFactory.createEvent(
+        Node start = graph.create(BpmnRealizerFactory.createEvent(
                 BpmnTypeEnum.EVENT_TYPE_PLAIN, EventCharEnum.EVENT_CHARACTERISTIC_START));
         graph.getRealizer(start).setLineColor(START_LINE_COLOR);
         graph.getRealizer(start).setFillColor(FILL_1_COLOR);
@@ -283,29 +284,29 @@ public class YFilesFlowRenderer /*extends LayoutModule */implements IFlowRendere
         boolean isActivity = false;
         boolean isTask = false;
         if (task.isWait()) {
-            node = graph.createNode(BpmnRealizerFactory.createEvent(
+            node = graph.create(BpmnRealizerFactory.createEvent(
                     BpmnTypeEnum.EVENT_TYPE_TIMER,
                     EventCharEnum.EVENT_CHARACTERISTIC_INTERMEDIATE_BOUNDARY_INTERRUPTING));
             graph.getRealizer(node).setLineColor(INTER_LINE_COLOR);
         } else if (task.isEnd()) {
-            node = graph.createNode(BpmnRealizerFactory.createEvent(
+            node = graph.create(BpmnRealizerFactory.createEvent(
                     BpmnTypeEnum.EVENT_TYPE_PLAIN, EventCharEnum.EVENT_CHARACTERISTIC_END));
             graph.getRealizer(node).setLineColor(END_LINE_COLOR);
         } else if (task.isJava()) {
             if (task.getMetaDataValue(YFilesFlowRenderer.SEND_EMAIL, false)) {
-                node = graph.createNode(BpmnRealizerFactory.createEvent(
+                node = graph.create(BpmnRealizerFactory.createEvent(
                         BpmnTypeEnum.EVENT_TYPE_MESSAGE,
                         EventCharEnum.EVENT_CHARACTERISTIC_INTERMEDIATE_BOUNDARY_INTERRUPTING));
                 graph.getRealizer(node).setLineColor(INTER_LINE_COLOR);
             } else {
-                node = graph.createNode(BpmnRealizerFactory.createActivity(ActivityTypeEnum.TASK, TaskTypeEnum.SERVICE));
+                node = graph.create(BpmnRealizerFactory.createActivity(ActivityTypeEnum.TASK, TaskTypeEnum.SERVICE));
                 isTask = true;
             }
         } else if (task.isPeople()) {
-            node = graph.createNode(BpmnRealizerFactory.createActivity(ActivityTypeEnum.TASK, TaskTypeEnum.USER));
+            node = graph.create(BpmnRealizerFactory.createActivity(ActivityTypeEnum.TASK, TaskTypeEnum.USER));
             isTask = true;
         } else {
-            node = graph.createNode(BpmnRealizerFactory.createActivity(BpmnTypeEnum.ACTIVITY_TYPE));
+            node = graph.create(BpmnRealizerFactory.createActivity(BpmnTypeEnum.ACTIVITY_TYPE));
             isActivity = true;
         }
         graph.getRealizer(node).setFillColor(FILL_1_COLOR);

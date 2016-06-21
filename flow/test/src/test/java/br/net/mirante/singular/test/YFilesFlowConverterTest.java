@@ -72,7 +72,7 @@ public class YFilesFlowConverterTest {
     }
 
     @Test public void createNodesForEachTask(){
-        GraphComponent graphComponent = new YFilesFlowConverter(id).toGraphComponent();
+        GraphComponent graphComponent = new YFilesFlowConverter(id.getProcessDefinition()).build().toGraphComponent();
 
         IGraph graph = graphComponent.getGraph();
         assertThat(graph.getNodes())
@@ -82,7 +82,7 @@ public class YFilesFlowConverterTest {
     }
 
     @Test public void createEdgesForEachTransition(){
-        GraphComponent graphComponent = new YFilesFlowConverter(id).toGraphComponent();
+        GraphComponent graphComponent = new YFilesFlowConverter(id.getProcessDefinition()).build().toGraphComponent();
 
         IGraph graph = graphComponent.getGraph();
         assertThat(graph.getNodes())

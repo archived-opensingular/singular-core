@@ -133,10 +133,10 @@ public class YFilesSpike {
        /* INode[] nodes = new INode[10];
         for (int i = 0; i < nodes.length; i++) {
             if(i % 2 == 0)
-                nodes[i] = graph.createNode(new RectD(PointD.ORIGIN, new SizeD(80, 50)),
+                nodes[i] = graph.create(new RectD(PointD.ORIGIN, new SizeD(80, 50)),
                         new ActivityNodeStyle());
             else
-                nodes[i] = graph.createNode(new RectD(PointD.ORIGIN, new SizeD(80, 50)),
+                nodes[i] = graph.create(new RectD(PointD.ORIGIN, new SizeD(80, 50)),
                         new EventNodeStyle());
             graph.addLabel(nodes[i], "Node #" + Integer.toString(i));
         }
