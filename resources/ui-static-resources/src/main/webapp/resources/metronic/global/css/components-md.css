@@ -1499,7 +1499,7 @@ Custom Bootstrap Badges
   background-image: none; }
 
 .badge-primary {
-  background-color: #337ab7;
+  background-color: #40BAA7;
   background-image: none; }
 
 .badge-info {
@@ -6187,9 +6187,9 @@ Customized Bootstrap Labels
     background-color: #9ca8bb; }
 
 .label-primary {
-  background-color: #337ab7; }
+  background-color: #40BAA7; }
   .label-primary[href]:hover, .label-primary[href]:focus {
-    background-color: #286090; }
+    background-color: #339485; }
 
 .label-success {
   background-color: #36c6d3; }
@@ -6232,7 +6232,7 @@ Text states
   color: #bac3d0; }
 
 .text-primary {
-  color: #337ab7; }
+  color: #40BAA7; }
 
 .text-success {
   color: #36c6d3; }
@@ -12106,7 +12106,7 @@ Custom tables
   margin-left: 15px; }
 
 .table-advance td.highlight div.primary {
-  border-left: 2px solid #337ab7; }
+  border-left: 2px solid #40BAA7; }
 
 .table-advance td.highlight div.success {
   border-left: 2px solid #36c6d3; }
@@ -17928,17 +17928,17 @@ Tasks Widget
           border-left-color: #bac3d0;
           border-right-color: #bac3d0; }
     .mt-element-ribbon .ribbon.ribbon-color-primary {
-      background-color: #337ab7;
+      background-color: #40BAA7;
       color: #fff; }
       .mt-element-ribbon .ribbon.ribbon-color-primary:after {
-        border-color: #286090; }
+        border-color: #339485; }
       .mt-element-ribbon .ribbon.ribbon-color-primary > .ribbon-sub {
-        background-color: #337ab7;
+        background-color: #40BAA7;
         color: black; }
         .mt-element-ribbon .ribbon.ribbon-color-primary > .ribbon-sub:after {
-          border-color: #122b40;
-          border-left-color: #337ab7;
-          border-right-color: #337ab7; }
+          border-color: #194841;
+          border-left-color: #40BAA7;
+          border-right-color: #40BAA7; }
     .mt-element-ribbon .ribbon.ribbon-color-info {
       background-color: #659be0;
       color: #fff; }

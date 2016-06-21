@@ -6,6 +6,7 @@
 package br.net.mirante.singular.form.document;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -373,9 +374,13 @@ public class SDocument {
     public Set<IValidationError> getValidationErrors(Integer instanceId) {
         return validationErrors().get(instanceId);
     }
-    public void setValidationErrors(Integer instanceId, Iterable<IValidationError> errors) {
-        validationErrors().removeAll(instanceId);
+    public Set<IValidationError> clearValidationErrors(Integer instanceId) {
+        return setValidationErrors(instanceId, Collections.emptyList());
+    }
+    public Set<IValidationError> setValidationErrors(Integer instanceId, Iterable<IValidationError> errors) {
+        Set<IValidationError> removed = validationErrors().removeAll(instanceId);
         validationErrors().putAll(instanceId, errors);
+        return removed;
     }
     public void setValidationErrors(Iterable<IValidationError> errors) {
         validationErrors().clear();

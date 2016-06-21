@@ -118,17 +118,17 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic exists(Boolean value) {
-        setAttributeValue(SPackageBasic.ATR_REQUIRED, value);
+        setAttributeValue(SPackageBasic.ATR_EXISTS, value);
         return this;
     }
 
     public AtrBasic exists(Predicate<SInstance> value) {
-        setAttributeValue(SPackageBasic.ATR_REQUIRED_FUNCTION, value);
+        setAttributeValue(SPackageBasic.ATR_EXISTS_FUNCTION, value);
         return this;
     }
 
     public boolean exists() {
-        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_REQUIRED));
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
     }
     //    public AtrBasic onChange(Function<IBehavior<MInstancia>, IBehavior<MInstancia>> behaviorFunction) {
     //        IBehavior<MInstancia> existingBehavior = getOnChange();
@@ -170,6 +170,10 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public boolean isVisible() {
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_VISIBLE));
+    }
+
+    public boolean isExists() {
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
     }
 
     public boolean isEnabled() {

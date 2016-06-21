@@ -86,7 +86,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
             view
                     .newBlock()
                     .add("nomeComercial")
-                    .add("classe")
+                    .add("classeConformeMatriz")
                     .add("linhaProducao")
                     .add("formulasHomeopaticas")
 
@@ -110,7 +110,7 @@ public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {
 
     private void addCaracteristicas(STypeComposite<?> notificacaoSimplificada) {
 
-        final STypeCategoriaRegulatoria                           classe               = notificacaoSimplificada.addField("classe", STypeCategoriaRegulatoria.class);
+        final STypeCategoriaRegulatoria                           classe               = notificacaoSimplificada.addField("classeConformeMatriz", STypeCategoriaRegulatoria.class);
         final STypeLinhaProducaoDinamizado                        linhaProducao        = notificacaoSimplificada.addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
         final STypeList<STypeComposite<SIComposite>, SIComposite> formulasHomeopaticas = notificacaoSimplificada.addFieldListOfComposite("formulasHomeopaticas", "formulaHomeopatica");
 

@@ -4,14 +4,7 @@
  */
 package br.net.mirante.singular.form.persistence.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -42,11 +35,11 @@ public class FormEntity extends BaseEntity<Long> {
     @Column(name = "DS_XML_ANOTACAO")
     private String xmlAnnotations;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_TIPO_FORMULARIO")
     private FormTypeEntity formType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_COLECAO")
     private CollectionEntiry collection;
 

@@ -22,7 +22,7 @@ import java.util.Optional;
  *
  * @author Daniel C. Bordin
  */
-public abstract class TypeLoader<KEY extends Serializable> {
+public abstract class TypeLoader<TYPE_KEY extends Serializable> {
 
     /**
      * Retorna a referência ao tipo solicitado se possível.
@@ -30,7 +30,7 @@ public abstract class TypeLoader<KEY extends Serializable> {
      * @param typeId
      *            Identificador do tipo a ser carregado.
      */
-    public final Optional<RefType> loadRefType(KEY typeId) {
+    public final Optional<RefType> loadRefType(TYPE_KEY typeId) {
         return loadRefTypeImpl(Objects.requireNonNull(typeId));
     }
 
@@ -40,10 +40,10 @@ public abstract class TypeLoader<KEY extends Serializable> {
      * @param typeId
      *            Identificador do tipo a ser carregado.
      */
-    protected abstract Optional<RefType> loadRefTypeImpl(KEY typeId);
+    protected abstract Optional<RefType> loadRefTypeImpl(TYPE_KEY typeId);
 
     /** Recupera o tipo solicitado se possível. */
-    public final Optional<SType<?>> loadType(KEY typeId) {
+    public final Optional<SType<?>> loadType(TYPE_KEY typeId) {
         return loadTypeImpl(typeId);
     }
 
@@ -53,7 +53,7 @@ public abstract class TypeLoader<KEY extends Serializable> {
      * @param typeId
      *            Identificador do tipo a ser carregado.
      */
-    protected abstract Optional<SType<?>> loadTypeImpl(KEY typeId);
+    protected abstract Optional<SType<?>> loadTypeImpl(TYPE_KEY typeId);
 
     /**
      * Recupera a referência ao tipo solicitado se possível ou dispara exception
@@ -62,7 +62,7 @@ public abstract class TypeLoader<KEY extends Serializable> {
      * @exception SingularFormException
      *                Senão encontrar o tipo.
      */
-    public final RefType loadRefTypeOrException(KEY typeId) throws SingularFormException {
+    public final RefType loadRefTypeOrException(TYPE_KEY typeId) throws SingularFormException {
         return loadRefType(typeId).orElseThrow(() -> new SingularFormException("Não foi encontrado o tipo para o id=" + typeId));
     }
 
@@ -73,7 +73,7 @@ public abstract class TypeLoader<KEY extends Serializable> {
      * @exception SingularFormException
      *                Senão encontrar o tipo.
      */
-    public final SType<?> loadTypeOrException(KEY typeId) throws SingularFormException {
+    public final SType<?> loadTypeOrException(TYPE_KEY typeId) throws SingularFormException {
         return loadType(typeId).orElseThrow(() -> new SingularFormException("Não foi encontrado o tipo para o id=" + typeId));
     }
 }

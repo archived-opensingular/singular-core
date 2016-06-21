@@ -5,8 +5,11 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -56,6 +59,13 @@ public class FileListUploadPanel extends Panel {
                                WicketBuildContext ctx) {
         super(id, model);
         this.ctx = ctx;
+        add(new Label("uploadLabel", Model.of(ObjectUtils.defaultIfNull(ctx.getCurrentInstance().asAtr().getLabel(), StringUtils.EMPTY))){
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                this.setVisible(StringUtils.isNotEmpty(getDefaultModelObjectAsString()));
+            }
+        });
         add(new WebMarkupContainer("empty-box"){
             @Override
             public boolean isVisible() {
@@ -72,6 +82,7 @@ public class FileListUploadPanel extends Panel {
                 .getAttachmentPersistenceTemporaryHandler()));
         add(adder = new AddFileBehavior());
         add(remover = new RemoveFileBehavior());
+        fileField.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
     }
 
     private List<MInstanceRootModel> updateListOfFileModels(SIList<SIAttachment> fileList) {

@@ -36,7 +36,7 @@ public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
     @Test
     public void testIfNotContaisErrorForFieldTwoAfterChangeFieldOneValueWhithWrongValue() {
         form.setValue(findFieldOneFormComponent(), "abas" + testValue + "2132");
-        tester.executeAjaxEvent(findFieldOneFormComponent(), IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+        tester.executeAjaxEvent(findFieldOneFormComponent(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
         form.submit(page.getSingularValidationButton());
         Assert.assertTrue(findFormComponentsByType(fieldOne).findFirst().get().getFeedbackMessages().isEmpty());
         Assert.assertTrue(findFormComponentsByType(fieldTwo).findFirst().get().getFeedbackMessages().isEmpty());
@@ -45,7 +45,7 @@ public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
     @Test
     public void testIfContaisErrorForFieldTwoAfterChangeFieldOneValue() {
         form.setValue(findFieldOneFormComponent(), testValue);
-        tester.executeAjaxEvent(findFieldOneFormComponent(), IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+        tester.executeAjaxEvent(findFieldOneFormComponent(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
         form.submit(page.getSingularValidationButton());
         Assert.assertFalse(findModelsByType(fieldOne).findFirst().get().getMInstancia().hasValidationErrors());
         Assert.assertTrue(findModelsByType(fieldTwo).findFirst().get().getMInstancia().hasValidationErrors());

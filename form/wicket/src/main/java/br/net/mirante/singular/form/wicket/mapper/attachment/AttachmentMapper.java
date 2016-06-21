@@ -8,15 +8,16 @@ package br.net.mirante.singular.form.wicket.mapper.attachment;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
-
 public class AttachmentMapper extends ControlsFieldComponentAbstractMapper {
 
     @Override
+    @SuppressWarnings("unchecked")
     public Component appendInput() {
 
         /*final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDITION);
@@ -25,13 +26,13 @@ public class AttachmentMapper extends ControlsFieldComponentAbstractMapper {
         final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDITION);
         formGroup.appendDiv(container);
         return container.getUploadField();
-//        AttachmentContainer container = new AttachmentContainer((IModel<? extends SIAttachment>) model);
-//        formGroup.appendTypeahead(container);
-//        return container.field();
+        //        AttachmentContainer container = new AttachmentContainer((IModel<? extends SIAttachment>) model);
+        //        formGroup.appendTypeahead(container);
+        //        return container.field();
     }
 
     @Override
-    public boolean updateOnChange() {   return false;   }
+    public void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {}
 
     @Override
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
@@ -39,6 +40,7 @@ public class AttachmentMapper extends ControlsFieldComponentAbstractMapper {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Component appendReadOnlyInput() {
         final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.VISUALIZATION);
         formGroup.appendDiv(container);

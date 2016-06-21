@@ -57,7 +57,7 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
     protected abstract String getReadOnlyFormattedText(IModel<? extends SInstance> model);
 
     protected Component appendReadOnlyInput() {
-        final SInstance mi = model.getObject();
+        final SInstance    mi   = model.getObject();
         final BOutputPanel comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(model)));
         formGroup.appendTag("div", comp);
         return comp;
@@ -71,23 +71,26 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         this.view = ctx.getView();
         this.bodyContainer = ctx.getExternalContainer();
 
-        final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
-        final BSContainer<?> container = ctx.getContainer();
-        final AtributoModel<String> subtitle = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
-        final ViewMode viewMode = ctx.getViewMode();
-        final BSLabel label = new BSLabel("label", labelModel);
+        final boolean               hintNoDecoration   = ctx.getHint(NO_DECORATION);
+        final BSContainer<?>        container          = ctx.getContainer();
+        final AtributoModel<String> subtitle           = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
+        final ViewMode              viewMode           = ctx.getViewMode();
+        final BSLabel               label              = new BSLabel("label", labelModel);
+        final List<Component>       feedbackComponents = new ArrayList<>();
 
         this.formGroup = container.newFormGroup();
         formGroup.setFeedbackPanelFactory((id, fence, filter) -> new SValidationFeedbackPanel(id, fence));
-        SValidationFeedbackHandler.bindTo(ctx.getContainer())
-            .addInstanceModel(this.model)
-            .addListener(new ISValidationFeedbackHandlerListener() {
-                @Override
-                public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
-                    if (target.isPresent())
-                        target.get().add(formGroup);
-                }
-            });
+        BSContainer<?> ctxContainer = ctx.getContainer();
+        SValidationFeedbackHandler.bindTo(ctxContainer)
+                .addInstanceModel(this.model)
+                .addListener(new ISValidationFeedbackHandlerListener() {
+                    @Override
+                    public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
+                        if (target.isPresent())
+                            for (Component comp : feedbackComponents)
+                                target.get().add(comp);
+                    }
+                });
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
         label.add($b.onConfigure(c -> {
@@ -98,20 +101,20 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
 
         formGroup.appendLabel(label);
         formGroup.newHelpBlock(subtitle)
-            .add($b.classAppender("hidden-xs"))
-            .add($b.classAppender("hidden-sm"))
-            .add($b.classAppender("hidden-md"))
-            .add(InvisibleIfNullOrEmptyBehavior.getInstance());
+                .add($b.classAppender("hidden-xs"))
+                .add($b.classAppender("hidden-sm"))
+                .add($b.classAppender("hidden-md"))
+                .add(InvisibleIfNullOrEmptyBehavior.getInstance());
 
         final Component input;
 
         if (viewMode.isEdition()) {
             input = appendInput();
-            formGroup.appendFeedback(ctx.getContainer(), IFeedbackMessageFilter.ALL);
+            formGroup.appendFeedback(ctx.getContainer(), IFeedbackMessageFilter.ALL, feedbackComponents::add);
             formGroup.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
-                    if(model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null){
+                    if (model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null) {
                         oldClasses.add("dependant-input-group");
                     }
                     return oldClasses;
@@ -149,7 +152,7 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
 
     protected FormComponent<?>[] findAjaxComponents(Component input) {
         if (input instanceof FormComponent) {
-            return new FormComponent[] { (FormComponent<?>) input };
+            return new FormComponent[]{(FormComponent<?>) input};
         } else if (input instanceof MarkupContainer) {
             List<FormComponent<?>> formComponents = new ArrayList<>();
             ((MarkupContainer) input).visitChildren((component, iVisit) -> {
@@ -163,5 +166,21 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
             return new FormComponent[0];
         }
 
+    }
+
+    /**
+     * Filtra os eventos, disparando somente um
+     * <p>
+     * quando um blur acontecer, verifica se um change está agendado se não agenda um blur
+     * quando um change acontecer, verifica se um blur está agendado e renive dando prioridade ao change
+     * <p>
+     * a verificação é adicionada nas 2 pontas porque quando exite mascara o blur acontece antes do change
+     * quando não tem, acontece o contrario.
+     *
+     * @param comp
+     */
+    @Override
+    public void adjustJSEvents(Component comp) {
+        comp.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS));
     }
 }

@@ -7,16 +7,20 @@ import br.net.mirante.singular.form.*;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelI extends STypeComposite<SIComposite> {
 
+    public STypeAttachmentList marcasComerciais;
+    public STypeAttachmentList modelosRotulos;
+    public STypeAttachmentList modelosBulas;
+
     @Override
     protected void onLoadType(TypeBuilder builder) {
 
         super.onLoadType(builder);
 
-        final STypeAttachmentList marcarComerciais = addFieldListOfAttachment("marcasComerciais", "marcaComercial");
-        final STypeAttachmentList modelosRotulos   = addFieldListOfAttachment("modelosRotulos", "modeloRotulo");
-        final STypeAttachmentList modelosBulas     = addFieldListOfAttachment("modelosBulas", "modeloBula");
+        marcasComerciais = addFieldListOfAttachment("marcasComerciais", "marcaComercial");
+        modelosRotulos = addFieldListOfAttachment("modelosRotulos", "modeloRotulo");
+        modelosBulas = addFieldListOfAttachment("modelosBulas", "modeloBula");
 
-        marcarComerciais
+        marcasComerciais
                 .asAtr()
                 .label("Marcas Comerciais")
                 .asAtrBootstrap()

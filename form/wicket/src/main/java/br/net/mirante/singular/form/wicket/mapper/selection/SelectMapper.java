@@ -14,9 +14,11 @@ import br.net.mirante.singular.form.wicket.model.SelectMInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -75,8 +77,10 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
 
         @Override
         protected List<Serializable> load() {
-            final Provider           provider = model.getObject().asAtrProvider().getProvider();
-            final List<Serializable> values   = new ArrayList<>();
+
+            final Provider provider = model.getObject().asAtrProvider().getProvider();
+            final List<Serializable> values = new ArrayList<>();
+
             if (provider != null) {
                 final List<Serializable> result = provider.load(ProviderContext.of(model.getObject()));
                 if (result != null) {
@@ -85,10 +89,21 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
             }
 
             if (!model.getObject().isEmptyOfData()) {
+
                 final SInstanceConverter converter = model.getObject().asAtrProvider().getConverter();
-                final Serializable       converted = converter.toObject(model.getObject());
+                final Serializable converted = converter.toObject(model.getObject());
+                final RequestCycle requestCycle = RequestCycle.get();
+
                 if (!values.contains(converted)) {
-                    values.add(0, converted);
+                    /**
+                     * Se for requisição Ajax, limpa o campo caso o valor não for encontrado,
+                     * caso contrario mantem o valor.
+                     */
+                    if (requestCycle != null && requestCycle.find(AjaxRequestTarget.class) != null) {
+                        model.getObject().clearInstance();
+                    } else {
+                        values.add(0, converted);
+                    }
                 }
             }
 

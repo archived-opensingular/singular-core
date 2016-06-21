@@ -5,6 +5,8 @@
 
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import static org.apache.commons.lang3.StringUtils.*;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.util.wicket.behavior.BSSelectInitBehaviour;
 import br.net.mirante.singular.util.wicket.behavior.DatePickerInitBehaviour;
 import br.net.mirante.singular.util.wicket.behavior.PicklistInitBehaviour;
@@ -29,7 +32,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerCons
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSControls> {
 
@@ -191,11 +193,17 @@ public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSC
     }
 
     public BSControls appendFeedback() {
-        return appendFeedback(this, null);
+        return appendFeedback(this, null, IConsumer.noop());
     }
-
-    public BSControls appendFeedback(Component fence, IFeedbackMessageFilter filter) {
-        return super.appendTag("span", true, "class='help-block'", newFeedbackPanel("controlErrors", fence, filter));
+    public BSControls appendFeedback(Component fence, IFeedbackMessageFilter filter, IConsumer<Component> feedbackComponentConsumer) {
+        Component feedbackComponent = newFeedbackPanel("controlErrors", fence, filter);
+        super.appendTag("span", true, "class='help-block'", feedbackComponent);
+        feedbackComponentConsumer.accept(feedbackComponent);
+        return this;
+    }
+    protected Component newFeedbackPanel(String id, Component fence, IFeedbackMessageFilter filter) {
+        IFeedbackPanelFactory factory = ObjectUtils.defaultIfNull(feedbackPanelFactory, IFeedbackPanelFactory.DEFAULT);
+        return factory.newFeedbackPanel(id, fence, filter);
     }
 
     public Label newHelpBlock(IModel<String> textModel) {
@@ -206,11 +214,6 @@ public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSC
         return this;
     }
 
-    protected Component newFeedbackPanel(String id, Component fence, IFeedbackMessageFilter filter) {
-        IFeedbackPanelFactory factory = ObjectUtils.defaultIfNull(feedbackPanelFactory, IFeedbackPanelFactory.DEFAULT);
-        return factory.newFeedbackPanel(id, fence, filter);
-    }
-
     public BSControls appendDiv(Component typeahead) {
         return super.appendTag("div", typeahead);
     }
@@ -219,7 +222,7 @@ public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSC
         this.feedbackPanelFactory = feedbackPanelFactory;
         return this;
     }
-    
+
     public static interface IFeedbackPanelFactory extends Serializable {
         public Component newFeedbackPanel(String id, Component fence, IFeedbackMessageFilter filter);
 

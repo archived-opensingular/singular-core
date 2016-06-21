@@ -46,13 +46,13 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
  */
 public class FileUploadPanel extends Panel {
     public static String PARAM_NAME = "FILE-UPLOAD",
-                   UPLOAD_ID_KEY = "upload_id";
+            UPLOAD_ID_KEY           = "upload_id";
 
     private final IModel<SIAttachment> model;
-    private final ViewMode viewMode;
+    private final ViewMode             viewMode;
 
     private final FileUploadField fileField;
-    private final HiddenField nameField, hashField, sizeField, idField;
+    private final HiddenField     nameField, hashField, sizeField, idField;
     private final WebMarkupContainer filesContainer, progressBar;
     private final DownloadBehavior downloader;
 
@@ -81,7 +81,7 @@ public class FileUploadPanel extends Panel {
             super.onInitialize();
             add(new ClassAttributeModifier() {
                 protected Set<String> update(Set<String> oldClasses) {
-                    if(model.getObject().getFileId() == null){
+                    if (model.getObject().getFileId() == null) {
                         oldClasses.add("file-trash-button-hidden");
                     }
                     return oldClasses;
@@ -111,7 +111,7 @@ public class FileUploadPanel extends Panel {
             super.onInitialize();
             add(new ClassAttributeModifier() {
                 protected Set<String> update(Set<String> oldClasses) {
-                    if(model.getObject().getFileId() != null){
+                    if (model.getObject().getFileId() != null) {
                         oldClasses.add("file-trash-button-hidden");
                     }
                     return oldClasses;
@@ -135,8 +135,8 @@ public class FileUploadPanel extends Panel {
         idField = new HiddenField("file_id",
                 new PropertyModel<>(model, "fileId"));
 
-        add(    (filesContainer = new WebMarkupContainer("files"))
-                    .add(downloadLink.add(fileName)),
+        add((filesContainer = new WebMarkupContainer("files"))
+                        .add(downloadLink.add(fileName)),
                 uploadFileButton.add(fileField),
                 removeFileButton,
                 nameField, hashField, sizeField, idField,
@@ -144,7 +144,7 @@ public class FileUploadPanel extends Panel {
         );
         add(downloader = new DownloadBehavior(model.getObject().getDocument()
                 .getAttachmentPersistenceTemporaryHandler()));
-        add(new ClassAttributeModifier(){
+        add(new ClassAttributeModifier() {
 
             @Override
             protected Set<String> update(Set<String> oldClasses) {
@@ -157,13 +157,17 @@ public class FileUploadPanel extends Panel {
     private IMInstanciaAwareModel dummyModel(final IModel<SIAttachment> model) {
         return new IMInstanciaAwareModel() {
             @Override
-            public Object getObject() {return null;}
+            public Object getObject() {
+                return null;
+            }
 
             @Override
-            public void setObject(Object object) {}
+            public void setObject(Object object) {
+            }
 
             @Override
-            public void detach() {}
+            public void detach() {
+            }
 
             @Override
             public SInstance getMInstancia() {
@@ -186,25 +190,25 @@ public class FileUploadPanel extends Panel {
 
     private String generateInitJS() {
         return " $(function () { \n" +
-        "     var params = { \n" +
-        "             file_field_id: '"+fileField.getMarkupId()+"', \n" +
-        "             files_id : '"+ filesContainer.getMarkupId()+"', \n" +
-        "             progress_bar_id : '"+progressBar.getMarkupId()+"', \n" +
-        "  \n" +
-        "             name_id: '"+nameField.getMarkupId()+"', \n" +
-        "             id_id: '"+idField.getMarkupId()+"', \n" +
-        "             hash_id: '"+hashField.getMarkupId()+"', \n" +
-        "             size_id: '"+sizeField.getMarkupId()+"', \n" +
-        "  \n" +
-        "             param_name : '"+PARAM_NAME+"', \n" +
-        "             upload_url : '"+ uploadUrl() +"', \n" +
-        "             upload_id : '"+ serviceId().toString()+"', \n" +
-        "             download_url : '"+downloader.getUrl()+"', \n" +
-        "  \n" +
-        "     }; \n" +
-        "  \n" +
-        "     window.FileUploadPanel.setup(params); \n" +
-        " });";
+                "     var params = { \n" +
+                "             file_field_id: '" + fileField.getMarkupId() + "', \n" +
+                "             files_id : '" + filesContainer.getMarkupId() + "', \n" +
+                "             progress_bar_id : '" + progressBar.getMarkupId() + "', \n" +
+                "  \n" +
+                "             name_id: '" + nameField.getMarkupId() + "', \n" +
+                "             id_id: '" + idField.getMarkupId() + "', \n" +
+                "             hash_id: '" + hashField.getMarkupId() + "', \n" +
+                "             size_id: '" + sizeField.getMarkupId() + "', \n" +
+                "  \n" +
+                "             param_name : '" + PARAM_NAME + "', \n" +
+                "             upload_url : '" + uploadUrl() + "', \n" +
+                "             upload_id : '" + serviceId().toString() + "', \n" +
+                "             download_url : '" + downloader.getUrl() + "', \n" +
+                "  \n" +
+                "     }; \n" +
+                "  \n" +
+                "     window.FileUploadPanel.setup(params); \n" +
+                " });";
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
@@ -218,7 +222,7 @@ public class FileUploadPanel extends Panel {
 
     private UUID serviceId() {
         IAttachmentPersistenceHandler service = ((SIAttachment) model.getObject()).getDocument().getAttachmentPersistenceTemporaryHandler();
-        HttpSession session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
+        HttpSession                   session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
 
         return FileUploadServlet.registerService(session, service);
     }
@@ -228,6 +232,7 @@ public class FileUploadPanel extends Panel {
     }
 
 }
+
 class DownloadLink extends Link<Void> {
 
     private static final String SELF = "_self", BLANK = "_blank";
@@ -241,25 +246,29 @@ class DownloadLink extends Link<Void> {
 
     @Override
     public void onClick() {
-        final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
-            @Override
-            public void write(OutputStream outputStream) throws IOException {
-                outputStream.write(model.getObject().getContentAsByteArray());
+
+        if (model.getObject().getContent() != null) {
+
+            final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
+                @Override
+                public void write(OutputStream outputStream) throws IOException {
+                    outputStream.write(model.getObject().getContentAsByteArray());
+                }
+            };
+
+            final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
+
+            requestHandler.setFileName(model.getObject().getFileName());
+            requestHandler.setCacheDuration(Duration.NONE);
+
+            if (model.getObject().isContentTypeBrowserFriendly()) {
+                requestHandler.setContentDisposition(ContentDisposition.INLINE);
+            } else {
+                requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
             }
-        };
 
-        final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
-
-        requestHandler.setFileName(model.getObject().getFileName());
-        requestHandler.setCacheDuration(Duration.NONE);
-
-        if (model.getObject().isContentTypeBrowserFriendly()) {
-            requestHandler.setContentDisposition(ContentDisposition.INLINE);
-        } else {
-            requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+            getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
         }
-
-        getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
     }
 
     @Override
@@ -271,6 +280,7 @@ class DownloadLink extends Link<Void> {
     @Override
     protected void onConfigure() {
         super.onConfigure();
+        setVisible(model.getObject().getContent() != null);
         if (model.getObject().isContentTypeBrowserFriendly()) {
             target.setObject(BLANK);
         } else {

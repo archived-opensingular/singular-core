@@ -80,11 +80,11 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
         });
     }
 
-    protected boolean anyMessage() {
+    public boolean anyMessage() {
         return getValidationFeedbackHandler().containsNestedErrors();
     }
 
-    protected boolean anyMessage(ValidationErrorLevel level) {
+    public boolean anyMessage(ValidationErrorLevel level) {
         return getValidationFeedbackHandler().containsNestedErrors(level);
     }
 

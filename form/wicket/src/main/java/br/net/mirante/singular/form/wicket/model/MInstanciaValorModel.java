@@ -42,7 +42,7 @@ public class MInstanciaValorModel<T>
     public void setObject(T object) {
         SInstance target = getTarget();
         if (target instanceof SIList) {
-            ((SIList) target).clear();
+            target.clearInstance();
             ((List) object).forEach(((SIList) target)::addValue);
         } else {
             target.setValue(object);

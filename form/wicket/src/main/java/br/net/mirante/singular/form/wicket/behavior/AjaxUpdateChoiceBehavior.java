@@ -20,6 +20,6 @@ public final class AjaxUpdateChoiceBehavior extends AjaxFormChoiceComponentUpdat
     }
     @Override
     public void onUpdate(AjaxRequestTarget target) {
-        listener.onUpdate(this.getComponent(), target, model);
+        listener.onProcess(this.getComponent(), target, model);
     }
 }
