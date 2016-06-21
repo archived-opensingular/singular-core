@@ -18,7 +18,6 @@ import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
@@ -34,6 +33,7 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackIndicator;
 import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackPanel;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -57,7 +57,7 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
     protected abstract String getReadOnlyFormattedText(IModel<? extends SInstance> model);
 
     protected Component appendReadOnlyInput() {
-        final SInstance    mi   = model.getObject();
+        final SInstance mi = model.getObject();
         final BOutputPanel comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(model)));
         formGroup.appendTag("div", comp);
         return comp;
@@ -71,26 +71,26 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         this.view = ctx.getView();
         this.bodyContainer = ctx.getExternalContainer();
 
-        final boolean               hintNoDecoration   = ctx.getHint(NO_DECORATION);
-        final BSContainer<?>        container          = ctx.getContainer();
-        final AtributoModel<String> subtitle           = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
-        final ViewMode              viewMode           = ctx.getViewMode();
-        final BSLabel               label              = new BSLabel("label", labelModel);
-        final List<Component>       feedbackComponents = new ArrayList<>();
+        final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
+        final BSContainer<?> container = ctx.getContainer();
+        final AtributoModel<String> subtitle = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
+        final ViewMode viewMode = ctx.getViewMode();
+        final BSLabel label = new BSLabel("label", labelModel);
+        final List<Component> feedbackComponents = new ArrayList<>();
 
         this.formGroup = container.newFormGroup();
         formGroup.setFeedbackPanelFactory((id, fence, filter) -> new SValidationFeedbackPanel(id, fence));
         BSContainer<?> ctxContainer = ctx.getContainer();
         SValidationFeedbackHandler.bindTo(ctxContainer)
-                .addInstanceModel(this.model)
-                .addListener(new ISValidationFeedbackHandlerListener() {
-                    @Override
-                    public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
-                        if (target.isPresent())
-                            for (Component comp : feedbackComponents)
-                                target.get().add(comp);
-                    }
-                });
+            .addInstanceModel(this.model)
+            .addListener(new ISValidationFeedbackHandlerListener() {
+                @Override
+                public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
+                    if (target.isPresent())
+                        for (Component comp : feedbackComponents)
+                            target.get().add(comp);
+                }
+            });
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
         label.add($b.onConfigure(c -> {
@@ -100,17 +100,21 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         }));
 
         formGroup.appendLabel(label);
+
+        SValidationFeedbackIndicator feedback = new SValidationFeedbackIndicator("feedback", ctx.getContainer());
+        feedbackComponents.add(feedback);
+        formGroup.appendTag("i", feedback.add($b.classAppender("pull-right")));
+
         formGroup.newHelpBlock(subtitle)
-                .add($b.classAppender("hidden-xs"))
-                .add($b.classAppender("hidden-sm"))
-                .add($b.classAppender("hidden-md"))
-                .add(InvisibleIfNullOrEmptyBehavior.getInstance());
+            .add($b.classAppender("hidden-xs"))
+            .add($b.classAppender("hidden-sm"))
+            .add($b.classAppender("hidden-md"))
+            .add(InvisibleIfNullOrEmptyBehavior.getInstance());
 
         final Component input;
 
         if (viewMode.isEdition()) {
             input = appendInput();
-            formGroup.appendFeedback(ctx.getContainer(), IFeedbackMessageFilter.ALL, feedbackComponents::add);
             formGroup.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
@@ -152,7 +156,7 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
 
     protected FormComponent<?>[] findAjaxComponents(Component input) {
         if (input instanceof FormComponent) {
-            return new FormComponent[]{(FormComponent<?>) input};
+            return new FormComponent[] { (FormComponent<?>) input };
         } else if (input instanceof MarkupContainer) {
             List<FormComponent<?>> formComponents = new ArrayList<>();
             ((MarkupContainer) input).visitChildren((component, iVisit) -> {

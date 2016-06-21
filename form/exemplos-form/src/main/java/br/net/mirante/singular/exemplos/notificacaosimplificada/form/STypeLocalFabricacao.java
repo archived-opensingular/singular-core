@@ -2,6 +2,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.SPackageNotificacaoSimplificadaGasMedicinal;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.STypeNotificacaoSimplificadaGasMedicinal;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.converter.SInstanceConverter;
@@ -126,7 +127,7 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
     }
 
     private boolean isGas(SInstance ins) {
-        return getRoot(ins).getType().getNameSimple().equalsIgnoreCase(SPackageNotificacaoSimplificadaGasMedicinal.TIPO);
+        return getRoot(ins).getType().getClass().equals(STypeNotificacaoSimplificadaGasMedicinal.class);
     }
 
     private SInstance getRoot(SInstance instance) {
