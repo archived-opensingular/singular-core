@@ -24,6 +24,7 @@ import br.net.mirante.singular.commons.lambda.ISupplier;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.basic.AtrBootstrap;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.view.SViewTab;
@@ -83,8 +84,35 @@ public class TabMapper extends DefaultCompositeMapper {
                     }
                 })));
             }
+            @Override
+            protected void configureColspan() {
+                super.configureColspan();
+                // Configura o tamanho da aba de acordo com os atributos bootstrap informados
+                AtrBootstrap bootstrap = instance.asAtrBootstrap();
+                final Optional<Integer> colXs = Optional.ofNullable(bootstrap.getColXs(bootstrap.getColPreference())).filter(size -> size < 12);
+                final Optional<Integer> colSm = Optional.ofNullable(bootstrap.getColSm(bootstrap.getColPreference())).filter(size -> size < 12);
+                final Optional<Integer> colMd = Optional.ofNullable(bootstrap.getColMd(bootstrap.getColPreference())).filter(size -> size < 12);
+                final Optional<Integer> colLg = Optional.ofNullable(bootstrap.getColLg(bootstrap.getColPreference())).filter(size -> size < 12);
+                
+                if(colXs.isPresent()){
+                    getNavigation().xs(colXs.get());
+                    getContent().xs(BSTabCol.MAX_COLS - colXs.get());
+                }
+                if(colSm.isPresent()){
+                    getNavigation().sm(colSm.get());
+                    getContent().sm(BSTabCol.MAX_COLS - colSm.get());
+                }
+                if(colMd.isPresent()){
+                    getNavigation().md(colMd.get());
+                    getContent().md(BSTabCol.MAX_COLS - colMd.get());
+                }
+                if(colLg.isPresent()){
+                    getNavigation().lg(colLg.get());
+                    getContent().lg(BSTabCol.MAX_COLS - colLg.get());
+                }
+            }
         };
-
+        
         if (ctx.getCurrentInstance().getParent() == null) {
             panel.add(new ClassAttributeModifier() {
                 @Override
