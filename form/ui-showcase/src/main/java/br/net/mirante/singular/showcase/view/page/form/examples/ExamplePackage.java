@@ -22,29 +22,6 @@ public class ExamplePackage extends SPackage {
 
     private static final String PACKAGE = "mform.exemplo.uiShowcase";
 
-    public enum Types {
-        ORDER(PACKAGE + ".Order");
-
-        public final String name;
-
-        Types(String name) {
-            this.name = name;
-        }
-    }
-
-    public STypeComposite<? extends SIComposite> order;
-    public STypeInteger                          orderNumber;
-    public STypeComposite<?>                     buyer;
-    public STypePersonName                       buyerNome;
-    public STypeCPF                              buyerCpf;
-    public STypeTelefoneNacional                 buyerTelephone;
-    public STypeAttachment                       buyerAvatar;
-
-    public STypeComposite<SIComposite> address;
-    public STypeString addressStreet;
-    public STypeString addressCity;
-    public STypeString addressState;
-    public STypeCEP addressZipcode;
 
     public ExamplePackage() {
         super(PACKAGE);
@@ -52,72 +29,7 @@ public class ExamplePackage extends SPackage {
 
     @Override
     public void onLoadPackage(PackageBuilder pb) {
-        buildOrderType(pb);
+        pb.createType(STypeExample.class);
     }
 
-    private void buildOrderType(PackageBuilder pb) {
-        this.order = pb.createCompositeType("Order");
-        this.order.asAtr().label("Pedido");
-
-        this.orderNumber = addField(order,
-            "OrderNumber", "Número do Pedido", STypeInteger.class);
-        this.orderNumber.withRequired(true);
-
-        buildBuyerField();
-        buildAddressField();
-
-        STypeList<STypeComposite<SIComposite>, SIComposite> originCountry = this.order.addFieldListOfComposite("orginCountry", "country");
-
-        STypeComposite<SIComposite> country = originCountry.getElementsType();
-        originCountry.withView(SViewListByForm::new);
-
-        originCountry.asAtr().label("Países");
-
-        STypeString name = country.addFieldString("name");
-        name.asAtr().label("Nome");
-        country.addFieldInteger("population").asAtr().label("População");
-//        country.withSelectionFromProvider(name,(instance, lb) -> {
-//            lb.add().set(name,"Brazil")
-//                    .add().set(name,"USA")
-//                    .add().set(name,"Canada")
-//                    .add().set(name,"Bosnia")
-//                    .add().set(name,"Argentina")
-//                    .add().set(name,"Chile");
-//        });
-        country.withView(SViewSelectionBySelect::new);
-    }
-
-    private void buildBuyerField() {
-        this.buyer = order.addFieldComposite("Buyer");
-        this.buyer.asAtr().label("Comprador");
-        this.buyerNome = addField(buyer, "Name", "Nome", STypePersonName.class);
-        this.buyerCpf = addField(buyer, "CPF", "CPF", STypeCPF.class);
-        this.buyerTelephone = addField(buyer, "Telephone", "Telefone", STypeTelefoneNacional.class);
-        this.buyerAvatar = addField(buyer, "Avatar", "Imagem", STypeAttachment.class);
-
-        this.buyerNome.asAtr().required();
-
-        this.buyerCpf
-            .asAtr()
-            .dependsOn(this.buyerNome)
-        ;
-    }
-
-    private void buildAddressField() {
-        this.address = order.addFieldComposite("Address");
-        this.address.asAtr().label("Endereço");
-        this.addressStreet = addField(address, "street", "Logradouro", STypeString.class);
-        this.addressCity = addField(address, "city", "Cidade", STypeString.class);
-        this.addressState = addField(address, "state", "Estado", STypeString.class);
-        this.addressZipcode = addField(address, "Zipcode", "CEP", STypeCEP.class);
-
-        this.address.addInstanceValidator(InstanceValidators.allOrNothing());
-    }
-
-    private <I extends SInstance, T extends SType<I>> T addField(STypeComposite<?> root, String name, String label,
-                                                                 Class<T> type) {
-        T campo = root.addField(name, type);
-        campo.asAtr().label(label);
-        return campo;
-    }
 }
