@@ -100,6 +100,11 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         }));
 
         formGroup.appendLabel(label);
+
+        SValidationFeedbackIndicator feedback = new SValidationFeedbackIndicator("feedback", ctx.getContainer());
+        feedbackComponents.add(feedback);
+        formGroup.appendTag("i", feedback.add($b.classAppender("pull-right")));
+
         formGroup.newHelpBlock(subtitle)
             .add($b.classAppender("hidden-xs"))
             .add($b.classAppender("hidden-sm"))
@@ -109,13 +114,7 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         final Component input;
 
         if (viewMode.isEdition()) {
-            SValidationFeedbackIndicator feedback = new SValidationFeedbackIndicator("feedback", ctx.getContainer());
-            feedbackComponents.add(feedback);
-            formGroup.appendTag("i", feedback.add($b.classAppender("pull-right")));
             input = appendInput();
-            //SValidationFeedbackPanel feedback = new SValidationFeedbackPanel("feedback", ctx.getContainer());
-            //feedbackComponents.add(feedback);
-            //formGroup.appendFeedback(feedback);
             formGroup.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
