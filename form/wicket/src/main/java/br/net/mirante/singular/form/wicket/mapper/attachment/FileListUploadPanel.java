@@ -253,7 +253,7 @@ public class FileListUploadPanel extends Panel {
             MInstanceRootModel itemModel = (MInstanceRootModel) item.getModelObject();
             SIAttachment file = (SIAttachment) itemModel.getObject();
             item.add(
-                new DownloadLink((IModel<SIAttachment>) itemModel)
+                new FileUploadPanel.DownloadLink((IModel<SIAttachment>) itemModel)
                     .add(new Label("file_name", Model.of(file.getFileName())))
             );
             item.add(new RemoveButton(itemModel));
