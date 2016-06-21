@@ -5,8 +5,10 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.provider.AtrProvider;
 import br.net.mirante.singular.form.provider.Provider;
 import br.net.mirante.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
@@ -78,8 +80,9 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
         @Override
         protected List<Serializable> load() {
 
-            final Provider provider = model.getObject().asAtrProvider().getProvider();
-            final List<Serializable> values = new ArrayList<>();
+            final AtrProvider        atrProvider = model.getObject().asAtrProvider();
+            final Provider           provider    = atrProvider.getProvider();
+            final List<Serializable> values      = new ArrayList<>();
 
             if (provider != null) {
                 final List<Serializable> result = provider.load(ProviderContext.of(model.getObject()));
@@ -90,15 +93,24 @@ public class SelectMapper extends ControlsFieldComponentAbstractMapper {
 
             if (!model.getObject().isEmptyOfData()) {
 
-                final SInstanceConverter converter = model.getObject().asAtrProvider().getConverter();
-                final Serializable converted = converter.toObject(model.getObject());
-                final RequestCycle requestCycle = RequestCycle.get();
+                final SInstanceConverter        converter    = atrProvider.getConverter();
+                final Serializable              converted    = converter.toObject(model.getObject());
+                final RequestCycle              requestCycle = RequestCycle.get();
+                final List<Object>              ids          = new ArrayList<>();
+                final IFunction<Object, Object> idFunction   = atrProvider.getIdFunction();
 
-                if (!values.contains(converted)) {
+                /**
+                 * Collect All Ids
+                 */
+                values.forEach(v -> ids.add(idFunction.apply(v)));
+
+                if (!ids.contains(idFunction.apply(converted))) {
+
                     /**
                      * Se for requisição Ajax, limpa o campo caso o valor não for encontrado,
                      * caso contrario mantem o valor.
                      */
+
                     if (requestCycle != null && requestCycle.find(AjaxRequestTarget.class) != null) {
                         model.getObject().clearInstance();
                     } else {
