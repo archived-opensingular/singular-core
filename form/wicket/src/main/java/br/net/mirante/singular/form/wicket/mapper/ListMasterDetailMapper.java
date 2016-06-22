@@ -426,7 +426,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             setSize(BSModalBorder.Size.NORMAL);
 
             actionLabel = $m.ofValue("");
-            this.addButton(BSModalBorder.ButtonStyle.PRIMARY, actionLabel, new ActionAjaxButton("btn") {
+            this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, new ActionAjaxButton("btn") {
                 @Override
                 protected void onAction(AjaxRequestTarget target, Form<?> form) {
                     target.add(table);
@@ -441,7 +441,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             });
 
             if (viewMode.isEdition()) {
-                this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
+                this.addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
                     @Override
                     protected void onAction(AjaxRequestTarget target) {
                         if (closeCallback != null) {
