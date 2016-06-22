@@ -35,13 +35,12 @@
                     </div>
                 </div>
             </div>
-            <div class="upload-panel-footer" >
-                <span class="btn btn-add fileinput-button file-choose-button"
-                        title="Carregar Arquivo">
+            <div class="upload-panel-footer">
+                <input class="upload-fileinput" type="file" multiple="multiple" wicket:id="fileUpload" >
+                <label class="btn btn-add fileinput-button file-choose-button" title="Carregar Arquivo">
                     <i class="fa fa-upload"></i>
                     Carregar Arquivo
-                    <input type="file" multiple="multiple" wicket:id="fileUpload" />
-                </span>
+                </label>
             </div>
         </wicket:panel>
     </body>
