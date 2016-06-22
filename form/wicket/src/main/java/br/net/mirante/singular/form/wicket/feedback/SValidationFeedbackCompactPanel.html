@@ -40,7 +40,7 @@
   .has-error .singular-validation-feedback-compact-panel.singular-active > span,
   .has-error .singular-validation-feedback-compact-panel:hover > span {
     -display: none;
-    visibility: hidden;
+    -visibility: hidden;
   }
   </style>
 
@@ -48,12 +48,13 @@
 </head>
 <body>
 <wicket:panel>
-  <span wicket:id="firstMessage">First message</span>
-  <ul wicket:id="feedbackul" class="list-unstyled">
-    <li wicket:id="messages">
-      <span wicket:id="message">All messages</span>
-    </li>
-  </ul>
+  <span><span wicket:id="firstMessage">First message</span> <i class="glyphicon glyphicon-exclamation-circle"></i></span>
+  
+<!--   <ul wicket:id="feedbackul" class="list-unstyled"> -->
+<!--     <li wicket:id="messages"> -->
+<!--       <span wicket:id="message">All messages</span> -->
+<!--     </li> -->
+<!--   </ul> -->
 </wicket:panel>
 </body>
 </html>
