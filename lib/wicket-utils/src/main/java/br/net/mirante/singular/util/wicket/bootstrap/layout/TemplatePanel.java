@@ -21,8 +21,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
 import org.apache.wicket.util.resource.StringResourceStream;
 
-import com.google.common.base.Throwables;
-
+import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.commons.lambda.ISupplier;
 
@@ -72,7 +71,7 @@ public class TemplatePanel extends Panel {
                 try {
                     markup = markupParser.parse();
                 } catch (Exception e) {
-                    throw Throwables.propagate(e);
+                    throw SingularUtil.propagate(e);
                 }
                 
                 // If child == null, than return the markup fragment starting
