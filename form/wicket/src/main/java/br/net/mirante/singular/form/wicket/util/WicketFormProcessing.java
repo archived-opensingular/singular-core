@@ -17,6 +17,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -262,13 +263,12 @@ public class WicketFormProcessing {
     }
 
     public static boolean isVisibleAndExistsInHierarchy(SInstance si) {
-        boolean   isVisible = true;
-        SInstance current   = si;
-        while (current != null && isVisible) {
-            isVisible = current.asAtr().isVisible() && current.asAtr().exists();
-            current = current.getParent();
+        for (SInstance i = si; i.getParent() != null; i = i.getParent()) {
+            if (!(i.asAtr().isVisible() && i.asAtr().exists())) {
+                return false;
+            }
         }
-        return isVisible;
+        return true;
     }
 
     protected static boolean isSkipValidationOnRequest() {
