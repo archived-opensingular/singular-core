@@ -40,8 +40,7 @@ public class TabMapper extends DefaultCompositeMapper {
     @SuppressWarnings("unchecked")
     public void buildView(final WicketBuildContext ctx) {
 
-        final SIComposite instance = (SIComposite) ctx.getModel().getObject();
-        final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) instance.getType();
+        final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) ctx.getModel().getObject().getType();
         SViewTab tabView = (SViewTab) tComposto.getView();
 
         BSPanelGrid panel = new BSPanelGrid("panel") {
@@ -88,6 +87,7 @@ public class TabMapper extends DefaultCompositeMapper {
             protected void configureColspan() {
                 super.configureColspan();
                 // Configura o tamanho da aba de acordo com os atributos bootstrap informados
+                SIComposite instance = (SIComposite) ctx.getModel().getObject();
                 AtrBootstrap bootstrap = instance.asAtrBootstrap();
                 final Optional<Integer> colXs = Optional.ofNullable(bootstrap.getColXs(bootstrap.getColPreference())).filter(size -> size < 12);
                 final Optional<Integer> colSm = Optional.ofNullable(bootstrap.getColSm(bootstrap.getColPreference())).filter(size -> size < 12);
@@ -123,6 +123,7 @@ public class TabMapper extends DefaultCompositeMapper {
             });
         }
 
+        SIComposite instance = (SIComposite) ctx.getModel().getObject();
         for (SViewTab.STab tab : tabView.getTabs()) {
             defineTabIconCss(ctx, instance, tab.getTypesName());
             IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();

@@ -5,9 +5,43 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+
+import com.google.common.base.Strings;
+
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.SFormUtil;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeSimple;
+import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
@@ -15,7 +49,11 @@ import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.wicket.*;
+import br.net.mirante.singular.form.wicket.ISValidationFeedbackHandlerListener;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
+import br.net.mirante.singular.form.wicket.UIBuilderWicket;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
@@ -38,26 +76,6 @@ import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import com.google.common.base.Strings;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @SuppressWarnings("serial")
 public class ListMasterDetailMapper implements IWicketComponentMapper {
@@ -113,8 +131,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             @Override
             protected void buildFooter(BSContainer<?> footer, Form<?> form) {
-                AbstractListaMapper.buildFooter(footer, ctx,
-                        () -> newAddAjaxLink(modal, ctx.getModel()));
+                AbstractListaMapper.buildFooter(footer, ctx,  () -> newAddAjaxLink(modal, ctx));
             }
 
             @Override
@@ -345,29 +362,20 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         });
     }
 
-    private void appendAddButton(BSContainer<?> container, MasterDetailModal modal, IModel<? extends SInstance> m) {
-        container
-                .newTemplateTag(t -> ""
-                        + "<button"
-                        + " wicket:id='_add'"
-                        + " class='btn blue btn-sm pull-right'"
-                        + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
-                        + "</button>")
-                .add(newAddAjaxLink(modal, m));
-    }
-
-    private AjaxLink<Void> newAddAjaxLink(final MasterDetailModal modal, final IModel<? extends SInstance> m) {
-        return new AjaxLink<Void>("_add") {
+    private AjaxLink<String> newAddAjaxLink(final MasterDetailModal modal, final WicketBuildContext ctx) {
+        return new AjaxLink<String>("_add") {
             @Override
             protected void onInitialize() {
                 super.onInitialize();
                 add(WicketUtils.$b.attr("title", "Adicionar"));
                 add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
+                setBody($m.ofValue("<i class=\"fa fa-plus\"></i>"+AbstractListaMapper.definirLabel(ctx)));
+                setEscapeModelStrings(false);
             }
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                final SInstance si = m.getObject();
+                final SInstance si = ctx.getModel().getObject();
                 if (si instanceof SIList) {
                     final SIList<?> sil = (SIList<?>) si;
                     if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
@@ -418,7 +426,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             setSize(BSModalBorder.Size.NORMAL);
 
             actionLabel = $m.ofValue("");
-            this.addButton(BSModalBorder.ButtonStyle.PRIMARY, actionLabel, new ActionAjaxButton("btn") {
+            this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, new ActionAjaxButton("btn") {
                 @Override
                 protected void onAction(AjaxRequestTarget target, Form<?> form) {
                     target.add(table);
@@ -433,7 +441,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             });
 
             if (viewMode.isEdition()) {
-                this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
+                this.addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
                     @Override
                     protected void onAction(AjaxRequestTarget target) {
                         if (closeCallback != null) {
