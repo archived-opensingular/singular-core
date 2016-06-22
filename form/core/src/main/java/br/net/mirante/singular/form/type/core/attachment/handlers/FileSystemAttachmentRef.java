@@ -5,13 +5,13 @@
 
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import com.google.common.base.Throwables;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
+
+import br.net.mirante.singular.commons.base.SingularUtil;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
 @SuppressWarnings("serial")
 public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
@@ -47,7 +47,7 @@ public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
         try {
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {
-            throw Throwables.propagate(e);
+            throw SingularUtil.propagate(e);
         }
     }
 }
