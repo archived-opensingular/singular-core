@@ -30,13 +30,8 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
     }
 
 
-    @Override
-    protected void onLoadPackage(PackageBuilder pb) {
-        super.onLoadPackage(pb);
+    public static void onLoadType(STypeComposite<SIComposite> peticaoSimplificada) {
 
-        pb.getDictionary().loadPackage(SPackagePPSCommon.class);
-
-        final STypeComposite<SIComposite>                      peticaoSimplificada     = pb.createCompositeType(TIPO);
         final STypeComposite<SIComposite>                      tipoPeticao             = peticaoSimplificada.addFieldComposite("tipoPeticao");
         final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger("id");
         final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString("nome");
@@ -282,6 +277,14 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         });
 
 
+    }
+
+
+    @Override
+    protected void onLoadPackage(PackageBuilder pb) {
+        super.onLoadPackage(pb);
+        pb.loadPackage(SPackagePPSCommon.class);
+        pb.createType(STypePeticaoPrimariaSimplificada.class);
     }
 
 }

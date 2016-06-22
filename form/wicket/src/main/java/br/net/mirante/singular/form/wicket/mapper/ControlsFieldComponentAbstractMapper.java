@@ -98,12 +98,12 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
                 c.setVisible(false);
             }
         }));
-
-        formGroup.appendLabel(label);
-
+        
         SValidationFeedbackIndicator feedback = new SValidationFeedbackIndicator("feedback", ctx.getContainer());
         feedbackComponents.add(feedback);
-        formGroup.appendTag("i", feedback.add($b.classAppender("pull-right")));
+        formGroup.appendTag("i", feedback);
+
+        formGroup.appendLabel(label);
 
         formGroup.newHelpBlock(subtitle)
             .add($b.classAppender("hidden-xs"))
