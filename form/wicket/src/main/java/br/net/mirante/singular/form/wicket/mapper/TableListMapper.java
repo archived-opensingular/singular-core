@@ -5,9 +5,29 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+
+import java.util.Set;
+
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.commons.lambda.IBiConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewListByTable;
@@ -24,20 +44,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-
-import java.util.Set;
-
-import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListaMapper {
 
@@ -251,20 +257,20 @@ public class TableListMapper extends AbstractListaMapper {
         public TableListPanel(String id, boolean withForm) {
             super(id, withForm);
         }
-
+        
         @Override
-        protected IFunction<TemplatePanel, String> getTemplate(boolean withForm) {
+        public IFunction<TemplatePanel, String> getTemplateFunction() {
             String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";
             return (tp) -> String.format(wrapper, ""
-                    + "  <div class='list-table-input'>"
-                    + "    <div wicket:id='_hd' class='list-table-heading'></div>"
-                    + "    <div class='list-table-body' wicket:id='_co' >"
-                    + "    </div>"
-                    + "    <div wicket:id='_ft' class='list-table-footer'></div>"
-                    + "  </div>"
-                    + "");
+                + "  <div class='list-table-input'>"
+                + "    <div wicket:id='_hd' class='list-table-heading'></div>"
+                + "    <div class='list-table-body' wicket:id='_co' >"
+                + "    </div>"
+                + "    <div wicket:id='_ft' class='list-table-footer'></div>"
+                + "  </div>"
+                + "");
         }
-
+        
         public static final class TableListPanelBuilder {
 
             private TableListPanelBuilder() {

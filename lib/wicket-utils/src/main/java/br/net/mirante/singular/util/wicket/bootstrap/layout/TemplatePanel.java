@@ -5,15 +5,23 @@
 
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import java.nio.charset.Charset;
+
+import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.IMarkupFragment;
 import org.apache.wicket.markup.Markup;
+import org.apache.wicket.markup.MarkupParser;
+import org.apache.wicket.markup.MarkupResourceStream;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.panel.IMarkupSourcingStrategy;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
+import org.apache.wicket.util.resource.StringResourceStream;
+
+import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.commons.lambda.ISupplier;
@@ -33,20 +41,10 @@ public class TemplatePanel extends Panel {
 
     public TemplatePanel(String id, IFunction<TemplatePanel, String> templateFunction) {
         this(id);
-        setTemplateFunction(templateFunction);
-    }
-
-    protected TemplatePanel(String id) {
-        super(id);
-//        setRenderBodyOnly(true);
-    }
-
-    protected final IFunction<TemplatePanel, String> getTemplateFunction() {
-        return templateFunction;
-    }
-
-    protected final void setTemplateFunction(IFunction<TemplatePanel, String> templateFunction) {
         this.templateFunction = templateFunction;
+    }
+    public TemplatePanel(String id) {
+        super(id);
     }
 
     protected void onBeforeComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
@@ -54,14 +52,29 @@ public class TemplatePanel extends Panel {
 
     protected void onAfterComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
     }
-
+    
+    public IFunction<TemplatePanel, String> getTemplateFunction() {
+        return templateFunction;
+    }
+    
     @Override
     protected IMarkupSourcingStrategy newMarkupSourcingStrategy() {
         return new PanelMarkupSourcingStrategy(false) {
             @Override
             public IMarkupFragment getMarkup(MarkupContainer parent, Component child) {
-                Markup markup = Markup.of("<wicket:panel>" + getTemplateFunction().apply(TemplatePanel.this) + "</wicket:panel>");
-
+                // corrige o problema de encoding
+                StringResourceStream stringResourceStream = new StringResourceStream("<wicket:panel>" + getTemplateFunction().apply(TemplatePanel.this) + "</wicket:panel>", "text/html");
+                stringResourceStream.setCharset(Charset.forName(Application.get().getMarkupSettings().getDefaultMarkupEncoding()));
+                
+                MarkupParser markupParser = new MarkupParser(new MarkupResourceStream(stringResourceStream));
+                markupParser.setWicketNamespace(MarkupParser.WICKET);
+                Markup markup;
+                try {
+                    markup = markupParser.parse();
+                } catch (Exception e) {
+                    throw Throwables.propagate(e);
+                }
+                
                 // If child == null, than return the markup fragment starting
                 // with <wicket:panel>
                 if (child == null)

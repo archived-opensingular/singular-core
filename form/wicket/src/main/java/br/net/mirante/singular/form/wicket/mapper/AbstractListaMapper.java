@@ -259,13 +259,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     protected static String createButtonMarkup(WicketBuildContext ctx) {
         String label = definirLabel(ctx);
 
-        return "" +
-                "<button wicket:id=\"_add\" " +
-                "       class=\"btn btn-add\" type=\"button\" " +
-                "       title=\"" + label + "\">" +
-                "       <i class=\"fa fa-plus\"></i>" +
-                "           " + label +
-                "</button>";
+        return String.format("<button wicket:id=\"_add\" class=\"btn btn-add\" type=\"button\" title=\"%s\"><i class=\"fa fa-plus\"></i>%s</button>", label, label);
     }
 
     protected static void personalizeCSS(BSContainer<?> footer) {
