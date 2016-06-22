@@ -168,7 +168,7 @@ public abstract class WicketFormUtils {
 
             SInstance instance = WicketFormUtils.instanciaIfAware(comp.getDefaultModel()).orElse(null);
 
-            Optional<WicketBuildContext> wbc = WicketBuildContext.get(comp);
+            Optional<WicketBuildContext> wbc = WicketBuildContext.find(comp);
             if (wbc.isPresent()) {
 
                 Optional<String> title = wbc.get().resolveContainerTitle()

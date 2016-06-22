@@ -30,7 +30,7 @@ import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 
 /**
  * Classe marcadora para todos os tipos de vocabulario controlado Todo
- * vocabulario controlado deve herdar desta classe, direta ou indiretamente, por
+ * vocabulario controlado deve herdar desta classeConformeMatriz, direta ou indiretamente, por
  * questões de compatibilidade com os serviços que serão expostos
  */
 @XmlRootElement(name = "vocabulario-controlado", namespace = "http://www.anvisa.gov.br/reg-med/schema/domains")

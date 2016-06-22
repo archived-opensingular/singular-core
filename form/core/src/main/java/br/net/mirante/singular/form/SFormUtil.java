@@ -254,4 +254,13 @@ public final class SFormUtil {
         }
         return selected == null ? null : packages.get(selected);
     }
+
+
+    /**
+     * Indica se o tipo é um definição do próprio singular (true) ou se é uma definição de terceiros ou do usuário.
+     */
+    public static final boolean isSingularBuiltInType(SType<?> type) {
+        return type.getPackage().getName().startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX);
+    }
+
 }

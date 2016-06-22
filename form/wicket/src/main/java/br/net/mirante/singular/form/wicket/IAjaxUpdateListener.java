@@ -14,6 +14,9 @@ import java.io.Serializable;
 
 public interface IAjaxUpdateListener extends Serializable {
 
-    void onUpdate(Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel);
-    void onError(Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel);
+    //@formatter:off
+    void onValidate(Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel);
+    void onProcess (Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel);
+    void onError   (Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel);
+    //@formatter:on
 }

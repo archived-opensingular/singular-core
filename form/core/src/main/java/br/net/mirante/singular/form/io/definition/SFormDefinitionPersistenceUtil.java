@@ -6,16 +6,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import br.net.mirante.singular.form.*;
 import com.google.common.collect.Lists;
 
 import br.net.mirante.singular.commons.internal.function.SupplierUtil;
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SScopeBase;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.SingularFormException;
 
 /**
  * Transforma a definição de um tipo ou mesmo de um pacote inteiro em uma
@@ -137,7 +131,7 @@ public class SFormDefinitionPersistenceUtil {
         }
 
         public boolean isNecessaryToArchive(SType<?> type) {
-            return !type.getPackage().getName().startsWith("singular.form.");
+            return !SFormUtil.isSingularBuiltInType(type);
         }
 
         public SIPersistenceType createTypeInPackage(SType<?> type) {

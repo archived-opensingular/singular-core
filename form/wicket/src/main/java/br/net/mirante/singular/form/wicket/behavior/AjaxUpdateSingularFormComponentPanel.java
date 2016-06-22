@@ -38,7 +38,7 @@ public class AjaxUpdateSingularFormComponentPanel<T> extends AbstractDefaultAjax
         T value = this.getComponent().getRequest().getRequestParameters().getParameterValue(VALUE_REQUEST_PARAMETER_NAME).to(type);
         valueModelResolver.accept(value, model);
         target.add(this.getComponent());
-        listener.onUpdate(this.getComponent(), target, model);
+        listener.onProcess(this.getComponent(), target, model);
     }
 
 }

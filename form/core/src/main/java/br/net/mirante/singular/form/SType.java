@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,6 +30,8 @@ import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewSelectionBySelect;
+
+import static br.net.mirante.singular.form.type.basic.SPackageBasic.ATR_UPDATE_LISTENER;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
 public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled {
@@ -59,8 +62,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     private Set<SType<?>> dependentTypes;
 
-    private Consumer<SInstance> initListener;
-
     private AttributeDefinitionInfo attributeDefinitionInfo;
 
     /**
@@ -84,8 +85,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     private SView view;
 
     private UIComponentMapper customMapper;
-
-    private Consumer<SInstance> updateListener;
 
     /** Indica se o tipo está no meio da execução do seu método {@link #onLoadType(TypeBuilder)}. */
     private boolean callingOnLoadType;
@@ -504,8 +503,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
-    public SType<I> withUpdateListener(Consumer<I> consumer) {
-        this.updateListener = (Consumer<SInstance>) consumer;
+    public SType<I> withUpdateListener(IConsumer<I> consumer) {
+        asAtr().setAttributeValue(ATR_UPDATE_LISTENER, consumer);
         return this;
     }
 
@@ -704,6 +703,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * @param newInstance Instance recently created.
      */
     public void init(I newInstance) {
+        IConsumer<I> initListener = asAtr().getAttributeValue(SPackageBasic.ATR_INIT_LISTENER);
         if (initListener != null) {
             initListener.accept(newInstance);
         }
@@ -861,12 +861,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return customMapper;
     }
 
-    public Consumer<SInstance> getUpdateListener() {
-        return updateListener;
+    public IConsumer<SInstance> getUpdateListener() {
+        return asAtr().getAttributeValue(ATR_UPDATE_LISTENER);
     }
 
-    public void withInitListener(Consumer<SInstance> initListener) {
-        this.initListener = initListener;
+    public void withInitListener(IConsumer<I> initListener) {
+        this.asAtr().setAttributeValue(SPackageBasic.ATR_INIT_LISTENER, initListener);
     }
 
     public SelectionBuilder typelessSelection() {
@@ -884,6 +884,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     final void setTypeId(int typeId) {
         this.typeId = typeId;
+    }
+
+    /** Retorna um identificador único do tipo dentro de um mesmo dicionário. */
+    final int getTypeId() {
+        return this.typeId;
     }
 
     @Override

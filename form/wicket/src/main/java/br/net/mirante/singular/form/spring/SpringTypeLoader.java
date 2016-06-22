@@ -27,16 +27,16 @@ import java.util.Optional;
  *
  * @author Daniel C. Bordin
  */
-public abstract class SpringTypeLoader<KEY extends Serializable> extends TypeLoader<KEY>
+public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends TypeLoader<TYPE_KEY>
         implements ApplicationContextAware, BeanNameAware, NamedBean {
 
     private String springBeanName;
 
     @Override
-    protected final Optional<RefType> loadRefTypeImpl(KEY typeId) {
+    protected final Optional<RefType> loadRefTypeImpl(TYPE_KEY typeId) {
         Optional<SType<?>> type = loadType(typeId);
         if (type == null) {
-            throw new SingularFormException(getClass().getName() + ".loadType(KEY) retornou null em vez de um Optional");
+            throw new SingularFormException(getClass().getName() + ".loadType(TYPE_KEY) retornou null em vez de um Optional");
         }
         return type.map(t -> new SpringRefType(SpringFormUtil.checkBeanName(this), typeId, t));
     }

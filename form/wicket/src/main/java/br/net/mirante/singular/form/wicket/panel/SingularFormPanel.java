@@ -11,8 +11,11 @@ import java.util.Objects;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.resource.JQueryPluginResourceReference;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
@@ -32,7 +35,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos
  */
-public abstract class SingularFormPanel<KEY extends Serializable> extends Panel {
+public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends Panel {
 
     /**
      * Container onde os componentes serão adicionados
@@ -56,7 +59,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
 
     private RefSDocumentFactory documentFactoryRef;
 
-    private transient SFormConfig<KEY> singularFormConfig;
+    private transient SFormConfig<FORM_KEY> singularFormConfig;
 
     /**
      * Construtor do painel
@@ -67,7 +70,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
      *            configuração para manipulação do documento a ser criado ou
      *            recuperado.
      */
-    public SingularFormPanel(String id, SFormConfig<KEY> singularFormConfig) {
+    public SingularFormPanel(String id, SFormConfig<FORM_KEY> singularFormConfig) {
         super(id);
         this.rootInstance = new MInstanceRootModel<>();
         this.singularFormConfig = Objects.requireNonNull(singularFormConfig);
@@ -105,7 +108,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
      *            referências e configurador inicial da instancia e SDocument
      * @return Não pode ser Null
      */
-    protected abstract SInstance createInstance(SFormConfig<KEY> singularFormConfig);
+    protected abstract SInstance createInstance(SFormConfig<FORM_KEY> singularFormConfig);
 
     /**
      * Método wicket, local onde os componentes são adicionados
@@ -117,6 +120,12 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
         rootInstance.setObject(instance);
         updateContainer();
         add(buildFeedbackPanel());
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(JavaScriptHeaderItem.forReference(new JQueryPluginResourceReference(SingularFormPanel.class, "SingularFormPanel.js")));
     }
 
     /**
@@ -180,7 +189,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
         this.viewMode = viewMode;
     }
 
-    public SFormConfig<KEY> getSingularFormConfig() {
+    public SFormConfig<FORM_KEY> getSingularFormConfig() {
         return singularFormConfig;
     }
 

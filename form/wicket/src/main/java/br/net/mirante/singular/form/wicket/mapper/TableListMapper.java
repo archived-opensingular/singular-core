@@ -5,29 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.*;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-
-import java.util.Optional;
-import java.util.Set;
-
-import br.net.mirante.singular.form.type.basic.AtrBasic;
-import br.net.mirante.singular.form.view.AbstractSViewListWithControls;
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-
-import com.google.common.base.Strings;
-
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.commons.lambda.IBiConsumer;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewListByTable;
@@ -44,6 +24,20 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+
+import java.util.Set;
+
+import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListaMapper {
 
@@ -62,19 +56,19 @@ public class TableListMapper extends AbstractListaMapper {
         ctx.getContainer().appendComponent((String id) -> buildPannel(ctx, id));
     }
 
-    private MetronicPanel buildPannel(WicketBuildContext ctx, String id){
-        final IModel<SIList<SInstance>> list = $m.get(ctx::getCurrentInstance);
-        final SViewListByTable view = (SViewListByTable) ctx.getView();
-        final Boolean isEdition = ctx.getViewMode() == null || ctx.getViewMode().isEdition();
-        final SIList<SInstance> iLista = list.getObject();
-        final SType<?> currentType = ctx.getCurrentInstance().getType();
+    private TableListPanel buildPannel(WicketBuildContext ctx, String id) {
+        final IModel<SIList<SInstance>> list        = $m.get(ctx::getCurrentInstance);
+        final SViewListByTable          view        = (SViewListByTable) ctx.getView();
+        final Boolean                   isEdition   = ctx.getViewMode() == null || ctx.getViewMode().isEdition();
+        final SIList<SInstance>         iLista      = list.getObject();
+        final SType<?>                  currentType = ctx.getCurrentInstance().getType();
 
         addMinimumSize(currentType, iLista);
 
-        MetronicPanel panel = MetronicPanelBuilder.build(id,
+        TableListPanel panel = TableListPanel.TableListPanelBuilder.build(id,
                 (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
                 (c, form) -> builContent(c, form, list, ctx, view, isEdition),
-                (f, form) -> buildFooter(f, form, ctx) );
+                (f, form) -> buildFooter(f, form, ctx));
         return panel;
     }
 
@@ -82,7 +76,7 @@ public class TableListMapper extends AbstractListaMapper {
                              WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtr().getLabel());
-        final Label title = new Label("_title", label);
+        final Label          title = new Label("_title", label);
 
         ctx.configureContainer(label);
         header.appendTag("span", title);
@@ -100,28 +94,47 @@ public class TableListMapper extends AbstractListaMapper {
                              WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
 
         final String markup = ""
-            + " <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
-            + "      <thead wicket:id='_h'></thead>                                                              "
-            + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
-            + "      <tfoot wicket:id='_ft'>                                                                     "
-            + "          <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
-            + "      </tfoot>                                                                                    "
-            + " </table>" +
-            "                                                                                         ";
-        final TemplatePanel template = content.newTemplateTag(tp -> markup);
-        final BSTSection tableHeader = new BSTSection("_h").setTagName("thead");
-        final ElementsView tableRows = new TableElementsView("_e", list, ctx, form);
-        final WebMarkupContainer tableFooter = new WebMarkupContainer("_ft");
-        final BSContainer<?> footerBody = new BSContainer<>("_fb");
-        final SType<SInstance> elementsType = list.getObject().getElementsType();
+                + " <div class='list-table-empty' wicket:id='empty-content'>                                             "
+                + "     <p class='list-table-empty-message'>Nenhum item foi adicionado. </p>                             "
+                + " </div>                                                                                               "
+                + " <div wicket:id='not-empty-content'>                                                                  "
+                + "     <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
+                + "          <thead wicket:id='_h'></thead>                                                              "
+                + "          <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
+                + "          <tfoot wicket:id='_ft'>                                                                     "
+                + "              <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
+                + "          </tfoot>                                                                                    "
+                + "     </table>                                                                                         "
+                + " </div>                                                                                               ";
 
-        template.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
-        content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
+        final TemplatePanel template = content.newTemplateTag(tp -> markup);
+
+        final WebMarkupContainer emptyContent = new WebMarkupContainer("empty-content");
+        emptyContent.add(new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+                component.setVisible(list.getObject().isEmpty());
+            }
+        });
+        template.add(emptyContent);
+
+        final WebMarkupContainer notEmptyContent = new WebMarkupContainer("not-empty-content");
+
+        final BSTSection         tableHeader  = new BSTSection("_h").setTagName("thead");
+        final ElementsView       tableRows    = new TableElementsView("_e", list, ctx, form);
+        final WebMarkupContainer tableFooter  = new WebMarkupContainer("_ft");
+        final BSContainer<?>     footerBody   = new BSContainer<>("_fb");
+        final SType<SInstance>   elementsType = list.getObject().getElementsType();
+
+        notEmptyContent.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
+
+//        content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
 
         if (elementsType instanceof STypeComposite) {
 
             final STypeComposite<?> compositeElementsType = (STypeComposite<?>) elementsType;
-            final BSTRow row = tableHeader.newRow();
+            final BSTRow            row                   = tableHeader.newRow();
 
             if (view.isInsertEnabled()) {
                 row.newTHeaderCell($m.ofValue(""));
@@ -131,11 +144,11 @@ public class TableListMapper extends AbstractListaMapper {
 
             for (SType<?> tCampo : compositeElementsType.getFields()) {
 
-                final Integer preferentialWidth = tCampo.asAtrBootstrap().getColPreference(1);
-                final IModel<String> headerModel = $m.ofValue(tCampo.asAtr().getLabel());
-                final BSTDataCell cell = row.newTHeaderCell(headerModel);
-                final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
-                final boolean isCampoObrigatorio = tCampo.asAtr().isRequired();
+                final Integer        preferentialWidth  = tCampo.asAtrBootstrap().getColPreference(1);
+                final IModel<String> headerModel        = $m.ofValue(tCampo.asAtr().getLabel());
+                final BSTDataCell    cell               = row.newTHeaderCell(headerModel);
+                final String         width              = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
+                final boolean        isCampoObrigatorio = tCampo.asAtr().isRequired();
 
                 ctx.configureContainer(headerModel);
 
@@ -156,9 +169,11 @@ public class TableListMapper extends AbstractListaMapper {
 
         tableFooter.setVisible(!(view.isNewEnabled() && isEdition));
 
-        template.add(tableHeader)
-            .add(tableRows)
-            .add(tableFooter.add(footerBody));
+        template.add(
+                notEmptyContent.add(tableHeader)
+                        .add(tableRows)
+                        .add(tableFooter.add(footerBody))
+        );
 
         content.getParent().add(dependsOnModifier(list));
     }
@@ -183,13 +198,13 @@ public class TableListMapper extends AbstractListaMapper {
         @Override
         protected void populateItem(Item<SInstance> item) {
 
-            final BSTRow row = new BSTRow("_r", BSGridSize.MD);
-            final IModel<SInstance> im = item.getModel();
-            final SInstance ins = im.getObject();
+            final BSTRow            row = new BSTRow("_r", BSGridSize.MD);
+            final IModel<SInstance> im  = item.getModel();
+            final SInstance         ins = im.getObject();
 
             SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(row)
-                .addInstanceModel(im)
-                .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(row)));
+                    .addInstanceModel(im)
+                    .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(row)));
             row.add($b.classAppender("singular-form-table-row can-have-error"));
             row.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(it -> it.containsNestedErrors())));
 
@@ -206,15 +221,13 @@ public class TableListMapper extends AbstractListaMapper {
             }
 
             if (ins instanceof SIComposite) {
-
-                final SIComposite ci = (SIComposite) ins;
+                final SIComposite       ci = (SIComposite) ins;
                 final STypeComposite<?> ct = ci.getType();
 
                 for (SType<?> ft : ct.getFields()) {
                     final IModel<SInstance> fm = new SInstanceCampoModel<>(item.getModel(), ft.getNameSimple());
                     wicketBuilder.build(ctx.createChild(row.newCol(), true, fm), viewMode);
                 }
-
             } else {
                 wicketBuilder.build(ctx.createChild(row.newCol(), true, im), viewMode);
             }
@@ -226,6 +239,68 @@ public class TableListMapper extends AbstractListaMapper {
             }
 
             item.add(row);
+        }
+    }
+
+    private static abstract class TableListPanel extends MetronicPanel {
+
+        public TableListPanel(String id) {
+            super(id);
+        }
+
+        public TableListPanel(String id, boolean withForm) {
+            super(id, withForm);
+        }
+
+        @Override
+        protected IFunction<TemplatePanel, String> getTemplate(boolean withForm) {
+            String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";
+            return (tp) -> String.format(wrapper, ""
+                    + "  <div class='list-table-input'>"
+                    + "    <div wicket:id='_hd' class='list-table-heading'></div>"
+                    + "    <div class='list-table-body' wicket:id='_co' >"
+                    + "    </div>"
+                    + "    <div wicket:id='_ft' class='list-table-footer'></div>"
+                    + "  </div>"
+                    + "");
+        }
+
+        public static final class TableListPanelBuilder {
+
+            private TableListPanelBuilder() {
+            }
+
+            public static TableListPanel build(String id,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildHeading,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildContent,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildFooter) {
+                return build(id, true, buildHeading, buildContent, buildFooter);
+            }
+
+            public static TableListPanel build(String id,
+                                               boolean withForm,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildHeading,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildContent,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildFooter) {
+
+                return new TableListPanel(id, withForm) {
+                    @Override
+                    protected void buildHeading(BSContainer<?> heading, Form<?> form) {
+                        buildHeading.accept(heading, form);
+                    }
+
+                    @Override
+                    protected void buildFooter(BSContainer<?> footer, Form<?> form) {
+                        buildFooter.accept(footer, form);
+                    }
+
+                    @Override
+                    protected void buildContent(BSContainer<?> content, Form<?> form) {
+                        buildContent.accept(content, form);
+                    }
+                };
+            }
+
         }
     }
 }

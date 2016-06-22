@@ -18,7 +18,6 @@ import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
@@ -34,6 +33,7 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackIndicator;
 import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackPanel;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -76,16 +76,19 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         final AtributoModel<String> subtitle = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
         final ViewMode viewMode = ctx.getViewMode();
         final BSLabel label = new BSLabel("label", labelModel);
+        final List<Component> feedbackComponents = new ArrayList<>();
 
         this.formGroup = container.newFormGroup();
         formGroup.setFeedbackPanelFactory((id, fence, filter) -> new SValidationFeedbackPanel(id, fence));
-        SValidationFeedbackHandler.bindTo(ctx.getContainer())
+        BSContainer<?> ctxContainer = ctx.getContainer();
+        SValidationFeedbackHandler.bindTo(ctxContainer)
             .addInstanceModel(this.model)
             .addListener(new ISValidationFeedbackHandlerListener() {
                 @Override
                 public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
                     if (target.isPresent())
-                        target.get().add(formGroup);
+                        for (Component comp : feedbackComponents)
+                            target.get().add(comp);
                 }
             });
         label.add(DisabledClassBehavior.getInstance());
@@ -95,8 +98,13 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
                 c.setVisible(false);
             }
         }));
+        
+        SValidationFeedbackIndicator feedback = new SValidationFeedbackIndicator("feedback", ctx.getContainer());
+        feedbackComponents.add(feedback);
+        formGroup.appendTag("i", feedback);
 
         formGroup.appendLabel(label);
+
         formGroup.newHelpBlock(subtitle)
             .add($b.classAppender("hidden-xs"))
             .add($b.classAppender("hidden-sm"))
@@ -107,11 +115,10 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
 
         if (viewMode.isEdition()) {
             input = appendInput();
-            formGroup.appendFeedback(ctx.getContainer(), IFeedbackMessageFilter.ALL);
             formGroup.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
-                    if(model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null){
+                    if (model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null) {
                         oldClasses.add("dependant-input-group");
                     }
                     return oldClasses;
@@ -163,5 +170,21 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
             return new FormComponent[0];
         }
 
+    }
+
+    /**
+     * Filtra os eventos, disparando somente um
+     * <p>
+     * quando um blur acontecer, verifica se um change está agendado se não agenda um blur
+     * quando um change acontecer, verifica se um blur está agendado e renive dando prioridade ao change
+     * <p>
+     * a verificação é adicionada nas 2 pontas porque quando exite mascara o blur acontece antes do change
+     * quando não tem, acontece o contrario.
+     *
+     * @param comp
+     */
+    @Override
+    public void adjustJSEvents(Component comp) {
+        comp.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS));
     }
 }
