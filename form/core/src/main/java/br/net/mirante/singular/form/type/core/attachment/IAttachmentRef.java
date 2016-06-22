@@ -5,11 +5,12 @@
 
 package br.net.mirante.singular.form.type.core.attachment;
 
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-
 import java.io.IOException;
 import java.io.InputStream;
+
+import com.google.common.io.ByteStreams;
+
+import br.net.mirante.singular.commons.base.SingularUtil;
 
 /**
  * Referência para um arquivo binário persistido, contudo não identifica nome
@@ -46,7 +47,7 @@ public interface IAttachmentRef {
         try {
             return ByteStreams.toByteArray(getContent());
         } catch (IOException e) {
-            throw Throwables.propagate(e);
+            throw SingularUtil.propagate(e);
         }
     }
 

@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.form.view;
 
-import br.net.mirante.singular.form.SInstance;
-import com.google.common.base.Throwables;
-
 import java.util.function.Function;
+
+import br.net.mirante.singular.commons.base.SingularUtil;
+import br.net.mirante.singular.form.SInstance;
 
 /**
  * Representa uma regra de mapeamento de uma instância em uma view. Se a regra
@@ -29,7 +29,7 @@ public abstract class ViewRule implements Function<SInstance, SView> {
         try {
             return view.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw Throwables.propagate(e);
+            throw SingularUtil.propagate(e);
         }
     }
 }
