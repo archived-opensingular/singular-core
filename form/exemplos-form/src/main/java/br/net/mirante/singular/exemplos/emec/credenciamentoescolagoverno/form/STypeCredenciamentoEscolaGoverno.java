@@ -19,19 +19,29 @@ public class STypeCredenciamentoEscolaGoverno extends STypeComposite<SIComposite
         
         this.asAtr().label("Credenciamento de Escola de Governo");
         
-        STypeInformacoesPDI informacoesPDI = this.addField("informacoesPDI", STypeInformacoesPDI.class);
-        informacoesPDI
-            .asAtr().required()
-            .label("Informações do PDI");
         
         SViewTab tabbed = this.setView(SViewTab::new);
-        tabbed.addTab("mantenedora", "Mantenedora");
+        tabbed.addTab(addField("mantenedora", STypeMantenedora.class), "Mantenedora");
         tabbed.addTab("mantida", "Mantida");
         tabbed.addTab("corpoDirigente", "Corpo Dirigente");
         tabbed.addTab("membrosCPA", "Membros da CPA");
-        tabbed.addTab(informacoesPDI);
+        
+        tabbed.addTab(addField("PDI", STypePDI.class), "Informações do PDI");
+        tabbed.addTab(addField("projetoPedagogico", STypePDIProjetoPedagogico.class), "Projeto Pedagógico");
+        tabbed.addTab(addField("documentos", STypePDIDocumentos.class), "Documentos");
+        tabbed.addTab(addRegimentoEstatuto(), "Regimento/Estatuto");
         
         // configuração do tamanho da coluna de navegação das abas
         this.asAtrBootstrap().colPreference(2);
+    }
+    
+    private STypeComposite<SIComposite> addRegimentoEstatuto() {
+        final STypeComposite<SIComposite> regimentoEstatuto = this.addFieldComposite("regimentoEstatuto");
+        regimentoEstatuto.asAtr().label("Regimento/Estatuto");
+        //TODO - richtext
+        regimentoEstatuto.addFieldString("textoRegimento", true)
+            .withTextAreaView().asAtr().label("25 Texto do Regimento")
+            .asAtrBootstrap().colPreference(12);
+        return regimentoEstatuto;
     }
 }

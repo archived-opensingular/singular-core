@@ -41,9 +41,13 @@ public class SViewTab extends SView {
         return tab;
     }
 
-    public STab addTab(SType<?> type) {
-        return addTab(type.getNameSimple(), type.asAtr().getLabel())
+    public STab addTab(SType<?> type, String label) {
+        return addTab(type.getNameSimple(), label)
             .add(type);
+    }
+
+    public STab addTab(SType<?> type) {
+        return addTab(type, type.asAtr().getLabel());
     }
 
     public final static class STab implements Serializable {
