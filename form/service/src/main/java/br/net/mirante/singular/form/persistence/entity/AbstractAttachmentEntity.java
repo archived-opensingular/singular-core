@@ -5,18 +5,24 @@
 
 package br.net.mirante.singular.form.persistence.entity;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.util.Constants;
+import org.apache.commons.io.IOUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
-
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.support.persistence.entity.BaseEntity;
-import br.net.mirante.singular.support.persistence.util.Constants;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 
 @MappedSuperclass
 @Table(schema = Constants.SCHEMA, name = "TB_ARQUIVO_PETICAO")
@@ -31,14 +37,19 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
 
     @Lob
     @Column(name = "BL_ARQUIVO_PETICAO")
-    private byte[] rawContent;
+    private Blob rawContent;
 
     @Column(name = "NU_TAMANHO")
-    private int size;
-    
-    public AbstractAttachmentEntity() {}
-    
-    public AbstractAttachmentEntity(String id) { this.id = id;   }
+    private long size;
+
+    private transient File f;
+
+    public AbstractAttachmentEntity() {
+    }
+
+    public AbstractAttachmentEntity(String id) {
+        this.id = id;
+    }
 
     @Override
     public String getCod() {
@@ -61,19 +72,19 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
         this.hashSha1 = hashSha1;
     }
 
-    public byte[] getRawContent() {
+    public Blob getRawContent() {
         return rawContent;
     }
 
-    public void setRawContent(byte[] rawContent) {
+    public void setRawContent(Blob rawContent) {
         this.rawContent = rawContent;
     }
 
-    public Integer getSize() {
+    public long getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(long size) {
         this.size = size;
     }
 
@@ -83,8 +94,26 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
     }
 
     @Override
-    public InputStream getContent() {
-        return new ByteArrayInputStream(rawContent);
+    public InputStream newInputStream() {
+        try {
+            if (f == null) {
+                f = File.createTempFile(id, hashSha1);
+                f.deleteOnExit();
+                try (InputStream in = rawContent.getBinaryStream();
+                     FileOutputStream fos = new FileOutputStream(f)) {
+                    IOUtils.copy(in, fos);
+                }
+            }
+            return new FileInputStream(f);
+        } catch (IOException | SQLException e) {
+            throw new SingularException(e);
+        }
+    }
+
+    public void deleteTempFile() {
+        if (f != null && f.exists()) {
+            f.delete();
+        }
     }
 
     @Override
@@ -93,25 +122,25 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
         int result = 1;
         result = prime * result + ((hashSha1 == null) ? 0 : hashSha1.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + size;
+        result = (int) (prime * result + size);
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)    return true;
-        if (obj == null)    return false;
-        if (getClass() != obj.getClass())   return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         AbstractAttachmentEntity other = (AbstractAttachmentEntity) obj;
         if (hashSha1 == null) {
             if (other.hashSha1 != null) return false;
-        } else if (!hashSha1.equals(other.hashSha1))    return false;
+        } else if (!hashSha1.equals(other.hashSha1)) return false;
         if (id == null) {
-            if (other.id != null)   return false;
-        } else if (!id.equals(other.id))    return false;
+            if (other.id != null) return false;
+        } else if (!id.equals(other.id)) return false;
         if (size != other.size) return false;
         return true;
     }
-    
+
 
 }

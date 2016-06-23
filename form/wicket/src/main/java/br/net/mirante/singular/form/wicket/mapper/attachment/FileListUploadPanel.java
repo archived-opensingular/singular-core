@@ -54,10 +54,10 @@ public class FileListUploadPanel extends Panel {
 
     private final FileUploadField          fileField;
     private final WebMarkupContainer       fileList;
-    private final DownloadBehavior         downloader;
     private final AddFileBehavior          adder;
     private final RemoveFileBehavior       remover;
     private final WicketBuildContext       ctx;
+    private final DownloadBehavior downloader;
     private       List<MInstanceRootModel> listOfFileModels;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
@@ -83,10 +83,9 @@ public class FileListUploadPanel extends Panel {
         add(fileList = new WebMarkupContainer("fileList"));
         updateListOfFileModels(model.getObject());
         fileList.add(new FilesListView(listOfFileModels, model, ctx));
-        add(downloader = new DownloadBehavior(model.getObject().getDocument()
-                .getAttachmentPersistenceTemporaryHandler()));
         add(adder = new AddFileBehavior());
         add(remover = new RemoveFileBehavior());
+        add(downloader = new DownloadBehavior(model.getObject().getDocument()));
         fileField.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
     }
 
@@ -264,8 +263,8 @@ public class FileListUploadPanel extends Panel {
             MInstanceRootModel itemModel = (MInstanceRootModel) item.getModelObject();
             SIAttachment       file      = (SIAttachment) itemModel.getObject();
             item.add(
-                    new FileUploadPanel.DownloadLink((IModel<SIAttachment>) itemModel)
-                            .add(new Label("file_name", Model.of(file.getFileName())))
+                    DownloadResource.link("downloadLink", itemModel, downloader.getUrl())
+                                .add(new Label("file_name", Model.of(file.getFileName())))
             );
             item.add(new RemoveButton(itemModel));
         }

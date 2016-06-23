@@ -13,6 +13,7 @@ import br.net.mirante.singular.form.document.SDocument;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
+import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -68,16 +69,12 @@ class AttachmentDocumentService {
         return service;
     }
 
-    public IAttachmentRef addContent(String oldReferenceId, byte[] content) {
-        return addContent(oldReferenceId, getTemporaryAttachmentHandler().addAttachment(content));
-    }
-
-    public IAttachmentRef addContent(String oldReferenceId, InputStream in) {
-        return addContent(oldReferenceId, getTemporaryAttachmentHandler().addAttachment(in));
+    public IAttachmentRef addContent(String currentReferenceId, File content, long length) {
+        return addContent(currentReferenceId, getTemporaryAttachmentHandler().addAttachment(content, length));
     }
 
     private IAttachmentRef addContent(String oldReferenceId, IAttachmentRef newRef) {
-        if (newRef.getSize() == null) {
+        if (newRef.getSize() == 0) {
             throw new SingularFormException("O size da nova referência a anexo deveria ter sido preenchido");
         }
         if (oldReferenceId == null) {

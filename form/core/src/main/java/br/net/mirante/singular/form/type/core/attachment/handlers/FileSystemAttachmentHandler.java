@@ -5,6 +5,13 @@
 
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
+import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.form.io.HashUtil;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import com.google.common.base.Throwables;
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,14 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.LinkedList;
-
-import com.google.common.io.ByteStreams;
-
-import br.net.mirante.singular.commons.base.SingularUtil;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.io.HashUtil;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import java.util.UUID;
 
 /**
  * This handler persists uploaded files in the filesystem. You mus inform which
@@ -27,21 +27,20 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
  * temporary files but also for definitive files. It's worth noticing that files
  * are stored with its content SHA-1 hash as its name. Also, all files are
  * stored ZIP compressed. Usage is as follows: <code>
- *     SDocument sdocument = instance.getDocument();
- *     sdocument.setAttachmentPersistenceHandler(new ServiceRef<IAttachmentPersistenceHandler>() {
- *        public IAttachmentPersistenceHandler get() {
- *             return new FileSystemAttachmentHandler("/tmp");
- *          } 
- *      });
+ * SDocument sdocument = instance.getDocument();
+ * sdocument.setAttachmentPersistenceHandler(new ServiceRef<IAttachmentPersistenceHandler>() {
+ * public IAttachmentPersistenceHandler get() {
+ * return new FileSystemAttachmentHandler("/tmp");
+ * }
+ * });
  * </code>
- * 
+ *
  * @author Fabricio Buzeto
  */
 @SuppressWarnings("serial")
 public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandler {
 
     private File folder;
-    private IdGenerator generator = new IdGenerator();
 
     public FileSystemAttachmentHandler(String folder) {
         this(new File(folder));
@@ -49,85 +48,6 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
 
     public FileSystemAttachmentHandler(File folder) {
         this.folder = folder;
-    }
-
-    public void setGenerator(IdGenerator generator) {
-        this.generator = generator;
-    }
-    
-    @Override
-    public Collection<? extends IAttachmentRef> getAttachments() {
-        LinkedList<IAttachmentRef> result = new LinkedList<>();
-        File[] files = folder.listFiles();
-        if (files == null) {
-            return result;
-        }
-        for (File f : files) {
-            if (f.isFile() && f.exists()) {
-                try {
-                    result.add(toRef(f));
-                } catch (Exception e) {
-                    throw SingularUtil.propagate(e);
-                }
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public IAttachmentRef getAttachment(String hashId) {
-        try {
-            File file = fileFromId(hashId);
-            if(file.exists()){
-                return toRef(file);
-            }
-        } catch (Exception e) {
-            throw SingularUtil.propagate(e);
-        }
-        return null;
-    }
-
-    private File fileFromId(String hashId) {
-        return new File(folder, hashId);
-    }
-
-    private FileSystemAttachmentRef toRef(File file) throws Exception {
-        FileInputStream in = new FileInputStream(file);
-        return new FileSystemAttachmentRef(file.getName(), HashUtil.toSHA1Base16(in),
-            file.getAbsolutePath(), (int) file.length());
-    }
-
-
-    @Override
-    public void deleteAttachment(String hashId) {
-        if(hashId == null) return ; 
-        File file = fileFromId(hashId);
-        file.delete();
-    }
-
-    @Override
-    public IAttachmentRef addAttachment(byte[] content) {
-        try {
-            String sha1 = HashUtil.toSHA1Base16(content);
-            String id = generator.generate(content);
-            File dest = fileFromId(id);
-            FileOutputStream out = new FileOutputStream(dest);
-            out.write(content);
-            out.close();
-            return new FileSystemAttachmentRef(id, sha1, dest.getAbsolutePath(), 
-                content.length);
-        } catch (Exception e) {
-            throw SingularUtil.propagate(e);
-        }
-    }
-
-    @Override
-    public IAttachmentRef addAttachment(InputStream in) {
-        try {
-            return addAttachment(ByteStreams.toByteArray(in));
-        } catch (IOException e) {
-            throw new SingularFormException("Erro lendo origem de dados", e);
-        }
     }
 
     /**
@@ -144,5 +64,87 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         tmpDir.mkdir();
         tmpDir.deleteOnExit();
         return tmpDir;
+    }
+
+    @Override
+    public IAttachmentRef addAttachment(File file, long length) {
+        try {
+            return addAttachment(new FileInputStream(file), length);
+        } catch (Exception e) {
+            throw new SingularException(e);
+        }
+    }
+
+    private IAttachmentRef addAttachment(InputStream origin, long originLength) throws IOException {
+        String id = UUID.randomUUID().toString();
+        File temp = fileFromId(id);
+        try (
+                FileOutputStream out = new FileOutputStream(temp);
+                InputStream in = origin
+        ) {
+            IOUtils.copy(in, out);
+        }
+        String sha1 = HashUtil.toSHA1Base16(temp);
+        File destination = fileFromId(sha1);
+        temp.renameTo(destination);
+        return new FileSystemAttachmentRef(id, sha1, destination.getAbsolutePath(), originLength);
+    }
+
+    @Override
+    public IAttachmentRef copy(IAttachmentRef toBeCopied) {
+        try {
+            return addAttachment(toBeCopied.newInputStream(), toBeCopied.getSize());
+        } catch (Exception e) {
+            throw new SingularException(e);
+        }
+    }
+
+    @Override
+    public Collection<? extends IAttachmentRef> getAttachments() {
+        LinkedList<IAttachmentRef> result = new LinkedList<>();
+        File[] files = folder.listFiles();
+        if (files == null) {
+            return result;
+        }
+        for (File f : files) {
+            if (f.isFile() && f.exists()) {
+                try {
+                    result.add(toRef(f));
+                } catch (Exception e) {
+                    throw Throwables.propagate(e);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public IAttachmentRef getAttachment(String hashId) {
+        try {
+            File file = fileFromId(hashId);
+            if (file.exists()) {
+                return toRef(file);
+            }
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
+        return null;
+    }
+
+    protected File fileFromId(String hashId) {
+        return new File(folder, hashId);
+    }
+
+    private FileSystemAttachmentRef toRef(File file) throws Exception {
+        FileInputStream in = new FileInputStream(file);
+        return new FileSystemAttachmentRef(file.getName(), HashUtil.toSHA1Base16(in),
+                file.getAbsolutePath(), (int) file.length());
+    }
+
+    @Override
+    public void deleteAttachment(String hashId) {
+        if (hashId == null) return;
+        File file = fileFromId(hashId);
+        file.delete();
     }
 }

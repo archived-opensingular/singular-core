@@ -142,10 +142,10 @@ public class SDocument {
      */
     public IAttachmentPersistenceHandler getAttachmentPersistencePermanentHandler() {
         IAttachmentPersistenceHandler h = lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
-        if (h == null) {
-            throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
-                + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
-        }
+//        if (h == null) {
+//            throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
+//                + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
+//        }
         return h;
     }
 
@@ -426,7 +426,7 @@ class AttachmentPersistenceHelper {
         if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
             IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
             if (fileRef != null) {
-                IAttachmentRef newRef = persistent.addAttachment(fileRef.getContentAsByteArray());
+                IAttachmentRef newRef = persistent.copy(fileRef);
                 deleteOldFiles(attachment, fileRef);
                 updateFileId(attachment, newRef);
             }

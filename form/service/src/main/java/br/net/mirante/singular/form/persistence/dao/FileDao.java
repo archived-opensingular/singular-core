@@ -5,31 +5,32 @@
 
 package br.net.mirante.singular.form.persistence.dao;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
-
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-
+import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.io.HashUtil;
 import br.net.mirante.singular.form.persistence.entity.AbstractAttachmentEntity;
 import br.net.mirante.singular.form.persistence.entity.Attachment;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.type.core.attachment.handlers.IdGenerator;
 import br.net.mirante.singular.support.persistence.BaseDAO;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.UUID;
 
 @SuppressWarnings("serial")
 public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long> implements IAttachmentPersistenceHandler<T> {
+
+    @Inject
+    private SessionFactory sessionFactory;
 
     public FileDao() {
         super((Class<T>) Attachment.class);
@@ -38,10 +39,6 @@ public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long
     public FileDao(Class<T> tipo) {
         super(tipo);
     }
-
-    @Inject
-    private SessionFactory sessionFactory;
-    private IdGenerator genereator = new IdGenerator();
 
     private Session session() {
         return sessionFactory.getCurrentSession();
@@ -59,59 +56,69 @@ public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long
     }
 
     @Transactional
-    public T find(String hash){
+    public T find(String hash) {
         return (T) session().createCriteria(tipo).add(Restrictions.eq("hashSha1", hash)).setMaxResults(1).uniqueResult();
     }
-    
-    @Override @Transactional
-    public IAttachmentRef addAttachment(byte[] content) {
-        return addAttachment(new ByteArrayInputStream(content));
-    }
 
-    @Override @Transactional
-    public IAttachmentRef addAttachment(InputStream in) {
-        try {
-            byte[] byteArray = ByteStreams.toByteArray(in);
-            String sha1 = HashUtil.toSHA1Base16(byteArray);
-            return insert(createFile(byteArray, sha1));
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
-        }
-    }
 
-    private T createFile(byte[] byteArray, String sha1) {
-        T file = createInstance();
-        file.setId(genereator.generate(byteArray));
-        file.setHashSha1(sha1);
-        file.setRawContent(byteArray);
-        file.setSize(byteArray.length);
-        return file;
+    private T createFile(String sha1, InputStream in, long length) throws IOException {
+        T fileEntity = createInstance();
+        fileEntity.setId(UUID.randomUUID().toString());
+        fileEntity.setHashSha1(sha1);
+        fileEntity.setRawContent(session().getLobHelper().createBlob(in, length));
+        fileEntity.setSize(length);
+        return fileEntity;
     }
 
     private T createInstance() {
         try {
             return tipo.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            return null;
+            throw new SingularException(e);
         }
     }
 
-    @Override @Transactional
+    @Transactional
+    @Override
+    public IAttachmentRef addAttachment(File file, long length) {
+        try {
+            String sha1 = HashUtil.toSHA1Base16(file);
+            return insert(createFile(sha1, new FileInputStream(file), length));
+        } catch (IOException e) {
+            throw new SingularException(e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public IAttachmentRef copy(IAttachmentRef toBeCopied) {
+        try {
+            return insert(createFile(toBeCopied.getHashSHA1(), toBeCopied.newInputStream(), toBeCopied.getSize()));
+        } catch (IOException e) {
+            throw new SingularException(e);
+        }
+    }
+
+    @Override
+    @Transactional
     public List<T> getAttachments() {
         Criteria crit = session().createCriteria(tipo);
         return crit.list();
     }
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public IAttachmentRef getAttachment(String hashId) {
         return find(hashId);
     }
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public void deleteAttachment(String hashId) {
         T file = createInstance();
         file.setId(hashId);
         remove(file);
+        file.deleteTempFile();
     }
 
 }

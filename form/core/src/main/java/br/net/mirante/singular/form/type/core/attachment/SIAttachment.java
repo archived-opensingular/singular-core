@@ -9,10 +9,12 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SingularFormException;
 import org.apache.tika.Tika;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class SIAttachment extends SIComposite {
 
@@ -20,12 +22,8 @@ public class SIAttachment extends SIComposite {
         return AttachmentDocumentService.lookup(this);
     }
 
-    public void setContent(InputStream in) {
-        setContent(getAttachmentService().addContent(getFileId(), in));
-    }
-
-    public void setContent(byte[] content) {
-        setContent(getAttachmentService().addContent(getFileId(), content));
+    public void setContent(File f, long length) {
+        setContent(getAttachmentService().addContent(getFileId(), f, length));
     }
 
     private void setContent(IAttachmentRef ref) {
@@ -70,10 +68,6 @@ public class SIAttachment extends SIComposite {
             ref = getDocument().getAttachmentPersistencePermanentHandler().getAttachment(hash);
         }
 
-        if (ref == null) {
-            //todo trocar para SingularException, rever se é relevante uma vez que crash a aplicacao pela falta de um anexo.
-//            throw new RuntimeException(errorMsg("Não foi encontrado o arquivo de hash=" + hash + " e nome=" + getFileName()));
-        }
         return ref;
     }
 
@@ -91,14 +85,14 @@ public class SIAttachment extends SIComposite {
 
     public void setFileHashSHA1(String hash) {  setValue(STypeAttachment.FIELD_HASH_SHA1, hash);    }
 
-    public void setFileSize(Integer size) { setValue(STypeAttachment.FIELD_SIZE, size); }
+    public void setFileSize(long size   ) { setValue(STypeAttachment.FIELD_SIZE, size); }
 
     /**
      * Retorna o tamanho do arquivo binário associado ou -1 se não houver
      * arquivo.
      */
-    public Integer getFileSize() {
-        return getValueInteger(STypeAttachment.FIELD_SIZE);
+    public long getFileSize() {
+        return Optional.ofNullable(getValueLong(STypeAttachment.FIELD_SIZE)).orElse(-1l);
     }
 
     public String getFileName() {
@@ -121,19 +115,15 @@ public class SIAttachment extends SIComposite {
         return getValueString(STypeAttachment.FIELD_HASH_SHA1);
     }
 
-    public byte[] getContentAsByteArray() {
-        IAttachmentRef ref = getAttachmentRef();
-        return ref == null ? null : ref.getContentAsByteArray();
-    }
 
-    public InputStream getContent() {
+    public InputStream newInputStream() {
         IAttachmentRef ref = getAttachmentRef();
-        return ref == null ? null : ref.getContent();
+        return ref == null ? null : ref.newInputStream();
     }
 
     private String getContentType() {
         try {
-            return new Tika().detect(getContent());
+            return new Tika().detect(newInputStream());
         } catch (IOException e) {
             throw new SingularFormException("Não foi possivel detectar o content type.");
         }
@@ -155,7 +145,7 @@ public class SIAttachment extends SIComposite {
 
     @Override
     public String toStringDisplayDefault() {
-        if (getFileSize() == null || getFileName() == null) {
+        if (getFileSize() <= 0 || getFileName() == null) {
             return super.toStringDisplayDefault();
         }
         final String[] sufixo    = new String[]{"B", "KB", "MB", "GB"};

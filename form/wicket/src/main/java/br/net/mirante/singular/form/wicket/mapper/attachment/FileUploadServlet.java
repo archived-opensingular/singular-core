@@ -1,11 +1,14 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.*;
-import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
+import org.apache.wicket.ajax.json.JSONArray;
+import org.apache.wicket.ajax.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,14 +16,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.wicket.ajax.json.JSONArray;
-import org.apache.wicket.ajax.json.JSONObject;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.UPLOAD_ID_KEY;
@@ -32,7 +41,7 @@ import static java.util.Collections.synchronizedList;
  * FileUploadServlet.registerService o UUID retornado deve ser usado no
  * parâmetro UPLOAD_ID_KEY do request.
  */
-@WebServlet(urlPatterns = { FileUploadServlet.UPLOAD_URL+"/*" })
+@WebServlet(urlPatterns = {FileUploadServlet.UPLOAD_URL + "/*"})
 public class FileUploadServlet extends HttpServlet {
     public final static String UPLOAD_URL = "/fileUpload";
 
@@ -42,7 +51,7 @@ public class FileUploadServlet extends HttpServlet {
 
     private static List<String> temporaryIds = synchronizedList(new LinkedList<>());
 
-    public static UUID registerService(HttpSession session, IAttachmentPersistenceHandler service){
+    public static UUID registerService(HttpSession session, IAttachmentPersistenceHandler service) {
         Map<UUID, IAttachmentPersistenceHandler> services =
                 createOfGetSessionMap(session, SERVICE_MAP_KEY);
         Map<IAttachmentPersistenceHandler, UUID> uuids =
@@ -52,7 +61,9 @@ public class FileUploadServlet extends HttpServlet {
     }
 
     private static UUID regsterOrReturnKnownId(IAttachmentPersistenceHandler service, Map<UUID, IAttachmentPersistenceHandler> services, Map<IAttachmentPersistenceHandler, UUID> uuids) {
-        if(uuids.containsKey(service)){ return uuids.get(service);  }
+        if (uuids.containsKey(service)) {
+            return uuids.get(service);
+        }
         return registerNewService(service, services, uuids);
     }
 
@@ -64,14 +75,14 @@ public class FileUploadServlet extends HttpServlet {
     }
 
     private static Map createOfGetSessionMap(HttpSession session, String mapKey) {
-        if(session.getAttribute(mapKey) == null){
+        if (session.getAttribute(mapKey) == null) {
             session.setAttribute(mapKey, new HashMap<>());
         }
         return (Map<UUID, IAttachmentPersistenceHandler>) session.getAttribute(mapKey);
     }
 
     private static IAttachmentPersistenceHandler getService(HttpSession session,
-                                                            UUID serviceId ){
+                                                            UUID serviceId) {
         Map<UUID, IAttachmentPersistenceHandler> services =
                 createOfGetSessionMap(session, SERVICE_MAP_KEY);
         return services.get(serviceId);
@@ -82,7 +93,7 @@ public class FileUploadServlet extends HttpServlet {
         validadeMultpart(request);
         FileUploadProcessor processor = new FileUploadProcessor(
                 request, response,
-                (id)-> getService(request.getSession(),id));
+                (id) -> getService(request.getSession(), id));
         processor.handleFiles();
     }
 
@@ -99,31 +110,30 @@ class FileUploadProcessor {
     private JSONArray filesJson;
     private HttpServletRequest request;
     private HttpServletResponse response;
-
-    private ServletFileUpload handler() {
-        return new ServletFileUpload(new DiskFileItemFactory());
-    }
-
     private Function<UUID, IAttachmentPersistenceHandler> getService;
 
     FileUploadProcessor(
             HttpServletRequest request, HttpServletResponse response,
-            Function<UUID, IAttachmentPersistenceHandler> getService){
+            Function<UUID, IAttachmentPersistenceHandler> getService) {
         this.request = request;
         this.response = response;
         this.getService = getService;
         filesJson = new JSONArray();
     }
 
+    private ServletFileUpload handler() {
+        return new ServletFileUpload(new DiskFileItemFactory());
+    }
+
     public void handleFiles() {
         try {
             Map<String, List<FileItem>> params = handler().parseParameterMap(request);
             UUID serviceId = serviceId(params);
-            if(serviceId != null){
+            if (serviceId != null) {
                 addFileToService(params.get(PARAM_NAME), service(serviceId));
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SingularException(e);
         } finally {
             writeResponseAnswer();
         }
@@ -131,7 +141,7 @@ class FileUploadProcessor {
 
     private UUID serviceId(Map<String, List<FileItem>> params) {
         List<FileItem> upload_id = params.get(UPLOAD_ID_KEY);
-        if(!upload_id.isEmpty() && upload_id.get(0).isFormField()){
+        if (!upload_id.isEmpty() && upload_id.get(0).isFormField()) {
             return idFromField(upload_id.get(0));
         }
         return null;
@@ -143,7 +153,7 @@ class FileUploadProcessor {
 
     private void addFileToService(List<FileItem> files,
                                   IAttachmentPersistenceHandler service) throws Exception {
-        if(service != null){
+        if (service != null) {
             processFiles(filesJson, service, files);
         }
     }
@@ -164,7 +174,15 @@ class FileUploadProcessor {
                                  IAttachmentPersistenceHandler service,
                                  FileItem item) throws Exception {
         if (!item.isFormField()) {
-            IAttachmentRef ref = service.addAttachment(item.getInputStream());
+            File f = File.createTempFile("servletTemp", item.getFieldName());
+            f.deleteOnExit();
+            try (
+                    InputStream in = item.getInputStream();
+                    OutputStream out = new FileOutputStream(f);
+            ) {
+                IOUtils.copy(in, out);
+            }
+            IAttachmentRef ref = service.addAttachment(f, item.getSize());
             fileGroup.put(createJsonFile(item, ref));
         }
     }
@@ -179,7 +197,7 @@ class FileUploadProcessor {
             jsonFile.put("size", ref.getSize());
             return jsonFile;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SingularException(e);
         }
     }
 
@@ -194,7 +212,7 @@ class FileUploadProcessor {
             writer.close();
         } catch (IOException e) {
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
-                    "Not possible to perform upload response.",e);
+                    "Not possible to perform upload response.", e);
         }
     }
 }

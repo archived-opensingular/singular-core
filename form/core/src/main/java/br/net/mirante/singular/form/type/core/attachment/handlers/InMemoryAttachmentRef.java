@@ -5,20 +5,24 @@
 
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
+import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {
 
-    private final int size;
+    private final long size;
     private final String hashSHA1Hex;
-    private final byte[] conteudo;
+    private final File tempFile;
 
-    public InMemoryAttachmentRef(byte[] conteudo, int size, String hashSHA1Hex) {
-        this.conteudo = conteudo;
+    public InMemoryAttachmentRef(File tempFile, long size, String hashSHA1Hex) {
+        this.tempFile = tempFile;
         this.size = size;
         this.hashSHA1Hex = hashSHA1Hex;
     }
@@ -29,12 +33,16 @@ public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {
     }
 
     @Override
-    public InputStream getContent() {
-        return CompressionUtil.inflateToInputStream(conteudo);
+    public InputStream newInputStream() {
+        try {
+            return new FileInputStream(tempFile);
+        } catch (FileNotFoundException e) {
+            throw new SingularException(e);
+        }
     }
 
     @Override
-    public Integer getSize() {
+    public long getSize() {
         return size;
     }
 }

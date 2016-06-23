@@ -17,9 +17,9 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
 
     private String id, hashSHA1, path;
-    private Integer size;
+    private long size;
 
-    public FileSystemAttachmentRef(String id, String hashSHA1, String path, Integer size) {
+    public FileSystemAttachmentRef(String id, String hashSHA1, String path, long size) {
         this.id = id;
         this.hashSHA1 = hashSHA1;
         this.path = path;
@@ -38,12 +38,12 @@ public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
         return path;
     }
 
-    public Integer getSize() {
+    public long getSize() {
         return size;
     }
 
     @Override
-    public InputStream getContent() {
+    public InputStream newInputStream() {
         try {
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {

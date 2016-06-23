@@ -8,7 +8,6 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -20,25 +19,18 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
-import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
-import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
-import org.apache.wicket.util.time.Duration;
 
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
-import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -47,15 +39,15 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
  */
 public class FileUploadPanel extends Panel {
     public static String PARAM_NAME = "FILE-UPLOAD",
-            UPLOAD_ID_KEY           = "upload_id";
+            UPLOAD_ID_KEY = "upload_id";
 
     private final IModel<SIAttachment> model;
-    private final ViewMode             viewMode;
+    private final ViewMode viewMode;
 
-    private final FileUploadField fileField;
-    private final HiddenField     nameField, hashField, sizeField, idField;
-    private final WebMarkupContainer filesContainer, progressBar;
-    private final DownloadBehavior downloader;
+    private FileUploadField fileField;
+    private HiddenField nameField, hashField, sizeField, idField;
+    private WebMarkupContainer filesContainer, progressBar;
+    private DownloadBehavior downlaoder;
 
     private final Label fileName = new Label("fileName", new AbstractReadOnlyModel<String>() {
         @Override
@@ -73,7 +65,7 @@ public class FileUploadPanel extends Panel {
         }
     };
 
-    private final Link<Void> downloadLink;
+    private WebMarkupContainer downloadLink;
 
     private final AjaxButton removeFileButton = new AjaxButton("remove_btn") {
 
@@ -125,39 +117,11 @@ public class FileUploadPanel extends Panel {
         super(id, model);
         this.model = model;
         this.viewMode = viewMode;
-        downloadLink = new DownloadLink(model);
-        fileField = new FileUploadField("fileUpload", dummyModel(model));
-        nameField = new HiddenField("file_name",
-                new PropertyModel<>(model, "fileName"));
-        hashField = new HiddenField("file_hash",
-                new PropertyModel<>(model, "fileHashSHA1"));
-        sizeField = new HiddenField("file_size",
-                new PropertyModel<>(model, "fileSize"));
-        idField = new HiddenField("file_id",
-                new PropertyModel<>(model, "fileId"));
 
-        add((filesContainer = new WebMarkupContainer("files"))
-                        .add(downloadLink.add(fileName)),
-                uploadFileButton.add(fileField),
-                removeFileButton,
-                nameField, hashField, sizeField, idField,
-                progressBar = new WebMarkupContainer("progress")
-        );
-        add(downloader = new DownloadBehavior(model.getObject().getDocument()
-                .getAttachmentPersistenceTemporaryHandler()));
-        add(new ClassAttributeModifier() {
-
-            @Override
-            protected Set<String> update(Set<String> oldClasses) {
-                oldClasses.add("fileinput fileinput-new upload-single upload-single-uploaded");
-                return oldClasses;
-            }
-        });
-
-        uploadFileButton.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
-        downloadLink.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
 
     }
+
+
 
     private IMInstanciaAwareModel dummyModel(final IModel<SIAttachment> model) {
         return new IMInstanciaAwareModel() {
@@ -184,6 +148,41 @@ public class FileUploadPanel extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+
+
+        this.add(downlaoder = new DownloadBehavior(model.getObject().getDocument()));
+        downloadLink = DownloadResource.link("downloadLink", model, downlaoder.getUrl());
+        downloadLink.add(fileName);
+        fileField = new FileUploadField("fileUpload", dummyModel(model));
+        nameField = new HiddenField("file_name",
+                new PropertyModel<>(model, "fileName"));
+        hashField = new HiddenField("file_hash",
+                new PropertyModel<>(model, "fileHashSHA1"));
+        sizeField = new HiddenField("file_size",
+                new PropertyModel<>(model, "fileSize"));
+        idField = new HiddenField("file_id",
+                new PropertyModel<>(model, "fileId"));
+
+        add((filesContainer = new WebMarkupContainer("files")).add(downloadLink));
+        add(uploadFileButton.add(fileField));
+        add(removeFileButton);
+        add(nameField);
+        add(hashField);
+        add(sizeField);
+        add(idField);
+        add(progressBar = new WebMarkupContainer("progress"));
+
+        add(new ClassAttributeModifier() {
+
+            @Override
+            protected Set<String> update(Set<String> oldClasses) {
+                oldClasses.add("fileinput fileinput-new upload-single upload-single-uploaded");
+                return oldClasses;
+            }
+        });
+
+        uploadFileButton.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
+        downloadLink.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
     }
 
     @Override
@@ -208,7 +207,7 @@ public class FileUploadPanel extends Panel {
                 "             param_name : '" + PARAM_NAME + "', \n" +
                 "             upload_url : '" + uploadUrl() + "', \n" +
                 "             upload_id : '" + serviceId().toString() + "', \n" +
-                "             download_url : '" + downloader.getUrl() + "', \n" +
+                "             download_url : '" + downlaoder.getUrl() + "', \n" +
                 "  \n" +
                 "     }; \n" +
                 "  \n" +
@@ -226,8 +225,8 @@ public class FileUploadPanel extends Panel {
     }
 
     private UUID serviceId() {
-        IAttachmentPersistenceHandler service = ((SIAttachment) model.getObject()).getDocument().getAttachmentPersistenceTemporaryHandler();
-        HttpSession                   session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
+        IAttachmentPersistenceHandler service = model.getObject().getDocument().getAttachmentPersistenceTemporaryHandler();
+        HttpSession session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
 
         return FileUploadServlet.registerService(session, service);
     }
@@ -236,62 +235,6 @@ public class FileUploadPanel extends Panel {
         return fileField;
     }
 
-
-    public static class DownloadLink extends Link<Void> {
-
-        private static final String SELF = "_self", BLANK = "_blank";
-        private IModel<String> target = $m.ofValue(SELF);
-        private IModel<SIAttachment> model;
-
-        public DownloadLink(IModel<SIAttachment> model) {
-            super("downloadLink");
-            this.model = model;
-        }
-
-        @Override
-        public void onClick() {
-
-            if (model.getObject().getContent() != null) {
-
-                final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
-                    @Override
-                    public void write(OutputStream outputStream) throws IOException {
-                        outputStream.write(model.getObject().getContentAsByteArray());
-                    }
-                };
-
-                final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
-
-                requestHandler.setFileName(model.getObject().getFileName());
-                requestHandler.setCacheDuration(Duration.NONE);
-
-                if (model.getObject().isContentTypeBrowserFriendly()) {
-                    requestHandler.setContentDisposition(ContentDisposition.INLINE);
-                } else {
-                    requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
-                }
-
-                getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
-            }
-        }
-
-        @Override
-        protected void onInitialize() {
-            super.onInitialize();
-            add(new AttributeModifier("target", target));
-        }
-
-        @Override
-        protected void onConfigure() {
-            super.onConfigure();
-            setVisible(model.getObject().getContent() != null);
-            if (model.getObject().isContentTypeBrowserFriendly()) {
-                target.setObject(BLANK);
-            } else {
-                target.setObject(SELF);
-            }
-        }
-    }
 
 }
 

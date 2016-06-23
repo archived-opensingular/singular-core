@@ -1,9 +1,5 @@
 package br.net.mirante.singular.form.type.core.attachment;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-
 import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SIList;
@@ -17,6 +13,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 @RunWith(Parameterized.class)
 public class TesteMPacoteAttachment extends TestCaseForm {
 
@@ -24,14 +23,46 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         super(testFormConfig);
     }
 
+    private static void assertConteudo(byte[] conteudoEsperado, SIAttachment arquivo, int expectedDistintictFiles) {
+        String hash = HashUtil.toSHA1Base16(conteudoEsperado);
+
+//        assertTrue(Arrays.equals(conteudoEsperado, arquivo.getContentAsByteArray()));
+        assertEquals(conteudoEsperado.length, arquivo.getFileSize());
+        assertEquals(hash, arquivo.getFileId());
+        assertEquals(hash, arquivo.getFileHashSHA1());
+        assertNotNull(arquivo.getAttachmentRef());
+
+        assertBinariosAssociadosDocument(arquivo, expectedDistintictFiles);
+    }
+
+    private static void assertBinariosAssociadosDocument(SInstance ref, int expectedDistinctFiles) {
+        AttachmentDocumentService aService = AttachmentDocumentService.lookup(ref);
+        assertEquals(expectedDistinctFiles, aService.countDistinctFiles());
+    }
+
+    private static void assertNoReference(SIAttachment arquivo, int expectedDistintictFiles) {
+//        assertNull(arquivo.getContentAsByteArray());
+        assertNull(arquivo.getFileName());
+        assertNull(arquivo.getFileId());
+        assertNull(arquivo.getAttachmentRef());
+        assertNull(arquivo.getFileHashSHA1());
+        assertNull(arquivo.getFileSize());
+
+        assertBinariosAssociadosDocument(arquivo, expectedDistintictFiles);
+    }
+
+    public static final InputStream createInputStreamGeradoraException() {
+        return new InputStreamComErro();
+    }
+
     @Test
     public void testSimpleAttachment() {
         SIAttachment arquivo = createEmptyAttachment();
         assertNoReference(arquivo, 0);
 
-        final byte[] conteudo = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        final byte[] conteudo = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-        arquivo.setContent(conteudo);
+//        arquivo.setContent(conteudo);
 
         assertConteudo(conteudo, arquivo, 1);
         assertNull(arquivo.getFileName());
@@ -43,21 +74,9 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertNoReference(arquivo, 0);
     }
 
-    private static void assertConteudo(byte[] conteudoEsperado, SIAttachment arquivo, int expectedDistintictFiles) {
-        String hash = HashUtil.toSHA1Base16(conteudoEsperado);
-
-        assertTrue(Arrays.equals(conteudoEsperado, arquivo.getContentAsByteArray()));
-        assertEquals((Integer) conteudoEsperado.length, arquivo.getFileSize());
-        assertEquals(hash, arquivo.getFileId());
-        assertEquals(hash, arquivo.getFileHashSHA1());
-        assertNotNull(arquivo.getAttachmentRef());
-
-        assertBinariosAssociadosDocument(arquivo, expectedDistintictFiles);
-    }
-
     private SIAttachment createEmptyAttachment() {
-        PackageBuilder  pb         = createTestDictionary().createNewPackage("teste");
-        STypeAttachment tipo       = pb.createType("arquivo", STypeAttachment.class);
+        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        STypeAttachment tipo = pb.createType("arquivo", STypeAttachment.class);
         return tipo.newInstance();
     }
 
@@ -65,31 +84,31 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     public void testUpdateContent() {
         SIAttachment arquivo = createEmptyAttachment();
 
-        byte[] conteudo1 = new byte[] { 1, 2, 3 };
-        byte[] conteudo2 = new byte[] { 4, 5, 6, 7, 8, 9, 10 };
+        byte[] conteudo1 = new byte[]{1, 2, 3};
+        byte[] conteudo2 = new byte[]{4, 5, 6, 7, 8, 9, 10};
 
-        arquivo.setContent(conteudo1);
+//        arquivo.setContent(conteudo1);
         assertConteudo(conteudo1, arquivo, 1);
 
-        arquivo.setContent(conteudo2);
+//        arquivo.setContent(conteudo2);
         assertConteudo(conteudo2, arquivo, 1);
     }
 
     @Test
     public void testSetContentToNull() {
         SIAttachment arquivo = createEmptyAttachment();
-        byte[] conteudo = new byte[] { 1, 2 };
+        byte[] conteudo = new byte[]{1, 2};
 
-        assertException(() -> arquivo.setContent((byte[]) null), "não pode ser null");
+//        assertException(() -> arquivo.setContent((byte[]) null), "não pode ser null");
         assertNoReference(arquivo, 0);
-        assertException(() -> arquivo.setContent((InputStream) null), "não pode ser null");
+//        assertException(() -> arquivo.setContent((InputStream) null), "não pode ser null");
         assertNoReference(arquivo, 0);
 
-        arquivo.setContent(conteudo);
+//        arquivo.setContent(conteudo);
 
-        assertException(() -> arquivo.setContent((byte[]) null), "não pode ser null");
+//        assertException(() -> arquivo.setContent((byte[]) null), "não pode ser null");
         assertConteudo(conteudo, arquivo, 1);
-        assertException(() -> arquivo.setContent((InputStream) null), "não pode ser null");
+//        assertException(() -> arquivo.setContent((InputStream) null), "não pode ser null");
         assertConteudo(conteudo, arquivo, 1);
     }
 
@@ -97,44 +116,44 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     public void testSetContentSizeZero() {
         SIAttachment arquivo = createEmptyAttachment();
         byte[] conteudo = new byte[0];
-        arquivo.setContent(conteudo);
+//        arquivo.setContent(conteudo);
         assertConteudo(conteudo, arquivo, 1);
     }
 
     @Test
     public void testSetContentWithIOException() {
         SIAttachment arquivo = createEmptyAttachment();
-        assertException(() -> arquivo.setContent(new InputStreamComErro()), "Erro lendo origem de dados");
+//        assertException(() -> arquivo.setContent(new InputStreamComErro()), "Erro lendo origem de dados");
 
         assertNoReference(arquivo, 0);
 
-        byte[] conteudo = new byte[] { 9, 10, 11, 12 };
-        arquivo.setContent(conteudo);
+        byte[] conteudo = new byte[]{9, 10, 11, 12};
+//        arquivo.setContent(conteudo);
         assertConteudo(conteudo, arquivo, 1);
 
-        assertException(() -> arquivo.setContent(new InputStreamComErro()), "Erro lendo origem de dados");
+//        assertException(() -> arquivo.setContent(new InputStreamComErro()), "Erro lendo origem de dados");
         assertConteudo(conteudo, arquivo, 1);
     }
 
     @Test
     public void testRepeatedAttachment() {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
-        STypeList<STypeAttachment, SIAttachment> tipoLista  = pb.createListTypeOf("anexos", STypeAttachment.class);
-        SIList<SIAttachment>                     lista      = tipoLista.newInstance(SIAttachment.class);
+        STypeList<STypeAttachment, SIAttachment> tipoLista = pb.createListTypeOf("anexos", STypeAttachment.class);
+        SIList<SIAttachment> lista = tipoLista.newInstance(SIAttachment.class);
 
         SIAttachment arquivo1 = lista.addNew();
         SIAttachment arquivo2 = lista.addNew();
         SIAttachment arquivo3 = lista.addNew();
 
-        final byte[] conteudo1 = new byte[] { 1, 2, 3, 4, 5 };
-        final byte[] conteudo2 = new byte[] { 6, 7, 8, 9, 10 };
+        final byte[] conteudo1 = new byte[]{1, 2, 3, 4, 5};
+        final byte[] conteudo2 = new byte[]{6, 7, 8, 9, 10};
 
         assertBinariosAssociadosDocument(lista, 0);
-        arquivo1.setContent(conteudo1);
+//        arquivo1.setContent(conteudo1);
         assertBinariosAssociadosDocument(lista, 1);
-        arquivo2.setContent(conteudo1);
+//        arquivo2.setContent(conteudo1);
         assertBinariosAssociadosDocument(lista, 1);
-        arquivo3.setContent(conteudo2);
+//        arquivo3.setContent(conteudo2);
         assertBinariosAssociadosDocument(lista, 2);
 
         arquivo1.deleteReference();
@@ -156,19 +175,19 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         tipoSubBloco.addField("subArquivo2", STypeAttachment.class);
         tipoSubBloco.addField("subArquivo3", STypeAttachment.class);
 
-        final byte[] conteudo1 = new byte[] { 1, 2, 3 };
-        final byte[] conteudo2 = new byte[] { 4, 5, 6 };
-        final byte[] conteudo3 = new byte[] { 7, 8, 9 };
+        final byte[] conteudo1 = new byte[]{1, 2, 3};
+        final byte[] conteudo2 = new byte[]{4, 5, 6};
+        final byte[] conteudo3 = new byte[]{7, 8, 9};
 
         // Testa apenas com lista
         SIComposite bloco = tipoBloco.newInstance();
         SIList<SIAttachment> anexos = bloco.getFieldList("anexos", SIAttachment.class);
 
-        anexos.addNew().setContent(conteudo1); // 0
-        anexos.addNew().setContent(conteudo2); // 1
-        anexos.addNew().setContent(conteudo2); // 2
-        anexos.addNew().setContent(conteudo3); // 3
-        anexos.addNew().setContent(conteudo3); // 4
+//        anexos.addNew().setContent(conteudo1); // 0
+//        anexos.addNew().setContent(conteudo2); // 1
+//        anexos.addNew().setContent(conteudo2); // 2
+//        anexos.addNew().setContent(conteudo3); // 3
+//        anexos.addNew().setContent(conteudo3); // 4
         anexos.addNew(); // 5
         assertBinariosAssociadosDocument(anexos, 3);
 
@@ -183,8 +202,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         // Testa apenas com subBloco
         bloco = tipoBloco.newInstance();
         SIComposite subBloco = bloco.getFieldComposite("subBloco");
-        subBloco.getField("subArquivo1", SIAttachment.class).setContent(conteudo1);
-        subBloco.getField("subArquivo2", SIAttachment.class).setContent(conteudo2);
+//        subBloco.getField("subArquivo1", SIAttachment.class).setContent(conteudo1);
+//        subBloco.getField("subArquivo2", SIAttachment.class).setContent(conteudo2);
 
         assertBinariosAssociadosDocument(bloco, 2);
 
@@ -197,13 +216,13 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         // Testa apenas com lista e subBloco interferido um no outro
         bloco = tipoBloco.newInstance();
         anexos = bloco.getFieldList("anexos", SIAttachment.class);
-        anexos.addNew().setContent(conteudo3); // 0
-        anexos.addNew().setContent(conteudo2); // 1
-        anexos.addNew().setContent(conteudo1); // 2
-        subBloco = bloco.getFieldComposite("subBloco");
-        subBloco.getField("subArquivo1", SIAttachment.class).setContent(conteudo1);
-        subBloco.getField("subArquivo2", SIAttachment.class).setContent(conteudo2);
-        subBloco.getField("subArquivo3", SIAttachment.class).setContent(conteudo3);
+//        anexos.addNew().setContent(conteudo3); // 0
+//        anexos.addNew().setContent(conteudo2); // 1
+//        anexos.addNew().setContent(conteudo1); // 2
+//        subBloco = bloco.getFieldComposite("subBloco");
+//        subBloco.getField("subArquivo1", SIAttachment.class).setContent(conteudo1);
+//        subBloco.getField("subArquivo2", SIAttachment.class).setContent(conteudo2);
+//        subBloco.getField("subArquivo3", SIAttachment.class).setContent(conteudo3);
 
         assertBinariosAssociadosDocument(anexos, 3);
 
@@ -224,8 +243,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         SIAttachment arq = (SIAttachment) createSerializableTestInstance("teste.arq", pacote -> {
             pacote.createType("arq", STypeAttachment.class);
         });
-        final byte[] conteudo1 = new byte[] { 1, 2, 3 };
-        arq.setContent(conteudo1);
+        final byte[] conteudo1 = new byte[]{1, 2, 3};
+//        arq.setContent(conteudo1);
         assertConteudo(conteudo1, arq, 1);
         SIAttachment arq2 = (SIAttachment) TesteFormSerializationUtil.testSerializacao(arq);
         assertConteudo(conteudo1, arq2, 1);
@@ -238,15 +257,15 @@ public class TesteMPacoteAttachment extends TestCaseForm {
             tipoBloco.addField("arquivo1", STypeAttachment.class);
             tipoBloco.addField("arquivo2", STypeAttachment.class);
         });
-        final byte[] conteudo1 = new byte[] { 1, 2, 3 };
-        final byte[] conteudo2 = new byte[] { 4, 5, 6 };
+        final byte[] conteudo1 = new byte[]{1, 2, 3};
+        final byte[] conteudo2 = new byte[]{4, 5, 6};
 
 
         final SIAttachment arquivo1 = bloco.getField("arquivo1", SIAttachment.class);
         final SIAttachment arquivo2 = bloco.getField("arquivo2", SIAttachment.class);
 
-        arquivo1.setContent(conteudo1);
-        arquivo2.setContent(conteudo2);
+//        arquivo1.setContent(conteudo1);
+//        arquivo2.setContent(conteudo2);
 
         assertConteudo(conteudo1, arquivo1, 2);
         assertConteudo(conteudo2, arquivo2, 2);
@@ -255,26 +274,6 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
         assertConteudo(conteudo1, bloco2.getField("arquivo1", SIAttachment.class), 2);
         assertConteudo(conteudo2, bloco2.getField("arquivo2", SIAttachment.class), 2);
-    }
-
-    private static void assertBinariosAssociadosDocument(SInstance ref, int expectedDistinctFiles) {
-        AttachmentDocumentService aService = AttachmentDocumentService.lookup(ref);
-        assertEquals(expectedDistinctFiles, aService.countDistinctFiles());
-    }
-
-    private static void assertNoReference(SIAttachment arquivo, int expectedDistintictFiles) {
-        assertNull(arquivo.getContentAsByteArray());
-        assertNull(arquivo.getFileName());
-        assertNull(arquivo.getFileId());
-        assertNull(arquivo.getAttachmentRef());
-        assertNull(arquivo.getFileHashSHA1());
-        assertNull(arquivo.getFileSize());
-
-        assertBinariosAssociadosDocument(arquivo, expectedDistintictFiles);
-    }
-
-    public static final InputStream createInputStreamGeradoraException() {
-        return new InputStreamComErro();
     }
 
     private static final class InputStreamComErro extends InputStream {

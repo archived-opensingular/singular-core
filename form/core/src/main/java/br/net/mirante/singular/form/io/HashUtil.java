@@ -5,6 +5,10 @@
 
 package br.net.mirante.singular.form.io;
 
+import com.google.common.base.Throwables;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
@@ -47,6 +51,10 @@ public class HashUtil {
         }
         input.close();
         return bytesToBase16(messageDigest.digest());
+    }
+
+    public static String toSHA1Base16(File f) throws IOException {
+        return toSHA1Base16(new FileInputStream(f));
     }
 
     /**

@@ -11,11 +11,11 @@ import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
-import br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.DownloadLink;
-import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
+
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -61,19 +61,9 @@ public class AttachmentMapper extends ControlsFieldComponentAbstractMapper {
 
         final BSWellBorder well = BSWellBorder.small("well");
         final Label fileName = new Label("fileName", Model.of(((SIAttachment) model.getObject()).getFileName()));
-        final DownloadLink downloadLink = new DownloadLink(new AbstractMInstanceAwareModel<SIAttachment>() {
-            @Override
-            public SInstance getMInstancia() {
-                return model.getObject();
-            }
-
-            @Override
-            public SIAttachment getObject() {
-                return (SIAttachment) model.getObject();
-            }
-        });
+        final WebMarkupContainer downloadLink = new WebMarkupContainer("downloadLink");
         final TemplatePanel panel = new TemplatePanel("_readOnlyAttachment", markup);
-
+        //TODO vinciius organizar isso
         downloadLink.add(fileName);
         well.add(downloadLink);
         panel.add(well);

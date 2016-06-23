@@ -43,10 +43,17 @@ if(window.FileUploadPanel == undefined){
                     console.log('f',file, $('#' + params.files_id ));
                     $('#' + params.files_id ).append(
                         $('<a />')
-                            .attr('href',
-                                    params.download_url +
-                                    '&fileId='+file.fileId+
-                                    '&fileName='+file.name)
+                            .on('click', function(){$.ajax({
+                                type: "POST",
+                                dataType: 'json',
+                                url: params.download_url +'&hashSHA1='+file.hashSHA1+'&fileName='+file.name,
+                                success: function(response, status, request) {
+                                        var form = $('<form method="GET" action="' + response.url + '">');
+                                        $('body').append(form);
+                                        form.submit();
+                                        form.remove();
+                                }
+                            })})
                             .text(file.name)
                     );
                     $('#' + params.progress_bar_id).hide();
