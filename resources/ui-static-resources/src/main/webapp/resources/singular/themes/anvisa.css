@@ -15,6 +15,26 @@ a {
   background: #F9F9F9;
   border-bottom: 1px solid #e9ecf3; }
 
+.page-header.navbar .menu-toggler {
+  opacity: 1;
+  position: relative;
+  display: inline-block;
+  width: 1.25em;
+  height: 1.2em;
+  margin-right: 0.3em;
+  border-top: 0.2em solid #508450;
+  border-bottom: 0.2em solid #508450; }
+  .page-header.navbar .menu-toggler:hover {
+    opacity: 0.6; }
+
+.page-header.navbar .menu-toggler:before {
+  content: "";
+  position: absolute;
+  top: 0.4em;
+  left: 0px;
+  width: 100%;
+  border-top: 0.2em solid #508450; }
+
 .form-actions .send-btn, .btn {
   background-color: #508450;
   border: 1px solid transparent; }
@@ -43,8 +63,17 @@ a {
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
   background-color: #F2F2F2; }
 
+.tt-input[readonly] {
+  background-color: #fff; }
+
 .list-detail-empty {
   background-color: #F2F2F2; }
+
+.upload-list-item .list-item-progress .progress-bar {
+  background-color: #508450; }
+
+.upload-list-container ul li:nth-child(even) {
+  background-color: #e4efe4; }
 
 .form-actions .cancel-btn {
   background-color: #e0e0e0; }
