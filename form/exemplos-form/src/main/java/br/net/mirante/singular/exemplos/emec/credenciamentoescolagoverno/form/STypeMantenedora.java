@@ -90,7 +90,7 @@ public class STypeMantenedora extends STypeComposite<SIComposite>{
             .asAtrBootstrap().colPreference(2);
         representanteLegal.addFieldString("nome", true)
             .asAtr().label("Nome")
-            .asAtrBootstrap().colPreference(9).newRow();
+            .asAtrBootstrap().colPreference(7);
         representanteLegal.addField("sexo", STypeSexo.class)
             .asAtr().required()
             .asAtrBootstrap().colPreference(3);

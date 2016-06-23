@@ -22,12 +22,14 @@ public class STypePDIDocumentos extends STypeComposite<SIComposite>{
         addDemonstracaoPatrimonio();
         
         // cria um bloco por campo
-        setView(SViewByBlock::new).newBlockPerType(getFieldsLocal());
+        setView(SViewByBlock::new)
+            .newBlock("22 Situação Legal").add("situacaoLegal")
+            .newBlock("23 Regularidade Fiscal").add("regularidadeFiscal")
+            .newBlock("24 Regularidade Fiscal").add("demonstracaoPatrimonio");
     }
     
     private void addSituacaoLegal() {
         final STypeComposite<SIComposite> situacaoLegal = this.addFieldComposite("situacaoLegal");
-        situacaoLegal.asAtr().label("22 Situação Legal");
         situacaoLegal.addFieldAttachment("atosConstitutivos")
             .asAtr().label("Atos Constitutivos");
         situacaoLegal.addFieldAttachment("certidaoConjuntaDebitos")
@@ -46,7 +48,6 @@ public class STypePDIDocumentos extends STypeComposite<SIComposite>{
 
     private void addRegularidadeFiscal() {
         final STypeComposite<SIComposite> regularidadeFiscal = this.addFieldComposite("regularidadeFiscal");
-        regularidadeFiscal.asAtr().label("23 Regularidade Fiscal");
         regularidadeFiscal.addFieldAttachment("fazendaEstadual")
             .asAtr().label("Fazenda Estadual");
         regularidadeFiscal.addFieldAttachment("fazendaMunicipal")
@@ -55,7 +56,6 @@ public class STypePDIDocumentos extends STypeComposite<SIComposite>{
 
     private void addDemonstracaoPatrimonio() {
         final STypeComposite<SIComposite> demonstracaoPatrimonio = this.addFieldComposite("demonstracaoPatrimonio");
-        demonstracaoPatrimonio.asAtr().label("24 Regularidade Fiscal");
         demonstracaoPatrimonio.addFieldAttachment("balanco")
             .asAtr().label("Balanço");
         demonstracaoPatrimonio.addFieldAttachment("demonstracoesContabeis")

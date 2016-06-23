@@ -88,11 +88,13 @@ public class TabMapper extends DefaultCompositeMapper {
                 super.configureColspan();
                 // Configura o tamanho da aba de acordo com os atributos bootstrap informados
                 SIComposite instance = (SIComposite) ctx.getModel().getObject();
+                SViewTab tabView = (SViewTab) instance.getType().getView();
                 AtrBootstrap bootstrap = instance.asAtrBootstrap();
-                final Optional<Integer> colXs = Optional.ofNullable(bootstrap.getColXs(bootstrap.getColPreference())).filter(size -> size < 12);
-                final Optional<Integer> colSm = Optional.ofNullable(bootstrap.getColSm(bootstrap.getColPreference())).filter(size -> size < 12);
-                final Optional<Integer> colMd = Optional.ofNullable(bootstrap.getColMd(bootstrap.getColPreference())).filter(size -> size < 12);
-                final Optional<Integer> colLg = Optional.ofNullable(bootstrap.getColLg(bootstrap.getColPreference())).filter(size -> size < 12);
+                // da prioridade ao que foi definido na View e nos atributos em seguida
+                final Optional<Integer> colXs = Optional.ofNullable(Optional.ofNullable(tabView.getNavColXs()).orElse(bootstrap.getColXs(bootstrap.getColPreference())));
+                final Optional<Integer> colSm = Optional.ofNullable(Optional.ofNullable(tabView.getNavColSm()).orElse(bootstrap.getColSm(bootstrap.getColPreference())));
+                final Optional<Integer> colMd = Optional.ofNullable(Optional.ofNullable(tabView.getNavColMd()).orElse(bootstrap.getColMd(bootstrap.getColPreference())));
+                final Optional<Integer> colLg = Optional.ofNullable(Optional.ofNullable(tabView.getNavColLg()).orElse(bootstrap.getColLg(bootstrap.getColPreference())));
                 
                 if(colXs.isPresent()){
                     getNavigation().xs(colXs.get());
