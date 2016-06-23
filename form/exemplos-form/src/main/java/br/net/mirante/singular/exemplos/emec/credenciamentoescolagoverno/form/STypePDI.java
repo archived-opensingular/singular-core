@@ -65,11 +65,9 @@ public class STypePDI extends STypeComposite<SIComposite>{
 
     private void addImplantacaoInstituicao() {
         final STypeComposite<SIComposite> implantacaoInstituicao = this.addFieldComposite("implantacaoInstituicao");
-        final STypeList<STypeComposite<SIComposite>, SIComposite> cursosPrevistos = implantacaoInstituicao.addFieldListOfComposite("cursosPrevistos", "curso");
-        cursosPrevistos.withView(SViewListByMasterDetail::new)
+        implantacaoInstituicao.addFieldListOf("cursosPrevistos", STypeCurso.class)
+            .withView(SViewListByMasterDetail::new)
             .asAtr().label("Cursos Previstos").itemLabel("Curso Previsto");
-        cursosPrevistos.getElementsType()
-            .addFieldString("nome").asAtr().required().label("Nome");
     }
     
     private void addOrganizacaoDidaticopedagogica() {

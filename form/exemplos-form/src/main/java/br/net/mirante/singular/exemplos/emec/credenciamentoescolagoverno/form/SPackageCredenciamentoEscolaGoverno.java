@@ -28,6 +28,7 @@ public class SPackageCredenciamentoEscolaGoverno extends SPackage{
         pb.createType(STypeSexo.class);
         pb.createType(STypeMunicipio.class);
         
+        pb.createType(STypeCurso.class);
         pb.createType(STypePDI.class);
         pb.createType(STypePDIProjetoPedagogico.class);
         pb.createType(STypePDIDocumentos.class);
