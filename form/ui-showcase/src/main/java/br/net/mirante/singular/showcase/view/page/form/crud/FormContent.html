@@ -1,8 +1,13 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:extend>
+    <style type="text/css">
+        .form-content-margin-top {
+            margin-top: 15px;
+        }
+    </style>
     <form wicket:id="save-form">
         <div wicket:id="singular-panel"></div>
-        <div class="form-actions noborder">
+        <div class="form-actions noborder form-content-margin-top">
             <button type="submit" class="btn send-btn" wicket:id="save-btn">
                 <wicket:message key="label.button.save"/>
             </button>

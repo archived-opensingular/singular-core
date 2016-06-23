@@ -1740,8 +1740,9 @@ Theme Panel
 .list-detail-input .table td {
   border-bottom: none !important; }
 
-.list-detail-input .table th {
-  border-bottom: none !important; }
+.list-detail-input .table thead tr th {
+  border-bottom: none !important;
+  font-weight: 300; }
 
 .list-detail-input .table-hover > tbody > tr > td:hover, .list-detail-input .table-hover > tbody > tr > th:hover, .list-detail-input .table-hover > tbody > tr:hover > td, .list-detail-input .table-hover > tbody > tr:hover > th {
   background: #eafffb; }
