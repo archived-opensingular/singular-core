@@ -101,7 +101,7 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         dadosGerais
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .visible(si -> Value.notNull(si, tipoPeticao));
+                .exists(si -> Value.notNull(si, tipoPeticao));
 
         ingredienteAtivoPeticao
                 .asAtr()
@@ -111,18 +111,18 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         produtoTecnicoPeticao
                 .asAtr()
                 .dependsOn(nivel, tipoPeticao)
-                .visible(si -> StringUtils.isNotEmpty(Value.of(si, nivel)));
+                .exists(si -> StringUtils.isNotEmpty(Value.of(si, nivel)));
 
         produtoTecnicoPeticao
                 .produtoTecnicoNaoSeAplica
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .visible(si -> produtoTecnicoOpcional.contains(Value.of(si, idTipoPeticao)));
+                .exists(si -> produtoTecnicoOpcional.contains(Value.of(si, idTipoPeticao)));
         produtoTecnicoPeticao
                 .produtosTecnicos
                 .asAtr()
                 .dependsOn(tipoPeticao, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)
-                .visible(si ->
+                .exists(si ->
                         !Value.notNull(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica) || !Value.of(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)
 
                 );
@@ -194,7 +194,7 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                 .fabricante
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
+                .exists(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
 
         produtoTecnicoPeticao
                 .produtosTecnicos
@@ -202,66 +202,66 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                 .fabricantes
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
+                .exists(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
 
 
         produtoFormulado
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> StringUtils.isNotEmpty(Value.of(si, nivel)) && !naoPossuiProdutoFormulado.contains(Value.of(si, idTipoPeticao)));
+                .exists(si -> StringUtils.isNotEmpty(Value.of(si, nivel)) && !naoPossuiProdutoFormulado.contains(Value.of(si, idTipoPeticao)));
 
         produtoFormulado
                 .formulador
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "I".equals(Value.of(si, nivel)));
+                .exists(si -> "I".equals(Value.of(si, nivel)));
 
         produtoFormulado
                 .formuladores
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> !"I".equals(Value.of(si, nivel)));
+                .exists(si -> !"I".equals(Value.of(si, nivel)));
 
         anexos
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> Value.notNull(si, nivel));
+                .exists(si -> Value.notNull(si, nivel));
         anexos
                 .documentacaoI
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "I".equals(Value.of(si, nivel)));
+                .exists(si -> "I".equals(Value.of(si, nivel)));
 
         anexos.documentacaoI
                 .modelosBulas
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .visible(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
+                .exists(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
 
         anexos.documentacaoI
                 .modelosRotulos
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .visible(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
+                .exists(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
 
 
         anexos
                 .documentacaoII
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "II".equals(Value.of(si, nivel)));
+                .exists(si -> "II".equals(Value.of(si, nivel)));
 
         anexos
                 .documentacaoIII
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "III".equals(Value.of(si, nivel)));
+                .exists(si -> "III".equals(Value.of(si, nivel)));
 
         anexos
                 .documentacaoIV
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "IV".equals(Value.of(si, nivel)));
+                .exists(si -> "IV".equals(Value.of(si, nivel)));
 
         peticaoSimplificada.withView(new SViewByBlock(), blocks -> {
             blocks

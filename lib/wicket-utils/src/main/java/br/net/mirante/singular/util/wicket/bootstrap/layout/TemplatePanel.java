@@ -6,6 +6,7 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
 import java.nio.charset.Charset;
+import java.util.Optional;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
@@ -63,7 +64,7 @@ public class TemplatePanel extends Panel {
             public IMarkupFragment getMarkup(MarkupContainer parent, Component child) {
                 // corrige o problema de encoding
                 StringResourceStream stringResourceStream = new StringResourceStream("<wicket:panel>" + getTemplateFunction().apply(TemplatePanel.this) + "</wicket:panel>", "text/html");
-                stringResourceStream.setCharset(Charset.forName(Application.get().getMarkupSettings().getDefaultMarkupEncoding()));
+                stringResourceStream.setCharset(Charset.forName(Optional.ofNullable(Application.get().getMarkupSettings().getDefaultMarkupEncoding()).orElse("UTF-8")));
                 
                 MarkupParser markupParser = new MarkupParser(new MarkupResourceStream(stringResourceStream));
                 markupParser.setWicketNamespace(MarkupParser.WICKET);

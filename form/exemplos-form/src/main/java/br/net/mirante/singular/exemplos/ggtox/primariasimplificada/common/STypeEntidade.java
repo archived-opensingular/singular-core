@@ -90,7 +90,7 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
                 .asAtr()
                 .label("CNPJ")
                 .dependsOn(tipoPessoa)
-                .visible(i -> i.findNearestValue(tipoPessoa).orElse("").equals("Juridica"))
+                .exists(i -> i.findNearestValue(tipoPessoa).orElse("").equals("Juridica"))
                 .asAtrBootstrap()
                 .colPreference(3);
 
@@ -98,7 +98,7 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
                 .asAtr()
                 .label("CPF")
                 .dependsOn(tipoPessoa)
-                .visible(i -> i.findNearestValue(tipoPessoa).orElse("").equals("Fisica"))
+                .exists(i -> i.findNearestValue(tipoPessoa).orElse("").equals("Fisica"))
                 .asAtrBootstrap()
                 .colPreference(3);
 
