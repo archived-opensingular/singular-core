@@ -71,17 +71,19 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
                     String errors = messages.stream()
                         .map(IValidationError::getMessage)
                         .collect(joining("</li><li>", "<ul class='list-unstyled'><li>", "</li></ul>"));
-                    response.render(OnDomReadyHeaderItem.forScript(""
-                        + "var $feedback = " + JQuery.$(component) + ";"
-                        + "var $formGroup = $feedback.parent();"
-                        + "$formGroup"
-                        + "  .data('content', '" + JavaScriptUtils.javaScriptEscape(errors) + "')"
-                        + "  .popover({"
-                        + "    'html':true,"
-                        + "    'placement':'bottom',"
-                        + "    'trigger':'hover'"
-                        + "  });"
-                        + ""));
+                    if(messages.size() > 1) {
+                        response.render(OnDomReadyHeaderItem.forScript(""
+                                + "var $feedback = " + JQuery.$(component) + ";"
+                                + "var $formGroup = $feedback.parent();"
+                                + "$formGroup"
+                                + "  .data('content', '" + JavaScriptUtils.javaScriptEscape(errors) + "')"
+                                + "  .popover({"
+                                + "    'html':true,"
+                                + "    'placement':'bottom',"
+                                + "    'trigger':'hover'"
+                                + "  });"
+                                + ""));
+                    }
                 }
             }
 
