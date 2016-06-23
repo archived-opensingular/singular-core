@@ -265,6 +265,9 @@ public class WicketFormProcessing {
      * Verifica se existe na hierarquia, ignora a si proprio.
      */
     public static boolean isParentsVisible(SInstance si) {
+        if (si == null) {
+            return false;
+        }
         if(si.getParent() == null){
             return true;
         }
