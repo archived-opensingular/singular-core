@@ -19,6 +19,7 @@ public class ItemBoxDTO implements Serializable {
     private boolean deleteButton = false;
     private boolean viewButton = false;
     private boolean quickFilter = true;
+    private boolean showDraft = false;
     private String searchEndpoint;
     private String countEndpoint;
     private Map<String, String> fieldsDatatable;
@@ -101,5 +102,13 @@ public class ItemBoxDTO implements Serializable {
 
     public void setCountEndpoint(String countEndpoint) {
         this.countEndpoint = countEndpoint;
+    }
+
+    public boolean isShowDraft() {
+        return showDraft;
+    }
+
+    public void setShowDraft(boolean showDraft) {
+        this.showDraft = showDraft;
     }
 }

@@ -47,8 +47,10 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
     private boolean showEdit;
     private boolean showView;
     private boolean showQuickFilter;
+    private boolean withRascunho;
     private Map<String, String> fieldsDatatable;
-    private String restUrl;
+    private String searchEndpoint;
+    private String countEndpoint;
     private ISupplier<Map<String, String>> linkParamsSupplier;
 
     public BoxContent(String id, String processGroupCod, String menu) {
@@ -132,7 +134,7 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
         return new QuickFilter()
                 .withFilter(getFiltroRapidoModelObject())
                 .withProcessesAbbreviation(getProcessesNames())
-                .withRascunho(true);
+                .withRascunho(withRascunho);
     }
 
     private List<String> getProcessesNames() {
@@ -147,11 +149,11 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
     }
 
     @Override
-    protected List<BoxModel> quickSearch(QuickFilter filtro, List<String> siglasProcesso) {
+    protected List<BoxModel> quickSearch(QuickFilter filter, List<String> siglasProcesso) {
         final String connectionURL = petitionService.findByProcessGroupCod(getProcessGroupCod()).getConnectionURL();
-        final String url = connectionURL + PATH_BOX_SEARCH + restUrl;
+        final String url = connectionURL + PATH_BOX_SEARCH + searchEndpoint;
         try {
-            return (List<BoxModel>) Arrays.asList(new RestTemplate().postForObject(url, filtro, Map[].class))
+            return (List<BoxModel>) Arrays.asList(new RestTemplate().postForObject(url, filter, Map[].class))
                     .stream().map(BoxModel::new).collect(Collectors.toList());
         } catch (Exception e) {
             return Collections.emptyList();
@@ -184,7 +186,13 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
 
     @Override
     protected long countQuickSearch(QuickFilter filter, List<String> processesNames) {
-        return 10;
+        final String connectionURL = petitionService.findByProcessGroupCod(getProcessGroupCod()).getConnectionURL();
+        final String url = connectionURL + PATH_BOX_SEARCH + countEndpoint;
+        try {
+            return new RestTemplate().postForObject(url, filter, Long.class);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public void setBaseUrl(String baseUrl) {
@@ -253,12 +261,20 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
         this.fieldsDatatable = fieldsDatatable;
     }
 
-    public String getRestUrl() {
-        return restUrl;
+    public String getSearchEndpoint() {
+        return searchEndpoint;
     }
 
-    public void setRestUrl(String restUrl) {
-        this.restUrl = restUrl;
+    public void setSearchEndpoint(String searchEndpoint) {
+        this.searchEndpoint = searchEndpoint;
+    }
+
+    public String getCountEndpoint() {
+        return countEndpoint;
+    }
+
+    public void setCountEndpoint(String countEndpoint) {
+        this.countEndpoint = countEndpoint;
     }
 
     public boolean isShowView() {
@@ -275,5 +291,13 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
 
     public void setLinkParamsSupplier(ISupplier<Map<String, String>> linkParamsSupplier) {
         this.linkParamsSupplier = linkParamsSupplier;
+    }
+
+    public boolean isWithRascunho() {
+        return withRascunho;
+    }
+
+    public void setWithRascunho(boolean withRascunho) {
+        this.withRascunho = withRascunho;
     }
 }
