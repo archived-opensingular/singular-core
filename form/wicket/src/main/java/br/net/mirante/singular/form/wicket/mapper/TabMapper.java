@@ -44,6 +44,13 @@ public class TabMapper extends DefaultCompositeMapper {
         SViewTab tabView = (SViewTab) tComposto.getView();
 
         BSPanelGrid panel = new BSPanelGrid("panel") {
+
+            @Override
+            protected void onInitialize() {
+                super.onInitialize();
+                getNavigation().add($b.attr("style", "padding-right:0px;"));
+            }
+
             @Override
             public void updateTab(BSTab tab, List<BSTab> tabs) {
                 renderTab(tab.getSubtree(), this, ctx);
@@ -72,16 +79,11 @@ public class TabMapper extends DefaultCompositeMapper {
                     }
                 });
                 tabComponent.add($b.classAppender("has-errors",
-                    $m.get(new ISupplier<Boolean>() {
-                    @Override
-                    public Boolean get() {
-                        return subtreeModels.get().stream()
-                            .map(it -> it.getObject())
-                            .filter(it -> !SValidationFeedbackHandler.collectNestedErrors(tabComponent).isEmpty())
-                            .findAny()
-                            .isPresent();
-                    }
-                })));
+                    $m.get((ISupplier<Boolean>) () -> subtreeModels.get().stream()
+                        .map(IModel::getObject)
+                        .filter(it -> !SValidationFeedbackHandler.collectNestedErrors(tabComponent).isEmpty())
+                        .findAny()
+                        .isPresent())));
             }
             @Override
             protected void configureColspan() {
