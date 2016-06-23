@@ -17,7 +17,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -223,7 +222,7 @@ public class WicketFormProcessing {
                 return false;
             };
 
-            final Predicate<SInstance> shouldntGoDepper = i -> !isVisibleAndExistsInHierarchy(i);
+            final Predicate<SInstance> shouldntGoDepper = i -> !isParentsVisible(i);
 
             final Consumer<MarkupContainer> refreshDependentComponentsConsumer = rc -> rc.visitChildren(Component.class, (c, visit) -> {
                 IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
@@ -262,8 +261,14 @@ public class WicketFormProcessing {
 
     }
 
-    public static boolean isVisibleAndExistsInHierarchy(SInstance si) {
-        for (SInstance i = si; i.getParent() != null; i = i.getParent()) {
+    /**
+     * Verifica se existe na hierarquia, ignora a si proprio.
+     */
+    public static boolean isParentsVisible(SInstance si) {
+        if(si.getParent() == null){
+            return true;
+        }
+        for (SInstance i = si.getParent(); i.getParent() != null; i = i.getParent()) {
             if (!(i.asAtr().isVisible() && i.asAtr().exists())) {
                 return false;
             }
