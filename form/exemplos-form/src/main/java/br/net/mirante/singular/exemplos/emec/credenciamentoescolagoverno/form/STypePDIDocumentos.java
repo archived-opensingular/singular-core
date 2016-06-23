@@ -17,8 +17,6 @@ public class STypePDIDocumentos extends STypeComposite<SIComposite>{
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         
-        this.asAtr().label("Documentos");
-        
         addSituacaoLegal();
         addRegularidadeFiscal();
         addDemonstracaoPatrimonio();
@@ -29,7 +27,7 @@ public class STypePDIDocumentos extends STypeComposite<SIComposite>{
     
     private void addSituacaoLegal() {
         final STypeComposite<SIComposite> situacaoLegal = this.addFieldComposite("situacaoLegal");
-        situacaoLegal.asAtr().label("Situação Legal");
+        situacaoLegal.asAtr().label("22 Situação Legal");
         situacaoLegal.addFieldAttachment("atosConstitutivos")
             .asAtr().label("Atos Constitutivos");
         situacaoLegal.addFieldAttachment("certidaoConjuntaDebitos")
@@ -48,7 +46,7 @@ public class STypePDIDocumentos extends STypeComposite<SIComposite>{
 
     private void addRegularidadeFiscal() {
         final STypeComposite<SIComposite> regularidadeFiscal = this.addFieldComposite("regularidadeFiscal");
-        regularidadeFiscal.asAtr().label("Regularidade Fiscal");
+        regularidadeFiscal.asAtr().label("23 Regularidade Fiscal");
         regularidadeFiscal.addFieldAttachment("fazendaEstadual")
             .asAtr().label("Fazenda Estadual");
         regularidadeFiscal.addFieldAttachment("fazendaMunicipal")
@@ -57,7 +55,7 @@ public class STypePDIDocumentos extends STypeComposite<SIComposite>{
 
     private void addDemonstracaoPatrimonio() {
         final STypeComposite<SIComposite> demonstracaoPatrimonio = this.addFieldComposite("demonstracaoPatrimonio");
-        demonstracaoPatrimonio.asAtr().label("Regularidade Fiscal");
+        demonstracaoPatrimonio.asAtr().label("24 Regularidade Fiscal");
         demonstracaoPatrimonio.addFieldAttachment("balanco")
             .asAtr().label("Balanço");
         demonstracaoPatrimonio.addFieldAttachment("demonstracoesContabeis")

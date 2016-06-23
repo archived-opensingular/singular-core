@@ -1,7 +1,10 @@
 package br.net.mirante.singular.form.type.country.brazil;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SInfoPackage;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.STypeComposite;
 
 @SInfoPackage(name = SDictionary.SINGULAR_PACKAGES_PREFIX + "country.brazil")
 public class SPackageCountryBrazil extends SPackage {

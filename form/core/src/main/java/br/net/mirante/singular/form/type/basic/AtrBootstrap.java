@@ -24,6 +24,13 @@ public class AtrBootstrap extends STranslatorForAttribute {
     public static <A extends SAttributeEnabled> Function<A, AtrBootstrap> factory() {
         return AtrBootstrap::new;
     }
+    /**
+     * Configura com o tamanho máximo
+     */
+    public AtrBootstrap maxColPreference() {
+        setAttributeValue(SPackageBootstrap.ATR_COL_PREFERENCE, SPackageBootstrap.MAX_COL_PREFERENCE);
+        return this;
+    }
 
     public AtrBootstrap colPreference(Integer valor) {
         setAttributeValue(SPackageBootstrap.ATR_COL_PREFERENCE, valor);

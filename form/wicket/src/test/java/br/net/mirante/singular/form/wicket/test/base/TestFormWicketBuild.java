@@ -49,6 +49,7 @@ public class TestFormWicketBuild  {
                 return null;
             }
         });
+        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding("utf-8");
     }
 
     protected static SInstance createIntance(Supplier<SType<?>> typeSupplier) {

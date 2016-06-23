@@ -19,7 +19,7 @@ public class STypeFormulador extends STypeEntidade {
 
         tipoPessoa
                 .asAtr()
-                .visible(false);
+                .exists(false);
 
         withInitListener(si -> si.findNearest(tipoPessoa)
                 .get()
@@ -28,7 +28,7 @@ public class STypeFormulador extends STypeEntidade {
 
         cnpj
                 .asAtr()
-                .visible(si -> true);
+                .exists(si -> true);
 
         laudoLaboratorial = addField("laudoLaboratorial", STypeAttachment.class);
 
