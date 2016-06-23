@@ -82,13 +82,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
     @Override
     protected IModel<?> getContentTitleModel() {
-        return new Model<String>() {
-            @Override
-            public String getObject() {
-                final String label = singularFormPanel.getRootInstance().getObject().asAtr().getLabel();
-                return ObjectUtils.defaultIfNull(label, StringUtils.EMPTY);
-            }
-        };
+        return Model.of();
     }
 
     @Override

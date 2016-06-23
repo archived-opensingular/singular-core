@@ -8,6 +8,8 @@ package br.net.mirante.singular.form.wicket.mapper;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 import static com.google.common.collect.Lists.*;
 import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +20,7 @@ import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapp
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
@@ -133,6 +136,11 @@ public class TabMapper extends DefaultCompositeMapper {
             IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
             BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesName(), baseInstanceModel);
             t.iconClass((m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t.getSubtree()));
+        }
+
+        final IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtr().getLabel()));
+        if (isNotBlank(label.getObject())) {
+            ctx.getContainer().newTag("h4", new Label("_title", label));
         }
 
         ctx.getContainer().newTag("div", panel);
