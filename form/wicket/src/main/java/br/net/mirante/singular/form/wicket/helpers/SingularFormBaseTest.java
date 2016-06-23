@@ -38,6 +38,7 @@ public abstract class SingularFormBaseTest {
     @Before
     public void setUp() {
         tester = new WicketTester();
+        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding("utf-8");
         page = new DummyPage();
         page.setTypeBuilder(this::buildBaseType);
         page.setInstanceCreator(this::createAndPopulateInstance);
