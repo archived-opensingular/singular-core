@@ -12026,27 +12026,26 @@ Customized Bootstrap Tabs
       margin-bottom: 3px; }
 
 /* Left tabs */
-.tabs-left.nav-tabs {
-  border-right: 1px solid #ddd; }
-  .tabs-left.nav-tabs > li > a {
-    display: block;
-    margin-right: -1px; }
-    .tabs-left.nav-tabs > li > a:hover, .tabs-left.nav-tabs > li > a:focus {
-      -webkit-border-radius: 10px 0 0 10px;
-      -moz-border-radius: 10px 0 0 10px;
-      -ms-border-radius: 10px 0 0 10px;
-      -o-border-radius: 10px 0 0 10px;
-      border-radius: 10px 0 0 10px;
-      border-color: #eeeeee #dddddd #eeeeee #eeeeee; }
-  .tabs-left.nav-tabs > li.active > a,
-  .tabs-left.nav-tabs > li.active > a:hover > li.active > a:focus {
+.tabs-left.nav-tabs > li > a {
+  display: block;
+  margin-right: -1px; }
+  .tabs-left.nav-tabs > li > a:hover, .tabs-left.nav-tabs > li > a:focus {
     -webkit-border-radius: 10px 0 0 10px;
     -moz-border-radius: 10px 0 0 10px;
     -ms-border-radius: 10px 0 0 10px;
     -o-border-radius: 10px 0 0 10px;
     border-radius: 10px 0 0 10px;
-    border-color: #ddd transparent #ddd #ddd;
-    *border-right-color: #ffffff; }
+    border-color: #eeeeee #dddddd #eeeeee #eeeeee; }
+
+.tabs-left.nav-tabs > li.active > a,
+.tabs-left.nav-tabs > li.active > a:hover > li.active > a:focus {
+  -webkit-border-radius: 10px 0 0 10px;
+  -moz-border-radius: 10px 0 0 10px;
+  -ms-border-radius: 10px 0 0 10px;
+  -o-border-radius: 10px 0 0 10px;
+  border-radius: 10px 0 0 10px;
+  border-color: #ddd transparent #ddd #ddd;
+  *border-right-color: #ffffff; }
 
 /* Right tabs */
 .tabs-right.nav-tabs {
