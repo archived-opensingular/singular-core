@@ -5,19 +5,21 @@
 
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.LinkedList;
+
+import com.google.common.io.ByteStreams;
+
+import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.io.HashUtil;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-
-import java.io.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-import java.util.Formatter;
-import java.util.LinkedList;
 
 /**
  * This handler persists uploaded files in the filesystem. You mus inform which
@@ -65,7 +67,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
                 try {
                     result.add(toRef(f));
                 } catch (Exception e) {
-                    throw Throwables.propagate(e);
+                    throw SingularUtil.propagate(e);
                 }
             }
         }
@@ -80,7 +82,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
                 return toRef(file);
             }
         } catch (Exception e) {
-            throw Throwables.propagate(e);
+            throw SingularUtil.propagate(e);
         }
         return null;
     }
@@ -115,7 +117,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
             return new FileSystemAttachmentRef(id, sha1, dest.getAbsolutePath(), 
                 content.length);
         } catch (Exception e) {
-            throw Throwables.propagate(e);
+            throw SingularUtil.propagate(e);
         }
     }
 

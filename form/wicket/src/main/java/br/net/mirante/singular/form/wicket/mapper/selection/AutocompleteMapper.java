@@ -56,4 +56,9 @@ public class AutocompleteMapper extends ControlsFieldComponentAbstractMapper {
         }
         return StringUtils.EMPTY;
     }
+
+    @Override
+    public void adjustJSEvents(Component comp) {
+    }
+
 }

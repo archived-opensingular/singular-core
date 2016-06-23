@@ -71,7 +71,7 @@ public abstract class ItemCasePanel<T extends CaseBase> extends Panel {
 
         for (ResourceRef rr : sources) {
             bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(
-                    BSTabPanel.TAB_PANEL_ID, $m.ofValue(rr.getContent()), $m.ofValue(rr.getExtension())));
+                    BSTabPanel.TAB_PANEL_ID, $m.ofValue(rr.getContent()), rr.getExtension()));
         }
 
         return bsTabPanel;

@@ -5,13 +5,13 @@
 
 package br.net.mirante.singular.form.io;
 
-import com.google.common.base.Throwables;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import br.net.mirante.singular.commons.base.SingularUtil;
 
 /**
  * Funções utilitária para geração de hash e codificação do hash em diferentes
@@ -26,7 +26,7 @@ public class HashUtil {
         try {
             return MessageDigest.getInstance("SHA");
         } catch (NoSuchAlgorithmException e) {
-            throw Throwables.propagate(e);
+            throw SingularUtil.propagate(e);
         }
     }
 

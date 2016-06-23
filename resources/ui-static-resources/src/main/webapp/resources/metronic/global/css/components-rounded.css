@@ -150,12 +150,12 @@ body {
     padding-right: 0;
     font-size: 14px; }
     .form-group.form-md-line-input .form-control::-moz-placeholder {
-      color: #BBBFCD;
+      color: #acb1c2;
       opacity: 1; }
     .form-group.form-md-line-input .form-control:-ms-input-placeholder {
-      color: #BBBFCD; }
+      color: #acb1c2; }
     .form-group.form-md-line-input .form-control::-webkit-input-placeholder {
-      color: #BBBFCD; }
+      color: #acb1c2; }
     .form-group.form-md-line-input .form-control.form-control-static {
       border-bottom: 0; }
     .form-group.form-md-line-input .form-control.input-sm {
@@ -230,7 +230,7 @@ body {
     font-size: 16px;
     top: 25px;
     transition: 0.2s ease all;
-    color: #BBBFCD; }
+    color: #acb1c2; }
   .form-group.form-md-line-input.form-md-floating-label .form-control[readonly] ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control.edited ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control.form-control-static ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control:focus:not([readonly]) ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control.focus:not([readonly]) ~ label {
     top: 0;
     font-size: 13px; }
@@ -1484,7 +1484,7 @@ Custom Bootstrap Badges
   background-image: none; }
 
 .badge-primary {
-  background-color: #337ab7;
+  background-color: #40BAA7;
   background-image: none; }
 
 .badge-info {
@@ -6130,9 +6130,9 @@ Customized Bootstrap Labels
     background-color: #9ca8bb; }
 
 .label-primary {
-  background-color: #337ab7; }
+  background-color: #40BAA7; }
   .label-primary[href]:hover, .label-primary[href]:focus {
-    background-color: #286090; }
+    background-color: #339485; }
 
 .label-success {
   background-color: #36c6d3; }
@@ -6175,7 +6175,7 @@ Text states
   color: #bac3d0; }
 
 .text-primary {
-  color: #337ab7; }
+  color: #40BAA7; }
 
 .text-success {
   color: #36c6d3; }
@@ -6690,7 +6690,7 @@ Portlets
 /* Basic portlet */
 .portlet {
   margin-top: 0px;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   padding: 0px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -7062,7 +7062,7 @@ Portlets
     display: none; } }
 
 /***
-Custom colored portlets 
+Custom colored portlets
 ***/
 .portlet > .portlet-body.white,
 .portlet.white {
@@ -11921,7 +11921,7 @@ Custom tables
   margin-left: 15px; }
 
 .table-advance td.highlight div.primary {
-  border-left: 2px solid #337ab7; }
+  border-left: 2px solid #40BAA7; }
 
 .table-advance td.highlight div.success {
   border-left: 2px solid #36c6d3; }
@@ -11952,7 +11952,7 @@ Light Table
   .table.table-light > thead > tr > th {
     font-weight: 600;
     font-size: 13px;
-    color: #93a2a9;
+    color: #acb1c2;
     font-family: "Open Sans", sans-serif;
     border: 0;
     border-bottom: 1px solid #F2F5F8; }
@@ -11961,7 +11961,7 @@ Light Table
   .table.table-light > tbody > tr > td {
     border: 0;
     border-bottom: 1px solid #F2F5F8;
-    color: #8896a0;
+    color: #303442;
     vertical-align: middle; }
     .table.table-light > tbody > tr > td.fit {
       width: 1px;
@@ -11979,7 +11979,7 @@ Light Table
   .table.table-light.table-hover > tbody > tr > th:hover,
   .table.table-light.table-hover > tbody > tr:hover > td,
   .table.table-light.table-hover > tbody > tr:hover > th {
-    background: #f9fafb; }
+    background: #eef1f5; }
 
 /***
 Customized Bootstrap Tabs 
@@ -17739,17 +17739,17 @@ Tasks Widget
           border-left-color: #bac3d0;
           border-right-color: #bac3d0; }
     .mt-element-ribbon .ribbon.ribbon-color-primary {
-      background-color: #337ab7;
+      background-color: #40BAA7;
       color: #fff; }
       .mt-element-ribbon .ribbon.ribbon-color-primary:after {
-        border-color: #286090; }
+        border-color: #339485; }
       .mt-element-ribbon .ribbon.ribbon-color-primary > .ribbon-sub {
-        background-color: #337ab7;
+        background-color: #40BAA7;
         color: black; }
         .mt-element-ribbon .ribbon.ribbon-color-primary > .ribbon-sub:after {
-          border-color: #122b40;
-          border-left-color: #337ab7;
-          border-right-color: #337ab7; }
+          border-color: #194841;
+          border-left-color: #40BAA7;
+          border-right-color: #40BAA7; }
     .mt-element-ribbon .ribbon.ribbon-color-info {
       background-color: #659be0;
       color: #fff; }

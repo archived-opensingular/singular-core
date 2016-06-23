@@ -5,6 +5,16 @@
 
 package br.net.mirante.singular.form.type.basic;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+import org.apache.commons.lang3.ObjectUtils;
+
 import br.net.mirante.singular.form.SAttributeEnabled;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STranslatorForAttribute;
@@ -13,15 +23,9 @@ import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.internal.freemarker.FormFreemarkerUtil;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
 public class AtrBasic extends STranslatorForAttribute {
 
-    public AtrBasic() {
-    }
+    public AtrBasic() {}
 
     public AtrBasic(SAttributeEnabled alvo) {
         super(alvo);
@@ -91,7 +95,12 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic dependsOn(Supplier<Collection<SType<?>>> value) {
-        setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, value);
+        Supplier<Collection<SType<?>>> previous = ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
+        setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, () -> {
+            Set<SType<?>> union = new LinkedHashSet<>(previous.get());
+            union.addAll(value.get());
+            return union;
+        });
         return this;
     }
 
@@ -118,17 +127,17 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic exists(Boolean value) {
-        setAttributeValue(SPackageBasic.ATR_REQUIRED, value);
+        setAttributeValue(SPackageBasic.ATR_EXISTS, value);
         return this;
     }
 
     public AtrBasic exists(Predicate<SInstance> value) {
-        setAttributeValue(SPackageBasic.ATR_REQUIRED_FUNCTION, value);
+        setAttributeValue(SPackageBasic.ATR_EXISTS_FUNCTION, value);
         return this;
     }
 
     public boolean exists() {
-        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_REQUIRED));
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
     }
     //    public AtrBasic onChange(Function<IBehavior<MInstancia>, IBehavior<MInstancia>> behaviorFunction) {
     //        IBehavior<MInstancia> existingBehavior = getOnChange();
@@ -170,6 +179,10 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public boolean isVisible() {
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_VISIBLE));
+    }
+
+    public boolean isExists() {
+        return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
     }
 
     public boolean isEnabled() {

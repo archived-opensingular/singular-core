@@ -25,6 +25,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
@@ -136,8 +137,10 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtr().getLabel()));
             if (isNotBlank(label.getObject())) {
                 BSCol column = grid.newColInRow();
-                column.appendTag("h3", new Label("_title", label));
+                column.appendTag("h5", new Label("_title", label));
+                column.appendTag("hr", new WebMarkupContainer("_hr"));
                 ctx.configureContainer(label);
+                column.setVisible(!ctx.getParent().isTitleInBlock());
                 return column;
             }
             return null;

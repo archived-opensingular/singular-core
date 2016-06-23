@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.type.core;
 
+import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeSimple;
 import com.google.common.base.Strings;
@@ -50,7 +51,7 @@ public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
     private Date handleError(String value, Exception e) {
         String msg = String.format("Can't parse value '%s' with format '%s'.", value, "dd/MM/yyyy");
         LOGGER.log(Level.WARNING, msg, e);
-        throw Throwables.propagate(e);
+        throw SingularUtil.propagate(e);
     }
 
     @Override

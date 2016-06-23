@@ -5,16 +5,15 @@
 
 package br.net.mirante.singular.form;
 
+import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Function;
+
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.provider.AtrProvider;
 import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.basic.AtrBootstrap;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Representa um entidade habilitada para ter atributos lidos ou alterados.

@@ -5,16 +5,6 @@
 
 package br.net.mirante.singular.showcase.component;
 
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple;
-import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple2;
-import br.net.mirante.singular.studio.core.CollectionDefinition;
-import br.net.mirante.singular.util.wicket.resource.Icone;
-import com.google.common.base.Throwables;
-import org.apache.wicket.util.string.StringValue;
-import org.reflections.Reflections;
-import org.springframework.stereotype.Service;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +15,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.apache.wicket.util.string.StringValue;
+import org.reflections.Reflections;
+import org.springframework.stereotype.Service;
+
+import br.net.mirante.singular.commons.base.SingularUtil;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple;
+import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple2;
+import br.net.mirante.singular.studio.core.CollectionDefinition;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 @Service
 public class ShowCaseTable {
@@ -183,7 +184,7 @@ public class ShowCaseTable {
             try {
                 return addCase(classCase.newInstance());
             } catch (InstantiationException | IllegalAccessException e) {
-                throw Throwables.propagate(e);
+                throw SingularUtil.propagate(e);
             }
         }
 

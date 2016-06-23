@@ -126,7 +126,7 @@ public class DataSubmissionTest {
         protected void buildBaseType(STypeComposite<?> baseType) {
             super.buildBaseType(baseType);
             data2.asAtr().dependsOn(data1);
-            data2.asAtr().visible((x)->{
+            data2.asAtr().exists((x)->{
                 SIComposite parent = (SIComposite) x.getParent();
                 SInstance d1 =  parent.getField(data1.getNameSimple());
                 if(d1 == null || d1.getValue() == null) return false;
@@ -155,10 +155,10 @@ public class DataSubmissionTest {
             assertThat(tester.getTagById(text2.getMarkupId())).isNotNull();
 
             form.setValue(text1, "clear");
-            tester.executeAjaxEvent(text1, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+            tester.executeAjaxEvent(text1, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
 
-            assertThat(tester.getTagById(text1.getMarkupId())).isNotNull();
-            assertThat(tester.getTagById(text2.getMarkupId())).isNull();
+            assertThat(findFirstFormComponentsByType(form.getForm(), data1).getValue()).isNotNull();
+            assertThat(findFirstFormComponentsByType(form.getForm(), data2).getValue()).isEmpty();
 
 
             assertThat(page.getCurrentInstance().getValue(data1))

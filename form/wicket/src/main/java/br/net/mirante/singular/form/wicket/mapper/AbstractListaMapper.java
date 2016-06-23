@@ -5,13 +5,14 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import br.net.mirante.singular.form.view.AbstractSViewListWithControls;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import org.apache.commons.collections.Factory;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -26,12 +27,15 @@ import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.view.AbstractSViewListWithControls;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public abstract class AbstractListaMapper implements IWicketComponentMapper {
@@ -206,7 +210,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
     protected void addMinimumSize(SType<?> currentType, SIList<?> list) {
         if (currentType instanceof STypeList && list.isEmpty()) {
-            final STypeList tl = (STypeList) currentType;
+            final STypeList<?,?> tl = (STypeList<?,?>) currentType;
             if (tl.getMinimumSize() != null) {
                 for (int i = 0; i < tl.getMinimumSize(); i++) {
                     list.addNew();
@@ -235,15 +239,15 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     }
 
     protected static boolean canAddItems(WicketBuildContext ctx) {
-        return ((AbstractSViewListWithControls) ctx.getView()).isNewEnabled()
+        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled()
                 && ctx.getViewMode().isEdition();
     }
 
     protected static String definirLabel(WicketBuildContext ctx) {
-        SType<?>                      type = ctx.getCurrentInstance().getType();
-        AbstractSViewListWithControls view = (AbstractSViewListWithControls) ctx.getView();
+        SType<?> type = ctx.getCurrentInstance().getType();
+        AbstractSViewListWithControls<?> view = (AbstractSViewListWithControls<?>) ctx.getView();
         return (String) view.label().orElse(
-                Optional.ofNullable(type.asAtr().getLabel())
+                Optional.ofNullable(Optional.ofNullable(type.asAtr().getItemLabel()).orElseGet(()->type.asAtr().getLabel()))
                         .map((x) -> {
                             String[] parts = x.trim().split(" ");
                             return "Adicionar " + parts[0];
@@ -255,13 +259,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     protected static String createButtonMarkup(WicketBuildContext ctx) {
         String label = definirLabel(ctx);
 
-        return "" +
-                "<button wicket:id=\"_add\" " +
-                "       class=\"btn btn-add\" type=\"button\" " +
-                "       title=\"" + label + "\">" +
-                "       <i class=\"fa fa-plus\"></i>" +
-                "           " + label +
-                "</button>";
+        return String.format("<button wicket:id=\"_add\" class=\"btn btn-add\" type=\"button\" title=\"%s\"><i class=\"fa fa-plus\"></i>%s</button>", label, label);
     }
 
     protected static void personalizeCSS(BSContainer<?> footer) {

@@ -1260,11 +1260,11 @@ mark,
   color: #777777; }
 
 .text-primary {
-  color: #337ab7; }
+  color: #40BAA7; }
 
 a.text-primary:hover,
 a.text-primary:focus {
-  color: #286090; }
+  color: #339485; }
 
 .text-success {
   color: #27a4b0; }
@@ -1298,11 +1298,11 @@ a.text-danger:focus {
   color: #fff; }
 
 .bg-primary {
-  background-color: #337ab7; }
+  background-color: #40BAA7; }
 
 a.bg-primary:hover,
 a.bg-primary:focus {
-  background-color: #286090; }
+  background-color: #339485; }
 
 .bg-success {
   background-color: #abe7ed; }
@@ -2326,18 +2326,18 @@ output {
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(63, 185, 167, 0.6);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(63, 185, 167, 0.6); }
   .form-control::-moz-placeholder {
-    color: #BBBFCD;
+    color: #acb1c2;
     opacity: 1; }
   .form-control:-ms-input-placeholder {
-    color: #BBBFCD; }
+    color: #acb1c2; }
   .form-control::-webkit-input-placeholder {
-    color: #BBBFCD; }
+    color: #acb1c2; }
   .form-control::-ms-expand {
     border: 0;
     background-color: transparent; }
   .form-control[disabled], .form-control[readonly],
   fieldset[disabled] .form-control {
-    background-color: #eef1f5;
+    background-color: #eaeef2;
     opacity: 1; }
   .form-control[disabled],
   fieldset[disabled] .form-control {
@@ -4200,7 +4200,7 @@ tbody.collapse.in {
   font-size: 75%;
   font-weight: bold;
   line-height: 1;
-  color: #fff;
+  color: #65697c;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;

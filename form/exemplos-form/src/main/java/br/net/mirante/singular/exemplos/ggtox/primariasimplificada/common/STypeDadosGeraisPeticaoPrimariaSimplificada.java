@@ -1,7 +1,7 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 
+
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePeticaoPrimariaSimplificada;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
@@ -12,20 +12,31 @@ import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypeComposite<SIComposite> {
 
+    public STypeAnvisaNumeroProcesso numeroProcessoPeticaoMatriz;
+    public STypeAttachment           declaracaoVinculoPeticaoMatriz;
+    public STypeString               justificativa;
+    public STypeAttachment           anexoJustificativa;
 
     @Override
     protected void onLoadType(TypeBuilder builder) {
         super.onLoadType(builder);
 
-        final STypeAttachment guiaRecolhimentoUniao          = addField("guiaRecolhimentoUniao", STypeAttachment.class);
-        final STypeAttachment declaracaoVinculoPeticaoMatriz = addField("declaracaoVinculoPeticaoMatriz", STypeAttachment.class);
-        final STypeString     justificativa                  = addFieldString("justificativa");
+        numeroProcessoPeticaoMatriz = addField("numeroProcessoPeticaoMatriz", STypeAnvisaNumeroProcesso.class);
+        declaracaoVinculoPeticaoMatriz = addField("declaracaoVinculoPeticaoMatriz", STypeAttachment.class);
+        justificativa = addFieldString("justificativa");
+        anexoJustificativa = addField("anexoJustificativa", STypeAttachment.class);
 
-        guiaRecolhimentoUniao
+        this
                 .asAtr()
-                .label("Guia de Recolhimento da União")
+                .label("Petição Matriz");
+
+        numeroProcessoPeticaoMatriz
+                .asAtr()
+                .required()
+                .label("Número do processo da petição matriz")
+                //TODO vincius help para dizer que o número do processo é anvisa
                 .asAtrBootstrap()
-                .colPreference(12);
+                .colPreference(4);
 
         declaracaoVinculoPeticaoMatriz
                 .asAtr()
@@ -41,6 +52,12 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypeComposite<
                 .label("Justificativa da solicitação")
                 .asAtrBootstrap()
                 .colPreference(12);
+
+        anexoJustificativa
+                .asAtrBootstrap()
+                .colPreference(12)
+                .asAtr()
+                .label("Anexo da justificativa (opcional)");
 
     }
 }
