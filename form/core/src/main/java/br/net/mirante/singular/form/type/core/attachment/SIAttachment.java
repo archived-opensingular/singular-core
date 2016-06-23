@@ -9,33 +9,15 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SingularFormException;
 import org.apache.tika.Tika;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 public class SIAttachment extends SIComposite {
 
     private AttachmentDocumentService getAttachmentService() {
         return AttachmentDocumentService.lookup(this);
-    }
-
-    public void setContent(File f, long length) {
-        setContent(getAttachmentService().addContent(getFileId(), f, length));
-    }
-
-    private void setContent(IAttachmentRef ref) {
-        if (!Objects.equals(getFileHashSHA1(), ref.getHashSHA1())) {
-            setValue(STypeAttachment.FIELD_HASH_SHA1, ref.getHashSHA1());
-        }
-        if (Objects.equals(ref.getId(), ref.getHashSHA1())) {
-            setValue(STypeAttachment.FIELD_FILE_ID, null);
-        } else {
-            setValue(STypeAttachment.FIELD_FILE_ID, ref.getId());
-        }
-        setValue(STypeAttachment.FIELD_SIZE, ref.getSize());
     }
 
     void deleteReference() {
@@ -71,22 +53,6 @@ public class SIAttachment extends SIComposite {
         return ref;
     }
 
-    public void setFileName(String name) {
-        setValue(STypeAttachment.FIELD_NAME, name);
-    }
-
-    public void setFileId(String id) {
-        setValue(STypeAttachment.FIELD_FILE_ID, id);
-    }
-
-    public void setOriginalFileId(String id) {
-        setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, id);
-    }
-
-    public void setFileHashSHA1(String hash) {  setValue(STypeAttachment.FIELD_HASH_SHA1, hash);    }
-
-    public void setFileSize(long size   ) { setValue(STypeAttachment.FIELD_SIZE, size); }
-
     /**
      * Retorna o tamanho do arquivo binário associado ou -1 se não houver
      * arquivo.
@@ -95,8 +61,16 @@ public class SIAttachment extends SIComposite {
         return Optional.ofNullable(getValueLong(STypeAttachment.FIELD_SIZE)).orElse(-1l);
     }
 
+    public void setFileSize(long size) {
+        setValue(STypeAttachment.FIELD_SIZE, size);
+    }
+
     public String getFileName() {
         return getValueString(STypeAttachment.FIELD_NAME);
+    }
+
+    public void setFileName(String name) {
+        setValue(STypeAttachment.FIELD_NAME, name);
     }
 
     public String getFileId() {
@@ -107,14 +81,30 @@ public class SIAttachment extends SIComposite {
         return id;
     }
 
+    /**
+     * Será removido em breve, utilizar hash como chave.
+     * @param id
+     */
+    @Deprecated
+    public void setFileId(String id) {
+        setValue(STypeAttachment.FIELD_FILE_ID, id);
+    }
+
     public String getOriginalFileId() {
         return getAttributeValue(STypeAttachment.ATR_ORIGINAL_ID);
+    }
+
+    public void setOriginalFileId(String id) {
+        setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, id);
     }
 
     public String getFileHashSHA1() {
         return getValueString(STypeAttachment.FIELD_HASH_SHA1);
     }
 
+    public void setFileHashSHA1(String hash) {
+        setValue(STypeAttachment.FIELD_HASH_SHA1, hash);
+    }
 
     public InputStream newInputStream() {
         IAttachmentRef ref = getAttachmentRef();
@@ -148,9 +138,9 @@ public class SIAttachment extends SIComposite {
         if (getFileSize() <= 0 || getFileName() == null) {
             return super.toStringDisplayDefault();
         }
-        final String[] sufixo    = new String[]{"B", "KB", "MB", "GB"};
-        int            posSufixo = 0;
-        double         bytesSize = getFileSize();
+        final String[] sufixo = new String[]{"B", "KB", "MB", "GB"};
+        int posSufixo = 0;
+        double bytesSize = getFileSize();
 
         while (bytesSize > 900 && posSufixo < sufixo.length - 1) {
             bytesSize = bytesSize / 1024;

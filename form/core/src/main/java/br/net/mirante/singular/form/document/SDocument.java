@@ -432,7 +432,7 @@ class AttachmentPersistenceHelper {
 
     private void moveFromTemporaryToPersistentIfNeeded(SIAttachment attachment) {
         if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
-            IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
+            IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileHashSHA1());
             if (fileRef != null) {
                 IAttachmentRef newRef = persistent.copy(fileRef);
                 deleteOldFiles(attachment, fileRef);
