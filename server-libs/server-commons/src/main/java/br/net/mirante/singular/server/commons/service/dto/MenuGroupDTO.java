@@ -37,4 +37,16 @@ public class MenuGroupDTO implements Serializable {
     public void setItemBoxes(List<ItemBoxDTO> itemBoxes) {
         this.itemBoxes = itemBoxes;
     }
+
+    public ItemBoxDTO getItemPorLabel(String itemName) {
+        if (itemBoxes != null) {
+            for (ItemBoxDTO itemBox : itemBoxes) {
+                if (itemBox.getName().equalsIgnoreCase(itemName)) {
+                    return itemBox;
+                }
+            }
+        }
+
+        return null;
+    }
 }
