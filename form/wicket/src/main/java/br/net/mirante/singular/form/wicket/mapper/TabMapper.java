@@ -8,6 +8,8 @@ package br.net.mirante.singular.form.wicket.mapper;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 import static com.google.common.collect.Lists.*;
 import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +20,7 @@ import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapp
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
@@ -44,6 +47,13 @@ public class TabMapper extends DefaultCompositeMapper {
         SViewTab tabView = (SViewTab) tComposto.getView();
 
         BSPanelGrid panel = new BSPanelGrid("panel") {
+
+            @Override
+            protected void onInitialize() {
+                super.onInitialize();
+                getNavigation().add($b.attr("style", "padding-right:0px;"));
+            }
+
             @Override
             public void updateTab(BSTab tab, List<BSTab> tabs) {
                 renderTab(tab.getSubtree(), this, ctx);
@@ -72,16 +82,11 @@ public class TabMapper extends DefaultCompositeMapper {
                     }
                 });
                 tabComponent.add($b.classAppender("has-errors",
-                    $m.get(new ISupplier<Boolean>() {
-                    @Override
-                    public Boolean get() {
-                        return subtreeModels.get().stream()
-                            .map(it -> it.getObject())
-                            .filter(it -> !SValidationFeedbackHandler.collectNestedErrors(tabComponent).isEmpty())
-                            .findAny()
-                            .isPresent();
-                    }
-                })));
+                    $m.get((ISupplier<Boolean>) () -> subtreeModels.get().stream()
+                        .map(IModel::getObject)
+                        .filter(it -> !SValidationFeedbackHandler.collectNestedErrors(tabComponent).isEmpty())
+                        .findAny()
+                        .isPresent())));
             }
             @Override
             protected void configureColspan() {
@@ -131,6 +136,11 @@ public class TabMapper extends DefaultCompositeMapper {
             IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
             BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesName(), baseInstanceModel);
             t.iconClass((m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t.getSubtree()));
+        }
+
+        final IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtr().getLabel()));
+        if (isNotBlank(label.getObject())) {
+            ctx.getContainer().newTag("h4", new Label("_title", label));
         }
 
         ctx.getContainer().newTag("div", panel);

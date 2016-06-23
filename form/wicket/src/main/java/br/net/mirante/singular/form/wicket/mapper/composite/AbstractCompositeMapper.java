@@ -138,7 +138,6 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             if (isNotBlank(label.getObject())) {
                 BSCol column = grid.newColInRow();
                 column.appendTag("h5", new Label("_title", label));
-                column.appendTag("hr", new WebMarkupContainer("_hr"));
                 ctx.configureContainer(label);
                 column.setVisible(!ctx.getParent().isTitleInBlock());
                 return column;
