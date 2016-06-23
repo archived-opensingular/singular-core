@@ -25,7 +25,7 @@ public class STypePDIDocumentos extends STypeComposite<SIComposite>{
         setView(SViewByBlock::new)
             .newBlock("22 Situação Legal").add("situacaoLegal")
             .newBlock("23 Regularidade Fiscal").add("regularidadeFiscal")
-            .newBlock("24 Regularidade Fiscal").add("demonstracaoPatrimonio");
+            .newBlock("24 Demonstração de Patrimônio").add("demonstracaoPatrimonio");
     }
     
     private void addSituacaoLegal() {

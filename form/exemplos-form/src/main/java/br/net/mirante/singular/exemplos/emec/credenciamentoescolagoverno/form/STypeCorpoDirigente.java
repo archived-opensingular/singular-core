@@ -9,9 +9,11 @@ import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.type.core.STypeBoolean;
 import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.type.util.STypeEMail;
+import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.view.SViewListByTable;
 
@@ -23,9 +25,10 @@ public class STypeCorpoDirigente extends STypeComposite<SIComposite>{
         super.onLoadType(tb);
         
         final STypeList<STypeComposite<SIComposite>, SIComposite> corpoDirigenteMembrosCPA = this.addFieldListOfComposite("corpoDirigenteMembrosCPA", "membro");
+        corpoDirigenteMembrosCPA.withMiniumSizeOf(3);
         corpoDirigenteMembrosCPA
             .withView(SViewListByForm::new)
-            .asAtr().label("Corpo Dirigente e/ou Membro CPA").itemLabel("Membro");
+            .asAtr().label("Corpo Dirigente e/ou Membro CPA").itemLabel("Membro").required();
         
         final STypeComposite<SIComposite> membro = corpoDirigenteMembrosCPA.getElementsType();
         membro.addField("cpf", STypeCPF.class)
@@ -60,15 +63,22 @@ public class STypeCorpoDirigente extends STypeComposite<SIComposite>{
             .asAtr().label("Cargo")
             .asAtrBootstrap().colPreference(6);
         
-        membro.addFieldBoolean("membroCPA", true)
-            .asAtr().label("Membro CPA")
+        final STypeBoolean membroCPA = membro.addFieldBoolean("membroCPA", true);
+        membroCPA.asAtr().label("Membro CPA")
             .asAtrBootstrap().newRow();
-        membro.addFieldBoolean("coordenadorCPA", true)
-            .asAtr().label("Coordenador CPA")
+        final STypeBoolean coordenadorCPA = membro.addFieldBoolean("coordenadorCPA", true);
+        coordenadorCPA.asAtr().label("Coordenador CPA")
             .asAtrBootstrap().newRow();
         membro.addFieldBoolean("dirigente", true)
             .asAtr().label("Dirigente")
             .asAtrBootstrap().newRow();
+        
+        corpoDirigenteMembrosCPA.addInstanceValidator(validatable -> {
+            if(validatable.getInstance().stream().filter(membro_ -> Value.of(membro_, membroCPA).booleanValue()).count() >= 3
+                && validatable.getInstance().stream().filter(membro_ -> Value.of(membro_, coordenadorCPA).booleanValue()).count() >= 1){
+                validatable.error("É necessário ter no mínimo três membros e um coordenador do CPA definidos");
+            }
+        });
     }
     
 }

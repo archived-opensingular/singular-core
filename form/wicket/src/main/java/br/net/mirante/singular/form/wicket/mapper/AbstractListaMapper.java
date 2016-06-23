@@ -215,6 +215,8 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                 for (int i = 0; i < tl.getMinimumSize(); i++) {
                     list.addNew();
                 }
+            } else if(tl.isRequired()){
+                list.addNew();
             }
         }
     }
