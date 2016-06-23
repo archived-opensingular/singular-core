@@ -39,26 +39,27 @@ import org.apache.wicket.util.string.StringValue;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.Serializable;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
-import static java.lang.Integer.*;
-import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.*;
+import static java.lang.Integer.parseInt;
+import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forReference;
 
 /**
  * Created by nuk on 10/06/16.
  */
 public class FileListUploadPanel extends Panel {
 
-    private final FileUploadField          fileField;
-    private final WebMarkupContainer       fileList;
-    private final AddFileBehavior          adder;
-    private final RemoveFileBehavior       remover;
-    private final WicketBuildContext       ctx;
-    private final DownloadBehavior downloader;
-    private       List<MInstanceRootModel> listOfFileModels;
+    private final FileUploadField fileField;
+    private final WebMarkupContainer fileList;
+    private final AddFileBehavior adder;
+    private final RemoveFileBehavior remover;
+    private final WicketBuildContext ctx;
+    private final DownloadSupportedBehavior downloader;
+    private List<MInstanceRootModel> listOfFileModels;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
                                WicketBuildContext ctx) {
@@ -85,8 +86,26 @@ public class FileListUploadPanel extends Panel {
         fileList.add(new FilesListView(listOfFileModels, model, ctx));
         add(adder = new AddFileBehavior());
         add(remover = new RemoveFileBehavior());
-        add(downloader = new DownloadBehavior(model.getObject().getDocument()));
+        add(downloader = new DownloadSupportedBehavior(model));
         fileField.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
+    }
+
+    private static void removeFileFrom(SIList<SIAttachment> list, String fileId) {
+        SIAttachment file = findFileByID(list, fileId);
+        if (file != null) {
+            list.remove(file);
+        }
+    }
+
+    private static SIAttachment findFileByID(SIList<SIAttachment> list, String fileId) {
+        SIAttachment file = null;
+        for (SIAttachment a : list) {
+            if (fileId.equals(a.getFileId())) {
+                file = a;
+                break;
+            }
+        }
+        return file;
     }
 
     private List<MInstanceRootModel> updateListOfFileModels(SIList<SIAttachment> fileList) {
@@ -142,7 +161,7 @@ public class FileListUploadPanel extends Panel {
 
     private UUID serviceId() {
         IAttachmentPersistenceHandler service = ((SIList) getDefaultModel().getObject()).getDocument().getAttachmentPersistenceTemporaryHandler();
-        HttpSession                   session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
+        HttpSession session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
 
         return FileUploadServlet.registerService(session, service);
     }
@@ -169,22 +188,34 @@ public class FileListUploadPanel extends Panel {
         };
     }
 
-    private static void removeFileFrom(SIList<SIAttachment> list, String fileId) {
-        SIAttachment file = findFileByID(list, fileId);
-        if (file != null) {
-            list.remove(file);
-        }
-    }
+    public static class LabelWithIcon extends Label {
 
-    private static SIAttachment findFileByID(SIList<SIAttachment> list, String fileId) {
-        SIAttachment file = null;
-        for (SIAttachment a : list) {
-            if (fileId.equals(a.getFileId())) {
-                file = a;
-                break;
+        private final Icone icon;
+        private final IModel<String> forAttrValue;
+
+        public LabelWithIcon(String id, IModel<?> model, Icone icon, IModel<String> forAttrValue) {
+            super(id, model);
+            this.icon = icon;
+            this.forAttrValue = forAttrValue;
+        }
+
+        public LabelWithIcon(String id, IModel<?> model, Icone icon) {
+            this(id, model, icon, null);
+        }
+
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            if (forAttrValue != null) {
+                add(WicketUtils.$b.attr("for", forAttrValue.getObject()));
             }
         }
-        return file;
+
+        @Override
+        public void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
+            replaceComponentTagBody(markupStream, openTag, "<i class='" + icon.getCssClass() + "'></i>\n" + getDefaultModelObjectAsString());
+        }
+
     }
 
     protected abstract class BaseJQueryFileUploadBehavior
@@ -251,7 +282,7 @@ public class FileListUploadPanel extends Panel {
 
     private class FilesListView extends ListView {
         private final IModel<SIList<SIAttachment>> model;
-        private final WicketBuildContext           ctx;
+        private final WicketBuildContext ctx;
 
         public FilesListView(List<MInstanceRootModel> collect, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
             super("fileItem", collect);
@@ -261,11 +292,8 @@ public class FileListUploadPanel extends Panel {
 
         protected void populateItem(ListItem item) {
             MInstanceRootModel itemModel = (MInstanceRootModel) item.getModelObject();
-            SIAttachment       file      = (SIAttachment) itemModel.getObject();
-            item.add(
-                    DownloadResource.link("downloadLink", itemModel, downloader.getUrl())
-                                .add(new Label("file_name", Model.of(file.getFileName())))
-            );
+            SIAttachment file = (SIAttachment) itemModel.getObject();
+            item.add(new DownloadLink("downloadLink", itemModel, downloader));
             item.add(new RemoveButton(itemModel));
         }
 
@@ -292,7 +320,7 @@ public class FileListUploadPanel extends Panel {
                 Iterator<MInstanceRootModel> it = listOfFileModels.iterator();
                 while (it.hasNext()) {
                     MInstanceRootModel m = it.next();
-                    SIAttachment       f = (SIAttachment) m.getObject();
+                    SIAttachment f = (SIAttachment) m.getObject();
                     if (file.getFileId().equals(f.getFileId())) {
                         it.remove();
                         break;
@@ -305,36 +333,6 @@ public class FileListUploadPanel extends Panel {
                 return ctx.getViewMode().isEdition();
             }
         }
-    }
-
-    public static class LabelWithIcon extends Label {
-
-        private final Icone          icon;
-        private final IModel<String> forAttrValue;
-
-        public LabelWithIcon(String id, IModel<?> model, Icone icon, IModel<String> forAttrValue) {
-            super(id, model);
-            this.icon = icon;
-            this.forAttrValue = forAttrValue;
-        }
-
-        public LabelWithIcon(String id, IModel<?> model, Icone icon) {
-            this(id, model, icon, null);
-        }
-
-        @Override
-        protected void onInitialize() {
-            super.onInitialize();
-            if (forAttrValue != null) {
-                add(WicketUtils.$b.attr("for", forAttrValue.getObject()));
-            }
-        }
-
-        @Override
-        public void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
-            replaceComponentTagBody(markupStream, openTag, "<i class='" + icon.getCssClass() + "'></i>\n" + getDefaultModelObjectAsString());
-        }
-
     }
 
 }

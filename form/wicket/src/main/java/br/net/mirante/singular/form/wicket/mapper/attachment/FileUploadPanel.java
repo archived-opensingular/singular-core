@@ -7,7 +7,6 @@ import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -15,12 +14,10 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -31,8 +28,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 /**
  * Created by nuk on 27/05/16.
@@ -47,25 +42,9 @@ public class FileUploadPanel extends Panel {
     private FileUploadField fileField;
     private HiddenField nameField, hashField, sizeField, idField;
     private WebMarkupContainer filesContainer, progressBar;
-    private DownloadBehavior downlaoder;
+    private DownloadSupportedBehavior downloader;
 
-    private final Label fileName = new Label("fileName", new AbstractReadOnlyModel<String>() {
-        @Override
-        public String getObject() {
-            if (!model.getObject().isEmptyOfData()) {
-                return model.getObject().getFileName();
-            }
-            return StringUtils.EMPTY;
-        }
-    }) {
-        @Override
-        protected void onConfigure() {
-            super.onConfigure();
-            add($b.attr("title", $m.ofValue(model.getObject().getFileName())));
-        }
-    };
-
-    private WebMarkupContainer downloadLink;
+    private DownloadLink downloadLink;
 
     private final AjaxButton removeFileButton = new AjaxButton("remove_btn") {
 
@@ -150,9 +129,8 @@ public class FileUploadPanel extends Panel {
         super.onInitialize();
 
 
-        this.add(downlaoder = new DownloadBehavior(model.getObject().getDocument()));
-        downloadLink = DownloadResource.link("downloadLink", model, downlaoder.getUrl());
-        downloadLink.add(fileName);
+        this.add(downloader = new DownloadSupportedBehavior(model));
+        downloadLink = new DownloadLink("downloadLink", model, downloader);
         fileField = new FileUploadField("fileUpload", dummyModel(model));
         nameField = new HiddenField("file_name",
                 new PropertyModel<>(model, "fileName"));
@@ -207,7 +185,7 @@ public class FileUploadPanel extends Panel {
                 "             param_name : '" + PARAM_NAME + "', \n" +
                 "             upload_url : '" + uploadUrl() + "', \n" +
                 "             upload_id : '" + serviceId().toString() + "', \n" +
-                "             download_url : '" + downlaoder.getUrl() + "', \n" +
+                "             download_url : '" + downloader.getUrl() + "', \n" +
                 "  \n" +
                 "     }; \n" +
                 "  \n" +

@@ -118,6 +118,10 @@ public class SDocument {
 
     }
 
+    public boolean isAttachmentPersistenceTemporaryHandlerSupported(){
+        return lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class) != null;
+    }
+
     /**
      * Retorna o serviço responsável por persistir temporáriamente os novos
      * anexos incluidos durante a edição. Se o formulário não for salvo, então
@@ -133,6 +137,10 @@ public class SDocument {
             setAttachmentPersistenceTemporaryHandler(RefService.of(ref));
         }
         return ref;
+    }
+
+    public boolean isAttachmentPersistencePermanentHandlerSupported(){
+        return lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class) != null;
     }
 
     /**

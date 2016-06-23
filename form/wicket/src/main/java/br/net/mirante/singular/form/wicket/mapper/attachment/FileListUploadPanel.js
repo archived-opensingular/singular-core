@@ -71,9 +71,9 @@ if(window.FileListUploadPanel == undefined){
                                     box.find('.list-item-content')
                                         .css("width","80%");
                                     box.find('.download-link')
-                                        .attr('href',params.download_url +
-                                            '&fileId='+file.fileId+
-                                            '&fileName='+file.name);
+                                        .on('click', function(){
+                                            DownloadSupportedBehavior.ajaxDownload(params.download_url, file.hashSHA1, file.name);
+                                        });
                                     box.find('.list-action-remove')
                                         .click(function (e) {
                                             $.getJSON(params.remove_url,
