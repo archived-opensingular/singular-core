@@ -13,6 +13,7 @@ public class DummyPageTest {
     @Test
     public void testPageRendering() {
         WicketTester tester = new WicketTester();
+        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding("utf-8");
 
         DummyPage dummyPage = new DummyPage() ;
         dummyPage.setTypeBuilder((x) -> {x.addFieldString("mockString");});

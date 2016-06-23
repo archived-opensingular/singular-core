@@ -18,6 +18,11 @@ public class SViewTab extends SView {
 
     private List<STab> tabs = new ArrayList<>();
 
+    private Integer navColXs;
+    private Integer navColSm;
+    private Integer navColMd;
+    private Integer navColLg;
+    
     @Override
     public boolean isApplicableFor(SType<?> type) {
         return type instanceof STypeComposite;
@@ -41,9 +46,68 @@ public class SViewTab extends SView {
         return tab;
     }
 
-    public STab addTab(SType<?> type) {
-        return addTab(type.getNameSimple(), type.asAtr().getLabel())
+    public STab addTab(SType<?> type, String label) {
+        return addTab(type.getNameSimple(), label)
             .add(type);
+    }
+
+    public STab addTab(SType<?> type) {
+        return addTab(type, type.asAtr().getLabel());
+    }
+    /**
+     * Configura o tamanho geral da coluna de navegação das abas
+     * @param valor
+     */
+    public SViewTab navColPreference(Integer valor) {
+        return navColLg(valor).navColMd(valor).navColSm(valor).navColXs(valor);
+    }
+    /**
+     * Configura o tamanho da coluna de navegação das abas em modo Smallest
+     * @param valor
+     */
+    public SViewTab navColXs(Integer valor) {
+        this.navColXs = valor;
+        return this;
+    }
+    /**
+     * Configura o tamanho da coluna de navegação das abas em modo Small
+     * @param valor
+     */
+    public SViewTab navColSm(Integer valor) {
+        this.navColSm = valor;
+        return this;
+    }
+    /**
+     * Configura o tamanho da coluna de navegação das abas em modo Medium
+     * @param valor
+     */
+    public SViewTab navColMd(Integer valor) {
+        this.navColMd = valor;
+        return this;
+    }
+    /**
+     * Configura o tamanho da coluna de navegação das abas em modo Large
+     * @param valor
+     */
+    public SViewTab navColLg(Integer valor) {
+        this.navColLg = valor;
+        return this;
+    }
+    
+    public Integer getNavColXs() {
+        return navColXs;
+    }
+
+    public Integer getNavColSm() {
+        return navColSm;
+    }
+
+    public Integer getNavColMd() {
+        return navColMd;
+    }
+
+    public Integer getNavColLg() {
+        return navColLg;
     }
 
     public final static class STab implements Serializable {

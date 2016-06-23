@@ -20,8 +20,6 @@ public class STypePDI extends STypeComposite<SIComposite>{
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         
-        this.asAtr().label("PDI");
-        
         addPerfilInstitucional();
         addProjetoPedagogico();
         addImplantacaoInstituicao();
@@ -35,12 +33,22 @@ public class STypePDI extends STypeComposite<SIComposite>{
         addOutros();
         
         // cria um bloco por campo
-        setView(SViewByBlock::new).newBlockPerType(getFieldsLocal());
+        setView(SViewByBlock::new)
+            .newBlock("1 Perfil Institucional").add("perfilInstitucional")
+            .newBlock("2 Projeto Pedagógico da Instituição").add("projetoPedagogicoInstituicao")
+            .newBlock("3 Implantação de Desenvolvimento da Instituição - Programa de Abertura de Cursos de Pós Graduação").add("implantacaoInstituicao")
+            .newBlock("4 Organização didatico-pedagógica da Instituição").add("organizacaoDidaticopedagogicaInstituicao")
+            .newBlock("5 Perfil do corpo docente e técnico-administrativo").add("perfilCorpoDocenteETecnicoAdministrativo")
+            .newBlock("6 Organização Administrativa da Instituição").add("organizacaoAdministrativa")
+            .newBlock("7 Infra-estrutura e Instalações Acadêmicas").add("infraestruturaInstalacoesAcademicas")
+            .newBlock("8 Atendimento de Pessoas com Necessidades Especiais").add("atendimentoPessoasNecessidadesEspeciais")
+            .newBlock("9 Ato autorizativo anterior ou ato de criação").add("atoAutorizativoCriacao")
+            .newBlock("10 Demonstrativo de Capacidade e Sustentabilidade Financeira").add("demonstrativoCapacidadeSustentabilidadeFinanceira")
+            .newBlock("11 Outros").add("outros");
     }
     
     private void addPerfilInstitucional() {
         final STypeComposite<SIComposite> perfilInstitucional = this.addFieldComposite("perfilInstitucional");
-        perfilInstitucional.asAtr().label("Perfil Institucional");
         perfilInstitucional.addFieldInteger("anoInicioPDI", true).asAtr().label("Ano de Início do PDI");
         perfilInstitucional.addFieldInteger("anoFimPDI", true).asAtr().label("Ano de Fim do PDI");
         perfilInstitucional.addFieldString("historicoDesenvolvimentoInstituicao", true)
@@ -50,17 +58,13 @@ public class STypePDI extends STypeComposite<SIComposite>{
     }
     
     private void addProjetoPedagogico() {
-        final STypeComposite<SIComposite> projetoPedagogico = this.addFieldComposite("projetoPedagogico");
-        projetoPedagogico.asAtr().label("Projeto Pedagógico");
-        projetoPedagogico.addFieldString("projetoPedagogicoInstituicao", true)
-            .withTextAreaView().asAtr().label("Projeto Pedagógico da Instituição")
-            .asAtrBootstrap().colPreference(12);
+        this.addFieldString("projetoPedagogicoInstituicao", true)
+            .withTextAreaView()
+            .asAtrBootstrap().maxColPreference();
     }
 
     private void addImplantacaoInstituicao() {
         final STypeComposite<SIComposite> implantacaoInstituicao = this.addFieldComposite("implantacaoInstituicao");
-        implantacaoInstituicao.asAtr().label("Implantação de Desenvolvimento da Instituição - Programa de Abertura de Cursos de Pós Graduação");
-        
         final STypeList<STypeComposite<SIComposite>, SIComposite> cursosPrevistos = implantacaoInstituicao.addFieldListOfComposite("cursosPrevistos", "curso");
         cursosPrevistos.withView(SViewListByMasterDetail::new)
             .asAtr().label("Cursos Previstos").itemLabel("Curso Previsto");
@@ -69,16 +73,13 @@ public class STypePDI extends STypeComposite<SIComposite>{
     }
     
     private void addOrganizacaoDidaticopedagogica() {
-        final STypeComposite<SIComposite> organizacaoDidaticopedagogica = this.addFieldComposite("organizacaoDidaticopedagogica");
-        organizacaoDidaticopedagogica.asAtr().label("Organização didatico-pedagógica da Instituição");
-        organizacaoDidaticopedagogica.addFieldString("organizacaoDidaticopedagogicaInstituicao", true)
+        this.addFieldString("organizacaoDidaticopedagogicaInstituicao", true)
             .withTextAreaView().asAtr().label("Organização didatico-pedagógica da Instituição")
-            .asAtrBootstrap().colPreference(12);
+            .asAtrBootstrap().maxColPreference();
     }
 
     private void addPerfilCorpoDocente() {
         final STypeComposite<SIComposite> perfilCorpoDocenteETecnicoAdministrativo = this.addFieldComposite("perfilCorpoDocenteETecnicoAdministrativo");
-        perfilCorpoDocenteETecnicoAdministrativo.asAtr().label("Perfil do corpo docente e técnico-administrativo");
         perfilCorpoDocenteETecnicoAdministrativo.addFieldString("corpoTecnicoAdministrativo", true)
             .withTextAreaView().asAtr().label("Corpo técnico-administrativo");
         perfilCorpoDocenteETecnicoAdministrativo.addFieldString("cronogramaExpansaoCorpoTecnicoAdministrativo", true)
@@ -97,7 +98,6 @@ public class STypePDI extends STypeComposite<SIComposite>{
 
     private void addOrganizacaoAdministrativa() {
         final STypeComposite<SIComposite> organizacaoAdministrativa = this.addFieldComposite("organizacaoAdministrativa");
-        organizacaoAdministrativa.asAtr().label("Organização Administrativa da Instituição");
         organizacaoAdministrativa.addFieldString("estruturaOrganizacionalIES", true)
             .withTextAreaView().asAtr().label("Estrutura OrganizacionalIES");
         organizacaoAdministrativa.addFieldString("procedimentosAtendimentosAlunos", true)
@@ -108,7 +108,6 @@ public class STypePDI extends STypeComposite<SIComposite>{
     
     private void addInfraestruturaInstalacoesAcademicas() {
         final STypeComposite<SIComposite> infraestruturaInstalacoesAcademicas = this.addFieldComposite("infraestruturaInstalacoesAcademicas");
-        infraestruturaInstalacoesAcademicas.asAtr().label("Infra-estrutura e Instalações Acadêmicas");
         
         final STypeList<STypeComposite<SIComposite>, SIComposite> enderecoes = infraestruturaInstalacoesAcademicas.addFieldListOfComposite("enderecoes", "encereco");
         enderecoes.withView(SViewListByMasterDetail::new)
@@ -119,22 +118,19 @@ public class STypePDI extends STypeComposite<SIComposite>{
     }
     
     private void addAtendimentoPessoasNecessidadesEspeciais() {
-        final STypeComposite<SIComposite> atendimentoPessoasNecessidadesEspeciais = this.addFieldComposite("atendimentoPessoasNecessidadesEspeciais");
-        atendimentoPessoasNecessidadesEspeciais.asAtr().label("Atendimento de Pessoas com Necessidades Especiais");
-        atendimentoPessoasNecessidadesEspeciais.addFieldString("planoPromocaoAcessibilidade", true)
+        this.addFieldString("atendimentoPessoasNecessidadesEspeciais", true)
             .withTextAreaView().asAtr().label("Plano de promoção de acessibilidade e atendimento prioritário, imediato e diferenciado para utilização, "
                 + "com segurança e autonomia, total ou assistida, dos espaços, mobiliários e equipamentos urbanos, das edificações, dos serviços de transporte, dos dispositivos, "
                 + "sistemas e meios de comunicação e informação, serviços de tradutor e intérprete de Língua Brasileira de Sinais - LIBRAS")
-            .asAtrBootstrap().colPreference(12);
+            .asAtrBootstrap().maxColPreference();
     }
 
     private void addAtoAutorizativoCriacao() {
         final STypeComposite<SIComposite> atoAutorizativoCriacao = this.addFieldComposite("atoAutorizativoCriacao");
-        atoAutorizativoCriacao.asAtr().label("Ato autorizativo anterior ou ato de criação");
         atoAutorizativoCriacao.addFieldString("tipoDocumento", true)
             .withRadioView().selectionOf("Ata", "Decreto", "Decreto-lei", "Lei", "Medida Provisória", "Parecer", "Portaria", "Resolução")
             .asAtr().label("Tipo de Documento")
-            .asAtrBootstrap().colPreference(12);
+            .asAtrBootstrap().maxColPreference();
         atoAutorizativoCriacao.addFieldInteger("numeroDocumento", true)
             .asAtr().label("Nº do Documento")
             .asAtrBootstrap().colPreference(3);
@@ -152,7 +148,6 @@ public class STypePDI extends STypeComposite<SIComposite>{
     
     private void addDemonstrativoCapacidadeSustentabilidadeFinanceira() {
         final STypeComposite<SIComposite> demonstrativoCapacidadeSustentabilidadeFinanceira = this.addFieldComposite("demonstrativoCapacidadeSustentabilidadeFinanceira");
-        demonstrativoCapacidadeSustentabilidadeFinanceira.asAtr().label("Demonstrativo de Capacidade e Sustentabilidade Financeira");
         
         final STypeList<STypeComposite<SIComposite>, SIComposite> demonstrativos = demonstrativoCapacidadeSustentabilidadeFinanceira.addFieldListOfComposite("demonstrativos", "demonstrativo");
         demonstrativos.withView(SViewListByMasterDetail::new)
@@ -165,8 +160,8 @@ public class STypePDI extends STypeComposite<SIComposite>{
     
     private void addOutros() {
         this.addFieldString("outros", true)
-            .withTextAreaView().asAtr().label("Outros")
-            .asAtrBootstrap().colPreference(12);
+            .withTextAreaView()
+            .asAtrBootstrap().maxColPreference();
     }
     
 }
