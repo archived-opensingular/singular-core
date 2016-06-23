@@ -24,10 +24,14 @@ public class SPackageCredenciamentoEscolaGoverno extends SPackage{
     @Override
     protected void onLoadPackage(PackageBuilder pb) {
         super.onLoadPackage(pb);
+        pb.createType(STypeEstado.class);
+        pb.createType(STypeSexo.class);
+        pb.createType(STypeMunicipio.class);
+        
         pb.createType(STypePDI.class);
         pb.createType(STypePDIProjetoPedagogico.class);
         pb.createType(STypePDIDocumentos.class);
-        pb.createType(STypeInformacoesPDI.class);
+        pb.createType(STypeMantenedora.class);
         pb.createType(STypeCredenciamentoEscolaGoverno.class);
     }
 }

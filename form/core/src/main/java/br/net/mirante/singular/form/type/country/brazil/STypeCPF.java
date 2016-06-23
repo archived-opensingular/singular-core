@@ -7,7 +7,6 @@ package br.net.mirante.singular.form.type.country.brazil;
 
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.validation.validator.InstanceValidators;
