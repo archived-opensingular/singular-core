@@ -17,7 +17,7 @@ public class STypeFabricante extends STypeEntidade {
 
         tipoPessoa
                 .asAtr()
-                .visible(false);
+                .exists(false);
 
         withInitListener(si -> si.findNearest(tipoPessoa)
                         .get()
@@ -31,7 +31,7 @@ public class STypeFabricante extends STypeEntidade {
 
         cnpj
                 .asAtr()
-                .visible( si -> true);
+                .exists( si -> true);
 
 
         comprovanteRegistroEstado = addField("comprovanteRegistroEstado", STypeAttachment.class);

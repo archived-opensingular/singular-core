@@ -16,7 +16,7 @@ public class STypeRepresentanteLegal extends STypeEntidade {
 
         tipoPessoa
                 .asAtr()
-                .visible(false);
+                .exists(false);
 
         tipoPessoa.withInitListener(si -> si.setValue("Fisica"));
         tipoPessoa.withUpdateListener(si -> {
