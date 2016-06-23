@@ -9,6 +9,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
@@ -45,6 +47,22 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
         Query query = createQuery(filtro, siglasProcesso, false);
         query.setFirstResult(filtro.getFirst());
         query.setMaxResults(filtro.getCount());
+        query.setResultTransformer(new AliasToBeanResultTransformer(getResultClass()));
+
+        return query.list();
+
+    }
+
+    protected Class<? extends PeticaoDTO> getResultClass() {
+        return PeticaoDTO.class;
+    }
+
+    public List<Map<String, Object>> quickSearchMap(QuickFilter filter, List<String> processesAbbreviation) {
+        Query query = createQuery(filter, processesAbbreviation, false);
+        query.setFirstResult(filter.getFirst());
+        query.setMaxResults(filter.getCount());
+        query.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
         return query.list();
 
     }
@@ -53,18 +71,16 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
         if (count) {
             hql.append("SELECT count(p) ");
         } else {
-            hql.append(" SELECT NEW " + PeticaoDTO.class.getName());
-            hql.append(" ( p.cod ");
-            hql.append(" , p.description");
-            hql.append(" , task.name");
-            hql.append(" , p.processName");
-            hql.append(" , p.creationDate");
-            hql.append(" , p.type");
-            hql.append(" , p.processType");
-            hql.append(" , ta.beginDate");
-            hql.append(" , pie.beginDate");
-            hql.append(" , p.editionDate");
-            hql.append(")");
+            hql.append(" SELECT p.cod as cod ");
+            hql.append(" , p.description as description ");
+            hql.append(" , task.name as situation ");
+            hql.append(" , p.processName as processName ");
+            hql.append(" , p.creationDate as creationDate ");
+            hql.append(" , p.type as type ");
+            hql.append(" , p.processType as processType ");
+            hql.append(" , ta.beginDate as situationBeginDate ");
+            hql.append(" , pie.beginDate as processBeginDate ");
+            hql.append(" , p.editionDate as editionDate ");
         }
     }
 

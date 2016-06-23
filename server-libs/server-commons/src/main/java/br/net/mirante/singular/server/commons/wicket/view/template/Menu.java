@@ -2,7 +2,6 @@ package br.net.mirante.singular.server.commons.wicket.view.template;
 
 import java.util.List;
 
-import br.net.mirante.singular.server.commons.wicket.SingularApplication;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -14,6 +13,8 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
+import br.net.mirante.singular.server.commons.wicket.SingularApplication;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -24,6 +25,8 @@ public class Menu extends Panel {
      *
      */
     private static final long serialVersionUID = 7622791136418841943L;
+
+    public static final String MENU_CACHE = "MENU_CACHE";
 
     public Menu(String id) {
         super(id);
@@ -92,5 +95,16 @@ public class Menu extends Panel {
             json.append("}");
             RequestCycle.get().scheduleRequestHandlerAfterCurrent(new TextRequestHandler(type, encoding, json.toString()));
         }
+    }
+
+    protected MenuSessionConfig getMenuSessionConfig() {
+        final SingularSession session = SingularSession.get();
+        MenuSessionConfig menuSessionConfig = (MenuSessionConfig) session.getAttribute(MENU_CACHE);
+        if (menuSessionConfig == null) {
+            menuSessionConfig = new MenuSessionConfig();
+            session.setAttribute(MENU_CACHE, menuSessionConfig);
+        }
+
+        return menuSessionConfig;
     }
 }

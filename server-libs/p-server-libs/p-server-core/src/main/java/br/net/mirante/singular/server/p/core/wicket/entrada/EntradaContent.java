@@ -17,18 +17,17 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
+import br.net.mirante.singular.server.p.core.wicket.view.AbstractPeticaoCaixaContent;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
-public class EntradaContent extends AbstractCaixaContent<PeticaoDTO> {
+public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 
     @Inject
     protected PetitionService peticaoService;
@@ -40,13 +39,8 @@ public class EntradaContent extends AbstractCaixaContent<PeticaoDTO> {
     @Override
     public QuickFilter montarFiltroBasico() {
         return new QuickFilter()
-                .withFilter(getFiltroRapido())
+                .withFilter(getFiltroRapidoModelObject())
                 .withRascunho(false);
-    }
-
-    @Override
-    protected String getBaseUrl() {
-        return getModuleContext() + ConfigProperties.get(ConfigProperties.SINGULAR_MODULE_FORM_ENDERECO);
     }
 
     @Override

@@ -1,12 +1,9 @@
 package br.net.mirante.singular.server.p.core.wicket.view;
 
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +12,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -31,15 +27,14 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.form.FormActions;
-import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
-import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
-import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -51,7 +46,7 @@ import br.net.mirante.singular.util.wicket.resource.Icone;
 /**
  * Classe base para construição de caixas do servidor de petições
  */
-public abstract class AbstractCaixaContent<T extends PeticaoDTO> extends Content {
+public abstract class AbstractCaixaContent<T extends Serializable> extends Content {
 
     private static final long serialVersionUID = -3611649597709058163L;
 
@@ -64,7 +59,7 @@ public abstract class AbstractCaixaContent<T extends PeticaoDTO> extends Content
     private List<ProcessDTO> processes;
 
     @Inject
-    private PetitionService petitionService;
+    protected PetitionService petitionService;
 
     /**
      * Form padrão
@@ -86,7 +81,7 @@ public abstract class AbstractCaixaContent<T extends PeticaoDTO> extends Content
     /**
      * Tabela de registros
      */
-    private BSDataTable<T, String> tabela = construirTabela(new BSDataTableBuilder<>(criarDataProvider()));
+    private BSDataTable<T, String> tabela;
 
     /**
      * Botão de pesquisa do filtro rapido
@@ -117,8 +112,9 @@ public abstract class AbstractCaixaContent<T extends PeticaoDTO> extends Content
         this.menu = menu;
     }
 
-
-    protected abstract String getBaseUrl();
+    protected String getBaseUrl() {
+        return getModuleContext() + ConfigProperties.get(ConfigProperties.SINGULAR_MODULE_FORM_ENDERECO);
+    }
 
     protected String getProcessGroupCod() {
         return processGroupCod;
@@ -168,25 +164,10 @@ public abstract class AbstractCaixaContent<T extends PeticaoDTO> extends Content
         return criarLink(peticao, id, FormActions.FORM_VIEW);
     }
 
-    protected WebMarkupContainer criarLink(T peticao, String id, FormActions formActions) {
-        String href = DispatcherPageUtil
-                .baseURL(getBaseUrl())
-                .formAction(formActions.getId())
-                .formId(peticao.getCod())
-                .params(getcriarLinkParameters(peticao))
-                .build();
+    //TODO delfino provisorio
+    protected abstract WebMarkupContainer criarLink(T peticao, String id, FormActions formActions);
 
-        WebMarkupContainer link = new WebMarkupContainer(id);
-        link.add($b.attr("target", String.format("_%s", peticao.getCod())));
-        link.add($b.attr("href", href));
-        return link;
-    }
-
-    protected Map<String, String> getcriarLinkParameters(T peticao){
-        Map<String, String> params = new HashMap<>();
-        params.put(SIGLA_FORM_NAME, peticao.getType());
-        return params;
-    }
+    protected abstract Map<String, String> getCriarLinkParameters(T peticao);
 
     protected BSModalBorder construirModalBorder() {
         BSModalBorder deleteModal = new BSModalBorder("deleteModal", getMessage("label.title.delete.draft"));
@@ -219,7 +200,15 @@ public abstract class AbstractCaixaContent<T extends PeticaoDTO> extends Content
         botoes.add(funcaoConstrutora.apply(botoes.newChildId()));
     }
 
-    public String getFiltroRapido() {
+    protected TextField<String> getFiltroRapido() {
+        return filtroRapido;
+    }
+
+    protected AjaxButton getPesquisarButton() {
+        return pesquisarButton;
+    }
+
+    public String getFiltroRapidoModelObject() {
         return filtroRapido.getModelObject();
     }
 
@@ -234,11 +223,12 @@ public abstract class AbstractCaixaContent<T extends PeticaoDTO> extends Content
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        tabela = construirTabela(new BSDataTableBuilder<>(criarDataProvider()));
         add(form.add(filtroRapido, pesquisarButton, botoes, dropdownMenu));
         add(tabela);
         add(deleteForm.add(deleteModal));
         if (getMenu() != null) {
-            setProcesses(Optional.ofNullable(SingularSession.get().getMenuPorLabel(getMenu())).map(MenuGroupDTO::getProcesses).orElse(new ArrayList<>(0)));
+            setProcesses(Optional.ofNullable(getMenuSessionConfig().getMenuPorLabel(getMenu())).map(MenuGroupDTO::getProcesses).orElse(new ArrayList<>(0)));
             if (CollectionUtils.isEmpty(getProcesses())){
                 getLogger().warn("!! NENHUM PROCESSO ENCONTRADO PARA A MONTAGEM DO MENU !!");
             }

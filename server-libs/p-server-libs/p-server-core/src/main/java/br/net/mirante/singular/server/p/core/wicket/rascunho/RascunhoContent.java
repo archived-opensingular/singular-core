@@ -11,21 +11,19 @@ import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
-import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.core.wicket.ModuleLink;
-import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
+import br.net.mirante.singular.server.p.core.wicket.view.AbstractPeticaoCaixaContent;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
-public class RascunhoContent extends AbstractCaixaContent<PeticaoDTO> {
+public class RascunhoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 
 
     @Inject
@@ -38,7 +36,7 @@ public class RascunhoContent extends AbstractCaixaContent<PeticaoDTO> {
     @Override
     public QuickFilter montarFiltroBasico() {
         return new QuickFilter()
-                .withFilter(getFiltroRapido())
+                .withFilter(getFiltroRapidoModelObject())
                 .withRascunho(true);
     }
 
@@ -50,11 +48,6 @@ public class RascunhoContent extends AbstractCaixaContent<PeticaoDTO> {
     @Override
     protected List<PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso) {
         return peticaoService.quickSearch(filtro, siglasProcesso);
-    }
-
-    @Override
-    protected String getBaseUrl() {
-        return getModuleContext() + ConfigProperties.get(ConfigProperties.SINGULAR_MODULE_FORM_ENDERECO);
     }
 
     @Override

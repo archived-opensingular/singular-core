@@ -1,10 +1,10 @@
 package br.net.mirante.singular.server.commons.persistence.filter;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-public class QuickFilter {
+public class QuickFilter implements Serializable {
 
     private String filter;
     private boolean rascunho;
@@ -15,6 +15,7 @@ public class QuickFilter {
     private String sortProperty;
     private boolean ascending;
     private List<String> tasks;
+    private List<String> processesAbbreviation;
 
     public String getFilter() {
         return filter;
@@ -101,5 +102,14 @@ public class QuickFilter {
 
     public List<String> getTasks() {
         return tasks;
+    }
+
+    public List<String> getProcessesAbbreviation() {
+        return processesAbbreviation;
+    }
+
+    public QuickFilter withProcessesAbbreviation(List<String> processesAbbreviation) {
+        this.processesAbbreviation = processesAbbreviation;
+        return this;
     }
 }

@@ -1,7 +1,21 @@
 package br.net.mirante.singular.server.commons.service;
 
 
-import br.net.mirante.singular.flow.core.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import br.net.mirante.singular.flow.core.Flow;
+import br.net.mirante.singular.flow.core.MTask;
+import br.net.mirante.singular.flow.core.MTransition;
+import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.FormKeyNumber;
@@ -17,12 +31,6 @@ import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 @Transactional
 public class PetitionService<T extends AbstractPetitionEntity> {
@@ -51,24 +59,34 @@ public class PetitionService<T extends AbstractPetitionEntity> {
         petitionDAO.delete(petitionDAO.find(peticao.getCod()));
     }
 
+    public void delete(Long idPeticao) {
+        petitionDAO.delete(petitionDAO.find(idPeticao));
+    }
 
-    public long countQuickSearch(QuickFilter filtro, String siglaProcesso) {
-        return countQuickSearch(filtro, Collections.singletonList(siglaProcesso));
+    public long countQuickSearch(QuickFilter filter, String siglaProcesso) {
+        return countQuickSearch(filter, Collections.singletonList(siglaProcesso));
+    }
+
+    public Long countQuickSearch(QuickFilter filter) {
+        return countQuickSearch(filter, filter.getProcessesAbbreviation());
+    }
+    
+    public Long countQuickSearch(QuickFilter filter, List<String> siglasProcesso) {
+        return petitionDAO.countQuickSearch(filter, siglasProcesso);
     }
 
 
-    public Long countQuickSearch(QuickFilter filtro, List<String> siglasProcesso) {
-        return petitionDAO.countQuickSearch(filtro, siglasProcesso);
+    public List<? extends PeticaoDTO> quickSearch(QuickFilter filter, String siglaProcesso) {
+        return quickSearch(filter, Collections.singletonList(siglaProcesso));
     }
 
 
-    public List<? extends PeticaoDTO> quickSearch(QuickFilter filtro, String siglaProcesso) {
-        return quickSearch(filtro, Collections.singletonList(siglaProcesso));
+    public List<? extends PeticaoDTO> quickSearch(QuickFilter filter, List<String> siglasProcesso) {
+        return petitionDAO.quickSearch(filter, siglasProcesso);
     }
 
-
-    public List<? extends PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso) {
-        return petitionDAO.quickSearch(filtro, siglasProcesso);
+    public List<Map<String, Object>> quickSearchMap(QuickFilter filter) {
+        return petitionDAO.quickSearchMap(filter, filter.getProcessesAbbreviation());
     }
 
     public FormKey saveOrUpdate(T peticao, SInstance instance) {

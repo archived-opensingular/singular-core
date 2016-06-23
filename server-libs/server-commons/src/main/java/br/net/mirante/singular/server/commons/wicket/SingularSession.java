@@ -1,9 +1,8 @@
 package br.net.mirante.singular.server.commons.wicket;
 
-import java.util.Collections;
-import java.util.HashMap;
+import static br.net.mirante.singular.server.commons.wicket.view.template.Menu.MENU_CACHE;
+
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.wicket.Session;
@@ -15,15 +14,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.config.IServerContext;
-import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
+import br.net.mirante.singular.server.commons.wicket.view.template.MenuSessionConfig;
 
 public class SingularSession extends AuthenticatedWebSession {
 
     private ProcessGroupEntity categoriaSelecionada;
-
-    private Map<ProcessGroupEntity, List<MenuGroupDTO>> map = new HashMap<>();
-    private Map<String, MenuGroupDTO> mapMenu = new HashMap<>();
 
     public SingularSession(Request request, Response response) {
         super(request);
@@ -95,35 +91,9 @@ public class SingularSession extends AuthenticatedWebSession {
         this.categoriaSelecionada = categoriaSelecionada;
     }
 
-    public Map<ProcessGroupEntity, List<MenuGroupDTO>> getMap() {
-        return Collections.unmodifiableMap(map);
+    public MenuSessionConfig getMenuSessionConfig() {
+        return (MenuSessionConfig) getAttribute(MENU_CACHE);
     }
 
-    public void addMenu(ProcessGroupEntity categoria, List<MenuGroupDTO> menusGroupDTO) {
-        mapMenu = null;
-        map.put(categoria, menusGroupDTO);
-    }
-
-    public List<MenuGroupDTO> getMenusPorCategoria(ProcessGroupEntity categoria) {
-        return map.get(categoria);
-    }
-
-    public MenuGroupDTO getMenuPorLabel(String label) {
-        return getMapMenu().get(label);
-    }
-
-    private Map<String,MenuGroupDTO> getMapMenu() {
-        if (mapMenu == null) {
-            mapMenu = new HashMap<>();
-        }
-
-        for (Map.Entry<ProcessGroupEntity, List<MenuGroupDTO>> processGroupEntityListEntry : map.entrySet()) {
-            for (MenuGroupDTO menuGroupDTO : processGroupEntityListEntry.getValue()) {
-                mapMenu.put(menuGroupDTO.getLabel(), menuGroupDTO);
-            }
-        }
-
-        return mapMenu;
-    }
 }
 

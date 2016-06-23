@@ -1,10 +1,8 @@
 package br.net.mirante.singular.server.commons.wicket.view.template;
 
+import static br.net.mirante.singular.server.commons.wicket.view.template.Menu.MENU_CACHE;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
-import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.server.commons.wicket.SingularSession;
-import br.net.mirante.singular.server.commons.wicket.view.SingularToastrHelper;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -16,6 +14,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.commons.util.Loggable;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
+import br.net.mirante.singular.server.commons.wicket.view.SingularToastrHelper;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 
 public abstract class Content extends Panel implements Loggable {
@@ -55,6 +56,9 @@ public abstract class Content extends Panel implements Loggable {
 
     }
 
+    protected MenuSessionConfig getMenuSessionConfig() {
+        return (MenuSessionConfig) SingularSession.get().getAttribute(MENU_CACHE);
+    }
 
     protected StringResourceModel getMessage(String prop) {
         return new StringResourceModel(prop.trim(), this, null);

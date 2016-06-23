@@ -1,24 +1,25 @@
 package br.net.mirante.singular.server.p.core.wicket.acompanhamento;
 
 
-import br.net.mirante.singular.server.commons.config.ConfigProperties;
-import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
-import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
-import br.net.mirante.singular.server.commons.service.PetitionService;
-import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.model.IModel;
 
-import javax.inject.Inject;
-import java.util.List;
+import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.p.core.wicket.view.AbstractPeticaoCaixaContent;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
-public class AcompanhamentoContent extends AbstractCaixaContent<PeticaoDTO> {
+public class AcompanhamentoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 
     @Inject
     protected PetitionService peticaoService;
@@ -31,7 +32,7 @@ public class AcompanhamentoContent extends AbstractCaixaContent<PeticaoDTO> {
     @Override
     public QuickFilter montarFiltroBasico() {
         return new QuickFilter()
-                .withFilter(getFiltroRapido())
+                .withFilter(getFiltroRapidoModelObject())
                 .withRascunho(false);
     }
 
@@ -44,11 +45,6 @@ public class AcompanhamentoContent extends AbstractCaixaContent<PeticaoDTO> {
     @Override
     protected List<PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso) {
         return peticaoService.quickSearch(filtro, siglasProcesso);
-    }
-
-    @Override
-    protected String getBaseUrl() {
-        return getModuleContext() + ConfigProperties.get(ConfigProperties.SINGULAR_MODULE_FORM_ENDERECO);
     }
 
     @Override

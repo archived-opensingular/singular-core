@@ -12,6 +12,7 @@ import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
 public interface IServerMetadataREST {
 
     String PATH_LIST_MENU = "/server/menu/list";
+    String PATH_BOX_SEARCH = "/box/search";
 
     List<MenuGroupDTO> listMenu();
 

@@ -6,23 +6,37 @@
 package br.net.mirante.singular.server.commons.service.dto;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class ItemBoxDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String nome;
+    private String name;
+    private String description;
     private boolean newButton = false;
     private boolean editButton = false;
     private boolean deleteButton = false;
+    private boolean viewButton = false;
+    private boolean quickFilter = true;
     private String searchEndpoint;
+    private String countEndpoint;
+    private Map<String, String> fieldsDatatable;
 
     public String getName() {
-        return nome;
+        return name;
     }
 
     public void setName(String name) {
-        this.nome = name;
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean isNewButton() {
@@ -55,5 +69,37 @@ public class ItemBoxDTO implements Serializable {
 
     public void setSearchEndpoint(String searchEndpoint) {
         this.searchEndpoint = searchEndpoint;
+    }
+
+    public boolean isQuickFilter() {
+        return quickFilter;
+    }
+
+    public void setQuickFilter(boolean quickFilter) {
+        this.quickFilter = quickFilter;
+    }
+
+    public Map<String, String> getFieldsDatatable() {
+        return fieldsDatatable;
+    }
+
+    public void setFieldsDatatable(Map<String, String> fieldsDatatable) {
+        this.fieldsDatatable = fieldsDatatable;
+    }
+
+    public boolean isViewButton() {
+        return viewButton;
+    }
+
+    public void setViewButton(boolean viewButton) {
+        this.viewButton = viewButton;
+    }
+
+    public String getCountEndpoint() {
+        return countEndpoint;
+    }
+
+    public void setCountEndpoint(String countEndpoint) {
+        this.countEndpoint = countEndpoint;
     }
 }
