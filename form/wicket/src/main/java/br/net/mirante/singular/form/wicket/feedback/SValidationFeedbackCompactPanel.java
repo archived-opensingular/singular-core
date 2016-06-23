@@ -8,9 +8,12 @@ package br.net.mirante.singular.form.wicket.feedback;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 import static java.util.stream.Collectors.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.StyleAttributeModifier;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.IFeedback;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -20,7 +23,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.ValidationError;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
@@ -39,6 +41,19 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
 
         add(new Label("firstMessage", $m.get(this::firstMessageOrQuantity)));
 
+        add(new StyleAttributeModifier() {
+            @Override
+            protected Map<String, String> update(Map<String, String> oldStyles) {
+                final Map<String, String> newStyles = new HashMap<>(oldStyles);
+                if (getMessages().isEmpty()) {
+                    newStyles.put("display", "none");
+                } else {
+                    newStyles.put("display", "block");
+                }
+                return newStyles;
+            }
+        });
+
         add(new Behavior() {
 
             @Override
@@ -47,31 +62,31 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
                 SValidationFeedbackCompactPanel fp = (SValidationFeedbackCompactPanel) component;
                 if (fp.anyMessage(ValidationErrorLevel.ERROR)) {
                     response.render(OnDomReadyHeaderItem.forScript(
-                        JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"));
+                            JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"));
                 } else if (fp.anyMessage(ValidationErrorLevel.WARNING)) {
                     response.render(OnDomReadyHeaderItem.forScript(
-                        JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"));
+                            JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"));
                 } else {
                     response.render(OnDomReadyHeaderItem.forScript(
-                        JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"));
+                            JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"));
                 }
                 response.render(OnDomReadyHeaderItem.forScript(""
-                    + "var $this = " + JQuery.$(SValidationFeedbackCompactPanel.this) + ";"
-                    + "var $fence = " + JQuery.$(fence) + ";"
-                    + "$fence.find(':input')"
-                    + "  .on('focus', function(){ $this.addClass('singular-active'); })"
-                    + "  .on('blur',  function(){ $this.removeClass('singular-active'); });"
-                    //                    + "$this"
-                    //                    + "  .on('mouseover', function(){ $this.addClass('singular-active'); })"
-                    //                    + "  .on('mouseout',  function(){ $this.removeClass('singular-active'); });"
-                    + ""));
+                        + "var $this = " + JQuery.$(SValidationFeedbackCompactPanel.this) + ";"
+                        + "var $fence = " + JQuery.$(fence) + ";"
+                        + "$fence.find(':input')"
+                        + "  .on('focus', function(){ $this.addClass('singular-active'); })"
+                        + "  .on('blur',  function(){ $this.removeClass('singular-active'); });"
+                        //                    + "$this"
+                        //                    + "  .on('mouseover', function(){ $this.addClass('singular-active'); })"
+                        //                    + "  .on('mouseout',  function(){ $this.removeClass('singular-active'); });"
+                        + ""));
 
                 List<IValidationError> messages = getMessages();
                 if (!messages.isEmpty()) {
                     String errors = messages.stream()
-                        .map(IValidationError::getMessage)
-                        .collect(joining("</li><li>", "<ul class='list-unstyled'><li>", "</li></ul>"));
-                    if(messages.size() > 1) {
+                            .map(IValidationError::getMessage)
+                            .collect(joining("</li><li>", "<ul class='list-unstyled'><li>", "</li></ul>"));
+                    if (messages.size() > 1) {
                         response.render(OnDomReadyHeaderItem.forScript(""
                                 + "var $feedback = " + JQuery.$(component) + ";"
                                 + "var $formGroup = $feedback.parent();"
@@ -85,12 +100,6 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
                                 + ""));
                     }
                 }
-            }
-
-            @Override
-            public void onConfigure(Component component) {
-                super.onConfigure(component);
-                setVisible(!getMessages().isEmpty());
             }
         });
     }
