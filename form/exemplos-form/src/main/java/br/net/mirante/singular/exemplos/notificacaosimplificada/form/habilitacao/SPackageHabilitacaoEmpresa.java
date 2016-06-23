@@ -6,14 +6,11 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.habilitacao;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.core.STypeDate;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SInfoPackage;
+import br.net.mirante.singular.form.SPackage;
 
+@SInfoPackage(name = SPackageHabilitacaoEmpresa.PACOTE)
 public class SPackageHabilitacaoEmpresa extends SPackage {
 
     public static final String PACOTE        = "mform.peticao.notificacaosimplificada.habilitacao";
