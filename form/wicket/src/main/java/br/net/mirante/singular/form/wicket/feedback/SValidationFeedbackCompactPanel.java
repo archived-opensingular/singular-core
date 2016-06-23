@@ -40,6 +40,7 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
         add(new Label("firstMessage", $m.get(this::firstMessageOrQuantity)));
 
         add(new Behavior() {
+
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
@@ -68,7 +69,7 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
                 List<IValidationError> messages = getMessages();
                 if (!messages.isEmpty()) {
                     String errors = messages.stream()
-                        .map(it -> it.getMessage())
+                        .map(IValidationError::getMessage)
                         .collect(joining("</li><li>", "<ul class='list-unstyled'><li>", "</li></ul>"));
                     response.render(OnDomReadyHeaderItem.forScript(""
                         + "var $feedback = " + JQuery.$(component) + ";"
@@ -82,6 +83,12 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
                         + "  });"
                         + ""));
                 }
+            }
+
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+                setVisible(!getMessages().isEmpty());
             }
         });
     }
