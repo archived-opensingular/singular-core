@@ -27,8 +27,6 @@ public class DefaultCompositeMapper extends AbstractCompositeMapper {
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
             if (ctx.getCurrentInstance().getParent() == null) {
                 grid.setCssClass("singular-container");
-                //TEMPORARIO
-                grid.add($b.attrAppender("style", "padding-top:15px", ";"));
             }
             super.buildFields(ctx, grid);
         }
