@@ -5,19 +5,14 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.common.STypeSubstanciaPopulator;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeFormaFarmaceutica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeLinhaProducao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.exemplos.util.TripleConverter;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
-import org.apache.commons.lang3.tuple.Triple;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SInfoPackage;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SPackage;
 
+@SInfoPackage(name = SPackageNotificacaoSimplificadaBaixoRisco.PACOTE)
 public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {
 
     public static final String PACOTE = "mform.peticao.notificacaosimplificada.baixorisco";
