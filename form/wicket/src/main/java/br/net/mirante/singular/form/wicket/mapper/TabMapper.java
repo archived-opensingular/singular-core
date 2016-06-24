@@ -101,19 +101,19 @@ public class TabMapper extends DefaultCompositeMapper {
                 final Optional<Integer> colMd = Optional.ofNullable(Optional.ofNullable(tabView.getNavColMd()).orElse(bootstrap.getColMd(bootstrap.getColPreference())));
                 final Optional<Integer> colLg = Optional.ofNullable(Optional.ofNullable(tabView.getNavColLg()).orElse(bootstrap.getColLg(bootstrap.getColPreference())));
                 
-                if(colXs.isPresent()){
+                if(colXs.filter(x -> x < BSTabCol.MAX_COLS ).isPresent()){
                     getNavigation().xs(colXs.get());
                     getContent().xs(BSTabCol.MAX_COLS - colXs.get());
                 }
-                if(colSm.isPresent()){
+                if(colSm.filter(x -> x < BSTabCol.MAX_COLS ).isPresent()){
                     getNavigation().sm(colSm.get());
                     getContent().sm(BSTabCol.MAX_COLS - colSm.get());
                 }
-                if(colMd.isPresent()){
+                if(colMd.filter(x -> x < BSTabCol.MAX_COLS ).isPresent()){
                     getNavigation().md(colMd.get());
                     getContent().md(BSTabCol.MAX_COLS - colMd.get());
                 }
-                if(colLg.isPresent()){
+                if(colLg.filter(x -> x < BSTabCol.MAX_COLS ).isPresent()){
                     getNavigation().lg(colLg.get());
                     getContent().lg(BSTabCol.MAX_COLS - colLg.get());
                 }

@@ -30,7 +30,7 @@ public class STypeCredenciamentoEscolaGoverno extends STypeComposite<SIComposite
         tabbed.addTab(addField("documentos", STypePDIDocumentos.class), "Documentos");
         tabbed.addTab(addRegimentoEstatuto(), "Regimento/Estatuto");
         // configuração do tamanho da coluna de navegação das abas
-        tabbed.navColPreference(2);
+        tabbed.navColPreference(2).navColMd(3).navColSm(3).navColXs(4);
         
     }
     

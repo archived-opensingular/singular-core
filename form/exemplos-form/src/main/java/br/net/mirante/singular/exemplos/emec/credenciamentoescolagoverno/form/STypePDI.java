@@ -5,15 +5,15 @@
 package br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import com.google.common.base.Predicates;
-
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInfoType;
@@ -21,10 +21,9 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.type.core.STypeDecimal;
 import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
+import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.view.SViewListByTable;
@@ -32,7 +31,15 @@ import br.net.mirante.singular.form.view.SViewListByTable;
 @SInfoType(spackage = SPackageCredenciamentoEscolaGoverno.class)
 public class STypePDI extends STypeComposite<SIComposite>{
 
-    private static final List<String> TIPOS_RECEITA = Arrays.asList("Anuidade / Mensalidade(+)", "Bolsas(-)", "Diversos(+)", "Financiamentos(+)", "Inadimplência(-)", "Serviços(+)", "Taxas(+)");
+    private static final List<String> TIPOS_RECEITA = Arrays.asList(
+        "Anuidade / Mensalidade(+)", "Bolsas(-)", "Diversos(+)", 
+        "Financiamentos(+)", "Inadimplência(-)", "Serviços(+)", "Taxas(+)");
+    private static final List<String> TIPOS_DESPESA = Arrays.asList(
+        "Acervo Bibliográfico(-)", "Aluguel(-)", "Despesas Administrativas(-)", 
+        "Encargos(-)", "Equipamentos(-)", "Eventos(-)", 
+        "Investimento (compra de imóvel)(-)", "Manutenção(-)", "Mobiliário(-)",
+        "Pagamento Pessoal Administrativo(-)", "Pagamento Professores(-)",
+        "Pesquisa e Extensão(-)", "Treinamento(-)");
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -168,43 +175,84 @@ public class STypePDI extends STypeComposite<SIComposite>{
         final STypeList<STypeComposite<SIComposite>, SIComposite> demonstrativos = demonstrativoCapacidadeSustentabilidadeFinanceira.addFieldListOfComposite("demonstrativos", "demonstrativo");
         final STypeComposite<SIComposite> demonstrativo = demonstrativos.getElementsType();
         
-        final STypeInteger ano = demonstrativo.addFieldInteger("ano", true);
-        ano.asAtr().displayString("Demonstrativo Financeiro ${ano}").enabled(false);
+        final STypeInteger ano = demonstrativo.addFieldInteger("ano");
+        ano.asAtr().label("Demonstrativo Financeiro").enabled(false);
         
         final STypeList<STypeComposite<SIComposite>, SIComposite> receitas = demonstrativo.addFieldListOfComposite("receitas", "receita");
         receitas.setView(SViewListByTable::new).disableNew().disableDelete();
-        final STypeString tipoReceita = receitas.getElementsType().addFieldString("tipo", true);
-        tipoReceita.asAtr().enabled(false);
-        final STypeDecimal valorReceita = receitas.getElementsType().addFieldDecimal("valor", true);
-        demonstrativo.withInitListener(ins -> {
-            final Optional<SIList<SIComposite>> lista = ins.findNearest(receitas);
-            for (String tipo : TIPOS_RECEITA) {
-                lista.get().addNew().findNearest(tipoReceita).get().setValue(tipo);
-            }
-        });
+        receitas.asAtr().label("Receitas");
+        receitas.getElementsType().addFieldString("tipo").asAtr().enabled(false);
+        receitas.getElementsType().addFieldMonetary("valor");
+
+        final STypeList<STypeComposite<SIComposite>, SIComposite> despesas = demonstrativo.addFieldListOfComposite("despesas", "despesa");
+        despesas.setView(SViewListByTable::new).disableNew().disableDelete();
+        despesas.asAtr().label("Despesas");
+        despesas.getElementsType().addFieldString("tipo").asAtr().enabled(false);
+        despesas.getElementsType().addFieldMonetary("valor");
         
         demonstrativoCapacidadeSustentabilidadeFinanceira.withInitListener(ins -> {
             final Optional<SIList<SIComposite>> lista = ins.findNearest(demonstrativos);
             for (int i = 0; i < 5; i++) {
                 final SIComposite siComposite = lista.get().addNew();
                 siComposite.findNearest(ano).get().setValue(LocalDate.now().getYear() + i);
+                final SIList<SIComposite> receitas_ = siComposite.findNearest(receitas).get();
+                final SIList<SIComposite> despesas_ = siComposite.findNearest(despesas).get();
+                TIPOS_RECEITA.stream().forEach(tipo -> receitas_.addNew().setValue("tipo", tipo));
+                TIPOS_DESPESA.stream().forEach(tipo -> despesas_.addNew().setValue("tipo", tipo));
             }
         });
         
         demonstrativos.withView(
             new SViewListByMasterDetail()
-                .col("Ano", "${ano}")
-                .col("Receitas", ins -> {
-                    final Optional<SIList<SIComposite>> lista = ins.findNearest(receitas);
-                    BigDecimal total = lista.get().stream().map(siComposite -> siComposite.findNearest(valorReceita).get().getValue())
-                        .filter(Objects::nonNull)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-                    return total.toString();
-                })
-                .col("Despesas", "Tipo de referência")
-                .col("Total Geral", "Tipo de referência")
+                .col(ano)
+                .col("Receitas", calcularTotal("receitas"))
+                .col("Despesas", calcularTotal("despesas"))
+                .col("Total Geral", calcularTotal())
                 .disableNew().disableDelete())
             .asAtr().label("Demonstrativos").itemLabel("Demonstrativo");
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static IFunction<SInstance, String> calcularTotal(){
+        return ins -> {
+            BigDecimal total = BigDecimal.ZERO;
+            SIList<SIComposite> lista = (SIList<SIComposite>) ((SIComposite)ins).getField("receitas");
+            if(lista != null){
+                total = lista.stream().map(siComposite -> ((BigDecimal)Value.of(siComposite, "valor")))
+                    .filter(Objects::nonNull)
+                    .reduce(total, BigDecimal::add);
+            }
+            lista = (SIList<SIComposite>) ((SIComposite)ins).getField("despesas");
+            if(lista != null){
+                total = lista.stream().map(siComposite -> ((BigDecimal)Value.of(siComposite, "valor")))
+                    .filter(Objects::nonNull)
+                    .reduce(total, BigDecimal::subtract);
+            }
+            return formatDecimal(total, 2);
+        };
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static IFunction<SInstance, String> calcularTotal(String nomeLista){
+        return ins -> {
+            BigDecimal total = BigDecimal.ZERO;
+            final SIList<SIComposite> lista = (SIList<SIComposite>) ((SIComposite)ins).getField(nomeLista);
+            if(lista != null){
+                total = lista.stream().map(siComposite -> (BigDecimal)Value.of(siComposite, "valor"))
+                    .filter(Objects::nonNull)
+                    .reduce(total, BigDecimal::add);
+            }
+            return formatDecimal(total, 2);
+        };
+    }
+    
+    private static String formatDecimal(BigDecimal bigDecimal, Integer casasDecimais) {
+        DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(new Locale("pt", "BR"));
+        nf.setParseBigDecimal(true);
+        nf.setGroupingUsed(true);
+        nf.setMinimumFractionDigits(casasDecimais);
+        nf.setMaximumFractionDigits(casasDecimais);
+        return nf.format(bigDecimal);
     }
     
     private void addOutros() {
