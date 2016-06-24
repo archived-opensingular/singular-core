@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.form.wicket.mapper.attachment;
+package br.net.mirante.singular.form.wicket.mapper.attachment.single;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SingularFormException;

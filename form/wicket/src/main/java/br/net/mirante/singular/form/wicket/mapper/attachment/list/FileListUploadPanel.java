@@ -1,12 +1,16 @@
-package br.net.mirante.singular.form.wicket.mapper.attachment;
+package br.net.mirante.singular.form.wicket.mapper.attachment.list;
 
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
+import br.net.mirante.singular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
+import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadLink;
+import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
+import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadUtil;
+import br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -14,11 +18,8 @@ import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import org.apache.commons.collections.iterators.TransformIterator;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.IResourceListener;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -32,18 +33,14 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.string.StringValue;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Iterator;
 
-import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
+import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
 import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forReference;
 
 /**
@@ -51,8 +48,8 @@ import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forRef
  * <p>
  * O upload múltiplo executado via jquery para a servlet {@link FileUploadServlet} atualiza
  * o código no cliente via javascript por meio do código java script associado a esse painel FileListUploadPanel.js
- * Para manter os models atualizados o js cliente se comunica com esse panel através do {@link br.net.mirante.singular.form.wicket.mapper.attachment.FileListUploadPanel.AddFileBehavior}
- * para remover os arquivos e atualizar os models o js cliente se comunica com esse panel através do {@link br.net.mirante.singular.form.wicket.mapper.attachment.FileListUploadPanel.RemoveFileBehavior}
+ * Para manter os models atualizados o js cliente se comunica com esse panel através do {@link br.net.mirante.singular.form.wicket.mapper.attachment.list.FileListUploadPanel.AddFileBehavior}
+ * para remover os arquivos e atualizar os models o js cliente se comunica com esse panel através do {@link br.net.mirante.singular.form.wicket.mapper.attachment.list.FileListUploadPanel.RemoveFileBehavior}
  *
  * @author fabricio, vinicius
  */
@@ -200,35 +197,13 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     }
 
-    protected abstract class BaseJQueryFileUploadBehavior
-            extends Behavior implements IResourceListener {
-        private Component component;
 
-        protected SIList<SIAttachment> currentInstance() {
-            IModel<?> model = FileListUploadPanel.this.getDefaultModel();
-            return (SIList<SIAttachment>) model.getObject();
+    private class AddFileBehavior extends BaseJQueryFileUploadBehavior<SIList<SIAttachment>> {
+
+        public AddFileBehavior() {
+            super((IModel<SIList<SIAttachment>>) FileListUploadPanel.this.getDefaultModel());
         }
 
-        protected StringValue getParamFileId(String fileId) {
-            return params().getParameterValue(fileId);
-        }
-
-        protected IRequestParameters params() {
-            WebRequest request = (WebRequest) RequestCycle.get().getRequest();
-            return request.getRequestParameters();
-        }
-
-        @Override
-        public void bind(Component component) {
-            this.component = component;
-        }
-
-        public String getUrl() {
-            return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
-        }
-    }
-
-    private class AddFileBehavior extends BaseJQueryFileUploadBehavior {
         @Override
         public void onResourceRequested() {
             try {
@@ -243,10 +218,13 @@ public class FileListUploadPanel extends Panel implements Loggable {
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }
-
     }
 
-    private class RemoveFileBehavior extends BaseJQueryFileUploadBehavior {
+    private class RemoveFileBehavior extends BaseJQueryFileUploadBehavior<SIList<SIAttachment>> {
+
+        public RemoveFileBehavior() {
+            super((IModel<SIList<SIAttachment>>) FileListUploadPanel.this.getDefaultModel());
+        }
 
         @Override
         public void onResourceRequested() {

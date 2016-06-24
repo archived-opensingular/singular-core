@@ -7,8 +7,8 @@
             $('#' + params.progress_bar_id).hide();
 
             var update_action_buttons = function () {
-                var choose_btn = $('#' + params.name_id).parent().find('.file-choose-button');
-                var trash_btn = $('#' + params.name_id).parent().find('.file-trash-button');
+                var choose_btn = $('#' + params.panel_id).find('.file-choose-button');
+                var trash_btn = $('#' + params.panel_id).parent().find('.file-trash-button');
 
                 if($('#' + params.id_id).val()){
                     // trash_btn.css('display','block').css('width','35px'); // Somewhat, we need this in order to not destroy the layout
@@ -43,21 +43,26 @@
                     console.log('done',e,data);
                     $.each(data.result, function (index, file) {
                         console.log('f',file, $('#' + params.files_id ));
-                        $('#' + params.files_id ).append(
-                            $('<a />')
-                                .on('click', function(event){
-                                    DownloadSupportedBehavior.ajaxDownload(params.download_url, file.fileId, file.name);
-                                    event.preventDefault();
-                                })
-                                .text(file.name)
-                        );
-                        $('#' + params.progress_bar_id).hide();
-                        $('#' + params.name_id).val(file.name);
-                        $('#' + params.id_id).val(file.fileId);
-                        $('#' + params.hash_id).val(file.hashSHA1);
-                        $('#' + params.size_id).val(file.size);
+                        $.getJSON(params.add_url,
+                            {
+                                name: file.name,
+                                fileId: file.fileId,
+                                hashSHA1: file.hashSHA1,
+                                size: file.size,
 
-                        update_action_buttons();
+                            }, function (dataSInstance, status, jqXHR) {
+                                $('#' + params.files_id).append(
+                                    $('<a />')
+                                        .on('click', function (event) {
+                                            DownloadSupportedBehavior.ajaxDownload(params.download_url, dataSInstance.fileId, dataSInstance.name);
+                                            event.preventDefault();
+                                        })
+                                        .text(dataSInstance.name)
+                                );
+                                $('#' + params.progress_bar_id).hide();
+
+                                update_action_buttons();
+                            });
                     });
                 },
                 progressall: function (e, data) {

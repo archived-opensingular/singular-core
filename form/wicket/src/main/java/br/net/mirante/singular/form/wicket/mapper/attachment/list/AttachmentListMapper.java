@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.mapper.attachment;
+package br.net.mirante.singular.form.wicket.mapper.attachment.list;
 
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
@@ -8,7 +8,7 @@ import org.apache.wicket.model.IModel;
 
 public class AttachmentListMapper extends AbstractListaMapper {
 
-    final static String MULTIPLE_HIDDEN_UPLOAD_FIELD_ID = "uploadField";
+    public final static String MULTIPLE_HIDDEN_UPLOAD_FIELD_ID = "uploadField";
     private final static String CLICK_DELEGATE_SCRIPT_TEMPLATE = "$('#%s').on('click', function(){$('#%s').click();});";
 
     @Override

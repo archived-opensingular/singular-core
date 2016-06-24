@@ -7,7 +7,6 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.input.TeeInputStream;
 import org.apache.wicket.ajax.json.JSONArray;
-import org.apache.wicket.ajax.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,14 +18,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
+import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
@@ -34,6 +30,7 @@ import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPa
 @WebServlet(urlPatterns = {FileUploadServlet.UPLOAD_URL + "/*"})
 public class FileUploadServlet extends HttpServlet {
 
+    public static final String PARAM_NAME = "FILE-UPLOAD";
     public final static String UPLOAD_URL = "/upload";
     public static File UPLOAD_WORK_FOLDER;
 
@@ -124,9 +121,6 @@ class FileUploadProcessor {
             }
         }
     }
-
-
-
 
 
 }

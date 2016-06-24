@@ -1,10 +1,16 @@
-package br.net.mirante.singular.form.wicket.mapper.attachment;
+package br.net.mirante.singular.form.wicket.mapper.attachment.single;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
+import br.net.mirante.singular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
+import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadLink;
+import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
+import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadUtil;
+import br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -14,21 +20,22 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Set;
-
+import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
 import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
 
-public class FileUploadPanel extends Panel {
+public class FileUploadPanel extends Panel implements Loggable {
 
-    public static String PARAM_NAME = "FILE-UPLOAD";
 
+    private AddFileBehavior adder;
     private final IModel<SIAttachment> model;
     private final ViewMode viewMode;
     private final AjaxButton removeFileButton = new AjaxButton("remove_btn") {
@@ -75,8 +82,8 @@ public class FileUploadPanel extends Panel {
             });
         }
     };
+
     private FileUploadField fileField;
-    private HiddenField nameField, hashField, sizeField, idField;
     private WebMarkupContainer filesContainer, progressBar;
     private DownloadSupportedBehavior downloader;
     private DownloadLink downloadLink;
@@ -85,7 +92,6 @@ public class FileUploadPanel extends Panel {
         super(id, model);
         this.model = model;
         this.viewMode = viewMode;
-
 
     }
 
@@ -117,26 +123,14 @@ public class FileUploadPanel extends Panel {
     protected void onInitialize() {
         super.onInitialize();
 
-
+        this.add(adder = new AddFileBehavior());
         this.add(downloader = new DownloadSupportedBehavior(model));
         downloadLink = new DownloadLink("downloadLink", model, downloader);
         fileField = new FileUploadField("fileUpload", dummyModel(model));
-        nameField = new HiddenField("file_name",
-                new PropertyModel<>(model, "fileName"));
-        hashField = new HiddenField("file_hash",
-                new PropertyModel<>(model, "fileHashSHA1"));
-        sizeField = new HiddenField("file_size",
-                new PropertyModel<>(model, "fileSize"));
-        idField = new HiddenField("file_id",
-                new PropertyModel<>(model, "fileId"));
 
         add((filesContainer = new WebMarkupContainer("files")).add(downloadLink));
         add(uploadFileButton.add(fileField));
         add(removeFileButton);
-        add(nameField);
-        add(hashField);
-        add(sizeField);
-        add(idField);
         add(progressBar = new WebMarkupContainer("progress"));
 
         add(new ClassAttributeModifier() {
@@ -162,18 +156,15 @@ public class FileUploadPanel extends Panel {
     private String generateInitJS() {
         return " $(function () { \n" +
                 "     var params = { \n" +
+                "             panel_id: '" + this.getMarkupId() + "', \n" +
                 "             file_field_id: '" + fileField.getMarkupId() + "', \n" +
                 "             files_id : '" + filesContainer.getMarkupId() + "', \n" +
                 "             progress_bar_id : '" + progressBar.getMarkupId() + "', \n" +
                 "  \n" +
-                "             name_id: '" + nameField.getMarkupId() + "', \n" +
-                "             id_id: '" + idField.getMarkupId() + "', \n" +
-                "             hash_id: '" + hashField.getMarkupId() + "', \n" +
-                "             size_id: '" + sizeField.getMarkupId() + "', \n" +
-                "  \n" +
                 "             param_name : '" + PARAM_NAME + "', \n" +
                 "             upload_url : '" + uploadUrl() + "', \n" +
                 "             download_url : '" + downloader.getUrl() + "', \n" +
+                "             add_url : '" + adder.getUrl() + "', \n" +
                 "  \n" +
                 "     }; \n" +
                 "  \n" +
@@ -194,6 +185,27 @@ public class FileUploadPanel extends Panel {
         return fileField;
     }
 
+    private class AddFileBehavior extends BaseJQueryFileUploadBehavior<SIAttachment> {
+
+        public AddFileBehavior() {
+            super((IModel<SIAttachment>) FileUploadPanel.this.getDefaultModel());
+        }
+
+        @Override
+        public void onResourceRequested() {
+            try {
+                SIAttachment siAttachment = (SIAttachment) FileUploadPanel.this.getDefaultModel().getObject();
+                siAttachment.setContent(
+                        getParamFileId("name").toString(),
+                        FileUploadServlet.lookupFile(getParamFileId("fileId").toString()),
+                        getParamFileId("size").toLong());
+                DownloadUtil.writeJSONtoResponse(siAttachment, RequestCycle.get().getResponse());
+            } catch (Exception e) {
+                getLogger().error(e.getMessage(), e);
+                throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
 
 
 }

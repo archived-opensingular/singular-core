@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-class DownloadUtil {
+public class DownloadUtil {
 
     public static void writeJSONtoResponse(SIAttachment attachment, Response response) {
         writeJSONtoResponse(toJSON(attachment), (HttpServletResponse) response.getContainerResponse());
