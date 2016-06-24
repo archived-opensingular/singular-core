@@ -112,6 +112,7 @@ public class FileUploadPanel extends Panel {
         };
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onInitialize() {
         super.onInitialize();

@@ -19,7 +19,11 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.protocol.http.servlet.ServletWebResponse;
 import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
+import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.AbstractResource;
@@ -49,7 +53,6 @@ import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
  */
 public class DownloadSupportedBehavior extends Behavior implements IResourceListener {
     private static final String DOWNLOAD_PATH = "/download";
-    transient protected WebWrapper w = new WebWrapper();
     private Component component;
     private IModel<? extends SInstance> model;
 
@@ -102,7 +105,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
     }
 
     private void handleRequest() throws IOException {
-        ServletWebRequest request = w.request();
+        WebRequest request = (WebRequest) RequestCycle.get().getRequest();
         IRequestParameters parameters = request.getRequestParameters();
         StringValue id = parameters.getParameterValue("hashSHA1");
         StringValue name = parameters.getParameterValue("fileName");
@@ -114,16 +117,27 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
     private void writeResponse(String url) throws IOException {
         JSONObject jsonFile = new JSONObject();
         jsonFile.put("url", url);
-        w.response().setContentType("application/json");
-        w.response().setHeader("Cache-Control","no-store, no-cache");
-        w.response().getOutputStream().write(jsonFile.toString().getBytes());
-        w.response().flush();
+        WebResponse response = (WebResponse) RequestCycle.get().getResponse();
+        response.setContentType("application/json");
+        response.setHeader("Cache-Control", "no-store, no-cache");
+        response.getOutputStream().write(jsonFile.toString().getBytes());
+        response.flush();
     }
 
     public String getUrl() {
         return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
     }
 
+    /**
+     * Registra um recurso compartilhado do wicket para permitir o download
+     * sem bloquear a fila de ajax do wicket.
+     * O recurso compartilhado é removido tão logo o download é executado
+     * Esse procedimento visa garantir que somente quem tem acesso à página pode fazer
+     * download dos arquivos.
+     * @param fileRef
+     * @param filename
+     * @return
+     */
     private String getDownloadURL(IAttachmentRef fileRef, String filename) {
         String url = DOWNLOAD_PATH + "/" + fileRef.getId() + "/" + fileRef.getHashSHA1();
         SharedResourceReference ref = new SharedResourceReference(String.valueOf(fileRef.getId()));
@@ -141,6 +155,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
                                 InputStream inputStream = fileRef.newInputStream();
                         ) {
                             IOUtils.copy(inputStream, attributes.getResponse().getOutputStream());
+                            /*Desregistrando recurso compartilhado*/
                             WebApplication.get().unmount(url);
                             WebApplication.get().getSharedResources().remove(ref.getKey());
                         } catch (Exception e) {
@@ -151,6 +166,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
                 return resourceResponse;
             }
         };
+        /*registrando recurso compartilhado*/
         WebApplication.get().getSharedResources().add(String.valueOf(fileRef.getId()), resource);
         WebApplication.get().mountResource(url, ref);
         return WebApplication.get().getServletContext().getContextPath() + url;

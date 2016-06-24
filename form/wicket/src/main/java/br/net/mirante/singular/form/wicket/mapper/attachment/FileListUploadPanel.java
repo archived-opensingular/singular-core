@@ -7,7 +7,6 @@ import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
@@ -34,6 +33,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -46,7 +47,14 @@ import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPa
 import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forReference;
 
 /**
- * Created by nuk on 10/06/16.
+ * Lista  os uploads múltiplos.
+ *
+ * O upload múltiplo executado via jquery para a servlet {@link FileUploadServlet} atualiza
+ * o código no cliente via javascript por meio do código java script associado a esse painel FileListUploadPanel.js
+ * Para manter os models atualizados o js cliente se comunica com esse panel através do {@link br.net.mirante.singular.form.wicket.mapper.attachment.FileListUploadPanel.AddFileBehavior}
+ * para remover os arquivos e atualizar os models o js cliente se comunica com esse panel através do {@link br.net.mirante.singular.form.wicket.mapper.attachment.FileListUploadPanel.RemoveFileBehavior}
+ *
+ * @author fabricio, vinicius
  */
 public class FileListUploadPanel extends Panel implements Loggable {
 
@@ -177,10 +185,6 @@ public class FileListUploadPanel extends Panel implements Loggable {
             this.forAttrValue = forAttrValue;
         }
 
-        public LabelWithIcon(String id, IModel<?> model, Icone icon) {
-            this(id, model, icon, null);
-        }
-
         @Override
         protected void onInitialize() {
             super.onInitialize();
@@ -210,7 +214,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
         }
 
         protected IRequestParameters params() {
-            ServletWebRequest request = new WebWrapper().request();
+            WebRequest request = (WebRequest) RequestCycle.get().getRequest();
             return request.getRequestParameters();
         }
 
@@ -228,13 +232,11 @@ public class FileListUploadPanel extends Panel implements Loggable {
         @Override
         public void onResourceRequested() {
             try {
-//                FileListUploadPanel.this.modelChanging();
                 SIAttachment siAttachment = currentInstance().addNew();
                 siAttachment.setContent(
                         getParamFileId("name").toString(),
                         FileUploadServlet.lookupFile(getParamFileId("fileId").toString()),
                         getParamFileId("size").toLong());
-//                FileListUploadPanel.this.modelChanged();
             } catch (Exception e) {
                 getLogger().error(e.getMessage(), e);
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
