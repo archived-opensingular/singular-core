@@ -30,7 +30,7 @@ public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
         return id;
     }
     
-    public String getHashSHA1() {
+    public String getHasSHA1() {
         return hashSHA1;
     }
 

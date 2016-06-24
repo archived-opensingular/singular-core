@@ -30,14 +30,13 @@ public interface IAttachmentRef {
      * situações de restrição de implementação.
      * </p>
      */
-    public default String getId() {
-        return getHashSHA1();
-    }
+    public String getId();
+
 
     /**
      * Retorna String de 40 digitos com o SHA1 do conteudo do arquivo.
      */
-    public String getHashSHA1();
+    public String getHasSHA1();
 
     /**
      * Retorna o conteúdo do arquivo em um novo inputStream.

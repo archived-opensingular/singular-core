@@ -4,6 +4,7 @@ import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
@@ -31,7 +32,6 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
@@ -48,7 +48,7 @@ import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forRef
 
 /**
  * Lista  os uploads múltiplos.
- *
+ * <p>
  * O upload múltiplo executado via jquery para a servlet {@link FileUploadServlet} atualiza
  * o código no cliente via javascript por meio do código java script associado a esse painel FileListUploadPanel.js
  * Para manter os models atualizados o js cliente se comunica com esse panel através do {@link br.net.mirante.singular.form.wicket.mapper.attachment.FileListUploadPanel.AddFileBehavior}
@@ -237,6 +237,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
                         getParamFileId("name").toString(),
                         FileUploadServlet.lookupFile(getParamFileId("fileId").toString()),
                         getParamFileId("size").toLong());
+                DownloadUtil.writeJSONtoResponse(siAttachment, RequestCycle.get().getResponse());
             } catch (Exception e) {
                 getLogger().error(e.getMessage(), e);
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

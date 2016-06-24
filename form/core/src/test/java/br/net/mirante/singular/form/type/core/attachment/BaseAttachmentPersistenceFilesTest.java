@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
+import static br.net.mirante.singular.form.type.core.attachment.AttachmentTestUtil.*;
 @RunWith(value = Parameterized.class)
 abstract public class BaseAttachmentPersistenceFilesTest {
     protected IAttachmentPersistenceHandler persistenHandler;
@@ -45,7 +45,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
             { "sha1 this string".getBytes(), "cf23df2207d99a74fbe169e3eba035e633b65d94" },
             { "The quick brown fox jumps over the lazy dog".getBytes(), "2fd4e1c67a2d28fced849ee1bb76e7391b93eb12" },
             { newByteArray(10 * 1024 * 1024, (byte) 0), "8c206a1a87599f532ce68675536f0b1546900d7a"},
-//            { newByteArray(100 * 1024 * 1024, (byte) 1), "9abe36b18e1871f67d581f2d1f4b6a9036dcc23f"}
+            { newByteArray(100 * 1024 * 1024, (byte) 1), "9abe36b18e1871f67d581f2d1f4b6a9036dcc23f"}
         });
     }
 
@@ -56,39 +56,38 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     }
     
     @Test public void createReferenceWithProperDataUsingByteArray() throws Exception {    
-//        assertReference(persistenHandler.addAttachment(content));
+        assertReference(persistenHandler.addAttachment(writeBytesToTempFile(content), content.length));
     }
     
     @Test public void createReferenceWithProperDataUsingStream() throws Exception {    
-//        assertReference(persistenHandler.addAttachment(new ByteArrayInputStream(content)));
+        assertReference(persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length));
     }
 
     private void assertReference(IAttachmentRef ref) throws IOException {
-        assertEquals(hash, ref.getHashSHA1());
+        assertEquals(hash, ref.getHasSHA1());
         assertEquals(defineId(ref), ref.getId());
         assertEquals((int)content.length, (int)ref.getSize());
-//        assertTrue(Arrays.equals(content, ref.getContentAsByteArray()));
         assertTrue(Arrays.equals(content, ByteStreams.toByteArray(ref.newInputStream())));
     }
     
     @Test public void recoverReferenceWithSameDataUsingByteArray() throws Exception {    
-//        IAttachmentRef original = persistenHandler.addAttachment(content);
-//        IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
-//        assertReference(original, returned);
+        IAttachmentRef original = persistenHandler.addAttachment(writeBytesToTempFile(content), content.length);
+        IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
+        assertReference(original, returned);
     }
     
     @Test public void recoverReferenceWithSameDataUsingStream() throws Exception {    
-//        IAttachmentRef original = persistenHandler.addAttachment(new ByteArrayInputStream(content));
-//        IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
-//        assertReference(original, returned);
+        IAttachmentRef original = persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length);
+        IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
+        assertReference(original, returned);
     }
 
     private void assertReference(IAttachmentRef original, IAttachmentRef returned) throws IOException {
-        assertEquals(returned.getHashSHA1(), original.getHashSHA1());
+        assertEquals(returned.getHasSHA1(), original.getHasSHA1());
         assertEquals(returned.getId(), original.getId());
         assertEquals(returned.getSize(), original.getSize());
-//        assertTrue(Arrays.equals(returned.getContentAsByteArray(),
-//                original.getContentAsByteArray()));
+        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.newInputStream()),
+                ByteStreams.toByteArray(original.newInputStream())));
         assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.newInputStream()),
                 ByteStreams.toByteArray(original.newInputStream())));
     }

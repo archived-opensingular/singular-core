@@ -89,7 +89,7 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
     }
 
     @Override
-    public String getHashSHA1() {
+    public String getHasSHA1() {
         return hashSha1;
     }
 

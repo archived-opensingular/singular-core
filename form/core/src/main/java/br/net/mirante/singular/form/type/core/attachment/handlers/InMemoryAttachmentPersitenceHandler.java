@@ -34,21 +34,21 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
     @Override
     public IAttachmentRef copy(IAttachmentRef toBeCopied) {
         IAttachmentRef ref = super.copy(toBeCopied);
-        attachments.put(ref.getHashSHA1(), ref);
+        attachments.put(ref.getId(), ref);
         return ref;
     }
 
     @Override
     public IAttachmentRef addAttachment(File file, long length) {
         IAttachmentRef ref = super.addAttachment(file, length);
-        attachments.put(ref.getHashSHA1(), ref);
+        attachments.put(ref.getId(), ref);
         return ref;
     }
 
     @Override
-    public void deleteAttachment(String hashId) {
-        super.deleteAttachment(hashId);
-        attachments.remove(hashId);
+    public void deleteAttachment(String fileId) {
+        super.deleteAttachment(fileId);
+        attachments.remove(fileId);
     }
 
     @Override
@@ -57,9 +57,9 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
     }
 
     @Override
-    protected File fileFromId(String hashId) {
+    protected File fileFromId(String fileId) {
         try {
-            File f = File.createTempFile("tmp_handler", hashId);
+            File f = File.createTempFile("tmp_handler", fileId);
             f.deleteOnExit();
             return f;
         } catch (Exception e) {

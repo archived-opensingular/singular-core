@@ -85,7 +85,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
             IOUtils.copy(in, out);
         }
         String sha1 = HashUtil.toSHA1Base16(temp);
-        File destination = fileFromId(sha1);
+        File destination = fileFromId(id);
         temp.renameTo(destination);
         return new FileSystemAttachmentRef(id, sha1, destination.getAbsolutePath(), originLength);
     }
@@ -119,9 +119,9 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public IAttachmentRef getAttachment(String hashId) {
+    public IAttachmentRef getAttachment(String fileId) {
         try {
-            File file = fileFromId(hashId);
+            File file = fileFromId(fileId);
             if (file.exists()) {
                 return toRef(file);
             }
@@ -131,8 +131,8 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         return null;
     }
 
-    protected File fileFromId(String hashId) {
-        return new File(folder, hashId);
+    protected File fileFromId(String fileId) {
+        return new File(folder, fileId);
     }
 
     private FileSystemAttachmentRef toRef(File file) throws Exception {
@@ -142,9 +142,9 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public void deleteAttachment(String hashId) {
-        if (hashId == null) return;
-        File file = fileFromId(hashId);
+    public void deleteAttachment(String fileId) {
+        if (fileId == null) return;
+        File file = fileFromId(fileId);
         file.delete();
     }
 }

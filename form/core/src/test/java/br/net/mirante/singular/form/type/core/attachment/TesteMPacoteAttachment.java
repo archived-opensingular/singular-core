@@ -9,12 +9,17 @@ import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.TestCaseForm;
 import br.net.mirante.singular.form.io.HashUtil;
 import br.net.mirante.singular.form.io.TesteFormSerializationUtil;
+import com.google.common.base.Throwables;
+import com.google.common.io.ByteStreams;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+
+import static br.net.mirante.singular.form.type.core.attachment.AttachmentTestUtil.*;
 
 @RunWith(Parameterized.class)
 public class TesteMPacoteAttachment extends TestCaseForm {
@@ -23,10 +28,10 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         super(testFormConfig);
     }
 
-    private static void assertConteudo(byte[] conteudoEsperado, SIAttachment arquivo, int expectedDistintictFiles) {
+    private static void assertConteudo(byte[] conteudoEsperado, SIAttachment arquivo, int expectedDistintictFiles) throws IOException {
         String hash = HashUtil.toSHA1Base16(conteudoEsperado);
 
-//        assertTrue(Arrays.equals(conteudoEsperado, arquivo.getContentAsByteArray()));
+        assertTrue(Arrays.equals(conteudoEsperado, ByteStreams.toByteArray(arquivo.newInputStream())));
         assertEquals(conteudoEsperado.length, arquivo.getFileSize());
         assertEquals(hash, arquivo.getFileId());
         assertEquals(hash, arquivo.getFileHashSHA1());
@@ -40,8 +45,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertEquals(expectedDistinctFiles, aService.countDistinctFiles());
     }
 
-    private static void assertNoReference(SIAttachment arquivo, int expectedDistintictFiles) {
-//        assertNull(arquivo.getContentAsByteArray());
+    private static void assertNoReference(SIAttachment arquivo, int expectedDistintictFiles) throws IOException {
+        assertNull(ByteStreams.toByteArray(arquivo.newInputStream()));
         assertNull(arquivo.getFileName());
         assertNull(arquivo.getFileId());
         assertNull(arquivo.getAttachmentRef());
@@ -56,13 +61,13 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     @Test
-    public void testSimpleAttachment() {
+    public void testSimpleAttachment() throws IOException {
         SIAttachment arquivo = createEmptyAttachment();
         assertNoReference(arquivo, 0);
 
         final byte[] conteudo = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-//        arquivo.setContent(conteudo);
+        arquivo.setContent("asasd", writeBytesToTempFile(conteudo), conteudo.length);
 
         assertConteudo(conteudo, arquivo, 1);
         assertNull(arquivo.getFileName());
@@ -81,62 +86,68 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     @Test
-    public void testUpdateContent() {
+    public void testUpdateContent() throws IOException {
         SIAttachment arquivo = createEmptyAttachment();
 
         byte[] conteudo1 = new byte[]{1, 2, 3};
         byte[] conteudo2 = new byte[]{4, 5, 6, 7, 8, 9, 10};
 
-//        arquivo.setContent(conteudo1);
+        arquivo.setContent("", writeBytesToTempFile(conteudo1), conteudo1.length);
         assertConteudo(conteudo1, arquivo, 1);
 
-//        arquivo.setContent(conteudo2);
+        arquivo.setContent("", writeBytesToTempFile(conteudo2), conteudo2.length);
         assertConteudo(conteudo2, arquivo, 1);
     }
 
     @Test
-    public void testSetContentToNull() {
+    public void testSetContentToNull() throws IOException {
         SIAttachment arquivo = createEmptyAttachment();
         byte[] conteudo = new byte[]{1, 2};
 
-//        assertException(() -> arquivo.setContent((byte[]) null), "não pode ser null");
-        assertNoReference(arquivo, 0);
-//        assertException(() -> arquivo.setContent((InputStream) null), "não pode ser null");
+        assertException(() -> arquivo.setContent("", null, 0), "não pode ser null");
         assertNoReference(arquivo, 0);
 
-//        arquivo.setContent(conteudo);
+        arquivo.setContent("", writeBytesToTempFile(conteudo), conteudo.length);
 
-//        assertException(() -> arquivo.setContent((byte[]) null), "não pode ser null");
-        assertConteudo(conteudo, arquivo, 1);
-//        assertException(() -> arquivo.setContent((InputStream) null), "não pode ser null");
-        assertConteudo(conteudo, arquivo, 1);
     }
 
     @Test
-    public void testSetContentSizeZero() {
+    public void testSetContentSizeZero() throws IOException {
         SIAttachment arquivo = createEmptyAttachment();
         byte[] conteudo = new byte[0];
-//        arquivo.setContent(conteudo);
+        arquivo.setContent("", writeBytesToTempFile(conteudo), conteudo.length);
         assertConteudo(conteudo, arquivo, 1);
     }
 
     @Test
-    public void testSetContentWithIOException() {
+    public void testSetContentWithIOException() throws IOException {
         SIAttachment arquivo = createEmptyAttachment();
-//        assertException(() -> arquivo.setContent(new InputStreamComErro()), "Erro lendo origem de dados");
+        assertException(() -> {
+            try {
+                arquivo.setContent("", writeBytesToTempFile(new InputStreamComErro()), 0);
+            } catch (IOException e) {
+                throw  Throwables.propagate(e);
+            }
+        }, "Erro lendo origem de dados");
 
         assertNoReference(arquivo, 0);
 
         byte[] conteudo = new byte[]{9, 10, 11, 12};
-//        arquivo.setContent(conteudo);
+        arquivo.setContent("", writeBytesToTempFile(conteudo), conteudo.length);
         assertConteudo(conteudo, arquivo, 1);
 
-//        assertException(() -> arquivo.setContent(new InputStreamComErro()), "Erro lendo origem de dados");
+        assertException(() -> {
+            try {
+                arquivo.setContent("", writeBytesToTempFile(new InputStreamComErro()), 0);
+            } catch (IOException e) {
+                throw  Throwables.propagate(e);
+            }
+        }, "Erro lendo origem de dados");
         assertConteudo(conteudo, arquivo, 1);
     }
 
     @Test
-    public void testRepeatedAttachment() {
+    public void testRepeatedAttachment() throws IOException {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         STypeList<STypeAttachment, SIAttachment> tipoLista = pb.createListTypeOf("anexos", STypeAttachment.class);
         SIList<SIAttachment> lista = tipoLista.newInstance(SIAttachment.class);
@@ -149,11 +160,11 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         final byte[] conteudo2 = new byte[]{6, 7, 8, 9, 10};
 
         assertBinariosAssociadosDocument(lista, 0);
-//        arquivo1.setContent(conteudo1);
+        arquivo1.setContent("", writeBytesToTempFile(conteudo1), conteudo1.length);
         assertBinariosAssociadosDocument(lista, 1);
-//        arquivo2.setContent(conteudo1);
+        arquivo2.setContent("", writeBytesToTempFile(conteudo1), conteudo1.length);
         assertBinariosAssociadosDocument(lista, 1);
-//        arquivo3.setContent(conteudo2);
+        arquivo3.setContent("", writeBytesToTempFile(conteudo2), conteudo2.length);
         assertBinariosAssociadosDocument(lista, 2);
 
         arquivo1.deleteReference();
@@ -165,7 +176,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     @Test
-    public void testRemoveAttachmentWheDeletingInstanceOrParentInstance() {
+    public void testRemoveAttachmentWheDeletingInstanceOrParentInstance() throws IOException {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
@@ -183,11 +194,11 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         SIComposite bloco = tipoBloco.newInstance();
         SIList<SIAttachment> anexos = bloco.getFieldList("anexos", SIAttachment.class);
 
-//        anexos.addNew().setContent(conteudo1); // 0
-//        anexos.addNew().setContent(conteudo2); // 1
-//        anexos.addNew().setContent(conteudo2); // 2
-//        anexos.addNew().setContent(conteudo3); // 3
-//        anexos.addNew().setContent(conteudo3); // 4
+        anexos.addNew().setContent("", writeBytesToTempFile(conteudo1), conteudo1.length); // 0
+        anexos.addNew().setContent("", writeBytesToTempFile(conteudo2), conteudo2.length); // 1
+        anexos.addNew().setContent("", writeBytesToTempFile(conteudo2), conteudo2.length); // 2
+        anexos.addNew().setContent("", writeBytesToTempFile(conteudo3), conteudo3.length); // 3
+        anexos.addNew().setContent("", writeBytesToTempFile(conteudo3), conteudo3.length); // 4
         anexos.addNew(); // 5
         assertBinariosAssociadosDocument(anexos, 3);
 
@@ -202,8 +213,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         // Testa apenas com subBloco
         bloco = tipoBloco.newInstance();
         SIComposite subBloco = bloco.getFieldComposite("subBloco");
-//        subBloco.getField("subArquivo1", SIAttachment.class).setContent(conteudo1);
-//        subBloco.getField("subArquivo2", SIAttachment.class).setContent(conteudo2);
+        subBloco.getField("subArquivo1", SIAttachment.class).setContent("", writeBytesToTempFile(conteudo1), conteudo1.length);
+        subBloco.getField("subArquivo2", SIAttachment.class).setContent("", writeBytesToTempFile(conteudo2), conteudo2.length);
 
         assertBinariosAssociadosDocument(bloco, 2);
 
@@ -216,13 +227,13 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         // Testa apenas com lista e subBloco interferido um no outro
         bloco = tipoBloco.newInstance();
         anexos = bloco.getFieldList("anexos", SIAttachment.class);
-//        anexos.addNew().setContent(conteudo3); // 0
-//        anexos.addNew().setContent(conteudo2); // 1
-//        anexos.addNew().setContent(conteudo1); // 2
-//        subBloco = bloco.getFieldComposite("subBloco");
-//        subBloco.getField("subArquivo1", SIAttachment.class).setContent(conteudo1);
-//        subBloco.getField("subArquivo2", SIAttachment.class).setContent(conteudo2);
-//        subBloco.getField("subArquivo3", SIAttachment.class).setContent(conteudo3);
+        anexos.addNew().setContent("", writeBytesToTempFile(conteudo3), conteudo3.length); // 0
+        anexos.addNew().setContent("", writeBytesToTempFile(conteudo2), conteudo2.length); // 1
+        anexos.addNew().setContent("", writeBytesToTempFile(conteudo1), conteudo1.length); // 2
+        subBloco = bloco.getFieldComposite("subBloco");
+        subBloco.getField("subArquivo1", SIAttachment.class).setContent("", writeBytesToTempFile(conteudo1), conteudo1.length);
+        subBloco.getField("subArquivo2", SIAttachment.class).setContent("", writeBytesToTempFile(conteudo2), conteudo2.length);
+        subBloco.getField("subArquivo3", SIAttachment.class).setContent("", writeBytesToTempFile(conteudo3), conteudo3.length);
 
         assertBinariosAssociadosDocument(anexos, 3);
 
@@ -239,19 +250,19 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     @Test
-    public void testSerializacaoDeserializacaoComAnexo() {
+    public void testSerializacaoDeserializacaoComAnexo() throws IOException {
         SIAttachment arq = (SIAttachment) createSerializableTestInstance("teste.arq", pacote -> {
             pacote.createType("arq", STypeAttachment.class);
         });
         final byte[] conteudo1 = new byte[]{1, 2, 3};
-//        arq.setContent(conteudo1);
+        arq.setContent("arq1", writeBytesToTempFile(conteudo1), conteudo1.length);
         assertConteudo(conteudo1, arq, 1);
         SIAttachment arq2 = (SIAttachment) TesteFormSerializationUtil.testSerializacao(arq);
         assertConteudo(conteudo1, arq2, 1);
     }
 
     @Test
-    public void testSerializacaoDeserializacaoCompositeComAnexo() {
+    public void testSerializacaoDeserializacaoCompositeComAnexo() throws IOException {
         SIComposite bloco = (SIComposite) createSerializableTestInstance("teste.bloco", pacote -> {
             STypeComposite<? extends SIComposite> tipoBloco = pacote.createCompositeType("bloco");
             tipoBloco.addField("arquivo1", STypeAttachment.class);
@@ -264,8 +275,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         final SIAttachment arquivo1 = bloco.getField("arquivo1", SIAttachment.class);
         final SIAttachment arquivo2 = bloco.getField("arquivo2", SIAttachment.class);
 
-//        arquivo1.setContent(conteudo1);
-//        arquivo2.setContent(conteudo2);
+        arquivo1.setContent("content",writeBytesToTempFile(conteudo1), conteudo1.length);
+        arquivo2.setContent("content", writeBytesToTempFile(conteudo2), conteudo2.length);
 
         assertConteudo(conteudo1, arquivo1, 2);
         assertConteudo(conteudo2, arquivo2, 2);

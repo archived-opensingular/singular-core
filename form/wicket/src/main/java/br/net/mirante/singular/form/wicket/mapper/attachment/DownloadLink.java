@@ -30,7 +30,7 @@ public class DownloadLink extends Link<Void> {
         this.add($b.attr("onclick",
                 "DownloadSupportedBehavior.ajaxDownload(" +
                         "'" + downloadSupportedBehaviour.getUrl() + "'," +
-                        "'" + model.getObject().getFileHashSHA1() + "'," +
+                        "'" + model.getObject().getFileId() + "'," +
                         "'" + model.getObject().getFileName() + "'" +
                         ");" +
                         "return false;"));

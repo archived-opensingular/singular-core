@@ -57,7 +57,7 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends
      */
     Collection<T> getAttachments();
 
-    IAttachmentRef getAttachment(String hashId);
+    IAttachmentRef getAttachment(String fileId);
 
-    void deleteAttachment(String hashId);
+    void deleteAttachment(String fileId);
 }

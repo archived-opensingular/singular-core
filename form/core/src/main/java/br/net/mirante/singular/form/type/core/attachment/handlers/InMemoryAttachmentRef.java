@@ -20,15 +20,22 @@ public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {
     private final long size;
     private final String hashSHA1Hex;
     private final File tempFile;
+    private final String id;
 
-    public InMemoryAttachmentRef(File tempFile, long size, String hashSHA1Hex) {
+    public InMemoryAttachmentRef(String id, File tempFile, long size, String hashSHA1Hex) {
         this.tempFile = tempFile;
         this.size = size;
+        this.id = id;
         this.hashSHA1Hex = hashSHA1Hex;
     }
 
     @Override
-    public String getHashSHA1() {
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public String getHasSHA1() {
         return hashSHA1Hex;
     }
 

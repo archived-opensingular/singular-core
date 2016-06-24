@@ -158,7 +158,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
                 return content.length;
             }
 
-            public String getHashSHA1() {
+            public String getHasSHA1() {
                 return hash;
             }
 

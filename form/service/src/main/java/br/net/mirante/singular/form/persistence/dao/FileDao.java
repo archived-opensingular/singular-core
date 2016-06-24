@@ -13,9 +13,9 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceH
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -55,12 +55,6 @@ public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long
         session().delete(o);
     }
 
-    @Transactional
-    public T find(String hash) {
-        return (T) session().createCriteria(tipo).add(Restrictions.eq("hashSha1", hash)).setMaxResults(1).uniqueResult();
-    }
-
-
     private T createFile(String sha1, InputStream in, long length) throws IOException {
         T fileEntity = createInstance();
         fileEntity.setId(UUID.randomUUID().toString());
@@ -93,7 +87,7 @@ public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long
     @Override
     public IAttachmentRef copy(IAttachmentRef toBeCopied) {
         try {
-            return insert(createFile(toBeCopied.getHashSHA1(), toBeCopied.newInputStream(), toBeCopied.getSize()));
+            return insert(createFile(toBeCopied.getHasSHA1(), toBeCopied.newInputStream(), toBeCopied.getSize()));
         } catch (IOException e) {
             throw new SingularException(e);
         }
@@ -108,8 +102,10 @@ public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long
 
     @Override
     @Transactional
-    public IAttachmentRef getAttachment(String hashId) {
-        return find(hashId);
+    public IAttachmentRef getAttachment(String fileId) {
+        IAttachmentRef ref = (IAttachmentRef) session().get(tipo, fileId);
+        Hibernate.initialize(ref);
+        return ref;
     }
 
     @Override

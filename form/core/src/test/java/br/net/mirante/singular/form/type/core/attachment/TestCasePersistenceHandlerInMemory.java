@@ -11,7 +11,7 @@ public class TestCasePersistenceHandlerInMemory extends TestCasePersistenceHandl
 
     @Override
     protected String defineId(IAttachmentRef ref) {
-        return ref.getHashSHA1();
+        return ref.getHasSHA1();
     }
 
 }

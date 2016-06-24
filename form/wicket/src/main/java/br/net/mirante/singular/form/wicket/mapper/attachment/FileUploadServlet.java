@@ -1,16 +1,13 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.form.io.HashUtil;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.input.TeeInputStream;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.request.IRequestParameters;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,8 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,9 +30,6 @@ import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPa
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
- * Observer que é necessário cadastrar o serviço de persistência através do
- * FileUploadServlet.registerService o UUID retornado deve ser usado no
- * parâmetro UPLOAD_ID_KEY do request.
  */
 @WebServlet(urlPatterns = {FileUploadServlet.UPLOAD_URL + "/*"})
 public class FileUploadServlet extends HttpServlet {
@@ -103,7 +95,7 @@ class FileUploadProcessor {
         } catch (Exception e) {
             throw new SingularException(e);
         } finally {
-            writeResponseAnswer();
+            DownloadUtil.writeJSONtoResponse(filesJson, response);
         }
     }
 
@@ -128,39 +120,13 @@ class FileUploadProcessor {
                     InputStream in = new TeeInputStream(upIn, out);
             ) {
                 String hash = HashUtil.toSHA1Base16(in);
-                fileGroup.put(createJsonFile(item, id, hash));
+                fileGroup.put(DownloadUtil.toJSON(id, hash, item.getName(), item.getSize()));
             }
         }
     }
 
 
-    private JSONObject createJsonFile(FileItem item, String id, String hash) {
-        try {
-            JSONObject jsonFile = new JSONObject();
-            jsonFile.put("name", item.getName());
-            jsonFile.put("fileId", id);
-            jsonFile.put("hashSHA1", hash);
-            jsonFile.put("size", item.getSize());
-            return jsonFile;
-        } catch (Exception e) {
-            throw new SingularException(e);
-        }
-    }
 
-    private void writeResponseAnswer() {
-        JSONObject answer = new JSONObject();
-        answer.put("files", filesJson);
-
-        response.setContentType("application/json");
-        try {
-            PrintWriter writer = response.getWriter();
-            writer.write(answer.toString());
-            writer.close();
-        } catch (IOException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
-                    "Not possible to perform upload response.", e);
-        }
-    }
 
 
 }
