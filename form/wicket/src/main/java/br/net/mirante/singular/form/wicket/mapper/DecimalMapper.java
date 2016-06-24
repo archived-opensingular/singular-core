@@ -81,16 +81,16 @@ public class DecimalMapper extends StringMapper {
         if ((mi != null) && (mi.getValue() != null)) {
 
             final BigDecimal valor = (BigDecimal) mi.getValue();
-            return formatDecimal(valor);
+            return formatDecimal(valor, true);
         }
 
         return StringUtils.EMPTY;
     }
 
-    private String formatDecimal(BigDecimal bigDecimal) {
+    private String formatDecimal(BigDecimal bigDecimal, boolean groupingUsed) {
         DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(new Locale("pt", "BR"));
         nf.setParseBigDecimal(true);
-        nf.setGroupingUsed(true);
+        nf.setGroupingUsed(groupingUsed);
         nf.setMinimumFractionDigits(0);
         return nf.format(bigDecimal);
     }
@@ -123,7 +123,7 @@ public class DecimalMapper extends StringMapper {
             BigDecimal bigDecimal = (BigDecimal) value;
             int casasValue = bigDecimal.scale();
             int casasDecimais = casasValue < this.maximoCasasDecimais ? casasValue : this.maximoCasasDecimais;
-            return formatDecimal(bigDecimal.setScale(casasDecimais, BigDecimal.ROUND_HALF_UP));
+            return formatDecimal(bigDecimal.setScale(casasDecimais, BigDecimal.ROUND_HALF_UP), false);
         }
 
     }
