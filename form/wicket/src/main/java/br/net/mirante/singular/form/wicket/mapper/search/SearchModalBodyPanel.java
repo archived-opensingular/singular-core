@@ -40,6 +40,8 @@ import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+
 @SuppressWarnings("unchecked")
 class SearchModalBodyPanel extends Panel {
 
@@ -76,9 +78,14 @@ class SearchModalBodyPanel extends Panel {
     protected void onInitialize() {
         super.onInitialize();
 
+        final AjaxButton filterButton;
+
         add(innerSingularFormPanel = buildInnerSingularFormPanel());
-        add(buildFilterButton());
+        add(filterButton = buildFilterButton());
         add(resultTable = buildResultTable(getConfig()));
+
+        innerSingularFormPanel.add($b.onEnterDelegate(filterButton));
+
     }
 
     private Config getConfig() {

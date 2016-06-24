@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.util.Shortcuts;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -167,6 +169,9 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 });
             }
         });
+
+        modal.add($b.onEnterDelegate(modal.addButton));
+
     }
 
     /*
@@ -212,12 +217,12 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             @Override
             public Iterator<SInstance> iterator(int first, int count, Object sortProperty, boolean ascending) {
-                return ((SIList<SInstance>) model.getObject()).iterator();
+                return model.getObject().iterator();
             }
 
             @Override
             public long size() {
-                return ((SIList<SInstance>) model.getObject()).size();
+                return model.getObject().size();
             }
 
             @Override
@@ -405,6 +410,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         private       BSContainer<?>               containerExterno;
         private       FormStateUtil.FormState      formState;
         private       IModel<String>               actionLabel;
+        private       ActionAjaxButton             addButton;
 
         @SuppressWarnings("unchecked")
         MasterDetailModal(String id,
@@ -429,7 +435,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             setSize(BSModalBorder.Size.NORMAL);
 
             actionLabel = $m.ofValue("");
-            this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, new ActionAjaxButton("btn") {
+            this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton = new ActionAjaxButton("btn") {
                 @Override
                 protected void onAction(AjaxRequestTarget target, Form<?> form) {
                     target.add(table);
