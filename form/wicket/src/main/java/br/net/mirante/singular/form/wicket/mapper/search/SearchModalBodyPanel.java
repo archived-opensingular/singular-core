@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.util.Shortcuts;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -76,9 +78,16 @@ class SearchModalBodyPanel extends Panel {
     protected void onInitialize() {
         super.onInitialize();
 
+        final AjaxButton filterButton;
+
         add(innerSingularFormPanel = buildInnerSingularFormPanel());
-        add(buildFilterButton());
+        add(filterButton = buildFilterButton());
         add(resultTable = buildResultTable(getConfig()));
+
+        innerSingularFormPanel.add(Shortcuts.$b.onReadyScript(c -> {
+            return JQuery.on(c, "keypress", "if((e.keyCode || e.which) == 13){e.preventDefault(); "+JQuery.$(filterButton)+".click();}");
+        }));
+
     }
 
     private Config getConfig() {
