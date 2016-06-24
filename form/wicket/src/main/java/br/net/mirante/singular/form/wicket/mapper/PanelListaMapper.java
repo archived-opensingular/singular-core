@@ -54,19 +54,19 @@ public class PanelListaMapper extends AbstractListaMapper {
         MetronicPanel panel = MetronicPanel.MetronicPanelBuilder.build(id,
                 (heading, form) -> {
                     heading.appendTag("span", new Label("_title", label));
-//                    heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
+                    heading.setVisible(ctx.isTitleInBlock());
                 },
                 (content, form) -> {
 
                     TemplatePanel list = content.newTemplateTag(t -> ""
                             + "    <ul class='list-group'>"
-                            + "      <li wicket:id='_e' class='list-group-item'>"
-                            + "        <div wicket:id='_r'></div>"
+                            + "      <li wicket:id='_e' class='list-group-item' style='margin-bottom:15px'>"
+                            + "         <div wicket:id='_r'></div>"
                             + "      </li>"
                             + "    </ul>");
                     list.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
                     list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form));
-                    content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
+//                    content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
                     content.getParent().add(dependsOnModifier(listaModel));
                 },
                 (f, form) -> buildFooter(f, form, ctx)
