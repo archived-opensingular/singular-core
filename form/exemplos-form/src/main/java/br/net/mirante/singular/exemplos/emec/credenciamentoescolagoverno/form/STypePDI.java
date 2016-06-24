@@ -4,17 +4,35 @@
  */
 package br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.google.common.base.Predicates;
+
 import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInfoType;
+import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.type.core.STypeDecimal;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.view.SViewListByTable;
 
 @SInfoType(spackage = SPackageCredenciamentoEscolaGoverno.class)
 public class STypePDI extends STypeComposite<SIComposite>{
+
+    private static final List<String> TIPOS_RECEITA = Arrays.asList("Anuidade / Mensalidade(+)", "Bolsas(-)", "Diversos(+)", "Financiamentos(+)", "Inadimplência(-)", "Serviços(+)", "Taxas(+)");
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -148,12 +166,45 @@ public class STypePDI extends STypeComposite<SIComposite>{
         final STypeComposite<SIComposite> demonstrativoCapacidadeSustentabilidadeFinanceira = this.addFieldComposite("demonstrativoCapacidadeSustentabilidadeFinanceira");
         
         final STypeList<STypeComposite<SIComposite>, SIComposite> demonstrativos = demonstrativoCapacidadeSustentabilidadeFinanceira.addFieldListOfComposite("demonstrativos", "demonstrativo");
-        demonstrativos.withView(SViewListByMasterDetail::new)
-            .asAtr().label("Demonstrativos").itemLabel("Demonstrativo");
         final STypeComposite<SIComposite> demonstrativo = demonstrativos.getElementsType();
-        demonstrativo.addFieldInteger("ano", true).asAtr().label("Ano");
-        demonstrativo.addFieldDecimal("receitas", true).asAtr().label("Receitas");
-        demonstrativo.addFieldDecimal("despesas", true).asAtr().label("Despesas");
+        
+        final STypeInteger ano = demonstrativo.addFieldInteger("ano", true);
+        ano.asAtr().displayString("Demonstrativo Financeiro ${ano}").enabled(false);
+        
+        final STypeList<STypeComposite<SIComposite>, SIComposite> receitas = demonstrativo.addFieldListOfComposite("receitas", "receita");
+        receitas.setView(SViewListByTable::new).disableNew().disableDelete();
+        final STypeString tipoReceita = receitas.getElementsType().addFieldString("tipo", true);
+        tipoReceita.asAtr().enabled(false);
+        final STypeDecimal valorReceita = receitas.getElementsType().addFieldDecimal("valor", true);
+        demonstrativo.withInitListener(ins -> {
+            final Optional<SIList<SIComposite>> lista = ins.findNearest(receitas);
+            for (String tipo : TIPOS_RECEITA) {
+                lista.get().addNew().findNearest(tipoReceita).get().setValue(tipo);
+            }
+        });
+        
+        demonstrativoCapacidadeSustentabilidadeFinanceira.withInitListener(ins -> {
+            final Optional<SIList<SIComposite>> lista = ins.findNearest(demonstrativos);
+            for (int i = 0; i < 5; i++) {
+                final SIComposite siComposite = lista.get().addNew();
+                siComposite.findNearest(ano).get().setValue(LocalDate.now().getYear() + i);
+            }
+        });
+        
+        demonstrativos.withView(
+            new SViewListByMasterDetail()
+                .col("Ano", "${ano}")
+                .col("Receitas", ins -> {
+                    final Optional<SIList<SIComposite>> lista = ins.findNearest(receitas);
+                    BigDecimal total = lista.get().stream().map(siComposite -> siComposite.findNearest(valorReceita).get().getValue())
+                        .filter(Objects::nonNull)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    return total.toString();
+                })
+                .col("Despesas", "Tipo de referência")
+                .col("Total Geral", "Tipo de referência")
+                .disableNew().disableDelete())
+            .asAtr().label("Demonstrativos").itemLabel("Demonstrativo");
     }
     
     private void addOutros() {
