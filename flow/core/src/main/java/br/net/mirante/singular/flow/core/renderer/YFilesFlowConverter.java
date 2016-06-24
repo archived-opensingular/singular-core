@@ -45,6 +45,10 @@ public class YFilesFlowConverter {
         graphComponent = new GraphComponent();
     }
 
+    public void setConnector(NodeConnector connector) { this.connector = connector; }
+
+    public void setCreator(NodeCreator creator) {   this.creator = creator;}
+
     public GraphComponent toGraphComponent() {
         return graphComponent;
     }
