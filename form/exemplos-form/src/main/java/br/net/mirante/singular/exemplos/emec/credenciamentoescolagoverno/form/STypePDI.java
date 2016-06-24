@@ -208,8 +208,7 @@ public class STypePDI extends STypeComposite<SIComposite>{
                 .col("Receitas", calcularTotal("receitas"))
                 .col("Despesas", calcularTotal("despesas"))
                 .col("Total Geral", calcularTotal())
-                .disableNew().disableDelete())
-            .asAtr().label("Demonstrativos").itemLabel("Demonstrativo");
+                .disableNew().disableDelete());
     }
     
     @SuppressWarnings("unchecked")

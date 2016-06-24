@@ -53,8 +53,9 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     @Override
     public void clearInstance() {
         if (values != null) {
-            for (int i = 0; i < values.size(); i++) {
-                remove(i);
+            int size = values.size();
+            for (int i = 0; i < size; i++) {
+                remove(0);
             }
         }
     }
