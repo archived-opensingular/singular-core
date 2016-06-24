@@ -44,7 +44,7 @@ public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long
         return sessionFactory.getCurrentSession();
     }
 
-    @Transactional
+    @Transactional(Transactional.TxType.MANDATORY)
     public T insert(T o) {
         session().save(o);
         return o;

@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
     if (window.DownloadSupportedBehavior == undefined) {
         window.DownloadSupportedBehavior = function () {
         };
@@ -14,6 +15,7 @@
                     form.remove();
                 }
             });
+            return false;
         }
     }
 })();

@@ -43,8 +43,9 @@ if(window.FileUploadPanel == undefined){
                     console.log('f',file, $('#' + params.files_id ));
                     $('#' + params.files_id ).append(
                         $('<a />')
-                            .on('click', function(){
+                            .on('click', function(event){
                                 DownloadSupportedBehavior.ajaxDownload(params.download_url, file.hashSHA1, file.name);
+                                event.preventDefault();
                             })
                             .text(file.name)
                     );

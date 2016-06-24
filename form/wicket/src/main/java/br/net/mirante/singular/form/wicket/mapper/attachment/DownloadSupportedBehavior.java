@@ -115,6 +115,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         JSONObject jsonFile = new JSONObject();
         jsonFile.put("url", url);
         w.response().setContentType("application/json");
+        w.response().setHeader("Cache-Control","no-store, no-cache");
         w.response().getOutputStream().write(jsonFile.toString().getBytes());
         w.response().flush();
     }
@@ -126,7 +127,6 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
     private String getDownloadURL(IAttachmentRef fileRef, String filename) {
         String url = DOWNLOAD_PATH + "/" + fileRef.getId() + "/" + fileRef.getHashSHA1();
         SharedResourceReference ref = new SharedResourceReference(String.valueOf(fileRef.getId()));
-        WebApplication.get().mountResource(url, ref);
         AbstractResource resource = new AbstractResource() {
             @Override
             protected ResourceResponse newResourceResponse(Attributes attributes) {
@@ -138,10 +138,9 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
                     @Override
                     public void writeData(Attributes attributes) throws IOException {
                         try (
-                                OutputStream outputStream = attributes.getResponse().getOutputStream();
                                 InputStream inputStream = fileRef.newInputStream();
                         ) {
-                            IOUtils.copy(inputStream, outputStream);
+                            IOUtils.copy(inputStream, attributes.getResponse().getOutputStream());
                             WebApplication.get().unmount(url);
                             WebApplication.get().getSharedResources().remove(ref.getKey());
                         } catch (Exception e) {
@@ -153,6 +152,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
             }
         };
         WebApplication.get().getSharedResources().add(String.valueOf(fileRef.getId()), resource);
+        WebApplication.get().mountResource(url, ref);
         return WebApplication.get().getServletContext().getContextPath() + url;
     }
 

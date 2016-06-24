@@ -32,14 +32,14 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
     @Column(name = "CO_ARQUIVO_PETICAO")
     private String id;
 
-    @Column(name = "DS_SHA1")
+    @Column(name = "DS_SHA1", nullable = false)
     private String hashSha1;
 
     @Lob
-    @Column(name = "BL_ARQUIVO_PETICAO")
+    @Column(name = "BL_ARQUIVO_PETICAO", nullable = false)
     private Blob rawContent;
 
-    @Column(name = "NU_TAMANHO")
+    @Column(name = "NU_TAMANHO", nullable = false)
     private long size;
 
     private transient File f;

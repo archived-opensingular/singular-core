@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
@@ -28,16 +27,13 @@ public class DownloadLink extends Link<Void> {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        this.add($b.onReadyScript(c -> JQuery.$(c) +
-                ".on('click', " +
-                "function(){"
-                + "DownloadSupportedBehavior.ajaxDownload(" +
-                "'" + downloadSupportedBehaviour.getUrl() + "'," +
-                "'" + model.getObject().getFileHashSHA1() + "'," +
-                "'" + model.getObject().getFileName() + "'" +
-                ");" + "" +
-                "}" +
-                ");"));
+        this.add($b.attr("onclick",
+                "DownloadSupportedBehavior.ajaxDownload(" +
+                        "'" + downloadSupportedBehaviour.getUrl() + "'," +
+                        "'" + model.getObject().getFileHashSHA1() + "'," +
+                        "'" + model.getObject().getFileName() + "'" +
+                        ");" +
+                        "return false;"));
         this.setBody($m.property(model, "fileName"));
         add(WicketUtils.$b.attr("title", $m.ofValue(model.getObject().getFileName())));
     }
@@ -45,4 +41,6 @@ public class DownloadLink extends Link<Void> {
     @Override
     public void onClick() {
     }
+
+
 }
