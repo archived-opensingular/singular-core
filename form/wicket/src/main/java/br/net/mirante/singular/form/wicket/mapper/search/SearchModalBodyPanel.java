@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
-import br.net.mirante.singular.util.wicket.util.Shortcuts;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -41,6 +39,8 @@ import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 
 @SuppressWarnings("unchecked")
 class SearchModalBodyPanel extends Panel {
@@ -84,9 +84,7 @@ class SearchModalBodyPanel extends Panel {
         add(filterButton = buildFilterButton());
         add(resultTable = buildResultTable(getConfig()));
 
-        innerSingularFormPanel.add(Shortcuts.$b.onReadyScript(c -> {
-            return JQuery.on(c, "keypress", "if((e.keyCode || e.which) == 13){e.preventDefault(); "+JQuery.$(filterButton)+".click();}");
-        }));
+        innerSingularFormPanel.add($b.onEnterDelegate(filterButton));
 
     }
 

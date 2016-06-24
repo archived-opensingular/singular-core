@@ -171,9 +171,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             }
         });
 
-        modal.add(Shortcuts.$b.onReadyScript(c -> {
-            return JQuery.on(c, "keypress", "if((e.keyCode || e.which) == 13){e.preventDefault(); "+JQuery.$(modal.addButton)+".click();}");
-        }));
+        modal.add($b.onEnterDelegate(modal.addButton));
 
     }
 
