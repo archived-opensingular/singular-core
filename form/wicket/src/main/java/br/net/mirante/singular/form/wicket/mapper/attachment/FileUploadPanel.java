@@ -2,7 +2,6 @@ package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
@@ -20,32 +19,18 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import javax.servlet.http.HttpSession;
 import java.util.Set;
-import java.util.UUID;
 
 import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
 
-/**
- * Created by nuk on 27/05/16.
- */
 public class FileUploadPanel extends Panel {
-    public static String PARAM_NAME = "FILE-UPLOAD",
-            UPLOAD_ID_KEY = "upload_id";
+
+    public static String PARAM_NAME = "FILE-UPLOAD";
 
     private final IModel<SIAttachment> model;
     private final ViewMode viewMode;
-
-    private FileUploadField fileField;
-    private HiddenField nameField, hashField, sizeField, idField;
-    private WebMarkupContainer filesContainer, progressBar;
-    private DownloadSupportedBehavior downloader;
-
-    private DownloadLink downloadLink;
-
     private final AjaxButton removeFileButton = new AjaxButton("remove_btn") {
 
         @Override
@@ -75,7 +60,6 @@ public class FileUploadPanel extends Panel {
         }
 
     };
-
     private final WebMarkupContainer uploadFileButton = new WebMarkupContainer("upload_btn") {
 
         @Override
@@ -91,6 +75,11 @@ public class FileUploadPanel extends Panel {
             });
         }
     };
+    private FileUploadField fileField;
+    private HiddenField nameField, hashField, sizeField, idField;
+    private WebMarkupContainer filesContainer, progressBar;
+    private DownloadSupportedBehavior downloader;
+    private DownloadLink downloadLink;
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
@@ -99,7 +88,6 @@ public class FileUploadPanel extends Panel {
 
 
     }
-
 
 
     private IMInstanciaAwareModel dummyModel(final IModel<SIAttachment> model) {
@@ -184,7 +172,6 @@ public class FileUploadPanel extends Panel {
                 "  \n" +
                 "             param_name : '" + PARAM_NAME + "', \n" +
                 "             upload_url : '" + uploadUrl() + "', \n" +
-                "             upload_id : '" + serviceId().toString() + "', \n" +
                 "             download_url : '" + downloader.getUrl() + "', \n" +
                 "  \n" +
                 "     }; \n" +
@@ -202,16 +189,10 @@ public class FileUploadPanel extends Panel {
         return contextPath + FileUploadServlet.UPLOAD_URL;
     }
 
-    private UUID serviceId() {
-        IAttachmentPersistenceHandler service = model.getObject().getDocument().getAttachmentPersistenceTemporaryHandler();
-        HttpSession session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
-
-        return FileUploadServlet.registerService(session, service);
-    }
-
     public FileUploadField getUploadField() {
         return fileField;
     }
+
 
 
 }

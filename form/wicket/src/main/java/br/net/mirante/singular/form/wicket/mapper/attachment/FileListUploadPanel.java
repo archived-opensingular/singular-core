@@ -1,15 +1,17 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import org.apache.commons.collections.iterators.TransformIterator;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -25,9 +27,9 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -38,20 +40,15 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadPanel.PARAM_NAME;
-import static java.lang.Integer.parseInt;
 import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forReference;
 
 /**
  * Created by nuk on 10/06/16.
  */
-public class FileListUploadPanel extends Panel {
+public class FileListUploadPanel extends Panel implements Loggable {
 
     private final FileUploadField fileField;
     private final WebMarkupContainer fileList;
@@ -59,7 +56,6 @@ public class FileListUploadPanel extends Panel {
     private final RemoveFileBehavior remover;
     private final WicketBuildContext ctx;
     private final DownloadSupportedBehavior downloader;
-    private List<MInstanceRootModel> listOfFileModels;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
                                WicketBuildContext ctx) {
@@ -82,8 +78,7 @@ public class FileListUploadPanel extends Panel {
         add(fileField = new FileUploadField("fileUpload", dummyModel()));
         add(new LabelWithIcon("fileUploadLabel", Model.of("Carregar Arquivo"), Icone.UPLOAD, Model.of(fileField.getMarkupId())));
         add(fileList = new WebMarkupContainer("fileList"));
-        updateListOfFileModels(model.getObject());
-        fileList.add(new FilesListView(listOfFileModels, model, ctx));
+        fileList.add(new FilesListView(model, ctx));
         add(adder = new AddFileBehavior());
         add(remover = new RemoveFileBehavior());
         add(downloader = new DownloadSupportedBehavior(model));
@@ -108,16 +103,6 @@ public class FileListUploadPanel extends Panel {
         return file;
     }
 
-    private List<MInstanceRootModel> updateListOfFileModels(SIList<SIAttachment> fileList) {
-        return listOfFileModels = toModelList(fileList);
-    }
-
-    private List<MInstanceRootModel> toModelList(SIList<SIAttachment> fileList) {
-        return fileList.stream()
-                .map((f) -> new MInstanceRootModel(f))
-                .collect(Collectors.toList());
-    }
-
     @Override
     protected void onInitialize() {
         super.onInitialize();
@@ -139,7 +124,6 @@ public class FileListUploadPanel extends Panel {
                 "  \n" +
                 "             param_name : '" + PARAM_NAME + "', \n" +
                 "             upload_url : '" + uploadUrl() + "', \n" +
-                "             upload_id : '" + serviceId().toString() + "', \n" +
                 "             download_url : '" + downloader.getUrl() + "', \n" +
                 "             add_url : '" + adder.getUrl() + "', \n" +
                 "             remove_url : '" + remover.getUrl() + "', \n" +
@@ -159,12 +143,6 @@ public class FileListUploadPanel extends Panel {
         return contextPath + FileUploadServlet.UPLOAD_URL;
     }
 
-    private UUID serviceId() {
-        IAttachmentPersistenceHandler service = ((SIList) getDefaultModel().getObject()).getDocument().getAttachmentPersistenceTemporaryHandler();
-        HttpSession session = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
-
-        return FileUploadServlet.registerService(session, service);
-    }
 
     private IMInstanciaAwareModel dummyModel() {
         return new IMInstanciaAwareModel() {
@@ -220,7 +198,6 @@ public class FileListUploadPanel extends Panel {
 
     protected abstract class BaseJQueryFileUploadBehavior
             extends Behavior implements IResourceListener {
-        transient protected WebWrapper w = new WebWrapper();
         private Component component;
 
         protected SIList<SIAttachment> currentInstance() {
@@ -233,7 +210,7 @@ public class FileListUploadPanel extends Panel {
         }
 
         protected IRequestParameters params() {
-            ServletWebRequest request = w.request();
+            ServletWebRequest request = new WebWrapper().request();
             return request.getRequestParameters();
         }
 
@@ -251,18 +228,17 @@ public class FileListUploadPanel extends Panel {
         @Override
         public void onResourceRequested() {
             try {
-                populateFromParams(currentInstance().addNew());
-                updateListOfFileModels(currentInstance());
+//                FileListUploadPanel.this.modelChanging();
+                SIAttachment siAttachment = currentInstance().addNew();
+                siAttachment.setContent(
+                        getParamFileId("name").toString(),
+                        FileUploadServlet.lookupFile(getParamFileId("fileId").toString()),
+                        getParamFileId("size").toLong());
+//                FileListUploadPanel.this.modelChanged();
             } catch (Exception e) {
+                getLogger().error(e.getMessage(), e);
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-        }
-
-        private void populateFromParams(SIAttachment siAttachment) {
-            siAttachment.setFileId(getParamFileId("fileId").toString());
-            siAttachment.setFileName(getParamFileId("name").toString());
-            siAttachment.setFileHashSHA1(getParamFileId("hashSHA1").toString());
-            siAttachment.setFileSize(parseInt(getParamFileId("size").toString()));
         }
 
     }
@@ -275,32 +251,39 @@ public class FileListUploadPanel extends Panel {
                 String fileId = getParamFileId("fileId").toString();
                 removeFileFrom(currentInstance(), fileId);
             } catch (Exception e) {
+                getLogger().error(e.getMessage(), e);
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }
     }
 
-    private class FilesListView extends ListView {
+    private class FilesListView extends RefreshingView<SIAttachment> {
         private final IModel<SIList<SIAttachment>> model;
         private final WicketBuildContext ctx;
 
-        public FilesListView(List<MInstanceRootModel> collect, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
-            super("fileItem", collect);
+        public FilesListView(IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
+            super("fileItem", model);
             this.model = model;
             this.ctx = ctx;
         }
 
-        protected void populateItem(ListItem item) {
-            MInstanceRootModel itemModel = (MInstanceRootModel) item.getModelObject();
-            SIAttachment file = (SIAttachment) itemModel.getObject();
+        @SuppressWarnings("unchecked")
+        @Override
+        protected Iterator<IModel<SIAttachment>> getItemModels() {
+            return new TransformIterator(model.getObject().iterator(), input -> new SInstanceItemListaModel<>(model, model.getObject().indexOf((SInstance) input)));
+        }
+
+        @Override
+        protected void populateItem(Item<SIAttachment> item) {
+            IMInstanciaAwareModel itemModel = (SInstanceItemListaModel) item.getModel();
             item.add(new DownloadLink("downloadLink", itemModel, downloader));
             item.add(new RemoveButton(itemModel));
         }
 
         private class RemoveButton extends AjaxButton {
-            private final MInstanceRootModel itemModel;
+            private final IMInstanciaAwareModel itemModel;
 
-            public RemoveButton(MInstanceRootModel itemModel) {
+            public RemoveButton(IMInstanciaAwareModel itemModel) {
                 super("remove_btn");
                 this.itemModel = itemModel;
             }
@@ -309,24 +292,12 @@ public class FileListUploadPanel extends Panel {
                 super.onSubmit(target, form);
                 SIAttachment file = (SIAttachment) itemModel.getObject();
 
-                removeFromListOfModels(file);
                 removeFileFrom(model.getObject(), file.getFileId());
 
                 target.add(FileListUploadPanel.this);
                 target.add(fileList);
             }
 
-            private void removeFromListOfModels(SIAttachment file) {
-                Iterator<MInstanceRootModel> it = listOfFileModels.iterator();
-                while (it.hasNext()) {
-                    MInstanceRootModel m = it.next();
-                    SIAttachment f = (SIAttachment) m.getObject();
-                    if (file.getFileId().equals(f.getFileId())) {
-                        it.remove();
-                        break;
-                    }
-                }
-            }
 
             @Override
             public boolean isVisible() {

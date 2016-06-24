@@ -9,6 +9,7 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SingularFormException;
 import org.apache.tika.Tika;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -19,6 +20,18 @@ public class SIAttachment extends SIComposite {
     private AttachmentDocumentService getAttachmentService() {
         return AttachmentDocumentService.lookup(this);
     }
+
+    public void setContent(String name, File f, long length) {
+        setContent(name, getAttachmentService().addContent(getFileId(), f, length));
+    }
+
+    private void setContent(String name, IAttachmentRef ref) {
+        setFileId(ref.getId());
+        setFileHashSHA1(ref.getHashSHA1());
+        setFileSize(ref.getSize());
+        setFileName(name);
+    }
+
 
     void deleteReference() {
         if (getFileId() != null) {
@@ -69,8 +82,8 @@ public class SIAttachment extends SIComposite {
         return getValueString(STypeAttachment.FIELD_NAME);
     }
 
-    public void setFileName(String name) {
-        setValue(STypeAttachment.FIELD_NAME, name);
+    public void setFileName(String fileName) {
+        setValue(STypeAttachment.FIELD_NAME, fileName);
     }
 
     public String getFileId() {
@@ -81,11 +94,6 @@ public class SIAttachment extends SIComposite {
         return id;
     }
 
-    /**
-     * Será removido em breve, utilizar hash como chave.
-     * @param id
-     */
-    @Deprecated
     public void setFileId(String id) {
         setValue(STypeAttachment.FIELD_FILE_ID, id);
     }
