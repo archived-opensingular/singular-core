@@ -13,13 +13,18 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -40,6 +45,9 @@ import java.util.UUID;
  */
 @SuppressWarnings("serial")
 public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandler {
+
+    protected static final String INFO_SUFFIX = ".INFO";
+    protected static final Charset UTF8 = Charset.forName("UTF-8");
 
     private File folder;
 
@@ -78,11 +86,13 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
 
     private IAttachmentRef addAttachment(InputStream origin, long originLength) throws IOException {
         String id = UUID.randomUUID().toString();
-        File temp = fileFromId(id);
+        File temp = findFileFromId(id);
         try (FileOutputStream fos = new FileOutputStream(temp);
              HashAndCompressInputStream inHash = new HashAndCompressInputStream(origin)) {
             IOUtils.copy(inHash, fos);
             String sha1 = inHash.getHashSHA1();
+            FileOutputStream infoFOS = new FileOutputStream(temp.getAbsolutePath()+INFO_SUFFIX);
+            IOUtils.writeLines(Arrays.asList(new String[]{sha1, String.valueOf(originLength)}), IOUtils.LINE_SEPARATOR_UNIX, infoFOS, UTF8);
             return newRef(id, sha1, temp.getAbsolutePath(), originLength);
         }
     }
@@ -118,7 +128,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     @Override
     public IAttachmentRef getAttachment(String fileId) {
         try {
-            File file = fileFromId(fileId);
+            File file = findFileFromId(fileId);
             if (file.exists()) {
                 return toRef(file);
             }
@@ -128,12 +138,13 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         return null;
     }
 
-    protected File fileFromId(String fileId) {
+    protected File findFileFromId(String fileId) {
         return new File(folder, fileId);
     }
 
     private FileSystemAttachmentRef toRef(File file) throws Exception {
-        return newRef(file.getName(), HashUtil.toSHA1Base16(file), file.getAbsolutePath(), -1);
+        List<String> lines = IOUtils.readLines(new FileInputStream(file.getAbsolutePath() + INFO_SUFFIX), UTF8);
+        return newRef(file.getName(), lines.get(0), file.getAbsolutePath(), Long.valueOf(lines.get(1)));
     }
 
     private FileSystemAttachmentRef newRef(String id, String hash, String filePath, long length) {
@@ -143,7 +154,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     @Override
     public void deleteAttachment(String fileId) {
         if (fileId == null) return;
-        File file = fileFromId(fileId);
+        File file = findFileFromId(fileId);
         file.delete();
     }
 }

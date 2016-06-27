@@ -54,11 +54,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
         Arrays.fill(grande, conteudo);
         return grande;
     }
-    
-    @Test public void createReferenceWithProperDataUsingByteArray() throws Exception {    
-        assertReference(persistenHandler.addAttachment(writeBytesToTempFile(content), content.length));
-    }
-    
+
     @Test public void createReferenceWithProperDataUsingStream() throws Exception {    
         assertReference(persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length));
     }
@@ -69,12 +65,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
         assertEquals((int)content.length, (int)ref.getSize());
         assertTrue(Arrays.equals(content, ByteStreams.toByteArray(ref.newInputStream())));
     }
-    
-    @Test public void recoverReferenceWithSameDataUsingByteArray() throws Exception {    
-        IAttachmentRef original = persistenHandler.addAttachment(writeBytesToTempFile(content), content.length);
-        IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
-        assertReference(original, returned);
-    }
+
     
     @Test public void recoverReferenceWithSameDataUsingStream() throws Exception {    
         IAttachmentRef original = persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length);
