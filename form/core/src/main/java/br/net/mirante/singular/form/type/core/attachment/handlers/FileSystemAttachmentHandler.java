@@ -6,6 +6,7 @@
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
 import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.io.HashAndCompressInputStream;
 import br.net.mirante.singular.form.io.HashUtil;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
@@ -80,7 +81,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         try {
             return addAttachment(new FileInputStream(file), length);
         } catch (Exception e) {
-            throw new SingularException(e);
+            throw new SingularFormException("Erro lendo origem de dados", e);
         }
     }
 
@@ -114,7 +115,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
             return result;
         }
         for (File f : files) {
-            if (f.isFile() && f.exists()) {
+            if (f.isFile() && f.exists() && !f.getName().endsWith(INFO_SUFFIX)) {
                 try {
                     result.add(toRef(f));
                 } catch (Exception e) {

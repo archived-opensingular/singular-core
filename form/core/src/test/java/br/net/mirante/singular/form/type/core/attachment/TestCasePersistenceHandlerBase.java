@@ -153,8 +153,7 @@ public abstract class TestCasePersistenceHandlerBase {
     @Test
     public void testExceptionNaEscritaDoConteudo() throws IOException {
         try {
-            File f = writeBytesToTempFile(TesteMPacoteAttachment.createInputStreamGeradoraException());
-            getHandler().addAttachment(f, f.length());
+            getHandler().addAttachment(new File(""), 1);
             fail("Era esperada Exception");
         } catch (SingularFormException e) {
             Assert.assertTrue(e.getMessage().contains("Erro lendo origem de dados"));
