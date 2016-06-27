@@ -29,65 +29,60 @@ public class STypePDIProjetoPedagogico extends STypeComposite<SIComposite>{
         addOutrosProjetosPedagogicosCurso();
         
         // cria um bloco por campo
-        setView(SViewByBlock::new).newBlockPerType(getFieldsLocal());
+        setView(SViewByBlock::new)
+            .newBlock("12 Justificativa da Oferta do Curso").add("justificativaOfertaCurso")
+            .newBlock("13 Atividades do Curso").add("atividadesComplementares")
+            .newBlock("14 Perfil do Egresso").add("perfilEgresso")
+            .newBlock("15 Forma de Acesso ao Curso").add("formaAcessoCurso")
+            .newBlock("16 Representação Gráfica de um perfil de formação").add("representacaoGraficaPerfilFormacao")
+            .newBlock("17 Sistema de Avaliação do processo de ensino e aprendizagem").add("sistemaAvaliacaoProcessoEnsinoAprendizagem")
+            .newBlock("18 Sistema de Avaliação do Projeto de Curso").add("sistemaAvaliacaoProjetoCurso")
+            .newBlock("19 Atividades de Conclusão de Curso (TCC)").add("atividadesConclusaoCurso")
+            .newBlock("20 Ato autorizativo anterior ou ato de criação").add("atoAutorizativoCriacao")
+            .newBlock("21 Outros Projetos Pedagógicos de Curso").add("informacoesOutrosProjetosPedagogicosCurso");
     }
 
     private void addPerfilCurso() {
-        final STypeComposite<SIComposite> perfilCurso = this.addFieldComposite("perfilCurso");
-        perfilCurso.asAtr().label("12 Perfil do Curso");
-        perfilCurso.addFieldString("justificativaOfertaCurso", true)
-            .withTextAreaView().asAtr().label("Justificativa da Oferta do Curso")
-            .asAtrBootstrap().maxColPreference();
+        this.addFieldString("justificativaOfertaCurso", true)
+            .withTextAreaView().asAtrBootstrap().maxColPreference();
     }
 
     private void addAtividadesCurso() {
-        final STypeComposite<SIComposite> atividadesCurso = this.addFieldComposite("atividadesCurso");
-        atividadesCurso.asAtr().label("13 Atividades do Curso");
-        atividadesCurso.addFieldString("atividadesComplementares")
-            .withTextAreaView().asAtr().label("Atividades Complementares")
-            .asAtrBootstrap().maxColPreference();
+        this.addFieldString("atividadesComplementares")
+            .withTextAreaView().asAtrBootstrap().maxColPreference();
     }
 
     private void addPerfilEgresso() {
         this.addFieldString("perfilEgresso", true)
-            .withTextAreaView().asAtr().label("14 Perfil do Egresso")
-            .asAtrBootstrap().maxColPreference();
+            .withTextAreaView().asAtrBootstrap().maxColPreference();
     }
 
     private void addFormaAcessoCurso() {
         this.addFieldString("formaAcessoCurso", true)
-            .withTextAreaView().asAtr().label("15 Forma de Acesso ao Curso")
-            .asAtrBootstrap().maxColPreference();
+            .withTextAreaView().asAtrBootstrap().maxColPreference();
     }
 
     private void addRepresentacaoGraficaPerfilFormacao() {
-        this.addFieldAttachment("representacaoGraficaPerfilFormacao")
-            .asAtr().label("16 Representação Gráfica de um perfil de formação");
+        this.addFieldAttachment("representacaoGraficaPerfilFormacao");
     }
     
     private void addSistemaAvaliacaoProcessoEnsinoAprendizagem() {
         this.addFieldString("sistemaAvaliacaoProcessoEnsinoAprendizagem", true)
-            .withTextAreaView().asAtr().label("17 Sistema de Avaliação do processo de ensino e aprendizagem")
-            .asAtrBootstrap().maxColPreference();
+            .withTextAreaView().asAtrBootstrap().maxColPreference();
     }
 
     private void addSistemaAvaliacaoProjetoCurso() {
         this.addFieldString("sistemaAvaliacaoProjetoCurso", true)
-            .withTextAreaView().asAtr().label("18 Sistema de Avaliação do Projeto de Curso")
-            .asAtrBootstrap().maxColPreference();
+            .withTextAreaView().asAtrBootstrap().maxColPreference();
     }
     
     private void addTrabalhoConclusaoCurso() {
-        final STypeComposite<SIComposite> trabalhoConclusaoCurso = this.addFieldComposite("trabalhoConclusaoCurso");
-        trabalhoConclusaoCurso.asAtr().label("19 Atividades de Conclusão de Curso (TCC)");
-        trabalhoConclusaoCurso.addFieldString("atividadesConclusaoCurso")
-            .withTextAreaView().asAtr().label("Atividades de Conslusão de Curso")
-            .asAtrBootstrap().maxColPreference();
+        this.addFieldString("atividadesConclusaoCurso")
+            .withTextAreaView().asAtrBootstrap().maxColPreference();
     }
     
     private void addAtoAutorizativoCriacao() {
         final STypeComposite<SIComposite> atoAutorizativoCriacao = this.addFieldComposite("atoAutorizativoCriacao");
-        atoAutorizativoCriacao.asAtr().label("20 Ato autorizativo anterior ou ato de criação");
         atoAutorizativoCriacao.addFieldString("tipoDocumento", true)
             .withRadioView().selectionOf("Ata", "Decreto", "Decreto-lei", "Lei", "Medida Provisória", "Parecer", "Portaria", "Resolução")
             .asAtr().label("Tipo de Documento")
@@ -108,9 +103,7 @@ public class STypePDIProjetoPedagogico extends STypeComposite<SIComposite>{
     }
 
     private void addOutrosProjetosPedagogicosCurso() {
-        final STypeComposite<SIComposite> outrosProjetosPedagogicosCurso = this.addFieldComposite("outrosProjetosPedagogicosCurso");
-        outrosProjetosPedagogicosCurso.asAtr().label("21 Outros Projetos Pedagógicos de Curso");
-        outrosProjetosPedagogicosCurso.addFieldAttachment("informacoesOutrosProjetosPedagogicosCurso")
+        this.addFieldAttachment("informacoesOutrosProjetosPedagogicosCurso")
             .asAtr().label("Informações sobre outros Projetos Pedagógicos de Curso");
     }
 }

@@ -16,10 +16,10 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.util.Shortcuts;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -32,6 +32,7 @@ import org.apache.wicket.model.Model;
 
 import com.google.common.base.Strings;
 
+import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.SFormUtil;
@@ -168,6 +169,9 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 });
             }
         });
+
+        modal.add($b.onEnterDelegate(modal.addButton));
+
     }
 
     /*
@@ -213,12 +217,12 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             @Override
             public Iterator<SInstance> iterator(int first, int count, Object sortProperty, boolean ascending) {
-                return ((SIList<SInstance>) model.getObject()).iterator();
+                return model.getObject().iterator();
             }
 
             @Override
             public long size() {
-                return ((SIList<SInstance>) model.getObject()).size();
+                return model.getObject().size();
             }
 
             @Override
@@ -253,7 +257,9 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             }
         } else {
-            mapColumns.forEach((col) -> columnTypes.add(new ColumnType(model.getObject().getDictionary().getType(col.getTypeName()), col.getCustomLabel(), col.getDisplayValueFunction())));
+            mapColumns.forEach((col) -> columnTypes.add(new ColumnType(
+                Optional.ofNullable(col.getTypeName()).map(typeName -> model.getObject().getDictionary().getType(typeName)).orElse(null), 
+                col.getCustomLabel(), col.getDisplayValueFunction())));
         }
 
         for (ColumnType columnType : columnTypes) {
@@ -354,8 +360,10 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             SIComposite composto = (SIComposite) o;
             SType<?>    mtipo    = mTipoModel.getObject();
             if (mtipo == null) {
-                Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Não foi especificado o valor da coluna para " + o);
-                return null;
+//                TODO (LL) - confirmar
+//                Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Não foi especificado o valor da coluna para " + o);
+//                return null;
+                return displayValueFunction.apply(composto);
             }
             SInstance instancia = composto.findDescendant(mtipo).get();
             return displayValueFunction.apply(instancia);
@@ -402,6 +410,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         private       BSContainer<?>               containerExterno;
         private       FormStateUtil.FormState      formState;
         private       IModel<String>               actionLabel;
+        private       ActionAjaxButton             addButton;
 
         @SuppressWarnings("unchecked")
         MasterDetailModal(String id,
@@ -426,7 +435,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             setSize(BSModalBorder.Size.NORMAL);
 
             actionLabel = $m.ofValue("");
-            this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, new ActionAjaxButton("btn") {
+            this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton = new ActionAjaxButton("btn") {
                 @Override
                 protected void onAction(AjaxRequestTarget target, Form<?> form) {
                     target.add(table);
@@ -549,21 +558,24 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
     private static class ColumnType {
 
-        private SType<?> type;
-        private String   customLabel;
-        private IFunction<SInstance, String> displayValueFunction = SInstance::toStringDisplay;
+        private final SType<?> type;
+        private final String   customLabel;
+        private final IFunction<SInstance, String> displayValueFunction;
 
         ColumnType(SType<?> type, String customLabel, IFunction<SInstance, String> displayValueFunction) {
+            if(type == null && displayValueFunction == null){
+                throw new SingularException("Não foi especificado o valor da coluna.");
+            }
             this.type = type;
             this.customLabel = customLabel;
-            if (displayValueFunction != null) {
-                this.displayValueFunction = displayValueFunction;
-            }
+            this.displayValueFunction = displayValueFunction != null ? displayValueFunction : SInstance::toStringDisplay;
         }
 
         ColumnType(SType<?> type, String customLabel) {
-            this.type = type;
-            this.customLabel = customLabel;
+            this(type, customLabel, null);
+            if(type == null){
+                throw new SingularException("Não foi especificado o valor da coluna.");
+            }
         }
 
         public SType<?> getType() {

@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.document.SDocumentFactoryEmpty;
+import br.net.mirante.singular.form.io.TesteFormSerializationUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,53 +18,46 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @RunWith(Parameterized.class)
 public class InitListenerTest extends TestCaseForm {
 
-    private STypeComposite<SIComposite> base;
-    private STypeString                 field1, field2;
-
     public InitListenerTest(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
-    @Before
-    public void setup() {
-        PackageBuilder test = createTestDictionary().createNewPackage("test");
-        base = test.createCompositeType("base");
-        field1 = base.addFieldString("field1");
-        field2 = base.addFieldString("field2");
+    @Test
+    public void runInitializationCode() {
+        STypeComposite<SIComposite> base = createTestDictionary().createNewPackage("test").createCompositeType("base");
+        STypeString field1 = base.addFieldString("field1");
+        STypeString field2 = base.addFieldString("field2");
+
+        field1.withInitListener(x -> x.setValue("abacate"));
+        assertInstance(newInstance(field1)).isValueEquals("abacate");
     }
 
     @Test
-    public void runIntializationCode() {
-        field1.withInitListener((x) -> {
-            x.setValue("abacate");
-        });
+    public void initializationCodeHasAccessToAllServices() {
+        STypeComposite<SIComposite> base = createTestDictionary().createNewPackage("test").createCompositeType("base");
+        STypeString field1 = base.addFieldString("field1");
+        STypeString field2 = base.addFieldString("field2");
 
-        assertThat(newInstance(field1).getValue()).isEqualTo("abacate");
-    }
-
-    @Test
-    public void intializationCodeHasAccessToAllServices() {
         field1.withInitListener((x) -> {
             assertThat(x.getDocument()).isNotNull();
             assertThat(x.getDocument().lookupService(P.class)).isNotNull();
             x.setValue("abacate");
         });
 
-        assertThat(newInstance(field1).getValue()).isEqualTo("abacate");
+        assertInstance(newInstance(field1)).isValueEquals("abacate");
     }
 
     @Test
-    public void intializationIsRunnedForAllInstances() {
-        field1.withInitListener((x) -> {
-            x.setValue("abacate");
-        });
-        field2.withInitListener((x) -> {
-            x.setValue("avocado");
-        });
+    public void initializationIsRunnedForAllInstances() {
+        STypeComposite<SIComposite> base = createTestDictionary().createNewPackage("test").createCompositeType("base");
+        STypeString field1 = base.addFieldString("field1");
+        STypeString field2 = base.addFieldString("field2");
 
-        SIComposite ins = (SIComposite) newInstance(base);
-        assertThat(ins.getValue(field1)).isEqualTo("abacate");
-        assertThat(ins.getValue(field2)).isEqualTo("avocado");
+        field1.withInitListener(x -> x.setValue("abacate"));
+        field2.withInitListener(x -> x.setValue("avocado"));
+
+        assertInstance(newInstance(base))
+                .isValueEquals(field1, "abacate").isValueEquals(field2,"avocado");
     }
 
     private static class P implements Serializable {
@@ -84,6 +78,111 @@ public class InitListenerTest extends TestCaseForm {
             }
         });
 
+    }
+
+    @Test
+    public void testIfSimpleInitWithValue() {
+        PackageBuilder pb   = createTestDictionary().createNewPackage("SPackageTest");
+        STypeString    nome = pb.createType("nome", STypeString.class);
+
+        nome.withInitListener(si -> si.setValue("banana"));
+
+        assertInstance(nome.newInstance()).isValueEquals("banana");
+
+        //Tipo extendido deve manter a inicialização
+        STypeString nomeFilho = pb.createType("nomeFilho", nome);
+        assertInstance(nomeFilho.newInstance()).isValueEquals("banana");
+    }
+
+    @Test
+    public void testIfCompositeInitWithValue() {
+        PackageBuilder              pb   = createTestDictionary().createNewPackage("SPackageTest");
+        STypeComposite<SIComposite> root = pb.createCompositeType("root");
+        STypeString                 nome = root.addFieldString("nome");
+        root.addFieldString("origem");
+
+        nome.withInitListener(si -> si.setValue("banana"));
+        root.withInitListener(c -> c.setValue("origem", "desconhecida"));
+
+        assertInstance(root.newInstance())
+                .isValueEquals("nome", "banana")
+                .isValueEquals("origem", "desconhecida");
+
+        //Tipo extendido deve manter a inicialização original
+        STypeComposite<SIComposite> filho = pb.createType("Filho", root);
+        assertInstance(filho.newInstance())
+                .isValueEquals("nome", "banana")
+                .isValueEquals("origem", "desconhecida");
+    }
+
+    @Test
+    public void testListOfCompositeInitWithValue() {
+
+        PackageBuilder                                      pb     = createTestDictionary().createNewPackage("SPackageTest");
+        STypeComposite<SIComposite>                         root   = pb.createCompositeType("root");
+        STypeList<STypeComposite<SIComposite>, SIComposite> frutas = root.addFieldListOfComposite("frutas", "fruta");
+        STypeComposite<SIComposite>                         fruta  = frutas.getElementsType();
+
+        fruta.addField("nome", STypeString.class)
+                .withInitListener(si -> si.setValue("banana"));
+        fruta.addField("origem", STypeString.class);
+
+        fruta.withInitListener(c -> c.setValue("origem", "desconhecida"));
+
+
+        SIList<SIComposite> iFrutas = root.newInstance().getFieldList("frutas", SIComposite.class);
+        iFrutas.addNew();
+
+        assertInstance(iFrutas)
+                .isValueEquals("[0].nome", "banana")
+                .isValueEquals("[0].origem", "desconhecida");
+    }
+
+    @Test
+    public void testIfListOfSimpleInitWithValue() {
+        PackageBuilder pb = createTestDictionary().createNewPackage("SPackageTest");
+        STypeList<STypeString, SIString> frutasType = pb.createListTypeOf("frutas", STypeString.class);
+
+        frutasType.getElementsType().withInitListener(si -> si.setValue("banana"));
+
+        SIList<SIString> frutas = frutasType.newInstance();
+        frutas.addNew();
+        frutas.addValue("manga");
+
+        AssertionsSInstance aFrutas = assertInstance(frutas);
+        aFrutas.isValueEquals("[0]", "banana");
+        aFrutas.isValueEquals("[1]", "manga");
+
+        //O init da string filha não pode afeta o comportamento STypeString
+        assertInstance(pb.getDictionary().getType(STypeString.class).newInstance()).isValueNull();
+    }
+
+    @Test
+    public void testInitListenerMustNotBeExecutedDuringDeserialization() {
+        SIComposite instance = (SIComposite) createSerializableTestInstance("teste.pedido", pacote -> {
+            STypeComposite<?> tipoPedido = pacote.createCompositeType("pedido");
+            tipoPedido.addFieldString("nome");
+            tipoPedido.addFieldString("descr");
+            tipoPedido.addFieldString("prioridade")
+                    .withInitListener(i -> i.setValue("alta"));
+            tipoPedido.withInitListener(p -> p.setValue("descr", "x"));
+        });
+
+        assertInstance(instance)
+                .isValueEquals("nome", null)
+                .isValueEquals("descr", "x")
+                .isValueEquals("prioridade", "alta");
+
+        instance.setValue("descr","y");
+        instance.setValue("prioridade", "baixa");
+
+        SInstance instance2 = TesteFormSerializationUtil.testSerializacao(instance);
+
+        assertInstance(instance2)
+                .isNotSameAs(instance)
+                .isValueEquals("nome", null)
+                .isValueEquals("descr", "y")
+                .isValueEquals("prioridade", "baixa");
     }
 
 }

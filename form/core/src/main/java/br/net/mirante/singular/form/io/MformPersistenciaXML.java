@@ -72,7 +72,7 @@ public class MformPersistenciaXML {
      * factory de documento informada.
      */
     public static <T extends SInstance> T fromXML(RefType refType, MElement xml, SDocumentFactory documentFactory) {
-        SInstance novo = documentFactory.createInstanceWithoutInitialization(refType);
+        SInstance novo = documentFactory.createInstance(refType, false);
         return (T) fromXMLInterno(novo, xml);
     }
 
@@ -97,9 +97,10 @@ public class MformPersistenciaXML {
 
     private static int verificarIds(SInstance instancia, Set<Integer> ids) {
         Integer id = instancia.getId();
-        if (ids.contains(id)) {
-            throw new SingularFormException(
-                    "A instancia " + instancia.getPathFull() + " tem um ID repetido (igual a outra instância) id=" + id);
+        if (id == null) {
+            throw new SingularFormException("O ID da instância está null", instancia);
+        } else if (ids.contains(id)) {
+            throw new SingularFormException("A instancia tem ID repetido (igual a outra instância) id=" + id, instancia);
         }
         if (instancia instanceof ICompositeInstance) {
             int max = id;
@@ -136,7 +137,8 @@ public class MformPersistenciaXML {
                 fromXML(filho, xmlFilho);
             }
         } else {
-            throw new UnsupportedOperationException(instancia.getClass().getName());
+            throw new SingularFormException(
+                    "Conversão não implementando para a classe " + instancia.getClass().getName(), instancia);
         }
     }
 

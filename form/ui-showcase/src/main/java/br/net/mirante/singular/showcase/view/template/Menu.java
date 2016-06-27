@@ -9,18 +9,15 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-import br.net.mirante.singular.showcase.component.ShowCaseType;
-import br.net.mirante.singular.showcase.view.page.studio.StudioHomePage;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
+import br.net.mirante.singular.showcase.component.ShowCaseType;
 import br.net.mirante.singular.showcase.view.page.ComponentPage;
-import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
 import br.net.mirante.singular.showcase.view.page.prototype.PrototypeListPage;
+import br.net.mirante.singular.showcase.view.page.studio.StudioHomePage;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuGroup;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;

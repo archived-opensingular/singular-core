@@ -15,10 +15,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import org.fest.assertions.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
@@ -88,6 +91,28 @@ public class TesteFormSerializationUtil extends TestCaseForm {
         instancia.setValue("bairro", "A2");
         instancia.setValue("rua", null);
         testSerializacao(instancia);
+    }
+
+    @Test
+    public void testTipoCompostoWithSubTipoCompostoWithOneFieldSetToNull() {
+        SIComposite bloco = (SIComposite) createSerializableTestInstance("teste.bloco", pacote -> {
+            STypeComposite<SIComposite> tipoBloco = pacote.createCompositeType("bloco");
+            STypeComposite<SIComposite> sub = tipoBloco.addFieldComposite("ref");
+            sub.addFieldString("bairro");
+            sub.addFieldString("rua");
+        });
+        bloco.setValue("ref.rua", null);
+        testSerializacao(bloco);
+    }
+
+    @Test
+    public void testTipoCompostoWithSubTipoCompostoByClassWithOneFieldSetToNull() {
+        SIComposite bloco = (SIComposite) createSerializableTestInstance("teste.bloco", pacote -> {
+            STypeComposite<SIComposite> tipoBloco = pacote.createCompositeType("bloco");
+            tipoBloco.addField("ref", STypeTesteEndereco.class);
+        });
+        bloco.setValue("ref.rua", null);
+        testSerializacao(bloco);
     }
 
     public static class RefTypeSeria extends RefType {
@@ -287,7 +312,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
 
         TwoReferences tr2 = toAndFromByteArray(tr1);
 
-        assertEquivalent(tr1.ref1.get().getDocument(), tr2.ref1.get().getDocument());
+        assertEquivalent(tr1.ref1.get().getDocument(), tr2.ref1.get().getDocument(), true);
         assertEquivalent(tr1.ref1.get(), tr2.ref1.get());
         assertSame(tr2.ref1.get().getDictionary(), tr2.ref2.get().getDictionary());
     }
@@ -303,7 +328,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
 
     public static void testSerializacao(InstanceSerializableRef<?> ref) {
         SInstance instancia2 = toAndFromByteArray(ref).get();
-        assertEquivalent(ref.get().getDocument(), instancia2.getDocument());
+        assertEquivalent(ref.get().getDocument(), instancia2.getDocument(), true);
         assertEquivalent(ref.get(), instancia2);
     }
 
@@ -316,12 +341,12 @@ public class TesteFormSerializationUtil extends TestCaseForm {
         // Testa sem transformar em array de bytes
         FormSerialized fs = toSerial.apply(original);
         SInstance instancia2 = fromSerial.apply(fs);
-        assertEquivalent(original.getDocument(), instancia2.getDocument());
+        assertEquivalent(original.getDocument(), instancia2.getDocument(), fs.getXml() != null);
         assertEquivalent(original, instancia2);
 
         fs = toAndFromByteArray(fs);
         instancia2 = fromSerial.apply(fs);
-        assertEquivalent(original.getDocument(), instancia2.getDocument());
+        assertEquivalent(original.getDocument(), instancia2.getDocument(), fs.getXml() != null);
         assertEquivalent(original, instancia2);
 
         return instancia2;
@@ -361,9 +386,11 @@ public class TesteFormSerializationUtil extends TestCaseForm {
         }
     }
 
-    public static void assertEquivalent(SDocument original, SDocument copy) {
+    public static void assertEquivalent(SDocument original, SDocument copy, boolean verificarLastId) {
         assertNotSame(original, copy);
-        assertEquals(original.getLastId(), copy.getLastId());
+        if (verificarLastId) {
+            assertEquals(original.getLastId(), copy.getLastId());
+        }
 
         for (Entry<String, Pair> service : original.getLocalServices().entrySet()) {
             Object originalService = original.lookupService(service.getKey(), Object.class);

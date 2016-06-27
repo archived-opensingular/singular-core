@@ -196,11 +196,11 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         SInstance instancia;
         SType<?> tipoCampo = getFieldsDef().getByIndex(fieldIndex);
         instancia = tipoCampo.newInstance(getDocument());
-        instancia.setParent(this);
         if (fields == null) {
             fields = new FieldMapOfRecordInstance(getFieldsDef());
         }
         fields.set(fieldIndex, instancia);
+        instancia.setParent(this);
         return instancia;
     }
 
