@@ -118,6 +118,10 @@ public class SDocument {
 
     }
 
+    public boolean isAttachmentPersistenceTemporaryHandlerSupported(){
+        return lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class) != null;
+    }
+
     /**
      * Retorna o serviço responsável por persistir temporáriamente os novos
      * anexos incluidos durante a edição. Se o formulário não for salvo, então
@@ -135,6 +139,10 @@ public class SDocument {
         return ref;
     }
 
+    public boolean isAttachmentPersistencePermanentHandlerSupported(){
+        return lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class) != null;
+    }
+
     /**
      * Retorna o serviço responsável por consultar os anexos já salvos
      * anteriormente e responsável por gravar os novos anexos, que estavam na
@@ -142,10 +150,10 @@ public class SDocument {
      */
     public IAttachmentPersistenceHandler getAttachmentPersistencePermanentHandler() {
         IAttachmentPersistenceHandler h = lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
-        if (h == null) {
-            throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
-                + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
-        }
+//        if (h == null) {
+//            throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
+//                + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
+//        }
         return h;
     }
 
@@ -426,7 +434,7 @@ class AttachmentPersistenceHelper {
         if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
             IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
             if (fileRef != null) {
-                IAttachmentRef newRef = persistent.addAttachment(fileRef.getContentAsByteArray());
+                IAttachmentRef newRef = persistent.copy(fileRef);
                 deleteOldFiles(attachment, fileRef);
                 updateFileId(attachment, newRef);
             }

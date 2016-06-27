@@ -17,6 +17,7 @@ public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHan
     @Before
     public void createFolders() throws Exception {
         tmpFolder = rootTmp.newFolder("tempSingular" + Math.random());
+        tmpFolder.deleteOnExit();
     }
 
     
@@ -28,11 +29,6 @@ public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHan
             Throwables.propagate(e);
         }
         return new FileSystemAttachmentHandler(tmpFolder);
-    }
-    
-    @Override
-    protected String defineId(IAttachmentRef ref) {
-        return ref.getId();
     }
 
 }

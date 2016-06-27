@@ -54,7 +54,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
 
         // Verifica se a visibilidade está ok
         tester.assertVisible(choose.getPageRelativePath());
-//        tester.assertInvisible(removeFileButton.getPageRelativePath());
+        tester.assertInvisible(removeFileButton.getPageRelativePath());
 
         // Verifica se não existe arqiovps
         assertThat(model.getMInstancia().isEmptyOfData()).isTrue();

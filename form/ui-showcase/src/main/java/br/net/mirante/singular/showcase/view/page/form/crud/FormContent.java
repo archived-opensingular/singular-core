@@ -218,8 +218,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private Component buildSaveWithoutValidateButton() {
         final Component button = new SingularValidationButton("save-whitout-validate-btn", singularFormPanel.getRootInstance()) {
             protected void save(IModel<? extends SInstance> instanceModel) {
+                instanceModel.getObject().getDocument().persistFiles();//Tem que ser feito antes obrigatoriamente para poder atualizar os ids
                 MElement rootXml = MformPersistenciaXML.toXML(instanceModel.getObject());
-                instanceModel.getObject().getDocument().persistFiles();
                 if (rootXml != null) {
                     currentModel.setXml(rootXml.toStringExato());
                 } else {

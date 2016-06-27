@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentListMapper.MULTIPLE_HIDDEN_UPLOAD_FIELD_ID;
+import static br.net.mirante.singular.form.wicket.mapper.attachment.list.AttachmentListMapper.MULTIPLE_HIDDEN_UPLOAD_FIELD_ID;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @Ignore("Review after updating logic")
