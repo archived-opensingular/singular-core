@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.provider.SSimpleProvider;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,13 +30,8 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
     }
 
 
-    @Override
-    protected void onLoadPackage(PackageBuilder pb) {
-        super.onLoadPackage(pb);
+    public static void onLoadType(STypeComposite<SIComposite> peticaoSimplificada) {
 
-        pb.getDictionary().loadPackage(SPackagePPSCommon.class);
-
-        final STypeComposite<SIComposite>                      peticaoSimplificada     = pb.createCompositeType(TIPO);
         final STypeComposite<SIComposite>                      tipoPeticao             = peticaoSimplificada.addFieldComposite("tipoPeticao");
         final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger("id");
         final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString("nome");
@@ -105,8 +101,7 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         dadosGerais
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .visible(si -> Value.notNull(si, tipoPeticao));
-
+                .exists(si -> Value.notNull(si, tipoPeticao));
 
         ingredienteAtivoPeticao
                 .asAtr()
@@ -115,121 +110,158 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
 
         produtoTecnicoPeticao
                 .asAtr()
-                .dependsOn(nivel)
-                .visible(si -> StringUtils.isNotEmpty(Value.of(si, nivel)));
+                .dependsOn(nivel, tipoPeticao)
+                .exists(si -> StringUtils.isNotEmpty(Value.of(si, nivel)));
 
         produtoTecnicoPeticao
                 .produtoTecnicoNaoSeAplica
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .visible(si -> produtoTecnicoOpcional.contains(Value.of(si, idTipoPeticao)));
-
+                .exists(si -> produtoTecnicoOpcional.contains(Value.of(si, idTipoPeticao)));
         produtoTecnicoPeticao
                 .produtosTecnicos
                 .asAtr()
-                .dependsOn(tipoPeticao)
-                .visible(si -> produtoTecnicoMultiplo.contains(Value.of(si, idTipoPeticao)));
-
-        produtoTecnicoPeticao
-                .produtoTecnico
-                .asAtr()
                 .dependsOn(tipoPeticao, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)
-                .visible(si ->
-                        !produtoTecnicoMultiplo.contains(Value.of(si, idTipoPeticao))
-                                &&
-                                (!Value.notNull(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica) || !Value.of(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica))
+                .exists(si ->
+                        !Value.notNull(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica) || !Value.of(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)
 
                 );
 
-
-        final STypeProdutoTecnico[] tiposProdutoTecnicos = new STypeProdutoTecnico[]{produtoTecnicoPeticao.produtoTecnico, produtoTecnicoPeticao.produtosTecnicos.getElementsType()};
-
-        for (STypeProdutoTecnico pt : tiposProdutoTecnicos) {
-
-
-            pt
-                    .numeroProcessoProdutoTecnico
-                    .withUpdateListener(si -> {
-                        if (numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao))) {
-                            si.setValue(Value.of(si, dadosGerais.numeroProcessoPeticaoMatriz));
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .addInstanceValidator(ValidationErrorLevel.ERROR, validatable -> {
+                    if (!produtoTecnicoMultiplo.contains(Value.of(validatable.getInstance(), idTipoPeticao))) {
+                        if (validatable.getInstance().size() > 1) {
+                            validatable.error("Apenas um produto técnico deve ser informado para o tipo de petição escolhido.");
                         }
-                    })
-                    .asAtr()
-                    .dependsOn(dadosGerais.numeroProcessoPeticaoMatriz, tipoPeticao)
-                    .enabled(si -> !numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao)));
+                    }
+                    if (!produtoTecnicoOpcional.contains(Value.of(validatable.getInstance(), idTipoPeticao))) {
+                        if (validatable.getInstance().size() < 1) {
+                            validatable.error("Nenhum produto técnico foi informado.");
+                        }
+                    }
+                });
 
 
-            pt
-                    .fabricante
-                    .asAtr()
-                    .dependsOn(nivel)
-                    .visible(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .getElementsType()
+                .numeroProcessoProdutoTecnico
+                .asAtr()
+                .dependsOn(dadosGerais.numeroProcessoPeticaoMatriz, tipoPeticao)
+                .enabled(si -> !numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao)));
 
-            pt
-                    .fabricantes
-                    .asAtr()
-                    .dependsOn(nivel)
-                    .visible(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
-        }
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .getElementsType()
+                .numeroProcessoProdutoTecnico
+                .withUpdateListener(si -> {
+                    if (numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao))) {
+                        si.setValue(Value.of(si, dadosGerais.numeroProcessoPeticaoMatriz));
+                    }
+                });
+
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .getElementsType()
+                .numeroProcessoProdutoTecnico
+                .withInitListener(si -> {
+                    if (numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao))) {
+                        si.setValue(Value.of(si, dadosGerais.numeroProcessoPeticaoMatriz));
+                    }
+                });
+
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .withUpdateListener(si -> {
+                    if (numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao))) {
+                        for (SIComposite composite : si.getValues()) {
+                            composite.findNearest(produtoTecnicoPeticao
+                                    .produtosTecnicos
+                                    .getElementsType()
+                                    .numeroProcessoProdutoTecnico).get().setValue(
+                                    Value.of(si, dadosGerais.numeroProcessoPeticaoMatriz));
+                        }
+                    }
+                })
+                .asAtr()
+                .dependsOn(dadosGerais.numeroProcessoPeticaoMatriz);
+
+
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .getElementsType()
+                .fabricante
+                .asAtr()
+                .dependsOn(nivel)
+                .exists(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
+
+        produtoTecnicoPeticao
+                .produtosTecnicos
+                .getElementsType()
+                .fabricantes
+                .asAtr()
+                .dependsOn(nivel)
+                .exists(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
 
 
         produtoFormulado
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> StringUtils.isNotEmpty(Value.of(si, nivel)) && !naoPossuiProdutoFormulado.contains(Value.of(si, idTipoPeticao)));
+                .exists(si -> StringUtils.isNotEmpty(Value.of(si, nivel)) && !naoPossuiProdutoFormulado.contains(Value.of(si, idTipoPeticao)));
 
         produtoFormulado
                 .formulador
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "I".equals(Value.of(si, nivel)));
+                .exists(si -> "I".equals(Value.of(si, nivel)));
 
         produtoFormulado
                 .formuladores
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> !"I".equals(Value.of(si, nivel)));
+                .exists(si -> !"I".equals(Value.of(si, nivel)));
 
         anexos
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> Value.notNull(si, nivel));
+                .exists(si -> Value.notNull(si, nivel));
         anexos
                 .documentacaoI
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "I".equals(Value.of(si, nivel)));
+                .exists(si -> "I".equals(Value.of(si, nivel)));
 
         anexos.documentacaoI
                 .modelosBulas
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .visible(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
+                .exists(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
 
         anexos.documentacaoI
                 .modelosRotulos
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .visible(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
+                .exists(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
 
 
         anexos
                 .documentacaoII
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "II".equals(Value.of(si, nivel)));
+                .exists(si -> "II".equals(Value.of(si, nivel)));
 
         anexos
                 .documentacaoIII
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "III".equals(Value.of(si, nivel)));
+                .exists(si -> "III".equals(Value.of(si, nivel)));
 
         anexos
                 .documentacaoIV
                 .asAtr()
                 .dependsOn(nivel)
-                .visible(si -> "IV".equals(Value.of(si, nivel)));
+                .exists(si -> "IV".equals(Value.of(si, nivel)));
 
         peticaoSimplificada.withView(new SViewByBlock(), blocks -> {
             blocks
@@ -244,6 +276,15 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
 
         });
 
+
+    }
+
+
+    @Override
+    protected void onLoadPackage(PackageBuilder pb) {
+        super.onLoadPackage(pb);
+        pb.loadPackage(SPackagePPSCommon.class);
+        pb.createType(STypePeticaoPrimariaSimplificada.class);
     }
 
 }

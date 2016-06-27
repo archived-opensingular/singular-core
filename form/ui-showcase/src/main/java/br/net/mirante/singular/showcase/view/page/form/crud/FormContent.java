@@ -5,23 +5,6 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.lang.Bytes;
-import org.apache.wicket.util.string.StringValue;
-
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
@@ -37,6 +20,22 @@ import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.template.Content;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.lang.Bytes;
+import org.apache.wicket.util.string.StringValue;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Optional;
 
 public class FormContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
@@ -45,7 +44,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
      */
     private static final long serialVersionUID = 327099871613673185L;
 
-    private Long idExampleData;
+    private Long   idExampleData;
     private String typeName;
     private ViewMode viewMode = ViewMode.EDITION;
 
@@ -62,7 +61,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private SFormConfig<String> singularFormConfig;
 
     public FormContent(String id, StringValue type, StringValue idExampleData, StringValue viewMode, StringValue annotation) {
-        super(id, false, true);
+        super(id, false, false);
         if (!viewMode.isNull()) {
             this.viewMode = ViewMode.valueOf(viewMode.toString());
         }
@@ -70,7 +69,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             this.annotation = AnnotationMode.valueOf(annotation.toString());
         }
         this.typeName = type.toString();
-        if(!idExampleData.isNull()) {
+        if (!idExampleData.isNull()) {
             this.idExampleData = idExampleData.toLong();
         }
     }
@@ -83,12 +82,12 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
     @Override
     protected IModel<?> getContentTitleModel() {
-        return new ResourceModel("label.content.title");
+        return Model.of();
     }
 
     @Override
     protected IModel<?> getContentSubtitleModel() {
-        return new ResourceModel("label.content.title");
+        return Model.of();
     }
 
     private Form<?> buildForm() {

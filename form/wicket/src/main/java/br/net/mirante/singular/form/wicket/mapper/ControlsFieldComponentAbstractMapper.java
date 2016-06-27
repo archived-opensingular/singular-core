@@ -5,27 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.wicket.ISValidationFeedbackHandlerListener;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
@@ -34,12 +15,27 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackPanel;
+import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackCompactPanel;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
+import org.apache.wicket.model.IModel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public abstract class ControlsFieldComponentAbstractMapper implements IWicketComponentMapper {
 
@@ -79,22 +75,21 @@ public abstract class ControlsFieldComponentAbstractMapper implements IWicketCom
         final List<Component>       feedbackComponents = new ArrayList<>();
 
         this.formGroup = container.newFormGroup();
-        formGroup.setFeedbackPanelFactory((id, fence, filter) -> new SValidationFeedbackPanel(id, fence));
+        formGroup.setFeedbackPanelFactory((id, fence, filter) -> new SValidationFeedbackCompactPanel(id, fence));
         BSContainer<?> ctxContainer = ctx.getContainer();
         SValidationFeedbackHandler.bindTo(ctxContainer)
                 .addInstanceModel(this.model)
-                .addListener(new ISValidationFeedbackHandlerListener() {
-                    @Override
-                    public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
-                        if (target.isPresent())
-                            for (Component comp : feedbackComponents)
-                                target.get().add(comp);
-                    }
+                .addListener((ISValidationFeedbackHandlerListener) (handler, target, container1, baseInstances, oldErrors, newErrors) -> {
+                    if (target.isPresent())
+                        for (Component comp : feedbackComponents)
+                            target.get().add(comp);
                 });
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
         label.add($b.onConfigure(c -> {
-            if (StringUtils.isEmpty(labelModel.getObject())) {
+            if (ctx.isTitleInBlock()) {
+                c.setVisible(false);
+            } else if (StringUtils.isEmpty(labelModel.getObject())) {
                 c.setVisible(false);
             }
         }));

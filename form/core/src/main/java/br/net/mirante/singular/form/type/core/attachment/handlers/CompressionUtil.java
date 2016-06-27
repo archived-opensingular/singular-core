@@ -5,9 +5,6 @@
 
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,6 +13,10 @@ import java.util.zip.Deflater;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
+
+import com.google.common.io.ByteStreams;
+
+import br.net.mirante.singular.commons.base.SingularUtil;
 
 /**
  * Funções de apoio a compressão e descompressão de dados para uso interno
@@ -39,7 +40,7 @@ final class CompressionUtil {
         try {
             return ByteStreams.toByteArray(in);
         } catch (Exception e) {
-            throw Throwables.propagate(e);
+            throw SingularUtil.propagate(e);
         }
     }
 

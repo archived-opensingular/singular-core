@@ -5,8 +5,8 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ClassAttributeModifier;
@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -152,6 +153,10 @@ public class FileUploadPanel extends Panel {
                 return oldClasses;
             }
         });
+
+        uploadFileButton.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
+        downloadLink.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
+
     }
 
     private IMInstanciaAwareModel dummyModel(final IModel<SIAttachment> model) {
@@ -231,60 +236,62 @@ public class FileUploadPanel extends Panel {
         return fileField;
     }
 
-}
 
-class DownloadLink extends Link<Void> {
+    public static class DownloadLink extends Link<Void> {
 
-    private static final String SELF = "_self", BLANK = "_blank";
-    private IModel<String> target = $m.ofValue(SELF);
-    private IModel<SIAttachment> model;
+        private static final String SELF = "_self", BLANK = "_blank";
+        private IModel<String> target = $m.ofValue(SELF);
+        private IModel<SIAttachment> model;
 
-    public DownloadLink(IModel<SIAttachment> model) {
-        super("downloadLink");
-        this.model = model;
-    }
+        public DownloadLink(IModel<SIAttachment> model) {
+            super("downloadLink");
+            this.model = model;
+        }
 
-    @Override
-    public void onClick() {
+        @Override
+        public void onClick() {
 
-        if (model.getObject().getContent() != null) {
+            if (model.getObject().getContent() != null) {
 
-            final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
-                @Override
-                public void write(OutputStream outputStream) throws IOException {
-                    outputStream.write(model.getObject().getContentAsByteArray());
+                final AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
+                    @Override
+                    public void write(OutputStream outputStream) throws IOException {
+                        outputStream.write(model.getObject().getContentAsByteArray());
+                    }
+                };
+
+                final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
+
+                requestHandler.setFileName(model.getObject().getFileName());
+                requestHandler.setCacheDuration(Duration.NONE);
+
+                if (model.getObject().isContentTypeBrowserFriendly()) {
+                    requestHandler.setContentDisposition(ContentDisposition.INLINE);
+                } else {
+                    requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
                 }
-            };
 
-            final ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
-
-            requestHandler.setFileName(model.getObject().getFileName());
-            requestHandler.setCacheDuration(Duration.NONE);
-
-            if (model.getObject().isContentTypeBrowserFriendly()) {
-                requestHandler.setContentDisposition(ContentDisposition.INLINE);
-            } else {
-                requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+                getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
             }
+        }
 
-            getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new AttributeModifier("target", target));
+        }
+
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            setVisible(model.getObject().getContent() != null);
+            if (model.getObject().isContentTypeBrowserFriendly()) {
+                target.setObject(BLANK);
+            } else {
+                target.setObject(SELF);
+            }
         }
     }
 
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-        add(new AttributeModifier("target", target));
-    }
-
-    @Override
-    protected void onConfigure() {
-        super.onConfigure();
-        setVisible(model.getObject().getContent() != null);
-        if (model.getObject().isContentTypeBrowserFriendly()) {
-            target.setObject(BLANK);
-        } else {
-            target.setObject(SELF);
-        }
-    }
 }
+

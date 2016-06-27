@@ -676,12 +676,6 @@ Page container
   margin-bottom: 15px;
   box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.03); }
 
-.singular-container-tab {
-  background-color: #ffffff;
-  padding: 15px 20px 15px 0;
-  margin-bottom: 15px;
-  box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.03); }
-
 @media (max-width: 767px) {
   /* 767px */
   /* Page container */
@@ -1509,6 +1503,9 @@ Theme Panel
 .has-error .control-label {
   color: #65697c; }
 
+.feedbackPanelERROR {
+  font-size: 12px; }
+
 .btn-noclose {
   float: right;
   margin-left: 20px; }
@@ -1573,6 +1570,13 @@ Theme Panel
     .form-actions .cancel-btn::before {
       display: none; }
 
+.modal-footer {
+  color: #65697C; }
+  .modal-footer .btn.cancel-btn {
+    background-color: #EDEFF3;
+    color: currentColor;
+    border-color: #D5D9E3; }
+
 .btn.btn-danger {
   position: relative; }
   .btn.btn-danger i {
@@ -1582,6 +1586,10 @@ Theme Panel
 .panel-heading {
   color: #65697c; }
 
+.btn:focus {
+  transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.36); }
+
 .form-body .singular-container {
   margin-bottom: 0; }
 
@@ -1590,6 +1598,18 @@ Theme Panel
 
 .portlet-body .panel-body, .portlet-body .panel-footer {
   padding: 10px 0 0; }
+
+.upload-fileinput {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1; }
+
+.upload-fileinput:focus + label {
+  transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.36); }
 
 .upload-list {
   color: currentColor; }
@@ -1687,7 +1707,7 @@ Theme Panel
 .upload-list-container ul li:nth-child(even) {
   background-color: #eafffb; }
 
-.list-table-heading, .upload-panel-heading {
+.list-table-heading, .upload-panel-heading, .list-form-heading {
   margin: 1px 0 5px 0; }
 
 .list-table-body {
@@ -1720,14 +1740,12 @@ Theme Panel
 .list-detail-input .table td {
   border-bottom: none !important; }
 
-.list-detail-input .table th {
-  border-bottom: none !important; }
+.list-detail-input .table thead tr th {
+  border-bottom: none !important;
+  font-weight: 300; }
 
-.list-detail-input .table-hover > tbody > tr > td:hover,
-.list-detail-input .table-hover > tbody > tr > th:hover,
-.list-detail-input .table-hover > tbody > tr:hover > td,
-.list-detail-input .table-hover > tbody > tr:hover > th {
-  background: #eafffb !important; }
+.list-detail-input .table-hover > tbody > tr > td:hover, .list-detail-input .table-hover > tbody > tr > th:hover, .list-detail-input .table-hover > tbody > tr:hover > td, .list-detail-input .table-hover > tbody > tr:hover > th {
+  background: #eafffb; }
 
 .list-detail-input .table-striped > tbody > tr:nth-of-type(odd) {
   background-color: #F4FFFD; }
@@ -1775,6 +1793,26 @@ Theme Panel
 
 .list-detail-footer {
   margin-bottom: 15px; }
+
+.list-group-item-fields {
+  float: left;
+  padding: 0 15px 10px 15px;
+  width: calc(100% - 1em); }
+  .list-group-item-fields:before, .list-group-item-fields:after {
+    content: " ";
+    display: table; }
+  .list-group-item-fields:after {
+    clear: both; }
+
+.list-group-item-actions {
+  float: right;
+  width: 1em;
+  padding: 0 5px; }
+  .list-group-item-actions:before, .list-group-item-actions:after {
+    content: " ";
+    display: table; }
+  .list-group-item-actions:after {
+    clear: both; }
 
 /* Page Portlet Fullscreen */
 .page-portlet-fullscreen .page-quick-sidebar-wrapper,
