@@ -91,7 +91,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
              HashAndCompressInputStream inHash = new HashAndCompressInputStream(origin)) {
             IOUtils.copy(inHash, fos);
             String sha1 = inHash.getHashSHA1();
-            FileOutputStream infoFOS = new FileOutputStream(temp.getAbsolutePath()+INFO_SUFFIX);
+            FileOutputStream infoFOS = new FileOutputStream(infoFileFromId(id));
             IOUtils.writeLines(Arrays.asList(new String[]{sha1, String.valueOf(originLength)}), IOUtils.LINE_SEPARATOR_UNIX, infoFOS, UTF8);
             return newRef(id, sha1, temp.getAbsolutePath(), originLength);
         }
@@ -142,6 +142,10 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         return new File(folder, fileId);
     }
 
+    protected File infoFileFromId(String fileId) {
+        return new File(folder, fileId+INFO_SUFFIX);
+    }
+
     private FileSystemAttachmentRef toRef(File file) throws Exception {
         List<String> lines = IOUtils.readLines(new FileInputStream(file.getAbsolutePath() + INFO_SUFFIX), UTF8);
         return newRef(file.getName(), lines.get(0), file.getAbsolutePath(), Long.valueOf(lines.get(1)));
@@ -156,5 +160,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         if (fileId == null) return;
         File file = findFileFromId(fileId);
         file.delete();
+        File infoFile = infoFileFromId(fileId);
+        infoFile.delete();
     }
 }
