@@ -83,9 +83,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
              HashAndCompressInputStream inHash = new HashAndCompressInputStream(origin)) {
             IOUtils.copy(inHash, fos);
             String sha1 = inHash.getHashSHA1();
-            File destination = fileFromId(id);
-            temp.renameTo(destination);
-            return newRef(id, sha1, destination.getAbsolutePath(), originLength);
+            return newRef(id, sha1, temp.getAbsolutePath(), originLength);
         }
     }
 
@@ -135,12 +133,11 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     private FileSystemAttachmentRef toRef(File file) throws Exception {
-        FileInputStream in = new FileInputStream(file);
-        return newRef(file.getName(), HashUtil.toSHA1Base16(in), file.getAbsolutePath(), -1);
+        return newRef(file.getName(), HashUtil.toSHA1Base16(file), file.getAbsolutePath(), -1);
     }
 
-    private FileSystemAttachmentRef newRef(String name, String hash, String filePath, long length) {
-        return new FileSystemAttachmentRef(name, hash, filePath, length);
+    private FileSystemAttachmentRef newRef(String id, String hash, String filePath, long length) {
+        return new FileSystemAttachmentRef(id, hash, filePath, length);
     }
 
     @Override

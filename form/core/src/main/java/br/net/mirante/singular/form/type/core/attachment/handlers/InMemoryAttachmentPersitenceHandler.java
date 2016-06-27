@@ -52,6 +52,11 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
     }
 
     @Override
+    public IAttachmentRef getAttachment(String fileId) {
+        return attachments.get(fileId);
+    }
+
+    @Override
     public Collection<? extends IAttachmentRef> getAttachments() {
         return Collections.unmodifiableCollection(attachments.values());
     }
