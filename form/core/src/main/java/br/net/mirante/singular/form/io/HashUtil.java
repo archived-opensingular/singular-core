@@ -26,7 +26,7 @@ import br.net.mirante.singular.commons.base.SingularUtil;
 public class HashUtil {
 
     /** Localiza o algorítmo de hash SHA1. */
-    private static MessageDigest getMessageDigestSHA1() {
+    public static MessageDigest getMessageDigestSHA1() {
         try {
             return MessageDigest.getInstance("SHA");
         } catch (NoSuchAlgorithmException e) {

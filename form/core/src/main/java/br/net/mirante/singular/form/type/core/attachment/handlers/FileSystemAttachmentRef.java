@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 
 import br.net.mirante.singular.commons.base.SingularUtil;
+import br.net.mirante.singular.form.io.CompressionUtil;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
 @SuppressWarnings("serial")
@@ -45,7 +46,7 @@ public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
     @Override
     public InputStream newInputStream() {
         try {
-            return new FileInputStream(path);
+            return CompressionUtil.inflateToInputStream(new FileInputStream(path));
         } catch (FileNotFoundException e) {
             throw SingularUtil.propagate(e);
         }

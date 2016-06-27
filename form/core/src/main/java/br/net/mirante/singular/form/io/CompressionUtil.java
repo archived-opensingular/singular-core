@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.form.type.core.attachment.handlers;
+package br.net.mirante.singular.form.io;
 
 import java.io.InputStream;
 import java.util.zip.Deflater;
@@ -16,7 +16,7 @@ import java.util.zip.InflaterInputStream;
  *
  * @author Daniel C. Bordin
  */
-final class CompressionUtil {
+public final class CompressionUtil {
 
     public static InputStream inflateToInputStream(InputStream source) {
         return new InflaterInputStream(source);

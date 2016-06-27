@@ -6,7 +6,7 @@
 package br.net.mirante.singular.form.persistence.dao;
 
 import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.form.io.HashUtil;
+import br.net.mirante.singular.form.io.HashAndCompressInputStream;
 import br.net.mirante.singular.form.persistence.entity.AbstractAttachmentEntity;
 import br.net.mirante.singular.form.persistence.entity.Attachment;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
@@ -55,11 +55,12 @@ public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long
         session().delete(o);
     }
 
-    private T createFile(String sha1, InputStream in, long length) throws IOException {
+    private T createFile(InputStream in, long length) throws IOException {
+        HashAndCompressInputStream inHash = new HashAndCompressInputStream(in);
         T fileEntity = createInstance();
         fileEntity.setId(UUID.randomUUID().toString());
-        fileEntity.setHashSha1(sha1);
-        fileEntity.setRawContent(session().getLobHelper().createBlob(in, length));
+        fileEntity.setRawContent(session().getLobHelper().createBlob(inHash, length));
+        fileEntity.setHashSha1(inHash.getHashSHA1());
         fileEntity.setSize(length);
         return fileEntity;
     }
@@ -74,10 +75,9 @@ public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long
 
     @Transactional
     @Override
-    public IAttachmentRef addAttachment(File file, long length) {
+    public T addAttachment(File file, long length) {
         try {
-            String sha1 = HashUtil.toSHA1Base16(file);
-            return insert(createFile(sha1, new FileInputStream(file), length));
+            return insert(createFile(new FileInputStream(file), length));
         } catch (IOException e) {
             throw new SingularException(e);
         }
@@ -85,9 +85,9 @@ public class FileDao<T extends AbstractAttachmentEntity> extends BaseDAO<T, Long
 
     @Transactional
     @Override
-    public IAttachmentRef copy(IAttachmentRef toBeCopied) {
+    public T copy(IAttachmentRef toBeCopied) {
         try {
-            return insert(createFile(toBeCopied.getHasSHA1(), toBeCopied.newInputStream(), toBeCopied.getSize()));
+            return insert(createFile(toBeCopied.newInputStream(), toBeCopied.getSize()));
         } catch (IOException e) {
             throw new SingularException(e);
         }

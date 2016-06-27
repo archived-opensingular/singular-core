@@ -43,13 +43,13 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends
      * @return Referencia ao arquivo salvo, incluido id e hash do mesmo.
      * @throws IOException
      */
-    IAttachmentRef addAttachment(File file, long length);
+    T addAttachment(File file, long length);
 
     /**
      * Copia o conteúdo de um IAttachmentRef para esse persistence handler e retorna
      * o novo IAttachmentRef criado.
      */
-    IAttachmentRef copy(IAttachmentRef toBeCopied);
+    T copy(IAttachmentRef toBeCopied);
 
     /**
      * Recuperar os anexos associados ao contexto atual (provavelmente contexto
