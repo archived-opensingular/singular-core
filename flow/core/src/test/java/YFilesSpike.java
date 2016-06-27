@@ -1,6 +1,4 @@
-import br.net.mirante.singular.flow.core.renderer.bpmn.view.ActivityNodeStyle;
-import br.net.mirante.singular.flow.core.renderer.bpmn.view.ChoreographyLabelModel;
-import br.net.mirante.singular.flow.core.renderer.bpmn.view.EventNodeStyle;
+import br.net.mirante.singular.flow.core.renderer.bpmn.view.*;
 import com.yworks.yfiles.geometry.*;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.labelmodels.*;
@@ -243,16 +241,29 @@ public class YFilesSpike {
     }
 
     private static INode addActivity(IGraph graph, String s) {
-        INode aguardando = graph.createNode(new RectD(PointD.ORIGIN, new SizeD(96, 60)),
-                new ActivityNodeStyle());
+        ActivityNodeStyle style = new ActivityNodeStyle();
+//        style.setActivityType(ActivityType.TASK);
+        if(Math.random()*100 > 50 ){
+            style.setTaskType(TaskType.USER);
+        }if(Math.random()*100 > 50 ) {
+            style.setTaskType(TaskType.SCRIPT);
+        }else{
+            style.setTaskType(TaskType.MANUAL);
+        }
+//        style.setTriggerEventType(EventType.TIMER);
+        INode node = graph.createNode(new RectD(PointD.ORIGIN, new SizeD(96, 60)),
+                style);
 //        graph.addLabel(aguardando, s, InteriorStretchLabelModel.CENTER);
 //        graph.addLabel(aguardando, s, InteriorStretchLabelModel.CENTER);
 //        InteriorStretchLabelModel model = new InteriorStretchLabelModel();
 //        graph.addLabel(aguardando, s, model.createDefaultParameter());
-        graph.addLabel(aguardando, s, ChoreographyLabelModel.NORTH_MESSAGE);
+//        graph.addLabel(node, s, ChoreographyLabelModel.SOUTH_MESSAGE);
+//        graph.addLabel(node, s, InteriorStretchLabelModel.SOUTH);
+
+        graph.addLabel(node, s.replace(' ','\n'), FreeNodeLabelModel.INSTANCE.createDefaultParameter());
 //        EdgeSegmentLabelModel model = new EdgeSegmentLabelModel();
 //        graph.addLabel(aguardando, s, model.createDefaultParameter());
-        return aguardando;
+        return node;
     }
 
 }
