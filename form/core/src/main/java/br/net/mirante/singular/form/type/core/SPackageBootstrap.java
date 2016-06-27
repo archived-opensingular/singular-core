@@ -18,6 +18,7 @@ import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.SMultiSelectionByCheckboxView;
 import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
 import br.net.mirante.singular.form.view.SMultiSelectionBySelectView;
@@ -63,19 +64,20 @@ public class SPackageBootstrap extends SPackage {
             .appendOnView(SMultiSelectionByCheckboxView.class, 4)
             .appendOnView(SMultiSelectionBySelectView.class, 4);
 
-        pb.getType(STypeList.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, calcsForMultiple
-            .orElse(12));
+        pb.getType(STypeList.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForMultiple.orElse(12));
 
-        pb.getType(STypeComposite.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle
+        pb.getType(STypeComposite.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle
             .prependOnView(SViewAttachmentList.class, SPackageBootstrap.MAX_COL_PREFERENCE)
             .orElse(12));
 
-        pb.getType(STypeSimple.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle
-            .orElse(4));
+        pb.getType(STypeSimple.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle.orElse(4));
 
-        pb.getType(STypeString.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle
+        pb.getType(STypeString.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle
             .prependOnView(SViewTextArea.class, SPackageBootstrap.MAX_COL_PREFERENCE)
             .orElse(6));
+
+        pb.getType(STypeDate.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle.orElse(3));
+        pb.getType(STypeYearMonth.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle.orElse(3));
     }
 
     private <T extends SType<I>, I extends SInstance, V extends Object> void adicionarDefinicaoColuna(PackageBuilder pb, AtrRef<T, I, V> atrRef, String label) {
