@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.RefService;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.TestCaseForm;
+import br.net.mirante.singular.form.type.core.attachment.AttachmentTestUtil;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
@@ -16,6 +17,7 @@ import org.junit.runners.Parameterized;
 import org.mockito.Matchers;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -66,30 +68,30 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
     }
 
     @Test
-    public void deveMigrarOsAnexosParaAPersistencia() {
+    public void deveMigrarOsAnexosParaAPersistencia() throws IOException {
         fileFieldInstance.setFileId("abacate");
 
         byte[] content = new byte[]{0};
 
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(attachmentRef("abacate", content));
-//        when(persistentHandler.addAttachment(content))
-//            .thenReturn(attachmentRef("abacate", content));
+        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
+            .thenReturn(attachmentRef("abacate", content));
 
         document.persistFiles();
-//        verify(persistentHandler).addAttachment(content);
+        verify(persistentHandler).addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length);
     }
 
     @Test
-    public void armazenaOValorDoNovoId() {
+    public void armazenaOValorDoNovoId() throws IOException {
         fileFieldInstance.setFileId("abacate");
 
         byte[] content = new byte[]{0};
 
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(attachmentRef("abacate", content));
-//        when(persistentHandler.addAttachment(content))
-//            .thenReturn(attachmentRef("avocado", content));
+        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
+            .thenReturn(attachmentRef("avocado", content));
 
         document.persistFiles();
         assertThat(fileFieldInstance.getFileId()).isEqualTo("avocado");
@@ -97,22 +99,22 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
     }
 
     @Test
-    public void deveApagarOTemporarioAposInserirNoPersistente() {
+    public void deveApagarOTemporarioAposInserirNoPersistente() throws IOException {
         fileFieldInstance.setFileId("abacate");
 
         byte[] content = new byte[]{0};
 
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(attachmentRef("abacate", content));
-//        when(persistentHandler.addAttachment(content))
-//            .thenReturn(attachmentRef("abacate", content));
+        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
+            .thenReturn(attachmentRef("abacate", content));
 
         document.persistFiles();
         verify(tempHandler).deleteAttachment("abacate");
     }
 
     @Test
-    public void deveApagarOPersistenteSeEsteSeAlterou() {
+    public void deveApagarOPersistenteSeEsteSeAlterou() throws IOException {
         fileFieldInstance.setFileId("abacate");
         fileFieldInstance.setOriginalFileId("avocado");
 
@@ -120,8 +122,8 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(attachmentRef("abacate", content));
-//        when(persistentHandler.addAttachment(content))
-//            .thenReturn(attachmentRef("abacate", content));
+        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
+            .thenReturn(attachmentRef("abacate", content));
 
         document.persistFiles();
         verify(persistentHandler).deleteAttachment("avocado");
