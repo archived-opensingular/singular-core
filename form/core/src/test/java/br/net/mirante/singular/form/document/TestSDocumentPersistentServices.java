@@ -63,8 +63,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         tempHandler = mock(IAttachmentPersistenceHandler.class);
         persistentHandler = mock(IAttachmentPersistenceHandler.class);
         document.setAttachmentPersistenceTemporaryHandler(RefService.of(tempHandler));
-        document.bindLocalService("filePersistence",
-                IAttachmentPersistenceHandler.class, RefService.of(persistentHandler));
+        document.bindLocalService("filePersistence", IAttachmentPersistenceHandler.class, RefService.of(persistentHandler));
     }
 
     @Test
@@ -73,13 +72,20 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         byte[] content = new byte[]{0};
 
+        IAttachmentRef tempRef;
+        IAttachmentRef persistentRef;
+
         when(tempHandler.getAttachment("abacate"))
-                .thenReturn(attachmentRef("abacate", content));
+                .thenReturn(tempRef = attachmentRef("abacate", content));
+
         when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
-            .thenReturn(attachmentRef("abacate", content));
+            .thenReturn(persistentRef = attachmentRef("abacate", content));
+
+        when(persistentHandler.copy(tempRef))
+                .thenReturn(persistentRef);
 
         document.persistFiles();
-        verify(persistentHandler).addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length);
+        verify(persistentHandler).copy(tempRef);
     }
 
     @Test
@@ -88,10 +94,17 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         byte[] content = new byte[]{0};
 
+        IAttachmentRef tempRef;
+        IAttachmentRef persistentRef;
+
         when(tempHandler.getAttachment("abacate"))
-                .thenReturn(attachmentRef("abacate", content));
+                .thenReturn(tempRef = attachmentRef("abacate", content));
+
         when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
-            .thenReturn(attachmentRef("avocado", content));
+            .thenReturn(persistentRef = attachmentRef("avocado", content));
+
+        when(persistentHandler.copy(tempRef))
+                .thenReturn(persistentRef);
 
         document.persistFiles();
         assertThat(fileFieldInstance.getFileId()).isEqualTo("avocado");
@@ -104,10 +117,18 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         byte[] content = new byte[]{0};
 
+        IAttachmentRef tempRef;
+        IAttachmentRef persistentRef;
+
         when(tempHandler.getAttachment("abacate"))
-                .thenReturn(attachmentRef("abacate", content));
+                .thenReturn(tempRef = attachmentRef("abacate", content));
+
         when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
-            .thenReturn(attachmentRef("abacate", content));
+            .thenReturn(persistentRef = attachmentRef("abacate", content));
+
+        when(persistentHandler.copy(tempRef))
+                .thenReturn(persistentRef);
+
 
         document.persistFiles();
         verify(tempHandler).deleteAttachment("abacate");
@@ -120,10 +141,14 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         byte[] content = new byte[]{0};
 
+        IAttachmentRef tempRef;
+        IAttachmentRef persistentRef;
         when(tempHandler.getAttachment("abacate"))
-                .thenReturn(attachmentRef("abacate", content));
+                .thenReturn(tempRef = attachmentRef("abacate", content));
         when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
-            .thenReturn(attachmentRef("abacate", content));
+            .thenReturn(persistentRef = attachmentRef("abacate", content));
+        when(persistentHandler.copy(tempRef))
+                .thenReturn(persistentRef);
 
         document.persistFiles();
         verify(persistentHandler).deleteAttachment("avocado");
