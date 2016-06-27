@@ -12,7 +12,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
+import br.net.mirante.singular.commons.internal.function.SupplierUtil;
 import br.net.mirante.singular.form.builder.selection.SSelectionBuilder;
 import br.net.mirante.singular.form.builder.selection.SelectionBuilder;
 import br.net.mirante.singular.form.type.core.SPackageCore;
@@ -458,15 +460,16 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     }
 
     @Override
-    public void init(INSTANCE_TYPE newInstance) {
-        super.init(newInstance);
-        initFields(newInstance);
+    public void init(Supplier<INSTANCE_TYPE> instanceRef) {
+        initFields(instanceRef);
+        super.init(instanceRef);
     }
 
-    private void initFields(INSTANCE_TYPE newInstance) {
+    private void initFields(Supplier<INSTANCE_TYPE> instanceRef) {
         Collection<SType> fields = (Collection) getFields();
-        fields.stream().forEach((t)->{
-            t.init(newInstance.getField(t.getNameSimple()));
-        });
+        for(SType t : fields) {
+            //Passa uma referência lazy demodo que não precisa fazer busca se o tipo não possui inicialização
+            t.init(() -> instanceRef.get().getField(t.getNameSimple()));
+        }
     }
 }

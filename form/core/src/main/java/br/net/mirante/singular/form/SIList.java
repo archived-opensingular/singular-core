@@ -71,39 +71,44 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public E addNew() {
-        return addInternal(getElementsType().newInstance(getDocument()));
+        E instance = getElementsType().newInstance(getDocument());
+        return addInternal(instance, true, -1);
     }
 
     public E addNew(Consumer<E> consumer) {
-        E novo = getElementsType().newInstance(getDocument());
-        consumer.accept(novo);
-        return addInternal(novo);
+        E instance = addNew();
+        consumer.accept(instance);
+        return instance;
     }
 
     @SuppressWarnings("unchecked")
     public E addElement(Object e) {
-        E element = (E) e;
-        element.setDocument(getDocument());
-        return addInternal(element);
+        E instance = (E) e;
+        instance.setDocument(getDocument());
+        return addInternal(instance, true, -1);
     }
 
     public E addElementAt(int index, E e) {
-        E element = e;
-        element.setDocument(getDocument());
-        addAtInternal(index, element);
-        return element;
+        E instance = e;
+        instance.setDocument(getDocument());
+        return addInternal(instance, false, index);
     }
 
     public E addNewAt(int index) {
         E instance = getElementsType().newInstance(getDocument());
-        addAtInternal(index, instance);
-        return instance;
+        return addInternal(instance, false, index);
     }
 
     public E addValue(Object value) {
-        E instance = getElementsType().newInstance(getDocument());
-        instance.setValue(value);
-        return addInternal(instance);
+        E instance = addNew();
+        try {
+            instance.setValue(value);
+        } catch(RuntimeException e) {
+            //Senão conseguiu converter o valor, então desfaz a inclusão
+            values.remove(values.size()-1);
+            throw e;
+        }
+        return instance;
     }
 
     public SIList<E> addValues(Collection<?> values) {
@@ -112,21 +117,18 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return this;
     }
 
-    private E addInternal(E instance) {
+    private E addInternal(E instance, boolean atEnd, int index) {
         if (values == null) {
             values = new ArrayList<>();
         }
-        values.add(instance);
+        if (atEnd) {
+            values.add(instance);
+        } else {
+            values.add(index, instance);
+        }
         instance.setParent(this);
+        instance.init();
         return instance;
-    }
-
-    private void addAtInternal(int index, E instance) {
-        if (values == null) {
-            values = new ArrayList<>();
-        }
-        values.add(index, instance);
-        instance.setParent(this);
     }
 
     public SInstance get(int index) {

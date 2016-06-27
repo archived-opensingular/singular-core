@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.internal.xml.MElement;
@@ -134,6 +135,14 @@ public abstract class SInstance implements SAttributeEnabled {
             setFlag(InstanceFlags.IsAtributo, true);
             attributeInstanceInfo = pai.attributeInstanceInfo;
         }
+    }
+
+    /**
+     * Executa as inicilização de atribuição de valor da instância (ver {@link SType#withInitListener(IConsumer)}). Pode
+     * sobrepor valores preexistentes.
+     */
+    public final void init() {
+        ((SType) getType()).init(() -> this);
     }
 
     final void setType(SType<?> type) {
