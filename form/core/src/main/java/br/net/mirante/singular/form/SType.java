@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import br.net.mirante.singular.commons.internal.function.SupplierUtil;
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -648,10 +649,28 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return (I) instance;
     }
 
+    /**
+     * Criar uma nova instância do tipo atual e executa os códigos de inicialização dos tipos
+     * se existirem (ver {@link #withInitListener(IConsumer)}}).
+     */
     public final I newInstance() {
+        return newInstance(true);
+    }
+
+    /**
+     * Criar uma nova instância do tipo atual. Esse método deve se evitado o uso e preferencialmente usar
+     * {@link #newInstance()} sem parâmetros.
+     *
+     * @param executeInstanceInitListeners Indica se deve executar executa os códigos de inicialização dos tipos se
+     *                                     existirem (ver {@link #withInitListener(IConsumer)}}).
+     */
+    public final I newInstance(boolean executeInstanceInitListeners) {
         SDocument owner = new SDocument();
         I instance = newInstance(this, owner);
         owner.setRoot(instance);
+        if (executeInstanceInitListeners) {
+            init(() -> instance);
+        }
         return instance;
     }
 
@@ -698,14 +717,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     /**
-     * Run initialization code for new created instance.
-     *
-     * @param newInstance Instance recently created.
+     * Run initialization code for new created instance. Recebe uma referência que
+     * pode ser de inicialização lazy.
      */
-    public void init(I newInstance) {
+    void init(Supplier<I> instanceRef) {
         IConsumer<I> initListener = asAtr().getAttributeValue(SPackageBasic.ATR_INIT_LISTENER);
         if (initListener != null) {
-            initListener.accept(newInstance);
+            initListener.accept(instanceRef.get());
         }
     }
 

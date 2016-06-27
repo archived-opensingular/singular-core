@@ -61,6 +61,16 @@ public abstract class TestCaseForm extends TestCase {
         return dictionaryFactory.get();
     }
 
+    /** Cria assertivas para um {@link br.net.mirante.singular.form.SType}. */
+    public static AssertionsSType assertType(SType<?> type) {
+        return new AssertionsSType(type);
+    }
+
+    /** Cria assertivas para um {@link br.net.mirante.singular.form.SInstance}. */
+    public static AssertionsSInstance assertInstance(SInstance instance) {
+        return new AssertionsSInstance(instance);
+    }
+
     protected static void testCaminho(SInstance registro, String path, String caminhoCompletoEsperado) {
         SInstance esperada = (path == null) ? registro : ((ICompositeInstance) registro).getField(path);
         assertNotNull(esperada);

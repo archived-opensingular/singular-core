@@ -7,9 +7,11 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulari
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SInfoPackage;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SPackage;
 
+@SInfoPackage(name = SPackageVocabularioControlado.PACOTE)
 public class SPackageVocabularioControlado extends SPackage {
 
     public static final String PACOTE        = "mform.peticao.anvisa.dominio";
