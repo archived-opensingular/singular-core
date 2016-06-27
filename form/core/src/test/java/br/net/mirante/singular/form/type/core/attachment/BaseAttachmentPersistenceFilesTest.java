@@ -31,8 +31,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     }
     
     protected abstract IAttachmentPersistenceHandler createHandler() throws Exception;
-    protected abstract String defineId(IAttachmentRef ref);
-    
+
     @Parameters(name = "{index}: ({1})")
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][] { 
@@ -61,8 +60,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
 
     private void assertReference(IAttachmentRef ref) throws IOException {
         assertEquals(hash, ref.getHasSHA1());
-        assertEquals(defineId(ref), ref.getId());
-        assertEquals((int)content.length, (int)ref.getSize());
+        assertEquals(content.length, ref.getSize());
         assertTrue(Arrays.equals(content, ByteStreams.toByteArray(ref.newInputStream())));
     }
 

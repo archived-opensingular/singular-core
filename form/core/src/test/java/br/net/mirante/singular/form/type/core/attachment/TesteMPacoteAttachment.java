@@ -33,7 +33,6 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
         assertTrue(Arrays.equals(conteudoEsperado, ByteStreams.toByteArray(arquivo.newInputStream())));
         assertEquals(conteudoEsperado.length, arquivo.getFileSize());
-        assertEquals(hash, arquivo.getFileId());
         assertEquals(hash, arquivo.getFileHashSHA1());
         assertNotNull(arquivo.getAttachmentRef());
 
@@ -200,12 +199,12 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         anexos.addNew().setContent("", writeBytesToTempFile(conteudo3), conteudo3.length); // 3
         anexos.addNew().setContent("", writeBytesToTempFile(conteudo3), conteudo3.length); // 4
         anexos.addNew(); // 5
-        assertBinariosAssociadosDocument(anexos, 3);
+        assertBinariosAssociadosDocument(anexos, 5);
 
         anexos.remove(4);
-        assertBinariosAssociadosDocument(anexos, 3);
+        assertBinariosAssociadosDocument(anexos, 4);
         anexos.remove(3);
-        assertBinariosAssociadosDocument(anexos, 2);
+        assertBinariosAssociadosDocument(anexos, 3);
 
         bloco.setValue("anexos", null);
         assertBinariosAssociadosDocument(anexos, 0);
@@ -235,14 +234,14 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         subBloco.getField("subArquivo2", SIAttachment.class).setContent("", writeBytesToTempFile(conteudo2), conteudo2.length);
         subBloco.getField("subArquivo3", SIAttachment.class).setContent("", writeBytesToTempFile(conteudo3), conteudo3.length);
 
-        assertBinariosAssociadosDocument(anexos, 3);
+        assertBinariosAssociadosDocument(anexos, 6);
 
         bloco.setValue("subBloco.subArquivo1", null); // conteudo1
-        assertBinariosAssociadosDocument(anexos, 3);
+        assertBinariosAssociadosDocument(anexos, 5);
         anexos.remove(2); // conteudo1
-        assertBinariosAssociadosDocument(anexos, 2);
+        assertBinariosAssociadosDocument(anexos, 4);
         anexos.remove(1); // conteudo2
-        assertBinariosAssociadosDocument(anexos, 2);
+        assertBinariosAssociadosDocument(anexos, 3);
 
         bloco.setValue("anexos", null); // conteudo2, conteudo3
         assertBinariosAssociadosDocument(anexos, 2);

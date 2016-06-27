@@ -29,10 +29,5 @@ public class FileSystemAttachmentPersistenceFilesTest extends BaseAttachmentPers
         return handler;
     }
 
-    @Override
-    protected String defineId(IAttachmentRef ref) {
-        return "generate_" + countGenerations;
-    }
-
 
 }

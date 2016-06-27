@@ -52,15 +52,10 @@ public class SIAttachment extends SIComposite {
     }
 
     IAttachmentRef getAttachmentRef() {
-        final String hash = getFileHashSHA1();
-        if (hash == null) {
-            return null;
-        }
-
-        IAttachmentRef ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(hash);
+        IAttachmentRef ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(getFileId());
 
         if (ref == null) {
-            ref = getDocument().getAttachmentPersistencePermanentHandler().getAttachment(hash);
+            ref = getDocument().getAttachmentPersistencePermanentHandler().getAttachment(getFileId());
         }
 
         return ref;
