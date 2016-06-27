@@ -10,7 +10,7 @@
                 var choose_btn = $('#' + params.panel_id).find('.file-choose-button');
                 var trash_btn = $('#' + params.panel_id).parent().find('.file-trash-button');
 
-                if($('#' + params.id_id).val()){
+                if($('#' + params.panel_id + ' a ').text()){
                     // trash_btn.css('display','block').css('width','35px'); // Somewhat, we need this in order to not destroy the layout
                     trash_btn.show()
                     trash_btn.css('display','block')
