@@ -22,6 +22,9 @@ public class SIAttachment extends SIComposite {
     }
 
     public void setContent(String name, File f, long length) {
+        if (f == null){
+            throw new SingularFormException("O arquivo não pode ser nulo.");
+        }
         setContent(name, getAttachmentService().addContent(getFileId(), f, length));
     }
 
@@ -52,12 +55,13 @@ public class SIAttachment extends SIComposite {
     }
 
     IAttachmentRef getAttachmentRef() {
-        IAttachmentRef ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(getFileId());
-
-        if (ref == null) {
+        IAttachmentRef ref = null;
+        if (getDocument().isAttachmentPersistenceTemporaryHandlerSupported()) {
+            ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(getFileId());
+        }
+        if (ref == null && getDocument().isAttachmentPersistencePermanentHandlerSupported()) {
             ref = getDocument().getAttachmentPersistencePermanentHandler().getAttachment(getFileId());
         }
-
         return ref;
     }
 

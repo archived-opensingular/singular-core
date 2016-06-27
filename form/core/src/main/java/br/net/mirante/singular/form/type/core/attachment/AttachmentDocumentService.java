@@ -74,8 +74,8 @@ class AttachmentDocumentService {
     }
 
     private IAttachmentRef addContent(String oldReferenceId, IAttachmentRef newRef) {
-        if (newRef.getSize() == 0) {
-            throw new SingularFormException("O size da nova referência a anexo deveria ter sido preenchido");
+        if (newRef.getSize() <= 0) {
+            throw new SingularFormException("O tamanho (em bytes) da nova referência a deve ser preenchido.");
         }
         if (oldReferenceId == null) {
             contador.add(newRef.getId());

@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -45,12 +46,12 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     private static void assertNoReference(SIAttachment arquivo, int expectedDistintictFiles) throws IOException {
-        assertNull(ByteStreams.toByteArray(arquivo.newInputStream()));
+        assertNull(arquivo.newInputStream());
         assertNull(arquivo.getFileName());
         assertNull(arquivo.getFileId());
         assertNull(arquivo.getAttachmentRef());
         assertNull(arquivo.getFileHashSHA1());
-        assertNull(arquivo.getFileSize());
+        assertEquals(arquivo.getFileSize(), -1);
 
         assertBinariosAssociadosDocument(arquivo, expectedDistintictFiles);
     }
@@ -66,7 +67,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
         final byte[] conteudo = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-        arquivo.setContent("asasd", writeBytesToTempFile(conteudo), conteudo.length);
+        arquivo.setContent(null, writeBytesToTempFile(conteudo), conteudo.length);
 
         assertConteudo(conteudo, arquivo, 1);
         assertNull(arquivo.getFileName());
@@ -103,7 +104,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         SIAttachment arquivo = createEmptyAttachment();
         byte[] conteudo = new byte[]{1, 2};
 
-        assertException(() -> arquivo.setContent("", null, 0), "não pode ser null");
+        assertException(() -> arquivo.setContent("", null, 0), "O arquivo não pode ser nulo.");
         assertNoReference(arquivo, 0);
 
         arquivo.setContent("", writeBytesToTempFile(conteudo), conteudo.length);
@@ -114,20 +115,19 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     public void testSetContentSizeZero() throws IOException {
         SIAttachment arquivo = createEmptyAttachment();
         byte[] conteudo = new byte[0];
-        arquivo.setContent("", writeBytesToTempFile(conteudo), conteudo.length);
-        assertConteudo(conteudo, arquivo, 1);
+        assertException(() -> {
+            try {
+                arquivo.setContent("", writeBytesToTempFile(conteudo), conteudo.length);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }, "O tamanho (em bytes) da nova referência a deve ser preenchido.");
     }
 
     @Test
     public void testSetContentWithIOException() throws IOException {
         SIAttachment arquivo = createEmptyAttachment();
-        assertException(() -> {
-            try {
-                arquivo.setContent("", writeBytesToTempFile(new InputStreamComErro()), 0);
-            } catch (IOException e) {
-                throw  Throwables.propagate(e);
-            }
-        }, "Erro lendo origem de dados");
+        assertException(() -> arquivo.setContent("", new File(""), 0), "Erro lendo origem de dados");
 
         assertNoReference(arquivo, 0);
 
@@ -135,13 +135,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         arquivo.setContent("", writeBytesToTempFile(conteudo), conteudo.length);
         assertConteudo(conteudo, arquivo, 1);
 
-        assertException(() -> {
-            try {
-                arquivo.setContent("", writeBytesToTempFile(new InputStreamComErro()), 0);
-            } catch (IOException e) {
-                throw  Throwables.propagate(e);
-            }
-        }, "Erro lendo origem de dados");
+        assertException(() -> arquivo.setContent("", new File(""), 0), "Erro lendo origem de dados");
         assertConteudo(conteudo, arquivo, 1);
     }
 
@@ -162,9 +156,9 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         arquivo1.setContent("", writeBytesToTempFile(conteudo1), conteudo1.length);
         assertBinariosAssociadosDocument(lista, 1);
         arquivo2.setContent("", writeBytesToTempFile(conteudo1), conteudo1.length);
-        assertBinariosAssociadosDocument(lista, 1);
-        arquivo3.setContent("", writeBytesToTempFile(conteudo2), conteudo2.length);
         assertBinariosAssociadosDocument(lista, 2);
+        arquivo3.setContent("", writeBytesToTempFile(conteudo2), conteudo2.length);
+        assertBinariosAssociadosDocument(lista, 3);
 
         arquivo1.deleteReference();
         assertBinariosAssociadosDocument(lista, 2);
