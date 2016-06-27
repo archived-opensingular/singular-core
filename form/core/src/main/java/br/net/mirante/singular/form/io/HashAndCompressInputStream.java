@@ -1,12 +1,17 @@
 package br.net.mirante.singular.form.io;
 
-import br.net.mirante.singular.form.io.HashUtil;
-
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterInputStream;
 
+/**
+ * Input stream para comprimir e calcular o hash ao mesmo tempo
+ * O hash, após a leitura do input stream fica disponível através do método
+ * {@link HashAndCompressInputStream#getHashSHA1()}
+ *
+ * O algoritmo de hash utilizado é o SHA1 e o nível de compressão é o máximo.
+ */
 public class HashAndCompressInputStream extends DeflaterInputStream {
 
 
