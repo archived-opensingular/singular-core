@@ -7,10 +7,8 @@ package br.net.mirante.singular.form.type.core.attachment.handlers;
 
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.io.HashUtil;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import com.google.common.base.Throwables;
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,7 +36,7 @@ import java.util.UUID;
  * @author Fabricio Buzeto
  */
 @SuppressWarnings("serial")
-public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandler {
+public class FileSystemAttachmentHandler extends AbstractAttachmentPersistenceHandler {
 
     private File folder;
 
@@ -78,16 +76,10 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     private IAttachmentRef addAttachment(InputStream origin, long originLength) throws IOException {
         String id = UUID.randomUUID().toString();
         File temp = fileFromId(id);
-        try (
-                FileOutputStream out = new FileOutputStream(temp);
-                InputStream in = origin
-        ) {
-            IOUtils.copy(in, out);
-        }
-        String sha1 = HashUtil.toSHA1Base16(temp);
+        String sha1 = hashAndCopyCompressed(origin, new FileOutputStream(temp));
         File destination = fileFromId(id);
         temp.renameTo(destination);
-        return new FileSystemAttachmentRef(id, sha1, destination.getAbsolutePath(), originLength);
+        return newRef(id, sha1, destination.getAbsolutePath(), originLength);
     }
 
     @Override
@@ -137,8 +129,16 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
 
     private FileSystemAttachmentRef toRef(File file) throws Exception {
         FileInputStream in = new FileInputStream(file);
-        return new FileSystemAttachmentRef(file.getName(), HashUtil.toSHA1Base16(in),
-                file.getAbsolutePath(), (int) file.length());
+        return newRef(file.getName(), HashUtil.toSHA1Base16(in), file.getAbsolutePath(), -1);
+    }
+
+    private FileSystemAttachmentRef newRef(String name, String hash, String filePath, long length){
+        return new FileSystemAttachmentRef(name, hash, filePath, length) {
+            @Override
+            public InputStream newInputStream() {
+                return decompressStream(super.newInputStream());
+            }
+        };
     }
 
     @Override

@@ -46,7 +46,7 @@ public interface IAttachmentRef {
     public InputStream newInputStream();
 
     /**
-     * Retorna o tamanho do arquivo se a informação estiver disponível ou Null
+     * Retorna o tamanho do arquivo se a informação estiver disponível ou -1
      * se não for possível informar. No entanto, deve sempre retornar o tamanho
      * se a referencia for produzida por uma operação de inserção
      * (addContent()).
