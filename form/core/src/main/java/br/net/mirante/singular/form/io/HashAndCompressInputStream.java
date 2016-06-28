@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.io;
 
+import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.util.zip.Deflater;
@@ -12,11 +13,15 @@ import java.util.zip.DeflaterInputStream;
  *
  * O algoritmo de hash utilizado é o SHA1 e o nível de compressão é o máximo.
  */
-public class HashAndCompressInputStream extends DeflaterInputStream {
+//public class HashAndCompressInputStream extends DeflaterInputStream {
+public class HashAndCompressInputStream extends FilterInputStream {
+
 
 
     public HashAndCompressInputStream(InputStream in) {
-        super(HashUtil.toSHA1InputStream(in), new Deflater(Deflater.BEST_COMPRESSION));
+//        super(HashUtil.toSHA1InputStream(in), new Deflater(Deflater.BEST_COMPRESSION));
+        //TODO vinicius - Se for best compression dá pau no wicket prq a thread demora mt a responder.
+        super(HashUtil.toSHA1InputStream(in));
     }
 
 

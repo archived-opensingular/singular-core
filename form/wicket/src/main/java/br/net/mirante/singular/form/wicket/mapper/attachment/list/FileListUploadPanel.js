@@ -11,7 +11,9 @@
                 url: params.upload_url,
                 paramName: params.param_name,
                 singleFileUploads: true,
+                dropZone: $('#' + params.component_id ),
                 dataType: 'json',
+                limitConcurrentUploads: 2,
                 formData:{
                     'upload_id' : params.upload_id,
                 },
