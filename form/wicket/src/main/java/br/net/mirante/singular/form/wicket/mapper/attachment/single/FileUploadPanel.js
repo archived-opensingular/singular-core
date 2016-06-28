@@ -29,7 +29,10 @@
                 url: params.upload_url,
                 paramName: params.param_name,
                 singleFileUploads: true,
+                dropZone: $('#' + params.panel_id ),
                 dataType: 'json',
+                sequentialUploads: true,
+                limitConcurrentUploads: 1,
                 formData:{
                     'upload_id' : params.upload_id,
                 },
@@ -51,6 +54,7 @@
                                 size: file.size,
 
                             }, function (dataSInstance, status, jqXHR) {
+                                $('#' + params.files_id).empty();
                                 $('#' + params.files_id).append(
                                     $('<a />')
                                         .on('click', function (event) {
