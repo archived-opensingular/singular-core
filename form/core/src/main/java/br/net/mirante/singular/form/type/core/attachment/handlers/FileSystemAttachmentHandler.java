@@ -8,20 +8,19 @@ package br.net.mirante.singular.form.type.core.attachment.handlers;
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.io.HashAndCompressInputStream;
-import br.net.mirante.singular.form.io.HashUtil;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -79,7 +78,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     @Override
     public IAttachmentRef addAttachment(File file, long length) {
         try {
-            return addAttachment(new FileInputStream(file), length);
+            return addAttachment(Files.newInputStream(Paths.get(file.toURI())), length);
         } catch (Exception e) {
             throw new SingularFormException("Erro lendo origem de dados", e);
         }
@@ -88,9 +87,8 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     private IAttachmentRef addAttachment(InputStream origin, long originLength) throws IOException {
         String id = UUID.randomUUID().toString();
         File temp = findFileFromId(id);
-        try (FileOutputStream fos = new FileOutputStream(temp);
-             HashAndCompressInputStream inHash = new HashAndCompressInputStream(origin)) {
-            IOUtils.copy(inHash, fos);
+        try (HashAndCompressInputStream inHash = new HashAndCompressInputStream(origin)) {
+            Files.copy(inHash, Paths.get(temp.toURI()));
             String sha1 = inHash.getHashSHA1();
             FileOutputStream infoFOS = new FileOutputStream(infoFileFromId(id));
             IOUtils.writeLines(Arrays.asList(new String[]{sha1, String.valueOf(originLength)}), IOUtils.LINE_SEPARATOR_UNIX, infoFOS, UTF8);
@@ -144,7 +142,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     protected File infoFileFromId(String fileId) {
-        return new File(folder, fileId+INFO_SUFFIX);
+        return new File(folder, fileId + INFO_SUFFIX);
     }
 
     private FileSystemAttachmentRef toRef(File file) throws Exception {

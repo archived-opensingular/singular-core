@@ -1,11 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.form.io.HashUtil;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.input.TeeInputStream;
 import org.apache.wicket.ajax.json.JSONArray;
 
 import javax.servlet.ServletException;
@@ -14,14 +13,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
-import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
 import java.util.UUID;
+
+import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
 
 
 /**
@@ -102,23 +99,19 @@ class FileUploadProcessor {
 
     private void processFiles(JSONArray fileGroup, List<FileItem> items) throws Exception {
         for (FileItem item : items) {
-            processFileItem(fileGroup, item);
+            processFileItem(fileGroup, (DiskFileItem) item);
         }
     }
 
-    private void processFileItem(JSONArray fileGroup, FileItem item) throws Exception {
+    private void processFileItem(JSONArray fileGroup, DiskFileItem item) throws Exception {
         if (!item.isFormField()) {
             String id = UUID.randomUUID().toString();
+            long size = item.getSize();
+            String name = item.getName();
             File f = new File(FileUploadServlet.UPLOAD_WORK_FOLDER, id);
             f.deleteOnExit();
-            try (
-                    InputStream upIn = item.getInputStream();
-                    OutputStream out = new FileOutputStream(f);
-                    InputStream in = new TeeInputStream(upIn, out);
-            ) {
-                String hash = HashUtil.toSHA1Base16(in);
-                fileGroup.put(DownloadUtil.toJSON(id, hash, item.getName(), item.getSize()));
-            }
+            item.getStoreLocation().renameTo(f);
+            fileGroup.put(DownloadUtil.toJSON(id, null, name, size));
         }
     }
 
