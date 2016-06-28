@@ -5,8 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.panel;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-import static com.google.common.collect.Lists.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static com.google.common.collect.Lists.newArrayList;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -20,6 +21,8 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -31,11 +34,14 @@ import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol;
 
 public abstract class BSPanelGrid extends Panel {
 
     private static final String ID_TAB    = "tab";
     private SingularForm<?>     form      = new SingularForm<>("panel-form");
+    private BSTabCol            navigation = new BSTabCol("tab-navigation");
+    private BSTabCol            content = new BSTabCol("tab-content");
     private BSGrid              container = new BSGrid("grid");
     private Map<String, BSTab>  tabMap    = new LinkedHashMap<>();
     private BSTab               activeTab = null;
@@ -57,8 +63,13 @@ public abstract class BSPanelGrid extends Panel {
     }
 
     private void rebuildForm() {
-        add(form.add(buildTabControl()));
+        add(form);
+        form.add(navigation);
+        form.add(content);
+        navigation.add(buildTabControl());
         buildTabContent();
+        
+        configureColspan();
     }
 
     private Component buildTabControl() {
@@ -108,7 +119,14 @@ public abstract class BSPanelGrid extends Panel {
             }
         };
     }
-
+    /**
+     * Método responsável por configurar o tamanho da coluna de navegação e de conteúdo
+     */
+    protected void configureColspan() {
+        navigation.xs(3).sm(3).md(3).lg(3);
+        content.xs(9).sm(9).md(9).lg(9);
+    }
+    
     public abstract void updateTab(BSTab tab, List<BSTab> tabs);
 
     protected void onTabCreated(BSTab tab, Component tabComponent) {}
@@ -118,10 +136,9 @@ public abstract class BSPanelGrid extends Panel {
     }
 
     public void buildTabContent() {
-        form.remove(container);
+        content.remove(container);
         container = new BSGrid("grid");
-        form.add(container);
-
+        content.add(container);
     }
 
     public BSGrid getContainer() {
@@ -132,6 +149,14 @@ public abstract class BSPanelGrid extends Panel {
         return Collections.unmodifiableMap(tabMap);
     }
 
+    public BSTabCol getNavigation() {
+        return navigation;
+    }
+    
+    public BSTabCol getContent() {
+        return content;
+    }
+    
     public static final class BSTab implements Serializable {
         private String                               headerText;
         private List<String>                         subtree;
@@ -172,4 +197,18 @@ public abstract class BSPanelGrid extends Panel {
             this.iconProcessor = iconProcessor;
         }
     }
+    
+    protected class BSTabCol extends WebMarkupContainer implements IBSGridCol<BSTabCol> {
+
+        public BSTabCol(String id) {
+            super(id);
+            add(newBSGridColBehavior());
+        }
+
+        @Override
+        public BSTabCol add(Behavior... behaviors) {
+            return (BSTabCol) super.add(behaviors);
+        }
+    }
+    
 }

@@ -5,14 +5,15 @@
 
 package br.net.mirante.singular.showcase.component;
 
-import com.google.common.base.Throwables;
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Optional;
+
+import org.apache.commons.io.IOUtils;
+
+import br.net.mirante.singular.commons.base.SingularUtil;
 
 /**
  * Representa um referência um recurso no class path e seu respectivo nome para
@@ -55,7 +56,7 @@ public class ResourceRef implements Serializable {
         try {
             return IOUtils.toString(in, Charset.forName("UTF-8"));
         } catch (IOException e) {
-            throw Throwables.propagate(e);
+            throw SingularUtil.propagate(e);
         }
     }
 

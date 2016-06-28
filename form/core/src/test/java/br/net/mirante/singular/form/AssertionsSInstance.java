@@ -27,13 +27,37 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
     }
 
     /**
+     * Verifica se o valor da instância atual é null.
+     */
+    public AssertionsSInstance isValueNull() {
+        return isValueEquals((String) null, null);
+    }
+
+    /**
+     * Verifica se o valor da instância atual é igual ao esperado.
+     */
+    public AssertionsSInstance isValueEquals(Object expectedValue) {
+        return isValueEquals((String) null, expectedValue);
+    }
+
+    public AssertionsSInstance isValueEquals(SType<?> field, Object expectedValue) {
+        return isValueEquals(field.getNameSimple(), expectedValue);
+    }
+
+    /**
      * Verifica se o valor contido no campo do caminho indicado é igual ao esperado. O caminho pode ser null, nesse caso
      * pega o valor da instância atual.
      */
     public AssertionsSInstance isValueEquals(String fieldPath, Object expectedValue) {
         Object currentValue = getValue(fieldPath);
         if (!Objects.equals(expectedValue, currentValue)) {
-            throw new AssertionError(errorMsg("Valor diferente do esperado:", expectedValue, currentValue));
+            if (fieldPath == null) {
+                throw new AssertionError(errorMsg("Valor diferente do esperado", expectedValue, currentValue));
+            } else {
+                throw new AssertionError(
+                        errorMsg("Valor diferente do esperado no path '" + fieldPath + '\'', expectedValue,
+                                currentValue));
+            }
         }
         return this;
     }

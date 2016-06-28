@@ -30,10 +30,6 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
 
     private E elementsType;
 
-    private Integer minimumSize;
-
-    private Integer maximumSize;
-
     @SuppressWarnings("unchecked")
     public STypeList() {
         // O cast na linha abaixo parece redundante, mas é necessário para
@@ -122,14 +118,13 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return elementsType;
     }
 
-    //TODO: utilizar atributos do tipo ao invés de atributos de classe
     public STypeList<E, I> withMiniumSizeOf(Integer size) {
-        this.minimumSize = size;
+        this.asAtr().setAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE, size);
         return this;
     }
-    //TODO: utilizar atributos do tipo ao invés de atributos de classe
+
     public STypeList<E, I> withMaximumSizeOf(Integer size) {
-        this.maximumSize = size;
+        this.asAtr().setAttributeValue(SPackageBasic.ATR_MAXIMUM_SIZE, size);
         return this;
     }
 
@@ -137,13 +132,13 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         addInstanceValidator(validatable -> {
-            final Integer minimumSize = validatable.getInstance().getType().minimumSize;
+            final Integer minimumSize = validatable.getInstance().getType().asAtr().getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
             if (minimumSize != null && validatable.getInstance().getValue().size() < minimumSize) {
                 validatable.error("A Quantidade mínima de " + getLabel(validatable.getInstance()) + " é " + minimumSize);
             }
         });
         addInstanceValidator(validatable -> {
-            final Integer maximumSize = validatable.getInstance().getType().maximumSize;
+            final Integer maximumSize = validatable.getInstance().getType().asAtr().getAttributeValue(SPackageBasic.ATR_MAXIMUM_SIZE);
             if (maximumSize != null && validatable.getInstance().getValue().size() > maximumSize) {
                 validatable.error("A Quantidade máxima " + getLabel(validatable.getInstance()) + " é " + maximumSize);
             }
@@ -155,11 +150,11 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
     }
 
     public Integer getMinimumSize() {
-        return minimumSize;
+        return asAtr().getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
     }
 
     public Integer getMaximumSize() {
-        return maximumSize;
+        return asAtr().getAttributeValue(SPackageBasic.ATR_MAXIMUM_SIZE);
     }
 
     public <T extends Serializable> SelectionBuilder<T, SIList<I>, I> selectionOf(Class<T> clazz, SView view) {

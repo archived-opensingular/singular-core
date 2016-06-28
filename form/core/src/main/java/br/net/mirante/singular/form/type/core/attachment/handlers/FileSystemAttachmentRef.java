@@ -5,21 +5,22 @@
 
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import com.google.common.base.Throwables;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import br.net.mirante.singular.commons.base.SingularUtil;
+import br.net.mirante.singular.form.io.CompressionUtil;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+
 @SuppressWarnings("serial")
 public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
 
     private String id, hashSHA1, path;
-    private Integer size;
+    private long size;
 
-    public FileSystemAttachmentRef(String id, String hashSHA1, String path, Integer size) {
+    public FileSystemAttachmentRef(String id, String hashSHA1, String path, long size) {
         this.id = id;
         this.hashSHA1 = hashSHA1;
         this.path = path;
@@ -30,7 +31,7 @@ public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
         return id;
     }
     
-    public String getHashSHA1() {
+    public String getHasSHA1() {
         return hashSHA1;
     }
 
@@ -38,16 +39,17 @@ public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
         return path;
     }
 
-    public Integer getSize() {
+    public long getSize() {
         return size;
     }
 
     @Override
-    public InputStream getContent() {
+    public InputStream newInputStream() {
         try {
+//            return CompressionUtil.inflateToInputStream(new FileInputStream(path));
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {
-            throw Throwables.propagate(e);
+            throw SingularUtil.propagate(e);
         }
     }
 }

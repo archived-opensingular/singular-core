@@ -13,9 +13,5 @@ public class InMemoryAttachmentPersistenceFilesTest extends BaseAttachmentPersis
         return new InMemoryAttachmentPersitenceHandler();
     }
 
-    @Override
-    protected String defineId(IAttachmentRef ref) {
-        return hash;
-    }
 
 }

@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.type.core;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import br.net.mirante.singular.form.AtrRef;
 import br.net.mirante.singular.form.PackageBuilder;
@@ -18,7 +18,7 @@ import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.SMultiSelectionByCheckboxView;
 import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
 import br.net.mirante.singular.form.view.SMultiSelectionBySelectView;
@@ -32,6 +32,8 @@ import br.net.mirante.singular.form.view.SViewTextArea;
 @SInfoPackage(name = SDictionary.SINGULAR_PACKAGES_PREFIX + "plaf.bootstrap")
 public class SPackageBootstrap extends SPackage {
 
+    public static final int MAX_COL_PREFERENCE = 12;
+    
     //@formatter:off
     public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_COL_PREFERENCE    = new AtrRef<>(SPackageBootstrap.class, "larguraColuna"  , STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_COL_XS_PREFERENCE = new AtrRef<>(SPackageBootstrap.class, "larguraColunaXS", STypeInteger.class, SIInteger.class, Integer.class);
@@ -52,29 +54,30 @@ public class SPackageBootstrap extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_COL_ON_NEW_ROW);
 
         final SimpleValueCalculation<Integer> calcsForSingle = SimpleValueCalculation.nil(Integer.class)
-            .appendOnView(SViewSelectionByRadio.class, 12)
+            .appendOnView(SViewSelectionByRadio.class, SPackageBootstrap.MAX_COL_PREFERENCE)
             .appendOnView(SViewSelectionBySelect.class, 6)
             .appendOnView(SViewAutoComplete.class, 6)
             .appendOnView(SViewSearchModal.class, 6);
 
         final SimpleValueCalculation<Integer> calcsForMultiple = SimpleValueCalculation.nil(Integer.class)
-            .appendOnView(SMultiSelectionByPicklistView.class, 12)
+            .appendOnView(SMultiSelectionByPicklistView.class, SPackageBootstrap.MAX_COL_PREFERENCE)
             .appendOnView(SMultiSelectionByCheckboxView.class, 4)
             .appendOnView(SMultiSelectionBySelectView.class, 4);
 
-        pb.getType(STypeList.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, calcsForMultiple
+        pb.getType(STypeList.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForMultiple.orElse(12));
+
+        pb.getType(STypeComposite.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle
+            .prependOnView(SViewAttachmentList.class, SPackageBootstrap.MAX_COL_PREFERENCE)
             .orElse(12));
 
-        pb.getType(STypeComposite.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle
-            .prependOnView(SViewAttachmentList.class, 12)
-            .orElse(12));
+        pb.getType(STypeSimple.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle.orElse(4));
 
-        pb.getType(STypeSimple.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle
-            .orElse(4));
-
-        pb.getType(STypeString.class).asAtrBootstrap().setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle
-            .prependOnView(SViewTextArea.class, 12)
+        pb.getType(STypeString.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle
+            .prependOnView(SViewTextArea.class, SPackageBootstrap.MAX_COL_PREFERENCE)
             .orElse(6));
+
+        pb.getType(STypeDate.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle.orElse(3));
+        pb.getType(STypeYearMonth.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle.orElse(3));
     }
 
     private <T extends SType<I>, I extends SInstance, V extends Object> void adicionarDefinicaoColuna(PackageBuilder pb, AtrRef<T, I, V> atrRef, String label) {

@@ -5,26 +5,25 @@
 
 package br.net.mirante.singular.form.wicket.mapper.components;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import java.util.Set;
+
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.commons.lambda.IBiConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-
-import java.util.Set;
 
 public abstract class MetronicPanel extends TemplatePanel {
 
     private SingularForm<?> form = null;
-    private boolean withForm;
+    protected final boolean withForm;
 
     public MetronicPanel(String id) {
         this(id, true);
@@ -38,7 +37,6 @@ public abstract class MetronicPanel extends TemplatePanel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        setTemplateFunction(getTemplate(withForm));
         setRenderBodyOnly(true);
         setOutputMarkupId(false);
         setOutputMarkupPlaceholderTag(false);
@@ -90,19 +88,20 @@ public abstract class MetronicPanel extends TemplatePanel {
     protected String getPanelFooterClass() {
         return "panel-footer";
     }
-
-    protected IFunction<TemplatePanel, String> getTemplate(boolean withForm) {
+    
+    @Override
+    public IFunction<TemplatePanel, String> getTemplateFunction() {
         String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";
         return (tp) -> String.format(wrapper, ""
-                + "  <div class='" + getPanelWrapperClass() + "'>"
-                + "    <div wicket:id='_hd' class='" + getPanelHeadingClass() + "'></div>"
-                + "    <div class='" + getPanelBodyClass() + "' wicket:id='_co' >"
-                + "    </div>"
-                + "    <div wicket:id='_ft' class='" + getPanelFooterClass() + " text-right'></div>"
-                + "  </div>"
-                + "");
+            + "  <div class='" + getPanelWrapperClass() + "'>"
+            + "    <div wicket:id='_hd' class='" + getPanelHeadingClass() + "'></div>"
+            + "    <div class='" + getPanelBodyClass() + "' wicket:id='_co' >"
+            + "    </div>"
+            + "    <div wicket:id='_ft' class='" + getPanelFooterClass() + " text-right'></div>"
+            + "  </div>"
+            + "");
     }
-
+    
     public static ClassAttributeModifier dependsOnModifier(IModel<? extends SInstance> model) {
         return new ClassAttributeModifier() {
             @Override

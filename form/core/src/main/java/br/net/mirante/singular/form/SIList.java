@@ -18,7 +18,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     private SType<E> elementsType;
 
-    public SIList() {}
+    public SIList() {
+    }
 
     static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
         //        MILista<I> lista = new MILista<>();
@@ -52,8 +53,10 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     @Override
     public void clearInstance() {
         if (values != null) {
-            values.forEach(SInstance::clearInstance);
-            values.clear();
+            int size = values.size();
+            for (int i = 0; i < size; i++) {
+                remove(0);
+            }
         }
     }
 
@@ -63,49 +66,49 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
-    protected void resetValue() {
-        clear();
-    }
-
-    @Override
     public boolean isEmptyOfData() {
         return isEmpty() || values.stream().allMatch(SInstance::isEmptyOfData);
     }
 
     public E addNew() {
-        return addInternal(getElementsType().newInstance(getDocument()));
+        E instance = getElementsType().newInstance(getDocument());
+        return addInternal(instance, true, -1);
     }
 
     public E addNew(Consumer<E> consumer) {
-        E novo = getElementsType().newInstance(getDocument());
-        consumer.accept(novo);
-        return addInternal(novo);
+        E instance = addNew();
+        consumer.accept(instance);
+        return instance;
     }
 
     @SuppressWarnings("unchecked")
     public E addElement(Object e) {
-        E element = (E) e;
-        element.setDocument(getDocument());
-        return addInternal(element);
+        E instance = (E) e;
+        instance.setDocument(getDocument());
+        return addInternal(instance, true, -1);
     }
 
     public E addElementAt(int index, E e) {
-        E element = e;
-        element.setDocument(getDocument());
-        addAtInternal(index, element);
-        return element;
+        E instance = e;
+        instance.setDocument(getDocument());
+        return addInternal(instance, false, index);
     }
 
     public E addNewAt(int index) {
         E instance = getElementsType().newInstance(getDocument());
-        addAtInternal(index, instance);
-        return instance;
+        return addInternal(instance, false, index);
     }
 
     public E addValue(Object value) {
-        E instance = getElementsType().newInstance(getDocument());
-        instance.setValue(value);
-        return addInternal(instance);
+        E instance = addNew();
+        try {
+            instance.setValue(value);
+        } catch(RuntimeException e) {
+            //Senão conseguiu converter o valor, então desfaz a inclusão
+            values.remove(values.size()-1);
+            throw e;
+        }
+        return instance;
     }
 
     public SIList<E> addValues(Collection<?> values) {
@@ -114,27 +117,18 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return this;
     }
 
-    private E addInternal(E instance) {
+    private E addInternal(E instance, boolean atEnd, int index) {
         if (values == null) {
             values = new ArrayList<>();
         }
-        values.add(instance);
+        if (atEnd) {
+            values.add(instance);
+        } else {
+            values.add(index, instance);
+        }
         instance.setParent(this);
+        instance.init();
         return instance;
-    }
-
-    private void addAtInternal(int index, E instance) {
-        if (values == null) {
-            values = new ArrayList<>();
-        }
-        values.add(index, instance);
-        instance.setParent(this);
-    }
-
-    public void clear() {
-        if (values != null) {
-            values.clear();
-        }
     }
 
     public SInstance get(int index) {
@@ -180,7 +174,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     private SInstance getChecking(int index, PathReader pathReader) {
         if (index < 0 || index + 1 > size()) {
-            String msg = "índice inválido: " + index + ((index < 0) ? " < 0" : " > que a lista (size= " + size() +")");
+            String msg = "índice inválido: " + index + ((index < 0) ? " < 0" : " > que a lista (size= " + size() + ")");
             if (pathReader == null) {
                 throw new SingularFormException(msg, this);
             }
@@ -202,15 +196,16 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public void setValue(Object obj) {
-        if(obj instanceof SIList){
+        if (obj instanceof SIList) {
             clearInstance();
-            values = newArrayList(((SIList)obj).getValues());
-            elementsType = ((SIList)obj).getElementsType();
+            values = newArrayList(((SIList) obj).getValues());
+            elementsType = ((SIList) obj).getElementsType();
             ((SIList) obj).getValue().clear();
-        }else{
+        } else {
             throw new SingularFormException("SList só suporta valores de mesmo tipo da lista", this);
         }
     }
+
     @Override
     public final void setValue(String fieldPath, Object value) {
         setValue(new PathReader(fieldPath), value);
@@ -285,8 +280,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
+        final int prime  = 31;
+        int       result = 1;
         result = prime * result + ((elementsType == null) ? 0 : elementsType.hashCode());
         for (E e : this)
             result = prime * result + (e == null ? 0 : e.hashCode());
@@ -322,7 +317,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public E first() {
-        if(hasValues()) return values.get(0);
+        if (hasValues()) return values.get(0);
         return null;
     }
 
@@ -331,7 +326,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public E last() {
-        if(hasValues()) return values.get(values.size()-1);
+        if (hasValues()) return values.get(values.size() - 1);
         return null;
     }
 

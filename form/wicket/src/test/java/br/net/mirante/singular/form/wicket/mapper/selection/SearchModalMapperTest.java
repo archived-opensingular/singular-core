@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.provider.FilteredProvider;
 import br.net.mirante.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewSearchModal;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
@@ -76,6 +77,9 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
         tester.executeAjaxEvent(links.get(0), "click");
 
         tester.assertModelValue(mandatoryFieldComp.getPageRelativePath(), "1");
+
+        tester.executeAjaxEvent(mandatoryFieldComp, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+
         tester.assertVisible(dependentFieldComp.getPageRelativePath());
 
     }

@@ -1,33 +1,27 @@
 package br.net.mirante.singular.form.wicket.mapper.composite;
 
+import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.SPackageBootstrap;
 import br.net.mirante.singular.form.view.Block;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.StyleAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
@@ -50,8 +44,14 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             final SViewByBlock view           = (SViewByBlock) ctx.getView();
 
             for (int i = 0; i < view.getBlocks().size(); i++) {
-                final Block        block   = view.getBlocks().get(i);
-                final PortletPanel portlet = new PortletPanel("_portlet" + i, block);
+                final Block block = view.getBlocks().get(i);
+                if (StringUtils.isEmpty(block.getName()) && block.getTypes().size() == 1 && ctx.getCurrentInstance() instanceof SIComposite) {
+                    final SIComposite sic        = ctx.getCurrentInstance();
+                    final SInstance   firstChild = sic.getField(block.getTypes().get(0));
+                    block.setName(firstChild.asAtr().getLabel());
+                    ctx.setTitleInBlock(true);
+                }
+                final PortletPanel portlet = new PortletPanel("_portlet" + i, block, ctx);
                 addedTypes.addAll(block.getTypes());
                 appendBlock(grid, block, portlet);
             }
@@ -64,7 +64,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
             if (!remainingTypes.isEmpty()) {
                 final Block        block   = new Block();
-                final PortletPanel portlet = new PortletPanel("_portletForRemaining", block);
+                final PortletPanel portlet = new PortletPanel("_portletForRemaining", block, ctx);
                 block.setTypes(remainingTypes);
                 appendBlock(grid, block, portlet);
             }
@@ -83,7 +83,6 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 row = buildBlockAndGetCurrentRow(type.getField(typeName), newGrid, row);
             }
 
-            portlet.add(new ConfigurePortletVisibilityBehaviour(block));
         }
 
         private BSRow buildBlockAndGetCurrentRow(SType<?> field, BSGrid grid, BSRow row) {
@@ -94,46 +93,6 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             }
             buildField(ctx.getUiBuilderWicket(), row, im);
             return row;
-        }
-    }
-
-    private static class ConfigurePortletVisibilityBehaviour extends Behavior {
-
-        private final Block block;
-
-        private ConfigurePortletVisibilityBehaviour(Block block) {
-            this.block = block;
-        }
-
-        @Override
-        public void onConfigure(Component c) {
-            super.onConfigure(c);
-            final MarkupContainer container    = (MarkupContainer) c;
-            final Boolean         isAnyVisible = container.visitChildren(Component.class, new VisibilityVisitor(block));
-            container.setVisible(isAnyVisible != null && isAnyVisible);
-        }
-
-    }
-
-    private static class VisibilityVisitor implements IVisitor<Component, Boolean>, Serializable {
-
-        private final Block block;
-
-        private VisibilityVisitor(Block block) {
-            this.block = block;
-        }
-
-        @Override
-        public void component(Component component, IVisit<Boolean> visit) {
-            IModel<?> model = component.getDefaultModel();
-            if (model != null && IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
-                SInstance si = ((IMInstanciaAwareModel) model).getMInstancia();
-                if (block.getTypes().contains(si.getType().getNameSimple())) {
-                    if (si.asAtr().isVisible()) {
-                        visit.stop(true);
-                    }
-                }
-            }
         }
     }
 
@@ -150,24 +109,68 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 + "     </div>                                                     "
                 + " </div>                                                         ";
 
-        private final Block  block;
-        private final BSGrid newGrid;
+        private final Block              block;
+        private final BSGrid             newGrid;
+        private final WicketBuildContext ctx;
 
-        PortletPanel(String id, Block block) {
+        private boolean visible;
+
+        PortletPanel(String id, Block block, WicketBuildContext ctx) {
             super(id, PORTLET_MARKUP);
             this.block = block;
+            this.ctx = ctx;
             this.newGrid = new BSGrid(GRID_ID);
             add(newGrid, buildPortletTitle(block));
+
+        }
+
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new StyleAttributeModifier() {
+                @Override
+                protected Map<String, String> update(Map<String, String> oldStyles) {
+                    final Map<String, String> newStyles = new HashMap<>(oldStyles);
+                    if (isAnyChildrenVisible()) {
+                        newStyles.put("display", "block");
+                        visible = true;
+                    } else {
+                        newStyles.put("display", "none");
+                        visible = false;
+                    }
+                    return newStyles;
+                }
+            });
+        }
+
+        private boolean isAnyChildrenVisible() {
+            if (ctx.getCurrentInstance().asAtr().exists() && ctx.getCurrentInstance().asAtr().isVisible()) {
+                for (String typeName : block.getTypes()) {
+                    if (ctx.getCurrentInstance() instanceof SIComposite) {
+                        final SIComposite ci    = ctx.getCurrentInstance();
+                        final SInstance   field = ci.getField(typeName);
+                        if (field.asAtr().exists() && field.asAtr().isVisible()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         @Override
         public void onEvent(IEvent<?> event) {
             super.onEvent(event);
-            final Boolean isAnyVisible = visitChildren(Component.class, new VisibilityVisitor(block));
-            if(isAnyVisible != null && isAnyVisible != isVisible()) {
-                setVisible(isAnyVisible);
-                if (AjaxRequestTarget.class.isAssignableFrom(event.getPayload().getClass())) {
-                    ((AjaxRequestTarget) event.getPayload()).add(this);
+            if (AjaxRequestTarget.class.isAssignableFrom(event.getPayload().getClass())) {
+                final AjaxRequestTarget payload = (AjaxRequestTarget) event.getPayload();
+                if (isAnyChildrenVisible() != visible) {
+                    if (isAnyChildrenVisible()) {
+                        payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'block');");
+                        visible = true;
+                    } else {
+                        payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'none');");
+                        visible = false;
+                    }
                 }
             }
         }
@@ -182,9 +185,26 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                     + "  </div>                                  ";
 
             final TemplatePanel portletTitle = new TemplatePanel(TITLE_ID, titleMarkup);
+            final Label         titleLabel   = new Label(name, Model.of(block.getName()));
 
-            portletTitle.add($b.onConfigure(c -> c.setVisible(StringUtils.isNotEmpty(block.getName()))));
-            portletTitle.add(new Label(name, Model.of(block.getName())));
+            portletTitle.setVisible(StringUtils.isNotEmpty(block.getName()));
+            portletTitle.add(titleLabel);
+
+            titleLabel.add(new ClassAttributeModifier() {
+                @Override
+                protected Set<String> update(Set<String> oldClasses) {
+                    if (block.getTypes().size() == 1) {
+                        final SIComposite sic        = ctx.getCurrentInstance();
+                        final SInstance   firstChild = sic.getField(block.getTypes().get(0));
+                        if (firstChild.getAttributeValue(SPackageBasic.ATR_REQUIRED)) {
+                            oldClasses.add("singular-form-required");
+                        } else {
+                            oldClasses.remove("singular-form-required");
+                        }
+                    }
+                    return oldClasses;
+                }
+            });
 
             return portletTitle;
         }

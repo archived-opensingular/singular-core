@@ -52,8 +52,6 @@
             <groupId>y.ed</groupId>
             <artifactId>yfiles</artifactId>
             <version>3.0.0.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/yfiles-for-java.jar</systemPath>
         </dependency>
 
         <dependency>

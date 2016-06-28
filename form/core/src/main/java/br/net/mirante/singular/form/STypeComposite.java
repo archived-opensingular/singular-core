@@ -5,20 +5,32 @@
 
 package br.net.mirante.singular.form;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import br.net.mirante.singular.commons.internal.function.SupplierUtil;
 import br.net.mirante.singular.form.builder.selection.SSelectionBuilder;
 import br.net.mirante.singular.form.builder.selection.SelectionBuilder;
-import br.net.mirante.singular.form.type.core.*;
-import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
-import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
-import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
+import br.net.mirante.singular.form.type.core.SPackageCore;
+import br.net.mirante.singular.form.type.core.STypeBoolean;
+import br.net.mirante.singular.form.type.core.STypeDate;
+import br.net.mirante.singular.form.type.core.STypeDateTime;
+import br.net.mirante.singular.form.type.core.STypeDecimal;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeMonetary;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.type.util.STypeEMail;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewAttachmentList;
 import br.net.mirante.singular.form.view.SViewAutoComplete;
 import br.net.mirante.singular.form.view.SViewSelectionBySelect;
-
-import java.io.Serializable;
-import java.util.*;
 
 @SInfoType(name = "STypeComposite", spackage = SPackageCore.class)
 public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INSTANCE_TYPE> implements ICompositeType {
@@ -156,7 +168,25 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         STypeList<STypeComposite<I>, I> novo = createListOfNewTypeComposite(fieldSimpleName, simpleNameNewCompositeType);
         return addInternal(fieldSimpleName, novo);
     }
-
+    
+    /**
+     * Cria um novo campo do tipo {@link STypeAttachment} com o nome informado.
+     * @param fieldSimpleName - nome do campo
+     * @param required - se o campo é obrigatório
+     * @return
+     */
+    public STypeAttachment addFieldAttachment(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeAttachment.class, required);
+    }
+    /**
+     * Cria um novo campo do tipo {@link STypeAttachment} com o nome informado.
+     * @param fieldSimpleName - nome do campo
+     * @return
+     */
+    public STypeAttachment addFieldAttachment(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeAttachment.class);
+    }
+    
     public STypeAttachmentList addFieldListOfAttachment(String listName, String fieldName) {
         checkNameNewField(listName,null);
         STypeAttachmentList novo = extendType(listName, STypeAttachmentList.class);
@@ -430,15 +460,16 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     }
 
     @Override
-    public void init(INSTANCE_TYPE newInstance) {
-        super.init(newInstance);
-        initFields(newInstance);
+    public void init(Supplier<INSTANCE_TYPE> instanceRef) {
+        initFields(instanceRef);
+        super.init(instanceRef);
     }
 
-    private void initFields(INSTANCE_TYPE newInstance) {
+    private void initFields(Supplier<INSTANCE_TYPE> instanceRef) {
         Collection<SType> fields = (Collection) getFields();
-        fields.stream().forEach((t)->{
-            t.init(newInstance.getField(t.getNameSimple()));
-        });
+        for(SType t : fields) {
+            //Passa uma referência lazy demodo que não precisa fazer busca se o tipo não possui inicialização
+            t.init(() -> instanceRef.get().getField(t.getNameSimple()));
+        }
     }
 }

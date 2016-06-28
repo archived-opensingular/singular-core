@@ -64,11 +64,6 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
         return getValueWithDefault(classeDestino);
     }
 
-    @Override
-    protected void resetValue() {
-        setValue(null);
-    }
-
     /** Indica que o valor da instância atual é null. */
     public boolean isNull() {
         return getValue() == null;
@@ -144,7 +139,7 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
     }
 
     @Override
-    public String toString() {
-        return getClass().getSimpleName() + '(' + getValue() + ')';
+    StringBuilder toStringInternal() {
+        return super.toStringInternal().append("; value=").append(getValue());
     }
 }

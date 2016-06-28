@@ -40,26 +40,22 @@ public abstract class SDocumentFactory {
      * {@link FormSerializationUtil#checkIfSerializable(SInstance)}).
      */
     public final SInstance createInstance(RefType rootType) {
-        SInstance instance = createInstanceWithoutInitialization(rootType);
-        SType type = instance.getType();
-        type.init(instance);
-        return instance;
+        return createInstance(rootType, true);
     }
 
     /**
-     * USO INTERNO: cria uma instancia ser disparar as inicializações
+     * USO INTERNO: cria uma instancia sem disparar as inicializações
      * automáticas.
      */
-    public final SInstance createInstanceWithoutInitialization(RefType rootType) {
-        SInstance instance = createIntanceWithoutSetup(rootType);
-        setupDocument(instance.getDocument());
-        return instance;
-    }
-
-    private final SInstance createIntanceWithoutSetup(RefType rootType) {
-        SInstance instance = Objects.requireNonNull(rootType).get().newInstance();
+    public final SInstance createInstance(RefType rootType, boolean executeInitTypeSetup) {
+        SType type = Objects.requireNonNull(rootType).get();
+        SInstance instance = type.newInstance(false);
         instance.getDocument().setRootRefType(rootType);
         instance.getDocument().setDocumentFactory(this);
+        setupDocument(instance.getDocument());
+        if (executeInitTypeSetup) {
+            instance.init();
+        }
         return instance;
     }
 

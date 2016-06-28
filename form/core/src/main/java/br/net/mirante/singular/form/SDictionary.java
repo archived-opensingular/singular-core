@@ -7,11 +7,12 @@ package br.net.mirante.singular.form;
 
 import java.util.Collection;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.type.core.SPackageCore;
 import br.net.mirante.singular.form.view.ViewResolver;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 public class SDictionary {
 
@@ -120,7 +121,6 @@ public class SDictionary {
         if (tipoRef == null) {
             Class<? extends SPackage> classPacote = SFormUtil.getTypePackage(typeClass);
             loadPackage(classPacote);
-
             tipoRef = types.get(typeClass);
         }
         return tipoRef;

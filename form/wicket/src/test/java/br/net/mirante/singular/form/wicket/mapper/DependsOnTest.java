@@ -1,26 +1,26 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
-import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.*;
+import static org.fest.assertions.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 
 @RunWith(Enclosed.class)
 public class DependsOnTest {
@@ -31,11 +31,10 @@ public class DependsOnTest {
         public void rendersBothDropDowns() {
             assertThat(options()).hasSize(2);
         }
-
         @Test
         public void renderOnlyThePrimaryChoice() {
             final DropDownChoice categoryChoice = options().get(0), elementChoice = options().get(1);
-            final List<Object>   displayArray   = new ArrayList<>();
+            final List<Object> displayArray = new ArrayList<>();
 
             for (Object choice : categoryChoice.getChoices()) {
                 displayArray.add(categoryChoice.getChoiceRenderer().getDisplayValue(choice));
@@ -75,8 +74,7 @@ public class DependsOnTest {
         @Test
         public void preloadSelectedValues() {
             DropDownChoice categoryChoice = options().get(0),
-                    elementChoice = options().get(1);
-
+                elementChoice = options().get(1);
 
             List<Object> displayArray = new ArrayList<>();
             for (Object choice : categoryChoice.getChoices()) {
@@ -105,7 +103,7 @@ public class DependsOnTest {
         @Test
         public void addPreloadedOptionsToLisIfNotPresent() {
             DropDownChoice categoryChoice = options().get(0),
-                    elementChoice = options().get(1);
+                elementChoice = options().get(1);
 
             List<Object> displayArray = new ArrayList<>();
             for (Object choice : categoryChoice.getChoices()) {
@@ -133,14 +131,13 @@ public class DependsOnTest {
         @Test
         public void addPreloadedOptionsToDependentLisIfNotPresent() {
             DropDownChoice categoryChoice = options().get(0),
-                    elementChoice = options().get(1);
+                elementChoice = options().get(1);
 
             List<Object> displayArray = new ArrayList<>();
             for (Object choice : categoryChoice.getChoices()) {
                 displayArray.add(categoryChoice.getChoiceRenderer().getDisplayValue(choice));
             }
             assertThat(displayArray).contains("vegetables");
-
 
             displayArray = new ArrayList<>();
             for (Object choice : elementChoice.getChoices()) {
@@ -152,14 +149,39 @@ public class DependsOnTest {
         @Test
         public void whenChangingValueRemovesDanglingOptions() {
             final DropDownChoice categoryChoice = options().get(0);
-            final DropDownChoice elementChoice  = options().get(1);
+            final DropDownChoice elementChoice = options().get(1);
             form.select(getFormRelativePath(categoryChoice), 2);
-            tester.executeAjaxEvent(categoryChoice, IWicketComponentMapper.SINNGULAR_BLUR_CHANGE_EVENT);
+            tester.executeAjaxEvent(categoryChoice, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
             List<Object> displayArray = new ArrayList<>();
             for (Object choice : elementChoice.getChoices()) {
                 displayArray.add(elementChoice.getChoiceRenderer().getDisplayValue(choice));
             }
             assertThat(displayArray).containsOnly(OPTIONS.get("condiments").toArray());
+        }
+    }
+
+    public static class MultiplosDependsOn extends Base {
+
+        STypeString a, b, c;
+
+        @Override
+        protected void buildBaseType(STypeComposite<?> baseCompositeField) {
+            super.buildBaseType(baseCompositeField);
+            a = baseCompositeField.addFieldString("a");
+            b = baseCompositeField.addFieldString("b");
+            c = baseCompositeField.addFieldString("c");
+            a.asAtr().dependsOn(b);
+            a.asAtr().dependsOn(c);
+        }
+
+        @Test
+        public void multiplosDependsOn() {
+            assertThat(b.isDependentType(a)).isTrue();
+            assertThat(c.isDependentType(a)).isTrue();
+            assertThat(a.isDependentType(b)).isFalse();
+            assertThat(a.isDependentType(c)).isFalse();
+            assertThat(b.isDependentType(c)).isFalse();
+            assertThat(c.isDependentType(b)).isFalse();
         }
     }
 
@@ -180,17 +202,17 @@ public class DependsOnTest {
             element = baseCompositeField.addFieldString("element");
 
             category.asAtr().label("category");
-            category.selectionOf(OPTIONS.keySet().toArray(new String[]{}));
+            category.selectionOf(OPTIONS.keySet().toArray(new String[] {}));
 
             element.asAtr()
-                    .label("Word")
-                    .dependsOn(category);
+                .label("Word")
+                .dependsOn(category);
             element.selectionOf(String.class)
-                    .selfIdAndDisplay()
-                    .simpleProvider(ins -> {
-                        String prefix = ins.findNearest(category).get().getValue();
-                        return (prefix == null) ? Collections.emptyList() : OPTIONS.getOrDefault(prefix, Lists.newArrayList());
-                    });
+                .selfIdAndDisplay()
+                .simpleProvider(ins -> {
+                    String prefix = ins.findNearest(category).get().getValue();
+                    return (prefix == null) ? Collections.emptyList() : OPTIONS.getOrDefault(prefix, Lists.newArrayList());
+                });
         }
 
         protected List<DropDownChoice> options() {
@@ -203,4 +225,3 @@ public class DependsOnTest {
         }
     }
 }
-

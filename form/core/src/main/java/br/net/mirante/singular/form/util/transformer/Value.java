@@ -127,6 +127,8 @@ public class Value {
             SInstance campo = ((SIComposite) instanciaComposta).getField(path);
             if (campo instanceof SISimple) {
                 return Value.of((SISimple<T>) campo);
+            } else if(campo instanceof SIList){
+                return (T) ofList((SIList)campo);
             }
         }
         return null;

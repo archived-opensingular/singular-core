@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Formatter;
 
 /**
- * Created by nuk on 19/05/16.
  * Ripoff od {@link UploadProgressBar} since it's not designed for extension.
  * Example found at http://examples7x.wicket.apache.org/upload/single
  *

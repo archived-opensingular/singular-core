@@ -7,11 +7,15 @@ package br.net.mirante.singular.form.io;
 
 import com.google.common.base.Throwables;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import br.net.mirante.singular.commons.base.SingularUtil;
 
 /**
  * Funções utilitária para geração de hash e codificação do hash em diferentes
@@ -22,11 +26,11 @@ import java.security.NoSuchAlgorithmException;
 public class HashUtil {
 
     /** Localiza o algorítmo de hash SHA1. */
-    private static MessageDigest getMessageDigestSHA1() {
+    public static MessageDigest getMessageDigestSHA1() {
         try {
             return MessageDigest.getInstance("SHA");
         } catch (NoSuchAlgorithmException e) {
-            throw Throwables.propagate(e);
+            throw SingularUtil.propagate(e);
         }
     }
 
@@ -47,6 +51,10 @@ public class HashUtil {
         }
         input.close();
         return bytesToBase16(messageDigest.digest());
+    }
+
+    public static String toSHA1Base16(File f) throws IOException {
+        return toSHA1Base16(new FileInputStream(f));
     }
 
     /**
