@@ -49,7 +49,6 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-
         showNew();
         configureQuickFilter();
     }

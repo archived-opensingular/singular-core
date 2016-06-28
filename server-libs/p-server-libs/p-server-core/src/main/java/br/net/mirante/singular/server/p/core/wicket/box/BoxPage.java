@@ -16,24 +16,39 @@ import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.template.MenuSessionConfig;
 import br.net.mirante.singular.server.core.wicket.template.ServerTemplate;
+import org.slf4j.LoggerFactory;
 
 public class BoxPage extends ServerTemplate {
+
+    private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(BoxPage.class);
 
     @Override
     protected Content getContent(String id) {
 
-        final String processGroupCod = getPageParameters().get(PROCESS_GROUP_PARAM_NAME).toString();
-        final String menu = getPageParameters().get(MENU_PARAM_NAME).toString();
-        final String item = getPageParameters().get(ITEM_PARAM_NAME).toString();
-
+        final String            processGroupCod   = getPageParameters().get(PROCESS_GROUP_PARAM_NAME).toString();
+        final String            menu              = getPageParameters().get(MENU_PARAM_NAME).toString();
+        final String            item              = getPageParameters().get(ITEM_PARAM_NAME).toString();
         final MenuSessionConfig menuSessionConfig = SingularSession.get().getMenuSessionConfig();
-        MenuGroupDTO menuGroup = menuSessionConfig.getMenuPorLabel(menu);
-        ItemBoxDTO itemBoxDTO = menuGroup.getItemPorLabel(item);
+        final MenuGroupDTO      menuGroup         = menuSessionConfig.getMenuPorLabel(menu);
+        final ItemBoxDTO        itemBoxDTO        = menuGroup.getItemPorLabel(item);
 
-        return new BoxContent(id, processGroupCod, menuGroup.getLabel(), itemBoxDTO);
+        /**
+         * itemBoxDTO pode ser nulo quando nenhum item está selecionado.
+         */
+        if (itemBoxDTO != null) {
+            return new BoxContent(id, processGroupCod, menuGroup.getLabel(), itemBoxDTO);
+        } else {
+            /**
+             * Fallback
+             */
+            LOGGER.warn("Não existe correspondencia para o label " + String.valueOf(item));
+            return new EmptyBoxContent(id);
+        }
+
     }
 
     protected Map<String, String> createLinkParams() {
         return new HashMap<>();
     }
+
 }
