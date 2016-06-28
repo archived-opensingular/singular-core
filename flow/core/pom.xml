@@ -51,6 +51,18 @@
         <dependency>
             <groupId>y.ed</groupId>
             <artifactId>yfiles</artifactId>
+            <version>3.0.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-svggen</artifactId>
+            <version>1.7</version>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>y.ed</groupId>
+            <artifactId>yfiles</artifactId>
             <version>2.12.5</version>
             <scope>provided</scope>
         </dependency>
@@ -59,7 +71,7 @@
             <artifactId>ybpmn</artifactId>
             <version>2.1.5</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>javax.inject</groupId>

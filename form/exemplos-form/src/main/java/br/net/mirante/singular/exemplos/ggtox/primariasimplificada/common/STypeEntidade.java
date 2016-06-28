@@ -51,7 +51,7 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
     public STypeString           bairro;
     public STypeString           endereco;
     public STypeTelefoneNacional telefone;
-    public STypeString           fax;
+    public STypeTelefoneNacional fax;
     public STypeTelefoneNacional celular;
 
     @Override
@@ -75,7 +75,7 @@ public class STypeEntidade extends STypeComposite<SIComposite> {
         bairro = addField(BAIRRO, STypeString.class);
         endereco = addField(ENDERECO, STypeString.class);
         telefone = addField(TELEFONE, STypeTelefoneNacional.class);
-        fax = addField(FAX, STypeString.class);
+        fax = addField(FAX, STypeTelefoneNacional.class);
         celular = addField(CELULAR, STypeTelefoneNacional.class);
 
         tipoPessoa

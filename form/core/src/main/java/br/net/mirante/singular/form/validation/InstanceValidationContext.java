@@ -10,7 +10,9 @@ import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -32,14 +34,17 @@ public class InstanceValidationContext {
     }
 
     public void validateAll(SInstance rootInstance) {
+        final List<String> pathsWithError = new ArrayList<>();
         SInstances.visitPostOrder(
-            rootInstance,
-            (inst, v) -> {
-                InstanceValidatable<SInstance> validatable = new InstanceValidatable<>(inst, this::onError);
-                validateInstance(validatable, Boolean.TRUE.equals(v.getPartial()));
-                if (validatable.errorFound)
-                    v.setPartial(true);
-            });
+                rootInstance,
+                (inst, v) -> {
+                    final InstanceValidatable<SInstance> validatable = new InstanceValidatable<>(inst, this::onError);
+                    final boolean containsInvalidChild = pathsWithError.stream().anyMatch(s -> s.contains(inst.getPathFull()));
+                    validateInstance(validatable, containsInvalidChild);
+                    if (validatable.errorFound) {
+                        pathsWithError.add(inst.getPathFull());
+                    }
+                });
         updateDocumentErrors(rootInstance);
     }
     public void validateSingle(SInstance rootInstance) {
