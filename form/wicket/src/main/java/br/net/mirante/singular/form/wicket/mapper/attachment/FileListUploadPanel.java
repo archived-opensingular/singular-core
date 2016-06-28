@@ -48,7 +48,7 @@ import static java.lang.Integer.*;
 import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.*;
 
 /**
- * Created by nuk on 10/06/16.
+ * Component for Uploading multiple files
  */
 public class FileListUploadPanel extends Panel {
 

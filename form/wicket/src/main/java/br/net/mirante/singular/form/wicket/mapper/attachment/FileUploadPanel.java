@@ -43,7 +43,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 /**
- * Created by nuk on 27/05/16.
+ * Component for uploading a single file
  */
 public class FileUploadPanel extends Panel {
     public static String PARAM_NAME = "FILE-UPLOAD",

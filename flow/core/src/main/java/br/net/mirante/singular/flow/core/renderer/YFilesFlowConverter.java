@@ -12,7 +12,7 @@ import java.util.Map;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * Created by nuk on 21/06/16.
+ * Class responsible for converting a ProcessDefinition into a GraphComponent.
  */
 public class YFilesFlowConverter {
 

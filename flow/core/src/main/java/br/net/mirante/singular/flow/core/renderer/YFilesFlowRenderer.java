@@ -7,6 +7,8 @@ package br.net.mirante.singular.flow.core.renderer;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTransition;
@@ -24,6 +26,7 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.labelmodels.ExteriorLabelModel;
+import com.yworks.yfiles.graph.labelmodels.FreeNodeLabelModel;
 import com.yworks.yfiles.graph.labelmodels.NinePositionsEdgeLabelModel;
 import com.yworks.yfiles.layout.hierarchic.HierarchicLayout;
 import com.yworks.yfiles.view.GraphComponent;
@@ -51,8 +54,7 @@ public class YFilesFlowRenderer implements IFlowRenderer {
         try {
             GraphComponent graphComponent = convert(definicao);
             LayoutUtilities.applyLayout(graphComponent.getGraph(), buildLayouter());
-            ByteArrayOutputStream outputStream = exportToPng(graphComponent);
-            return outputStream.toByteArray();
+            return exportToPng(graphComponent);
         } catch (IOException e) {
             Throwables.propagate(e);
         }
@@ -112,8 +114,7 @@ public class YFilesFlowRenderer implements IFlowRenderer {
 
     private INode addTaskNode(MTask<?> task, IGraph graph) {
         INode node = graph.createNode(new RectD(PointD.ORIGIN, activitySize()), createStyle(task));
-//                    graph.addLabel(node, task.getName(), ChoreographyLabelModel.NORTH_MESSAGE);
-        graph.addLabel(node, taskLabel(task), ChoreographyLabelModel.NORTH_MESSAGE);
+        graph.addLabel(node, taskLabel(task), FreeNodeLabelModel.INSTANCE.createDefaultParameter());
         return node;
     }
 
@@ -161,21 +162,21 @@ public class YFilesFlowRenderer implements IFlowRenderer {
         return bpmnLayout;
     }
 
-    private ByteArrayOutputStream exportToPng(GraphComponent graphComponent) throws IOException {
-        ContextConfigurator configuration = new ContextConfigurator(graphComponent.getContentRect());
+    private byte[] exportToPng(GraphComponent graphComponent) throws IOException {
 
-        graphComponent.setBounds(0,0,400,400);
+
+        graphComponent.setBounds(0,0,500,100);
         graphComponent.fitGraphBounds();
-//            graphComponent.zoomTo(graphComponent.getContentRect());
+        graphComponent.zoomTo(graphComponent.getContentRect());
 
+        ContextConfigurator configuration = new ContextConfigurator(graphComponent.getContentRect());
         PixelImageExporter exporter = new PixelImageExporter(configuration);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         exporter.setBackgroundFill(Color.WHITE);
 
-//            exporter.export(graphComponent, outputStream,"png");
-//            outputStream.close();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        exporter.export(graphComponent, outputStream,"png");
+            outputStream.close();
 
-        ImageIO.write(exporter.exportToBitmap(graphComponent), "png", outputStream);
-        return outputStream;
+        return outputStream.toByteArray();
     }
 }
