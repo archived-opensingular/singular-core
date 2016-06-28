@@ -7,21 +7,37 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static br.net.mirante.singular.form.type.core.attachment.AttachmentTestUtil.writeBytesToTempFile;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public abstract class TestCasePersistenceHandlerBase {
-
-    private IAttachmentPersistenceHandler persistenHandler;
 
     // @formatter:off
     private final byte[][] conteudos = new byte[][] { "i".getBytes(), "np".getBytes(), "1234".getBytes() };
     private final String[] hashs = new String[] { "042dc4512fa3d391c5170cf3aa61e6a638f84342", "003fffd5649fc27c0fc0d15a402a4fe5b0444ce7", "7110eda4d09e062aa5e4a390b0a572ac0d2c0220" };
+    private IAttachmentPersistenceHandler persistenHandler;
     // @formatter:on
+
+    private static void assertConteudo(IAttachmentPersistenceHandler handler, IAttachmentRef ref, byte[] conteudoEsperado, String hashEsperado, int sizeEsperado) throws IOException {
+        assertEquals(hashEsperado, ref.getHasSHA1());
+        assertEquals(hashEsperado, ref.getId());
+        assertEquals(sizeEsperado, handler.getAttachments().size());
+        assertTrue(Arrays.equals(conteudoEsperado, ByteStreams.toByteArray(ref.newInputStream())));
+    }
 
     protected final IAttachmentPersistenceHandler getHandler() {
         if (persistenHandler == null) {
@@ -30,36 +46,29 @@ public abstract class TestCasePersistenceHandlerBase {
         return persistenHandler;
     }
 
-    /** Se chamado mais de uma vez, deve retornar contextos diferente. */
+    /**
+     * Se chamado mais de uma vez, deve retornar contextos diferente.
+     */
     protected abstract IAttachmentPersistenceHandler setupHandler();
-    protected abstract String defineId(IAttachmentRef ref);
 
     @After
     public void limpeza() {
         persistenHandler = null;
     }
 
-    private static void assertConteudo(IAttachmentPersistenceHandler handler, IAttachmentRef ref, byte[] conteudoEsperado, String hashEsperado, int sizeEsperado) throws IOException {
-        assertEquals(hashEsperado, ref.getHashSHA1());
-        assertEquals(hashEsperado, ref.getId());
-        assertEquals(sizeEsperado, handler.getAttachments().size());
-        assertTrue(Arrays.equals(conteudoEsperado, ref.getContentAsByteArray()));
-        assertTrue(Arrays.equals(conteudoEsperado, ByteStreams.toByteArray(ref.getContent())));
-    }
-
     @Test
     public void testSerializacao() throws IOException, ClassNotFoundException {
         IAttachmentRef[] refs = new IAttachmentRef[conteudos.length];
         for (int i = 0; i < conteudos.length; i++) {
-            refs[i] = getHandler().addAttachment(conteudos[i]);
+            refs[i] = getHandler().addAttachment(writeBytesToTempFile(conteudos[i]), conteudos[i].length);
         }
         IAttachmentPersistenceHandler handler2 = deserialize(serialize(getHandler()));
 
         for (int i = 0; i < conteudos.length; i++) {
-            IAttachmentRef ref = handler2.getAttachment(defineId(refs[i]));
+            IAttachmentRef ref = handler2.getAttachment(refs[i].getId());
             assertThat(ref).isNotNull();
-            assertThat(ref.getContentAsByteArray()).isEqualTo(conteudos[i]);
-            assertThat(ref.getHashSHA1()).isEqualTo(hashs[i]);
+            assertThat(ByteStreams.toByteArray(ref.newInputStream())).isEqualTo(conteudos[i]);
+            assertThat(ref.getHasSHA1()).isEqualTo(hashs[i]);
         }
     }
 
@@ -77,45 +86,47 @@ public abstract class TestCasePersistenceHandlerBase {
         return (IAttachmentPersistenceHandler) inO.readObject();
     }
 
-    @Test @Ignore("Review this test")
+    @Test
+    @Ignore("Review this test")
     public void testIndependenciaDeleteEntreContextosDiferentes() throws IOException {
         IAttachmentPersistenceHandler handler1 = getHandler();
         IAttachmentPersistenceHandler handler2 = setupHandler();
         assertNotEquals(handler1, handler2);
 
-        IAttachmentRef ref11 = handler1.addAttachment(conteudos[1]);
-        IAttachmentRef ref12 = handler1.addAttachment(conteudos[2]);
-        IAttachmentRef ref13 = handler1.addAttachment(conteudos[0]);
+        IAttachmentRef ref11 = handler1.addAttachment(writeBytesToTempFile(conteudos[1]), conteudos[1].length);
+        IAttachmentRef ref12 = handler1.addAttachment(writeBytesToTempFile(conteudos[2]), conteudos[2].length);
+        IAttachmentRef ref13 = handler1.addAttachment(writeBytesToTempFile(conteudos[0]), conteudos[0].length);
         assertConteudo(handler1, ref13, conteudos[0], hashs[0], 3);
 
-        IAttachmentRef ref21 = handler2.addAttachment(conteudos[1]);
-        IAttachmentRef ref22 = handler2.addAttachment(conteudos[2]);
+        IAttachmentRef ref21 = handler2.addAttachment(writeBytesToTempFile(conteudos[1]), conteudos[1].length);
+        IAttachmentRef ref22 = handler2.addAttachment(writeBytesToTempFile(conteudos[2]), conteudos[2].length);
         assertConteudo(handler2, ref22, conteudos[2], hashs[2], 2);
 
-        handler2.deleteAttachment(ref21.getHashSHA1());
-        assertNull(handler2.getAttachment(defineId(ref11)));
+        handler2.deleteAttachment(ref21.getHasSHA1());
+        assertNull(handler2.getAttachment(ref11.getId()));
         assertConteudo(handler2, ref22, conteudos[2], hashs[2], 1);
         assertConteudo(handler1, ref11, conteudos[1], hashs[1], 3);
-        assertConteudo(handler1, handler1.getAttachment(defineId(ref11)), conteudos[1], hashs[1], 3);
+        assertConteudo(handler1, handler1.getAttachment(ref11.getId()), conteudos[1], hashs[1], 3);
 
-        handler1.deleteAttachment(ref12.getHashSHA1());
-        assertNull(handler1.getAttachment(defineId(ref12)));
+        handler1.deleteAttachment(ref12.getHasSHA1());
+        assertNull(handler1.getAttachment(ref12.getId()));
         assertConteudo(handler2, ref22, conteudos[2], hashs[2], 1);
-        assertConteudo(handler2, handler2.getAttachment(defineId(ref22)), conteudos[2], hashs[2], 1);
+        assertConteudo(handler2, handler2.getAttachment(ref22.getId()), conteudos[2], hashs[2], 1);
     }
 
-    @Test @Ignore("Review this test")
+    @Test
+    @Ignore("Review this test")
     public void testCopiaEntreContextosDiferentesComDeletesDepois() throws IOException {
         IAttachmentPersistenceHandler handler1 = getHandler();
         IAttachmentPersistenceHandler handler2 = setupHandler();
         assertNotEquals(handler1, handler2);
 
-        handler1.addAttachment(conteudos[1]);
-        IAttachmentRef ref12o = handler1.addAttachment(conteudos[2]);
+        handler1.addAttachment(writeBytesToTempFile(conteudos[1]), conteudos[1].length);
+        IAttachmentRef ref12o = handler1.addAttachment(writeBytesToTempFile(conteudos[2]), conteudos[2].length);
 
-        IAttachmentRef ref21o = handler2.addAttachment(conteudos[1]);
+        IAttachmentRef ref21o = handler2.addAttachment(writeBytesToTempFile(conteudos[1]), conteudos[1].length);
 
-        // Apagando na origem
+//         Apagando na origem
         IAttachmentRef ref22c = handler2.copy(ref12o);
         assertConteudo(handler2, ref22c, conteudos[2], hashs[2], 2);
         assertConteudo(handler2, handler2.getAttachment(hashs[2]), conteudos[2], hashs[2], 2);
@@ -149,36 +160,40 @@ public abstract class TestCasePersistenceHandlerBase {
     }
 
     @Test
-    public void testExceptionNaEscritaDoConteudo() {
+    public void testExceptionNaEscritaDoConteudo() throws IOException {
         try {
-            getHandler().addAttachment(TesteMPacoteAttachment.createInputStreamGeradoraException());
+            getHandler().addAttachment(new File(""), 1);
             fail("Era esperada Exception");
         } catch (SingularFormException e) {
             Assert.assertTrue(e.getMessage().contains("Erro lendo origem de dados"));
         }
         assertEquals(0, getHandler().getAttachments().size());
     }
-    
-    @Test public void deletedFileIsNoLongerAvailable(){
-        IAttachmentRef ref = getHandler().addAttachment(new byte[]{1,2});
+
+    @Test
+    public void deletedFileIsNoLongerAvailable() throws IOException {
+        IAttachmentRef ref = getHandler().addAttachment(writeBytesToTempFile(new byte[]{1, 2}), 2l);
         getHandler().deleteAttachment(ref.getId());
         assertThat(getHandler().getAttachment(ref.getId())).isNull();
     }
-    
-    @Test public void doesNothingWhenYouTryToDeleteANullFile(){
+
+    @Test
+    public void doesNothingWhenYouTryToDeleteANullFile() {
         getHandler().deleteAttachment(null);
     }
-    
+
     @SuppressWarnings("unchecked")
-    @Test public void deleteOnlyTheDesiredFile(){
-        getHandler().addAttachment(new byte[]{1,2,3});
-        IAttachmentRef ref = getHandler().addAttachment(new byte[]{1,2});
-        getHandler().addAttachment(new byte[]{1,2,4,5});
-        
+    @Test
+    public void deleteOnlyTheDesiredFile() throws IOException {
+        getHandler().addAttachment(writeBytesToTempFile(new byte[]{1, 2, 3}), 3l);
+        IAttachmentRef ref = getHandler().addAttachment(writeBytesToTempFile(new byte[]{1, 2}), 2l);
+        getHandler().addAttachment(writeBytesToTempFile(new byte[]{1, 2, 4, 5}), 4l);
+
         getHandler().deleteAttachment(ref.getId());
-        
-        assertThat((Collection<IAttachmentRef>)getHandler().getAttachments()).hasSize(2)
-            .doesNotContain(ref);
+
+        assertThat((Collection<IAttachmentRef>) getHandler().getAttachments()).hasSize(2)
+                .doesNotContain(ref);
     }
+
 
 }

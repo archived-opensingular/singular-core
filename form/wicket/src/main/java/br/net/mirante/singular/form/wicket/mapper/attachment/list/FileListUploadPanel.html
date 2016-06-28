@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:panel>
+    <div class="upload-panel-body">
+        <div class="upload-panel-heading">
+            <span wicket:id="uploadLabel"/>
+        </div>
+        <div wicket:id="empty-box" class='list-detail-empty'>
+            <p wicket:id="empty-message"
+               class='list-detail-empty-message'/>
+        </div>
+        <div class="upload-list">
+            <div class="upload-list-container">
+                <ul wicket:id="fileList">
+                    <li wicket:id="fileItem" class="upload-list-item">
+                        <div class="list-item-icon">
+                            <a href="#" class="list-item-uploaded">
+                                <i class="fa fa-file-text"></i>
+                            </a>
+                        </div>
+                        <div class="list-item-content" style="width: 80%;">
+                            <a wicket:id="downloadLink"
+                               class="download-link"></a>
+                        </div>
+                        <div class="list-item-action">
+                            <a wicket:id="remove_btn" class="list-action-remove">
+                                <i class="fa fa-close"></i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="upload-panel-footer">
+        <input class="upload-fileinput" type="file" multiple="multiple" wicket:id="fileUpload">
+        <label class="btn btn-add fileinput-button file-choose-button"
+               wicket:id="fileUploadLabel"
+               title="Carregar Arquivo">
+            <i class="fa fa-upload"></i>
+        </label>
+    </div>
+</wicket:panel>
+</body>
+</html>

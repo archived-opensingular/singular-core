@@ -5,12 +5,11 @@
 
 package br.net.mirante.singular.form.type.core.attachment;
 
-import java.io.IOException;
-import java.io.InputStream;
-
+import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 
-import br.net.mirante.singular.commons.base.SingularUtil;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Referência para um arquivo binário persistido, contudo não identifica nome
@@ -31,36 +30,26 @@ public interface IAttachmentRef {
      * situações de restrição de implementação.
      * </p>
      */
-    public default String getId() {
-        return getHashSHA1();
-    }
+    public String getId();
+
 
     /**
      * Retorna String de 40 digitos com o SHA1 do conteudo do arquivo.
      */
-    public String getHashSHA1();
+    public String getHasSHA1();
 
     /**
-     * Retorna o conteúdo do arquivo descompactado.
+     * Retorna o conteúdo do arquivo em um novo inputStream.
+     * Cada chamada a esse método deve retornar um novo inputStream
+     *
      */
-    public default byte[] getContentAsByteArray() {
-        try {
-            return ByteStreams.toByteArray(getContent());
-        } catch (IOException e) {
-            throw SingularUtil.propagate(e);
-        }
-    }
+    public InputStream newInputStream();
 
     /**
-     * Retorna o conteúdo do arquivo descompactado.
-     */
-    public InputStream getContent();
-
-    /**
-     * Retorna o tamanho do arquivo se a informação estiver disponível ou Null
+     * Retorna o tamanho do arquivo se a informação estiver disponível ou -1
      * se não for possível informar. No entanto, deve sempre retornar o tamanho
      * se a referencia for produzida por uma operação de inserção
      * (addContent()).
      */
-    public Integer getSize();
+    public long getSize();
 }

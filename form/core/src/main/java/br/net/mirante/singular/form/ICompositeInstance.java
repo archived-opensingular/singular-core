@@ -128,6 +128,8 @@ public interface ICompositeInstance {
         return getValue(fieldPath, String.class);
     }
 
+    public default Long getValueLong(String fieldPath) { return getValue(fieldPath, Long.class);}
+
     public default Integer getValueInteger(String fieldPath) { return getValue(fieldPath, Integer.class);}
 
     public default Boolean getValueBoolean(String fieldPath) { return getValue(fieldPath, Boolean.class);}

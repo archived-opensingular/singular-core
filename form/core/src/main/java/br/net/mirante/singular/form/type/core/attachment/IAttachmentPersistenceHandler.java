@@ -5,12 +5,10 @@
 
 package br.net.mirante.singular.form.type.core.attachment;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * <p>
@@ -29,10 +27,6 @@ import java.util.List;
  * guardar.
  * </p>
  * <p>
- * Apesar de não ser obrigatório, é altamente recomendado que os arquivo sejam
- * guardados compactados como gzip em máxima compressão (ver
- * {@link java.util.zip.DeflaterOutputStream} e
- * {@link java.util.zip.InflaterInputStream}).
  * </p>
  *
  * @author Daniel C. Bordin
@@ -41,46 +35,29 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends
 
     /**
      * Salvo os dados informado e associa-o ao documento (formulário) atual.
+     * O arquivo pode ser excluido em seguida
      *
-     * @return Referencia ao arquivo salvo, incluido id e hash do mesmo.
-     */
-    IAttachmentRef addAttachment(byte[] content);
-
-    /**
-     * Salvo os dados informado e associa-o ao documento (formulário) atual.
-     *
+     * @param file   Arquivo temporário com o conteúdo do anexo.
+     * @param length Tamanho em bytes do arquivo, note que esse parâmetro é inportante uma vez que o método
+     *               File.length não retorna o tamanho do arquivo de maneira confiável em qualquer sistema operacional
      * @return Referencia ao arquivo salvo, incluido id e hash do mesmo.
      * @throws IOException
      */
-    IAttachmentRef addAttachment(InputStream in);
+    T addAttachment(File file, long length);
 
     /**
-     * Copia o anexo entre persistencias diferente. Por default, faz uma copia
-     * simples (copia os bytes de um para o outro), mas pode ser sobreescrito
-     * para otimizar essa copia dependendo da implementações específicas.
+     * Copia o conteúdo de um IAttachmentRef para esse persistence handler e retorna
+     * o novo IAttachmentRef criado.
      */
-    default IAttachmentRef copy(IAttachmentRef toBeCopied) {
-        return addAttachment(toBeCopied.getContent());
-    }
+    T copy(IAttachmentRef toBeCopied);
 
     /**
      * Recuperar os anexos associados ao contexto atual (provavelmente contexto
      * será um Documento).
      */
     Collection<T> getAttachments();
-    /**
-     * Recuperar os anexos associados ao contexto atual (provavelmente contexto
-     * será um Documento).
-     */
-    default List<? extends IAttachmentRef> getAttachmentsAsList() {
-        Collection<? extends IAttachmentRef> c = getAttachments();
-        if (c instanceof List) {
-            return (List<? extends IAttachmentRef>) c;
-        }
-        return new ArrayList<>(c);
-    }
 
-    IAttachmentRef getAttachment(String hashId);
+    IAttachmentRef getAttachment(String fileId);
 
-    void deleteAttachment(String hashId);
+    void deleteAttachment(String fileId);
 }
