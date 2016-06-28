@@ -2,6 +2,7 @@ package br.net.mirante.singular.server.commons.flow;
 
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
+import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 
@@ -22,6 +23,7 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
 
     @Override
     public IFlowRenderer getFlowRenderer() {
-        return JGraphFlowRenderer.INSTANCE;
+//        return JGraphFlowRenderer.INSTANCE;
+        return YFilesFlowRenderer.getInstance();
     }
 }
