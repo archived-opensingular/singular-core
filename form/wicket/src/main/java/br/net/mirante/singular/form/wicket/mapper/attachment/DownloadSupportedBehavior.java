@@ -147,7 +147,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
                         try (
                                 InputStream inputStream = fileRef.newInputStream();
                         ) {
-                                    IOUtils.copy(inputStream, attributes.getResponse().getOutputStream());
+                            IOUtils.copy(inputStream, attributes.getResponse().getOutputStream());
                             /*Desregistrando recurso compartilhado*/
                             WebApplication.get().unmount(url);
                             WebApplication.get().getSharedResources().remove(ref.getKey());

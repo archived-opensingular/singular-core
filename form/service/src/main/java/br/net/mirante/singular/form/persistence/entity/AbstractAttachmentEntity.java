@@ -6,7 +6,6 @@
 package br.net.mirante.singular.form.persistence.entity;
 
 import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.form.io.CompressionUtil;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import br.net.mirante.singular.support.persistence.util.Constants;
@@ -17,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -101,7 +101,7 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
                 f = File.createTempFile(id, hashSha1);
                 f.deleteOnExit();
                 try (InputStream in = rawContent.getBinaryStream();
-                     FileOutputStream fos = new FileOutputStream(f)) {
+                     BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
                     IOUtils.copy(in, fos);
                 }
             }
