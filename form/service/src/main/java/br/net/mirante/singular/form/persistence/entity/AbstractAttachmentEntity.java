@@ -105,7 +105,8 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
                     IOUtils.copy(in, fos);
                 }
             }
-            return CompressionUtil.inflateToInputStream(new FileInputStream(f));
+//            return CompressionUtil.inflateToInputStream(new FileInputStream(f));
+            return new FileInputStream(f);
         } catch (IOException | SQLException e) {
             throw new SingularException(e);
         }
