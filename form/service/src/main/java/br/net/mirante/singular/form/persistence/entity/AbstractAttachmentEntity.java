@@ -6,6 +6,7 @@
 package br.net.mirante.singular.form.persistence.entity;
 
 import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.form.io.CompressionUtil;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import br.net.mirante.singular.support.persistence.util.Constants;
@@ -105,8 +106,7 @@ public class AbstractAttachmentEntity extends BaseEntity<String> implements IAtt
                     IOUtils.copy(in, fos);
                 }
             }
-//            return CompressionUtil.inflateToInputStream(new FileInputStream(f));
-            return new FileInputStream(f);
+            return CompressionUtil.inflateToInputStream(new FileInputStream(f));
         } catch (IOException | SQLException e) {
             throw new SingularException(e);
         }

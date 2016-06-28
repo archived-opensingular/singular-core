@@ -46,7 +46,6 @@ public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
     @Override
     public InputStream newInputStream() {
         try {
-//            return CompressionUtil.inflateToInputStream(new FileInputStream(path));
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {
             throw SingularUtil.propagate(e);

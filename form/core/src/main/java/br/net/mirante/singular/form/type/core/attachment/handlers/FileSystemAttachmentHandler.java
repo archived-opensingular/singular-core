@@ -8,6 +8,7 @@ package br.net.mirante.singular.form.type.core.attachment.handlers;
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.io.HashAndCompressInputStream;
+import br.net.mirante.singular.form.io.HashUtil;
 import br.net.mirante.singular.form.io.IOUtil;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
@@ -19,10 +20,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.DigestInputStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.DeflaterInputStream;
+import java.util.zip.DeflaterOutputStream;
 
 /**
  * This handler persists uploaded files in the filesystem. You mus inform which
@@ -84,10 +88,10 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         String id = UUID.randomUUID().toString();
         File temp = findFileFromId(id);
         try (OutputStream fos = IOUtil.newBuffredOutputStream(temp);
-             HashAndCompressInputStream inHash = new HashAndCompressInputStream(origin);
+             DigestInputStream inHash = HashUtil.toSHA1InputStream(IOUtil.newBuffredInputStream(origin));
              OutputStream infoFOS = IOUtil.newBuffredOutputStream(infoFileFromId(id))) {
             IOUtils.copy(inHash, fos);
-            String sha1 = inHash.getHashSHA1();
+            String sha1 = HashUtil.bytesToBase16(inHash.getMessageDigest().digest());
             IOUtil.writeLines(infoFOS, sha1, String.valueOf(originLength));
             return newRef(id, sha1, temp.getAbsolutePath(), originLength);
         }
