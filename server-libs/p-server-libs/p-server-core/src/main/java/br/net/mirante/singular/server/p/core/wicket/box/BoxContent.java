@@ -108,6 +108,15 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
     }
 
     @Override
+    protected WebMarkupContainer criarLinkEdicao(BoxModel peticao, String id) {
+        if (peticao.getProcessBeginDate() == null) {
+            return criarLink(peticao, id, FormActions.FORM_FILL);
+        } else {
+            return criarLink(peticao, id, FormActions.FORM_FILL_WITH_ANALYSIS);
+        }
+    }
+
+    @Override
     protected Pair<String, SortOrder> getSortProperty() {
         return sortProperty;
     }

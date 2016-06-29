@@ -28,6 +28,10 @@ public class BoxModel implements Map<String, Object>, Serializable {
         return ((Integer) intern.get("cod")).longValue();
     }
 
+    public String getProcessBeginDate() {
+        return (String) intern.get("processBeginDate");
+    }
+
     @Override
     public int size() {
         return intern.size();
