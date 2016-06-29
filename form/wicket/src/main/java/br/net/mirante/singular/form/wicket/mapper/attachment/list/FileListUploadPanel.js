@@ -5,8 +5,9 @@
 
         window.FileListUploadPanel.setup = function(params) {
             var self = this;
-            self.last_id = 1;
-
+            if (self.last_id == undefined){
+                self.last_id = 1;
+            }
             $('#' + params.file_field_id).fileupload({
                 url: params.upload_url,
                 paramName: params.param_name,
@@ -39,7 +40,10 @@
                                     .append($('<span>').text(name))
                                 ),
                             $('<div class="list-item-progress" id="progress_bar_'+fake_id+'">')
-                                .append($('<div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>'))
+                                .append($('<div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>')),
+                            $('<div class="list-item-action">')
+                                .append($('<a href="javascript:void(0);" class="list-action-remove hidden">')
+                                    .append($('<i class="fa fa-close">')))
                             );
 
                     $('#'+params.component_id).find('.list-detail-empty').hide();
@@ -63,11 +67,6 @@
                                     if (status == 'success'){
                                         $('#progress_bar_'+fake_id).hide();
                                         var box = $('#upload-box-'+fake_id);
-                                        box.append(
-                                            $('<div class="list-item-action">')
-                                                .append($('<a href="javascript:void(0);" class="list-action-remove">')
-                                                    .append($('<i class="fa fa-close">')))
-                                        );
                                         box.find('.fa-file-text')
                                             .removeClass('fa-file-text')
                                             .addClass('fa-check');
@@ -82,6 +81,7 @@
                                                 event.preventDefault();
                                             });
                                         box.find('.list-action-remove')
+                                            .removeClass('hidden')
                                             .click(function (e) {
                                                 $.getJSON(params.remove_url,
                                                     {   fileId: dataSInstance.fileId,

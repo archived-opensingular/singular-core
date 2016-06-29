@@ -7,7 +7,6 @@ package br.net.mirante.singular.form.type.core.attachment.handlers;
 
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.io.HashAndCompressInputStream;
 import br.net.mirante.singular.form.io.HashUtil;
 import br.net.mirante.singular.form.io.IOUtil;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
@@ -25,8 +24,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import java.util.zip.DeflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
 
 /**
  * This handler persists uploaded files in the filesystem. You mus inform which
@@ -78,9 +75,6 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     @Override
     public IAttachmentRef addAttachment(File file, long length) {
         try {
-            if (!file.exists()){
-                System.out.println(file.getAbsolutePath());
-            }
             return addAttachment(new FileInputStream(file), length);
         } catch (Exception e) {
             throw new SingularFormException("Erro lendo origem de dados", e);
