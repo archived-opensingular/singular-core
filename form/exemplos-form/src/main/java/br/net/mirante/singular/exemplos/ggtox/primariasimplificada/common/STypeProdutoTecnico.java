@@ -2,7 +2,11 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInfoType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.type.core.STypeBoolean;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewListByForm;
@@ -12,12 +16,12 @@ import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 public class STypeProdutoTecnico extends STypeComposite<SIComposite> {
 
     public STypeList<STypeFabricante, SIComposite> fabricantes;
-    public STypeFabricanteConformeMatriz           fabricante;
-    public STypeString                             nomeProdutoTecnico;
-    public STypeAnvisaNumeroProcesso               numeroProcessoProdutoTecnico;
-    public STypeBoolean                            finalidadeConformeMatriz;
-    public STypeBoolean                            classeConformeMatriz;
-    public STypeBoolean                            modoAcaoConformeMatriz;
+    public STypeFabricanteConformeMatriz fabricante;
+    public STypeString nomeProdutoTecnico;
+    public STypeAnvisaNumeroProcesso numeroProcessoProdutoTecnico;
+    public STypeBoolean finalidadeConformeMatriz;
+    public STypeBoolean classeConformeMatriz;
+    public STypeBoolean modoAcaoConformeMatriz;
 
     @Override
     protected void onLoadType(TypeBuilder builder) {
@@ -55,19 +59,24 @@ public class STypeProdutoTecnico extends STypeComposite<SIComposite> {
         fabricantes.withMiniumSizeOf(1);
         fabricantes.asAtr().label("Fabricantes");
         fabricantes.withView(new SViewListByMasterDetail()
-                .col(fabricantes.getElementsType().cnpj)
-                .col(fabricantes.getElementsType().nome)
-                .col(fabricantes.getElementsType().cidade)
-                .col(fabricantes.getElementsType().estado)
+                        .col(fabricantes.getElementsType().cnpj)
+                        .col(fabricantes.getElementsType().nome)
+                        .col(fabricantes.getElementsType().cidade)
+                        .col(fabricantes.getElementsType().estado)
         );
 
         fabricante = addField("fabricante", STypeFabricanteConformeMatriz.class);
+        fabricante
+                .asAtrBootstrap()
+                .colPreference(6)
+                .newRow();
 
         finalidadeConformeMatriz
                 .asAtr()
                 .label("Declaro que a finalidade está conforme a petição Matriz.")
                 .asAtrBootstrap()
-                .colPreference(6);
+                .colPreference(6)
+                .newRow();
 
         finalidadeConformeMatriz
                 .addInstanceValidator(validator -> {

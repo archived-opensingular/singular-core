@@ -136,14 +136,16 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         AbstractResource resource = new AbstractResource() {
             @Override
             protected ResourceResponse newResourceResponse(Attributes attributes) {
-
+                IAttachmentRef fileRef = findAttachmentRef(id);
                 ResourceResponse resourceResponse = new ResourceResponse();
                 resourceResponse.setContentType("application/octet-stream");
                 resourceResponse.setFileName(filename);
+                if (fileRef.getSize() > 0) {
+                    resourceResponse.setContentLength(fileRef.getSize());
+                }
                 resourceResponse.setWriteCallback(new WriteCallback() {
                     @Override
                     public void writeData(Attributes attributes) throws IOException {
-                        IAttachmentRef fileRef = findAttachmentRef(id);
                         try (
                                 InputStream inputStream = fileRef.newInputStream();
                         ) {
