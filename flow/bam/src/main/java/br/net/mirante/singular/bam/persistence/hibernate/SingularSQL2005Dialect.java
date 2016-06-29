@@ -9,7 +9,7 @@ import org.hibernate.dialect.SQLServer2005Dialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 
-import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.util.Constants;
 
 public class SingularSQL2005Dialect extends SQLServer2005Dialect {
 

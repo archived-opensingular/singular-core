@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -25,13 +26,15 @@ import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import br.net.mirante.singular.util.wicket.behavior.FormChoiceAjaxUpdateBehavior;
-import br.net.mirante.singular.util.wicket.behavior.FormComponentAjaxUpdateBehavior;
-import br.net.mirante.singular.util.wicket.behavior.IAjaxUpdateConfiguration;
 import br.net.mirante.singular.commons.lambda.IBiConsumer;
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.commons.lambda.ISupplier;
+import br.net.mirante.singular.util.wicket.behavior.FormChoiceAjaxUpdateBehavior;
+import br.net.mirante.singular.util.wicket.behavior.FormComponentAjaxUpdateBehavior;
+import br.net.mirante.singular.util.wicket.behavior.IAjaxUpdateConfiguration;
+
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 
 @SuppressWarnings("serial")
 public interface IBehaviorsMixin extends Serializable {
@@ -97,6 +100,15 @@ public interface IBehaviorsMixin extends Serializable {
             @Override
             public void onConfigure(Component component) {
                 component.setRenderBodyOnly(renderBodyOnly.getObject());
+            }
+        };
+    }
+
+    default Behavior visibleIf(ISupplier<Boolean> model) {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                component.setVisible(model.get());
             }
         };
     }
@@ -216,6 +228,12 @@ public interface IBehaviorsMixin extends Serializable {
                 return isEnabled.apply(component);
             }
         };
+    }
+
+    default Behavior onEnterDelegate(Component target) {
+        return $b.onReadyScript(c -> {
+            return JQuery.on(c, "keypress", "if((e.keyCode || e.which) == 13){e.preventDefault(); " + JQuery.$(target) + ".click();}");
+        });
     }
 
 }

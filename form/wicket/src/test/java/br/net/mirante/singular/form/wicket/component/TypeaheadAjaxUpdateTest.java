@@ -1,19 +1,17 @@
 package br.net.mirante.singular.form.wicket.component;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.SOptionsConfig;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.provider.SimpleProvider;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Test;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -21,7 +19,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 /**
  * Verifica se é possivel selecionar um valor apos
  * o componente de typeahead ser atualizado via ajax por outro componente.
- *
+ * <p>
  * Ultima execução : 08/04/2016
  * Falhou: Não que eu saiba
  */
@@ -34,35 +32,30 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
     protected void buildBaseType(STypeComposite<?> baseType) {
 
         genero = baseType.addFieldString("genero");
-        genero.withSelectionOf("Feminino", "Masculino");
+        genero.selectionOf("Feminino", "Masculino");
 
         pessoa = baseType.addFieldComposite("pessoa");
 
-        final STypeInteger idade = pessoa.addFieldInteger("id");
-        final STypeString  nome  = pessoa.addFieldString("descricao");
+        final STypeInteger idade = pessoa.addFieldInteger("idade");
+        final STypeString  nome  = pessoa.addFieldString("nome");
 
-        pessoa.withSelectionFromProvider(nome, new SOptionsProvider() {
-            @Override
-            public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
-                final SIList<?>        list  = optionsInstance.getType().newList();
-                final Optional<String> value = optionsInstance.findNearestValue(genero, String.class);
-                if (value.isPresent()) {
-                    if (value.get().equals("Masculino")) {
-                        final SIComposite danilo = (SIComposite) list.addNew();
-                        danilo.setValue(idade, 20);
-                        danilo.setValue(nome, "Danilo");
-                    } else {
-                        final SIComposite francielle = (SIComposite) list.addNew();
-                        francielle.setValue(idade, 19);
-                        francielle.setValue(nome, "Francielle");
+        pessoa.autocompleteOf(Pessoa.class)
+                .id(Pessoa::getNome)
+                .display("${nome}")
+                .autoConverterOf(Pessoa.class)
+                .simpleProvider((SimpleProvider<Pessoa, SIComposite>) ins -> {
+                    final Optional<String> genero1 = ins.findNearestValue(TypeaheadAjaxUpdateTest.this.genero);
+                    if (genero1.isPresent()) {
+                        if (genero1.get().equals("Masculino")) {
+                            return Collections.singletonList(Pessoa.of(20, "Danilo"));
+                        } else {
+                            return Collections.singletonList(Pessoa.of(19, "Francielle"));
+                        }
                     }
-                    return list;
-                }
-                return null;
-            }
-        });
-        pessoa.withView(SViewAutoComplete::new);
-        pessoa.asAtrBasic()
+                    return null;
+                });
+
+        pessoa.asAtr()
                 .dependsOn(genero)
                 .visible(ins -> ins.findNearestValue(genero, String.class).isPresent());
     }
@@ -73,7 +66,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
         final FormComponent input         = findFirstFormComponentsByType(page.getForm(), pessoa);
         tester.assertInvisible(input.getPageRelativePath());
         form.select(getFormRelativePath(selecaoGenero), 0);
-        tester.executeAjaxEvent(selecaoGenero, "change");
+        tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
         tester.assertVisible(input.getPageRelativePath());
     }
 
@@ -85,13 +78,13 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
         {
             form.select(getFormRelativePath(selecaoGenero), 1);
-            tester.executeAjaxEvent(selecaoGenero, "change");
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
             setAndCheckValue(input);
         }
 
         {
             form.select(getFormRelativePath(selecaoGenero), 0);
-            tester.executeAjaxEvent(selecaoGenero, "change");
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
             setAndCheckValue(input);
         }
 
@@ -105,30 +98,52 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
 
         {
             form.select(getFormRelativePath(selecaoGenero), 1);
-            tester.executeAjaxEvent(selecaoGenero, "change");
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
             setAndCheckValue(input);
         }
 
         {
             form.select(getFormRelativePath(selecaoGenero), 0);
-            tester.executeAjaxEvent(selecaoGenero, "change");
+            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
             setAndCheckValue(input);
         }
 
-        tester.submitForm(form.getForm());
         assertThat(input.getModel().getObject()).isNotNull();
-
     }
 
     private void setAndCheckValue(FormComponent input) {
-        SOptionsConfig optionsConfig = ((IMInstanciaAwareModel) input.getModel()).getMInstancia().getOptionsConfig();
-        assertThat(optionsConfig.listSelectOptions()).hasSize(1);
-        String key = optionsConfig.listSelectOptions()
-                .keySet()
-                .stream()
-                .findFirst().orElseThrow(() -> new AssertionError("Lista vazia"));
-        form.setValue(input, key);
-        tester.executeAjaxEvent(input, "change");
+        form.setValue(input, "Danilo");
+        tester.executeAjaxEvent(input, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
         assertThat(input.getModel().getObject()).isNotNull();
     }
+
+    public static class Pessoa implements Serializable {
+
+        private Integer idade;
+        private String  nome;
+
+        public static Pessoa of(Integer idade, String nome) {
+            final Pessoa p = new Pessoa();
+            p.idade = idade;
+            p.nome = nome;
+            return p;
+        }
+
+        public Integer getIdade() {
+            return idade;
+        }
+
+        public void setIdade(Integer idade) {
+            this.idade = idade;
+        }
+
+        public String getNome() {
+            return nome;
+        }
+
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+    }
+
 }

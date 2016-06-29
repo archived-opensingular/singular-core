@@ -47,23 +47,18 @@
         <!-- Projeto Singular -->
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>form-core</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>br.net.mirante</groupId>
             <artifactId>form-wicket</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>br.net.mirante</groupId>
-            <artifactId>singular-support</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>exemplos-form</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
+            <version>${singular.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>studio-core</artifactId>
+            <version>${singular.version}</version>
         </dependency>
 
 
@@ -111,13 +106,6 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.10</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

@@ -20,7 +20,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.springframework.web.util.JavaScriptUtils;
 
-import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.util.wicket.model.FallbackReadOnlyModel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
@@ -116,7 +115,7 @@ public interface SingularWicketContainer<CONTAINER extends MarkupContainer, T> {
     default void alert(AjaxRequestTarget target, Serializable message) {
         CONTAINER self = (CONTAINER) this;
         Page page = self.getPage();
-        if (self != page && page instanceof SingularWicketContainer) {
+        if (!self.equals(page) && page instanceof SingularWicketContainer) {
             ((SingularWicketContainer<?, ?>) page).alert(target, message);
         } else {
             String msgString;

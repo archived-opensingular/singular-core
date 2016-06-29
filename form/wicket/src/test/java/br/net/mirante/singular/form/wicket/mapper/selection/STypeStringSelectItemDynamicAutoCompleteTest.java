@@ -1,16 +1,12 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.core.SIString;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewAutoComplete;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.fest.assertions.core.Condition;
 import org.junit.Test;
@@ -33,16 +29,7 @@ public class STypeStringSelectItemDynamicAutoCompleteTest {
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
             base = baseType.addFieldString("myHero");
-            base.withSelectionFromProvider(new SOptionsProvider() {
-                @Override
-                public SIList<? extends SInstance> listOptions(SInstance instance, String filter) {
-                    SIList<?> r = base.newList();
-                    for(String d : DOMAINS){
-                        r.addNew().setValue(d);
-                    }
-                    return r;
-                }
-            });
+            base.selectionOf(DOMAINS);
             base.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
         }
 
@@ -58,13 +45,14 @@ public class STypeStringSelectItemDynamicAutoCompleteTest {
 
     public static class Default extends Base {
 
-        @Test public void renderField(){
+        @Test
+        public void renderField() {
             assertThat(findTag(form.getForm(), TypeaheadComponent.class)).hasSize(1);
             assertThat(findTag(form.getForm(), TextField.class)).hasSize(2);
-            assertThat(findTag(form.getForm(), HiddenField.class)).hasSize(1);
         }
 
-        @Test public void haveABloodhoundBehabiour(){
+        @Test
+        public void haveABloodhoundBehabiour() {
             List<Component> tag = findTag(form.getForm(), TypeaheadComponent.class);
             assertThat(tag.get(0).getBehaviors()).haveAtLeast(1, new Condition<Behavior>() {
                 @Override

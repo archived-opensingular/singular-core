@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
+import br.net.mirante.singular.support.persistence.util.EnumId;
+
 public enum TipoSolventeResidual implements EnumId<TipoSolventeResidual, Character> {
 
     CLASSE_1('1', "Classe 1 - Solventes que devem ser evitados"),
@@ -38,7 +40,8 @@ public enum TipoSolventeResidual implements EnumId<TipoSolventeResidual, Charact
         this.codigo = codigo;
     }
 
-    public static TipoSolventeResidual valueOfEnum(Character codigo) {
+    @Override
+    public TipoSolventeResidual valueOfEnum(Character codigo) {
         TipoSolventeResidual status[] = TipoSolventeResidual.values();
 
         for (TipoSolventeResidual st : status) {
@@ -49,10 +52,5 @@ public enum TipoSolventeResidual implements EnumId<TipoSolventeResidual, Charact
         return null;
     }
 
-
-    @Override
-    public TipoSolventeResidual getEnum() {
-        return this;
-    }
 
 }

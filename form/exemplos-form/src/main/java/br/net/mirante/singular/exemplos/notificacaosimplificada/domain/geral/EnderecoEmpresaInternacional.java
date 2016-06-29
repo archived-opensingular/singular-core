@@ -5,7 +5,6 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
 
@@ -20,12 +19,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import br.net.mirante.singular.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 
 @Entity
 @Table(name = "TB_ENDERECO_EMP_INTERNACIONAL", schema = "DBGERAL")
 @XmlRootElement(name = "enderecoEmpresaInternacional", namespace = "http://www.anvisa.gov.br/geral/schema/domains")
-public class EnderecoEmpresaInternacional extends BaseEntity {
+public class EnderecoEmpresaInternacional extends BaseEntity<EnderecoEmpresaInternacionalId> {
 
     private static final long serialVersionUID = 1L;
 
@@ -185,7 +184,7 @@ public class EnderecoEmpresaInternacional extends BaseEntity {
     }
 
     @Override
-    public Serializable getCod() {
+    public EnderecoEmpresaInternacionalId getCod() {
         return id;
     }
 }

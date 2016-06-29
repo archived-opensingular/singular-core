@@ -62,6 +62,7 @@
           <xs:element minOccurs="0" name="processAbbreviation" type="xs:string"/>
           <xs:element minOccurs="0" name="codProcessInstance" type="xs:long"/>
           <xs:element minOccurs="0" name="username" type="xs:string"/>
+          <xs:element minOccurs="0" name="lastVersion" type="xs:int"/>
         </xs:sequence>
       </xs:complexType>
 
@@ -205,7 +206,7 @@
   </wsdl:binding>
   <wsdl:service name="SingularWSService">
     <wsdl:port binding="tns:SingularWSServiceSoapBinding" name="SingularWSPort">
-      <soap:address location="http://localhost:8080/canabidiol/SingularWS"/>
+      <soap:address location="http://localhost:8080/notificacaosimplificada/SingularWS"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.core.STypeTime;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.core.STypeTime;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MIDateTimeModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by nuk on 04/04/16.
+ * Mapper for data type responsible for storing time (hour and minutes).
  */
 public class TimeMapper extends ControlsFieldComponentAbstractMapper {
 

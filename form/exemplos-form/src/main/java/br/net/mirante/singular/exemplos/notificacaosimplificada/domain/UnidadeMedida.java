@@ -2,7 +2,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.domain;
 
 // Generated 16/03/2010 08:00:26 by Mirante 3.2.2.GA
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 
 import javax.persistence.Column;

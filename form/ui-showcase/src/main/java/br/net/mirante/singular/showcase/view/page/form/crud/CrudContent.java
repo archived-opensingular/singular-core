@@ -39,16 +39,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.util.xml.MParser;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.internal.xml.MParser;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
@@ -70,7 +70,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     private final static Logger LOGGER = LoggerFactory.getLogger(CrudContent.class);
 
     private BSDataTable<ExampleDataDTO, String> listTable;
-    private FormVO                              selectedTemplate;
+    private IModel<FormVO>                      selectedTemplate;
 
     private final BFModalBorder deleteModal  = new BFModalBorder("deleteModal");
     private final BFModalBorder viewXmlModal = new BFModalBorder("viewXmlModal");
@@ -91,9 +91,9 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
     private void setActiveTemplate(StringValue type) {
         if (!type.isEmpty()) {
-            selectedTemplate = new FormVO(dictionaryLoader.findEntryByType(type.toString()));
+            selectedTemplate = new Model<>(new FormVO(dictionaryLoader.findEntryByType(type.toString())));
         } else {
-            selectedTemplate = new FormVO(null, null);
+            selectedTemplate = new Model<>(new FormVO(null, null));
         }
     }
 
@@ -102,8 +102,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
         super.onInitialize();
 
-        add(new Form<>("optionsForm").add(setUpTemplatesOptions()));
-        add(new Form<>("delete-form").add(deleteModal));
+        add(new SingularForm<>("optionsForm").add(setUpTemplatesOptions()));
+        add(new SingularForm<>("delete-form").add(deleteModal));
         add(setUpInsertButton());
         add(listTable = setupDataTable());
         add(viewXmlModal);
@@ -130,35 +130,29 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     }
 
     private DropDownChoice setUpTemplatesOptions() {
-        final List<SelectOption> options = dictionaryLoader.getEntries().stream()
-                .map(t -> new SelectOption(t.getDisplayName(), new FormVO(t)))
+        final List<FormVO> options = dictionaryLoader.getEntries().stream()
+                .map(FormVO::new)
                 .collect(Collectors.toList());
 
-        return new DropDownChoice<SelectOption>("options", new SelectOption(selectedTemplate.getKey(), selectedTemplate), options, new ChoiceRenderer<>("selectLabel", "value")) {
+        return new DropDownChoice<FormVO>("options", selectedTemplate, options, new ChoiceRenderer<>("key", "key")) {
             @Override
             protected boolean wantOnSelectionChangedNotifications() {
                 return true;
             }
-
-            @Override
-            protected void onSelectionChanged(SelectOption newSelection) {
-                selectedTemplate = (FormVO) newSelection.getValue();
-            }
-
         };
     }
 
     private MarkupContainer setUpInsertButton() {
-        return new Form<>("form").add(new AjaxButton("insert") {
+        return new SingularForm<>("form").add(new AjaxButton("insert") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                PageParameters params = new PageParameters().add(FormPage.TYPE_NAME, selectedTemplate.getTypeName());
+                PageParameters params = new PageParameters().add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName());
                 setResponsePage(FormPage.class, params);
             }
 
             @Override
             public boolean isVisible() {
-                return selectedTemplate != null && selectedTemplate.getKey() != null;
+                return selectedTemplate != null && selectedTemplate.getObject().getKey() != null;
             }
 
         });
@@ -177,14 +171,14 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
                 .appendColumn($action.get().appendAction(getMessage("label.table.column.edit"), Icone.PENCIL_SQUARE,
                         (target, model) -> {
                             setResponsePage(FormPage.class, new PageParameters()
-                                    .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                                    .add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName())
                                     .add(FormPage.MODEL_ID, model.getObject().getId())
                                     .add(FormPage.VIEW_MODE, ViewMode.EDITION));
                         }))
                 .appendColumn($action.get().appendAction(getMessage("label.table.column.visualizar"), Icone.EYE,
                         (target, model) -> {
                             setResponsePage(FormPage.class, new PageParameters()
-                                    .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                                    .add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName())
                                     .add(FormPage.MODEL_ID, model.getObject().getId())
                                     .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION));
                         }));
@@ -204,7 +198,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             }
         }.appendAction(getMessage("label.table.column.analisar"), Icone.COMMENT, (target, model) -> {
             setResponsePage(FormPage.class, new PageParameters()
-                    .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                    .add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName())
                     .add(FormPage.MODEL_ID, model.getObject().getId())
                     .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
                     .add(FormPage.ANNOTATION, AnnotationMode.EDIT));
@@ -220,7 +214,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             }
         }.appendAction(getMessage("label.table.column.exigencia"), Icone.PENCIL, (target, model) -> {
             setResponsePage(FormPage.class, new PageParameters()
-                    .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                    .add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName())
                     .add(FormPage.MODEL_ID, model.getObject().getId())
                     .add(FormPage.VIEW_MODE, ViewMode.EDITION)
                     .add(FormPage.ANNOTATION, AnnotationMode.READ_ONLY));
@@ -229,8 +223,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
     private boolean hasAnnotations() {
         boolean hasAnntations = false;
-        if (selectedTemplate.getType() != null && selectedTemplate.getType() instanceof STypeComposite) {
-            STypeComposite<?> type = (STypeComposite<?>) selectedTemplate.getType();
+        if (selectedTemplate.getObject().getType() != null && selectedTemplate.getObject().getType() instanceof STypeComposite) {
+            STypeComposite<?> type = (STypeComposite<?>) selectedTemplate.getObject().getType();
             for (SType<?> i : type.getFields()) {
                 hasAnntations |= i.asAtrAnnotation().isAnnotated();
             }
@@ -243,13 +237,13 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
             @Override
             public long size() {
-                return dao.count(selectedTemplate.getTypeName());
+                return dao.count(selectedTemplate.getObject().getTypeName());
             }
 
             @Override
             public Iterator<? extends ExampleDataDTO> iterator(int first, int count, String property,
                                                                boolean asc) {
-                return dao.list(selectedTemplate.getTypeName(), first, count, Optional.ofNullable(property), asc).iterator();
+                return dao.list(selectedTemplate.getObject().getTypeName(), first, count, Optional.ofNullable(property), asc).iterator();
             }
         };
     }
@@ -266,7 +260,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         final String     definicao       = getDefinicao(model.getObject().getType());
         final BSTabPanel xmlTabs         = new BSTabPanel("xmlTabs");
 
-        final Function<String, BOutputPanel> creator = val -> new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(val));
+        final Function<String, BOutputPanel> creator = val -> new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(val));
 
         xmlTabs.addTab(getString("label.xml.tabulado"), creator.apply(xmlTabulado));
         xmlTabs.addTab(getString("label.xml.persistencia"), creator.apply(xmlPersistencia));
@@ -274,7 +268,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
         if (hasAnnotations()) {
             String xmlAnnotations = getXmlTabulado(model.getObject().getAnnnotations());
-            xmlTabs.addTab(getString("label.xml.anotacao"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlAnnotations)));
+            xmlTabs.addTab(getString("label.xml.anotacao"), new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(xmlAnnotations)));
         }
 
         viewXmlModal.addOrReplace(xmlTabs);
@@ -285,9 +279,9 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     private String getXmlTabulado(String xmlString) {
         if (StringUtils.isNotEmpty(xmlString)) {
             try {
-                final MElement xml = MParser.parse(xmlString);
-                final StringWriter sw = new StringWriter();
-                final PrintWriter writer = new PrintWriter(sw);
+                final MElement     xml    = MParser.parse(xmlString);
+                final StringWriter sw     = new StringWriter();
+                final PrintWriter  writer = new PrintWriter(sw);
                 xml.printTabulado(writer);
                 return sw.toString();
             } catch (SAXException | IOException e) {

@@ -5,18 +5,18 @@
 
 package br.net.mirante.singular.form.wicket.component;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
-import java.util.Optional;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
+import java.util.Optional;
+
 public abstract class SingularValidationButton extends SingularButton {
 
-    public SingularValidationButton(String id) {
-        super(id);
+    public SingularValidationButton(String id, IModel<? extends SInstance> currentInstance) {
+        super(id, currentInstance);
     }
 
     protected abstract void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance>  instanceModel);
@@ -32,6 +32,10 @@ public abstract class SingularValidationButton extends SingularButton {
         }
         target.add(form);
     }
+    
+    @Override
+    protected boolean isShouldProcessFormSubmitWithoutValidation() {
+        return false;
+    }
 
-    public abstract IModel<? extends SInstance>  getCurrentInstance();
 }

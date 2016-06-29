@@ -3,4 +3,34 @@
     -moz-hyphens: auto;
     -ms-hyphens: auto;
     hyphens: auto;
-} 
+}
+
+.ms-elem-selectable > span::after {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: '\f0a9' !important;
+    float: right;
+}
+
+.ms-selected {
+    width: inherit;
+    text-align: right;
+}
+
+.ms-selected > span::before {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: '\f0a8' !important;
+    float: left;
+}
+
+.ms-container {
+    width: auto;
+    background: none !important;
+}
+
+.ms-selectable {
+    width: 49% !important;
+}
+
+.ms-selection {
+    width: 49% !important;
+}

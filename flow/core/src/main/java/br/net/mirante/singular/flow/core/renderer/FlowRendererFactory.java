@@ -24,7 +24,11 @@ public class FlowRendererFactory {
             .build(new CacheLoader<Class<? extends ProcessDefinition>, byte[]>() {
                 @Override
                 public byte[] load(Class<? extends ProcessDefinition> classe) throws Exception {
-                    return Flow.getConfigBean().getFlowRenderer().generateImage(Flow.getProcessDefinition(classe));
+                    return flowRenderer().generateImage(Flow.getProcessDefinition(classe));
+                }
+
+                private IFlowRenderer flowRenderer() {
+                    return Flow.getConfigBean().getFlowRenderer();
                 }
             });
 

@@ -24,6 +24,8 @@
 
     <bean id="showcaseTypeLoader" class="br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader"/>
 
+    <bean id="showcaseStudioTypeLoader" class="br.net.mirante.singular.showcase.dao.form.studio.ShowcaseStudioTypeLoader"/>
+
 	<bean id="formConfigWithoutDatabase" class="br.net.mirante.singular.form.spring.SpringFormConfig">
         <property name="typeLoader" ref="showcaseTypeLoader"/>
 	</bean>
@@ -35,5 +37,9 @@
         <property name="typeLoader" ref="showcaseTypeLoader"/>
         <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
 	</bean>
+
+    <bean id="fileDao" class="br.net.mirante.singular.form.persistence.dao.FileDao" />
+    <bean id="studioCollectionPersistenceFactory" class="br.net.mirante.singular.studio.persistence.StudioCollectionPersistenceFactory" />
+    <bean id="collectionGallery" class="br.net.mirante.singular.studio.core.CollectionGallery" />
 
 </beans>

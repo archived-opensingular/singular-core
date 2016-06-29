@@ -1,26 +1,33 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.options.SOptionsConfig;
-import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateSingularFormComponentPanel;
-import br.net.mirante.singular.form.wicket.component.SingularFormComponentPanel;
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
-import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -28,12 +35,18 @@ import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
 
-import java.util.Map;
-import java.util.Optional;
-
-import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static com.google.common.collect.Maps.newHashMap;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.provider.Provider;
+import br.net.mirante.singular.form.provider.ProviderContext;
+import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.view.SViewAutoComplete;
+import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 
 
 /**
@@ -46,19 +59,32 @@ import static com.google.common.collect.Maps.newHashMap;
  *
  * @author Fabricio Buzeto
  */
-public class TypeaheadComponent extends SingularFormComponentPanel<SInstance, String> {
+public class TypeaheadComponent extends Panel {
+
+    public static final CssReferenceHeaderItem CSS_REFERENCE = CssReferenceHeaderItem.forReference(new PackageResourceReference(TypeaheadComponent.class, "TypeaheadComponent.css"){
+        @Override
+        public List<HeaderItem> getDependencies() {
+            return SingularTemplate.getDefaultCSSUrls();
+        }
+    });
+
+    private static final long serialVersionUID = -3639240121493651170L;
 
     private static final String BLOODHOUND_SUGGESTION_KEY_NAME   = "key";
     private static final String BLOODHOUND_SUGGESTION_LABEL_NAME = "value";
-    private final SViewAutoComplete.Mode fetch;
-    private       WebMarkupContainer     container;
-    private       AbstractAjaxBehavior   dynamicFetcher;
-    private       HiddenField            valueField;
-    private       TextField<String>      labelField;
 
-    @SuppressWarnings("unchecked")
+    private final Map<String, TypeaheadCache> cache = new HashMap<>();
+
+    private final SViewAutoComplete.Mode      fetch;
+    private final IModel<? extends SInstance> model;
+    private       WebMarkupContainer          container;
+    private       BloodhoundDataBehavior      dynamicFetcher;
+    private       TextField<String>           valueField;
+    private       TextField<String>           labelField;
+
     public TypeaheadComponent(String id, IModel<? extends SInstance> model, SViewAutoComplete.Mode fetch) {
-        super(id, new MSelectionInstanceModel<>(model));
+        super(id);
+        this.model = model;
         this.fetch = fetch;
         add(container = buildContainer());
     }
@@ -79,20 +105,112 @@ public class TypeaheadComponent extends SingularFormComponentPanel<SInstance, St
     @SuppressWarnings("unchecked")
     private WebMarkupContainer buildContainer() {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
-        c.add(labelField = new TextField("label_field",
-                (IReadOnlySafeModel) () -> instance() != null ? Optional.ofNullable(instance().getSelectLabel()).orElse("") : ""));
-        c.add(valueField = new HiddenField("value_field",
-                (IReadOnlySafeModel) () -> instance() != null ? Optional.ofNullable(optionsConfig().getKeyFromOption(instance())).orElse("") : ""));
-        add(dynamicFetcher = new BloodhoundDataBehavior((MSelectionInstanceModel) getDefaultModel()));
+        c.add(labelField = new TextField<>("label_field", new Model<String>() {
+
+            private String lastDisplay;
+            private Object lastValue;
+
+            @Override
+            public String getObject() {
+                if (instance().isEmptyOfData()) {
+                    return null;
+                } else {
+                    if (!Value.dehydrate(instance()).equals(lastValue)) {
+                        lastValue = Value.dehydrate(instance());
+                        final SInstanceConverter<Serializable, SInstance> converter = instance().asAtrProvider().getConverter();
+                        if (converter != null) {
+                            final Serializable converted = converter.toObject(instance());
+                            if (converted != null) {
+                                lastDisplay = instance().asAtrProvider().getDisplayFunction().apply(converted);
+                            }
+                        }
+                    }
+                    return lastDisplay;
+                }
+            }
+        }));
+        c.add(valueField = new TextField<>("value_field", new AbstractMInstanceAwareModel<String>() {
+
+            private String lastId;
+            private Object lastValue;
+
+            @Override
+            public SInstance getMInstancia() {
+                return IMInstanciaAwareModel.optionalCast(model).map(IMInstanciaAwareModel::getMInstancia).orElse(null);
+            }
+
+            @Override
+            public String getObject() {
+                if (instance().isEmptyOfData()) {
+                    return null;
+                }
+                if (!Value.dehydrate(instance()).equals(lastValue)) {
+                    lastValue = Value.dehydrate(instance());
+                    final IFunction<Object, Object> idFunction = instance().asAtrProvider().getIdFunction();
+                    final SInstanceConverter<Serializable, SInstance>        converter  = instance().asAtrProvider().getConverter();
+                    if (idFunction != null && converter != null && !instance().isEmptyOfData()) {
+                        final Serializable converted = converter.toObject(instance());
+                        if (converted != null) {
+                            lastId = String.valueOf(idFunction.apply(converted));
+                        }
+                    }
+                }
+                return lastId;
+            }
+
+            @Override
+            public void setObject(String key) {
+                if (StringUtils.isEmpty(key)) {
+                    getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, true);
+                    getMInstancia().clearInstance();
+                } else {
+                    final Serializable val = getValueFromChace(key).map(TypeaheadCache::getTrueValue).orElse(getValueFromProvider(key).orElse(null));
+                    if (val != null) {
+                        instance().asAtrProvider().getConverter().fillInstance(getMInstancia(), val);
+                    } else {
+                        getMInstancia().clearInstance();
+                    }
+                }
+            }
+
+        }));
+        add(dynamicFetcher = new BloodhoundDataBehavior(model, cache));
         return c;
     }
 
+    private Optional<TypeaheadCache> getValueFromChace(String key) {
+        return Optional.ofNullable(cache.get(key));
+    }
+
+    private Optional<Serializable> getValueFromProvider(String key) {
+
+        final Stream<Serializable> stream;
+        final Provider<Serializable, SInstance> provider = instance().asAtrProvider().getProvider();
+        final ProviderContext<SInstance> providerContext = new ProviderContext<>();
+
+        providerContext.setInstance(instance());
+
+        if (dynamicFetcher != null) {
+            providerContext.setQuery(dynamicFetcher.getFilterModel().getObject());
+        } else {
+            providerContext.setQuery(StringUtils.EMPTY);
+        }
+
+        if (provider != null) {
+            stream = provider.load(providerContext).stream();
+        } else {
+            throw new SingularFormException("Nenhum provider foi informado");
+        }
+
+        return stream.filter(o -> instance().asAtrProvider().getIdFunction().apply(o).equals(key)).findFirst();
+    }
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("TypeaheadComponent.js")));
         response.render(OnDomReadyHeaderItem.forScript(createJSFetcher()));
+        response.render(CSS_REFERENCE);
     }
 
     private String createJSFetcher() {
@@ -104,61 +222,48 @@ public class TypeaheadComponent extends SingularFormComponentPanel<SInstance, St
     }
 
     private String staticJSFetch() {
-        return "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
-                "{hint: false, highlight: true, minLength: 0}," +
-                "{name: 's-select-typeahead', " +
-                "display: 'value', " +
-                "typeaheadAppendToBody: 'true', " +
-                "source: window.substringMatcher(" + jsOptionArray() + ") })\n" +
-                createBindExpression() +
-                ";";
-    }
-
-    private String createBindExpression() {
-        return ".bind('typeahead:select', function(ev, suggestion) {\n" +
-                "   $('#" + valueField.getMarkupId() + "').val(suggestion['key']);\n" +
-                "   $(this).data('openPlease', false);\n" +
-                "   $(this).typeahead('close');\n" +
-                "})\n" +
-                ".bind('typeahead:change', function(ev, suggestion) {\n" +
-                "   $(this).data('openPlease', true);\n" +
-                "   $(this).typeahead('open');\n" +
-                "})\n" +
-                ".bind('typeahead:open', function(ev, suggestion) {\n" +
-                "   if ($(this).data('openPlease') != true && $(this).typeahead('val') != ''){\n" +
-                "       $(this).typeahead('close');\n" +
-                "   }\n" +
-                "})" +
-                ".bind('typeahead:close', function(ev, suggestion) {\n" +
-                "    $(this).data('openPlease', false);\n" +
-                "})" +
-                ".keyup( function(e) {\n" +
-                "   if (e.keyCode == 13){\n" +
-                "       e.preventDefault();" +
-                "   } else {\n" +
-                "       $(this).trigger('typeahead:change');\n" +
-                "   }" +
-                "})" +
-                ".focus(function(e) {\n" +
-                "   var ttInput = $(this);\n" +
-                "   var currentValue = ttInput.val();\n" +
-                "   ttInput.val('');\n" +
-                "   ttInput.val(currentValue);\n" +
-                "})\n" +
-                ".blur(function(e) {\n" +
-                "   $(this).data('openPlease', false);\n" +
-                "   $(this).typeahead('close');\n" +
-                "})\n";
+        String js = "";
+        js += " $('#" + labelField.getMarkupId() + "').typeahead('destroy');";
+        js += " $('#" + labelField.getMarkupId() + "').val('" + ObjectUtils.defaultIfNull(Optional.ofNullable(labelField.getModel()).map((x) -> x.getObject()).orElse(null), "") + "');";
+        js += " $('#" + labelField.getMarkupId() + "').typeahead( ";
+        js += "     { ";
+        js += "          highlight: true,";
+        js += "          minLength: 0,";
+        js += "          hint:false";
+        js += "      },";
+        js += "     {";
+        js += "        name : 's-select-typeahead', ";
+        js += "        display: 'value', ";
+        js += "        typeaheadAppendToBody: 'true',";
+        js += "        limit: Infinity,";// não limita os resultados exibidos
+        js += "        source: window.substringMatcher(" + jsOptionArray() + ") ";
+        js += "     }";
+        js += " );";
+        js += " SingularTypeahead.configure('" + container.getMarkupId() + "','" + valueField.getMarkupId() + "');";
+        return js;
     }
 
     private String dynamicJSFetch() {
-        return "$('#" + container.getMarkupId() + " .typeahead').typeahead( " +
-                "{limit: Infinity, minLength: 1, hint:false }," +
-                "{name: 's-select-typeahead', " +
-                "display: 'value', " +
-                "source: " + createJSBloodhoundOpbject() + " })\n" +
-                createBindExpression() +
-                ";";
+        String js = "";
+        js += " $('#" + container.getMarkupId() + " .typeahead').typeahead( ";
+        js += "     { ";
+        js += "          limit: Infinity,";
+        js += "          minLength: 1,";
+        js += "          hint:false";
+        js += "      },";
+        js += "     {";
+        js += "        name : 's-select-typeahead', ";
+        js += "        display: 'value', ";
+        js += "        limit: Infinity,";// não limita os resultados exibidos
+        js += "        source: " + createJSBloodhoundOpbject();
+        js += "     }";
+        js += " );";
+        js += " $('#" + container.getMarkupId() + " .typeahead').on('typeahead:selected', function(event, selection, dataset) {  ";
+        js += "     $('#" + valueField.getMarkupId(true) + "').val(selection.key);";
+        js += "     $('#" + valueField.getMarkupId(true) + "').trigger('blur');";
+        js += " });";
+        js += " SingularTypeahead.configure('" + container.getMarkupId() + "','" + valueField.getMarkupId() + "');";
+        return js;
     }
 
     private String createJSBloodhoundOpbject() {
@@ -181,85 +286,43 @@ public class TypeaheadComponent extends SingularFormComponentPanel<SInstance, St
     }
 
     private Map<String, String> optionsConfigMap() {
-        return optionsConfig().listSelectOptions();
-    }
 
-    private SOptionsConfig optionsConfig() {
-        return instance().getOptionsConfig();
+        final Map<String, String> map = newLinkedHashMap();
+        final SInstance instance = model.getObject();
+        final Provider<Serializable, SInstance> provider = instance.asAtrProvider().getProvider();
+        final ProviderContext<SInstance> providerContext = new ProviderContext<>();
+
+        providerContext.setInstance(instance);
+        providerContext.setQuery(StringUtils.EMPTY);
+
+        if (provider != null) {
+            for (Object o : provider.load(providerContext)) {
+                final String key = String.valueOf(instance.asAtrProvider().getIdFunction().apply(o));
+                final String display = instance.asAtrProvider().getDisplayFunction().apply((Serializable) o);
+                map.put(key, display);
+                cache.put(key, new TypeaheadCache((Serializable) o, display));
+            }
+        }
+
+        return map;
     }
 
     private SInstance instance() {
-        return ((MSelectionInstanceModel) getDefaultModel()).getMInstancia();
+        return IMInstanciaAwareModel.optionalCast(model).map(IMInstanciaAwareModel::getMInstancia).orElse(null);
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
         return new PackageResourceReference(getClass(), resourceName);
     }
-
+    
     @Override
-    public Class<String> configureAjaxBehavior(AjaxUpdateSingularFormComponentPanel<String> behavior, String valueRequestParameterName) {
-        add($b.onReadyScript(comp -> JQuery.$(comp) + ".on('typeahead:selected', \n"
-                + "function(event,selection,dataset){ \n"
-                + "( \n"
-                + behavior.getCallbackFunction(CallbackParameter.converted(valueRequestParameterName, "selection." + BLOODHOUND_SUGGESTION_KEY_NAME))
-                + ")(selection); \n"
-                + "});\n"));
-        return String.class;
+    protected void onInitialize() {
+        super.onInitialize();
+        valueField.add($b.attr("style", "display:none;"));
     }
 
-    @Override
-    public boolean processChildren() {
-        return false;
-    }
-
-    /**
-     * Faz o tratamento do valor recebido via ajax.
-     *
-     * @param value
-     * @param instanceModel
-     */
-    @Override
-    public void ajaxValueToModel(String value, IModel<SInstance> instanceModel) {
-        updateModel(value);
-    }
-
-    /**
-     * suprimindo processamento default dos campos do FormComponentPanel
-     */
-    @Override
-    public void convertInput() {
-    }
-
-    /**
-     * suprimindo a atualização default de model do FormComponentPanel
-     */
-    @Override
-    public void updateModel() {
-        //processando os inputs para forçar a re-renderização deles
-        labelField.processInput();
-        valueField.processInput();
-        updateModel(valueField.getConvertedInput());
-    }
-
-    /**
-     * Atualizando o model de acordo com a chave no campo hidden 'value'*
-     *
-     * @param value
-     */
-    private void updateModel(Object value) {
-        if (value != null) {
-            MSelectionInstanceModel model = (MSelectionInstanceModel) getDefaultModel();
-            String                  label = optionsConfig().getLabelFromKey(value);
-            if (label != null) {
-                model.setObject(new SelectOption(label, value));
-            }
-        }
-    }
-
-    interface IReadOnlySafeModel<T> extends IReadOnlyModel<T> {
-        @Override
-        default public void setObject(T object) {
-        }
+    public TextField<String> getValueField() {
+        return valueField;
     }
 }
 
@@ -270,19 +333,20 @@ public class TypeaheadComponent extends SingularFormComponentPanel<SInstance, St
  * @author Fabricio Buzeto
  */
 class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
-    private MSelectionInstanceModel model;
 
-    public BloodhoundDataBehavior(MSelectionInstanceModel model) {
+    private IModel<? extends SInstance> model;
+    private IModel<String>              filterModel;
+    private Map<String, TypeaheadCache> cache;
+
+    public BloodhoundDataBehavior(IModel<? extends SInstance> model, Map<String, TypeaheadCache> cache) {
         this.model = model;
+        this.filterModel = Model.of("");
+        this.cache = cache;
     }
 
     @Override
     public boolean getStatelessHint(Component component) {
         return false;
-    }
-
-    SOptionsConfig options() {
-        return model.getMInstancia().getOptionsConfig();
     }
 
     @Override
@@ -305,12 +369,17 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     private Map<String, String> values(String filter) {
-        Map<String, String> map = null;
-        if (options() != null) {
-            map = options().listSelectOptions(filter);
-        }
-        if (map == null) {
-            map = newHashMap();
+        filterModel.setObject(filter);
+        Map<String, String>                     map      = newLinkedHashMap();
+        final SInstance                         instance = model.getObject();
+        final Provider<Serializable, SInstance> provider = instance.asAtrProvider().getProvider();
+        if (provider != null) {
+            for (Serializable s : provider.load(ProviderContext.of(instance, filter))) {
+                String key     = String.valueOf(instance.asAtrProvider().getIdFunction().apply(s));
+                String display = instance.asAtrProvider().getDisplayFunction().apply(s);
+                map.put(key, display);
+                cache.put(key, new TypeaheadCache(s, display));
+            }
         }
         return map;
     }
@@ -319,5 +388,27 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
         return getComponent().getRequestCycle();
     }
 
+    public IModel<String> getFilterModel() {
+        return filterModel;
+    }
 
+}
+
+class TypeaheadCache implements Serializable {
+
+    private final Serializable trueValue;
+    private final String       display;
+
+    TypeaheadCache(Serializable trueValue, String display) {
+        this.trueValue = trueValue;
+        this.display = display;
+    }
+
+    public Serializable getTrueValue() {
+        return trueValue;
+    }
+
+    public String getDisplay() {
+        return display;
+    }
 }

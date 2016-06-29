@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import org.apache.wicket.Component;
@@ -23,7 +23,7 @@ public class IntegerMapper extends StringMapper {
     @Override
     public Component appendInput() {
         Optional<Integer> size = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
         TextField<Integer> comp = new TextField<>(model.getObject().getName(),
                 new MInstanciaValorModel<>(model), Integer.class);
         formGroup.appendInputText(comp.setLabel(labelModel).setOutputMarkupId(true)

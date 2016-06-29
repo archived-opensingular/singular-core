@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.TipoEstadoFisico;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;

@@ -1,13 +1,23 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
-
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.form.type.core.SIString;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
+import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.panel.FormPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.FormTester;
@@ -16,20 +26,9 @@ import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
-import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import br.net.mirante.singular.util.wicket.panel.FormPanel;
-
 import java.util.function.Supplier;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
 
 public class TestFormWicketBuild  {
 
@@ -50,6 +49,7 @@ public class TestFormWicketBuild  {
                 return null;
             }
         });
+        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding("utf-8");
     }
 
     protected static SInstance createIntance(Supplier<SType<?>> typeSupplier) {
@@ -70,7 +70,7 @@ public class TestFormWicketBuild  {
         SIString instancia = (SIString) createIntance(() -> {
             PackageBuilder pb = dicionario.createNewPackage("teste");
             STypeString tipoCidade = pb.createType("cidade", STypeString.class);
-            tipoCidade.as(AtrBasic.class).label("Cidade").tamanhoEdicao(21);
+            tipoCidade.asAtr().label("Cidade").editSize(21);
             return tipoCidade;
         });
 
@@ -80,13 +80,13 @@ public class TestFormWicketBuild  {
         singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
 
         tester.startComponentInPage(testPanel);
-        Assertions.assertThat("Brasilia").isEqualTo(mCidade.getObject().getValue());
+        Assertions.assertThat(mCidade.getObject().getValue()).isEqualTo("Brasilia");
 
         FormTester formTester = tester.newFormTester("body-child:container:form");
         formTester.setValue(findContainerRelativePath(formTester.getForm(), "cidade").get(), "Guará");
         formTester.submit();
 
-        Assertions.assertThat("Guará").isEqualTo(mCidade.getObject().getValue());
+        Assertions.assertThat(mCidade.getObject().getValue()).isEqualTo("Guará");
     }
 
     @Test
@@ -110,7 +110,7 @@ public class TestFormWicketBuild  {
     }
 
     private TestPanel buildTestPanel(BSGrid rootContainer){
-        Form<Object> form = new Form<>("form");
+        SingularForm<Object> form = new SingularForm<>("form");
 
         TestPanel testPanel = new TestPanel("body-child"){
             @Override

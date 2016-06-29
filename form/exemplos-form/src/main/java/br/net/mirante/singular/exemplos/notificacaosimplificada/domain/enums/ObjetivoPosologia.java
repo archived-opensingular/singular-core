@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
+import br.net.mirante.singular.support.persistence.util.EnumId;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
@@ -61,16 +63,12 @@ public enum ObjetivoPosologia implements EnumId<ObjetivoPosologia, Integer> {
         return this.descricao;
     }
 
-    @Override
-    public ObjetivoPosologia getEnum() {
-        return this;
-    }
-
     /**
      * @param id
      * @return
      */
-    public static ObjetivoPosologia valueOfEnum(Integer id) {
+    @Override
+    public ObjetivoPosologia valueOfEnum(Integer id) {
         for (ObjetivoPosologia tipo : values()) {
             if (tipo.getCodigo().equals(id)) {
                 return tipo;

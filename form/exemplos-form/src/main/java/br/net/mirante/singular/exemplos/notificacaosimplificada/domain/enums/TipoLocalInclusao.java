@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
+import br.net.mirante.singular.support.persistence.util.EnumId;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
@@ -54,16 +56,12 @@ public enum TipoLocalInclusao implements EnumId<TipoLocalInclusao, Integer> {
         return this.descricao;
     }
 
-    @Override
-    public TipoLocalInclusao getEnum() {
-        return this;
-    }
-
     /**
      * @param id
      * @return
      */
-    public static TipoLocalInclusao valueOfEnum(Integer id) {
+    @Override
+    public TipoLocalInclusao valueOfEnum(Integer id) {
         for (TipoLocalInclusao tipo : values()) {
             if (tipo.getCodigo().equals(id)) {
                 return tipo;

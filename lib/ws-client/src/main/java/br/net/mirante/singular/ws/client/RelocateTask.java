@@ -36,13 +36,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "relocateTask", propOrder = {
     "processAbbreviation",
     "codProcessInstance",
-    "username"
+    "username",
+    "lastVersion"
 })
 public class RelocateTask {
 
     protected String processAbbreviation;
     protected Long codProcessInstance;
     protected String username;
+    protected Integer lastVersion;
 
     /**
      * Obtém o valor da propriedade processAbbreviation.
@@ -114,6 +116,14 @@ public class RelocateTask {
      */
     public void setUsername(String value) {
         this.username = value;
+    }
+
+    public Integer getLastVersion() {
+        return lastVersion;
+    }
+
+    public void setLastVersion(Integer lastVersion) {
+        this.lastVersion = lastVersion;
     }
 
 }

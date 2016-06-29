@@ -5,12 +5,9 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.MedEntity;
-import br.net.mirante.singular.persistence.entity.BaseEntity;
-import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,13 +16,18 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.MedEntity;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
+import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 
 @Entity
 @Table(name = "TB_EMPRESA_INTERNACIONAL", schema = "DBGERAL")
-public class EmpresaInternacional extends BaseEntity implements MedEntity<Long> {
+public class EmpresaInternacional extends BaseEntity<Long> implements MedEntity<Long> {
 
     private static final long serialVersionUID = 1L;
 
@@ -94,7 +96,7 @@ public class EmpresaInternacional extends BaseEntity implements MedEntity<Long> 
     }
 
     @Override
-    public Serializable getCod() {
+    public Long getCod() {
         return id;
     }
 

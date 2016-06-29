@@ -13,7 +13,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.wicket.util.ProcessadorCondigoFonte;
+import br.net.mirante.singular.form.wicket.util.ProcessadorCodigoFonte;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class ItemCodePanel extends Panel {
@@ -28,16 +28,19 @@ public class ItemCodePanel extends Panel {
         response.render(OnDomReadyHeaderItem.forScript(initScript.toString()));
     }
 
-    public ItemCodePanel(String id, IModel<String> code, IModel<String> extension) {
+    public ItemCodePanel(String id, IModel<String> code, String extension) {
         super(id);
-        final ProcessadorCondigoFonte pcf = new ProcessadorCondigoFonte(code.getObject());
+        final ProcessadorCodigoFonte pcf = new ProcessadorCodigoFonte(code.getObject());
         add(new Label("code", pcf.getFonteProcessado())
                 .add(WicketUtils.$b.classAppender(getSyntaxHighlighterConfig(pcf.getLinhasParaDestacar(), extension))));
     }
 
-    private String getSyntaxHighlighterConfig(List<Integer> linhasParaDestacar, IModel<String> extension) {
+    private String getSyntaxHighlighterConfig(List<Integer> linhasParaDestacar, String extension) {
         StringBuilder config = new StringBuilder();
-        config.append(String.format("brush: %s;", extension.getObject()));
+        if ("xsd".equalsIgnoreCase(extension)) {
+            extension = "xml";
+        }
+        config.append(String.format("brush: %s;", extension));
 
         if (!linhasParaDestacar.isEmpty()) {
             config.append(" highlight: [");

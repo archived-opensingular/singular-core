@@ -1,25 +1,14 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.options.SFixedOptionsSimpleProvider;
-import br.net.mirante.singular.form.mform.options.SOptionsCompositeProvider;
-import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.core.SIString;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewAutoComplete;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
-import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -35,16 +24,21 @@ public class STypeStringSelectItemAutoCompleteTest {
 
     //TODO: Testar modo read only
 
-    private static class Base extends SingularFormBaseTest {
+    private abstract static class Base extends SingularFormBaseTest {
 
         final String[] OPTIONS = {"Bruce Wayne", "Clark Kent", "Wally West", "Oliver Queen"};
+        final String[] KEYS    = {"Batman", "Superman", "Flash", "Green Arrow"};
+
         protected STypeString base;
 
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
             base = baseType.addFieldString("myHero");
-            base.withSelectionOf(OPTIONS);
-            base.withView(SViewAutoComplete::new);
+            base.autocompleteOf(String.class)
+                    .id(v -> KEYS[ArrayUtils.indexOf(OPTIONS, v)])
+                    .selfDisplay()
+                    .simpleConverter()
+                    .simpleProviderOf(OPTIONS);
         }
 
         protected SIString fieldInstance() {
@@ -59,8 +53,8 @@ public class STypeStringSelectItemAutoCompleteTest {
             return (TextField) ((List) findTag(form.getForm(), TextField.class)).get(0);
         }
 
-        protected HiddenField valueComponent() {
-            return (HiddenField) ((List) findTag(form.getForm(), HiddenField.class)).get(0);
+        protected TextField valueComponent() {
+            return findOnForm(TextField.class, page.getForm(), (c) -> c.getId().equals("value_field")).findFirst().orElse(null);
         }
 
         protected Component readOnlyComponent() {
@@ -71,21 +65,23 @@ public class STypeStringSelectItemAutoCompleteTest {
 
     public static class Default extends Base {
 
-        @Test public void renderOptions(){
-            for(String o : OPTIONS){
+        @Test
+        public void renderOptions() {
+            for (String o : OPTIONS) {
                 tester.assertContains(o);
             }
         }
 
-        @Test public void renderField(){
+        @Test
+        public void renderField() {
             assertThat(findTag(form.getForm(), TextField.class)).hasSize(2);
-            assertThat(findTag(form.getForm(), HiddenField.class)).hasSize(1);
         }
 
-        @Test public void submitsSelected() {
-            form.setValue(valueComponent(),"3");
+        @Test
+        public void submitsSelected() {
+            form.setValue(valueComponent(), KEYS[3]);
             form.submit();
-            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[3-1]);
+            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[3]);
         }
 
     }
@@ -97,7 +93,8 @@ public class STypeStringSelectItemAutoCompleteTest {
             page.setAsVisualizationView();
         }
 
-        @Test public void renderValue(){
+        @Test
+        public void renderValue() {
             assertThat(readOnlyComponent().getDefaultModelObjectAsString())
                     .isEqualTo("Tony Stark");
         }
@@ -105,32 +102,28 @@ public class STypeStringSelectItemAutoCompleteTest {
 
     public static class KeyValueSelection extends Base {
 
-        final String[] KEYS = {"Batman", "Superman", "Flash", "Green Arrow"};
-
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
             super.buildBaseType(baseType);
-
-            SFixedOptionsSimpleProvider provider = base.withSelection();
-            for(int i = 0 ; i < OPTIONS.length && i < KEYS.length; i++){
-                provider.add(KEYS[i],OPTIONS[i]);
-            }
         }
 
-        @Test public void renderLabelsNotKeys(){
-            for(String o : OPTIONS){
+        @Test
+        public void renderLabelsNotKeys() {
+            for (String o : OPTIONS) {
                 tester.assertContains(o);
             }
         }
 
-        @Test public void submitsSelectedKeyInstead() {
-            form.setValue(valueComponent(),"2");
+        @Test
+        public void submitsSelectedKeyInstead() {
+            form.setValue(valueComponent(), KEYS[2]);
             form.submit();
-            assertThat(fieldInstance().getValue()).isEqualTo(KEYS[2-1]);
+            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[2]);
         }
 
-        @Test public void justIgnoresIfTheSelectedLabelHasNoMatch() {
-            form.setValue(fieldComponent(),"Tony Stark");
+        @Test
+        public void justIgnoresIfTheSelectedLabelHasNoMatch() {
+            form.setValue(fieldComponent(), "Tony Stark");
             form.submit();
             assertThat(fieldInstance().getValue()).isNullOrEmpty();
         }
@@ -142,25 +135,19 @@ public class STypeStringSelectItemAutoCompleteTest {
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
             super.buildBaseType(baseType);
-
-            SFixedOptionsSimpleProvider provider = base.withSelection();
-            for(int i = 0 ; i < OPTIONS.length && i < KEYS.length; i++){
-                provider.add(KEYS[i],OPTIONS[i]);
-            }
             base.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
         }
 
         @Override
         protected void populateInstance(SIComposite instance) {
-            baseInstance(instance).setValue("Superman");
+            baseInstance(instance).setValue("Clark Kent");
             page.setAsVisualizationView();
         }
 
-        @Test public void renderValue(){
-            assertThat(readOnlyComponent().getDefaultModelObjectAsString())
-                    .isEqualTo("Clark Kent");
+        @Test
+        public void renderValue() {
+            assertThat(readOnlyComponent().getDefaultModelObjectAsString()).isEqualTo("Clark Kent");
         }
 
     }
-
 }

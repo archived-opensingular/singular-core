@@ -12,12 +12,14 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.showcase.component.ShowCaseType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
 
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
 import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
@@ -32,7 +34,7 @@ import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 @SuppressWarnings("serial")
-class ListContent extends Content implements SingularWicketContainer<ListContent, Void> {
+public class ListContent extends Content implements SingularWicketContainer<ListContent, Void> {
 
     private List<FormVO> formTypes;
 
@@ -46,9 +48,20 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
 
     private List<FormVO> getFormTypes() {
         if (formTypes == null) {
-            formTypes = showcaseTypeLoader.getEntries().stream().map(t -> new FormVO(t)).collect(Collectors.toList());
+            formTypes = showcaseTypeLoader.getEntries().stream().filter(this::verificarTipo).map(t -> new FormVO(t)).collect(Collectors.toList());
         }
         return formTypes;
+    }
+
+    private boolean verificarTipo(ShowcaseTypeLoader.TemplateEntry templateEntry) {
+        final StringValue tipoValue = getPage().getPageParameters().get(ShowCaseType.SHOWCASE_TYPE_PARAM);
+        ShowCaseType tipo;
+        if (tipoValue.isNull() || tipoValue.toString().equals(ShowCaseType.FORM.toString())) {
+            tipo = ShowCaseType.FORM;
+        } else {
+            tipo = ShowCaseType.STUDIO;
+        }
+        return tipo.equals(templateEntry.getTipo());
     }
 
     @Override

@@ -5,11 +5,20 @@
 
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-
-import java.io.Serializable;
-
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.component.BFModalWindow;
+import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -29,20 +38,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import java.io.Serializable;
+
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -219,7 +218,7 @@ public class AnnotationComponent extends Panel {
     }
 
     private static String labelOf(AbstractSInstanceModel target) {
-        return target.getMInstancia().asAtrBasic().getLabel();
+        return target.getMInstancia().asAtr().getLabel();
     }
 
     @Override

@@ -60,6 +60,7 @@ public abstract class AbstractProcessVersionEntity<PROCESS_DEF extends IEntityPr
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "processVersion")
     private List<TASK_VERSION> versionTasks = new ArrayList<>();
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -68,6 +69,7 @@ public abstract class AbstractProcessVersionEntity<PROCESS_DEF extends IEntityPr
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_DEF getProcessDefinition() {
         return processDefinition;
     }
@@ -76,14 +78,17 @@ public abstract class AbstractProcessVersionEntity<PROCESS_DEF extends IEntityPr
         this.processDefinition = processDefinition;
     }
 
+    @Override
     public Date getVersionDate() {
         return versionDate;
     }
 
+    @Override
     public void setVersionDate(Date versionDate) {
         this.versionDate = versionDate;
     }
 
+    @Override
     public List<TASK_VERSION> getVersionTasks() {
         return versionTasks;
     }

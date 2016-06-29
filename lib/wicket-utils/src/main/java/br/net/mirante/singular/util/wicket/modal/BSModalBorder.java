@@ -55,7 +55,8 @@ public class BSModalBorder extends Border {
         PRIMARY("btn-primary"),
         LINK("btn-link"),
         DANGER("btn-danger"),
-        BLUE("blue");
+        BLUE("blue"),
+        CANCEl("cancel-btn");
 
         private String cssClass;
 
@@ -164,7 +165,7 @@ public class BSModalBorder extends Border {
             + "  }"
             + "});"));
 
-        add(new AttributeAppender("class", Model.of("modal fade"), " "));
+        add(new AttributeAppender("class", Model.of("modal fade modal-scroll"), " "));
         add(new AttributeAppender("style", Model.of("visibility:visible"), ";"));
         add(new AttributeModifier("tabindex", "-1"));
         add($b.onReadyScript(this::getShowJavaScriptCallback));

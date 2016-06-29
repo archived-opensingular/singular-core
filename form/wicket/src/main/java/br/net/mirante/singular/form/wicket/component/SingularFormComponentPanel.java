@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.component;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateSingularFormComponentPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;

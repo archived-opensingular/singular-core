@@ -7,65 +7,83 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.view.SViewTextArea;
+
+import java.util.Arrays;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
-    public STypeString descricaoTipoEnsaio;
-    public STypeString descricaoTipoReferencia;
+    public STypeString  descricaoTipoEnsaio;
+    public STypeString  descricaoTipoReferencia;
     public STypeInteger idTipoEnsaio;
+    public STypeComposite<SIComposite> tipoEnsaio;
+    public STypeComposite<SIComposite> tipoReferencia;
+    public STypeComposite<SIComposite> informacoesFarmacopeicas;
+    public STypeAttachmentList resultadosLote;
+    public STypeString justificativa;
+    public STypeAttachmentList resultadosControleQualidade;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
-
-        STypeComposite<SIComposite> tipoEnsaio = this.addFieldComposite("tipoEnsaio");
+        tipoEnsaio = this.addFieldComposite("tipoEnsaio");
         idTipoEnsaio = tipoEnsaio.addFieldInteger("id");
         descricaoTipoEnsaio = tipoEnsaio.addFieldString("descricao");
-        tipoEnsaio.withSelectView().withSelectionFromProvider(descricaoTipoEnsaio, (ins, filter) -> {
-            final SIList<?> list = ins.getType().newList();
-            for (TipoEnsaioControleQualidade tipo : TipoEnsaioControleQualidade.values()) {
-                final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(idTipoEnsaio, tipo.getId());
-                c.setValue(descricaoTipoEnsaio, tipo.getDescricao());
-            }
-            return list;
-        });
+        tipoEnsaio.selectionOf(TipoEnsaioControleQualidade.class)
+                .id(TipoEnsaioControleQualidade::getId)
+                .display(TipoEnsaioControleQualidade::getDescricao)
+                .converter(new SInstanceConverter<TipoEnsaioControleQualidade, SIComposite>() {
+                    @Override
+                    public void fillInstance(SIComposite ins, TipoEnsaioControleQualidade obj) {
+                        ins.setValue(idTipoEnsaio, obj.getId());
+                        ins.setValue(descricaoTipoEnsaio, obj.getDescricao());
+                    }
 
-        tipoEnsaio.asAtrBasic().label("Ensaio de Controle de Qualidade").enabled(false);
+                    @Override
+                    public TipoEnsaioControleQualidade toObject(SIComposite ins) {
+                        return Arrays.asList(TipoEnsaioControleQualidade.values())
+                                .stream()
+                                .filter(t -> t.getId().equals(Value.of(ins, idTipoEnsaio)))
+                                .findFirst()
+                                .orElse(null);
+                    }
+                }).simpleProviderOf(TipoEnsaioControleQualidade.values());
 
-        STypeComposite<SIComposite> tipoReferencia = this.addFieldComposite("tipoReferencia");
-        STypeInteger idTipoReferencia = tipoReferencia.addFieldInteger("id");
+        tipoEnsaio.asAtr().label("Ensaio de Controle de Qualidade").enabled(false);
+
+        tipoReferencia   = this.addFieldComposite("tipoReferencia");
+        STypeInteger                idTipoReferencia = tipoReferencia.addFieldInteger("id");
         descricaoTipoReferencia = tipoReferencia.addFieldString("descricao");
-        tipoReferencia.withRadioView().withSelectionFromProvider(descricaoTipoReferencia, (ins, filter) -> {
-            final SIList<?> list = ins.getType().newList();
-            for (TipoReferencia tipo : TipoReferencia.values()) {
-                final SIComposite c = (SIComposite) list.addNew();
-                c.setValue(idTipoReferencia, tipo.getId());
-                c.setValue(descricaoTipoReferencia, tipo.getDescricao());
-            }
-            return list;
-        }).asAtrBasic().label("Tipo de referência")
-                .required()
-                .dependsOn(tipoEnsaio).visible(i -> !TipoEnsaioControleQualidade.RESULTADOS.getId().equals(Value.of(i, idTipoEnsaio)));
+
+        tipoReferencia.selectionOf(TipoReferencia.class, new SViewSelectionByRadio())
+                .id(TipoReferencia::getId)
+                .display(TipoReferencia::getDescricao)
+                .converter(new SInstanceConverter<TipoReferencia, SIComposite>() {
+                    @Override
+                    public void fillInstance(SIComposite ins, TipoReferencia obj) {
+                        ins.setValue(idTipoReferencia, obj.getId());
+                        ins.setValue(descricaoTipoReferencia, obj.getDescricao());
+                    }
+
+                    @Override
+                    public TipoReferencia toObject(SIComposite ins) {
+                        return Arrays.stream(TipoReferencia.values()).filter(tr -> tr.getId().equals(Value.of(ins, idTipoReferencia))).findFirst().orElse(null);
+                    }
+                })
+                .simpleProviderOf(TipoReferencia.values());
 
         {
-            STypeComposite<SIComposite> informacoesFarmacopeicas = this.addFieldComposite("informacoesFarmacopeicas");
-            informacoesFarmacopeicas
-                    .asAtrBasic()
+           informacoesFarmacopeicas = this.addFieldComposite("informacoesFarmacopeicas");
+           informacoesFarmacopeicas
+                    .asAtr()
                     .dependsOn(tipoReferencia)
                     .visible(i -> TipoReferencia.FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
 
@@ -74,28 +92,29 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
         }
 
         {
-            STypeAttachmentList resultadosLote = this.addFieldListOfAttachment("resultadosLote", "resuladoLote");
-            resultadosLote.asAtrBasic().label("Metodologia/Especificação/Resultado para um lote")
+            resultadosLote = this.addFieldListOfAttachment("resultadosLote", "resuladoLote");
+            resultadosLote.asAtr().label("Metodologia/Especificação/Resultado para um lote")
                     .dependsOn(tipoReferencia)
                     .visible(i -> TipoReferencia.NAO_FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
 
-            STypeAttachment f = resultadosLote.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
+            STypeAttachment f           = resultadosLote.getElementsType();
+            SType<?>        nomeArquivo = (STypeSimple) f.getField(STypeAttachment.FIELD_NAME);
+            nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 
-        STypeString justificativa = this.addFieldString("justificativa");
+        justificativa = this.addFieldString("justificativa");
         justificativa
-                .asAtrBasic().dependsOn(tipoReferencia)
+                .asAtr().dependsOn(tipoReferencia)
                 .label("Justificativa").visible(i -> TipoReferencia.NAO_SE_APLICA.getId().equals(Value.of(i, idTipoReferencia)))
-                .tamanhoMaximo(600)
+                .maxLength(600)
                 .getTipo().withView(SViewTextArea::new);
 
-        this.addFieldListOfAttachment("resultadosControleQualidade", "resultado")
-        .asAtrBasic()
-        .label("Resultados do controle da qualidade")
-        .visible(i -> TipoEnsaioControleQualidade.RESULTADOS.getId().equals(Value.of(i, idTipoEnsaio)))
-        .required();
+        resultadosControleQualidade = this.addFieldListOfAttachment("resultadosControleQualidade", "resultado");
+        resultadosControleQualidade
+                .asAtr()
+                .label("Resultados do controle da qualidade")
+                .visible(i -> TipoEnsaioControleQualidade.RESULTADOS.getId().equals(Value.of(i, idTipoEnsaio)))
+                .required();
 
     }
 
@@ -105,7 +124,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
         RESULTADOS(3, "Resultados do controle da qualidade");
 
         private Integer id;
-        private String descricao;
+        private String  descricao;
 
         TipoEnsaioControleQualidade(Integer id, String descricao) {
             this.id = id;
@@ -127,7 +146,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
         NAO_SE_APLICA(3, "Não se aplica");
 
         private Integer id;
-        private String descricao;
+        private String  descricao;
 
         TipoReferencia(Integer id, String descricao) {
             this.id = id;

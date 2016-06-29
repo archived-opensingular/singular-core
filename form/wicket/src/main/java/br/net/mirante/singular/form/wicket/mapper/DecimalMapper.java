@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +45,7 @@ public class DecimalMapper extends StringMapper {
 
     private Map<String, Object> withOptionsOf(IModel<? extends SInstance> model) {
         Optional<Integer> inteiroMaximo = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_INTEGER_MAX_LENGTH));
         Integer decimal = getDecimalMaximo(model);
         Map<String, Object> options = defaultOptions();
         options.put("integerDigits", inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS));
@@ -55,7 +55,7 @@ public class DecimalMapper extends StringMapper {
 
     private Integer getDecimalMaximo(IModel<? extends SInstance> model) {
         Optional<Integer> decimalMaximo = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_DECIMAL_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_FRACTIONAL_MAX_LENGTH));
         return (Integer) decimalMaximo.orElse(DEFAULT_DIGITS);
     }
 
@@ -81,16 +81,16 @@ public class DecimalMapper extends StringMapper {
         if ((mi != null) && (mi.getValue() != null)) {
 
             final BigDecimal valor = (BigDecimal) mi.getValue();
-            return formatDecimal(valor);
+            return formatDecimal(valor, true);
         }
 
         return StringUtils.EMPTY;
     }
 
-    private String formatDecimal(BigDecimal bigDecimal) {
+    private String formatDecimal(BigDecimal bigDecimal, boolean groupingUsed) {
         DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(new Locale("pt", "BR"));
         nf.setParseBigDecimal(true);
-        nf.setGroupingUsed(true);
+        nf.setGroupingUsed(groupingUsed);
         nf.setMinimumFractionDigits(0);
         return nf.format(bigDecimal);
     }
@@ -123,7 +123,7 @@ public class DecimalMapper extends StringMapper {
             BigDecimal bigDecimal = (BigDecimal) value;
             int casasValue = bigDecimal.scale();
             int casasDecimais = casasValue < this.maximoCasasDecimais ? casasValue : this.maximoCasasDecimais;
-            return formatDecimal(bigDecimal.setScale(casasDecimais, BigDecimal.ROUND_HALF_UP));
+            return formatDecimal(bigDecimal.setScale(casasDecimais, BigDecimal.ROUND_HALF_UP), false);
         }
 
     }

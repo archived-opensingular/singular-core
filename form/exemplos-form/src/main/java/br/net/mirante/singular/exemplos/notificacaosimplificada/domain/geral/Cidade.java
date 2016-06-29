@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral;
 
-import br.net.mirante.singular.persistence.entity.BaseEntity;
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,13 +16,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
+
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 
 @Entity
 @Table(name = "TB_CIDADE", schema = "DBGERAL")
 @XmlRootElement(name = "cidade", namespace = "http://www.anvisa.gov.br/geral/schema/domains")
 @XmlType(name = "cidade", namespace = "http://www.anvisa.gov.br/geral/schema/domains")
-public class Cidade extends BaseEntity {
+public class Cidade extends BaseEntity<Integer> {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,7 +75,7 @@ public class Cidade extends BaseEntity {
     }
 
     @Override
-    public Serializable getCod() {
+    public Integer getCod() {
         return id;
     }
 

@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.behavior.MoneyMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
@@ -108,13 +108,13 @@ public class MoneyMapper extends ControlsFieldComponentAbstractMapper {
 
     private Integer getDecimalMaximo(IModel<? extends SInstance> model) {
         Optional<Integer> decimalMaximo = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_DECIMAL_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_FRACTIONAL_MAX_LENGTH));
         return decimalMaximo.orElse(DEFAULT_DIGITS);
     }
 
     private Integer getInteiroMaximo(IModel<? extends SInstance> model) {
         Optional<Integer> inteiroMaximo = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_INTEGER_MAX_LENGTH));
         return inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS);
     }
 

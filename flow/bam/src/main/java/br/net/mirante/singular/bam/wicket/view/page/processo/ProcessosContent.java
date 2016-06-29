@@ -5,14 +5,11 @@
 
 package br.net.mirante.singular.bam.wicket.view.page.processo;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import java.util.Iterator;
 import java.util.Set;
 
-import br.net.mirante.singular.bam.wicket.view.SingularWicketContainer;
-import br.net.mirante.singular.bam.wicket.view.page.dashboard.DashboardPage;
-import br.net.mirante.singular.bam.wicket.view.template.Content;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
@@ -25,8 +22,12 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
+import br.net.mirante.singular.bam.wicket.view.SingularWicketContainer;
+import br.net.mirante.singular.bam.wicket.view.page.dashboard.DashboardPage;
+import br.net.mirante.singular.bam.wicket.view.template.Content;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -37,7 +38,7 @@ import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class ProcessosContent extends Content implements SingularWicketContainer<ProcessosContent, Void> {
 
-    private final Form<?> diagramForm = new Form<>("diagramForm");
+    private final SingularForm<?> diagramForm = new SingularForm<>("diagramForm");
     private final BSModalBorder diagramModal = new BSModalBorder("diagramModal");
     private final WebMarkupContainer diagram = new WebMarkupContainer("diagram");
 

@@ -10,8 +10,8 @@ import br.net.mirante.singular.test.InstanciaDefinicaoComVariavelTest;
 public class InstanciaDefinicaoComVariavelMssqlTest extends InstanciaDefinicaoComVariavelTest {
 
     @BeforeClass
-    public static void configProperites() {
-        SingularProperties.INSTANCE.loadFrom(ClassLoader.getSystemClassLoader()
-                .getResourceAsStream("singular-mssql.properties"));
+    public static void configProperties() {
+        SingularProperties.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
+                "singular-mssql.properties"));
     }
 }

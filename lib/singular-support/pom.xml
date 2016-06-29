@@ -38,13 +38,7 @@
 
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>wicket-utils</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>br.net.mirante</groupId>
-            <artifactId>flow-persistence</artifactId>
+            <artifactId>singular-commons</artifactId>
             <version>0.6.3-SNAPSHOT</version>
         </dependency>
 
@@ -163,7 +157,13 @@
             <version>1.2</version>
             <scope>provided</scope>
         </dependency>
-
+		
+		<dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
+		
     </dependencies>
 
 </project>

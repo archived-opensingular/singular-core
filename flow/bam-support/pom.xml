@@ -18,7 +18,7 @@
 
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>singular-support</artifactId>
+            <artifactId>flow-persistence</artifactId>
             <version>0.6.3-SNAPSHOT</version>
         </dependency>
 

@@ -65,12 +65,15 @@ public class BSModalWindow extends Panel {
         return new BSModalBorder(id);
     }
     private void doInit(boolean wrapBodyWithForm) {
-        form = (wrapBodyWithForm) ? new Form<>(FORM_ID) : new NonForm(FORM_ID);
+        form = (wrapBodyWithForm) ? newForm(FORM_ID) : new NonForm(FORM_ID);
         this
             .add(form
                 .add(modalBorder
                     .add(bodyContainer)));
         setBody(new WebMarkupContainer("_"));
+    }
+    protected Form<?> newForm(String id) {
+        return new Form<>(id);
     }
 
     public BSModalWindow setBody(Component body) {

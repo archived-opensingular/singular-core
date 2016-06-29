@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 

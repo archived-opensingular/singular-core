@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
@@ -247,6 +248,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         sw.saveOrUpdate(processVersion.getProcessDefinition());
         sw.saveOrUpdate(processVersion);
         sw.saveOrUpdate(processVersion.getVersionTasks().stream().map(tv -> tv.getTaskDefinition()));
+        sw.saveOrUpdate(processVersion.getVersionTasks().stream().flatMap(tv -> tv.getTaskDefinition().getRolesTask() != null ? tv.getTaskDefinition().getRolesTask().stream() : Stream.empty()));
         sw.saveOrUpdate(processVersion.getVersionTasks());
         sw.saveOrUpdate(processVersion.getVersionTasks().stream().flatMap(tv -> tv.getTransitions().stream()));
         
@@ -379,10 +381,10 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         }
         if (dataInicio != null && dataFim != null) {
             c.add(Restrictions.or(
-                Restrictions.and(Restrictions.ge("PI.beginDate", dataInicio), Restrictions.lt("PI.beginDate", LocalDate.fromDateFields(dataFim).plusDays(1).toDate())),
-                Restrictions.and(Restrictions.lt("PI.beginDate", dataInicio), Restrictions.isNull("PI.endDate")),
-                Restrictions.and(Restrictions.ge("PI.endDate", dataInicio), Restrictions.lt("PI.endDate", LocalDate.fromDateFields(dataFim).plusDays(1).toDate()))
-                ));
+                Restrictions.and(Restrictions.ge("PI.beginDate", dataInicio), Restrictions.lt("PI.beginDate", dataFim)),
+                Restrictions.and(Restrictions.ge("PI.endDate", dataInicio), Restrictions.lt("PI.endDate", dataFim)),
+                Restrictions.and(Restrictions.lt("PI.beginDate", dataInicio), Restrictions.ge("PI.endDate", dataInicio)),
+                Restrictions.and(Restrictions.isNull("PI.endDate"), Restrictions.lt("PI.beginDate", dataFim))));
         } else if(dataInicio != null){
             c.add(Restrictions.or(
                 Restrictions.ge("PI.beginDate", dataInicio), 

@@ -5,9 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.view.SViewTextArea;
 import br.net.mirante.singular.form.wicket.behavior.CountDownBehaviour;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import org.apache.wicket.Component;
@@ -32,7 +32,7 @@ public class TextAreaMapper extends StringMapper {
             textArea.setLabel(labelModel);
             formGroup.appendTextarea(textArea, mTextAreaView.getLines());
 
-            Optional<Integer> maxSize = Optional.ofNullable(mi.getAttributeValue(SPackageBasic.ATR_TAMANHO_MAXIMO));
+            Optional<Integer> maxSize = Optional.ofNullable(mi.getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
 
             if (maxSize.isPresent()) {
                 textArea.add(StringValidator.maximumLength(maxSize.get()));

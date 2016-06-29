@@ -5,26 +5,42 @@
 
 package br.net.mirante.singular.form.wicket.behavior;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.model.IModel;
 
 public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
 
     private final IAjaxUpdateListener listener;
-    private final IModel<SInstance>  model;
+    private final IModel<SInstance>   model;
+    private final boolean             validateOnly;
 
-    public AjaxUpdateInputBehavior(String event, IModel<SInstance> model, IAjaxUpdateListener listener) {
+    public AjaxUpdateInputBehavior(String event, IModel<SInstance> model, boolean validateOnly, IAjaxUpdateListener listener) {
         super(event);
-        this.listener = listener;
         this.model = model;
+        this.validateOnly = validateOnly;
+        this.listener = listener;
+    }
+
+    @Override
+    protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+        super.updateAjaxAttributes(attributes);
+        if (validateOnly)
+            attributes.getExtraParameters().put("forceDisableAJAXPageBlock", true);
     }
 
     @Override
     public void onUpdate(AjaxRequestTarget target) {
-        listener.onUpdate(this.getComponent(), target, model);
+        Component comp = this.getComponent();
+        if (validateOnly) {
+            listener.onValidate(comp, target, model);
+        } else
+            listener.onProcess(comp, target, model);
     }
 
 }

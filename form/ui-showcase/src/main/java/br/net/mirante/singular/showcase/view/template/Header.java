@@ -5,11 +5,19 @@
 
 package br.net.mirante.singular.showcase.view.template;
 
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.panel.Panel;
-
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import br.net.mirante.singular.showcase.component.ShowCaseType;
+import br.net.mirante.singular.showcase.view.page.studio.StudioHomePage;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
+import br.net.mirante.singular.showcase.view.page.form.ListPage;
+import br.net.mirante.singular.util.wicket.metronic.menu.DropdownMenu;
 
 public class Header extends Panel {
 
@@ -37,7 +45,35 @@ public class Header extends Panel {
         add(new WebMarkupContainer("togglerButton")
                 .add($b.attrAppender("class", "hide", " ", $m.ofValue(!withTogglerButton))));
         add(new WebMarkupContainer("_TopAction"));
+        add(buildShowcaseOptions());
         add(new TopMenu("_TopMenu", withSideBar, option));
         add(new WebMarkupContainer("brandLogo"));
+    }
+
+    private DropdownMenu buildShowcaseOptions() {
+        final DropdownMenu dropdownMenu = new DropdownMenu("showcase-options", "Tipo");
+        dropdownMenu.adicionarMenu(i -> new Link<String>(i) {
+            @Override
+            public void onClick() {
+                setResponsePage(ListPage.class, ShowCaseType.buildPageParameters(ShowCaseType.FORM));
+            }
+
+            @Override
+            public IModel<?> getBody() {
+                return $m.ofValue("Form");
+            }
+        });
+        dropdownMenu.adicionarMenu(i -> new Link<String>(i) {
+            @Override
+            public void onClick() {
+                setResponsePage(StudioHomePage.class, ShowCaseType.buildPageParameters(ShowCaseType.STUDIO));
+            }
+
+            @Override
+            public IModel<?> getBody() {
+                return $m.ofValue("Studio");
+            }
+        });
+        return dropdownMenu;
     }
 }

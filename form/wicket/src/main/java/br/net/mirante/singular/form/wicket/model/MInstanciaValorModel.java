@@ -5,15 +5,14 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
-import java.util.List;
-
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeSimple;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeSimple;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class MInstanciaValorModel<T>
@@ -43,7 +42,7 @@ public class MInstanciaValorModel<T>
     public void setObject(T object) {
         SInstance target = getTarget();
         if (target instanceof SIList) {
-            ((SIList) target).clear();
+            target.clearInstance();
             ((List) object).forEach(((SIList) target)::addValue);
         } else {
             target.setValue(object);

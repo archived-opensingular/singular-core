@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import br.net.mirante.singular.form.mform.context.SingularFormContextImpl;
+import br.net.mirante.singular.form.context.SingularFormContextImpl;
 
 public class SingularFormContextWicketImpl extends SingularFormContextImpl implements SingularFormContextWicket {
 
