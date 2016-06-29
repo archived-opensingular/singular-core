@@ -142,7 +142,10 @@ public abstract class SInstance implements SAttributeEnabled {
      * sobrepor valores preexistentes.
      */
     public final void init() {
-        ((SType) getType()).init(() -> this);
+        //Não deve chamar o init se estiver no modo de leitura do XML
+        if(getDocument().getLastId() != -1) {
+            ((SType) getType()).init(() -> this);
+        }
     }
 
     final void setType(SType<?> type) {

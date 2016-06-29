@@ -669,7 +669,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         I instance = newInstance(this, owner);
         owner.setRoot(instance);
         if (executeInstanceInitListeners) {
-            init(() -> instance);
+            instance.init();
         }
         return instance;
     }
