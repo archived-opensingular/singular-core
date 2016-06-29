@@ -78,6 +78,9 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     @Override
     public IAttachmentRef addAttachment(File file, long length) {
         try {
+            if (!file.exists()){
+                System.out.println(file.getAbsolutePath());
+            }
             return addAttachment(new FileInputStream(file), length);
         } catch (Exception e) {
             throw new SingularFormException("Erro lendo origem de dados", e);
