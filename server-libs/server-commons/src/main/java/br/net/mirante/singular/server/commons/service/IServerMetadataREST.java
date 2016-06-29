@@ -7,13 +7,13 @@ package br.net.mirante.singular.server.commons.service;
 
 import java.util.List;
 
-import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
+import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 
 public interface IServerMetadataREST {
 
     String PATH_LIST_MENU = "/server/menu/list";
     String PATH_BOX_SEARCH = "/box/search";
 
-    List<MenuGroupDTO> listMenu();
+    List<MenuGroup> listMenu();
 
 }

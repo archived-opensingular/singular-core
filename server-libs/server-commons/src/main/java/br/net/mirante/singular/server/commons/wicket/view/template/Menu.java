@@ -11,6 +11,8 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
 import br.net.mirante.singular.server.commons.wicket.SingularApplication;
@@ -27,6 +29,8 @@ public class Menu extends Panel {
     private static final long serialVersionUID = 7622791136418841943L;
 
     public static final String MENU_CACHE = "MENU_CACHE";
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(Menu.class);
 
     public Menu(String id) {
         super(id);

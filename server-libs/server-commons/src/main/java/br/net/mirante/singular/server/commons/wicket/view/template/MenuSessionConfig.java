@@ -14,64 +14,69 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
-import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
+import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 
 /**
  * Cache de sessão da configuração de menus que são exibidos para o usuário.
  */
 public class MenuSessionConfig implements Serializable {
 
+    static final Logger LOGGER = LoggerFactory.getLogger(MenuSessionConfig.class);
+
     private boolean initialized = false;
 
-    private Map<ProcessGroupEntity, List<MenuGroupDTO>> map = new HashMap<>();
-    private Map<String, MenuGroupDTO> mapMenu = new HashMap<>();
+    private Map<ProcessGroupEntity, List<MenuGroup>> map = new HashMap<>();
+    private Map<String, MenuGroup> mapMenu = new HashMap<>();
 
-    public Map<ProcessGroupEntity, List<MenuGroupDTO>> getMap() {
+    public Map<ProcessGroupEntity, List<MenuGroup>> getMap() {
         return Collections.unmodifiableMap(map);
     }
 
     public void initialize(List<ProcessGroupEntity> categorias) {
         for (ProcessGroupEntity categoria : categorias) {
-            final List<MenuGroupDTO> menuGroupDTOs = listMenus(categoria);
+            final List<MenuGroup> menuGroupDTOs = listMenus(categoria);
             addMenu(categoria, menuGroupDTOs);
         }
 
         initialized = true;
     }
 
-    private List<MenuGroupDTO> listMenus(ProcessGroupEntity processGroup) {
+    private List<MenuGroup> listMenus(ProcessGroupEntity processGroup) {
 
         final String url = processGroup.getConnectionURL() + PATH_LIST_MENU;
         try {
-            return Arrays.asList(new RestTemplate().getForObject(url, MenuGroupDTO[].class));
+            return Arrays.asList(new RestTemplate().getForObject(url, MenuGroup[].class));
         } catch (Exception e) {
+            LOGGER.error("Erro ao acessar serviço: " + url, e);
             return Collections.emptyList();
         }
     }
 
-    private void addMenu(ProcessGroupEntity categoria, List<MenuGroupDTO> menusGroupDTO) {
+    private void addMenu(ProcessGroupEntity categoria, List<MenuGroup> menusGroupDTO) {
         mapMenu = null;
         map.put(categoria, menusGroupDTO);
     }
 
-    public List<MenuGroupDTO> getMenusPorCategoria(ProcessGroupEntity categoria) {
+    public List<MenuGroup> getMenusPorCategoria(ProcessGroupEntity categoria) {
         return map.get(categoria);
     }
 
-    public MenuGroupDTO getMenuPorLabel(String label) {
+    public MenuGroup getMenuPorLabel(String label) {
         return getMapMenu().get(label);
     }
 
-    private Map<String,MenuGroupDTO> getMapMenu() {
+    private Map<String,MenuGroup> getMapMenu() {
         if (mapMenu == null) {
             mapMenu = new HashMap<>();
         }
 
-        for (Map.Entry<ProcessGroupEntity, List<MenuGroupDTO>> processGroupEntityListEntry : map.entrySet()) {
-            for (MenuGroupDTO menuGroupDTO : processGroupEntityListEntry.getValue()) {
+        for (Map.Entry<ProcessGroupEntity, List<MenuGroup>> processGroupEntityListEntry : map.entrySet()) {
+            for (MenuGroup menuGroupDTO : processGroupEntityListEntry.getValue()) {
                 mapMenu.put(menuGroupDTO.getLabel(), menuGroupDTO);
             }
         }

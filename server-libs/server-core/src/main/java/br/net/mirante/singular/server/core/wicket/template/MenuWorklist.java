@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import br.net.mirante.singular.commons.lambda.ISupplier;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
-import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
+import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.MenuSessionConfig;
 import br.net.mirante.singular.server.core.wicket.concluida.ConcluidaPage;
@@ -77,11 +77,12 @@ public class MenuWorklist extends MenuAnalise {
         }
     }
 
-    private List<MenuGroupDTO> listMenus(ProcessGroupEntity processGroup) {
+    private List<MenuGroup> listMenus(ProcessGroupEntity processGroup) {
         final String url = processGroup.getConnectionURL() + PATH_LIST_MENU;
         try {
-            return Arrays.asList(new RestTemplate().getForObject(url, MenuGroupDTO[].class));
+            return Arrays.asList(new RestTemplate().getForObject(url, MenuGroup[].class));
         } catch (Exception e) {
+            LOGGER.error("Erro ao acessar serviço: " + url, e);
             return Collections.emptyList();
         }
     }

@@ -27,12 +27,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
-import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
+import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
@@ -106,6 +107,8 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
      */
     private final BSModalBorder deleteModal = construirModalBorder();
 
+    private ProcessGroupEntity processGroup;
+
     public AbstractCaixaContent(String id, String processGroupCod, String menu) {
         super(id);
         this.processGroupCod = processGroupCod;
@@ -118,6 +121,10 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
 
     protected String getProcessGroupCod() {
         return processGroupCod;
+    }
+
+    public ProcessGroupEntity getProcessGroup() {
+        return processGroup;
     }
 
     protected abstract void appendPropertyColumns(BSDataTableBuilder<T, String, IColumn<T, String>> builder);
@@ -164,7 +171,6 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
         return criarLink(peticao, id, FormActions.FORM_VIEW);
     }
 
-    //TODO delfino provisorio
     protected abstract WebMarkupContainer criarLink(T peticao, String id, FormActions formActions);
 
     protected abstract Map<String, String> getCriarLinkParameters(T peticao);
@@ -223,12 +229,13 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        processGroup = petitionService.findByProcessGroupCod(getProcessGroupCod());
         tabela = construirTabela(new BSDataTableBuilder<>(criarDataProvider()));
         add(form.add(filtroRapido, pesquisarButton, botoes, dropdownMenu));
         add(tabela);
         add(deleteForm.add(deleteModal));
         if (getMenu() != null) {
-            setProcesses(Optional.ofNullable(getMenuSessionConfig().getMenuPorLabel(getMenu())).map(MenuGroupDTO::getProcesses).orElse(new ArrayList<>(0)));
+            setProcesses(Optional.ofNullable(getMenuSessionConfig().getMenuPorLabel(getMenu())).map(MenuGroup::getProcesses).orElse(new ArrayList<>(0)));
             if (CollectionUtils.isEmpty(getProcesses())){
                 getLogger().warn("!! NENHUM PROCESSO ENCONTRADO PARA A MONTAGEM DO MENU !!");
             }
@@ -277,7 +284,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
 
 
     public String getModuleContext() {
-        final String groupConnectionURL = petitionService.findByProcessGroupCod(getProcessGroupCod()).getConnectionURL();
+        final String groupConnectionURL = getProcessGroup().getConnectionURL();
         try {
             final String path = new URL(groupConnectionURL).getPath();
             return path.substring(0, path.indexOf("/", 1));

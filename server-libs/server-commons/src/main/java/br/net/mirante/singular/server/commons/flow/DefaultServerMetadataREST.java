@@ -15,7 +15,7 @@ import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 import br.net.mirante.singular.server.commons.service.IServerMetadataREST;
-import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
+import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 
@@ -29,9 +29,9 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
 
     @RequestMapping(value = PATH_LIST_MENU, method = RequestMethod.GET)
     @Override
-    public List<MenuGroupDTO> listMenu() {
+    public List<MenuGroup> listMenu() {
 
-        List<MenuGroupDTO> groupDTOs = new ArrayList<>();
+        List<MenuGroup> groupDTOs = new ArrayList<>();
         Map<String, List<ProcessDefinition>> definitionMap = new HashMap<>();
         Flow.getDefinitions().forEach(d -> {
             if (!definitionMap.containsKey(d.getCategory())) {
@@ -42,7 +42,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         });
 
         definitionMap.forEach((category, definitions) -> {
-            MenuGroupDTO menuGroupDTO = new MenuGroupDTO();
+            MenuGroup menuGroupDTO = new MenuGroup();
             menuGroupDTO.setLabel(category);
             menuGroupDTO.setProcesses(new ArrayList<>());
             definitions.forEach(d ->
@@ -60,7 +60,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         return groupDTOs;
     }
 
-    protected void customizeMenu(List<MenuGroupDTO> groupDTOs) {
+    protected void customizeMenu(List<MenuGroup> groupDTOs) {
 
     }
 

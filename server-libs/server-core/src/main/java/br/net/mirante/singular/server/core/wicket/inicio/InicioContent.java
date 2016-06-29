@@ -23,7 +23,7 @@ import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
-import br.net.mirante.singular.server.commons.service.dto.MenuGroupDTO;
+import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
@@ -107,9 +107,9 @@ public class InicioContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> 
     protected void onInitialize() {
         super.onInitialize();
 
-        for (Map.Entry<ProcessGroupEntity, List<MenuGroupDTO>> entry : getMenuSessionConfig().getMap().entrySet()) {
+        for (Map.Entry<ProcessGroupEntity, List<MenuGroup>> entry : getMenuSessionConfig().getMap().entrySet()) {
             String moduleContext = getModuleContext(entry.getKey());
-            for (MenuGroupDTO menuGroupDTO : entry.getValue()) {
+            for (MenuGroup menuGroupDTO : entry.getValue()) {
                 setProcesses(menuGroupDTO.getProcesses());
                 for (ProcessDTO process : getProcesses()) {
                     if (getProcesses().size() > 1) {

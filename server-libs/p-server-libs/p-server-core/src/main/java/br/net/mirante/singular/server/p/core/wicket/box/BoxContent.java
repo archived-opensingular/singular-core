@@ -22,13 +22,17 @@ import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
-import br.net.mirante.singular.server.commons.service.dto.ItemBoxDTO;
+import br.net.mirante.singular.server.commons.service.dto.ItemAction;
+import br.net.mirante.singular.server.commons.service.dto.ItemBox;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
+import br.net.mirante.singular.server.commons.util.ServerActionConstants;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.core.wicket.ModuleLink;
 import br.net.mirante.singular.server.p.core.wicket.model.BoxModel;
@@ -38,10 +42,12 @@ import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 
 public class BoxContent extends AbstractCaixaContent<BoxModel> {
 
-    private Pair<String, SortOrder> sortProperty;
-    private ItemBoxDTO itemBoxDTO;
+    static final Logger LOGGER = LoggerFactory.getLogger(BoxContent.class);
 
-    public BoxContent(String id, String processGroupCod, String menu, ItemBoxDTO itemBoxDTO) {
+    private Pair<String, SortOrder> sortProperty;
+    private ItemBox itemBoxDTO;
+
+    public BoxContent(String id, String processGroupCod, String menu, ItemBox itemBoxDTO) {
         super(id, processGroupCod, menu);
         this.itemBoxDTO = itemBoxDTO;
     }
@@ -87,24 +93,22 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
     }
 
     @Override
-    protected void appendDeleteAction(BSActionColumn<BoxModel, String> actionColumn) {
-        if (isShowDelete()) {
-            super.appendDeleteAction(actionColumn);
-        }
-    }
+    protected void appendActionColumns(BSDataTableBuilder<BoxModel, String, IColumn<BoxModel, String>> builder) {
+        BSActionColumn<BoxModel, String> actionColumn = new BSActionColumn<>(getMessage("label.table.column.actions"));
 
-    @Override
-    protected void appendEditAction(BSActionColumn<BoxModel, String> actionColumn) {
-        if (isShowEdit()) {
-            super.appendEditAction(actionColumn);
-        }
-    }
+        for (ItemAction itemAction : itemBoxDTO.getActions().values()) {
+            if (itemAction.getName().equalsIgnoreCase(ServerActionConstants.ACAO_ALTERAR)) {
+                appendEditAction(actionColumn);
+            } else if (itemAction.getName().equalsIgnoreCase(ServerActionConstants.ACAO_VISUALIZAR)) {
+                appendViewAction(actionColumn);
+            } else if (itemAction.getName().equalsIgnoreCase(ServerActionConstants.ACAO_EXCLUIR)) {
+                appendDeleteAction(actionColumn);
+            } else {
 
-    @Override
-    protected void appendViewAction(BSActionColumn<BoxModel, String> actionColumn) {
-        if (isShowView()) {
-            super.appendViewAction(actionColumn);
+            }
         }
+
+        builder.appendColumn(actionColumn);
     }
 
     @Override
@@ -119,8 +123,8 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
 
     @Override
     protected QuickFilter montarFiltroBasico() {
-        //TODO delfino
-        return new QuickFilter()
+        BoxPage boxPage = (BoxPage) getPage();
+        return boxPage.createFilter()
                 .withFilter(getFiltroRapidoModelObject())
                 .withProcessesAbbreviation(getProcessesNames())
                 .withRascunho(isWithRascunho());
@@ -139,12 +143,13 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
 
     @Override
     protected List<BoxModel> quickSearch(QuickFilter filter, List<String> siglasProcesso) {
-        final String connectionURL = petitionService.findByProcessGroupCod(getProcessGroupCod()).getConnectionURL();
+        final String connectionURL = getProcessGroup().getConnectionURL();
         final String url = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
         try {
             return (List<BoxModel>) Arrays.asList(new RestTemplate().postForObject(url, filter, Map[].class))
                     .stream().map(BoxModel::new).collect(Collectors.toList());
         } catch (Exception e) {
+            LOGGER.error("Erro ao acessar serviço: " + url, e);
             return Collections.emptyList();
         }
     }
@@ -178,11 +183,12 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
 
     @Override
     protected long countQuickSearch(QuickFilter filter, List<String> processesNames) {
-        final String connectionURL = petitionService.findByProcessGroupCod(getProcessGroupCod()).getConnectionURL();
+        final String connectionURL = getProcessGroup().getConnectionURL();
         final String url = connectionURL + PATH_BOX_SEARCH + getCountEndpoint();
         try {
             return new RestTemplate().postForObject(url, filter, Long.class);
         } catch (Exception e) {
+            LOGGER.error("Erro ao acessar serviço: " + url, e);
             return 0;
         }
     }
@@ -202,15 +208,7 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
     }
 
     public boolean isShowNew() {
-        return itemBoxDTO.isNewButton();
-    }
-
-    public boolean isShowDelete() {
-        return itemBoxDTO.isDeleteButton();
-    }
-
-    public boolean isShowEdit() {
-        return itemBoxDTO.isEditButton();
+        return itemBoxDTO.isShowNewButton();
     }
 
     public boolean isShowQuickFilter() {
@@ -227,10 +225,6 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
 
     public String getCountEndpoint() {
         return itemBoxDTO.getCountEndpoint();
-    }
-
-    public boolean isShowView() {
-        return itemBoxDTO.isViewButton();
     }
 
     public boolean isWithRascunho() {

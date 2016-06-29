@@ -8,10 +8,10 @@ package br.net.mirante.singular.server.commons.service.dto;
 import java.io.Serializable;
 import java.util.List;
 
-public class MenuGroupDTO implements Serializable {
+public class MenuGroup implements Serializable {
 
     private String label;
-    private List<ItemBoxDTO> itemBoxes;
+    private List<ItemBox> itemBoxes;
     private List<ProcessDTO> processes;
 
     public String getLabel() {
@@ -30,17 +30,17 @@ public class MenuGroupDTO implements Serializable {
         this.processes = processes;
     }
 
-    public List<ItemBoxDTO> getItemBoxes() {
+    public List<ItemBox> getItemBoxes() {
         return itemBoxes;
     }
 
-    public void setItemBoxes(List<ItemBoxDTO> itemBoxes) {
+    public void setItemBoxes(List<ItemBox> itemBoxes) {
         this.itemBoxes = itemBoxes;
     }
 
-    public ItemBoxDTO getItemPorLabel(String itemName) {
+    public ItemBox getItemPorLabel(String itemName) {
         if (itemBoxes != null) {
-            for (ItemBoxDTO itemBox : itemBoxes) {
+            for (ItemBox itemBox : itemBoxes) {
                 if (itemBox.getName().equalsIgnoreCase(itemName)) {
                     return itemBox;
                 }
