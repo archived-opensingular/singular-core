@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.util.wicket.datatable.column;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import java.io.Serializable;
 
 import org.apache.wicket.Component;
@@ -23,8 +26,6 @@ import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.resource.IconeView;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BSActionPanel<T> extends Panel {
 
@@ -138,6 +139,7 @@ public class BSActionPanel<T> extends Panel {
         protected IModel<String> title;
         protected boolean withText = false;
         protected IBiFunction<T, String, MarkupContainer> linkFactory;
+        protected IFunction<IModel, Boolean> visibleFor = m -> Boolean.TRUE;
 
         public ActionConfig<T> labelModel(IModel<?> labelModel) {
             this.labelModel = labelModel;
@@ -193,6 +195,16 @@ public class BSActionPanel<T> extends Panel {
             this.title = title;
             return this;
         }
+
+        public ActionConfig<T> visibleFor(IFunction<IModel, Boolean> visibleFor) {
+            this.visibleFor = visibleFor;
+            return this;
+        }
+
+        public boolean showActionItemFor(IModel<T> rowModel) {
+            return visibleFor.apply(rowModel);
+        }
+
     }
 
 

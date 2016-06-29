@@ -156,6 +156,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
             synchronized (this) {
                 if (flowMap == null) {
                     FlowMap novo = createFlowMap();
+                    configureActions(novo);
 
                     if (novo.getProcessDefinition() != this) {
                         throw new SingularFlowException("Mapa com definiçao trocada");
@@ -774,5 +775,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         result = getCategory().hashCode();
         result = 31 * result + getName().hashCode();
         return result;
+    }
+
+    protected void configureActions(FlowMap flowMap){
+
     }
 }

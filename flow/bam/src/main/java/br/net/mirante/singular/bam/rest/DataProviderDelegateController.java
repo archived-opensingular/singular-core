@@ -5,12 +5,16 @@
 
 package br.net.mirante.singular.bam.rest;
 
-import javax.inject.Inject;
+import static br.net.mirante.singular.flow.core.service.IFlowMetadataREST.generateGroupToken;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,14 +22,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import br.net.mirante.singular.bam.service.FlowMetadataFacade;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.flow.core.dto.GroupDTO;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataREST;
-import static br.net.mirante.singular.flow.core.service.IFlowMetadataREST.generateGroupToken;
-import br.net.mirante.singular.bam.service.FlowMetadataFacade;
 
 @RestController
 public class DataProviderDelegateController {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(DataProviderDelegateController.class);
 
     @Inject
     private FlowMetadataFacade flowMetadataFacade;
@@ -69,6 +74,7 @@ public class DataProviderDelegateController {
             final String token = generateGroupToken(groupDTO.getCod());
             return new RestTemplate().postForObject(url, context, List.class, token);
         } catch (Exception e) {
+            LOGGER.error("Erro ao acessar serviço: " + url, e);
             return Collections.emptyList();
         }
     }
