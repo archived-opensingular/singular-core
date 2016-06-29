@@ -1,37 +1,29 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:extend>
-    <div class="portlet light">
-        <div class="portlet-body form">
-            <form wicket:id="save-form">
-                <div wicket:id="singular-panel"></div>
-                <div class="form-actions noborder">
-                    <button type="submit" class="btn purple" wicket:id="send-btn">
-                        <wicket:message key="label.button.send"/>
-                    </button>
-                    <button type="submit" class="btn blue" wicket:id="save-btn">
-                        <wicket:message key="label.button.save"/>
-                    </button>
-                    <button type="submit" class="btn blue" wicket:id="save-annotation-btn">
-                        <wicket:message key="label.button.save"/>
-                    </button>
-                    <wicket:container wicket:id="custom-buttons"/>
-                    <button type="submit" class="btn red" wicket:id="validate-btn">
-                        <wicket:message key="label.button.validate"/>
-                    </button>
-                    <button type="submit" class="btn" wicket:id="close-btn">
-                        <wicket:message key="label.button.close"/>
-                    </button>
-
-                </div>
-
-                <wicket:container wicket:id="modals"/>
-
-                <div wicket:id="close-modal" class="portlet-body form">
-                    <wicket:message key="label.close.message"/>
-                </div>
-
-            </form>
+    <form wicket:id="save-form">
+        <div wicket:id="singular-panel"></div>
+        <div class="form-actions noborder">
+            <button type="submit" class="btn send-btn" wicket:id="send-btn">
+                <wicket:message key="label.button.send"/>
+            </button>
+            <button type="submit" class="btn save-btn" wicket:id="save-btn">
+                <wicket:message key="label.button.save"/>
+            </button>
+            <button type="submit" class="btn save-btn" wicket:id="save-annotation-btn">
+                <wicket:message key="label.button.save"/>
+            </button>
+            <wicket:container wicket:id="custom-buttons"/>
+            <button type="submit" class="btn validate-btn" wicket:id="validate-btn">
+                <wicket:message key="label.button.validate"/>
+            </button>
+            <button type="submit" class="btn cancel-btn" wicket:id="close-btn">
+                <wicket:message key="label.button.close"/>
+            </button>
         </div>
-    </div>
+        <wicket:container wicket:id="modals"/>
+        <div wicket:id="close-modal" class="portlet-body form">
+            <wicket:message key="label.close.message"/>
+        </div>
+    </form>
 </wicket:extend>
 </html>
