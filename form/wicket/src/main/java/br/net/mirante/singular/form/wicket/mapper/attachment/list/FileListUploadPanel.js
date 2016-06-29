@@ -13,11 +13,12 @@
                 singleFileUploads: true,
                 dropZone: $('#' + params.component_id ),
                 dataType: 'json',
-                limitConcurrentUploads: 2,
+                limitConcurrentUploads: 1,
+                sequentialUploads: true,
                 formData:{
                     'upload_id' : params.upload_id,
                 },
-                send: function (e, data) {
+                add: function (e, data) {
                     var name = '?', fake_id = -1;
                     $.each(data.files, function (index, file) {
                         file['fake_id'] = fake_id = self.last_id ++;
@@ -38,18 +39,14 @@
                                     .append($('<span>').text(name))
                                 ),
                             $('<div class="list-item-progress" id="progress_bar_'+fake_id+'">')
-                                .append($('<div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>')),
-
-                            $('<div class="list-item-action">')
-                                .append($('<a href="javascript:void(0);" class="list-action-remove">')
-                                    .append($('<i class="fa fa-close">'))
-                                )
+                                .append($('<div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>'))
                             );
 
                     $('#'+params.component_id).find('.list-detail-empty').hide();
                     fileList.append(fileElement);
                     $('#progress_bar_'+data.files[0].fake_id).hide();
 
+                    data.submit();
                     return true;
                 },
                 done: function (e, data) {
@@ -66,6 +63,11 @@
                                     if (status == 'success'){
                                         $('#progress_bar_'+fake_id).hide();
                                         var box = $('#upload-box-'+fake_id);
+                                        box.append(
+                                            $('<div class="list-item-action">')
+                                                .append($('<a href="javascript:void(0);" class="list-action-remove">')
+                                                    .append($('<i class="fa fa-close">')))
+                                        );
                                         box.find('.fa-file-text')
                                             .removeClass('fa-file-text')
                                             .addClass('fa-check');
