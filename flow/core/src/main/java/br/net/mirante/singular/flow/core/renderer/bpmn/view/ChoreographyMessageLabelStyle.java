@@ -312,6 +312,11 @@ public class ChoreographyMessageLabelStyle implements ILabelStyle {
         }
         return getTextPlacement() == other.getTextPlacement() && isNorth() == other.isNorth() && isResponseMessage() == other.isResponseMessage();
       }
+
+      @Override
+      public int hashCode() {
+        return 1;
+      }
     }
   }
 
