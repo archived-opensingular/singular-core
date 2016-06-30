@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static freemarker.template.Configuration.VERSION_2_3_22;
 
@@ -31,32 +33,30 @@ public class FreemarkerUtil {
 
     public static String mergeWithFreemarker(String template, Object obj) {
 
-        int minimumSize = 4;
-
         if (obj == null || template == null) {
             return StringUtils.EMPTY;
         }
 
-        StringWriter sw           = new StringWriter();
-        String       safeTemplate = template.trim();
-
-        /**
-         * nullsafe wrapper
-         */
-        if (safeTemplate.startsWith("${") && safeTemplate.endsWith("}") && safeTemplate.length() >= minimumSize) {
-            safeTemplate = safeTemplate.substring(2, safeTemplate.length());
-            safeTemplate = safeTemplate.substring(0, safeTemplate.length() - 1);
-            safeTemplate = "${(" + safeTemplate + ")!''}";
-        }
+        StringWriter sw = new StringWriter();
 
         try {
-            new Template(String.valueOf(template.hashCode()), new StringReader(safeTemplate), cfg).process(obj, sw);
+            new Template(String.valueOf(template.hashCode()), new StringReader(safeWrap(template)), cfg).process(obj, sw);
         } catch (IOException | TemplateException e) {
             LOGGER.error(e.getMessage(), e);
             throw new SingularFormException("Não foi possivel fazer o merge do template " + template);
         }
 
         return sw.toString();
+    }
+
+    public static String safeWrap(String template) {
+        final Matcher      matcher = Pattern.compile("((?<=\\$\\{)(.*?)+(?=\\}))").matcher(template);
+        final StringBuffer buffer  = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(buffer, String.format("(%s)!''", matcher.group()));
+        }
+        matcher.appendTail(buffer);
+        return buffer.toString();
     }
 
 }
