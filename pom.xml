@@ -223,7 +223,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
-        <singular.version>0.6.3-SNAPSHOT</singular.version>
+        <singular.version>1.0.0-SNAPSHOT</singular.version>
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <wicket.version>7.3.0</wicket.version>
