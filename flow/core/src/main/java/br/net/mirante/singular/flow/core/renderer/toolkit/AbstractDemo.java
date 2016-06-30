@@ -29,6 +29,7 @@
  ***************************************************************************/
 package br.net.mirante.singular.flow.core.renderer.toolkit;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import com.yworks.yfiles.geometry.InsetsD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.geometry.SizeD;
@@ -37,6 +38,7 @@ import com.yworks.yfiles.view.Command;
 import com.yworks.yfiles.view.CommandAction;
 import com.yworks.yfiles.view.ICommand;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -70,7 +72,7 @@ import java.util.Arrays;
  * Abstract base class for yFiles for Java demos. The default implementation creates a frame with a {@link
  * GraphComponent} in the center, a help pane on the right side and a toolbar.
  */
-public abstract class AbstractDemo {
+public abstract class AbstractDemo implements Loggable {
   protected GraphComponent graphComponent;
 
   /**
@@ -224,7 +226,7 @@ public abstract class AbstractDemo {
           try {
             Desktop.getDesktop().browse(e.getURL().toURI());
           } catch (IOException | URISyntaxException ex) {
-            ex.printStackTrace();
+            getLogger().error(ex.getMessage(), ex);
           }
         }
       }
@@ -426,7 +428,7 @@ public abstract class AbstractDemo {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      LoggerFactory.getLogger(AbstractDemo.class).error(e.getMessage(), e);
     }
   }
 }
