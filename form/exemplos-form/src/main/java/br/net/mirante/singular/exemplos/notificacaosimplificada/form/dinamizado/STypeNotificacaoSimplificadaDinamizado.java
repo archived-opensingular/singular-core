@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.converter.ValueToSICompositeConverter;
 import br.net.mirante.singular.form.provider.Config;
 import br.net.mirante.singular.form.provider.FilteredPagedProvider;
 import br.net.mirante.singular.form.provider.ProviderContext;
+import br.net.mirante.singular.form.provider.SSimpleProvider;
 import br.net.mirante.singular.form.type.core.SIInteger;
 import br.net.mirante.singular.form.type.core.STypeBoolean;
 import br.net.mirante.singular.form.type.core.STypeInteger;
@@ -18,7 +19,6 @@ import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.*;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.math.BigDecimal;
@@ -268,11 +268,16 @@ public class STypeNotificacaoSimplificadaDinamizado extends STypeComposite<SICom
                 .asAtrBootstrap()
                 .colPreference(6);
         indicacaoTerapeutica
-                .selectionOf(Pair.class)
-                .id(p -> String.valueOf(p.getLeft()))
-                .display(p -> String.valueOf(p.getRight()))
-                .converter(new PairConverter(idIndicacaoTerapeutica, descricaoIndicacaoTerapeutica))
-                .simpleProvider(ins -> dominioService(ins).indicacoesTerapeuticas());
+                .selection()
+                .id(idIndicacaoTerapeutica)
+                .display(descricaoIndicacaoTerapeutica)
+                .simpleProvider((SSimpleProvider) builder -> {
+                    dominioService(builder.getCurrentInstance()).indicacoesTerapeuticas().forEach(
+                            it -> builder.add()
+                                    .set(idIndicacaoTerapeutica, it.getLeft())
+                                    .set(descricaoIndicacaoTerapeutica, it.getRight())
+                    );
+                });
 
         STypeBoolean informarOutraIndicacaoTerapeutica = addFieldBoolean("informarOutraIndicacaoTerapeutica");
         informarOutraIndicacaoTerapeutica
