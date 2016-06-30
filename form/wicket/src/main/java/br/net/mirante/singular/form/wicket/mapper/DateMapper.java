@@ -32,6 +32,7 @@ public class DateMapper extends ControlsFieldComponentAbstractMapper {
 
     private static final Logger LOGGER = Logger.getLogger(DateMapper.class.getName());
 
+    @SuppressWarnings("unchecked")
     @Override
     public Component appendInput() {
         BSDatepickerInputGroup datepicker = formGroup
@@ -77,9 +78,12 @@ public class DateMapper extends ControlsFieldComponentAbstractMapper {
         return StringUtils.EMPTY;
     }
 
+    @SuppressWarnings("rawtypes")
     private static final class ConverterImpl implements IConverter {
         @Override
         public Object convertToObject(String date, Locale locale) throws ConversionException {
+            if ("//".equals(date))
+                return null;
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 sdf.setLenient(false);

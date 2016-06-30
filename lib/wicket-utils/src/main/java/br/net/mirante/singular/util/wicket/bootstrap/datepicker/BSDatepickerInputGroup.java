@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.IConverter;
 
 import br.net.mirante.singular.commons.lambda.IConsumer;
