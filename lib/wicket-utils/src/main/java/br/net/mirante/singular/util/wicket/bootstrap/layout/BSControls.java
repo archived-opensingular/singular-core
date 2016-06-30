@@ -190,7 +190,6 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     public BSControls appendInputGroup(IBSComponentFactory<BSInputGroup> factory) {
         return appendComponent(factory);
     }
-
     public BSInputGroup newInputGroup() {
         return newComponent(BSInputGroup::new);
     }

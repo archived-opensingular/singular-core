@@ -221,7 +221,11 @@ public interface IBehaviorsMixin extends Serializable {
         return new Behavior() {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
-                response.render(OnDomReadyHeaderItem.forScript(scriptFunction.apply(component)));
+                response.render(OnDomReadyHeaderItem.forScript(""
+                    + "(function(){"
+                    + "'use strict';"
+                    + scriptFunction.apply(component)
+                    + "})();"));
             }
             @Override
             public boolean isEnabled(Component component) {

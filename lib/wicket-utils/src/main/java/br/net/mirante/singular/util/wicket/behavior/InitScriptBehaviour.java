@@ -17,6 +17,7 @@ public abstract class InitScriptBehaviour extends Behavior {
     @Override
     public void onConfigure(Component component) {
         super.onConfigure(component);
+        //HACK: precisa $.ready()? não basta o OnDomReady do wicket?
         component.add($b.onReadyScript(c -> String.format(jQueryDocumentReady, getScript(c))));
     }
 

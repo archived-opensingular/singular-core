@@ -18,38 +18,39 @@ public class DatePickerInitBehaviour extends InitScriptBehaviour {
     @Override
     public String getScript(Component component) {
 
-        String js = "";
-
-        js += " $('#%s').datepicker({ ";
-        js += "     rtl: App.isRTL(), ";
-        js += "     orientation: 'right', ";
-        js += "     autoclose: true, ";
-        js += "     language: 'pt-BR' ";
-        js += " }) ";
-
         String idDatepicker = component.getMarkupId();
         String idInput = component.getMarkupId();
 
         if (component instanceof MarkupContainer) {
-            FormComponent fc = ((MarkupContainer) component).visitChildren(FormComponent.class, new IVisitor<FormComponent, FormComponent>() {
-                @Override
-                public void component(FormComponent object, IVisit<FormComponent> visit) {
-                    visit.stop(object);
-                }
-            });
+            FormComponent<?> fc = ((MarkupContainer) component)
+                .visitChildren(FormComponent.class, new IVisitor<FormComponent<?>, FormComponent<?>>() {
+                    @Override
+                    public void component(FormComponent<?> object, IVisit<FormComponent<?>> visit) {
+                        visit.stop(object);
+                    }
+                });
             if (fc != null) {
                 idInput = fc.getMarkupId();
             }
         }
 
-        js += ".on('changeDate', function(){";
-        js += String.format("var input = $('#%s');", idInput);
-        js += String.format("var format = $('#%s').attr('data-date-format').toUpperCase();", idDatepicker);
-        js += "     if( format == 'DD/MM/YYYY' && /\\d{1,2}\\/\\d{1,2}\\/\\d{4}/.test(input.val()) ";
-        js += "         || format == 'DD/MM' && /\\d{1,2}\\/\\d{1,2}/.test(input.val())) { ";
-        js += "         input.trigger('" + BSDatepickerConstants.JS_CHANGE_EVENT + "');";
-        js += "     } ";
-        js += " }); ";
+        String js = ""
+            + " var $datepicker = $('#" + idDatepicker + "');"
+            + " var $input = $('#" + idInput + "');"
+            + " $datepicker.datepicker({ "
+            + "   rtl: App.isRTL(), "
+            + "   orientation: 'right', "
+            + "   autoclose: true, "
+            + "   language: 'pt-BR' "
+            + " }) "
+            + " .on('changeDate', function(){"
+            + "   var input = $input; "
+            + "   var format = $datepicker.data('dateFormat').toUpperCase();"
+            + "   if ( format == 'DD/MM/YYYY' && /\\d{1,2}\\/\\d{1,2}\\/\\d{4}/.test(input.val()) "
+            + "     || format == 'DD/MM' && /\\d{1,2}\\/\\d{1,2}/.test(input.val())) { "
+            + "     input.trigger('" + BSDatepickerConstants.JS_CHANGE_EVENT + "');"
+            + "   } "
+            + " }); ";
 
         return String.format(js, idDatepicker);
     }

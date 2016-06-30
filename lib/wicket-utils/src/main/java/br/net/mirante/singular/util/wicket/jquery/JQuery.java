@@ -5,24 +5,24 @@
 
 package br.net.mirante.singular.util.wicket.jquery;
 
-import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.Page;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$L;
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+
+import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
 
 public class JQuery {
 
-    public static StringBuilder $(Component component) {
-        if (component instanceof Page) {
-            return new StringBuilder("$(document)");
-        }
-        return $("#" + component.getMarkupId());
-    }
+//    public static StringBuilder $(Component component) {
+//        if (component instanceof Page) {
+//            return new StringBuilder("$(document)");
+//        }
+//        return $("#" + component.getMarkupId());
+//    }
 
     public static StringBuilder convertEvent(Component component, String originalEvent, String newEvent) {
         return $(component).append(""
@@ -36,12 +36,11 @@ public class JQuery {
                                              Component newComponent, String newEvent) {
 
         return on(originalComponent, originalEvent, $(newComponent) + ".trigger('" + newEvent + "');"
-            + "console.log('redirecting event " + originalEvent + " to " + newEvent + "');"
-            );
+            + "console.log('redirecting event " + originalEvent + " to " + newEvent + "');");
     }
 
-    public static StringBuilder $(Component component, Component... moreComponents) {
-        final Component[] allComponents = ArrayUtils.add(moreComponents, component);
+    public static StringBuilder $(Component... components) {
+        final Component[] allComponents = components;
         final String selector = Arrays.stream(allComponents).filter($L.notNull())
             .map(it -> (it instanceof Page) ? "document" : "#" + it.getMarkupId())
             .collect(Collectors.joining(","));
