@@ -23,6 +23,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.validation.IValidationError;
+import br.net.mirante.singular.form.validation.ValidationError;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
@@ -62,42 +63,49 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
                 SValidationFeedbackCompactPanel fp = (SValidationFeedbackCompactPanel) component;
                 if (fp.anyMessage(ValidationErrorLevel.ERROR)) {
                     response.render(OnDomReadyHeaderItem.forScript(
-                            JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"));
+                        JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"));
                 } else if (fp.anyMessage(ValidationErrorLevel.WARNING)) {
                     response.render(OnDomReadyHeaderItem.forScript(
-                            JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"));
+                        JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"));
                 } else {
                     response.render(OnDomReadyHeaderItem.forScript(
-                            JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"));
+                        JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"));
                 }
                 response.render(OnDomReadyHeaderItem.forScript(""
-                        + "var $this = " + JQuery.$(SValidationFeedbackCompactPanel.this) + ";"
-                        + "var $fence = " + JQuery.$(fence) + ";"
-                        + "$fence.find(':input')"
-                        + "  .on('focus', function(){ $this.addClass('singular-active'); })"
-                        + "  .on('blur',  function(){ $this.removeClass('singular-active'); });"
-                        //                    + "$this"
-                        //                    + "  .on('mouseover', function(){ $this.addClass('singular-active'); })"
-                        //                    + "  .on('mouseout',  function(){ $this.removeClass('singular-active'); });"
-                        + ""));
+                    + "var $this = " + JQuery.$(SValidationFeedbackCompactPanel.this) + ";"
+                    + "var $fence = " + JQuery.$(fence) + ";"
+                    + "$fence.find(':input')"
+                    + "  .on('focus', function(){ $this.addClass('singular-active'); })"
+                    + "  .on('blur',  function(){ $this.removeClass('singular-active'); });"
+                    //                    + "$this"
+                    //                    + "  .on('mouseover', function(){ $this.addClass('singular-active'); })"
+                    //                    + "  .on('mouseout',  function(){ $this.removeClass('singular-active'); });"
+                    + ""));
 
                 List<IValidationError> messages = getMessages();
                 if (!messages.isEmpty()) {
                     String errors = messages.stream()
-                            .map(IValidationError::getMessage)
-                            .collect(joining("</li><li>", "<ul class='list-unstyled'><li>", "</li></ul>"));
+                        .map(IValidationError::getMessage)
+                        .collect(joining("</li><li>", "<ul class='list-unstyled'><li>", "</li></ul>"));
                     if (messages.size() > 1) {
                         response.render(OnDomReadyHeaderItem.forScript(""
-                                + "var $feedback = " + JQuery.$(component) + ";"
-                                + "var $formGroup = $feedback.parent();"
-                                + "$formGroup"
-                                + "  .data('content', '" + JavaScriptUtils.javaScriptEscape(errors) + "')"
-                                + "  .popover({"
-                                + "    'html':true,"
-                                + "    'placement':'bottom',"
-                                + "    'trigger':'hover'"
-                                + "  });"
-                                + ""));
+                            + "(function(){"
+                            + "'use strict';"
+                            + "var $feedback = " + JQuery.$(component) + ";"
+                            + "var $formGroup = $feedback.parent();"
+                            + "var $input = $formGroup.find(':input:first');"
+                            + "$input"
+                            + "  .data('content', '" + JavaScriptUtils.javaScriptEscape(errors) + "')"
+                            + "  .popover({"
+                            + "    'html':true,"
+                            + "    'placement':'bottom',"
+                            + "    'trigger':'manual'"
+                            + "  });"
+                            + "$formGroup"
+                            + "  .hover("
+                            + "    function(){ console.log($input); $input.popover('show'); },"
+                            + "    function(){ $input.popover('hide'); });"
+                            + "})();"));
                     }
                 }
             }
@@ -121,12 +129,12 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
 
     public List<IValidationError> getMessages() {
         List<IValidationError> list = getValidationFeedbackHandler().collectNestedErrors();
-//        if (!list.isEmpty()) {
-//            IValidationError first = list.get(0);
-//            list.add(new ValidationError(first.getInstanceId(), first.getErrorLevel(), "Erro 2"));
-//            list.add(new ValidationError(first.getInstanceId(), first.getErrorLevel(), "Erro 3"));
-//            list.add(new ValidationError(first.getInstanceId(), first.getErrorLevel(), "Erro 4"));
-//        }
+        if (!list.isEmpty()) {
+            IValidationError first = list.get(0);
+            list.add(new ValidationError(first.getInstanceId(), first.getErrorLevel(), "Erro 2"));
+            list.add(new ValidationError(first.getInstanceId(), first.getErrorLevel(), "Erro 3"));
+            list.add(new ValidationError(first.getInstanceId(), first.getErrorLevel(), "Erro 4"));
+        }
         return list;
     }
 
