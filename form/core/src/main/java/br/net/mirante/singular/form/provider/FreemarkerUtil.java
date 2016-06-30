@@ -30,16 +30,32 @@ public class FreemarkerUtil {
     }
 
     public static String mergeWithFreemarker(String template, Object obj) {
-        if (obj == null) {
+
+        int minimumSize = 4;
+
+        if (obj == null || template == null) {
             return StringUtils.EMPTY;
         }
-        final StringWriter sw = new StringWriter();
+
+        StringWriter sw           = new StringWriter();
+        String       safeTemplate = template.trim();
+
+        /**
+         * nullsafe wrapper
+         */
+        if (safeTemplate.startsWith("${") && safeTemplate.endsWith("}") && safeTemplate.length() >= minimumSize) {
+            safeTemplate = safeTemplate.substring(2, safeTemplate.length());
+            safeTemplate = safeTemplate.substring(0, safeTemplate.length() - 1);
+            safeTemplate = "${(" + safeTemplate + ")!''}";
+        }
+
         try {
-            new Template(String.valueOf(template.hashCode()), new StringReader(template), cfg).process(obj, sw);
+            new Template(String.valueOf(template.hashCode()), new StringReader(safeTemplate), cfg).process(obj, sw);
         } catch (IOException | TemplateException e) {
             LOGGER.error(e.getMessage(), e);
             throw new SingularFormException("Não foi possivel fazer o merge do template " + template);
         }
+
         return sw.toString();
     }
 
