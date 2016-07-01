@@ -1,5 +1,5 @@
 body {
-  background-color: #F2F2F2; }
+  background-color: #f2f2f2; }
 
 a {
   color: #508450; }
@@ -12,7 +12,7 @@ a {
   height: 30px; }
 
 .page-header.navbar {
-  background: #F9F9F9;
+  background: #f9f9f9;
   border-bottom: 1px solid #e9ecf3; }
 
 .page-header.navbar .menu-toggler {
@@ -39,6 +39,15 @@ a {
   background-color: #508450;
   border: 1px solid transparent; }
 
+.btn-add {
+  background-color: transparent;
+  border-color: #508450;
+  color: #508450; }
+  .btn-add:hover, .btn-add:focus {
+    background-color: #508450;
+    border-color: #508450;
+    color: #fff; }
+
 .form-control:focus {
   border-color: #508450; }
 
@@ -46,10 +55,10 @@ a {
   color: #508450; }
 
 .page-sidebar {
-  background-color: #FFFFFF; }
+  background-color: #ffffff; }
 
 .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li:hover > a, .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li.open > a, .page-sidebar .page-sidebar-menu > li:hover > a, .page-sidebar .page-sidebar-menu > li.open > a {
-  background-color: #F2F2F2; }
+  background-color: #f2f2f2; }
 
 .list-detail-input .headers {
   background-color: #dfdfdf; }
@@ -61,13 +70,16 @@ a {
   background-color: #d4e5d4; }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
-  background-color: #F2F2F2; }
+  background-color: #f2f2f2; }
 
 .tt-input[readonly] {
   background-color: #fff; }
 
+.upload-panel-body .list-detail-empty {
+  background-color: #f2f2f2; }
+
 .list-detail-empty {
-  background-color: #F2F2F2; }
+  background-color: #ffffff; }
 
 .upload-list-item .list-item-progress .progress-bar {
   background-color: #508450; }
@@ -79,4 +91,4 @@ a {
   background-color: #e0e0e0; }
 
 .page-footer {
-  background-color: #F9F9F9; }
+  background-color: #f9f9f9; }
