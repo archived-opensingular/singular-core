@@ -74,7 +74,7 @@ public class InputMaskBehavior extends Behavior {
         /**
          * <p>Máscara para CNPJ.</p>
          */
-        public static Masks CNPJ = new Masks("99-999.999/9999-99");
+        public static Masks CNPJ = new Masks("99.999.999/9999-99");
 
         /**
          * <p>Máscara para CEP.</p>

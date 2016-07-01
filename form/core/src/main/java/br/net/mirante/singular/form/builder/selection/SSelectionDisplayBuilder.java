@@ -9,8 +9,13 @@ import br.net.mirante.singular.form.converter.SInstanceConverter;
 import br.net.mirante.singular.form.internal.freemarker.FormFreemarkerUtil;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.util.transformer.Value.Content;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Optional;
 
 import static br.net.mirante.singular.form.util.transformer.Value.hydrate;
+import static java.lang.String.valueOf;
+import static java.util.Optional.*;
 
 
 public class SSelectionDisplayBuilder extends AbstractBuilder {
@@ -36,9 +41,9 @@ public class SSelectionDisplayBuilder extends AbstractBuilder {
                 final SInstance ins = elementsType.newInstance();
                 Value.hydrate(ins, content);
                 if (ins instanceof SIComposite) {
-                    return String.valueOf(((SIComposite) ins).getValue(display));
+                    return valueOf(ofNullable(((SIComposite) ins).getValue(display)).orElse(StringUtils.EMPTY));
                 }
-                return String.valueOf(ins.getValue());
+                return valueOf(ofNullable(ins.getValue()).orElse(StringUtils.EMPTY));
             }
         });
         addConverter();
@@ -78,6 +83,5 @@ public class SSelectionDisplayBuilder extends AbstractBuilder {
             }
         });
     }
-
 
 }

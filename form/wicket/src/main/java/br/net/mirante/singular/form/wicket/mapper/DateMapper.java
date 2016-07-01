@@ -14,10 +14,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
@@ -28,54 +25,45 @@ import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerInputGroup;
 
 @SuppressWarnings("serial")
 public class DateMapper extends ControlsFieldComponentAbstractMapper {
 
     private static final Logger LOGGER = Logger.getLogger(DateMapper.class.getName());
 
+    @SuppressWarnings("unchecked")
     @Override
     public Component appendInput() {
-        @SuppressWarnings("unchecked")
-        TextField<?> comp = new TextField<Date>(model.getObject().getName(),
-            new MInstanciaValorModel<>(model), Date.class) {
-            @Override
-            public <C> IConverter<C> getConverter(Class<C> type) {
-                return (IConverter<C>) (new IConverter<Date>() {
-                    @Override
-                    public Date convertToObject(String date, Locale locale) throws ConversionException {
-                        try {
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                            sdf.setLenient(false);
-                            return sdf.parse(date);
-                        } catch (ParseException e) {
-                            String msg = String.format(
-                                "Can't parse value '%s' with format '%s'.",
-                                date, "dd/MM/yyyy");
-                            LOGGER.log(Level.WARNING, msg, e);
-                            throw new ConversionException(e);
-                        }
-                    }
-
-                    @Override
-                    public String convertToString(Date date, Locale locale) {
-                        return (new SimpleDateFormat("dd/MM/yyyy")).format(date);
-                    }
-                });
-            }
-        };
-        formGroup.appendDatepicker(comp.setLabel(labelModel)
-            .setOutputMarkupId(true)
-            .add(new InputMaskBehavior(Masks.FULL_DATE)));
-        return comp;
+        BSDatepickerInputGroup datepicker = formGroup
+            .newComponent(id -> (BSDatepickerInputGroup) new BSDatepickerInputGroup(id)
+                .setConverter(new ConverterImpl())
+                .setTextFieldConfigurer((FormComponent<?> c) -> c
+                    .setLabel(labelModel)
+                    .setDefaultModel(new MInstanciaValorModel<>(model))
+                    .setOutputMarkupId(true)
+                    .add(new InputMaskBehavior(Masks.FULL_DATE))));
+        return datepicker.getTextField();
     }
 
     @Override
     public void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
-        component.add(new BSDatepickerAjaxUpdateBehavior(model, true, listener));
-        component.add(new BSDatepickerAjaxUpdateBehavior(model, false, listener));
+        adjustJSEvents(component);
+        BSDatepickerInputGroup datepicker = BSDatepickerInputGroup.getFromTextfield(component);
+        datepicker.getTextField()
+            .add(AjaxUpdateInputBehavior.forProcess(model, listener))
+            .add(AjaxUpdateInputBehavior.forValidate(model, listener));
+        //datepicker.getTextField().add(AjaxUpdateInputBehavior.forProcess(model, listener));
+    }
+
+    @Override
+    public void adjustJSEvents(Component comp) {
+        BSDatepickerInputGroup datepicker = BSDatepickerInputGroup.getFromTextfield(comp);
+        datepicker.getTextField()
+            .add(new SingularEventBehavior()
+                .setProcessEvent("changeDate", datepicker)
+                .setValidateEvent("blur", datepicker.getTextField())
+                .setSupportComponents(datepicker.getButton()));
     }
 
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
@@ -90,37 +78,61 @@ public class DateMapper extends ControlsFieldComponentAbstractMapper {
         return StringUtils.EMPTY;
     }
 
-    private static final class BSDatepickerAjaxUpdateBehavior extends AjaxUpdateInputBehavior {
-
-        private transient boolean flag;
-
-        private BSDatepickerAjaxUpdateBehavior(IModel<SInstance> model, boolean validateOnly, IAjaxUpdateListener listener) {
-            super((validateOnly) ? SINGULAR_VALIDATE_EVENT : SINGULAR_PROCESS_EVENT, model, validateOnly, listener);
-        }
-
+    @SuppressWarnings("rawtypes")
+    private static final class ConverterImpl implements IConverter {
         @Override
-        protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
-            super.updateAjaxAttributes(attributes);
-            if (flag)
-                attributes.setEventNames();
-        }
-
-        @Override
-        protected CharSequence getCallbackScript(Component component) {
-            flag = true;
+        public Object convertToObject(String date, Locale locale) throws ConversionException {
+            if ("//".equals(date))
+                return null;
             try {
-                return JQuery.on(component, super.getEvent(), super.getCallbackScript(component));
-            } finally {
-                flag = false;
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                sdf.setLenient(false);
+                return sdf.parse(date);
+            } catch (ParseException e) {
+                String msg = String.format(
+                    "Can't parse value '%s' with format '%s'.",
+                    date, "dd/MM/yyyy");
+                LOGGER.log(Level.WARNING, msg, e);
+                throw new ConversionException(e);
             }
         }
-
         @Override
-        public void renderHead(Component component, IHeaderResponse response) {
-            super.renderHead(component, response);
-            response.render(OnDomReadyHeaderItem.forScript(JQuery.$(getComponent())
-                + ".on('" + BSDatepickerConstants.JS_CHANGE_EVENT + "', function(){ $(this).trigger('" + SINGULAR_VALIDATE_EVENT + "'); })"
-                + ".on('hide', function(){ $(this).trigger('" + SINGULAR_PROCESS_EVENT + "'); });"));
+        public String convertToString(Object date, Locale locale) {
+            return (new SimpleDateFormat("dd/MM/yyyy")).format((Date) date);
         }
     }
+
+    //    private static final class BSDatepickerAjaxUpdateBehavior extends AjaxUpdateInputBehavior {
+    //
+    //        private transient boolean flag;
+    //
+    //        private BSDatepickerAjaxUpdateBehavior(IModel<SInstance> model, boolean validateOnly, IAjaxUpdateListener listener) {
+    //            super((validateOnly) ? SINGULAR_VALIDATE_EVENT : SINGULAR_PROCESS_EVENT, model, validateOnly, listener);
+    //        }
+    //
+    //        @Override
+    //        protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+    //            super.updateAjaxAttributes(attributes);
+    //            if (flag)
+    //                attributes.setEventNames();
+    //        }
+    //
+    //        @Override
+    //        protected CharSequence getCallbackScript(Component component) {
+    //            flag = true;
+    //            try {
+    //                return JQuery.on(component, super.getEvent(), super.getCallbackScript(component));
+    //            } finally {
+    //                flag = false;
+    //            }
+    //        }
+    //
+    //        @Override
+    //        public void renderHead(Component component, IHeaderResponse response) {
+    //            super.renderHead(component, response);
+    //            response.render(OnDomReadyHeaderItem.forScript(JQuery.$(getComponent())
+    //                + ".on('" + BSDatepickerConstants.JS_CHANGE_EVENT + "', function(){ $(this).trigger('" + SINGULAR_VALIDATE_EVENT + "'); })"
+    //                + ".on('hide', function(){ $(this).trigger('" + SINGULAR_PROCESS_EVENT + "'); });"));
+    //        }
+    //    }
 }
