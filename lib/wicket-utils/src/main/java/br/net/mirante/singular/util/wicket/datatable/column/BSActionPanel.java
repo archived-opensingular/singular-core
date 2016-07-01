@@ -23,12 +23,13 @@ import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.resource.IconeView;
+
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BSActionPanel<T> extends Panel {
 
-    public static final String LINK_ID = "link";
+    public static final String LINK_ID  = "link";
     public static final String ICONE_ID = "icone";
     public static final String LABEL_ID = "label";
 
@@ -41,13 +42,13 @@ public class BSActionPanel<T> extends Panel {
 
     public BSActionPanel<T> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, MarkupContainer link) {
         return appendAction(new ActionConfig<>().labelModel(labelModel).iconeModel(iconeModel)
-                .stripeModel(null).link(link).buttonModel($m.ofValue("black")).withText(true));
+                .stripeModel(null).link(link).styleClasses($m.ofValue("black")).withText(true));
     }
 
     public BSActionPanel<T> appendAction(ActionConfig<?> actionConfig) {
 
         actions.add(new WebMarkupContainer(actions.newChildId())
-                .add(actionConfig.link.add($b.attrAppender("class", actionConfig.buttonModel, " "))));
+                .add(actionConfig.link.add($b.attrAppender("class", actionConfig.styleClasses, " "))));
 
         if (actionConfig.stripeModel != null) {
             actionConfig.link.add($b.attrAppender("class", actionConfig.stripeModel, " "));
@@ -69,7 +70,7 @@ public class BSActionPanel<T> extends Panel {
         actionConfig.link.add($b.attr("data-toggle", "tooltip"));
         actionConfig.link.add($b.attr("data-placement", "bottom"));
 
-        if(actionConfig.title != null) {
+        if (actionConfig.title != null) {
             actionConfig.link.add($b.attr("title", actionConfig.title));
         } else {
             actionConfig.link.add($b.attr("title", actionConfig.labelModel));
@@ -128,12 +129,12 @@ public class BSActionPanel<T> extends Panel {
     public static class ActionConfig<T> implements Serializable {
 
         protected IModel<?> labelModel = $m.ofValue("");
-        protected IModel<Icone> iconeModel;
-        protected IModel<String> iconeStyle;
-        protected IModel<String> iconeClass;
-        protected IModel<String> stripeModel;
+        protected IModel<Icone>   iconeModel;
+        protected IModel<String>  iconeStyle;
+        protected IModel<String>  iconeClass;
+        protected IModel<String>  stripeModel;
         protected MarkupContainer link;
-        protected IModel<String> buttonModel = $m.ofValue("black");
+        protected IModel<String> styleClasses = $m.ofValue("btn default btn-xs black");
         protected IModel<String> style;
         protected IModel<String> title;
         protected boolean withText = false;
@@ -169,8 +170,8 @@ public class BSActionPanel<T> extends Panel {
             return this;
         }
 
-        public ActionConfig<T> buttonModel(IModel<String> buttonModel) {
-            this.buttonModel = buttonModel;
+        public ActionConfig<T> styleClasses(IModel<String> buttonModel) {
+            this.styleClasses = buttonModel;
             return this;
         }
 
@@ -189,7 +190,7 @@ public class BSActionPanel<T> extends Panel {
             return this;
         }
 
-        public ActionConfig<T> title(IModel<String> title){
+        public ActionConfig<T> title(IModel<String> title) {
             this.title = title;
             return this;
         }
