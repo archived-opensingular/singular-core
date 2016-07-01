@@ -1,10 +1,13 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.core.STypeDate;
-import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
-import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.*;
+import static org.junit.Assert.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 import org.fest.assertions.api.Assertions;
@@ -12,15 +15,17 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import java.util.List;
-import java.util.Optional;
-
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import static org.junit.Assert.*;
+import br.net.mirante.singular.commons.lambda.IPredicate;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.type.core.STypeDate;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerInputGroup;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 @RunWith(Enclosed.class)
-public class DateMapperTest  {
+public class DateMapperTest {
 
     private static class Base extends SingularFormBaseTest {
 
@@ -45,12 +50,18 @@ public class DateMapperTest  {
             page.setAsEditView();
         }
 
-        @Test public void testEditRendering() {
-            assertTrue(findId(form.getForm(), "data").isPresent());
+        @Test
+        @SuppressWarnings("rawtypes")
+        public void testEditRendering() {
+            Supplier<Stream<BSDatepickerInputGroup>> datepickers = () -> findOnForm(BSDatepickerInputGroup.class, form.getForm(), IPredicate.all());
+            assertTrue(datepickers.get().findAny().isPresent());
+            assertTrue(datepickers.get().count() == 1);
+            BSDatepickerInputGroup datepicker = datepickers.get().findFirst().get();
 
-            List<TextField> r = (List) findTag(form.getForm(), "data", TextField.class);
-            Assertions.assertThat(r).hasSize(1);
-            Assertions.assertThat(r.get(0).getValue()).isEqualTo("01/07/1991");
+            Optional<TextField> textfield = WicketUtils.findFirstChild(datepicker, TextField.class);
+            assertTrue(textfield.isPresent());
+
+            Assertions.assertThat(textfield.get().getValue()).isEqualTo("01/07/1991");
         }
     }
 
@@ -62,7 +73,8 @@ public class DateMapperTest  {
             page.setAsVisualizationView();
         }
 
-        @Test public void testVisualizationRendering() {
+        @Test
+        public void testVisualizationRendering() {
             Optional<String> data = findId(form.getForm(), "data");
             assertTrue(data.isPresent());
 
@@ -79,6 +91,5 @@ public class DateMapperTest  {
             assertEquals("01/07/1991", output.getDefaultModelObject());
         }
     }
-
 
 }
