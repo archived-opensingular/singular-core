@@ -118,34 +118,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             @Override
             protected void buildContent(BSContainer<?> content, Form<?> form) {
-
-                final String emptyContentTemplate = ""
-                        + " <div class='list-detail-empty'>                                          "
-                        + "    <p class='list-detail-empty-message'>Nenhum item foi adicionado.</p>  "
-                        + " </div>                                                                   ";
-                final TemplatePanel emptyContent = new TemplatePanel("emptyContent", emptyContentTemplate);
-                emptyContent.add(new Behavior() {
-                    @Override
-                    public void onConfigure(Component component) {
-                        super.onConfigure(component);
-                        if (ctx.getCurrentInstance() instanceof SIList) {
-                            component.setVisible(((SIList<?>) ctx.getCurrentInstance()).isEmpty());
-                        }
-                    }
-                });
-                content.appendTag("div", emptyContent);
-
                 content.appendTag("table", true, null, (id) -> {
-                    BSDataTable<SInstance, ?> bsDataTable = buildTable(id, model, (SViewListByMasterDetail) view, modal, ctx, viewMode);
-                    bsDataTable.add(new Behavior() {
-                        @Override
-                        public void onConfigure(Component component) {
-                            super.onConfigure(component);
-                            if (ctx.getCurrentInstance() instanceof SIList) {
-                                component.setVisible(!((SIList<?>) ctx.getCurrentInstance()).isEmpty());
-                            }
-                        }
-                    });
+                    final BSDataTable<SInstance, ?> bsDataTable = buildTable(id, model, (SViewListByMasterDetail) view, modal, ctx, viewMode);
                     bsDataTable.setStripedRows(false);
                     bsDataTable.setHoverRows(false);
                     bsDataTable.setBorderedTable(false);
@@ -176,21 +150,18 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
     private BSDataTable<SInstance, ?> buildTable(String id, IModel<SIList<SInstance>> model, SViewListByMasterDetail view, MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode) {
 
-        BSDataTableBuilder<SInstance, ?, ?> builder = new BSDataTableBuilder<>(newDataProvider(model)).withNoRecordsToolbar();
+        final BSDataTableBuilder<SInstance, ?, ?> builder = new BSDataTableBuilder<>(newDataProvider(model)).withNoRecordsToolbar();
+        final BSDataTable<SInstance, ?>           dataTable;
 
         configureColumns(view.getColumns(), builder, model, modal, ctx, viewMode, view);
+        dataTable = builder.build(id);
 
-        BSDataTable<SInstance, ?> dataTable = builder.build(id);
-
-        dataTable.setOnNewRowItem(new IConsumer<Item<SInstance>>() {
-            @Override
-            public void accept(Item<SInstance> rowItem) {
-                SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(rowItem)
-                        .addInstanceModel(rowItem.getModel())
-                        .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(rowItem)));
-                rowItem.add($b.classAppender("singular-form-table-row can-have-error"));
-                rowItem.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(it -> it.containsNestedErrors())));
-            }
+        dataTable.setOnNewRowItem((IConsumer<Item<SInstance>>) rowItem -> {
+            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(rowItem)
+                    .addInstanceModel(rowItem.getModel())
+                    .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(rowItem)));
+            rowItem.add($b.classAppender("singular-form-table-row can-have-error"));
+            rowItem.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(it -> it.containsNestedErrors())));
         });
 
         return dataTable;
