@@ -164,7 +164,9 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         /*registrando recurso compartilhado*/
         WebApplication.get().getSharedResources().add(String.valueOf(id), resource);
         WebApplication.get().mountResource(url, ref);
-        return WebApplication.get().getServletContext().getContextPath() + url;
+        String path = WebApplication.get().getServletContext().getContextPath() + "/" + WebApplication.get().getWicketFilter().getFilterPath() + url;
+        path = path.replaceAll("\\*","").replaceAll("//","/");
+        return  path;
     }
 
 }
