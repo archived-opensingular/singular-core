@@ -95,7 +95,7 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
         super.onInitialize();
         getCaption().setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
     }
-    
+
     @Override
     protected void onConfigure() {
         super.onConfigure();
@@ -104,14 +104,14 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
             .setOutputMarkupId(renderCaption)
             .setOutputMarkupPlaceholderTag(renderCaption);
     }
-    
+
     @Override
     protected Item<T> newRowItem(String id, int index, IModel<T> model) {
         Item<T> rowItem = super.newRowItem(id, index, model);
         onNewRowItem.accept(rowItem);
         return rowItem;
     }
-    
+
     public BSDataTable<T, S> setOnNewRowItem(IConsumer<Item<T>> onNewRowItem) {
         this.onNewRowItem = IConsumer.noopIfNull(onNewRowItem);
         return this;

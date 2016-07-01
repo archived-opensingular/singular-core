@@ -229,7 +229,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         buildFooter(footer, ctx, createAddButton);
     }
 
-    protected static void buildFooter(BSContainer<?> footer, WicketBuildContext ctx, Factory createAddButton) {
+    public static void buildFooter(BSContainer<?> footer, WicketBuildContext ctx, Factory createAddButton) {
         if (canAddItems(ctx)) {
             final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
             template.add((Component) createAddButton.create());
@@ -245,7 +245,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                 && ctx.getViewMode().isEdition();
     }
 
-    protected static String definirLabel(WicketBuildContext ctx) {
+    public static String definirLabel(WicketBuildContext ctx) {
         SType<?> type = ctx.getCurrentInstance().getType();
         AbstractSViewListWithControls<?> view = (AbstractSViewListWithControls<?>) ctx.getView();
         return (String) view.label().orElse(

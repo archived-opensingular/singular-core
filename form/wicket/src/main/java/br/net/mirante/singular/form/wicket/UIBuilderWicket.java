@@ -21,6 +21,7 @@ import br.net.mirante.singular.form.wicket.mapper.attachment.list.AttachmentList
 import br.net.mirante.singular.form.wicket.mapper.attachment.single.AttachmentMapper;
 import br.net.mirante.singular.form.wicket.mapper.composite.BlocksCompositeMapper;
 import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapper;
+import br.net.mirante.singular.form.wicket.mapper.masterdetail.ListMasterDetailMapper;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.*;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
