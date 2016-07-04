@@ -62,6 +62,11 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
         return appendAction(labelModel, $m.ofValue(icone), action);
     }
 
+    public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, Icone icone, IBSAction<T> action, IFunction<IModel, Boolean> visibleFunction) {
+        actions.add(new ActionItem<>(new ActionConfig().labelModel(labelModel).iconeModel($m.ofValue(icone), null,  $m.ofValue("fa-lg")).visibleFor(visibleFunction), action));
+        return this;
+    }
+
     public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, IBSAction<T> action) {
         return appendAction(labelModel, (IModel<Icone>) null, action);
     }
@@ -83,6 +88,11 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
 
     public BSActionColumn<T, S> appendStaticAction(IModel<?> labelModel, Icone icone, IBiFunction<T, S, MarkupContainer> linkFactory) {
         actions.add(new ActionItem<>(new ActionConfig().labelModel(labelModel).iconeModel($m.ofValue(icone), null, $m.ofValue("fa-lg")).linkFactory(linkFactory), null));
+        return this;
+    }
+
+    public BSActionColumn<T, S> appendStaticAction(IModel<?> labelModel, Icone icone, IBiFunction<T, S, MarkupContainer> linkFactory, IFunction<IModel, Boolean> visibleFunction) {
+        actions.add(new ActionItem<>(new ActionConfig().labelModel(labelModel).iconeModel($m.ofValue(icone), null, $m.ofValue("fa-lg")).linkFactory(linkFactory).visibleFor(visibleFunction), null));
         return this;
     }
 
