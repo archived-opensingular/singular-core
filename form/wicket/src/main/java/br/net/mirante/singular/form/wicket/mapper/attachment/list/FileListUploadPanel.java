@@ -81,7 +81,12 @@ public class FileListUploadPanel extends Panel implements Loggable {
         }
                 .add(new Label("empty-message", "Nenhum arquivo foi adicionado.")));
         add(fileField = new FileUploadField("fileUpload", dummyModel()));
-        add(new LabelWithIcon("fileUploadLabel", Model.of("Carregar Arquivo"), Icone.UPLOAD, Model.of(fileField.getMarkupId())));
+        add(new LabelWithIcon("fileUploadLabel", Model.of("Carregar Arquivo"), Icone.UPLOAD, Model.of(fileField.getMarkupId())){
+            @Override
+            public boolean isVisible() {
+                return ctx.getViewMode().isEdition();
+            }
+        });
         add(fileList = new WebMarkupContainer("fileList"));
         fileList.add(new FilesListView(model, ctx));
         add(adder = new AddFileBehavior());
@@ -121,22 +126,26 @@ public class FileListUploadPanel extends Panel implements Loggable {
     }
 
     private String generateInitJS() {
-        return " $(function () { \n" +
-                "     var params = { \n" +
-                "             file_field_id: '" + fileField.getMarkupId() + "', \n" +
-                "             fileList_id: '" + fileList.getMarkupId() + "', \n" +
-                "             component_id: '" + this.getMarkupId() + "', \n" +
-                "  \n" +
-                "             param_name : '" + PARAM_NAME + "', \n" +
-                "             upload_url : '" + uploadUrl() + "', \n" +
-                "             download_url : '" + downloader.getUrl() + "', \n" +
-                "             add_url : '" + adder.getUrl() + "', \n" +
-                "             remove_url : '" + remover.getUrl() + "', \n" +
-                "  \n" +
-                "     }; \n" +
-                "  \n" +
-                "     window.FileListUploadPanel.setup(params); \n" +
-                " });";
+        if (ctx.getViewMode().isEdition()) {
+            return " $(function () { \n" +
+                    "     var params = { \n" +
+                    "             file_field_id: '" + fileField.getMarkupId() + "', \n" +
+                    "             fileList_id: '" + fileList.getMarkupId() + "', \n" +
+                    "             component_id: '" + this.getMarkupId() + "', \n" +
+                    "  \n" +
+                    "             param_name : '" + PARAM_NAME + "', \n" +
+                    "             upload_url : '" + uploadUrl() + "', \n" +
+                    "             download_url : '" + downloader.getUrl() + "', \n" +
+                    "             add_url : '" + adder.getUrl() + "', \n" +
+                    "             remove_url : '" + remover.getUrl() + "', \n" +
+                    "  \n" +
+                    "     }; \n" +
+                    "  \n" +
+                    "     window.FileListUploadPanel.setup(params); \n" +
+                    " });";
+        } else {
+            return "";
+        }
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
