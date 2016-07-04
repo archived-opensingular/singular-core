@@ -207,7 +207,7 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
         }
     }
 
-    protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance) {
+    protected T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance) {
         T petition = currentModel.getObject();
         if (currentInstance.getObject() instanceof SIComposite) {
             petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
