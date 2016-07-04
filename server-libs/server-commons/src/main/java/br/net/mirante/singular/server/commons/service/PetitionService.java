@@ -1,6 +1,10 @@
 package br.net.mirante.singular.server.commons.service;
 
 
+import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +28,7 @@ import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
@@ -31,6 +36,8 @@ import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
+import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 
 @Transactional
 public class PetitionService<T extends AbstractPetitionEntity> {
@@ -86,7 +93,31 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     }
 
     public List<Map<String, Object>> quickSearchMap(QuickFilter filter) {
-        return petitionDAO.quickSearchMap(filter, filter.getProcessesAbbreviation());
+        final List<Map<String, Object>> list = petitionDAO.quickSearchMap(filter, filter.getProcessesAbbreviation());
+        list.forEach(this::parseItemAction);
+        return list;
+    }
+
+    private void parseItemAction(Map<String, Object> item) {
+        BoxItemAction acaoAlterar           = createBoxItemAction(item, FormActions.FORM_FILL, ACAO_ALTERAR);
+        BoxItemAction acaoVisualizar        = createBoxItemAction(item, FormActions.FORM_VIEW, ACAO_VISUALIZAR);
+        BoxItemAction acaoCumprirExigencia  = createBoxItemAction(item, FormActions.FORM_FILL_WITH_ANALYSIS, ACAO_EXIGENCIA);
+
+        item.put("actions", Arrays.asList(acaoAlterar, acaoVisualizar, acaoCumprirExigencia));
+    }
+
+    private BoxItemAction createBoxItemAction(Map<String, Object> item, FormActions formAction, String actionName) {
+        String endpoint = DispatcherPageUtil
+                .baseURL("")
+                .formAction(formAction.getId())
+                .formId(item.get("cod"))
+                .param(SIGLA_FORM_NAME, item.get("type"))
+                .build();
+
+        final BoxItemAction boxItemAction = new BoxItemAction();
+        boxItemAction.setName(actionName);
+        boxItemAction.setEndpoint(endpoint);
+        return boxItemAction;
     }
 
     public FormKey saveOrUpdate(T peticao, SInstance instance) {

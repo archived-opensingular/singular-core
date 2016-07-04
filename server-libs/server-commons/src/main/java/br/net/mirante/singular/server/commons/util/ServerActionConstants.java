@@ -11,5 +11,6 @@ public class ServerActionConstants {
     public static final String ACAO_ALTERAR = "alterar";
     public static final String ACAO_EXCLUIR = "excluir";
     public static final String ACAO_VISUALIZAR = "visualizar";
+    public static final String ACAO_EXIGENCIA = "exigencia";
 
 }

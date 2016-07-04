@@ -16,7 +16,7 @@ public class ItemAction implements Serializable {
 
     private String label;
     private Icone icon;
-    private String endpointPattern;
+    private ItemActionType type;
 
     public ItemAction() {
     }
@@ -26,11 +26,11 @@ public class ItemAction implements Serializable {
         defaultAction = true;
     }
 
-    public ItemAction(String name, String label, Icone icon, String endpointPattern) {
+    public ItemAction(String name, String label, Icone icon, ItemActionType type) {
         this.name = name;
         this.label = label;
         this.icon = icon;
-        this.endpointPattern = endpointPattern;
+        this.type = type;
         defaultAction = false;
     }
 
@@ -50,11 +50,27 @@ public class ItemAction implements Serializable {
         this.defaultAction = defaultAction;
     }
 
-    public String getEndpointPattern() {
-        return endpointPattern;
+    public ItemActionType getType() {
+        return type;
     }
 
-    public void setEndpointPattern(String endpointPattern) {
-        this.endpointPattern = endpointPattern;
+    public void setType(ItemActionType type) {
+        this.type = type;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public Icone getIcon() {
+        return icon;
+    }
+
+    public void setIcon(Icone icon) {
+        this.icon = icon;
     }
 }

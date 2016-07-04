@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -26,21 +28,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
+import br.net.mirante.singular.commons.lambda.IBiFunction;
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.service.dto.ItemAction;
+import br.net.mirante.singular.server.commons.service.dto.ItemActionType;
 import br.net.mirante.singular.server.commons.service.dto.ItemBox;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
-import br.net.mirante.singular.server.commons.util.ServerActionConstants;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.core.wicket.ModuleLink;
-import br.net.mirante.singular.server.p.core.wicket.model.BoxModel;
+import br.net.mirante.singular.server.p.core.wicket.model.BoxItemModel;
 import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 
-public class BoxContent extends AbstractCaixaContent<BoxModel> {
+public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     static final Logger LOGGER = LoggerFactory.getLogger(BoxContent.class);
 
@@ -86,29 +91,30 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
     }
 
     @Override
-    protected void appendPropertyColumns(BSDataTableBuilder<BoxModel, String, IColumn<BoxModel, String>> builder) {
+    protected void appendPropertyColumns(BSDataTableBuilder<BoxItemModel, String, IColumn<BoxItemModel, String>> builder) {
         for (Map.Entry<String, String> entry : getFieldsDatatable().entrySet()) {
             builder.appendPropertyColumn($m.ofValue(entry.getKey()), entry.getValue());
         }
     }
 
     @Override
-    protected void appendActionColumns(BSDataTableBuilder<BoxModel, String, IColumn<BoxModel, String>> builder) {
-        BSActionColumn<BoxModel, String> actionColumn = new BSActionColumn<>(getMessage("label.table.column.actions"));
+    protected void appendActionColumns(BSDataTableBuilder<BoxItemModel, String, IColumn<BoxItemModel, String>> builder) {
+        BSActionColumn<BoxItemModel, String> actionColumn = new BSActionColumn<>(getMessage("label.table.column.actions"));
 
         for (ItemAction itemAction : itemBoxDTO.getActions().values()) {
-            if (itemAction.getName().equalsIgnoreCase(ServerActionConstants.ACAO_ALTERAR)) {
-                appendEditAction(actionColumn);
-            } else if (itemAction.getName().equalsIgnoreCase(ServerActionConstants.ACAO_VISUALIZAR)) {
-                appendViewAction(actionColumn);
-            } else if (itemAction.getName().equalsIgnoreCase(ServerActionConstants.ACAO_EXCLUIR)) {
-                appendDeleteAction(actionColumn);
-            } else {
 
+            if (itemAction.getType() == ItemActionType.POPUP) {
+                actionColumn.appendStaticAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), new LinkFunction(itemAction, getBaseUrl(), getLinkParams()), new VisibleFunction(itemAction));
+            } else if (itemAction.getType() == ItemActionType.ENDPOINT) {
+                actionColumn.appendAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), this::createLink, new VisibleFunction(itemAction));
             }
         }
 
         builder.appendColumn(actionColumn);
+    }
+
+    protected void createLink(AjaxRequestTarget target, IModel<BoxItemModel> model) {
+
     }
 
     @Override
@@ -117,7 +123,7 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
     }
 
     @Override
-    protected void onDelete(BoxModel peticao) {
+    protected void onDelete(BoxItemModel peticao) {
         petitionService.delete(peticao.getCod());
     }
 
@@ -142,19 +148,19 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
     }
 
     @Override
-    protected List<BoxModel> quickSearch(QuickFilter filter, List<String> siglasProcesso) {
+    protected List<BoxItemModel> quickSearch(QuickFilter filter, List<String> siglasProcesso) {
         final String connectionURL = getProcessGroup().getConnectionURL();
         final String url = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
         try {
-            return (List<BoxModel>) Arrays.asList(new RestTemplate().postForObject(url, filter, Map[].class))
-                    .stream().map(BoxModel::new).collect(Collectors.toList());
+            return (List<BoxItemModel>) Arrays.asList(new RestTemplate().postForObject(url, filter, Map[].class))
+                    .stream().map(BoxItemModel::new).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error("Erro ao acessar serviço: " + url, e);
             return Collections.emptyList();
         }
     }
 
-    protected WebMarkupContainer criarLink(BoxModel item, String id, FormActions formActions){
+    protected WebMarkupContainer criarLink(BoxItemModel item, String id, FormActions formActions){
 
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl())
@@ -170,7 +176,7 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
         return link;
     }
 
-    protected Map<String, String> getCriarLinkParameters(BoxModel item){
+    protected Map<String, String> getCriarLinkParameters(BoxItemModel item){
         final Map<String, String> linkParameters = new HashMap<>();
         linkParameters.putAll(getLinkParams());
         return linkParameters;
@@ -229,5 +235,50 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
 
     public boolean isWithRascunho() {
         return itemBoxDTO.isShowDraft();
+    }
+
+    public static class LinkFunction implements IBiFunction<BoxItemModel,String,MarkupContainer> {
+
+        private ItemAction itemAction;
+        private String baseUrl;
+        private Map<String, String> additionalParams;
+
+        public LinkFunction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
+            this.itemAction = itemAction;
+            this.baseUrl = baseUrl;
+            this.additionalParams = additionalParams;
+        }
+
+        @Override
+        public MarkupContainer apply(BoxItemModel boxItemModel, String id) {
+            WebMarkupContainer link = new WebMarkupContainer(id);
+            link.add($b.attr("target", String.format("_%s", boxItemModel.getCod())));
+            link.add($b.attr("href", mountHref(boxItemModel)));
+            return link;
+        }
+
+        private String mountHref(BoxItemModel boxItemModel) {
+            final BoxItemAction action = boxItemModel.getActionByName(itemAction.getName());
+            String url = baseUrl + action.getEndpoint();
+            for (Map.Entry<String, String> entry : additionalParams.entrySet()) {
+                url += "&" + entry.getKey() + "=" + entry.getValue();
+            }
+            return url;
+        }
+    }
+
+    public static class VisibleFunction implements IFunction<IModel, Boolean> {
+
+        private ItemAction itemAction;
+
+        public VisibleFunction(ItemAction itemAction) {
+            this.itemAction = itemAction;
+        }
+
+        @Override
+        public Boolean apply(IModel model) {
+            BoxItemModel boxItemModel = (BoxItemModel) model.getObject();
+            return boxItemModel.hasAction(itemAction);
+        }
     }
 }
