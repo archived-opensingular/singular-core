@@ -118,7 +118,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     }
 
     @Override
-    protected WebMarkupContainer criarLinkEdicao(BoxModel peticao, String id) {
+    protected WebMarkupContainer criarLinkEdicao(BoxItemModel peticao, String id) {
         if (peticao.getProcessBeginDate() == null) {
             return criarLink(peticao, id, FormActions.FORM_FILL);
         } else {

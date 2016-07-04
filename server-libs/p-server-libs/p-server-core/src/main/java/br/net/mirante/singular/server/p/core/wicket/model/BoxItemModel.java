@@ -17,26 +17,25 @@ public class BoxItemModel extends LinkedHashMap<String, Object> implements Seria
 
     private static final long serialVersionUID = 1L;
 
-    private LinkedHashMap<String, BoxItemAction> actionsMap;
 
     public BoxItemModel(Map<String, Object> map) {
         super(map);
-//        put("actions", getActionsMap().values());
     }
 
     public Long getCod() {
         return ((Integer) get("cod")).longValue();
     }
 
-    public Map<String, BoxItemAction> getActionsMap() {
-        if (actionsMap == null) {
-            LinkedHashMap actionsMap2 = new LinkedHashMap<>();
+    public String getProcessBeginDate() {
+        return (String) get("processBeginDate");
+    }
 
-            for (Map<String, Object> map : (List<Map<String, Object>>) get("actions")) {
-                final BoxItemAction itemAction = new BoxItemAction(map);
-                actionsMap2.put(itemAction.getName(), itemAction);
-            }
-            return actionsMap2;
+    public Map<String, BoxItemAction> getActionsMap() {
+        LinkedHashMap actionsMap = new LinkedHashMap<>();
+
+        for (Map<String, Object> map : (List<Map<String, Object>>) get("actions")) {
+            final BoxItemAction itemAction = new BoxItemAction(map);
+            actionsMap.put(itemAction.getName(), itemAction);
         }
         return actionsMap;
     }
