@@ -160,9 +160,10 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     private String generateInitJS() {
-        FileUploadPanel self = this;
-        return String.format(""
-            //@formatter:off
+        if (viewMode.isEdition()) {
+            FileUploadPanel self = this;
+            return String.format(""
+                            //@formatter:off
             + "\n $(function () { "
             + "\n   var params = { "
             + "\n     param_name: '"        + PARAM_NAME                    + "', "
@@ -177,15 +178,18 @@ public class FileUploadPanel extends Panel implements Loggable {
             + "\n   window.FileUploadPanel.setup(params);"
             + "\n });",
             //@formatter:on
-            PARAM_NAME,
-            self.getMarkupId(),
-            fileField.getMarkupId(),
-            filesContainer.getMarkupId(),
-            progressBar.getMarkupId(),
-            getUploadUrl(),
-            getDownloaderUrl(),
-            getAdderUrl(),
-            getMaxFileSize());
+                    PARAM_NAME,
+                    self.getMarkupId(),
+                    fileField.getMarkupId(),
+                    filesContainer.getMarkupId(),
+                    progressBar.getMarkupId(),
+                    getUploadUrl(),
+                    getDownloaderUrl(),
+                    getAdderUrl(),
+                    getMaxFileSize());
+        } else {
+            return "";
+        }
     }
 
     private String getAdderUrl() {
