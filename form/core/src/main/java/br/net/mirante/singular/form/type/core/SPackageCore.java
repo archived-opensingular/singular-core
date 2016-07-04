@@ -35,6 +35,7 @@ public class SPackageCore extends SPackage {
         pb.createType(STypePredicate.class);
         pb.createType(STypeString.class);
         pb.createType(STypeInteger.class);
+        pb.createType(STypeLong.class);
         pb.createType(STypeBoolean.class);
         pb.createType(STypeDate.class);
         pb.createType(STypeDecimal.class);

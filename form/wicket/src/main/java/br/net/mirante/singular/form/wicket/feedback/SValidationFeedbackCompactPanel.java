@@ -5,13 +5,12 @@
 
 package br.net.mirante.singular.form.wicket.feedback;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-import static java.util.stream.Collectors.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import br.net.mirante.singular.form.validation.IValidationError;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.StyleAttributeModifier;
 import org.apache.wicket.behavior.Behavior;
@@ -22,12 +21,13 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
-import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
-import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static java.util.stream.Collectors.joining;
 
 public class SValidationFeedbackCompactPanel extends Panel implements IFeedback {
 
@@ -88,16 +88,23 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
                             .collect(joining("</li><li>", "<ul class='list-unstyled'><li>", "</li></ul>"));
                     if (messages.size() > 1) {
                         response.render(OnDomReadyHeaderItem.forScript(""
+                                + "(function(){"
+                                + "'use strict';"
                                 + "var $feedback = " + JQuery.$(component) + ";"
                                 + "var $formGroup = $feedback.parent();"
-                                + "$formGroup"
+                                + "var $input = $formGroup.find(':input:first');"
+                                + "$input"
                                 + "  .data('content', '" + JavaScriptUtils.javaScriptEscape(errors) + "')"
                                 + "  .popover({"
                                 + "    'html':true,"
                                 + "    'placement':'bottom',"
-                                + "    'trigger':'hover'"
+                                + "    'trigger':'manual'"
                                 + "  });"
-                                + ""));
+                                + "$formGroup"
+                                + "  .hover("
+                                + "    function(){ console.log($input); $input.popover('show'); },"
+                                + "    function(){ $input.popover('hide'); });"
+                                + "})();"));
                     }
                 }
             }
@@ -120,14 +127,7 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
     }
 
     public List<IValidationError> getMessages() {
-        List<IValidationError> list = getValidationFeedbackHandler().collectNestedErrors();
-//        if (!list.isEmpty()) {
-//            IValidationError first = list.get(0);
-//            list.add(new ValidationError(first.getInstanceId(), first.getErrorLevel(), "Erro 2"));
-//            list.add(new ValidationError(first.getInstanceId(), first.getErrorLevel(), "Erro 3"));
-//            list.add(new ValidationError(first.getInstanceId(), first.getErrorLevel(), "Erro 4"));
-//        }
-        return list;
+        return getValidationFeedbackHandler().collectNestedErrors();
     }
 
     public boolean anyMessage(ValidationErrorLevel level) {
@@ -135,12 +135,7 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
     }
 
     protected IModel<? extends List<IValidationError>> newValidationErrorsModel() {
-        return new IReadOnlyModel<List<IValidationError>>() {
-            @Override
-            public List<IValidationError> getObject() {
-                return getMessages();
-            }
-        };
+        return (IReadOnlyModel<List<IValidationError>>) this::getMessages;
     }
 
     protected SValidationFeedbackHandler getValidationFeedbackHandler() {

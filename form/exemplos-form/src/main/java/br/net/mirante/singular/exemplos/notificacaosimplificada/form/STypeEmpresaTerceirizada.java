@@ -1,11 +1,10 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.converter.VocabularioControladoDTOSInstanceConverter;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.provider.VocabularioControladoTextQueryProvider;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.provider.STextQueryProvider;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewAutoComplete;
 import br.net.mirante.singular.form.view.SViewListByTable;
@@ -33,22 +32,28 @@ public class STypeEmpresaTerceirizada extends STypeComposite<SIComposite> {
                 .id(PessoaJuridicaNS::getCod)
                 .display(PessoaJuridicaNS::getRazaoSocial)
                 .converter(new STypeLocalFabricacao.PessoaJuridicaConverter(idEmpresa, razaoSocial, endereco))
-                .filteredProvider((i,f) -> dominioService(i).empresaTerceirizada(f));
-        
-        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao       = addFieldListOfComposite("etapasFabricacao", "etapaFabricacaoWrapper");
-        STypeComposite<SIComposite>                         etapaFabricacaoWrapper = etapasFabricacao.getElementsType();
-        STypeComposite<SIComposite>                         etapaFabricacao        = etapaFabricacaoWrapper.addFieldComposite("etapaFabricacao");
-        STypeString                                         idEtapaFabricacao      = etapaFabricacao.addFieldString("id");
+                .filteredProvider((i, f) -> dominioService(i).empresaTerceirizada(f));
+
+        STypeList<STypeComposite<SIComposite>, SIComposite> etapasFabricacao         = addFieldListOfComposite("etapasFabricacao", "etapaFabricacaoWrapper");
+        STypeComposite<SIComposite>                         etapaFabricacaoWrapper   = etapasFabricacao.getElementsType();
+        STypeComposite<SIComposite>                         etapaFabricacao          = etapaFabricacaoWrapper.addFieldComposite("etapaFabricacao");
+        STypeString                                         idEtapaFabricacao        = etapaFabricacao.addFieldString("id");
         STypeString                                         descricaoEtapaFabricacao = etapaFabricacao.addFieldString("descricao");
 
         etapaFabricacao
                 .setView(SViewAutoComplete::new);
 
-        etapaFabricacao.autocompleteOf(VocabularioControladoDTO.class)
-                .id(VocabularioControladoDTO::getId)
-                .display(VocabularioControladoDTO::getDescricao)
-                .converter(new VocabularioControladoDTOSInstanceConverter(idEtapaFabricacao, descricaoEtapaFabricacao))
-                .filteredProvider(new VocabularioControladoTextQueryProvider<>(EtapaFabricacao.class));
+        etapaFabricacao.autocomplete()
+                .id(idEtapaFabricacao)
+                .display(descricaoEtapaFabricacao)
+                .filteredProvider((STextQueryProvider) (builder, query) -> {
+                    builder
+                            .getCurrentInstance()
+                            .getDocument()
+                            .lookupService(DominioService.class)
+                            .buscarVocabulario(EtapaFabricacao.class, query)
+                            .forEach(vc -> builder.add().set(idEtapaFabricacao, vc.getId()).set(descricaoEtapaFabricacao, vc.getDescricao()));
+                });
 
         etapasFabricacao
                 .withView(SViewListByTable::new);

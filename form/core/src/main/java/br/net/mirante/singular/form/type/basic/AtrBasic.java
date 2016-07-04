@@ -64,6 +64,11 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
+    public AtrBasic maxFileSize(Long value) {
+        setAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE, value);
+        return this;
+    }
+    
     public AtrBasic integerMaxLength(Integer value) {
         setAttributeValue(SPackageBasic.ATR_INTEGER_MAX_LENGTH, value);
         return this;
@@ -177,6 +182,10 @@ public class AtrBasic extends STranslatorForAttribute {
         return getAttributeValue(SPackageBasic.ATR_MAX_LENGTH);
     }
 
+    public Long getMaxFileSize() {
+        return getAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE);
+    }
+    
     public boolean isVisible() {
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_VISIBLE));
     }

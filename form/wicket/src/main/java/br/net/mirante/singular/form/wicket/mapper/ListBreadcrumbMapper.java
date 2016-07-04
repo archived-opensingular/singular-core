@@ -211,7 +211,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     .newTemplateTag(t -> ""
                             + "<button"
                             + " wicket:id='_add'"
-                            + " class='btn blue btn-sm pull-right'"
+                            + " class='btn btn-sm pull-right'"
                             + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
                             + "</button>")
                     .add(new AjaxLink<Void>("_add") {
@@ -372,7 +372,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 if (viewMode.isEdition() && view.isDeleteEnabled()) {
                     actionColumn.appendAction(new BSActionPanel.ActionConfig<>()
                                     .iconeModel(Model.of(Icone.MINUS), Model.of(MapperCommons.ICON_STYLE))
-                                    .buttonModel(Model.of("red"))
+                                    .styleClasses(Model.of("red"))
                                     .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                             (target, rowModel) -> {
                                 SIList<?> sList = ((SIList<?>) model.getObject());
@@ -384,7 +384,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 actionColumn.appendAction(
                         new BSActionPanel.ActionConfig<>()
                                 .iconeModel(Model.of(openModalIcon), Model.of(MapperCommons.ICON_STYLE))
-                                .buttonModel(Model.of("blue-madison"))
+                                .styleClasses(Model.of("blue-madison"))
                                 .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                         (target, rowModel) -> {
                             currentInstance = rowModel;

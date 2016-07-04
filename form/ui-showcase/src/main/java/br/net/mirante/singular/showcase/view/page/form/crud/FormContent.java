@@ -170,8 +170,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                instanceModel.getObject().getDocument().persistFiles();//Tem que ser feito antes obrigatoriamente para poder atualizar os ids
                 MElement xml = MformPersistenciaXML.toXML(instanceModel.getObject());
-                instanceModel.getObject().getDocument().persistFiles();
                 if (xml != null) {
                     currentModel.setXml(xml.toStringExato());
                 } else {

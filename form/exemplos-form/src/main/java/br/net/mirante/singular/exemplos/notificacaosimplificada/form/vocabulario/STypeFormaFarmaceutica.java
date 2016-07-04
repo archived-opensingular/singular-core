@@ -1,13 +1,12 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.converter.VocabularioControladoDTOSInstanceConverter;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.provider.VocabularioControladoTextQueryProvider;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.provider.STextQueryProvider;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewAutoComplete;
@@ -33,12 +32,17 @@ public class STypeFormaFarmaceutica extends STypeComposite<SIComposite> {
                     .colPreference(4);
             this.setView(SViewAutoComplete::new);
 
-            this.autocompleteOf(VocabularioControladoDTO.class)
-                    .id(VocabularioControladoDTO::getId)
-                    .display(VocabularioControladoDTO::getDescricao)
-                    .converter(new VocabularioControladoDTOSInstanceConverter(id, descricao))
-                    .filteredProvider(new VocabularioControladoTextQueryProvider<>(FormaFarmaceuticaBasica.class));
-
+            this.autocomplete()
+                    .id(id)
+                    .display(descricao)
+                    .filteredProvider((STextQueryProvider) (builder, query) -> {
+                        builder
+                                .getCurrentInstance()
+                                .getDocument()
+                                .lookupService(DominioService.class)
+                                .buscarVocabulario(FormaFarmaceuticaBasica.class, query)
+                                .forEach(vc -> builder.add().set(id, vc.getId()).set(descricao, vc.getDescricao()));
+                    });
 
         }
     }

@@ -5,14 +5,15 @@
 
 package br.net.mirante.singular.form.wicket.behavior;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.model.IModel;
+
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 
 public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
 
@@ -25,6 +26,13 @@ public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
         this.model = model;
         this.validateOnly = validateOnly;
         this.listener = listener;
+    }
+
+    public static AjaxUpdateInputBehavior forValidate(IModel<SInstance> model, IAjaxUpdateListener listener) {
+        return new AjaxUpdateInputBehavior(IWicketComponentMapper.SINGULAR_VALIDATE_EVENT, model, true, listener);
+    }
+    public static AjaxUpdateInputBehavior forProcess(IModel<SInstance> model, IAjaxUpdateListener listener) {
+        return new AjaxUpdateInputBehavior(IWicketComponentMapper.SINGULAR_PROCESS_EVENT, model, false, listener);
     }
 
     @Override

@@ -27,6 +27,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.renderer.bpmn.layout.BpmnLayout;
 import br.net.mirante.singular.flow.core.renderer.bpmn.layout.LayoutOrientation;
 import br.net.mirante.singular.flow.core.renderer.bpmn.view.ActivityNodeStyle;
@@ -206,7 +207,7 @@ import java.util.function.Consumer;
  * </ul>
  * </p>
  */
-public class BPMNEditorDemo extends AbstractDemo {
+public class BPMNEditorDemo extends AbstractDemo implements Loggable{
 
     private TableEditorInputMode tableEditorInputMode;
     private JComboBox<String> graphChooserBox;
@@ -374,7 +375,7 @@ public class BPMNEditorDemo extends AbstractDemo {
             // load the sample graph and start the layout algorithm
             graphComponent.importFromGraphML(getClass().getResource(fileName));
         } catch (IOException exc) {
-            exc.printStackTrace();
+            getLogger().error(exc.getMessage(), exc);
         } finally {
             inLoadSample = false;
             setUIEnabled(true);

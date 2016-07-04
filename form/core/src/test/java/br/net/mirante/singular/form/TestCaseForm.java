@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import junit.framework.TestCase;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public abstract class TestCaseForm extends TestCase {
+public abstract class TestCaseForm extends TestCase implements Loggable {
 
     private final Supplier<SDictionary> dictionaryFactory;
 

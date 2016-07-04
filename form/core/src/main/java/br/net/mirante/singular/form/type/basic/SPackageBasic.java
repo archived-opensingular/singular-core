@@ -6,24 +6,42 @@
 package br.net.mirante.singular.form.type.basic;
 
 import java.util.Collection;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.AtrRef;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIConsumer;
+import br.net.mirante.singular.form.SIPredicate;
+import br.net.mirante.singular.form.SISupplier;
+import br.net.mirante.singular.form.SInfoPackage;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeBehavior;
+import br.net.mirante.singular.form.STypeConsumer;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.STypePredicate;
+import br.net.mirante.singular.form.STypeSimple;
+import br.net.mirante.singular.form.STypeSupplier;
 import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.type.core.SIBoolean;
 import br.net.mirante.singular.form.type.core.SIInteger;
+import br.net.mirante.singular.form.type.core.SILong;
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeBoolean;
 import br.net.mirante.singular.form.type.core.STypeDate;
 import br.net.mirante.singular.form.type.core.STypeDecimal;
 import br.net.mirante.singular.form.type.core.STypeFormula;
 import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeLong;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({ "unchecked", "rawtypes" })
 @SInfoPackage(name = SPackageBasic.NAME)
 public class SPackageBasic extends SPackage {
 
@@ -60,6 +78,7 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeConsumer, SIConsumer, IConsumer>              ATR_UPDATE_LISTENER       = new AtrRef<>(SPackageBasic.class, "updateListener", STypeConsumer.class, SIConsumer.class, IConsumer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_MINIMUM_SIZE          = new AtrRef<>(SPackageBasic.class, "minimumSize", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_MAXIMUM_SIZE          = new AtrRef<>(SPackageBasic.class, "maximumSize", STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeLong, SILong, Long>                           ATR_MAX_FILE_SIZE         = new AtrRef<>(SPackageBasic.class, "maxFileSize", STypeLong.class, SILong.class, Long.class);
 
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<SType<?>>>>
@@ -98,6 +117,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeType(ATR_INTEGER_MAX_LENGTH);
         pb.createAttributeType(ATR_FRACTIONAL_MAX_LENGTH);
         pb.createAttributeType(ATR_EDIT_SIZE);
+        pb.createAttributeType(ATR_MAX_FILE_SIZE);
 
         // Aplica os atributos ao tipos
         pb.createAttributeIntoType(SType.class, ATR_LABEL);
@@ -127,6 +147,8 @@ public class SPackageBasic extends SPackage {
 
         pb.addAttribute(STypeDecimal.class, ATR_INTEGER_MAX_LENGTH, 9);
         pb.addAttribute(STypeDecimal.class, ATR_FRACTIONAL_MAX_LENGTH, 2);
+
+        pb.addAttribute(STypeAttachment.class, ATR_MAX_FILE_SIZE, 100 * 1024 * 1024L); // 100MB
 
         pb.getType(SType.class).asAtr().displayString(ctx -> ctx.instance().toStringDisplayDefault());
 

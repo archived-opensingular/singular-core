@@ -18,6 +18,7 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.lang.Bytes;
+import org.apache.wicket.util.time.Duration;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -48,6 +49,7 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
     public void init() {
         super.init();
 
+        getRequestCycleSettings().setTimeout(Duration.minutes(5));
         Locale.setDefault(new Locale("pt", "BR"));
 
         getApplicationSettings().setAccessDeniedPage(Error403Page.class);

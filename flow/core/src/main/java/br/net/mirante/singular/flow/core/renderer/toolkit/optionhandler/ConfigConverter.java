@@ -29,6 +29,7 @@
  ***************************************************************************/
 package br.net.mirante.singular.flow.core.renderer.toolkit.optionhandler;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import com.yworks.yfiles.annotations.DefaultValue;
 import com.yworks.yfiles.graphml.PropertyInfo;
 import com.yworks.yfiles.utils.FlagsEnum;
@@ -71,7 +72,7 @@ import java.util.stream.Collectors;
  * "ShouldDisable[memberName]" defines a condition to disable the component created for the corresponding member.
  * </p>
  */
-public class ConfigConverter {
+public class ConfigConverter implements Loggable {
   // all members that need to be added to the top-level OptionGroup - including groups
   private ArrayList<Member> toplevelItems = new ArrayList<Member>();
 
@@ -372,7 +373,7 @@ public class ConfigConverter {
         try {
           field.set(config, value);
         } catch (IllegalAccessException e) {
-          e.printStackTrace();
+          getLogger().error(e.getMessage(), e);
         }
       }
     });
@@ -429,9 +430,9 @@ public class ConfigConverter {
         try {
           property.setValue(config, value);
         } catch (InvocationTargetException e) {
-          e.printStackTrace();
+          getLogger().error(e.getMessage(), e);
         } catch (IllegalAccessException e) {
-          e.printStackTrace();
+          getLogger().error(e.getMessage(), e);
         } catch (IllegalArgumentException e) {
           throw new IllegalArgumentException("The value " + value + " can't be assigned to the property " + property.getName() + " of type " + property.getType());
         }

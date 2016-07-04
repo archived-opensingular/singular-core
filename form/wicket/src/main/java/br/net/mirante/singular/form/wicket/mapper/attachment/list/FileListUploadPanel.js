@@ -5,19 +5,21 @@
 
         window.FileListUploadPanel.setup = function(params) {
             var self = this;
-            self.last_id = 1;
-
+            if (self.last_id == undefined){
+                self.last_id = 1;
+            }
             $('#' + params.file_field_id).fileupload({
                 url: params.upload_url,
                 paramName: params.param_name,
                 singleFileUploads: true,
                 dropZone: $('#' + params.component_id ),
                 dataType: 'json',
-                limitConcurrentUploads: 2,
+                limitConcurrentUploads: 1,
+                sequentialUploads: true,
                 formData:{
                     'upload_id' : params.upload_id,
                 },
-                send: function (e, data) {
+                add: function (e, data) {
                     var name = '?', fake_id = -1;
                     $.each(data.files, function (index, file) {
                         file['fake_id'] = fake_id = self.last_id ++;
@@ -39,17 +41,16 @@
                                 ),
                             $('<div class="list-item-progress" id="progress_bar_'+fake_id+'">')
                                 .append($('<div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>')),
-
                             $('<div class="list-item-action">')
-                                .append($('<a href="javascript:void(0);" class="list-action-remove">')
-                                    .append($('<i class="fa fa-close">'))
-                                )
+                                .append($('<a href="javascript:void(0);" class="list-action-remove hidden">')
+                                    .append($('<i class="fa fa-close">')))
                             );
 
                     $('#'+params.component_id).find('.list-detail-empty').hide();
                     fileList.append(fileElement);
                     $('#progress_bar_'+data.files[0].fake_id).hide();
 
+                    data.submit();
                     return true;
                 },
                 done: function (e, data) {
@@ -80,6 +81,7 @@
                                                 event.preventDefault();
                                             });
                                         box.find('.list-action-remove')
+                                            .removeClass('hidden')
                                             .click(function (e) {
                                                 $.getJSON(params.remove_url,
                                                     {   fileId: dataSInstance.fileId,

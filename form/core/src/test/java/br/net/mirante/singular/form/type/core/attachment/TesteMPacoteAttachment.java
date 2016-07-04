@@ -119,7 +119,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
             try {
                 arquivo.setContent("", writeBytesToTempFile(conteudo), conteudo.length);
             } catch (IOException e) {
-                e.printStackTrace();
+                getLogger().error(e.getMessage(), e);
             }
         }, "O tamanho (em bytes) da nova referência a deve ser preenchido.");
     }

@@ -28,6 +28,7 @@
  **
  ***************************************************************************/
 
+import br.net.mirante.singular.commons.util.Loggable;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.view.CanvasComponent;
 import com.yworks.yfiles.view.Colors;
@@ -68,7 +69,7 @@ import java.io.OutputStream;
  * and BMP as well as drawing arbitrary objects onto the GraphComponent and interact with them via<code>
  * InputModes</code>.
  */
-public class ImageExportDemo extends AbstractImageExportDemo {
+public class ImageExportDemo extends AbstractImageExportDemo implements Loggable{
 
   // displays the preview image for the export
   private CanvasComponent previewComponent;
@@ -213,7 +214,7 @@ public class ImageExportDemo extends AbstractImageExportDemo {
       output.close();
       input.close();
     } catch (IOException e) {
-      e.printStackTrace();
+      getLogger().error(e.getMessage(), e);
     }
 
     return image;
@@ -244,7 +245,7 @@ public class ImageExportDemo extends AbstractImageExportDemo {
       exportComponentToStream(component, exporter, stream);
       stream.close();
     } catch (IOException e) {
-      e.printStackTrace();
+      getLogger().error(e.getMessage(), e);
     }
   }
 
@@ -264,7 +265,7 @@ public class ImageExportDemo extends AbstractImageExportDemo {
       try  {
         exporter.export(component, stream, writer, param);
       } catch (IOException e) {
-        e.printStackTrace();
+        getLogger().error(e.getMessage(), e);
       } finally {
         writer.dispose();
       }
@@ -272,7 +273,7 @@ public class ImageExportDemo extends AbstractImageExportDemo {
       try  {
         exporter.export(component, stream, format.canonicalExtension());
       } catch (IOException e) {
-        e.printStackTrace();
+        getLogger().error(e.getMessage(), e);
       }
     }
   }

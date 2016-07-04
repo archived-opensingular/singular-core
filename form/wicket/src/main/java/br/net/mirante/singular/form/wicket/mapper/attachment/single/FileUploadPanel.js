@@ -76,14 +76,19 @@
                     $('#' + params.progress_bar_id + ' .progress-bar').css( 'width',
                         progress + '%' );
                 }
-            }).prop('disabled', !$.support.fileInput)
+            })
+            	.prop('disabled', !$.support.fileInput)
+            	.on('fileuploadadd', function(e,data) {
+                	return FileUploadPanel.validateInputFile(data, params.max_file_size);
+            	})
                 .parent().addClass($.support.fileInput ? undefined : 'disabled');
+            
         }
 
         // Legacy for multple files
 
         window.FileUploadPanel.validateInputFile = function(input, maxSize){
-            if( input.files[0].size  > maxSize) {
+            if ( maxSize && input.files[0].size  > maxSize) {
                 toastr.error("Arquivo não pode ser maior que "+FileUploadPanel.humaneSize(maxSize));
                 FileUploadPanel.resetFormElement(input);
                 return false;
@@ -104,10 +109,10 @@
             var remainder = size;
             var index = 0;
             var names = ['bytes', 'KB', 'MB', 'GB', 'TB'];
-            while(remainder >= 1024){
+            while ((remainder >= 1024) && (index < names.length - 1)) {
                 remainder /= 1024; index ++;
             }
-            return remainder +" "+ names[index];
+            return Math.round(remainder) +" "+ names[index];
         }
 
     }

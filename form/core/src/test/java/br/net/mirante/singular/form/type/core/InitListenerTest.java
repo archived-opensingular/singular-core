@@ -157,32 +157,64 @@ public class InitListenerTest extends TestCaseForm {
         assertInstance(pb.getDictionary().getType(STypeString.class).newInstance()).isValueNull();
     }
 
+    private static int counterInitCalls;
+
     @Test
     public void testInitListenerMustNotBeExecutedDuringDeserialization() {
+        counterInitCalls = 0;
         SIComposite instance = (SIComposite) createSerializableTestInstance("teste.pedido", pacote -> {
             STypeComposite<?> tipoPedido = pacote.createCompositeType("pedido");
             tipoPedido.addFieldString("nome");
             tipoPedido.addFieldString("descr");
-            tipoPedido.addFieldString("prioridade")
-                    .withInitListener(i -> i.setValue("alta"));
-            tipoPedido.withInitListener(p -> p.setValue("descr", "x"));
+            tipoPedido.addFieldString("prioridade").withInitListener(i -> {
+                counterInitCalls++;
+                i.setValue("alta");
+            });
+            tipoPedido.withInitListener(p -> {
+                counterInitCalls++;
+                p.setValue("descr", "x");
+            });
+            STypeComposite<SIComposite> tipoItem = tipoPedido.addFieldListOfComposite("itens", "item")
+                    .getElementsType();
+            tipoItem.addFieldString("nome");
+            tipoItem.addFieldInteger("qtd").withInitListener(i -> {
+                counterInitCalls++;
+                i.setValue(1);
+            });
+            tipoItem.withInitListener(i -> {
+                counterInitCalls++;
+                i.setValue("nome", "w");
+            });
+
+
         });
+
+        assertEquals(2, counterInitCalls);
+        SIComposite item = instance.getFieldList("itens", SIComposite.class).addNew();
+        assertEquals(4, counterInitCalls);
 
         assertInstance(instance)
                 .isValueEquals("nome", null)
                 .isValueEquals("descr", "x")
-                .isValueEquals("prioridade", "alta");
+                .isValueEquals("prioridade", "alta")
+                .isValueEquals("itens[0].nome", "w")
+                .isValueEquals("itens[0].qtd", 1);
 
         instance.setValue("descr","y");
         instance.setValue("prioridade", "baixa");
+        item.setValue("nome", "k");
+        item.setValue("qtd", 2);
 
         SInstance instance2 = TesteFormSerializationUtil.testSerializacao(instance);
+        assertEquals(4, counterInitCalls);
 
         assertInstance(instance2)
                 .isNotSameAs(instance)
                 .isValueEquals("nome", null)
                 .isValueEquals("descr", "y")
-                .isValueEquals("prioridade", "baixa");
+                .isValueEquals("prioridade", "baixa")
+                .isValueEquals("itens[0].nome", "k")
+                .isValueEquals("itens[0].qtd", 2);
     }
 
 }

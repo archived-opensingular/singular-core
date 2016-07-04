@@ -29,6 +29,7 @@
  ***************************************************************************/
 package br.net.mirante.singular.flow.core.renderer.toolkit;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.view.export.CanvasPrintable;
 
@@ -52,7 +53,7 @@ import java.awt.print.Printable;
  * A JPanel that previews the current output of a given CanvasPrintable. The preview consists of a grid of rectangles representing the papers that
  * would be printed with a given PageFormat.
  */
-public class PagePanel extends JPanel implements Scrollable {
+public class PagePanel extends JPanel implements Scrollable, Loggable {
 
   // Some useful constants, for simplicity
   private static final int DESKTOP_INSETS = 10;
@@ -269,7 +270,7 @@ public class PagePanel extends JPanel implements Scrollable {
       g2d.setClip(oldClip);
     } catch (Exception pe) {
       result = Printable.NO_SUCH_PAGE;
-      pe.printStackTrace();
+      getLogger().error(pe.getMessage(), pe);
     }
     return result;
   }
