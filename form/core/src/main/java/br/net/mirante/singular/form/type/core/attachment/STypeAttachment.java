@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.form.type.core.attachment;
 
+import java.util.Arrays;
+import java.util.List;
+
 import br.net.mirante.singular.form.AtrRef;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
@@ -12,9 +15,6 @@ import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.SPackageCore;
 import br.net.mirante.singular.form.type.core.STypeString;
-
-import java.util.Arrays;
-import java.util.List;
 
 @SInfoType(name = "Attachment", spackage = SPackageCore.class)
 public class STypeAttachment extends STypeComposite<SIAttachment> {

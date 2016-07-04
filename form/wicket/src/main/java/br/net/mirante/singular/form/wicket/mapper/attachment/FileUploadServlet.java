@@ -79,7 +79,7 @@ class FileUploadProcessor {
             HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
-        filesJson = new JSONArray();
+        this.filesJson = new JSONArray();
     }
 
     private ServletFileUpload handler() {
