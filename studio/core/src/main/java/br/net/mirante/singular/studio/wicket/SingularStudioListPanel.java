@@ -50,7 +50,7 @@ public class SingularStudioListPanel extends SingularStudioPanel {
         grid
                 .appendTag("h4", true, "", new Label("title", $m.ofValue(collectionInfo().getTitle())))
                 .appendTag("hr", true, "", new WebMarkupContainer("regua"))
-                .appendTag("a", true, "class=\"btn blue\"", new AjaxLink("id") {
+                .appendTag("a", true, "class=\"btn\"", new AjaxLink("id") {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         showForm(target, null);
