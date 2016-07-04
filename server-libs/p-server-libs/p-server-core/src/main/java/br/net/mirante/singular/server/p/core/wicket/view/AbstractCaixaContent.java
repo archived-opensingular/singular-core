@@ -167,6 +167,10 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
         return criarLink(peticao, id, FormActions.FORM_FILL);
     }
 
+    protected WebMarkupContainer criarLinkExigencia(T peticao, String id) {
+        return criarLink(peticao, id, FormActions.FORM_FILL);
+    }
+
     protected WebMarkupContainer criarLinkVisualizacao(T peticao, String id) {
         return criarLink(peticao, id, FormActions.FORM_VIEW);
     }

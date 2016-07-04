@@ -78,25 +78,6 @@ public class FormPage extends AbstractFormPage<Petition> {
     }
 
     @Override
-    protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
-        List<MTransition> trans = petitionService.listCurrentTaskTransitions(config.formId);
-        if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDITION.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
-            int index = 0;
-            for (MTransition t : trans) {
-                if (t.getMetaDataValue(ServerContextMetaData.KEY) != null && t.getMetaDataValue(ServerContextMetaData.KEY).isEnabledOn(SingularSession.get().getServerContext())) {
-                    String btnId = "flow-btn" + index;
-                    buildFlowTransitionButton(
-                            btnId, buttonContainer,
-                            modalContainer,  t.getName(),
-                            currentInstance, viewMode);
-                }
-            }
-        } else {
-            buttonContainer.setVisible(false).setEnabled(false);
-        }
-    }
-    
-    @Override
     protected String getIdentifier() {
         return Optional.ofNullable(currentModel)
                 .map(IModel::getObject)

@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
 import br.net.mirante.singular.flow.core.Flow;
+import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeComposite;
@@ -16,14 +17,16 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.flow.metadata.ServerContextMetaData;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -39,6 +42,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -186,7 +190,21 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
     }
 
     protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
-        
+        List<MTransition> trans = petitionService.listCurrentTaskTransitions(config.formId);
+        if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDITION.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
+            int index = 0;
+            for (MTransition t : trans) {
+                if (t.getMetaDataValue(ServerContextMetaData.KEY) != null && t.getMetaDataValue(ServerContextMetaData.KEY).isEnabledOn(SingularSession.get().getServerContext())) {
+                    String btnId = "flow-btn" + index;
+                    buildFlowTransitionButton(
+                            btnId, buttonContainer,
+                            modalContainer,  t.getName(),
+                            currentInstance, viewMode);
+                }
+            }
+        } else {
+            buttonContainer.setVisible(false).setEnabled(false);
+        }
     }
 
     protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance) {
@@ -289,7 +307,7 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
 
     private void buildFlowButton(String buttonId, BSContainer<?> buttonContainer, String transitionName, IModel<? extends SInstance> instanceModel, BSModalBorder confirmarAcaoFlowModal) {
         TemplatePanel tp = buttonContainer
-                .newTemplateTag(tt -> "<button  type='submit' class='btn purple' wicket:id='" + buttonId +
+                .newTemplateTag(tt -> "<button  type='submit' class='btn' wicket:id='" + buttonId +
                         "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n");
         SingularButton singularButton = new SingularButton(buttonId, content.getFormInstance()) {
 
