@@ -51,9 +51,9 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                     builder.add().set(idTipoPeticao, 2).set(descricaoTipoPeticao, "Pré-mistura");
                     builder.add().set(idTipoPeticao, 3).set(descricaoTipoPeticao, "Preservativo de madeira");
                     builder.add().set(idTipoPeticao, 4).set(descricaoTipoPeticao, "Produto de uso não agrícola");
-                    builder.add().set(idTipoPeticao, 5).set(descricaoTipoPeticao, "Produto formulado novo (PFN)");
-                    builder.add().set(idTipoPeticao, 6).set(descricaoTipoPeticao, "Produto formulado com base em produto técnico equivalente (PTN)");
-                    builder.add().set(idTipoPeticao, 7).set(descricaoTipoPeticao, "Produto técnico novo (PTN)");
+                    builder.add().set(idTipoPeticao, 5).set(descricaoTipoPeticao, "Produto formulado de ingrediente ativo já registrado (PF)");
+                    builder.add().set(idTipoPeticao, 6).set(descricaoTipoPeticao, "Produto formulado com base em produto técnico equivalente (PFE)");
+                    builder.add().set(idTipoPeticao, 7).set(descricaoTipoPeticao, "Produto técnico de ingrediente ativo já registrado (PT)");
                     builder.add().set(idTipoPeticao, 8).set(descricaoTipoPeticao, "Produto técnico equivalente (PTE)");
                 });
 
