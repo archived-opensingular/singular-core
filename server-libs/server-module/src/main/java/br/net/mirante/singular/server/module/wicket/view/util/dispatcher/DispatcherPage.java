@@ -109,6 +109,7 @@ public class DispatcherPage extends WebPage {
                 destination = ref.getPageClass().newInstance();
             }
             configureReload(destination);
+            onDispatch(destination, config);
             setResponsePage(destination);
         } catch (Exception e) {
             closeAndReloadParent();
@@ -116,6 +117,8 @@ public class DispatcherPage extends WebPage {
 
         }
     }
+
+    protected void onDispatch(WebPage destination, AbstractFormPage.FormPageConfig config){}
 
     protected void configureReload(WebPage destination) {
         destination.add(new Behavior() {
