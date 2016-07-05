@@ -65,15 +65,12 @@
                                 size: file.size,
 
                             }, function (dataSInstance, status, jqXHR) {
+                            	var $link = $('<a target="_blank"></a>').text(dataSInstance.name);
+                            	DownloadSupportedBehavior.resolveUrl(params.download_url, dataSInstance.fileId, dataSInstance.name, function(url){
+                            		$link.attr('href', url);
+                            	});
                                 $('#' + params.files_id).empty();
-                                $('#' + params.files_id).append(
-                                    $('<a />')
-                                        .on('click', function (event) {
-                                            DownloadSupportedBehavior.ajaxDownload(params.download_url, dataSInstance.fileId, dataSInstance.name);
-                                            event.preventDefault();
-                                        })
-                                        .text(dataSInstance.name)
-                                );
+                                $('#' + params.files_id).append($link);
                                 $('#' + params.progress_bar_id).hide();
 
                                 update_action_buttons();
