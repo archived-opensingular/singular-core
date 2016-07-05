@@ -275,6 +275,7 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
     }
 
     protected void saveForm(IModel<? extends SInstance> currentInstance) {
+        onBeforeSave(currentInstance);
         FormKey key = petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance),
                 currentInstance.getObject());
         formModel.setObject(key);
@@ -287,6 +288,11 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
             petition.setProcessType(Flow.getProcessDefinition(dc).getKey());
         }
     }
+
+    protected void onBeforeSave(IModel<? extends SInstance> currentInstance) {
+
+    }
+
 
     protected void send(IModel<? extends SInstance> currentInstance) {
         onBeforeSend(currentInstance);

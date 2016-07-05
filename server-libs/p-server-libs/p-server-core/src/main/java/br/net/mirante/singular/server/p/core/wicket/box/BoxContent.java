@@ -39,7 +39,7 @@ import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 public class BoxContent extends AbstractCaixaContent<BoxModel> {
 
     private Pair<String, SortOrder> sortProperty;
-    private ItemBoxDTO itemBoxDTO;
+    private ItemBoxDTO              itemBoxDTO;
 
     public BoxContent(String id, String processGroupCod, String menu, ItemBoxDTO itemBoxDTO) {
         super(id, processGroupCod, menu);
@@ -132,6 +132,7 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
         return new QuickFilter()
                 .withFilter(getFiltroRapidoModelObject())
                 .withProcessesAbbreviation(getProcessesNames())
+                .withTypesNames(getFormNames())
                 .withRascunho(isWithRascunho());
     }
 
@@ -146,19 +147,34 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
         }
     }
 
+    private List<String> getFormNames() {
+        if (getProcesses() == null) {
+            return Collections.emptyList();
+        } else {
+            return getProcesses()
+                    .stream()
+                    .map(ProcessDTO::getFormName)
+                    .collect(Collectors.toList());
+        }
+    }
+
+
     @Override
-    protected List<BoxModel> quickSearch(QuickFilter filter, List<String> siglasProcesso) {
+    protected List<BoxModel> quickSearch(QuickFilter filter, List<String> siglasProcesso, List<String> formNames) {
         final String connectionURL = petitionService.findByProcessGroupCod(getProcessGroupCod()).getConnectionURL();
-        final String url = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
+        final String url           = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
         try {
-            return (List<BoxModel>) Arrays.asList(new RestTemplate().postForObject(url, filter, Map[].class))
-                    .stream().map(BoxModel::new).collect(Collectors.toList());
+            return (List<BoxModel>) Arrays
+                    .asList(new RestTemplate().postForObject(url, filter, Map[].class))
+                    .stream()
+                    .map(BoxModel::new)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             return Collections.emptyList();
         }
     }
 
-    protected WebMarkupContainer criarLink(BoxModel item, String id, FormActions formActions){
+    protected WebMarkupContainer criarLink(BoxModel item, String id, FormActions formActions) {
 
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl())
@@ -174,7 +190,7 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
         return link;
     }
 
-    protected Map<String, String> getCriarLinkParameters(BoxModel item){
+    protected Map<String, String> getCriarLinkParameters(BoxModel item) {
         final Map<String, String> linkParameters = new HashMap<>();
         linkParameters.putAll(getLinkParams());
         return linkParameters;
@@ -186,9 +202,9 @@ public class BoxContent extends AbstractCaixaContent<BoxModel> {
     }
 
     @Override
-    protected long countQuickSearch(QuickFilter filter, List<String> processesNames) {
+    protected long countQuickSearch(QuickFilter filter, List<String> processesNames, List<String> formNames) {
         final String connectionURL = petitionService.findByProcessGroupCod(getProcessGroupCod()).getConnectionURL();
-        final String url = connectionURL + PATH_BOX_SEARCH + getCountEndpoint();
+        final String url           = connectionURL + PATH_BOX_SEARCH + getCountEndpoint();
         try {
             return new RestTemplate().postForObject(url, filter, Long.class);
         } catch (Exception e) {

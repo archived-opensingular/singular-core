@@ -246,7 +246,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
                 if (getProcessesNames().isEmpty()) {
                     return 0;
                 }
-                return countQuickSearch(novoFiltro(), getProcessesNames());
+                return countQuickSearch(novoFiltro(), getProcessesNames(), getFormNames());
             }
 
             @Override
@@ -258,7 +258,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
                         .withSortProperty(sortProperty)
                         .withAscending(ascending);
 
-                return quickSearch(filtroRapido, getProcessesNames()).iterator();
+                return quickSearch(filtroRapido, getProcessesNames(), getFormNames()).iterator();
             }
 
             private List<String> getProcessesNames() {
@@ -268,6 +268,17 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
                     return getProcesses()
                             .stream()
                             .map(ProcessDTO::getAbbreviation)
+                            .collect(Collectors.toList());
+                }
+            }
+
+            private List<String> getFormNames() {
+                if (getProcesses() == null) {
+                    return Collections.emptyList();
+                } else {
+                    return getProcesses()
+                            .stream()
+                            .map(ProcessDTO::getFormName)
                             .collect(Collectors.toList());
                 }
             }
@@ -296,9 +307,9 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
 
     protected abstract QuickFilter montarFiltroBasico();
 
-    protected abstract List<T> quickSearch(QuickFilter filtro, List<String> siglasProcesso);
+    protected abstract List<T> quickSearch(QuickFilter filtro, List<String> siglasProcesso, List<String> formNames);
 
-    protected abstract long countQuickSearch(QuickFilter filter, List<String> processesNames);
+    protected abstract long countQuickSearch(QuickFilter filter, List<String> processesNames, List<String> formNames);
 
     public List<ProcessDTO> getProcesses() {
         return processes;

@@ -6,16 +6,17 @@ import java.util.List;
 
 public class QuickFilter implements Serializable {
 
-    private String filter;
+    private String  filter;
     private boolean rascunho;
 
-    private String idPessoaRepresentada;
-    private int first;
-    private int count;
-    private String sortProperty;
-    private boolean ascending;
+    private String       idPessoaRepresentada;
+    private int          first;
+    private int          count;
+    private String       sortProperty;
+    private boolean      ascending;
     private List<String> tasks;
     private List<String> processesAbbreviation;
+    private List<String> typesNames;
 
     public String getFilter() {
         return filter;
@@ -26,11 +27,11 @@ public class QuickFilter implements Serializable {
         return this;
     }
 
-    public String getIdPessoaRepresentada(){
+    public String getIdPessoaRepresentada() {
         return idPessoaRepresentada;
     }
 
-    public QuickFilter withIdPessoaRepresentada(String idPessoaRepresentada){
+    public QuickFilter withIdPessoaRepresentada(String idPessoaRepresentada) {
         this.idPessoaRepresentada = idPessoaRepresentada;
         return this;
     }
@@ -95,7 +96,7 @@ public class QuickFilter implements Serializable {
                 && !filter.isEmpty();
     }
 
-    public QuickFilter forTasks(String... tasks){
+    public QuickFilter forTasks(String... tasks) {
         this.tasks = Arrays.asList(tasks);
         return this;
     }
@@ -110,6 +111,15 @@ public class QuickFilter implements Serializable {
 
     public QuickFilter withProcessesAbbreviation(List<String> processesAbbreviation) {
         this.processesAbbreviation = processesAbbreviation;
+        return this;
+    }
+
+    public List<String> getTypesNames() {
+        return typesNames;
+    }
+
+    public QuickFilter withTypesNames(List<String> typesNames) {
+        this.typesNames = typesNames;
         return this;
     }
 }
