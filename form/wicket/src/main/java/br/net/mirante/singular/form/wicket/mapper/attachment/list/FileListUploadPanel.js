@@ -39,7 +39,7 @@
                                         )
                                 ),
                             $('<div>').addClass('list-item-content')
-                                .append($('<a>').attr('href','#').addClass('download-link')
+                                .append($('<a target="_blank" href="#" class="download-link"></a>')
                                     .append($('<span>').text(name))
                                 ),
                             $('<div class="list-item-progress" id="progress_bar_'+fake_id+'">')
@@ -78,11 +78,6 @@
                                             .addClass('list-item-uploaded');
                                         box.find('.list-item-content')
                                             .css("width","80%");
-                                        box.find('.download-link')
-                                            .on('click', function(event){
-                                                DownloadSupportedBehavior.ajaxDownload(params.download_url, dataSInstance.fileId, dataSInstance.name);
-                                                event.preventDefault();
-                                            });
                                         box.find('.list-action-remove')
                                             .removeClass('hidden')
                                             .click(function (e) {
@@ -99,6 +94,9 @@
                                                     }
                                                 );
                                             });
+                                    	DownloadSupportedBehavior.resolveUrl(params.download_url, dataSInstance.fileId, dataSInstance.name, function(url){
+                                    		box.find('.download-link').attr('href', url);
+                                    	});
                                     }
                                 });
                     });
