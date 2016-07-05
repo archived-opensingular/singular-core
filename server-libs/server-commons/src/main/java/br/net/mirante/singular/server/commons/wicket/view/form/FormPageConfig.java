@@ -18,7 +18,7 @@ public class FormPageConfig implements Serializable {
     private LazyFlowDefinitionResolver         lazyFlowDefinitionResolver;
     private Class<? extends ProcessDefinition> processDefinition;
 
-    public FormPageConfig() {
+    private FormPageConfig() {
         viewMode = ViewMode.VISUALIZATION;
         annotationMode = AnnotationMode.NONE;
         contextParams = new HashMap<>();
@@ -33,6 +33,27 @@ public class FormPageConfig implements Serializable {
         cfg.formId = formId;
         cfg.annotationMode = annotationMode;
         cfg.viewMode = viewMode;
+        return cfg;
+    }
+
+    public static FormPageConfig newConfig(String formType,
+                                           String formId,
+                                           AnnotationMode annotationMode,
+                                           ViewMode viewMode,
+                                           Class<? extends ProcessDefinition> processDefinition) {
+        final FormPageConfig cfg = newConfig(formType, formId, annotationMode, viewMode);
+        cfg.processDefinition = processDefinition;
+        return cfg;
+    }
+
+
+    public static FormPageConfig newConfig(String formType,
+                                           String formId,
+                                           AnnotationMode annotationMode,
+                                           ViewMode viewMode,
+                                           LazyFlowDefinitionResolver lazyFlowDefinitionResolver) {
+        final FormPageConfig cfg = newConfig(formType, formId, annotationMode, viewMode);
+        cfg.lazyFlowDefinitionResolver = lazyFlowDefinitionResolver;
         return cfg;
     }
 

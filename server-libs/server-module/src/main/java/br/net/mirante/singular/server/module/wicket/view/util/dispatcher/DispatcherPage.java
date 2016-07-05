@@ -47,7 +47,7 @@ import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
 
 @SuppressWarnings("serial")
 @MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
-public class DispatcherPage extends WebPage {
+public abstract class DispatcherPage extends WebPage {
 
     protected static final Logger logger = LoggerFactory.getLogger(DispatcherPage.class);
 
@@ -73,10 +73,6 @@ public class DispatcherPage extends WebPage {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(Template.class, "singular.js")));
-    }
-
-    protected FormPageConfig parseParameters(Request request) {
-        return buildConfig(request);
     }
 
     protected void dispatch(FormPageConfig config) {
@@ -140,7 +136,7 @@ public class DispatcherPage extends WebPage {
         return FormActions.getById(Integer.parseInt(action.toString("0")));
     }
 
-    private FormPageConfig buildConfig(Request r) {
+    private FormPageConfig parseParameters(Request r) {
 
         final StringValue action   = getParam(r, ACTION);
         final StringValue formId   = getParam(r, FORM_ID);
@@ -152,14 +148,12 @@ public class DispatcherPage extends WebPage {
 
         final FormActions formActions = resolveFormAction(action);
 
-        final FormPageConfig cfg = new FormPageConfig();
+        final String         fi = formId.toString("");
+        final AnnotationMode am = formActions.getAnnotationMode() == null ? AnnotationMode.NONE : formActions.getAnnotationMode();
+        final ViewMode       vm = formActions.getViewMode();
+        final String         fn = formName.toString();
 
-        cfg.setFormId(formId.toString(""));
-        cfg.setAnnotationMode(formActions.getAnnotationMode() == null ? AnnotationMode.NONE : formActions.getAnnotationMode());
-        cfg.setViewMode(formActions.getViewMode());
-        cfg.setFormType(formName.toString());
-
-        addFlowDefinitionConfigs(r, cfg);
+        final FormPageConfig cfg = buildConfig(r, fi, am, vm, fn);
 
         if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
             throw new SingularServerException("Nenhum fluxo está configurado");
@@ -168,8 +162,7 @@ public class DispatcherPage extends WebPage {
         return cfg;
     }
 
-    protected void addFlowDefinitionConfigs(Request r, FormPageConfig cfg) {
-    }
+    protected abstract FormPageConfig buildConfig(Request r, String formId, AnnotationMode annotationMode, ViewMode viewMode, String formType);
 
     /**
      * Possibilita execução de qualquer ação antes de fazer o dispatch
