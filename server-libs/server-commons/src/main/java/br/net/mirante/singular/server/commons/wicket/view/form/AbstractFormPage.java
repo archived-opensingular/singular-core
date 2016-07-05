@@ -2,6 +2,7 @@ package br.net.mirante.singular.server.commons.wicket.view.form;
 
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MTransition;
+import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeComposite;
@@ -208,7 +209,7 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
         }
     }
 
-    protected T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance) {
+    protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance) {
         T petition = currentModel.getObject();
         if (currentInstance.getObject() instanceof SIComposite) {
             petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
@@ -279,7 +280,16 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
         formModel.setObject(key);
     }
 
+    protected void onBeforeSend(IModel<? extends SInstance> currentInstance) {
+        final T petition = currentModel.getObject();
+        if (petition.getProcessType() == null && config.isWithLazyProcessResolver()) {
+            final Class<? extends ProcessDefinition> dc = config.getLazyFlowDefinitionResolver().resolve(config, (SIComposite) currentInstance.getObject());
+            petition.setProcessType(Flow.getProcessDefinition(dc).getKey());
+        }
+    }
+
     protected void send(IModel<? extends SInstance> currentInstance) {
+        onBeforeSend(currentInstance);
         FormKey key = petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject());
         formModel.setObject(key);
     }
