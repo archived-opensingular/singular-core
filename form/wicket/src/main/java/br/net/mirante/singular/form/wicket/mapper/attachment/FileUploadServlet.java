@@ -28,12 +28,12 @@ import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadSe
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
  */
-@WebServlet(urlPatterns = {FileUploadServlet.UPLOAD_URL + "/*"})
+@WebServlet(urlPatterns = { FileUploadServlet.UPLOAD_URL + "/*" })
 public class FileUploadServlet extends HttpServlet {
 
     public static final String PARAM_NAME = "FILE-UPLOAD";
     public final static String UPLOAD_URL = "/upload";
-    public static File UPLOAD_WORK_FOLDER;
+    public static File         UPLOAD_WORK_FOLDER;
 
     static {
         String tempPath = System.getProperty("java.io.tmpdir", "/tmp");
@@ -46,6 +46,8 @@ public class FileUploadServlet extends HttpServlet {
     }
 
     public final static File lookupFile(String fileId) {
+        // validação bem básica para evitar brecha de segurança
+        UUID.fromString(fileId);
         return new File(UPLOAD_WORK_FOLDER, fileId);
     }
 
@@ -71,12 +73,12 @@ public class FileUploadServlet extends HttpServlet {
 
 class FileUploadProcessor {
 
-    private JSONArray filesJson;
-    private HttpServletRequest request;
+    private JSONArray           filesJson;
+    private HttpServletRequest  request;
     private HttpServletResponse response;
 
     FileUploadProcessor(
-            HttpServletRequest request, HttpServletResponse response) {
+        HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
         this.filesJson = new JSONArray();
@@ -115,8 +117,8 @@ class FileUploadProcessor {
             File f = new File(FileUploadServlet.UPLOAD_WORK_FOLDER, id);
             f.deleteOnExit();
             try (
-                    OutputStream outputStream = IOUtil.newBuffredOutputStream(f);
-                    InputStream in = item.getInputStream();
+                OutputStream outputStream = IOUtil.newBuffredOutputStream(f);
+                InputStream in = item.getInputStream();
             ) {
                 IOUtils.copy(in, outputStream);
             }
