@@ -30,6 +30,11 @@ public abstract class FormInitializer {
         return SingularServerFormConfigFactory.class;
     }
 
+    /**
+     * Alterar para receber lista de tipos
+     * @return
+     */
+    @Deprecated
     protected abstract Map<Class<? extends SPackage>, String> formPackagesMap();
 
     public void init(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
