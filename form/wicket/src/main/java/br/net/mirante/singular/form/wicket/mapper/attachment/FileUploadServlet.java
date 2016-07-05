@@ -52,11 +52,6 @@ public class FileUploadServlet extends HttpServlet {
     }
 
     @Override
-    public void init() throws ServletException {
-        super.init();
-    }
-
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         validadeMultpart(request);
         FileUploadProcessor processor = new FileUploadProcessor(request, response);
