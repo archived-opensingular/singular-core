@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.attachment.single;
 import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet.*;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -37,17 +39,17 @@ import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
-    private AddFileBehavior            adder;
-    private final IModel<SIAttachment> model;
-    private final ViewMode             viewMode;
-    private final AjaxButton           removeFileButton = new AjaxButton("remove_btn") {
+    private FileUploadPanel          self             = this;
+    private AddFileBehavior          adder;
+    private final ViewMode           viewMode;
+    private final AjaxButton         removeFileButton = new AjaxButton("remove_btn") {
 
         @Override
         protected void onInitialize() {
             super.onInitialize();
             add(new ClassAttributeModifier() {
                 protected Set<String> update(Set<String> oldClasses) {
-                    if (model.getObject().getFileId() == null) {
+                    if (self.getModelObject().getFileId() == null) {
                         oldClasses.add("file-trash-button-hidden");
                     }
                     return oldClasses;
@@ -58,10 +60,10 @@ public class FileUploadPanel extends Panel implements Loggable {
         @Override
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             super.onSubmit(target, form);
-            model.getObject().clearInstance();
-            if (model.getObject().getParent() instanceof SIList) {
-                final SIList<?> parent = (SIList<?>) model.getObject().getParent();
-                parent.remove(parent.indexOf(model.getObject()));
+            self.getModelObject().clearInstance();
+            if (self.getModelObject().getParent() instanceof SIList) {
+                final SIList<?> parent = (SIList<?>) self.getModelObject().getParent();
+                parent.remove(parent.indexOf(self.getModelObject()));
                 target.add(form);
             } else {
                 target.add(FileUploadPanel.this);
@@ -69,14 +71,14 @@ public class FileUploadPanel extends Panel implements Loggable {
         }
 
     };
-    private final WebMarkupContainer   uploadFileButton = new WebMarkupContainer("upload_btn") {
+    private final WebMarkupContainer uploadFileButton = new WebMarkupContainer("upload_btn") {
 
         @Override
         protected void onInitialize() {
             super.onInitialize();
             add(new ClassAttributeModifier() {
                 protected Set<String> update(Set<String> oldClasses) {
-                    if (model.getObject().getFileId() != null) {
+                    if (self.getModelObject().getFileId() != null) {
                         oldClasses.add("file-trash-button-hidden");
                     }
                     return oldClasses;
@@ -92,7 +94,6 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
-        this.model = model;
         this.viewMode = viewMode;
     }
 
@@ -104,35 +105,25 @@ public class FileUploadPanel extends Panel implements Loggable {
         return (SIAttachment) getDefaultModelObject();
     }
 
-    private IMInstanciaAwareModel dummyModel(final IModel<SIAttachment> model) {
-        return new IMInstanciaAwareModel() {
-            @Override
-            public Object getObject() {
-                return null;
-            }
-
-            @Override
-            public void setObject(Object object) {}
-
-            @Override
-            public void detach() {}
-
-            @Override
-            public SInstance getMInstancia() {
-                return model.getObject();
-            }
+    private IMInstanciaAwareModel<List<FileUpload>> dummyModel(final IModel<SIAttachment> model) {
+        return new IMInstanciaAwareModel<List<FileUpload>>() {
+            //@formatter:off
+            @Override public List<FileUpload> getObject() { return null; }
+            @Override public void setObject(List<FileUpload> object) {}
+            @Override public void detach() {}
+            @Override public SInstance getMInstancia() { return model.getObject(); }
+            //@formatter:on
         };
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void onInitialize() {
         super.onInitialize();
 
-        this.add(adder = new AddFileBehavior());
-        this.add(downloader = new DownloadSupportedBehavior(model));
-        downloadLink = new DownloadLink("downloadLink", model, downloader);
-        fileField = new FileUploadField("fileUpload", dummyModel(model));
+        add(adder = new AddFileBehavior());
+        add(downloader = new DownloadSupportedBehavior(self.getModel()));
+        downloadLink = new DownloadLink("downloadLink", self.getModel(), downloader);
+        fileField = new FileUploadField("fileUpload", dummyModel(self.getModel()));
 
         add((filesContainer = new WebMarkupContainer("files")).add(downloadLink));
         add(uploadFileButton.add(fileField));
@@ -161,32 +152,22 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     private String generateInitJS() {
         if (viewMode.isEdition()) {
-            FileUploadPanel self = this;
-            return String.format(""
-                            //@formatter:off
-            + "\n $(function () { "
-            + "\n   var params = { "
-            + "\n     param_name: '"        + PARAM_NAME                    + "', "
-            + "\n     panel_id: '"          + self.getMarkupId()            + "', "
-            + "\n     file_field_id: '"     + fileField.getMarkupId()       + "', "
-            + "\n     files_id: '"          + filesContainer.getMarkupId()  + "', "
-            + "\n     progress_bar_id: '"   + progressBar.getMarkupId()     + "', "
-            + "\n     upload_url: '"        + getUploadUrl()                + "', "
-            + "\n     download_url: '"      + getDownloaderUrl()            + "', "
-            + "\n     add_url: '"           + getAdderUrl()                 + "', "
-            + "\n     max_file_size: "      + getMaxFileSize()              + " };"
-            + "\n   window.FileUploadPanel.setup(params);"
-            + "\n });",
+            return ""
+            //@formatter:off
+                + "\n $(function () { "
+                + "\n   window.FileUploadPanel.setup({ "
+                + "\n     param_name: '"        + PARAM_NAME                    + "',"
+                + "\n     panel_id: '"          + self.getMarkupId()            + "',"
+                + "\n     file_field_id: '"     + fileField.getMarkupId()       + "',"
+                + "\n     files_id: '"          + filesContainer.getMarkupId()  + "',"
+                + "\n     progress_bar_id: '"   + progressBar.getMarkupId()     + "',"
+                + "\n     upload_url: '"        + getUploadUrl()                + "',"
+                + "\n     download_url: '"      + getDownloaderUrl()            + "',"
+                + "\n     add_url: '"           + getAdderUrl()                 + "',"
+                + "\n     max_file_size: "      + getMaxFileSize()              + "  "
+                + "\n   });"
+                + "\n });";
             //@formatter:on
-                    PARAM_NAME,
-                    self.getMarkupId(),
-                    fileField.getMarkupId(),
-                    filesContainer.getMarkupId(),
-                    progressBar.getMarkupId(),
-                    getUploadUrl(),
-                    getDownloaderUrl(),
-                    getAdderUrl(),
-                    getMaxFileSize());
         } else {
             return "";
         }

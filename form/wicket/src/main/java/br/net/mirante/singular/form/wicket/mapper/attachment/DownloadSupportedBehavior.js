@@ -17,6 +17,17 @@
             });
             return false;
         }
+        window.DownloadSupportedBehavior.resolveUrl = function (url, fileId, filename, callback) {
+        	$.ajax({
+        		type: "POST",
+        		dataType: 'json',
+        		url: url + '&fileId=' + fileId + '&fileName=' + filename,
+        		success: function (response, status, request) {
+        			callback(response.url);
+        		}
+        	});
+        	return false;
+        }
     }
 })();
 
