@@ -36,6 +36,17 @@
                 formData:{
                     'upload_id' : params.upload_id,
                 },
+            	add: function(e,data) {
+            		if (!FileUploadPanel.validateInputFile(e, data, params.max_file_size)) {
+            			return false;
+            		}
+            		if (data.autoUpload || (data.autoUpload !== false && $(this).fileupload('option', 'autoUpload'))) {
+            	        data.process().done(function () {
+            	            data.submit();
+            	        });
+            	    }
+            		return true;
+            	},
                 start: function (e, data) {
                     // console.log($('#files_" + fieldId + "'));
                     $('#' + params.files_id ).html('');
@@ -43,9 +54,9 @@
                     $('#' + params.progress_bar_id + ' .progress-bar').css('width','0%');
                 },
                 done: function (e, data) {
-                    console.log('done',e,data);
+                    //console.log('done',e,data);
                     $.each(data.result, function (index, file) {
-                        console.log('f',file, $('#' + params.files_id ));
+                        //console.log('f',file, $('#' + params.files_id ));
                         $.getJSON(params.add_url,
                             {
                                 name: file.name,
@@ -71,34 +82,32 @@
                 },
                 progressall: function (e, data) {
                     var progress = parseInt(data.loaded / data.total * 100, 10);
-                    console.log($('#' + params.progress_bar_id));
+                    //console.log($('#' + params.progress_bar_id));
                     $('#' + params.progress_bar_id).show();
                     $('#' + params.progress_bar_id + ' .progress-bar').css( 'width',
                         progress + '%' );
                 }
             })
             	.prop('disabled', !$.support.fileInput)
-            	.on('fileuploadadd', function(e,data) {
-                	return FileUploadPanel.validateInputFile(data, params.max_file_size);
-            	})
                 .parent().addClass($.support.fileInput ? undefined : 'disabled');
             
         }
 
         // Legacy for multple files
 
-        window.FileUploadPanel.validateInputFile = function(input, maxSize){
-            if ( maxSize && input.files[0].size  > maxSize) {
+        window.FileUploadPanel.validateInputFile = function(e, data, maxSize){
+            if ( maxSize && data.files[0].size  > maxSize) {
                 toastr.error("Arquivo não pode ser maior que "+FileUploadPanel.humaneSize(maxSize));
-                FileUploadPanel.resetFormElement(input);
+                FileUploadPanel.resetFormElement(e);
                 return false;
             }
             return true;
         };
 
         window.FileUploadPanel.resetFormElement = function(e) {
-            e.wrap('<form>').closest('form').get(0).reset();
-            e.unwrap();
+        	var $input = $(e.target || e.srcElement);
+        	$input.wrap('<form>').closest('form').get(0).reset();
+        	$input.unwrap();
 
             // Prevent form submission
             e.stopPropagation();

@@ -55,15 +55,15 @@ import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forRef
  */
 public class FileListUploadPanel extends Panel implements Loggable {
 
-    private final FileUploadField fileField;
-    private final WebMarkupContainer fileList;
-    private final AddFileBehavior adder;
-    private final RemoveFileBehavior remover;
-    private final WicketBuildContext ctx;
+    private final FileUploadField           fileField;
+    private final WebMarkupContainer        fileList;
+    private final AddFileBehavior           adder;
+    private final RemoveFileBehavior        remover;
+    private final WicketBuildContext        ctx;
     private final DownloadSupportedBehavior downloader;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
-                               WicketBuildContext ctx) {
+        WicketBuildContext ctx) {
         super(id, model);
         this.ctx = ctx;
         add(new Label("uploadLabel", Model.of(ObjectUtils.defaultIfNull(ctx.getCurrentInstance().asAtr().getLabel(), StringUtils.EMPTY))) {
@@ -79,9 +79,9 @@ public class FileListUploadPanel extends Panel implements Loggable {
                 return model.getObject().isEmpty();
             }
         }
-                .add(new Label("empty-message", "Nenhum arquivo foi adicionado.")));
+            .add(new Label("empty-message", "Nenhum arquivo foi adicionado.")));
         add(fileField = new FileUploadField("fileUpload", dummyModel()));
-        add(new LabelWithIcon("fileUploadLabel", Model.of("Carregar Arquivo"), Icone.UPLOAD, Model.of(fileField.getMarkupId())){
+        add(new LabelWithIcon("fileUploadLabel", Model.of("Carregar Arquivo"), Icone.UPLOAD, Model.of(fileField.getMarkupId())) {
             @Override
             public boolean isVisible() {
                 return ctx.getViewMode().isEdition();
@@ -127,25 +127,39 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     private String generateInitJS() {
         if (ctx.getViewMode().isEdition()) {
-            return " $(function () { \n" +
-                    "     var params = { \n" +
-                    "             file_field_id: '" + fileField.getMarkupId() + "', \n" +
-                    "             fileList_id: '" + fileList.getMarkupId() + "', \n" +
-                    "             component_id: '" + this.getMarkupId() + "', \n" +
-                    "  \n" +
-                    "             param_name : '" + PARAM_NAME + "', \n" +
-                    "             upload_url : '" + uploadUrl() + "', \n" +
-                    "             download_url : '" + downloader.getUrl() + "', \n" +
-                    "             add_url : '" + adder.getUrl() + "', \n" +
-                    "             remove_url : '" + remover.getUrl() + "', \n" +
-                    "  \n" +
-                    "     }; \n" +
-                    "  \n" +
-                    "     window.FileListUploadPanel.setup(params); \n" +
-                    " });";
+            return ""
+                //@formatter:off
+                + "\n $(function () { "
+                + "\n   var params = { "
+                + "\n     param_name : '"       + PARAM_NAME                + "', "
+                + "\n     component_id: '"      + this.getMarkupId()        + "', "
+                + "\n     file_field_id: '"     + fileField.getMarkupId()   + "', "
+                + "\n     fileList_id: '"       + fileList.getMarkupId()    + "', "
+                + "\n     upload_url : '"       + uploadUrl()               + "', "
+                + "\n     download_url : '"     + downloader.getUrl()       + "', "
+                + "\n     add_url : '"          + adder.getUrl()            + "', "
+                + "\n     remove_url : '"       + remover.getUrl()          + "', "
+                + "\n     max_file_size: "      + getMaxFileSize()          + "  "
+                + "\n   }; "
+                + "\n   window.FileListUploadPanel.setup(params); "
+                + "\n });";
+                //@formatter:on
         } else {
             return "";
         }
+    }
+
+    private long getMaxFileSize() {
+        return getModelObject().getElementsType().asAtr().getMaxFileSize();
+    }
+
+    @SuppressWarnings("unchecked")
+    public IModel<SIList<SIAttachment>> getModel() {
+        return (IModel<SIList<SIAttachment>>) getDefaultModel();
+    }
+    @SuppressWarnings("unchecked")
+    public SIList<SIAttachment> getModelObject() {
+        return (SIList<SIAttachment>) getDefaultModelObject();
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
@@ -157,7 +171,6 @@ public class FileListUploadPanel extends Panel implements Loggable {
         return contextPath + FileUploadServlet.UPLOAD_URL;
     }
 
-
     private IMInstanciaAwareModel dummyModel() {
         return new IMInstanciaAwareModel() {
             @Override
@@ -166,12 +179,10 @@ public class FileListUploadPanel extends Panel implements Loggable {
             }
 
             @Override
-            public void setObject(Object object) {
-            }
+            public void setObject(Object object) {}
 
             @Override
-            public void detach() {
-            }
+            public void detach() {}
 
             @Override
             public SInstance getMInstancia() {
@@ -182,7 +193,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     public static class LabelWithIcon extends Label {
 
-        private final Icone icon;
+        private final Icone          icon;
         private final IModel<String> forAttrValue;
 
         public LabelWithIcon(String id, IModel<?> model, Icone icon, IModel<String> forAttrValue) {
@@ -206,7 +217,6 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     }
 
-
     private class AddFileBehavior extends BaseJQueryFileUploadBehavior<SIList<SIAttachment>> {
 
         public AddFileBehavior() {
@@ -218,9 +228,9 @@ public class FileListUploadPanel extends Panel implements Loggable {
             try {
                 SIAttachment siAttachment = currentInstance().addNew();
                 siAttachment.setContent(
-                        getParamFileId("name").toString(),
-                        FileUploadServlet.lookupFile(getParamFileId("fileId").toString()),
-                        getParamFileId("size").toLong());
+                    getParamFileId("name").toString(),
+                    FileUploadServlet.lookupFile(getParamFileId("fileId").toString()),
+                    getParamFileId("size").toLong());
                 DownloadUtil.writeJSONtoResponse(siAttachment, RequestCycle.get().getResponse());
             } catch (Exception e) {
                 getLogger().error(e.getMessage(), e);
@@ -249,7 +259,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     private class FilesListView extends RefreshingView<SIAttachment> {
         private final IModel<SIList<SIAttachment>> model;
-        private final WicketBuildContext ctx;
+        private final WicketBuildContext           ctx;
 
         public FilesListView(IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
             super("fileItem", model);
@@ -287,7 +297,6 @@ public class FileListUploadPanel extends Panel implements Loggable {
                 target.add(FileListUploadPanel.this);
                 target.add(fileList);
             }
-
 
             @Override
             public boolean isVisible() {
