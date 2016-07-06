@@ -1794,52 +1794,45 @@ Theme Panel
   .list-group-item-actions:after {
     clear: both; }
 
-.list-detail-input {
-  margin-left: -20px;
-  margin-right: -20px; }
-  .list-detail-input .table {
-    color: #a4a4a4; }
-    .list-detail-input .table tr:hover {
-      color: #4a4a4a; }
-    .list-detail-input .table td {
-      border-bottom: none !important;
-      border-top: none !important;
-      padding: 8px 0 8px 20px; }
-    .list-detail-input .table td:last-child {
-      padding: 8px 20px; }
-    .list-detail-input .table thead tr th {
-      border-bottom: 1px solid #eeeeee;
-      font-size: 12px;
-      padding: 8px 20px;
-      vertical-align: middle;
-      color: rgba(74, 74, 74, 0.7);
-      background-color: #fff; }
-  .list-detail-input .table-hover > tbody > tr > td:hover, .list-detail-input .table-hover > tbody > tr > th:hover, .list-detail-input .table-hover > tbody > tr:hover > td, .list-detail-input .table-hover > tbody > tr:hover > th {
-    background: #eafffb; }
-  .list-detail-input .table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: #F4FFFD; }
-  .list-detail-input .headers {
-    color: #acb1c2;
-    text-transform: uppercase;
-    background-color: #eaeef2; }
-  .list-detail-input .list-table-heading {
-    padding: 0 20px; }
+.list-detail-input .table {
+  color: #a4a4a4; }
+  .list-detail-input .table tr:hover {
+    color: #4a4a4a; }
+  .list-detail-input .table td {
+    border-bottom: 1px solid #dfdfdf; }
+  .list-detail-input .table td:last-child {
+    padding: 8px 20px; }
+  .list-detail-input .table thead tr th {
+    border-bottom: 1px solid #dfdfdf;
+    font-size: 12px;
+    vertical-align: middle;
+    color: rgba(74, 74, 74, 0.7);
+    background-color: #fff; }
+
+.list-detail-input .table-hover > tbody > tr > td:hover, .list-detail-input .table-hover > tbody > tr > th:hover, .list-detail-input .table-hover > tbody > tr:hover > td, .list-detail-input .table-hover > tbody > tr:hover > th {
+  background: #eafffb; }
+
+.list-detail-input .table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #F4FFFD; }
+
+.list-detail-input .headers {
+  color: #acb1c2;
+  text-transform: uppercase;
+  background-color: #eaeef2; }
+
+.list-detail-input .list-table-heading {
+  padding: 0 20px; }
 
 .list-detail-body {
-  margin-bottom: 15px;
-  border-bottom: 1px solid #eeeeee; }
+  margin-bottom: 15px; }
 
 .list-detail-remove {
   color: #a4a4a4;
-  font-size: 20px;
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
   vertical-align: middle;
   margin-right: 5px; }
-  .list-detail-remove::before {
-    content: "×";
-    top: 3px;
-    position: relative;
-    font-size: 27px;
-    line-height: 26px; }
   .list-detail-remove:hover, .list-detail-remove:focus {
     color: #ed6b75;
     text-decoration: none; }
@@ -1875,9 +1868,6 @@ Theme Panel
     height: 48px;
     font-size: 14px;
     margin: 0; }
-
-.list-detail-footer {
-  padding: 0 20px; }
 
 .singular-container .list-detail-input {
   margin-left: 0;
