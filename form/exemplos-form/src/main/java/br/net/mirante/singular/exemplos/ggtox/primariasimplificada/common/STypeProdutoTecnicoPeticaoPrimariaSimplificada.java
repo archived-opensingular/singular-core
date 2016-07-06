@@ -4,6 +4,7 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.core.STypeBoolean;
+import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 
 
@@ -33,7 +34,9 @@ public class STypeProdutoTecnicoPeticaoPrimariaSimplificada extends STypeComposi
                 .label("Produtos técnicos");
 
         produtosTecnicos
-                .withView(SViewListByMasterDetail::new);
+                .withView(new SViewListByMasterDetail()
+                        .col(produtosTecnicos.getElementsType().numeroProcessoProdutoTecnico)
+                        .col(produtosTecnicos.getElementsType().nomeProdutoTecnico));
 
 
     }
