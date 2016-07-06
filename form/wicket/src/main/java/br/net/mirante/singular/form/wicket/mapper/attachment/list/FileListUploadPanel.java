@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadLink;
@@ -40,6 +41,7 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -78,15 +80,31 @@ public class FileListUploadPanel extends Panel implements Loggable {
         };
     }
 
-    private WebMarkupContainer buildEmptyBox(IModel<SIList<SIAttachment>> model, FileUploadField fileField) {
+    private WebMarkupContainer buildEmptyBox(IModel<SIList<SIAttachment>> model, FileUploadField fileField, ViewMode viewMode) {
         return (WebMarkupContainer) new WebMarkupContainer("empty-box") {
             @Override
             public boolean isVisible() {
                 return model.getObject().isEmpty();
             }
-        }.add(new WebMarkupContainer("select-file-link") {{
-            add($b.onReadyScript(() -> JQuery.on(this, "click", JQuery.$(fileField).append(".click();"))));
-        }}.add(new Label("empty-message", "Selecione o arquivo.")));
+        }.add(
+                new WebMarkupContainer("select-file-link") {{
+                    if (viewMode.isEdition()) {
+                        add($b.onReadyScript(() -> JQuery.on(this, "click", JQuery.$(fileField).append(".click();"))));
+                    }
+                }}.add(new Label("select-file-link-message", new Model<String>() {
+                    @Override
+                    public String getObject() {
+                        return "Selecione o(s) arquivo(s)";
+                    }
+                })).add($b.visibleIf(viewMode::isEdition))
+        ).add(
+                new Label("empty-message", new Model<String>() {
+                    @Override
+                    public String getObject() {
+                        return "Nenhum arquivo adicionado";
+                    }
+                }).add($b.visibleIf(viewMode::isVisualization))
+        );
     }
 
 
@@ -129,7 +147,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
         add(buildUploadLabel());
         add(fileList = buildFileList(model));
         add(buildButtonContainer(model));
-        add(buildEmptyBox(model, fileField));
+        add(buildEmptyBox(model, fileField, ctx.getViewMode()));
         add(adder = new AddFileBehavior());
         add(remover = new RemoveFileBehavior());
         add(downloader = new DownloadSupportedBehavior(model));
