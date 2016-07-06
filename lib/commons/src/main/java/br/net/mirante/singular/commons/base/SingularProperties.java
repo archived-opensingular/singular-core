@@ -5,13 +5,21 @@
 
 package br.net.mirante.singular.commons.base;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Carrega os arquivos de propriedades do singular e dá fácil acesso ao mesmos, mediante um singleton {@link
@@ -31,10 +39,13 @@ public enum SingularProperties {
     public static final String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
     public static final String HIBERNATE_GENERATOR = "flow.persistence.hibernate.generator";
     public static final String HIBERNATE_SEQUENCE_PROPERTY_PATTERN = "flow.persistence.%s.sequence";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SingularProperties.class);
+    private static final String DEFAULT_PROPERTIES_FILENAME = "singular-defaults.properties";
+
     private Properties properties;
 
-    private static final String[] PROPERTIES_FILES_NAME = {"singular-form-service.properties", "singular.properties"};
+    private static final String[] PROPERTIES_FILES_NAME = { "singular-form-service.properties", "singular.properties" };
 
     private Properties getProperties() {
         //Faz leitura lazy das propriedades, pois no construtor da enum, as variáveis estáticas não estão disponíveis
@@ -83,7 +94,30 @@ public enum SingularProperties {
                 newProperties = loadNotOverriding(newProperties, name, url);
             }
         }
-        return newProperties == null ? new Properties() : newProperties;
+        Properties resolvedProperties = newProperties == null ? new Properties() : newProperties;
+
+        appendDefaultProperties(resolvedProperties, DEFAULT_PROPERTIES_FILENAME);
+
+        return resolvedProperties;
+    }
+
+    /**
+     * Adiciona as propriedades default que já não foram carregadas dos arquivos em PROPERTIES_FILES_NAME.
+     * @param resolvedProperties
+     */
+    protected void appendDefaultProperties(Properties resolvedProperties, String defaultPropertiesFilename) {
+        try (InputStream input = SingularProperties.class.getResourceAsStream(defaultPropertiesFilename);
+            Reader reader = new InputStreamReader(input, "utf-8")) {
+            Properties defaults = new Properties();
+            defaults.load(reader);
+            for (String key : defaults.stringPropertyNames()) {
+                if (!resolvedProperties.containsKey(key)) {
+                    resolvedProperties.setProperty(key, StringUtils.defaultString(defaults.getProperty(key)));
+                }
+            }
+        } catch (IOException ex) {
+            throw new IllegalStateException("");
+        }
     }
 
     private Properties loadNotOverriding(Properties newProperties, String propertiesName, URL propertiesUrl) {
@@ -99,8 +133,8 @@ public enum SingularProperties {
         for (Map.Entry<Object, Object> entry : p.entrySet()) {
             if (newProperties.containsKey(entry.getKey())) {
                 throw new SingularException("O arquivo de propriedade '" + propertiesName +
-                        "' no classpath define novamente a propriedade '" + entry.getKey() +
-                        "' definida anteriormente em outro arquivo de propriedade no class path.").add("url",
+                    "' no classpath define novamente a propriedade '" + entry.getKey() +
+                    "' definida anteriormente em outro arquivo de propriedade no class path.").add("url",
                         propertiesUrl);
             } else {
                 newProperties.setProperty((String) entry.getKey(), (String) entry.getValue());
@@ -121,7 +155,7 @@ public enum SingularProperties {
                     LOGGER.warn("   Era esperado que \"[singular.server.home]\\conf\" fosse um diretório");
                 }
                 return confDir;
-            } else if (LOGGER.isWarnEnabled()){
+            } else if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("      Não exite o diretório {}", confDir);
             }
         }
@@ -145,7 +179,7 @@ public enum SingularProperties {
                 selected = u;
             } else if (!selected.toURI().equals(u.toURI())) {
                 throw new SingularException(
-                        "Foram encontrados dois arquivos com mesmo nome '" + name + "' no class path").add("arquivo 1",
+                    "Foram encontrados dois arquivos com mesmo nome '" + name + "' no class path").add("arquivo 1",
                         selected).add("arquivo 2", u);
             }
         }
