@@ -1631,8 +1631,7 @@ Theme Panel
   z-index: -1; }
 
 .upload-fileinput:focus + label {
-  transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.36); }
+  text-decoration: underline; }
 
 .upload-list {
   color: currentColor; }
@@ -1642,30 +1641,40 @@ Theme Panel
     display: block;
     padding: 0 0;
     margin: 0; }
+    .upload-list ul:before, .upload-list ul:after {
+      content: " ";
+      display: table; }
+    .upload-list ul:after {
+      clear: both; }
 
 .upload-list-item {
   line-height: 30px;
   display: block;
-  padding: 10px 0; }
+  padding: 10px 0;
+  margin-bottom: 10px;
+  float: left;
+  width: calc((100%/3) - 10px);
+  margin-right: 15px; }
   .upload-list-item:before, .upload-list-item:after {
     content: " ";
     display: table; }
   .upload-list-item:after {
     clear: both; }
+  .upload-list-item:nth-child(3n) {
+    margin-right: 0; }
   .upload-list-item .list-item-icon {
-    width: 2%;
     font-size: 26px;
-    display: block;
+    display: inline;
+    margin-left: 15px;
     float: left; }
     .upload-list-item .list-item-icon .list-item-uploading {
       color: #acb1c2; }
     .upload-list-item .list-item-icon .list-item-uploaded {
       color: #40BAA7; }
   .upload-list-item .list-item-content {
-    width: 26%;
-    margin: 0 2%;
     height: 30px;
     float: left;
+    margin-left: 10px;
     overflow-y: hidden;
     text-overflow: ellipsis;
     color: #acb1c2; }
@@ -1724,19 +1733,45 @@ Theme Panel
 .upload-single.upload-single-uploading .upload-single-remove, .upload-single.upload-single-uploading .upload-single-progress {
   display: block; }
 
-.upload-panel-footer {
-  padding-bottom: 15px; }
+.upload-panel {
+  margin-bottom: 45px; }
+
+.upload-panel-heading {
+  margin: 1px 0 15px 0; }
 
 .upload-panel-body {
   margin-bottom: 15px; }
   .upload-panel-body .list-detail-empty {
-    background-color: #eaeef2;
-    border: 1px dashed currentColor; }
+    background-color: #ffffff;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    position: relative; }
+    .upload-panel-body .list-detail-empty label {
+      color: #40BAA7;
+      display: inline; }
+      .upload-panel-body .list-detail-empty label:hover {
+        text-decoration: underline; }
 
-.upload-list-container ul li:nth-child(even) {
-  background-color: #eafffb; }
+.upload-list-add {
+  float: left;
+  width: 51px;
+  height: 51px;
+  background-color: #eaeef2;
+  color: #acb1c2; }
+  .upload-list-add label {
+    font-size: 20px;
+    text-align: center;
+    padding: 12px;
+    width: 100%;
+    height: 100%;
+    cursor: pointer; }
 
-.upload-panel-heading, .list-form-heading {
+.upload-list-container ul li {
+  border: 1px solid #acb1c2;
+  border-radius: 3px;
+  font-weight: bold; }
+
+.list-form-heading {
   margin: 1px 0 5px 0; }
 
 .list-group-item-fields {
