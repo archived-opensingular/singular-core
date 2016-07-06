@@ -40,7 +40,7 @@ public class SingularPropertiesFromFileTest {
 
     @Test
     public void test() throws Exception {
-        SingularProperties.INSTANCE.reload();
-        Assert.assertEquals(MOCK_PROPERTY_VALUE, SingularProperties.INSTANCE.getProperty(MOCK_PROPERTY_KEY));
+        SingularProperties.get().reload();
+        Assert.assertEquals(MOCK_PROPERTY_VALUE, SingularProperties.get().getProperty(MOCK_PROPERTY_KEY));
     }
 }

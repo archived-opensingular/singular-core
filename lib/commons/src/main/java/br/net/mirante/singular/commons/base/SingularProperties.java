@@ -47,6 +47,10 @@ public enum SingularProperties {
 
     private static final String[] PROPERTIES_FILES_NAME = { "singular-form-service.properties", "singular.properties" };
 
+    public static SingularProperties get() {
+        return INSTANCE;
+    }
+    
     private Properties getProperties() {
         //Faz leitura lazy das propriedades, pois no construtor da enum, as variáveis estáticas não estão disponíveis
         if (properties == null) {

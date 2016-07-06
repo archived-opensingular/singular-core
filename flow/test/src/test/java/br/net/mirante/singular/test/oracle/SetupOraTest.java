@@ -10,7 +10,7 @@ public class SetupOraTest extends SetupTest {
 
     @BeforeClass
     public static void configProperties() {
-        SingularProperties.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
+        SingularProperties.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
                 "singular-ora.properties"));
     }
 }

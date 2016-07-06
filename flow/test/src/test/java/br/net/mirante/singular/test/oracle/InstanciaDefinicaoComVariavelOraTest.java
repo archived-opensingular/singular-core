@@ -10,7 +10,7 @@ public class InstanciaDefinicaoComVariavelOraTest extends InstanciaDefinicaoComV
 
     @BeforeClass
     public static void configProperties() {
-        SingularProperties.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
+        SingularProperties.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
                 "singular-ora.properties"));
     }
 }

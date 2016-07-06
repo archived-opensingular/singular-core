@@ -11,6 +11,6 @@ public class PersistenceOraTest extends PersistenceTest {
 
     @BeforeClass
     public static void configProperties() {
-        SingularProperties.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-ora.properties"));
+        SingularProperties.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-ora.properties"));
     }
 }
