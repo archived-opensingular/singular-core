@@ -36,7 +36,6 @@ public class LoginPage extends WebPage {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new WebMarkupContainer("brandLogo").add($b.attr("src", "/singular-static/resources/singular/img/brand.png")));
 
         WebMarkupContainer loginForm = new WebMarkupContainer("form");
         loginForm.add($b.attr("action", SecurityUtil.getLoginPath()));
