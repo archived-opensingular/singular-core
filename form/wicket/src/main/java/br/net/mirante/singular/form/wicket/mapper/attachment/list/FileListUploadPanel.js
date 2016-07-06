@@ -50,6 +50,7 @@
                             );
 
                     $('#'+params.component_id).find('.list-detail-empty').hide();
+                    $('#'+params.component_id).find('.upload-list-add').show();
                     fileList.append(fileElement);
                     $('#progress_bar_'+data.files[0].fake_id).hide();
 
@@ -89,6 +90,7 @@
                                                             var fileList = $('#' + params.fileList_id).find('li');
                                                             if (fileList.length == 0) {
                                                                 $('#' + params.component_id).find('.list-detail-empty').show();
+                                                                $('#' + params.component_id).find('.upload-list-add').hide();
                                                             }
                                                         }
                                                     }
