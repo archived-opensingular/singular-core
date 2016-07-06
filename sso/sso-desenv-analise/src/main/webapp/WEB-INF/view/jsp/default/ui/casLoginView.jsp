@@ -33,8 +33,7 @@ response.setHeader("Access-Control-Allow-Origin", "*");
 	<link href="/singular-static/resources/metronic/layout4/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
 	
 	<link rel="shortcut icon" href="/singular-static/resources/singular/img/favicon.png">
-	<link rel="stylesheet" type="text/css" href="resources/login.css">
-	
+
 </head>
 
 
@@ -46,7 +45,7 @@ response.setHeader("Access-Control-Allow-Origin", "*");
 	
 	<div class="logo">
 		<a>
-			<img alt="logo" class="logo-default" id="brandLogo3" src="/singular-static/resources/singular/img/brand.png">
+			<img alt="logo" class="logo-default" id="brandLogo3" src="/singular-static/resources/singular/img/logo_singular_gray.svg">
 		</a>
 	</div>
 	
@@ -94,14 +93,14 @@ response.setHeader("Access-Control-Allow-Origin", "*");
             <input type="hidden" name="execution" value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
 			<div class="form-actions">
-				<button id="btnsubss" type="submit" class="btn btn-success uppercase">Login</button>
+				<button id="btnsubss" type="submit" class="btn uppercase">Login</button>
 			</div>
 
 		</form:form>
 		
 	</div>
 	<div class="copyright">
-		 2015 © Singular por
+		 2016 © Singular por
 	     <a target="_blank" id="ownerLink7" href="http://www.mirante.net.br/" title="Desde 1998 colaborando para o desenvolvimento do seu negócio.">
 	         Mirante Tecnologia.
 	     </a>
