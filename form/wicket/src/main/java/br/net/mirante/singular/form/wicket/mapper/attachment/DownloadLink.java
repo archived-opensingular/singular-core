@@ -15,7 +15,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
  */
 public class DownloadLink extends Link<Void> {
 
-    private IModel<SIAttachment> model;
+    private IModel<SIAttachment>      model;
     private DownloadSupportedBehavior downloadSupportedBehaviour;
 
     public DownloadLink(String id, IModel<SIAttachment> model, DownloadSupportedBehavior downloadSupportedBehaviour) {
@@ -29,13 +29,14 @@ public class DownloadLink extends Link<Void> {
     protected void onInitialize() {
         super.onInitialize();
         this.add($b.attr("onclick", (IReadOnlyModel<String>) () -> "DownloadSupportedBehavior.ajaxDownload(" +
-                "'" + downloadSupportedBehaviour.getUrl() + "'," +
-                "'" + model.getObject().getFileId() + "'," +
-                "'" + model.getObject().getFileName() + "'" +
-                ");" +
-                "return false;"));
+            "'" + downloadSupportedBehaviour.getUrl() + "'," +
+            "'" + model.getObject().getFileId() + "'," +
+            "'" + model.getObject().getFileName() + "'" +
+            ");" +
+            "return false;"));
         this.setBody($m.property(model, "fileName"));
         add(WicketUtils.$b.attr("title", $m.ofValue(model.getObject().getFileName())));
+        add($b.attr("target", "_blank"));
     }
 
     @Override
@@ -44,8 +45,6 @@ public class DownloadLink extends Link<Void> {
     }
 
     @Override
-    public void onClick() {
-    }
-
+    public void onClick() {}
 
 }

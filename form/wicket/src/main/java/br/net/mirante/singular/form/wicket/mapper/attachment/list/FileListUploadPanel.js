@@ -20,6 +20,9 @@
                     'upload_id' : params.upload_id,
                 },
                 add: function (e, data) {
+        			if (!FileListUploadPanel.validateInputFile(e, data, params.max_file_size)) {
+        				return false;
+        			}
                     var name = '?', fake_id = -1;
                     $.each(data.files, function (index, file) {
                         file['fake_id'] = fake_id = self.last_id ++;
@@ -36,7 +39,7 @@
                                         )
                                 ),
                             $('<div>').addClass('list-item-content')
-                                .append($('<a>').attr('href','#').addClass('download-link')
+                                .append($('<a target="_blank" href="#" class="download-link"></a>')
                                     .append($('<span>').text(name))
                                 ),
                             $('<div class="list-item-progress" id="progress_bar_'+fake_id+'">')
@@ -75,11 +78,6 @@
                                             .addClass('list-item-uploaded');
                                         box.find('.list-item-content')
                                             .css("width","80%");
-                                        box.find('.download-link')
-                                            .on('click', function(event){
-                                                DownloadSupportedBehavior.ajaxDownload(params.download_url, dataSInstance.fileId, dataSInstance.name);
-                                                event.preventDefault();
-                                            });
                                         box.find('.list-action-remove')
                                             .removeClass('hidden')
                                             .click(function (e) {
@@ -96,6 +94,9 @@
                                                     }
                                                 );
                                             });
+                                    	DownloadSupportedBehavior.resolveUrl(params.download_url, dataSInstance.fileId, dataSInstance.name, function(url){
+                                    		box.find('.download-link').attr('href', url);
+                                    	});
                                     }
                                 });
                     });
@@ -105,10 +106,40 @@
                     $('#progress_bar_'+data.files[0].fake_id).show();
                     $('#progress_bar_'+data.files[0].fake_id+' .progress-bar')
                         .css( 'width', progress + '%' );
-                }
-            }).prop('disabled', !$.support.fileInput)
+            	} 
+            })
+            	.prop('disabled', !$.support.fileInput)
                 .parent().addClass($.support.fileInput ? undefined : 'disabled');
         }
 
+        window.FileListUploadPanel.resetFormElement = function(e) {
+        	var $input = $(e.target || e.srcElement);
+        	$input.wrap('<form>').closest('form').get(0).reset();
+        	$input.unwrap();
+
+            // Prevent form submission
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+
+        window.FileListUploadPanel.validateInputFile = function(e, data, maxSize){
+            if ( maxSize && data.files[0].size  > maxSize) {
+                toastr.error("Arquivo não pode ser maior que " + FileListUploadPanel.humaneSize(maxSize));
+                FileListUploadPanel.resetFormElement(e);
+                return false;
+            }
+            return true;
+        };
+
+        window.FileListUploadPanel.humaneSize = function(size){
+            var remainder = size;
+            var index = 0;
+            var names = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+            while ((remainder >= 1024) && (index < names.length - 1)) {
+                remainder /= 1024; index ++;
+            }
+            return Math.round(remainder) +" "+ names[index];
+        }
     }
 })();
