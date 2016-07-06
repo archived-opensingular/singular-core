@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.view.GraphComponent;
 
-import br.net.mirante.singular.commons.base.SingularProperties;
+import br.net.mirante.singular.commons.base.SingularPropertiesImpl;
 import br.net.mirante.singular.flow.core.ExecutionContext;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.FlowMap;
@@ -55,7 +55,7 @@ public class YFilesFlowConverterTest {
 
     @BeforeClass
     public static void configProperties() {
-        SingularProperties.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
+        SingularPropertiesImpl.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
     }
 
     static boolean started;
