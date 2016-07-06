@@ -293,7 +293,6 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
 
     }
 
-
     protected void send(IModel<? extends SInstance> currentInstance) {
         onBeforeSend(currentInstance);
         FormKey key = petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject());
