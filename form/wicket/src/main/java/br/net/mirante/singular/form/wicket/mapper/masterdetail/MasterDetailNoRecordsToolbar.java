@@ -17,11 +17,9 @@ class MasterDetailNoRecordsToolbar extends AbstractToolbar implements IMarkupRes
 
     private static final String MARKUP = ""
             + " <wicket:panel>                                                            "
-            + "     <tr>                                                                  "
+            + "     <tr class='list-detail-empty'>                                                                  "
             + "         <td wicket:id='td'>                                               "
-            + "             <div class='list-detail-empty'>                               "
-            + "                 <p class='list-detail-empty-message' wicket:id='msg'></p> "
-            + "             </div>                                                        "
+            + "                 <div wicket:id='msg'></div> "
             + "         </td>                                                             "
             + "     </tr>                                                                 "
             + " </wicket:panel>"                                                          ;
