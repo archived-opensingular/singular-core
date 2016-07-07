@@ -212,9 +212,6 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
     protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance) {
         T petition = currentModel.getObject();
         if (currentInstance.getObject() instanceof SIComposite) {
-            if (config.isWithLazyProcessResolver()){
-                petition.setProcessType(Flow.getKeyFromDefinition(config.getLazyFlowDefinitionResolver().resolve(config, (SIComposite) currentInstance.getObject())));
-            }
             petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
         }
         return petition;
