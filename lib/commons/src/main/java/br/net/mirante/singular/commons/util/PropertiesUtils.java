@@ -19,8 +19,9 @@ public abstract class PropertiesUtils {
 
     public static Properties propertiesFromMap(Map<String, String> map) {
         Properties props = new Properties();
-        for (String key : map.keySet())
-            props.put(key, map.get(key));
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            props.put(entry.getKey(), entry.getValue());
+        }
         return props;
     }
 
