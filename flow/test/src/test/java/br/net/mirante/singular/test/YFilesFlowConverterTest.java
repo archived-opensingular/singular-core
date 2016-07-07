@@ -1,16 +1,9 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.commons.base.SingularProperties;
-import br.net.mirante.singular.flow.core.*;
-import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
-import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
-import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
-import br.net.mirante.singular.flow.core.renderer.YFilesFlowConverter;
-import br.net.mirante.singular.flow.test.TestDAO;
-import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
-import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.graph.INode;
-import com.yworks.yfiles.view.GraphComponent;
+import static org.fest.assertions.api.Assertions.*;
+
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
@@ -24,10 +17,21 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.inject.Inject;
+import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.view.GraphComponent;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.extractProperty;
+import br.net.mirante.singular.commons.base.SingularPropertiesImpl;
+import br.net.mirante.singular.flow.core.ExecutionContext;
+import br.net.mirante.singular.flow.core.Flow;
+import br.net.mirante.singular.flow.core.FlowMap;
+import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
+import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
+import br.net.mirante.singular.flow.core.renderer.YFilesFlowConverter;
+import br.net.mirante.singular.flow.test.TestDAO;
+import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 
 @ActiveProfiles("mssql")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,7 +55,7 @@ public class YFilesFlowConverterTest {
 
     @BeforeClass
     public static void configProperties() {
-        SingularProperties.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
+        SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
     }
 
     static boolean started;
