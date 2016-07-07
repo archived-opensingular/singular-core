@@ -28,8 +28,8 @@ public class STypeProdutoTecnico extends STypeComposite<SIComposite> {
         super.onLoadType(builder);
 
 
-        nomeProdutoTecnico = addField("nomeProdutoTecnico", STypeString.class);
         numeroProcessoProdutoTecnico = addField("numeroProcessoProdutoTecnico", STypeAnvisaNumeroProcesso.class);
+        nomeProdutoTecnico = addField("nomeProdutoTecnico", STypeString.class);
         finalidadeConformeMatriz = addFieldBoolean("finalidadeConformeMatriz");
         classeConformeMatriz = addFieldBoolean("classeConformeMatriz");
         modoAcaoConformeMatriz = addFieldBoolean("modoAcaoConformeMatriz");

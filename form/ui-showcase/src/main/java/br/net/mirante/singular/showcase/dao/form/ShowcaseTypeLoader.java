@@ -49,7 +49,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
     public ShowcaseTypeLoader() {
         add(STypeCurriculo.class, ShowCaseType.FORM);
         add(STypeExample.class, ShowCaseType.FORM);
-        add(STypePeticaoGGTOX.class, ShowCaseType.FORM);
+//        add(STypePeticaoGGTOX.class, ShowCaseType.FORM);
         add(STypeNotificacaoSimplificadaDinamizado.class, ShowCaseType.FORM);
         add(STypeNotificacaoSimplificadaGasMedicinal.class, ShowCaseType.FORM);
         add(STypeNotificacaoSimplificadaFitoterapico.class, ShowCaseType.FORM);
