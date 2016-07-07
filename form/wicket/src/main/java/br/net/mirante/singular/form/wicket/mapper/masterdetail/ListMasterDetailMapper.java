@@ -231,6 +231,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     private ActionConfig buildRemoveActionConfig() {
         return new ActionConfig<>()
                 .styleClasses(Model.of("list-detail-remove"))
+                .iconeModel(Model.of(Icone.REMOVE))
                 .title(Model.of("Remover"));
     }
 
