@@ -1,19 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.form.io.IOUtil;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.IOUtils;
-import org.apache.wicket.ajax.json.JSONArray;
+import static br.net.mirante.singular.commons.util.ConversionUtils.*;
+import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet.*;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,8 +11,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
+import org.apache.wicket.ajax.json.JSONArray;
+
+import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.commons.base.SingularProperties;
+import br.net.mirante.singular.form.io.IOUtil;
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
@@ -80,7 +83,15 @@ class FileUploadProcessor {
     }
 
     private ServletFileUpload handler() {
-        return new ServletFileUpload(new DiskFileItemFactory());
+        final SingularProperties sp = SingularProperties.get();
+        final ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
+
+        long maxFileSize = toLongHumane(sp.getProperty(SingularProperties.FILEUPLOAD_GLOBAL_MAX_FILE_SIZE), -1);
+        long maxRequestSize = toLongHumane(sp.getProperty(SingularProperties.FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE), -1);
+        servletFileUpload.setFileSizeMax(maxFileSize);
+        servletFileUpload.setSizeMax(maxRequestSize);
+        
+        return servletFileUpload;
     }
 
     public void handleFiles() {
@@ -113,13 +124,11 @@ class FileUploadProcessor {
             f.deleteOnExit();
             try (
                 OutputStream outputStream = IOUtil.newBuffredOutputStream(f);
-                InputStream in = item.getInputStream();
-            ) {
+                InputStream in = item.getInputStream();) {
                 IOUtils.copy(in, outputStream);
             }
             fileGroup.put(DownloadUtil.toJSON(id, null, name, size));
         }
     }
-
 
 }

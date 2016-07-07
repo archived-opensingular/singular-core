@@ -17,15 +17,12 @@ public interface SingularProperties {
     public static final String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
     public static final String HIBERNATE_GENERATOR                  = "flow.persistence.hibernate.generator";
     public static final String HIBERNATE_SEQUENCE_PROPERTY_PATTERN  = "flow.persistence.%s.sequence";
+    public static final String FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE   = "singular.fileupload.global_max_request_size";
+    public static final String FILEUPLOAD_GLOBAL_MAX_FILE_SIZE      = "singular.fileupload.global_max_file_size";
 
     public static SingularProperties get() {
-        return SingularPropertiesImpl.INSTANCE;
+        return SingularPropertiesImpl.get();
     }
-
-    /**
-     * Limpa as propriedades da memoria e força recarga a partir da memória e classPath.
-     */
-    public void reload();
 
     /**
      * Verifica se a propriedade de nome informado existe.
@@ -37,4 +34,7 @@ public interface SingularProperties {
      */
     public String getProperty(String key);
 
+    default String getSingularServerHome() {
+        return System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
+    }
 }

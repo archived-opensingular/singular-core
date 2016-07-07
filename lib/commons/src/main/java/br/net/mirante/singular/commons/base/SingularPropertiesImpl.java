@@ -8,36 +8,53 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.commons.io.input.NullInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.net.mirante.singular.commons.lambda.IConsumerEx;
+import br.net.mirante.singular.commons.util.PropertiesUtils;
+
 public enum SingularPropertiesImpl implements SingularProperties {
     INSTANCE;
 
-    private static final Logger   LOGGER                      = LoggerFactory.getLogger(SingularProperties.class);
-    private static final String   DEFAULT_PROPERTIES_FILENAME = "singular-defaults.properties";
+    private static final Logger   LOGGER                            = LoggerFactory.getLogger(SingularProperties.class);
+    private static final String   DEFAULT_PROPERTIES_FILENAME       = "singular-defaults.properties";
 
     private volatile Properties   properties;
+    private Supplier<Properties>  singularDefaultPropertiesSupplier = this::getSingularDefaultProperties;
 
-    private static final String[] PROPERTIES_FILES_NAME       = { "singular-form-service.properties", "singular.properties" };
+    private static final String[] PROPERTIES_FILES_NAME             = { "singular-form-service.properties", "singular.properties" };
+
+    public static SingularPropertiesImpl get() {
+        return INSTANCE;
+    }
 
     /**
      * Limpa as propriedades da memoria e força recarga a partir da memória e classPath.
      */
-    @Override
     public synchronized void reload() {
         LOGGER.info("Carregando configurações do Singular");
         Properties newProperties = readClasspathDefaults();
         readPropertiesFilesOverrides(newProperties);
         properties = newProperties;
+    }
+
+    public void setSingularServerHome(String serverHome) {
+        if (serverHome != null)
+            System.setProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME, serverHome);
+        else
+            System.clearProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
     }
 
     /**
@@ -54,6 +71,9 @@ public enum SingularPropertiesImpl implements SingularProperties {
     @Override
     public String getProperty(String key) {
         return getProperties().getProperty(key);
+    }
+    public String setProperty(String key, String value) {
+        return (String) getProperties().setProperty(key, value);
     }
 
     private synchronized Properties getProperties() {
@@ -101,7 +121,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
      * @param resolvedProperties
      */
     private void appendDefaultProperties(Properties resolvedProperties) {
-        Properties defaults = getSingularDefaultProperties();
+        Properties defaults = singularDefaultPropertiesSupplier.get();
         for (String key : defaults.stringPropertyNames()) {
             if (!resolvedProperties.containsKey(key)) {
                 resolvedProperties.setProperty(key, StringUtils.defaultString(defaults.getProperty(key)));
@@ -109,7 +129,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
         }
     }
 
-    protected Properties getSingularDefaultProperties() {
+    public Properties getSingularDefaultProperties() {
         Properties defaults = new Properties();
         try (
             InputStream input = defaultIfNull(SingularProperties.class.getResourceAsStream(DEFAULT_PROPERTIES_FILENAME), new NullInputStream(0));
@@ -122,16 +142,16 @@ public enum SingularPropertiesImpl implements SingularProperties {
     }
 
     private Properties loadNotOverriding(Properties newProperties, String propertiesName, URL propertiesUrl) {
-        Properties p = new Properties();
-        try {
-            p.load(propertiesUrl.openStream());
+        Properties props;
+        try (InputStream input = propertiesUrl.openStream()) {
+            props = PropertiesUtils.load(propertiesUrl, "utf-8");
         } catch (IOException e) {
             throw new SingularException("Erro lendo arquivo de propriedade", e).add("url", propertiesUrl);
         }
         if (newProperties == null) {
-            return p;
+            return props;
         }
-        for (Map.Entry<Object, Object> entry : p.entrySet()) {
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
             if (newProperties.containsKey(entry.getKey())) {
                 throw new SingularException("O arquivo de propriedade '" + propertiesName +
                     "' no classpath define novamente a propriedade '" + entry.getKey() +
@@ -228,4 +248,41 @@ public enum SingularPropertiesImpl implements SingularProperties {
         loadOverriding(getProperties(), propertiesURL);
     }
 
+    public static class Tester {
+        private final Properties props;
+        public Tester(Properties props) {
+            this.props = props;
+        }
+        public String getProperty(String key) {
+            return props.getProperty(key);
+        }
+        public String setProperty(String key, String value) {
+            return (String) props.setProperty(key, value);
+        }
+        
+        public static <EX extends Exception> void runInSandbox(IConsumerEx<SingularPropertiesImpl, EX> callable) throws EX {
+            Object state = saveState();
+            try {
+                callable.accept(SingularPropertiesImpl.get());
+            } finally {
+                restoreState(state);
+            }
+        }
+        protected static void restoreState(Object stateObject) {
+            State state = (State) stateObject;
+            String serverHome = state.systemBackup.get(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
+            SingularPropertiesImpl.get().setSingularServerHome(serverHome);
+            SingularPropertiesImpl.INSTANCE.properties = state.propertiesBackup;
+        }
+        public static Object saveState() {
+            State state = new State();
+            PropertiesUtils.copyTo(SingularPropertiesImpl.INSTANCE.properties, state.propertiesBackup);
+            state.systemBackup.put(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME, System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME));
+            return state;
+        }
+        private static class State implements Serializable {
+            final Properties          propertiesBackup = new Properties();
+            final Map<String, String> systemBackup     = new HashMap<>();
+        }
+    }
 }
