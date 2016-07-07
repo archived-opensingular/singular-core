@@ -94,7 +94,7 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
                 .asAtr()
                 .enabled(si -> !apenasNivel1.contains(Value.of(si, idTipoPeticao)))
                 .required()
-                .label("Nível");
+                .label("Petição primária simplificada de nível");
 
         dadosGerais
                 .asAtr()
