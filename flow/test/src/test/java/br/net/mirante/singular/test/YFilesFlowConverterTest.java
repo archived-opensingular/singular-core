@@ -91,6 +91,7 @@ public class YFilesFlowConverterTest {
                 .containsOnly("Go To 1","Finish From 1");
     }
 
+    @DefinitionInfo("P-Y")
     public static class P extends ProcessDefinition<ProcessInstance> {
 
         public enum PTask implements ITaskDefinition {
@@ -103,7 +104,7 @@ public class YFilesFlowConverterTest {
         }
 
         public P() {
-            super("P-Y",ProcessInstance.class);
+            super(ProcessInstance.class);
         }
 
         @Override

@@ -5,15 +5,16 @@
 
 package br.net.mirante.singular.flow.core;
 
+import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.core.view.Lnk;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.core.view.Lnk;
 
 @SuppressWarnings("unchecked")
 public final class Flow {
@@ -136,5 +137,19 @@ public final class Flow {
 
     public static Lnk getDefaultHrefFor(TaskInstance instanciaTarefa) {
         return getConfigBean().getViewLocator().getDefaultHrefFor(instanciaTarefa);
+    }
+
+    public static String getKeyFromDefinition(Class<? extends ProcessDefinition> clazz) {
+        if (clazz == null) {
+            throw new SingularFlowException(" A classe de definição do fluxo não pode ser nula ");
+        }
+        if (!clazz.isAnnotationPresent(DefinitionInfo.class)) {
+            throw new SingularFlowException("A definição de fluxo deve ser anotada com " + DefinitionInfo.class.getName());
+        }
+        String key = clazz.getAnnotation(DefinitionInfo.class).value();
+        if (StringUtils.isBlank(key)) {
+            throw new SingularFlowException("A chave definida na anitação" + DefinitionInfo.class.getName() + " não pode ser nula");
+        }
+        return key;
     }
 }

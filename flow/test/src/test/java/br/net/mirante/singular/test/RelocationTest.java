@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.flow.core.DefinitionInfo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
@@ -185,6 +186,7 @@ public class RelocationTest  {
     }
 
 
+    @DefinitionInfo("P-P")
     public static class P extends ProcessDefinition<ProcessInstance> {
 
         public enum PTask implements ITaskDefinition {
@@ -197,7 +199,7 @@ public class RelocationTest  {
         }
 
         public P() {
-            super("P-P",ProcessInstance.class);
+            super(ProcessInstance.class);
         }
 
         @Override
