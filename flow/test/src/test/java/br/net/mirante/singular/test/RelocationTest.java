@@ -59,7 +59,7 @@ public class RelocationTest  {
 
     @BeforeClass
     public static void configProperties() {
-        SingularPropertiesImpl.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
+        SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
     }
 
     @Before

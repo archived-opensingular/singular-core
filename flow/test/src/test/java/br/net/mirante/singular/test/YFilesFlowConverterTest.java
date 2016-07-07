@@ -55,7 +55,7 @@ public class YFilesFlowConverterTest {
 
     @BeforeClass
     public static void configProperties() {
-        SingularPropertiesImpl.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
+        SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
     }
 
     static boolean started;

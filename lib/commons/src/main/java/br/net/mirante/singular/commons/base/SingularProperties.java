@@ -7,7 +7,7 @@ package br.net.mirante.singular.commons.base;
 
 /**
  * Carrega os arquivos de propriedades do singular e dá fácil acesso ao mesmos, mediante um singleton {@link
- * SingularProperties#INSTANCE}. <p>Primeiro lê do arquivos de propriedades e depois tentar ler do diretório de
+ * SingularProperties#get()}. <p>Primeiro lê do arquivos de propriedades e depois tentar ler do diretório de
  * configuração se o mesmo existir, ou seja, as variáveis no diretório de configuração têm precedência.</p>
  *
  * @author Daniel C. Bordin

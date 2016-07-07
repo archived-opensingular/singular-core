@@ -11,7 +11,7 @@ public class ProcessVersoesOraTest extends ProcessVersoesTest {
 
     @BeforeClass
     public static void configProperties() {
-        SingularPropertiesImpl.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
+        SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
                 "singular-ora.properties"));
     }
 }

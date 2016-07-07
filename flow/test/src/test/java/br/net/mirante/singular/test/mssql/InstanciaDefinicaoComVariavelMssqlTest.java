@@ -11,7 +11,7 @@ public class InstanciaDefinicaoComVariavelMssqlTest extends InstanciaDefinicaoCo
 
     @BeforeClass
     public static void configProperties() {
-        SingularPropertiesImpl.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
+        SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
                 "singular-mssql.properties"));
     }
 }
