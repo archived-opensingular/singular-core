@@ -4,6 +4,7 @@ import static org.fest.assertions.api.Assertions.*;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.flow.core.DefinitionInfo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
