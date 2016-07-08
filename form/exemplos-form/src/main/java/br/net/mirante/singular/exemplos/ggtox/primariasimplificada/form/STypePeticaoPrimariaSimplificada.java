@@ -1,5 +1,6 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.*;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static br.net.mirante.singular.form.util.SingularPredicates.*;
 
@@ -46,15 +48,8 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .selection()
                 .id(idTipoPeticao)
                 .display(descricaoTipoPeticao)
-                .simpleProvider((SSimpleProvider) builder -> {
-                    builder.add().set(idTipoPeticao, 1).set(descricaoTipoPeticao, "Feromônio, produtos biológicos, bioquímicos e outros");
-                    builder.add().set(idTipoPeticao, 2).set(descricaoTipoPeticao, "Pré-mistura");
-                    builder.add().set(idTipoPeticao, 3).set(descricaoTipoPeticao, "Preservativo de madeira");
-                    builder.add().set(idTipoPeticao, 4).set(descricaoTipoPeticao, "Produto de uso não agrícola");
-                    builder.add().set(idTipoPeticao, 5).set(descricaoTipoPeticao, "Produto formulado de ingrediente ativo já registrado (PF)");
-                    builder.add().set(idTipoPeticao, 6).set(descricaoTipoPeticao, "Produto formulado com base em produto técnico equivalente (PFE)");
-                    builder.add().set(idTipoPeticao, 7).set(descricaoTipoPeticao, "Produto técnico de ingrediente ativo já registrado (PT)");
-                    builder.add().set(idTipoPeticao, 8).set(descricaoTipoPeticao, "Produto técnico equivalente (PTE)");
+                .simpleProvider(builder -> {
+                    Stream.of(TipoPeticaoPrimariaGGTOX.values()).forEach(tp -> builder.add().set(idTipoPeticao, tp.getId()).set(descricaoTipoPeticao, tp.getDescricao()));
                 });
 
         final List<Integer> apenasNivel1              = Arrays.asList(3, 7, 8);
