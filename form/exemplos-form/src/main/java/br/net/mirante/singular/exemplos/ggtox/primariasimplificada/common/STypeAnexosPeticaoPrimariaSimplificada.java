@@ -20,6 +20,10 @@ public class STypeAnexosPeticaoPrimariaSimplificada extends STypeComposite<SICom
         super.onLoadType(tb);
 
         this
+                .asAtrAnnotation()
+                .setAnnotated();
+
+        this
                 .asAtr()
                 .label("Anexos");
 

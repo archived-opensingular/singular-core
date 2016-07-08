@@ -19,6 +19,10 @@ public class STypeProdutoTecnicoPeticaoPrimariaSimplificada extends STypeComposi
     protected void onLoadType(TypeBuilder builder) {
         super.onLoadType(builder);
 
+        this
+                .asAtrAnnotation()
+                .setAnnotated();
+
         asAtr().label("Produto Técnico");
 
         produtoTecnicoNaoSeAplica = addFieldBoolean("produtoTecnicoNaoSeAplica");

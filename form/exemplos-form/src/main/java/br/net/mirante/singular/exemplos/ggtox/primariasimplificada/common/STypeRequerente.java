@@ -16,6 +16,10 @@ public class STypeRequerente extends STypeEntidade {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
+        this
+                .asAtrAnnotation()
+                .setAnnotated();
+
         asAtr()
                 .label("Requerente");
 

@@ -11,6 +11,11 @@ public class STypeRepresentanteLegal extends STypeEntidade {
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
+
+        this
+                .asAtrAnnotation()
+                .setAnnotated();
+
         asAtr()
                 .label("Representante Legal");
 
