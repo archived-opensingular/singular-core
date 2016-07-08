@@ -6,6 +6,7 @@
 package br.net.mirante.singular.form;
 
 import br.net.mirante.singular.form.builder.selection.SelectionBuilder;
+import br.net.mirante.singular.form.provider.SimpleProvider;
 import br.net.mirante.singular.form.type.core.AtrFormula;
 import br.net.mirante.singular.form.type.core.SPackageCore;
 import br.net.mirante.singular.form.view.SView;
@@ -191,6 +192,5 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
     public <T extends Serializable> SelectionBuilder<T, I, I> lazyAutocompleteOf(Class<T> clazz) {
         return selectionOf(clazz, new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
     }
-
 
 }
