@@ -1,11 +1,12 @@
 package br.net.mirante.singular.test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.*;
 
 import java.util.Date;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.flow.core.DefinitionInfo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
@@ -21,7 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import br.net.mirante.singular.commons.base.SingularProperties;
+import br.net.mirante.singular.commons.base.SingularPropertiesImpl;
 import br.net.mirante.singular.flow.core.ExecutionContext;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.FlowMap;
@@ -59,7 +60,7 @@ public class RelocationTest  {
 
     @BeforeClass
     public static void configProperties() {
-        SingularProperties.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
+        SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
     }
 
     @Before
@@ -185,6 +186,7 @@ public class RelocationTest  {
     }
 
 
+    @DefinitionInfo("P-P")
     public static class P extends ProcessDefinition<ProcessInstance> {
 
         public enum PTask implements ITaskDefinition {
@@ -197,7 +199,7 @@ public class RelocationTest  {
         }
 
         public P() {
-            super("P-P",ProcessInstance.class);
+            super(ProcessInstance.class);
         }
 
         @Override

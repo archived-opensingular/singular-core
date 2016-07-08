@@ -85,19 +85,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     private transient RefProcessDefinition serializableReference;
 
-    /**
-     * <p>
-     * Instancia uma nova definição de processo do tipo informado.
-     * </p>
-     *
-     * @param key
-     *            a chave do processo.
-     * @param instanceClass
-     *            o tipo da instância da definição a ser instanciada.
-     */
-    protected ProcessDefinition(String key, Class<I> instanceClass) {
-        this(key, instanceClass, VarService.basic());
-    }
 
     /**
      * <p>
@@ -108,10 +95,26 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *            a chave do processo.
      * @param instanceClass
      *            o tipo da instância da definição a ser instanciada.
+     */
+    protected ProcessDefinition(Class<I> instanceClass) {
+        this(instanceClass, VarService.basic());
+    }
+
+    /**
+     * <p>
+     * Instancia uma nova definição de processo do tipo informado.
+     * </p>
+     *
+     * @param processInstanceClass
+     *            o tipo da instância da definição a ser instanciada.
      * @param varService
      *            o serviço de consulta das definições de variáveis.
      */
-    protected ProcessDefinition(String key, Class<I> processInstanceClass, VarService varService) {
+    protected ProcessDefinition(Class<I> processInstanceClass, VarService varService) {
+        if (!this.getClass().isAnnotationPresent(DefinitionInfo.class)){
+            throw new SingularFlowException("A definição de fluxo deve ser anotada com "+DefinitionInfo.class.getName());
+        }
+        String key = this.getClass().getAnnotation(DefinitionInfo.class).value();
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(processInstanceClass, "processInstanceClass");
         if(getClass().getSimpleName().equalsIgnoreCase(key)){

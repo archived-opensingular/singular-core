@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
 import br.net.mirante.singular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadLink;
@@ -13,11 +14,12 @@ import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadUtil;
 import br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import org.apache.commons.collections.iterators.TransformIterator;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.StyleAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.ComponentTag;
@@ -28,6 +30,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -38,9 +41,13 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forReference;
 
 /**
@@ -55,44 +62,95 @@ import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forRef
  */
 public class FileListUploadPanel extends Panel implements Loggable {
 
-    private final FileUploadField           fileField;
-    private final WebMarkupContainer        fileList;
-    private final AddFileBehavior           adder;
-    private final RemoveFileBehavior        remover;
-    private final WicketBuildContext        ctx;
-    private final DownloadSupportedBehavior downloader;
+    private FileUploadField           fileField;
+    private WebMarkupContainer        fileList;
+    private AddFileBehavior           adder;
+    private RemoveFileBehavior        remover;
+    private WicketBuildContext        ctx;
+    private DownloadSupportedBehavior downloader;
 
-    public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
-        WicketBuildContext ctx) {
-        super(id, model);
-        this.ctx = ctx;
-        add(new Label("uploadLabel", Model.of(ObjectUtils.defaultIfNull(ctx.getCurrentInstance().asAtr().getLabel(), StringUtils.EMPTY))) {
+
+    private Label buildUploadLabel() {
+        return new Label("uploadLabel", Model.of(ObjectUtils.defaultIfNull(ctx.getCurrentInstance().asAtr().getLabel(), StringUtils.EMPTY))) {
             @Override
             protected void onConfigure() {
                 super.onConfigure();
                 this.setVisible(StringUtils.isNotEmpty(getDefaultModelObjectAsString()));
             }
-        });
-        add(new WebMarkupContainer("empty-box") {
+        };
+    }
+
+    private WebMarkupContainer buildEmptyBox(IModel<SIList<SIAttachment>> model, FileUploadField fileField, ViewMode viewMode) {
+        return (WebMarkupContainer) new WebMarkupContainer("empty-box") {
             @Override
             public boolean isVisible() {
                 return model.getObject().isEmpty();
             }
-        }
-            .add(new Label("empty-message", "Nenhum arquivo foi adicionado.")));
-        add(fileField = new FileUploadField("fileUpload", dummyModel()));
-        add(new LabelWithIcon("fileUploadLabel", Model.of("Carregar Arquivo"), Icone.UPLOAD, Model.of(fileField.getMarkupId())) {
+        }.add(
+                new WebMarkupContainer("select-file-link") {{
+                    if (viewMode.isEdition()) {
+                        add($b.onReadyScript(() -> JQuery.on(this, "click", JQuery.$(fileField).append(".click();"))));
+                    }
+                }}.add(new Label("select-file-link-message", new Model<String>() {
+                    @Override
+                    public String getObject() {
+                        return "Selecione o(s) arquivo(s)";
+                    }
+                })).add($b.visibleIf(viewMode::isEdition))
+        ).add(
+                new Label("empty-message", new Model<String>() {
+                    @Override
+                    public String getObject() {
+                        return "Nenhum arquivo adicionado";
+                    }
+                }).add($b.visibleIf(viewMode::isVisualization))
+        );
+    }
+
+
+    private WebMarkupContainer buildFileList(IModel<SIList<SIAttachment>> model) {
+        final WebMarkupContainer fileList = new WebMarkupContainer("fileList");
+        fileList.add(new FilesListView(model, ctx));
+        return fileList;
+    }
+
+    private WebMarkupContainer buildButtonContainer(IModel<SIList<SIAttachment>> model) {
+        final WebMarkupContainer buttonContainer = new WebMarkupContainer("button-container");
+        buttonContainer.add(fileField = new FileUploadField("fileUpload", dummyModel()));
+        buttonContainer.add(new LabelWithIcon("fileUploadLabel", Model.of(""), Icone.PLUS, Model.of(fileField.getMarkupId())) {
             @Override
             public boolean isVisible() {
                 return ctx.getViewMode().isEdition();
             }
         });
-        add(fileList = new WebMarkupContainer("fileList"));
-        fileList.add(new FilesListView(model, ctx));
+        buttonContainer.add(new StyleAttributeModifier() {
+            @Override
+            protected Map<String, String> update(Map<String, String> oldStyles) {
+                final Map<String, String> newStyles = new HashMap<>(oldStyles);
+                if (model.getObject().isEmpty()) {
+                    newStyles.put("display", "none");
+                } else {
+                    newStyles.remove("display");
+                }
+                return newStyles;
+            }
+        });
+        fileField.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
+        return buttonContainer;
+    }
+
+
+    public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
+                               WicketBuildContext ctx) {
+        super(id, model);
+        this.ctx = ctx;
+        add(buildUploadLabel());
+        add(fileList = buildFileList(model));
+        add(buildButtonContainer(model));
+        add(buildEmptyBox(model, fileField, ctx.getViewMode()));
         add(adder = new AddFileBehavior());
         add(remover = new RemoveFileBehavior());
         add(downloader = new DownloadSupportedBehavior(model));
-        fileField.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
     }
 
     private static void removeFileFrom(SIList<SIAttachment> list, String fileId) {
@@ -128,22 +186,22 @@ public class FileListUploadPanel extends Panel implements Loggable {
     private String generateInitJS() {
         if (ctx.getViewMode().isEdition()) {
             return ""
-                //@formatter:off
-                + "\n $(function () { "
-                + "\n   var params = { "
-                + "\n     param_name : '"       + PARAM_NAME                + "', "
-                + "\n     component_id: '"      + this.getMarkupId()        + "', "
-                + "\n     file_field_id: '"     + fileField.getMarkupId()   + "', "
-                + "\n     fileList_id: '"       + fileList.getMarkupId()    + "', "
-                + "\n     upload_url : '"       + uploadUrl()               + "', "
-                + "\n     download_url : '"     + downloader.getUrl()       + "', "
-                + "\n     add_url : '"          + adder.getUrl()            + "', "
-                + "\n     remove_url : '"       + remover.getUrl()          + "', "
-                + "\n     max_file_size: "      + getMaxFileSize()          + "  "
-                + "\n   }; "
-                + "\n   window.FileListUploadPanel.setup(params); "
-                + "\n });";
-                //@formatter:on
+                    //@formatter:off
+                    + "\n $(function () { "
+                    + "\n   var params = { "
+                    + "\n     param_name : '" + PARAM_NAME + "', "
+                    + "\n     component_id: '" + this.getMarkupId() + "', "
+                    + "\n     file_field_id: '" + fileField.getMarkupId() + "', "
+                    + "\n     fileList_id: '" + fileList.getMarkupId() + "', "
+                    + "\n     upload_url : '" + uploadUrl() + "', "
+                    + "\n     download_url : '" + downloader.getUrl() + "', "
+                    + "\n     add_url : '" + adder.getUrl() + "', "
+                    + "\n     remove_url : '" + remover.getUrl() + "', "
+                    + "\n     max_file_size: " + getMaxFileSize() + "  "
+                    + "\n   }; "
+                    + "\n   window.FileListUploadPanel.setup(params); "
+                    + "\n });";
+            //@formatter:on
         } else {
             return "";
         }
@@ -157,6 +215,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
     public IModel<SIList<SIAttachment>> getModel() {
         return (IModel<SIList<SIAttachment>>) getDefaultModel();
     }
+
     @SuppressWarnings("unchecked")
     public SIList<SIAttachment> getModelObject() {
         return (SIList<SIAttachment>) getDefaultModelObject();
@@ -179,10 +238,12 @@ public class FileListUploadPanel extends Panel implements Loggable {
             }
 
             @Override
-            public void setObject(Object object) {}
+            public void setObject(Object object) {
+            }
 
             @Override
-            public void detach() {}
+            public void detach() {
+            }
 
             @Override
             public SInstance getMInstancia() {
@@ -206,7 +267,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
         protected void onInitialize() {
             super.onInitialize();
             if (forAttrValue != null) {
-                add(WicketUtils.$b.attr("for", forAttrValue.getObject()));
+                add($b.attr("for", forAttrValue.getObject()));
             }
         }
 
@@ -228,9 +289,9 @@ public class FileListUploadPanel extends Panel implements Loggable {
             try {
                 SIAttachment siAttachment = currentInstance().addNew();
                 siAttachment.setContent(
-                    getParamFileId("name").toString(),
-                    FileUploadServlet.lookupFile(getParamFileId("fileId").toString()),
-                    getParamFileId("size").toLong());
+                        getParamFileId("name").toString(),
+                        FileUploadServlet.lookupFile(getParamFileId("fileId").toString()),
+                        getParamFileId("size").toLong());
                 DownloadUtil.writeJSONtoResponse(siAttachment, RequestCycle.get().getResponse());
             } catch (Exception e) {
                 getLogger().error(e.getMessage(), e);

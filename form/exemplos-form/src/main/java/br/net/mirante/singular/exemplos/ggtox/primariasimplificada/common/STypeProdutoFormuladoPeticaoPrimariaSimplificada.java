@@ -20,6 +20,11 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypeCompo
     @Override
     protected void onLoadType(TypeBuilder builder) {
         super.onLoadType(builder);
+
+        this
+                .asAtrAnnotation()
+                .setAnnotated();
+
         this
                 .asAtr()
                 .label("Produto Formulado");
@@ -43,7 +48,7 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypeCompo
         formulador = addField("formulador", STypeFormuladorConformeMatriz.class);
         formulador
                 .asAtrBootstrap()
-                .colPreference(6)
+                .colPreference(12)
                 .newRow();
 
     }

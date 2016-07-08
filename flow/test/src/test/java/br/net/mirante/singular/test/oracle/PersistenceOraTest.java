@@ -1,9 +1,10 @@
 package br.net.mirante.singular.test.oracle;
 
-import br.net.mirante.singular.commons.base.SingularProperties;
-import br.net.mirante.singular.test.PersistenceTest;
 import org.junit.BeforeClass;
 import org.springframework.test.context.ActiveProfiles;
+
+import br.net.mirante.singular.commons.base.SingularPropertiesImpl;
+import br.net.mirante.singular.test.PersistenceTest;
 
 
 @ActiveProfiles("oracle")
@@ -11,6 +12,6 @@ public class PersistenceOraTest extends PersistenceTest {
 
     @BeforeClass
     public static void configProperties() {
-        SingularProperties.INSTANCE.reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-ora.properties"));
+        SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-ora.properties"));
     }
 }

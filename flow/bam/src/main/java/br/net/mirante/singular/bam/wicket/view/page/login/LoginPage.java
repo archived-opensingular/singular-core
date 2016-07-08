@@ -31,7 +31,6 @@ public class LoginPage extends WebPage{
         loginError.setVisible(getPageParameters().get("error").toBoolean(false));
         loginError.add(new Label("loginError", getString("label.login.error")));
         add(loginError);
-        add(new WebMarkupContainer("brandLogo").add($b.attr("src", "/singular-static/resources/singular/img/brand.png")));
         
         add(new WebMarkupContainer("username").add($b.attr("placeholder", getString("label.login.page.username"))));
         add(new WebMarkupContainer("password").add($b.attr("placeholder", getString("label.login.page.password"))));

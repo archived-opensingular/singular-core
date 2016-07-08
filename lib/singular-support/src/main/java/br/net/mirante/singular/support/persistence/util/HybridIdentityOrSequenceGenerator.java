@@ -39,7 +39,7 @@ public class HybridIdentityOrSequenceGenerator implements PostInsertIdentifierGe
 
     private PostInsertIdentifierGenerator getDelegate(){
         if (delegate == null) {
-            String generator = SingularProperties.INSTANCE.getProperty(SingularProperties.HIBERNATE_GENERATOR);
+            String generator = SingularProperties.get().getProperty(SingularProperties.HIBERNATE_GENERATOR);
             if ("sequence".equals(generator)) {
                 delegate = new SequenceIdentityGenerator();
             } else if ("identity".equals(generator)) {
@@ -67,7 +67,7 @@ public class HybridIdentityOrSequenceGenerator implements PostInsertIdentifierGe
     public void configure(Type type, Properties params, Dialect d) throws MappingException {
         if (getDelegate() instanceof Configurable) {
             String key = String.format(SingularProperties.HIBERNATE_SEQUENCE_PROPERTY_PATTERN, params.getProperty(ENTITY, ""));
-            String value = SingularProperties.INSTANCE.getProperty(key);
+            String value = SingularProperties.get().getProperty(key);
             if (value != null) {
                 params.put(SEQUENCE, value);
             } else {

@@ -28,8 +28,8 @@ public class STypeProdutoTecnico extends STypeComposite<SIComposite> {
         super.onLoadType(builder);
 
 
-        nomeProdutoTecnico = addField("nomeProdutoTecnico", STypeString.class);
         numeroProcessoProdutoTecnico = addField("numeroProcessoProdutoTecnico", STypeAnvisaNumeroProcesso.class);
+        nomeProdutoTecnico = addField("nomeProdutoTecnico", STypeString.class);
         finalidadeConformeMatriz = addFieldBoolean("finalidadeConformeMatriz");
         classeConformeMatriz = addFieldBoolean("classeConformeMatriz");
         modoAcaoConformeMatriz = addFieldBoolean("modoAcaoConformeMatriz");
@@ -68,14 +68,14 @@ public class STypeProdutoTecnico extends STypeComposite<SIComposite> {
         fabricante = addField("fabricante", STypeFabricanteConformeMatriz.class);
         fabricante
                 .asAtrBootstrap()
-                .colPreference(6)
+                .colPreference(12)
                 .newRow();
 
         finalidadeConformeMatriz
                 .asAtr()
                 .label("Declaro que a finalidade está conforme a petição Matriz.")
                 .asAtrBootstrap()
-                .colPreference(6)
+                .colPreference(12)
                 .newRow();
 
         finalidadeConformeMatriz
@@ -89,7 +89,7 @@ public class STypeProdutoTecnico extends STypeComposite<SIComposite> {
                 .asAtr()
                 .label("Declaro que a classe está conforme a petição Matriz.")
                 .asAtrBootstrap()
-                .colPreference(6)
+                .colPreference(12)
                 .newRow();
 
         classeConformeMatriz
@@ -103,7 +103,7 @@ public class STypeProdutoTecnico extends STypeComposite<SIComposite> {
                 .asAtr()
                 .label("Declaro que o modo de ação está conforme a petição Matriz.")
                 .asAtrBootstrap()
-                .colPreference(6)
+                .colPreference(12)
                 .newRow();
 
         modoAcaoConformeMatriz

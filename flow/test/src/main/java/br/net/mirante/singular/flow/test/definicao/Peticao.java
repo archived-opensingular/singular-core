@@ -7,6 +7,7 @@ package br.net.mirante.singular.flow.test.definicao;
 
 import java.util.Calendar;
 
+import br.net.mirante.singular.flow.core.DefinitionInfo;
 import br.net.mirante.singular.flow.core.ExecutionContext;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MBPMUtil;
@@ -27,6 +28,7 @@ import static br.net.mirante.singular.flow.test.definicao.Peticao.PeticaoTask.IN
 import static br.net.mirante.singular.flow.test.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
 import static br.net.mirante.singular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
 
+@DefinitionInfo("Peticoes")
 public class Peticao extends ProcessDefinition<ProcessInstance> {
 
     public enum PeticaoTask implements ITaskDefinition {
@@ -66,7 +68,7 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
     public static final String PAPEL_GERENTE = "GERENTE";
 
     public Peticao() {
-        super("Peticoes",ProcessInstance.class);
+        super(ProcessInstance.class);
     }
 
     @Override
