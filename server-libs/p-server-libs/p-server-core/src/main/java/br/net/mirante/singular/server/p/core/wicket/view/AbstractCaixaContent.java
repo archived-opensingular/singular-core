@@ -19,6 +19,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
@@ -26,6 +27,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
@@ -82,7 +84,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
     /**
      * Tabela de registros
      */
-    private BSDataTable<T, String> tabela;
+    protected BSDataTable<T, String> tabela;
 
     /**
      * Botão de pesquisa do filtro rapido
@@ -96,16 +98,16 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
     };
 
     /**
-     * Delete Form
+     * Confirmation Form
      */
-    private Form<?> deleteForm = new Form<>("deleteForm");
+    protected Form<?> confirmationForm = new Form<>("confirmationForm");
 
     private IModel<T> currentModel;
 
     /**
-     * Modal de deleção
+     * Modal de confirmação de ação
      */
-    private final BSModalBorder deleteModal = construirModalBorder();
+    private BSModalBorder confirmationModal = new BSModalBorder("confirmationModal");
 
     private ProcessGroupEntity processGroup;
 
@@ -179,31 +181,33 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
 
     protected abstract Map<String, String> getCriarLinkParameters(T peticao);
 
-    protected BSModalBorder construirModalBorder() {
-        BSModalBorder deleteModal = new BSModalBorder("deleteModal", getMessage("label.title.delete.draft"));
-        deleteModal.addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.cancel", new AjaxButton("cancel-delete-btn", deleteForm) {
+    protected BSModalBorder construirModalDeleteBorder(IConsumer<T> action) {
+        BSModalBorder confirmationModal = new BSModalBorder("confirmationModal", getMessage("label.title.delete.draft"));
+        confirmationModal.addToBorder(new Label("message", getMessage("label.delete.message")));
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.cancel", new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 currentModel = null;
-                deleteModal.hide(target);
+                confirmationModal.hide(target);
             }
         });
-        deleteModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.delete", new AjaxButton("delete-btn", deleteForm) {
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.delete", new AjaxButton("delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                onDelete(currentModel.getObject());
+                action.accept(currentModel.getObject());
                 currentModel = null;
                 target.add(tabela);
-                deleteModal.hide(target);
+                confirmationModal.hide(target);
             }
         });
 
-        return deleteModal;
+        return confirmationModal;
     }
 
     private void deleteSelected(AjaxRequestTarget target, IModel<T> model) {
         currentModel = model;
-        deleteModal.show(target);
+        confirmationForm.addOrReplace((confirmationModal = construirModalDeleteBorder(this::onDelete)));
+        confirmationModal.show(target);
     }
 
     public <X> void adicionarBotaoGlobal(IFunction<String, Link<X>> funcaoConstrutora) {
@@ -237,7 +241,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
         tabela = construirTabela(new BSDataTableBuilder<>(criarDataProvider()));
         add(form.add(filtroRapido, pesquisarButton, botoes, dropdownMenu));
         add(tabela);
-        add(deleteForm.add(deleteModal));
+        add(confirmationForm.add(confirmationModal));
         if (getMenu() != null) {
             setProcesses(Optional.ofNullable(getMenuSessionConfig().getMenuPorLabel(getMenu())).map(MenuGroup::getProcesses).orElse(new ArrayList<>(0)));
             if (CollectionUtils.isEmpty(getProcesses())){

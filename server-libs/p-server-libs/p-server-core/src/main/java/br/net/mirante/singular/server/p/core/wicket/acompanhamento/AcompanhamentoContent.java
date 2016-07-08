@@ -62,11 +62,6 @@ public class AcompanhamentoContent extends AbstractPeticaoCaixaContent<PeticaoDT
     }
 
     @Override
-    protected void onDelete(PeticaoDTO peticao) {
-
-    }
-
-    @Override
     protected IModel<?> getContentTitleModel() {
         return $m.ofValue("Acompanhamento");
     }

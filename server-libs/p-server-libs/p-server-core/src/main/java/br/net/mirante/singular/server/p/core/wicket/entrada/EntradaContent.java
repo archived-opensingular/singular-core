@@ -68,11 +68,6 @@ public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
     }
 
     @Override
-    protected void onDelete(PeticaoDTO peticao) {
-
-    }
-
-    @Override
     protected IModel<?> getContentTitleModel() {
         return $m.ofValue("Exigência");
     }

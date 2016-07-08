@@ -1,6 +1,8 @@
 package br.net.mirante.singular.server.commons.service;
 
 
+import static br.net.mirante.singular.server.commons.flow.DefaultServerREST.DELETE;
+import static br.net.mirante.singular.server.commons.flow.DefaultServerREST.PATH_BOX_ACTION;
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
 import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
 
@@ -99,14 +101,24 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     }
 
     private void parseItemAction(Map<String, Object> item) {
-        BoxItemAction acaoAlterar           = createBoxItemAction(item, FormActions.FORM_FILL, ACAO_ALTERAR);
-        BoxItemAction acaoVisualizar        = createBoxItemAction(item, FormActions.FORM_VIEW, ACAO_VISUALIZAR);
-        BoxItemAction acaoCumprirExigencia  = createBoxItemAction(item, FormActions.FORM_FILL_WITH_ANALYSIS, ACAO_EXIGENCIA);
+        BoxItemAction acaoAlterar           = createPopupBoxItemAction(item, FormActions.FORM_FILL, ACAO_ALTERAR);
+        BoxItemAction acaoVisualizar        = createPopupBoxItemAction(item, FormActions.FORM_VIEW, ACAO_VISUALIZAR);
+        BoxItemAction acaoCumprirExigencia  = createPopupBoxItemAction(item, FormActions.FORM_FILL_WITH_ANALYSIS, ACAO_EXIGENCIA);
+        BoxItemAction acaoExcluir           = createDeleteAction(item);
 
-        item.put("actions", Arrays.asList(acaoAlterar, acaoVisualizar, acaoCumprirExigencia));
+        item.put("actions",   Arrays.asList(acaoAlterar, acaoVisualizar, acaoExcluir, acaoCumprirExigencia));
     }
 
-    private BoxItemAction createBoxItemAction(Map<String, Object> item, FormActions formAction, String actionName) {
+    private BoxItemAction createDeleteAction(Map<String, Object> item) {
+        String endpointUrl = PATH_BOX_ACTION + DELETE + "?id=" + item.get("cod");
+
+        final BoxItemAction boxItemAction = new BoxItemAction();
+        boxItemAction.setName(ACAO_EXCLUIR);
+        boxItemAction.setEndpoint(endpointUrl);
+        return boxItemAction;
+    }
+
+    private BoxItemAction createPopupBoxItemAction(Map<String, Object> item, FormActions formAction, String actionName) {
         String endpoint = DispatcherPageUtil
                 .baseURL("")
                 .formAction(formAction.getId())

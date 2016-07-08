@@ -20,20 +20,25 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.commons.lambda.IBiFunction;
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.service.dto.ItemAction;
+import br.net.mirante.singular.server.commons.service.dto.ItemActionConfirmation;
 import br.net.mirante.singular.server.commons.service.dto.ItemActionType;
 import br.net.mirante.singular.server.commons.service.dto.ItemBox;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
@@ -43,7 +48,9 @@ import br.net.mirante.singular.server.core.wicket.ModuleLink;
 import br.net.mirante.singular.server.p.core.wicket.model.BoxItemModel;
 import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 
 public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
@@ -104,17 +111,13 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         for (ItemAction itemAction : itemBoxDTO.getActions().values()) {
 
             if (itemAction.getType() == ItemActionType.POPUP) {
-                actionColumn.appendStaticAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), new LinkFunction(itemAction, getBaseUrl(), getLinkParams()), new VisibleFunction(itemAction));
+                actionColumn.appendStaticAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), linkFunction(itemAction, getBaseUrl(), getLinkParams()), visibleFunction(itemAction));
             } else if (itemAction.getType() == ItemActionType.ENDPOINT) {
-                actionColumn.appendAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), this::createLink, new VisibleFunction(itemAction));
+                actionColumn.appendAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), dynamicLinkFunction(itemAction, getProcessGroup().getConnectionURL(), getLinkParams()), visibleFunction(itemAction));
             }
         }
 
         builder.appendColumn(actionColumn);
-    }
-
-    protected void createLink(AjaxRequestTarget target, IModel<BoxItemModel> model) {
-
     }
 
     @Override
@@ -126,6 +129,93 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         }
     }
 
+    public IBiFunction<BoxItemModel,String,MarkupContainer> linkFunction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
+        return (boxItemModel, id) -> {
+            String url = mountStaticUrl(itemAction, baseUrl, additionalParams, boxItemModel);
+
+            WebMarkupContainer link = new WebMarkupContainer(id);
+            link.add($b.attr("target", String.format("_%s", boxItemModel.getCod())));
+            link.add($b.attr("href", url));
+            return link;
+        };
+    }
+
+    private String mountStaticUrl(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItemModel) {
+        final BoxItemAction action = boxItemModel.getActionByName(itemAction.getName());
+        return baseUrl
+                + action.getEndpoint()
+                + appendParameters(additionalParams);
+    }
+
+    private IBSAction<BoxItemModel> dynamicLinkFunction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
+        if (itemAction.getConfirmation() != null) {
+            return (target, model) -> {
+                final BSModalBorder confirmationModal = construirModalConfirmationBorder(itemAction, baseUrl, additionalParams);
+                confirmationForm.addOrReplace(confirmationModal);
+                confirmationModal.show(target);
+            };
+        } else {
+            return (target, model) -> executeDynamicAction(itemAction, baseUrl, additionalParams, model.getObject());
+        }
+    }
+
+    private void executeDynamicAction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItem) {
+        final BoxItemAction action = boxItem.getActionByName(itemAction.getName());
+        String url = baseUrl
+                + action.getEndpoint()
+                + appendParameters(additionalParams);
+
+        try {
+            new RestTemplate().postForObject(url, boxItem.getCod(), Boolean.class);
+        } catch (Exception e) {
+            LOGGER.error("Erro ao acessar serviço: " + url, e);
+        }
+    }
+
+    protected BSModalBorder construirModalConfirmationBorder(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
+        final ItemActionConfirmation confirmation = itemAction.getConfirmation();
+        BSModalBorder confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
+        confirmationModal.addOrReplace(new Label("message", $m.ofValue(confirmation.getConfirmationMessage())));
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                confirmationModal.hide(target);
+            }
+        });
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue(confirmation.getConfirmationButtonLabel()), new AjaxButton("delete-btn", confirmationForm) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                dynamicLinkConfirmed(itemAction, baseUrl, additionalParams);
+                target.add(tabela);
+                confirmationModal.hide(target);
+            }
+        });
+
+        return confirmationModal;
+    }
+
+    private IConsumer<BoxItemModel> dynamicLinkConfirmed(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
+        return (boxItem) -> executeDynamicAction(itemAction, baseUrl, additionalParams, boxItem);
+    }
+
+    private String appendParameters(Map<String, String> additionalParams) {
+        String paramsValue = "";
+        if (!additionalParams.isEmpty()) {
+            paramsValue += "?";
+            for (Map.Entry<String, String> entry : additionalParams.entrySet()) {
+                paramsValue += entry.getKey() + "=" + entry.getValue() + "&";
+            }
+        }
+        return paramsValue;
+    }
+
+    private IFunction<IModel, Boolean> visibleFunction(ItemAction itemAction) {
+        return (model) -> {
+            BoxItemModel boxItemModel = (BoxItemModel) model.getObject();
+            return boxItemModel.hasAction(itemAction);
+        };
+    }
+
     @Override
     protected Pair<String, SortOrder> getSortProperty() {
         return sortProperty;
@@ -133,7 +223,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     @Override
     protected void onDelete(BoxItemModel peticao) {
-        petitionService.delete(peticao.getCod());
+
     }
 
     @Override
@@ -244,50 +334,5 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     public boolean isWithRascunho() {
         return itemBoxDTO.isShowDraft();
-    }
-
-    public static class LinkFunction implements IBiFunction<BoxItemModel,String,MarkupContainer> {
-
-        private ItemAction itemAction;
-        private String baseUrl;
-        private Map<String, String> additionalParams;
-
-        public LinkFunction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
-            this.itemAction = itemAction;
-            this.baseUrl = baseUrl;
-            this.additionalParams = additionalParams;
-        }
-
-        @Override
-        public MarkupContainer apply(BoxItemModel boxItemModel, String id) {
-            WebMarkupContainer link = new WebMarkupContainer(id);
-            link.add($b.attr("target", String.format("_%s", boxItemModel.getCod())));
-            link.add($b.attr("href", mountHref(boxItemModel)));
-            return link;
-        }
-
-        private String mountHref(BoxItemModel boxItemModel) {
-            final BoxItemAction action = boxItemModel.getActionByName(itemAction.getName());
-            String url = baseUrl + action.getEndpoint();
-            for (Map.Entry<String, String> entry : additionalParams.entrySet()) {
-                url += "&" + entry.getKey() + "=" + entry.getValue();
-            }
-            return url;
-        }
-    }
-
-    public static class VisibleFunction implements IFunction<IModel, Boolean> {
-
-        private ItemAction itemAction;
-
-        public VisibleFunction(ItemAction itemAction) {
-            this.itemAction = itemAction;
-        }
-
-        @Override
-        public Boolean apply(IModel model) {
-            BoxItemModel boxItemModel = (BoxItemModel) model.getObject();
-            return boxItemModel.hasAction(itemAction);
-        }
     }
 }

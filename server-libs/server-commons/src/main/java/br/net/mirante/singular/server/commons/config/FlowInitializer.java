@@ -10,6 +10,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataREST;
 import br.net.mirante.singular.server.commons.flow.DefaultServerMetadataREST;
+import br.net.mirante.singular.server.commons.flow.DefaultServerREST;
 import br.net.mirante.singular.server.commons.flow.SingularServerFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.service.IServerMetadataREST;
 
@@ -20,6 +21,10 @@ public abstract class FlowInitializer {
 
     public Class<? extends IServerMetadataREST> serverMetadataProvider() {
         return DefaultServerMetadataREST.class;
+    }
+
+    public Class<? extends DefaultServerREST> serverActionProvider() {
+        return DefaultServerREST.class;
     }
 
     public abstract Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap();
@@ -40,6 +45,9 @@ public abstract class FlowInitializer {
                 .ifPresent(applicationContext::register);
         Optional
                 .ofNullable(serverMetadataProvider())
+                .ifPresent(applicationContext::register);
+        Optional
+                .ofNullable(serverActionProvider())
                 .ifPresent(applicationContext::register);
     }
 }

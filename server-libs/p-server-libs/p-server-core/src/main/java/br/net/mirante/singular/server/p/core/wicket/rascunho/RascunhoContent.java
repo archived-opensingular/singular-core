@@ -64,12 +64,6 @@ public class RascunhoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
         return Pair.of("p.editionDate", SortOrder.DESCENDING);
     }
 
-
-    @Override
-    protected void onDelete(PeticaoDTO peticao) {
-        peticaoService.delete(peticao);
-    }
-
     @Override
     protected IModel<?> getContentTitleModel() {
         return $m.ofValue("Rascunho");

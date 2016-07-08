@@ -18,6 +18,8 @@ public class ItemAction implements Serializable {
     private Icone icon;
     private ItemActionType type;
 
+    private ItemActionConfirmation confirmation;
+
     public ItemAction() {
     }
 
@@ -31,6 +33,15 @@ public class ItemAction implements Serializable {
         this.label = label;
         this.icon = icon;
         this.type = type;
+        defaultAction = false;
+    }
+
+    public ItemAction(String name, String label, Icone icon, ItemActionType type, ItemActionConfirmation confirmation) {
+        this.name = name;
+        this.label = label;
+        this.icon = icon;
+        this.type = type;
+        this.confirmation = confirmation;
         defaultAction = false;
     }
 
@@ -72,5 +83,13 @@ public class ItemAction implements Serializable {
 
     public void setIcon(Icone icon) {
         this.icon = icon;
+    }
+
+    public ItemActionConfirmation getConfirmation() {
+        return confirmation;
+    }
+
+    public void setConfirmation(ItemActionConfirmation confirmation) {
+        this.confirmation = confirmation;
     }
 }
