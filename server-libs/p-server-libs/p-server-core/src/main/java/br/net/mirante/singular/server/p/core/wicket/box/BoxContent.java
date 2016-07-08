@@ -199,9 +199,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     private String appendParameters(Map<String, String> additionalParams) {
         String paramsValue = "";
         if (!additionalParams.isEmpty()) {
-            paramsValue += "?";
             for (Map.Entry<String, String> entry : additionalParams.entrySet()) {
-                paramsValue += entry.getKey() + "=" + entry.getValue() + "&";
+                paramsValue += "&" + entry.getKey() + "=" + entry.getValue();
             }
         }
         return paramsValue;
