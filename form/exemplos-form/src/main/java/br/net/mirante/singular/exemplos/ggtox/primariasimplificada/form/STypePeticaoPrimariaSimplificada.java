@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.List;
 
+import static br.net.mirante.singular.form.util.SingularPredicates.*;
+
 @SInfoType(name = "STypePeticaoPrimariaSimplificada", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite> {
 
@@ -79,7 +81,7 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .selectionOf("I", "II", "III", "IV")
                 .withRadioView()
                 .asAtr()
-                .exists(si -> Value.notNull(si, tipoPeticao))
+                .exists(typeValIsNotNull(tipoPeticao))
                 .dependsOn(tipoPeticao);
 
         nivel
@@ -89,14 +91,14 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                     }
                 })
                 .asAtr()
-                .enabled(si -> !apenasNivel1.contains(Value.of(si, idTipoPeticao)))
+                .enabled(typeValIsNotIn(idTipoPeticao, apenasNivel1))
                 .required()
                 .label("Petição primária simplificada de nível");
 
         dadosGerais
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .exists(si -> Value.notNull(si, tipoPeticao));
+                .exists(typeValIsNotNull(tipoPeticao));
 
         ingredienteAtivoPeticao
                 .asAtr()
@@ -105,21 +107,18 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
         produtoTecnicoPeticao
                 .asAtr()
                 .dependsOn(nivel, tipoPeticao)
-                .exists(si -> StringUtils.isNotEmpty(Value.of(si, nivel)));
+                .exists(typeValMatches(nivel, StringUtils::isNotEmpty));
 
         produtoTecnicoPeticao
                 .produtoTecnicoNaoSeAplica
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .exists(si -> produtoTecnicoOpcional.contains(Value.of(si, idTipoPeticao)));
+                .exists(typeValIsIn(idTipoPeticao, produtoTecnicoOpcional));
         produtoTecnicoPeticao
                 .produtosTecnicos
                 .asAtr()
                 .dependsOn(tipoPeticao, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)
-                .exists(si ->
-                        !Value.notNull(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica) || !Value.of(si, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)
-
-                );
+                .exists(anyMatches(typeValIsNull(produtoTecnicoPeticao.produtoTecnicoNaoSeAplica), typeValIsFalse(produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)));
 
         produtoTecnicoPeticao
                 .produtosTecnicos
@@ -142,7 +141,7 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .numeroProcessoProdutoTecnico
                 .asAtr()
                 .dependsOn(dadosGerais.numeroProcessoPeticaoMatriz, tipoPeticao)
-                .enabled(si -> !numeroProcessoIgualMatriz.contains(Value.of(si, idTipoPeticao)));
+                .enabled(typeValIsNotIn(idTipoPeticao, numeroProcessoIgualMatriz));
 
         produtoTecnicoPeticao
                 .produtosTecnicos
@@ -186,7 +185,7 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .fabricante
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel)));
+                .exists(typeValIsIn(nivel, "I", "II"));
 
         produtoTecnicoPeticao
                 .produtosTecnicos
@@ -194,65 +193,64 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .fabricantes
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> !("I".equals(Value.of(si, nivel)) || "II".equals(Value.of(si, nivel))));
+                .exists(typeValIsNotIn(nivel, "I", "II"));
 
         produtoFormulado
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> StringUtils.isNotEmpty(Value.of(si, nivel)) && !naoPossuiProdutoFormulado.contains(Value.of(si, idTipoPeticao)));
+                .exists(allMatches(typeValMatches(nivel, StringUtils::isNotEmpty), typeValIsNotIn(idTipoPeticao, naoPossuiProdutoFormulado)));
 
         produtoFormulado
                 .formulador
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "I".equals(Value.of(si, nivel)));
+                .exists(typeValIsEqualsTo(nivel, "I"));
 
         produtoFormulado
                 .formuladores
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> !"I".equals(Value.of(si, nivel)));
+                .exists(typeValIsNotEqualsTo(nivel, "I"));
 
         anexos
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> Value.notNull(si, nivel));
+                .exists(typeValIsNotNull(nivel));
         anexos
                 .documentacaoI
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "I".equals(Value.of(si, nivel)));
+                .exists(typeValIsEqualsTo(nivel, "I"));
 
         anexos.documentacaoI
                 .modelosBulas
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .exists(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
+                .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
 
         anexos.documentacaoI
                 .modelosRotulos
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .exists(si -> !naoTemRotuloBula.contains(Value.of(si, idTipoPeticao)));
-
+                .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
 
         anexos
                 .documentacaoII
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "II".equals(Value.of(si, nivel)));
+                .exists(typeValIsEqualsTo(nivel, "II"));
 
         anexos
                 .documentacaoIII
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "III".equals(Value.of(si, nivel)));
+                .exists(typeValIsEqualsTo(nivel, "III"));
 
         anexos
                 .documentacaoIV
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(si -> "IV".equals(Value.of(si, nivel)));
+                .exists(typeValIsEqualsTo(nivel, "IV"));
 
         this.withView(new SViewByBlock(), blocks -> {
             blocks
@@ -266,7 +264,7 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                     .newBlock().add(anexos);
 
         });
-
-
     }
+
+
 }
