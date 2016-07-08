@@ -7,10 +7,9 @@ package br.net.mirante.singular.server.commons.util;
 
 public class ServerActionConstants {
 
-    public static final String ACAO_ATRIBUIR = "atribuir";
-    public static final String ACAO_ALTERAR = "alterar";
-    public static final String ACAO_EXCLUIR = "excluir";
-    public static final String ACAO_VISUALIZAR = "visualizar";
-    public static final String ACAO_EXIGENCIA = "exigencia";
+    public static final String ACTION_RELOCATE = "atribuir";
+    public static final String ACTION_EDIT = "alterar";
+    public static final String ACTION_DELETE = "excluir";
+    public static final String ACTION_VIEW = "visualizar";
 
 }

@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.commons.lambda.IBiFunction;
-import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
@@ -58,6 +57,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     private Pair<String, SortOrder> sortProperty;
     private ItemBox itemBoxDTO;
+    private IModel<BoxItemModel> currentModel;
 
     public BoxContent(String id, String processGroupCod, String menu, ItemBox itemBoxDTO) {
         super(id, processGroupCod, menu);
@@ -150,6 +150,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     private IBSAction<BoxItemModel> dynamicLinkFunction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
         if (itemAction.getConfirmation() != null) {
             return (target, model) -> {
+                currentModel = model;
                 final BSModalBorder confirmationModal = construirModalConfirmationBorder(itemAction, baseUrl, additionalParams);
                 confirmationForm.addOrReplace(confirmationModal);
                 confirmationModal.show(target);
@@ -179,23 +180,20 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         confirmationModal.addButton(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                currentModel = null;
                 confirmationModal.hide(target);
             }
         });
         confirmationModal.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue(confirmation.getConfirmationButtonLabel()), new AjaxButton("delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                dynamicLinkConfirmed(itemAction, baseUrl, additionalParams);
+                executeDynamicAction(itemAction, baseUrl, additionalParams, currentModel.getObject());
                 target.add(tabela);
                 confirmationModal.hide(target);
             }
         });
 
         return confirmationModal;
-    }
-
-    private IConsumer<BoxItemModel> dynamicLinkConfirmed(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
-        return (boxItem) -> executeDynamicAction(itemAction, baseUrl, additionalParams, boxItem);
     }
 
     private String appendParameters(Map<String, String> additionalParams) {

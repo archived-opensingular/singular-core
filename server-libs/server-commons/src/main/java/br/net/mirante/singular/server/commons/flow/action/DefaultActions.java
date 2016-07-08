@@ -16,8 +16,8 @@ public class DefaultActions {
 
     public static final ItemActionConfirmation CONFIRMATION_DELETE = new ItemActionConfirmation("Excluir o rascunho", "Confirma a exclusão?", "Cancelar", "Remover");
 
-    public static final ItemAction ALTERAR = new ItemAction(ACAO_ALTERAR, "Alterar", Icone.PENCIL, ItemActionType.POPUP);
-    public static final ItemAction EXCLUIR = new ItemAction(ACAO_EXCLUIR, "Excluir", Icone.MINUS, ItemActionType.ENDPOINT, CONFIRMATION_DELETE);
-    public static final ItemAction VISUALIZAR = new ItemAction(ACAO_VISUALIZAR, "Visualizar", Icone.EYE, ItemActionType.POPUP);
-    public static final ItemAction CUMPRIR_EXIGENCIA = new ItemAction(ACAO_EXIGENCIA, "Exigência", Icone.PENCIL, ItemActionType.POPUP);
+    public static final ItemAction EDIT = new ItemAction(ACTION_EDIT, "Alterar", Icone.PENCIL, ItemActionType.POPUP);
+    public static final ItemAction DELETE = new ItemAction(ACTION_DELETE, "Excluir", Icone.MINUS, ItemActionType.ENDPOINT, CONFIRMATION_DELETE);
+    public static final ItemAction VIEW = new ItemAction(ACTION_VIEW, "Visualizar", Icone.EYE, ItemActionType.POPUP);
+
 }
