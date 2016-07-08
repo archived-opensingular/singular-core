@@ -256,9 +256,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         }
     }
 
-
     @Override
-    protected List<BoxItemModel> quickSearch(QuickFilter filter, List<String> siglasProcesso) {
+    protected List<BoxItemModel> quickSearch(QuickFilter filter, List<String> siglasProcesso, List<String> formNames) {
         final String connectionURL  = getProcessGroup().getConnectionURL();
         final String url            = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
         try {
