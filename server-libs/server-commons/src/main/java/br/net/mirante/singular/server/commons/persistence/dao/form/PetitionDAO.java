@@ -38,13 +38,13 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
         return crit.list();
     }
 
-    public Long countQuickSearch(QuickFilter filtro, List<String> siglasProcesso) {
-        Query query = createQuery(filtro, siglasProcesso, true);
+    public Long countQuickSearch(QuickFilter filtro, List<String> siglasProcesso, List<String> formNames) {
+        Query query = createQuery(filtro, siglasProcesso, true, formNames);
         return (Long) query.uniqueResult();
     }
 
-    public List<PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso) {
-        Query query = createQuery(filtro, siglasProcesso, false);
+    public List<PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso, List<String> formNames) {
+        Query query = createQuery(filtro, siglasProcesso, false, formNames);
         query.setFirstResult(filtro.getFirst());
         query.setMaxResults(filtro.getCount());
         query.setResultTransformer(new AliasToBeanResultTransformer(getResultClass()));
@@ -57,17 +57,15 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
         return PeticaoDTO.class;
     }
 
-    public List<Map<String, Object>> quickSearchMap(QuickFilter filter, List<String> processesAbbreviation) {
-        Query query = createQuery(filter, processesAbbreviation, false);
+    public List<Map<String, Object>> quickSearchMap(QuickFilter filter, List<String> processesAbbreviation, List<String> formNames) {
+        Query query = createQuery(filter, processesAbbreviation, false, formNames);
         query.setFirstResult(filter.getFirst());
         query.setMaxResults(filter.getCount());
         query.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
-
         return query.list();
-
     }
 
-    protected void buildSelectClause(StringBuilder hql, Map<String, Object> params, QuickFilter filtro, List<String> siglasProcesso, boolean count) {
+    protected void buildSelectClause(StringBuilder hql, boolean count) {
         if (count) {
             hql.append("SELECT count(p) ");
         } else {
@@ -84,20 +82,30 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
         }
     }
 
-    protected void buildFromClause(StringBuilder hql, Map<String, Object> params, QuickFilter filtro, List<String> siglasProcesso, boolean count) {
+    protected void buildFromClause(StringBuilder hql) {
         hql.append(" FROM " + tipo.getName() + " p ");
         hql.append(" LEFT JOIN p.processInstanceEntity pie ");
         hql.append(" LEFT JOIN pie.tasks ta ");
         hql.append(" LEFT JOIN ta.task task ");
     }
 
-    protected void buildWhereClause(StringBuilder hql, Map<String, Object> params, QuickFilter filtro, List<String> siglasProcesso, boolean count) {
+    protected void buildWhereClause(StringBuilder hql,
+                                    Map<String, Object> params,
+                                    QuickFilter filtro,
+                                    List<String> siglasProcesso,
+                                    List<String> formNames) {
         hql.append(" WHERE 1=1 ");
 
         if (siglasProcesso != null
                 && !siglasProcesso.isEmpty()) {
-            hql.append(" AND p.processType in (:siglasProcesso) ");
+            hql.append(" AND ( p.processType in (:siglasProcesso) ");
             params.put("siglasProcesso", siglasProcesso);
+            if (formNames != null && !formNames.isEmpty()) {
+                hql.append(" OR p.type in (:formNames) ");
+                params.put("formNames", formNames);
+            } else {
+                hql.append(" ) ");
+            }
         }
 
         if (filtro.hasFilter()) {
@@ -135,14 +143,14 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
     }
 
 
-    private Query createQuery(QuickFilter filtro, List<String> siglasProcesso, boolean count) {
+    private Query createQuery(QuickFilter filtro, List<String> siglasProcesso, boolean count, List<String> formNames) {
 
-        StringBuilder hql = new StringBuilder("");
-        Map<String, Object> params = new HashMap<>();
+        final StringBuilder       hql    = new StringBuilder("");
+        final Map<String, Object> params = new HashMap<>();
 
-        buildSelectClause(hql, params, filtro, siglasProcesso, count);
-        buildFromClause(hql, params, filtro, siglasProcesso, count);
-        buildWhereClause(hql, params, filtro, siglasProcesso, count);
+        buildSelectClause(hql, count);
+        buildFromClause(hql);
+        buildWhereClause(hql, params, filtro, siglasProcesso, formNames);
 
         Query query = getSession().createQuery(hql.toString());
 

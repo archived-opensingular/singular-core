@@ -35,8 +35,8 @@ public class ConfigProperties {
     }
 
     private static String lookupProperty(String key) {
-        if (SingularProperties.INSTANCE.containsKey(key)) {
-            return SingularProperties.INSTANCE.getProperty(key);
+        if (SingularProperties.get().containsKey(key)) {
+            return SingularProperties.get().getProperty(key);
         }
         return System.getProperty(key);
     }

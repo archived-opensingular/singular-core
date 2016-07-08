@@ -44,13 +44,13 @@ public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
     }
 
     @Override
-    protected long countQuickSearch(QuickFilter filter, List<String> processesNames) {
-        return peticaoService.countQuickSearch(filter, processesNames);
+    protected long countQuickSearch(QuickFilter filter, List<String> processesNames, List<String> formNames) {
+        return peticaoService.countQuickSearch(filter, processesNames, formNames);
     }
 
     @Override
-    protected List<PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso) {
-        return peticaoService.quickSearch(filtro, siglasProcesso);
+    protected List<PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso, List<String> formNames) {
+        return peticaoService.quickSearch(filtro, siglasProcesso, formNames);
     }
 
     @Override

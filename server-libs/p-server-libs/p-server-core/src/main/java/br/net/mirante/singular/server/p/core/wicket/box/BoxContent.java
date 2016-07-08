@@ -56,8 +56,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     static final Logger LOGGER = LoggerFactory.getLogger(BoxContent.class);
 
     private Pair<String, SortOrder> sortProperty;
-    private ItemBox itemBoxDTO;
-    private IModel<BoxItemModel> currentModel;
+    private ItemBox                 itemBoxDTO;
+    private IModel<BoxItemModel>    currentModel;
 
     public BoxContent(String id, String processGroupCod, String menu, ItemBox itemBoxDTO) {
         super(id, processGroupCod, menu);
@@ -230,6 +230,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         return boxPage.createFilter()
                 .withFilter(getFiltroRapidoModelObject())
                 .withProcessesAbbreviation(getProcessesNames())
+                .withTypesNames(getFormNames())
                 .withRascunho(isWithRascunho());
     }
 
@@ -244,20 +245,35 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         }
     }
 
+    private List<String> getFormNames() {
+        if (getProcesses() == null) {
+            return Collections.emptyList();
+        } else {
+            return getProcesses()
+                    .stream()
+                    .map(ProcessDTO::getFormName)
+                    .collect(Collectors.toList());
+        }
+    }
+
+
     @Override
     protected List<BoxItemModel> quickSearch(QuickFilter filter, List<String> siglasProcesso) {
-        final String connectionURL = getProcessGroup().getConnectionURL();
-        final String url = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
+        final String connectionURL  = getProcessGroup().getConnectionURL();
+        final String url            = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
         try {
-            return (List<BoxItemModel>) Arrays.asList(new RestTemplate().postForObject(url, filter, Map[].class))
-                    .stream().map(BoxItemModel::new).collect(Collectors.toList());
+            return (List<BoxItemModel>) Arrays
+                    .asList(new RestTemplate().postForObject(url, filter, Map[].class))
+                    .stream()
+                    .map(BoxItemModel::new)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error("Erro ao acessar serviço: " + url, e);
             return Collections.emptyList();
         }
     }
 
-    protected WebMarkupContainer criarLink(BoxItemModel item, String id, FormActions formActions){
+    protected WebMarkupContainer criarLink(BoxItemModel item, String id, FormActions formActions) {
 
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl())
@@ -273,7 +289,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         return link;
     }
 
-    protected Map<String, String> getCriarLinkParameters(BoxItemModel item){
+    protected Map<String, String> getCriarLinkParameters(BoxItemModel item) {
         final Map<String, String> linkParameters = new HashMap<>();
         linkParameters.putAll(getLinkParams());
         return linkParameters;
@@ -285,9 +301,9 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     }
 
     @Override
-    protected long countQuickSearch(QuickFilter filter, List<String> processesNames) {
-        final String connectionURL = getProcessGroup().getConnectionURL();
-        final String url = connectionURL + PATH_BOX_SEARCH + getCountEndpoint();
+    protected long countQuickSearch(QuickFilter filter, List<String> processesNames, List<String> formNames) {
+        final String connectionURL  = getProcessGroup().getConnectionURL();
+        final String url            = connectionURL + PATH_BOX_SEARCH + getCountEndpoint();
         try {
             return new RestTemplate().postForObject(url, filter, Long.class);
         } catch (Exception e) {

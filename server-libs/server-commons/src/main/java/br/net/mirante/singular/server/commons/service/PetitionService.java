@@ -55,7 +55,7 @@ public class PetitionService<T extends AbstractPetitionEntity> {
 
     @Inject
     private TaskInstanceDAO taskInstanceDAO;
-    
+
     public T find(Long cod) {
         return petitionDAO.find(cod);
     }
@@ -63,7 +63,7 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     public T findByProcessCod(Integer cod) {
         return petitionDAO.findByProcessCod(cod);
     }
-    
+
     public void delete(PeticaoDTO peticao) {
         petitionDAO.delete(petitionDAO.find(peticao.getCod()));
     }
@@ -72,30 +72,30 @@ public class PetitionService<T extends AbstractPetitionEntity> {
         petitionDAO.delete(petitionDAO.find(idPeticao));
     }
 
-    public long countQuickSearch(QuickFilter filter, String siglaProcesso) {
-        return countQuickSearch(filter, Collections.singletonList(siglaProcesso));
+    public long countQuickSearch(QuickFilter filter, String siglaProcesso, String formName) {
+        return countQuickSearch(filter, Collections.singletonList(siglaProcesso), Collections.singletonList(formName));
     }
 
     public Long countQuickSearch(QuickFilter filter) {
-        return countQuickSearch(filter, filter.getProcessesAbbreviation());
-    }
-    
-    public Long countQuickSearch(QuickFilter filter, List<String> siglasProcesso) {
-        return petitionDAO.countQuickSearch(filter, siglasProcesso);
+        return countQuickSearch(filter, filter.getProcessesAbbreviation(), filter.getTypesNames());
     }
 
-
-    public List<? extends PeticaoDTO> quickSearch(QuickFilter filter, String siglaProcesso) {
-        return quickSearch(filter, Collections.singletonList(siglaProcesso));
+    public Long countQuickSearch(QuickFilter filter, List<String> siglasProcesso, List<String> formNames) {
+        return petitionDAO.countQuickSearch(filter, siglasProcesso, formNames);
     }
 
 
-    public List<? extends PeticaoDTO> quickSearch(QuickFilter filter, List<String> siglasProcesso) {
-        return petitionDAO.quickSearch(filter, siglasProcesso);
+    public List<? extends PeticaoDTO> quickSearch(QuickFilter filter, String siglaProcesso, String formName) {
+        return quickSearch(filter, Collections.singletonList(siglaProcesso), Collections.singletonList(formName));
+    }
+
+
+    public List<? extends PeticaoDTO> quickSearch(QuickFilter filter, List<String> siglasProcesso, List<String> formNames) {
+        return petitionDAO.quickSearch(filter, siglasProcesso, formNames);
     }
 
     public List<Map<String, Object>> quickSearchMap(QuickFilter filter) {
-        final List<Map<String, Object>> list = petitionDAO.quickSearchMap(filter, filter.getProcessesAbbreviation());
+        final List<Map<String, Object>> list = petitionDAO.quickSearchMap(filter, filter.getProcessesAbbreviation(), filter.getTypesNames());
         list.forEach(this::checkItemActions);
         return list;
     }
@@ -139,10 +139,10 @@ public class PetitionService<T extends AbstractPetitionEntity> {
 
     public FormKey saveOrUpdate(T peticao, SInstance instance) {
         FormKey key;
-        if(instance != null){
+        if (instance != null) {
             key = formPersistenceService.insertOrUpdate(instance);
             Long keyAsLong = ((FormKeyNumber) key).longValue();
-            if (peticao.getCodForm() != null && ! peticao.getCodForm().equals(keyAsLong)) {
+            if (peticao.getCodForm() != null && !peticao.getCodForm().equals(keyAsLong)) {
                 throw new SingularServerException("Tentado criar novo formulário mas a petição já possui um");
             }
             peticao.setCodForm(keyAsLong);
@@ -150,33 +150,33 @@ public class PetitionService<T extends AbstractPetitionEntity> {
             peticao.setCodForm(null);
             key = null;
         }
-        
+
         petitionDAO.saveOrUpdate(peticao);
         return key;
     }
 
     public FormKey send(T peticao, SInstance instance) {
         ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(peticao.getProcessType());
-        ProcessInstance processInstance = processDefinition.newInstance();
+        ProcessInstance      processInstance   = processDefinition.newInstance();
         processInstance.setDescription(peticao.getDescription());
-        
+
         ProcessInstanceEntity processEntity = processInstance.saveEntity();
         peticao.setProcessInstanceEntity(processEntity);
         FormKey key = saveOrUpdate(peticao, instance);
-        
+
         processInstance.start();
 
         return key;
     }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public FormKey saveAndExecuteTransition(String transitionName, T peticao, SInstance instance) {
         try {
-            
+
             FormKey key = saveOrUpdate(peticao, instance);
-            
+
             final Class<? extends ProcessDefinition> clazz = Flow.getProcessDefinitionWith(peticao.getProcessType()).getClass();
-            ProcessInstance pi = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
+            ProcessInstance                          pi    = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
             pi.executeTransition(transitionName);
             return key;
         } catch (Exception e) {
@@ -200,7 +200,7 @@ public class PetitionService<T extends AbstractPetitionEntity> {
                 .map(MTask::getTransitions)
                 .orElse(Collections.emptyList());
     }
-    
+
     public TaskInstanceEntity findCurrentTaskByPetitionId(String petitionId) {
         List<TaskInstanceEntity> taskInstances = taskInstanceDAO.findCurrentTasksByPetitionId(petitionId);
         if (taskInstances.isEmpty()) {
@@ -209,7 +209,7 @@ public class PetitionService<T extends AbstractPetitionEntity> {
             return taskInstances.get(0);
         }
     }
-    
+
     public List<ProcessGroupEntity> listarTodosGruposProcesso() {
         return grupoProcessoDAO.listarTodosGruposProcesso();
     }
@@ -221,5 +221,5 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     public ProcessGroupEntity findByProcessGroupCod(String cod) {
         return grupoProcessoDAO.get(cod);
     }
-    
+
 }

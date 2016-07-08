@@ -3,6 +3,10 @@ package br.net.mirante.singular.server.commons.util;
 
 public class Parameters {
 
+    public static final String ACTION = "a";
+
+    public static final String FORM_ID = "k";
+
     public static final String SIGLA_FORM_NAME = "f";
 
     public static final String INSTANCE_ID = "instanceId";

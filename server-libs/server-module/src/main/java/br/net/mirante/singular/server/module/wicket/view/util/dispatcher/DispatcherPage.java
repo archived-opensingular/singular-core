@@ -1,5 +1,7 @@
 package br.net.mirante.singular.server.module.wicket.view.util.dispatcher;
 
+import static br.net.mirante.singular.server.commons.util.Parameters.ACTION;
+import static br.net.mirante.singular.server.commons.util.Parameters.FORM_ID;
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
@@ -7,6 +9,7 @@ import java.lang.reflect.Constructor;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -44,7 +47,7 @@ import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
 
 @SuppressWarnings("serial")
 @MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
-public class DispatcherPage extends WebPage {
+public abstract class DispatcherPage extends WebPage {
 
     protected static final Logger logger = LoggerFactory.getLogger(DispatcherPage.class);
 
@@ -54,16 +57,16 @@ public class DispatcherPage extends WebPage {
     private PetitionService<?> petitionService;
 
     public DispatcherPage() {
-        this.add(bodyContainer);
+        initPage();
+        dispatch(parseParameters(getRequest()));
+    }
+
+    private void initPage() {
         getApplication().setHeaderResponseDecorator(new SingularHeaderResponseDecorator());
-        bodyContainer.add(new HeaderResponseContainer("scripts", "scripts"));
+        bodyContainer
+                .add(new HeaderResponseContainer("scripts", "scripts"));
+        add(bodyContainer);
         add(new SingularJSBehavior());
-        AbstractFormPage.FormPageConfig config = parseParameters(getRequest());
-        if (config != null) {
-            dispatch(config);
-        } else {
-            closeAndReloadParent();
-        }
     }
 
     @Override
@@ -72,53 +75,64 @@ public class DispatcherPage extends WebPage {
         response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(Template.class, "singular.js")));
     }
 
-    protected AbstractFormPage.FormPageConfig parseParameters(Request request) {
-        AbstractFormPage.FormPageConfig config = buildConfig(request);
-        return parseParameters(request, config);
-    }
-
-    protected AbstractFormPage.FormPageConfig parseParameters(Request request, AbstractFormPage.FormPageConfig config) {
-        return config;
-    }
-
-    protected void dispatch(AbstractFormPage.FormPageConfig config) {
-        try {
-            WebPage destination = null;
-            SingularWebRef ref = null;
-            TaskInstance ti = findCurrentTaskByPetitionId(config.formId);
-            if (ti != null) {
-                MTask task = ti.getFlowTask();
-                if (task instanceof MTaskUserExecutable) {
-                    ITaskPageStrategy pageStrategy = ((MTaskUserExecutable) task).getExecutionPage();
-                    if (pageStrategy instanceof SingularServerTaskPageStrategy) {
-                        ref = (SingularWebRef) pageStrategy.getPageFor(ti, null);
-                    } else {
-                        logger.warn("Atividade atual possui uma estratégia de página não suportada. A página default será utilizada.");
-                    }
-                } else if (!ViewMode.VISUALIZATION.equals(config.viewMode)) {
-                    throw new SingularServerException("Página invocada para uma atividade que não é do tipo MTaskUserExecutable");
+    private SingularWebRef retrieveSingularWebRef(FormPageConfig cfg) {
+        final TaskInstance ti = findCurrentTaskByPetitionId(cfg.getFormId());
+        if (ti != null) {
+            final MTask task = ti.getFlowTask();
+            if (task instanceof MTaskUserExecutable) {
+                final ITaskPageStrategy pageStrategy = ((MTaskUserExecutable) task).getExecutionPage();
+                if (pageStrategy instanceof SingularServerTaskPageStrategy) {
+                    return (SingularWebRef) pageStrategy.getPageFor(ti, null);
+                } else {
+                    logger.warn("Atividade atual possui uma estratégia de página não suportada. A página default será utilizada.");
                 }
+            } else if (!ViewMode.VISUALIZATION.equals(cfg.getViewMode())) {
+                throw new SingularServerException("Página invocada para uma atividade que não é do tipo MTaskUserExecutable");
             }
+        }
+        return null;
+    }
+
+    private <T> T createNewInstanceUsingFormPageConfigConstructor(Class<T> clazz, FormPageConfig config) throws Exception {
+        Constructor c = clazz.getConstructor(FormPageConfig.class);
+        return (T) c.newInstance(config);
+    }
+
+    private WebPage retrieveDestination(FormPageConfig config) {
+        return retrieveDestinationUsingSingularWebRef(config, retrieveSingularWebRef(config));
+    }
+
+    private WebPage retrieveDestinationUsingSingularWebRef(FormPageConfig config, SingularWebRef ref) {
+        try {
             if (ref == null || ref.getPageClass() == null) {
-                Constructor c = getDefaultFormPageClass().getConstructor(AbstractFormPage.FormPageConfig.class);
-                destination = (WebPage) c.newInstance(config);
+                return createNewInstanceUsingFormPageConfigConstructor(getDefaultFormPageClass(), config);
             } else if (AbstractFormPage.class.isAssignableFrom(ref.getPageClass())) {
-                Constructor c = ref.getPageClass().getConstructor(AbstractFormPage.FormPageConfig.class);
-                destination = (WebPage) c.newInstance(config);
+                return createNewInstanceUsingFormPageConfigConstructor(ref.getPageClass(), config);
             } else {
-                destination = ref.getPageClass().newInstance();
+                return ref.getPageClass().newInstance();
             }
-            configureReload(destination);
-            onDispatch(destination, config);
-            setResponsePage(destination);
         } catch (Exception e) {
             closeAndReloadParent();
             logger.error(e.getMessage(), e);
+        }
+        return null;
+    }
 
+    protected void dispatch(FormPageConfig config) {
+        if (config != null) {
+            dispatchForDestination(config, retrieveDestination(config));
+        } else {
+            closeAndReloadParent();
         }
     }
 
-    protected void onDispatch(WebPage destination, AbstractFormPage.FormPageConfig config){}
+    private void dispatchForDestination(FormPageConfig config, WebPage destination) {
+        if (destination != null) {
+            configureReload(destination);
+            onDispatch(destination, config);
+            setResponsePage(destination);
+        }
+    }
 
     protected void configureReload(WebPage destination) {
         destination.add(new Behavior() {
@@ -131,31 +145,56 @@ public class DispatcherPage extends WebPage {
     }
 
     private void closeAndReloadParent() {
-        add($b.onReadyScript(() ->
-                " Singular.atualizarContentWorklist(); " +
-                        " window.close(); "));
+        add($b.onReadyScript(() -> " Singular.atualizarContentWorklist(); window.close(); "));
     }
 
+    private StringValue getParam(Request r, String key) {
+        return r.getRequestParameters().getParameterValue(key);
+    }
 
-    private AbstractFormPage.FormPageConfig buildConfig(Request request) {
+    private FormActions resolveFormAction(StringValue action) {
+        return FormActions.getById(Integer.parseInt(action.toString("0")));
+    }
 
-        StringValue action = request.getRequestParameters().getParameterValue("a");
-        StringValue formId = request.getRequestParameters().getParameterValue("k");
-        StringValue formName = request.getRequestParameters().getParameterValue(SIGLA_FORM_NAME);
+    private FormPageConfig parseParameters(Request r) {
+
+        final StringValue action   = getParam(r, ACTION);
+        final StringValue formId   = getParam(r, FORM_ID);
+        final StringValue formName = getParam(r, SIGLA_FORM_NAME);
 
         if (action.isEmpty()) {
             throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + "/singular");
         }
 
-        FormActions formActions = FormActions.getById(Integer.parseInt(action.toString("0")));
+        final FormActions formActions = resolveFormAction(action);
 
-        AbstractFormPage.FormPageConfig formPageConfig = new AbstractFormPage.FormPageConfig();
-        formPageConfig.formId = formId.toString("");
-        formPageConfig.annotationMode = formActions.getAnnotationMode() == null? AnnotationMode.NONE : formActions.getAnnotationMode();
-        formPageConfig.viewMode = formActions.getViewMode();
-        formPageConfig.formType = formName.toString();
+        final String         fi = formId.toString("");
+        final AnnotationMode am = formActions.getAnnotationMode() == null ? AnnotationMode.NONE : formActions.getAnnotationMode();
+        final ViewMode       vm = formActions.getViewMode();
+        final String         fn = formName.toString();
 
-        return formPageConfig;
+        final FormPageConfig cfg = buildConfig(r, fi, am, vm, fn);
+
+        if (cfg != null) {
+            if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
+                throw new SingularServerException("Nenhum fluxo está configurado");
+            }
+            return cfg;
+        } else {
+            return null;
+        }
+
+    }
+
+    protected abstract FormPageConfig buildConfig(Request r, String formId, AnnotationMode annotationMode, ViewMode viewMode, String formType);
+
+    /**
+     * Possibilita execução de qualquer ação antes de fazer o dispatch
+     *
+     * @param destination pagina destino
+     * @param config      config atual
+     */
+    protected void onDispatch(WebPage destination, FormPageConfig config) {
     }
 
     protected TaskInstance findCurrentTaskByPetitionId(String petitionId) {
