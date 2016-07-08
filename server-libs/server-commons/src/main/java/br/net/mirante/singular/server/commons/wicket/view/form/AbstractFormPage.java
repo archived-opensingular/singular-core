@@ -282,15 +282,18 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
     }
 
     protected void onBeforeSend(IModel<? extends SInstance> currentInstance) {
-        final T petition = currentModel.getObject();
-        if (petition.getProcessType() == null && config.isWithLazyProcessResolver()) {
-            final Class<? extends ProcessDefinition> dc = config.getLazyFlowDefinitionResolver().resolve(config, (SIComposite) currentInstance.getObject());
-            petition.setProcessType(Flow.getProcessDefinition(dc).getKey());
-        }
+        configureLazyFlowIfNeeded(currentInstance, currentModel.getObject(), config);
     }
 
     protected void onBeforeSave(IModel<? extends SInstance> currentInstance) {
+        configureLazyFlowIfNeeded(currentInstance, currentModel.getObject(), config);
+    }
 
+    protected void configureLazyFlowIfNeeded(IModel<? extends SInstance> currentInstance, T petition, FormPageConfig cfg){
+        if (petition.getProcessType() == null && cfg.isWithLazyProcessResolver()) {
+            final Class<? extends ProcessDefinition> dc = cfg.getLazyFlowDefinitionResolver().resolve(cfg, (SIComposite) currentInstance.getObject());
+            petition.setProcessType(Flow.getProcessDefinition(dc).getKey());
+        }
     }
 
     protected void send(IModel<? extends SInstance> currentInstance) {
