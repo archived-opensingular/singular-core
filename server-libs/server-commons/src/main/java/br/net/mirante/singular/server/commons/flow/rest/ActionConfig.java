@@ -51,4 +51,9 @@ public class ActionConfig {
     public IController getCustomAction(String name) {
         return customActions.get(name);
     }
+
+    public boolean containsAction(String name) {
+        return customActions.containsKey(name)
+                || defaultActions.contains(name);
+    }
 }

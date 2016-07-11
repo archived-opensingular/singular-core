@@ -174,14 +174,14 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
             callModule(url, buildCallObject(boxAction, boxItem));
         } catch (Exception e) {
             LOGGER.error("Erro ao acessar serviço: " + url, e);
-            error("Não foi possível executar esta ação.");
+            addToastrErrorMessage("Não foi possível executar esta ação.");
         }
     }
 
     private void callModule(String url, Object arg) {
         ActionResponse response = new RestTemplate().postForObject(url, arg, ActionResponse.class);
         if (response.isSuccessful()) {
-            addToastrInfoMessage(response.getResultMessage());
+            addToastrSuccessMessage(response.getResultMessage());
         } else {
             addToastrErrorMessage(response.getResultMessage());
         }

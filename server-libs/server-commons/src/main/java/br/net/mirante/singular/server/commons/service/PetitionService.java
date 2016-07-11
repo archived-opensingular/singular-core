@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -30,6 +31,7 @@ import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
@@ -100,15 +102,25 @@ public class PetitionService<T extends AbstractPetitionEntity> {
         return list;
     }
 
-    protected void checkItemActions(Map<String, Object> item) {
+    private void checkItemActions(Map<String, Object> item) {
         List<BoxItemAction> actions = new ArrayList<>();
         actions.add(createPopupBoxItemAction(item, FormActions.FORM_FILL, ACTION_EDIT));
         actions.add(createPopupBoxItemAction(item, FormActions.FORM_VIEW, ACTION_VIEW));
         actions.add(createDeleteAction(item));
+        actions.add(BoxItemAction.newExecuteInstante(item.get("cod"), ACTION_RELOCATE));
 
         appendItemActions(item, actions);
 
-        item.put("actions",   actions);
+        String processKey = (String) item.get("processType");
+        final ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(processKey);
+        final ActionConfig actionConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
+        if (actionConfig != null) {
+            actions = actions.stream()
+                    .filter(itemAction -> actionConfig.containsAction(itemAction.getName()))
+                    .collect(Collectors.toList());
+        }
+
+        item.put("actions", actions);
     }
 
     protected void appendItemActions(Map<String, Object> item, List<BoxItemAction> actions) {

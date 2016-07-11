@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.net.mirante.singular.flow.core.Flow;
-import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
@@ -66,8 +67,9 @@ public class DefaultServerREST {
     }
 
     private IController getActionController(Long id, Action action) {
-        final ProcessInstance processInstance = Flow.getProcessInstance(id.toString());
-        final ActionConfig actionConfig = processInstance.getProcessDefinition().getMetaDataValue(ActionConfig.KEY);
+        final AbstractPetitionEntity petition = petitionService.find(id);
+        final ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(petition.getProcessType());
+        final ActionConfig actionConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
 
         return actionConfig.getCustomAction(action.getName());
     }

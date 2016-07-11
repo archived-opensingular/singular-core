@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.server.commons.service.dto;
 
+import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.EXECUTE;
+import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -20,6 +23,17 @@ public class BoxItemAction implements Serializable {
     public BoxItemAction(Map<String, Object> map) {
         this.name = (String) map.get("name");
         this.endpoint = (String) map.get("endpoint");
+        this.useExecute = (Boolean) map.get("useExecute");
+    }
+
+    public static BoxItemAction newExecuteInstante(Object id, String actionName) {
+        String endpointUrl = PATH_BOX_ACTION + EXECUTE + "?id=" + id;
+
+        final BoxItemAction boxItemAction = new BoxItemAction();
+        boxItemAction.setName(actionName);
+        boxItemAction.setEndpoint(endpointUrl);
+        boxItemAction.setUseExecute(true);
+        return boxItemAction;
     }
 
     public String getName() {
