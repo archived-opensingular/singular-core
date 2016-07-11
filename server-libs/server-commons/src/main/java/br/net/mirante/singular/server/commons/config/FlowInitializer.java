@@ -9,9 +9,9 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataREST;
-import br.net.mirante.singular.server.commons.flow.DefaultServerMetadataREST;
-import br.net.mirante.singular.server.commons.flow.DefaultServerREST;
 import br.net.mirante.singular.server.commons.flow.SingularServerFlowConfigurationBean;
+import br.net.mirante.singular.server.commons.flow.rest.DefaultServerMetadataREST;
+import br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST;
 import br.net.mirante.singular.server.commons.service.IServerMetadataREST;
 
 public abstract class FlowInitializer {

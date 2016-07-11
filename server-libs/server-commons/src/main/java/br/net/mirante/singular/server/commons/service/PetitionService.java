@@ -1,8 +1,8 @@
 package br.net.mirante.singular.server.commons.service;
 
 
-import static br.net.mirante.singular.server.commons.flow.DefaultServerREST.DELETE;
-import static br.net.mirante.singular.server.commons.flow.DefaultServerREST.PATH_BOX_ACTION;
+import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
+import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
 import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
 

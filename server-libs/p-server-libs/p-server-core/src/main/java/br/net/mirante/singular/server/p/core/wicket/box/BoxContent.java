@@ -33,6 +33,8 @@ import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.commons.lambda.IBiFunction;
 import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.server.commons.flow.rest.Action;
+import br.net.mirante.singular.server.commons.flow.rest.ActionResponse;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
@@ -161,15 +163,37 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     }
 
     private void executeDynamicAction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItem) {
-        final BoxItemAction action = boxItem.getActionByName(itemAction.getName());
+        final BoxItemAction boxAction = boxItem.getActionByName(itemAction.getName());
+
         String url = baseUrl
-                + action.getEndpoint()
+                + boxAction.getEndpoint()
+                + appendParameter("id", boxItem.getCod())
                 + appendParameters(additionalParams);
 
         try {
-            new RestTemplate().postForObject(url, boxItem.getCod(), Boolean.class);
+            callModule(url, buildCallObject(boxAction, boxItem));
         } catch (Exception e) {
             LOGGER.error("Erro ao acessar serviço: " + url, e);
+            error("Não foi possível executar esta ação.");
+        }
+    }
+
+    private void callModule(String url, Object arg) {
+        ActionResponse response = new RestTemplate().postForObject(url, arg, ActionResponse.class);
+        if (response.isSuccessful()) {
+            addToastrInfoMessage(response.getResultMessage());
+        } else {
+            addToastrErrorMessage(response.getResultMessage());
+        }
+    }
+
+    private Object buildCallObject(BoxItemAction boxAction, BoxItemModel boxItem) {
+        if (boxAction.isUseExecute()) {
+            Action action = new Action();
+            action.setName(boxAction.getName());
+            return action;
+        } else {
+            return boxItem.getCod();
         }
     }
 
@@ -204,6 +228,10 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
             }
         }
         return paramsValue;
+    }
+
+    private String appendParameter(String key, Object value) {
+        return "&" + key + "=" + value;
     }
 
     private IFunction<IModel, Boolean> visibleFunction(ItemAction itemAction) {

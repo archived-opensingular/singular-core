@@ -3,14 +3,11 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.server.module.config;
-
-import br.net.mirante.singular.server.module.wicket.rest.Action;
-import br.net.mirante.singular.server.module.wicket.rest.ActionResponse;
+package br.net.mirante.singular.server.commons.flow.rest;
 
 public abstract class IController {
 
-    public abstract ActionResponse execute(Action action);
+    public abstract ActionResponse execute(Long id, Action action);
 
     public boolean isExecutable() {
         return true;

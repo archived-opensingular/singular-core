@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.server.module.config;
+package br.net.mirante.singular.server.commons.flow.rest;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,14 +20,6 @@ import br.net.mirante.singular.flow.core.property.MetaDataRef;
 public class ActionConfig {
 
     public static final MetaDataRef<ActionConfig> KEY = new MetaDataRef<>(ActionConfig.class.getName(), ActionConfig.class);
-
-    /**
-     * Ações default
-     */
-    public static final String EDIT = "EDIT";
-    public static final String VIEW = "VIEW";
-    public static final String DELETE = "DELETE";
-    public static final String RELOCATE = "RELOCATE";
 
     private List<String> defaultActions;
 
