@@ -6,15 +6,18 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.provider.SSimpleProvider;
+import br.net.mirante.singular.form.provider.SimpleProvider;
+import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SViewByBlock;
+import br.net.mirante.singular.form.view.SViewSelectionByRadio;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -72,9 +75,17 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .asAtr()
                 .label(" Tipo de Petição ");
 
+
+        nivel.selectionOf(String.class, new SViewSelectionByRadio())
+                .selfIdAndDisplay()
+                .simpleProvider((SimpleProvider<String, SIString>) ins -> ins
+                        .findNearestValue(idTipoPeticao)
+                        .map(i -> (int) i)
+                        .map(TipoPeticaoPrimariaGGTOX::getValueById)
+                        .map(TipoPeticaoPrimariaGGTOX::niveis)
+                        .orElseGet(Collections::emptyList));
+
         nivel
-                .selectionOf("I", "II", "III", "IV")
-                .withRadioView()
                 .asAtr()
                 .exists(typeValIsNotNull(tipoPeticao))
                 .dependsOn(tipoPeticao);
