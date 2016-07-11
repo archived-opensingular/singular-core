@@ -8,6 +8,8 @@ package br.net.mirante.singular.server.commons.service.dto;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 
+import br.net.mirante.singular.util.wicket.resource.Icone;
+
 public class ItemBox implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -19,6 +21,7 @@ public class ItemBox implements Serializable {
     private boolean showDraft = false;
     private String searchEndpoint;
     private String countEndpoint;
+    private Icone icone;
     private LinkedHashMap<String, String> fieldsDatatable;
 
     // Ações disponíveis para todos os processos
@@ -121,5 +124,13 @@ public class ItemBox implements Serializable {
     public ItemBox addProcessAction(ProcessDTO processDTO, ItemAction itemAction) {
         getProcessActions().put(processDTO.getName(), itemAction);
         return this;
+    }
+
+    public Icone getIcone() {
+        return icone;
+    }
+
+    public void setIcone(Icone icone) {
+        this.icone = icone;
     }
 }
