@@ -13,6 +13,10 @@ public class STypeIngredienteAtivoPeticaoPrimariaSimplificada extends STypeCompo
     protected void onLoadType(TypeBuilder builder) {
         super.onLoadType(builder);
 
+        this
+                .asAtrAnnotation()
+                .setAnnotated();
+
         final STypeList<STypeIngredienteAtivo, SIComposite> ingredientesAtivos  = this.addFieldListOf("ingredientesAtivos", STypeIngredienteAtivo.class);
 
         ingredientesAtivos.withView(new SViewListByMasterDetail()

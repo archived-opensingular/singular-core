@@ -27,6 +27,10 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypeComposite<
         anexoJustificativa = addField("anexoJustificativa", STypeAttachment.class);
 
         this
+                .asAtrAnnotation()
+                .setAnnotated();
+
+        this
                 .asAtr()
                 .label("Petição Matriz");
 

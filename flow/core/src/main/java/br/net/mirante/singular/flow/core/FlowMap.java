@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableSet;
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
+import br.net.mirante.singular.flow.core.property.MetaDataRef;
 import br.net.mirante.singular.flow.core.variable.VarService;
 
 /**
@@ -514,5 +515,10 @@ public class FlowMap implements Serializable {
 
     public DashboardView getDashboardViewWithName(String name) {
         return dashboardViews.get(name);
+    }
+
+    public <T> FlowMap setMetaDataValue(MetaDataRef<T> propRef, T value) {
+        getProcessDefinition().setMetaDataValue(propRef, value);
+        return this;
     }
 }

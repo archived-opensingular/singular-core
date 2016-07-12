@@ -1,6 +1,6 @@
 package br.net.mirante.singular.commons.base;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -185,8 +185,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
 
     private URL findProperties(String name) {
         try {
-            URL url = add(null, name, ClassLoader.getSystemClassLoader().getResources(name));
-            return add(url, name, SingularProperties.class.getClassLoader().getResources(name));
+            return SingularPropertiesImpl.class.getClassLoader().getResource(name);
         } catch (Exception e) {
             throw new SingularException("Erro procurando arquivo de properties '" + name + "' no class path", e);
         }

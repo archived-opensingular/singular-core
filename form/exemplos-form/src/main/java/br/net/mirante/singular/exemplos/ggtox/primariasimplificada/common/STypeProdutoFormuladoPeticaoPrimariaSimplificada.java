@@ -20,6 +20,11 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypeCompo
     @Override
     protected void onLoadType(TypeBuilder builder) {
         super.onLoadType(builder);
+
+        this
+                .asAtrAnnotation()
+                .setAnnotated();
+
         this
                 .asAtr()
                 .label("Produto Formulado");
