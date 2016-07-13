@@ -5,31 +5,30 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.view.AbstractSViewListWithControls;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.*;
-import com.google.common.base.Strings;
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-
-import java.util.Set;
-
-import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 
 public class PanelListaMapper extends AbstractListaMapper {
 
@@ -59,14 +58,22 @@ public class PanelListaMapper extends AbstractListaMapper {
                 (content, form) -> {
 
                     TemplatePanel list = content.newTemplateTag(t -> ""
-                            + "    <ul class='list-group'>"
+                            + "    <ul class='list-group list-by-form'>"
                             + "      <li wicket:id='_e' class='list-group-item' style='margin-bottom:15px'>"
                             + "         <div wicket:id='_r'></div>"
                             + "      </li>"
-                            + "    </ul>");
-                    list.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
-                    list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form));
-//                    content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
+                            + "      <div wicket:id='_empty' class='list-by-form-empty-state'>"
+                            + "         <span>Nenhum item foi adicionado</span>"
+                            + "      </div>"
+                            + "    </ul>"
+                    );
+                    final PanelElementsView elements = new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form);
+                    elements.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
+                    list.add(elements);
+                    final WebMarkupContainer empty = new WebMarkupContainer("_empty");
+                    empty.add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())));
+                    list.add(empty);
+                    content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
                     content.getParent().add(dependsOnModifier(listaModel));
                 },
                 (f, form) -> buildFooter(f, form, ctx)
