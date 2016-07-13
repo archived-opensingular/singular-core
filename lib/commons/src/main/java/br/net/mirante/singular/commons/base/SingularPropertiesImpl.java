@@ -99,13 +99,9 @@ public enum SingularPropertiesImpl implements SingularProperties {
         for (String name : PROPERTIES_FILES_NAME) {
             URL url = findProperties(name);
             if (url == null) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("   Não foi encontrado o arquivo no classpath: {}", name);
-                }
+                LOGGER.warn("   Não foi encontrado o arquivo no classpath: {}", name);
             } else {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("   Lendo arquivo de propriedades '{}' em {}", name, url);
-                }
+                LOGGER.info("   Lendo arquivo de propriedades '{}' em {}", name, url);
                 newProperties = loadNotOverriding(newProperties, name, url);
             }
         }
