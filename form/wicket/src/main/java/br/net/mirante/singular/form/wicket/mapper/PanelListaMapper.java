@@ -10,11 +10,15 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
 
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
@@ -25,10 +29,12 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public class PanelListaMapper extends AbstractListaMapper {
 
@@ -103,14 +109,33 @@ public class PanelListaMapper extends AbstractListaMapper {
         }
 
         @Override
+        public void renderHead(IHeaderResponse response) {
+            super.renderHead(response);
+            PackageResourceReference cssFile =
+                    new PackageResourceReference(this.getClass(), "PanelElementsView.js");
+            JavaScriptHeaderItem javascriptItem = JavaScriptHeaderItem.forReference(cssFile);
+
+            response.render(javascriptItem);
+            response.render(OnDomReadyHeaderItem.forScript("appendListItemEvent();"));
+        }
+
+        @Override
         protected void populateItem(Item<SInstance> item) {
             final BSGrid grid = new BSGrid("_r");
-            final BSRow row = grid.newRow();
             final ViewMode viewMode = ctx.getViewMode();
 
-            wicketBuilder.build(ctx.createChild(row.newCol(11), true, item.getModel()), viewMode);
+            buildHeader(item, grid, viewMode);
+            buildBody(item, grid, viewMode);
 
-            final BSGrid btnGrid = row.newCol(1).newGrid();
+            item.add(grid);
+        }
+
+        private void buildHeader(Item<SInstance> item, BSGrid grid, ViewMode viewMode) {
+            final BSRow header = grid.newRow();
+            header.add($b.classAppender("list-item-header"));
+            header.newCol(11);
+            final BSGrid btnGrid = header.newCol(1).newGrid();
+            header.add($b.classAppender("list-icons"));
 
             if ((view instanceof SViewListByForm) && (((SViewListByForm) view).isInsertEnabled())
                     && viewMode.isEdition()) {
@@ -118,13 +143,30 @@ public class PanelListaMapper extends AbstractListaMapper {
                         .add($b.classAppender("pull-right"));
             }
 
+            final BSCol btnCell = btnGrid.newColInRow();
             if ((view instanceof SViewListByForm) && ((SViewListByForm) view).isDeleteEnabled()
                     && viewMode.isEdition()) {
-                appendRemoverButton(this, form, item, btnGrid.newColInRow())
+                appendRemoverButton(this, form, item, btnCell)
                         .add($b.classAppender("pull-right"));
             }
 
-            item.add(grid);
+            if (viewMode == ViewMode.EDITION) {
+                btnCell
+                        .newTemplateTag(tp -> ""
+                                + "<i"
+                                + " style='" + MapperCommons.ICON_STYLE + " 'class='" + Icone.PENCIL + " pull-right' />");
+            } else {
+                btnCell
+                        .newTemplateTag(tp -> ""
+                                + "<i"
+                                + " style='" + MapperCommons.ICON_STYLE + " 'class='" + Icone.EYE + " pull-right' />");
+            }
+        }
+
+        private void buildBody(Item<SInstance> item, BSGrid grid, ViewMode viewMode) {
+            final BSRow body = grid.newRow();
+            body.add($b.classAppender("list-item-body"));
+            wicketBuilder.build(ctx.createChild(body.newCol(12), true, item.getModel()), viewMode);
         }
     }
 }
