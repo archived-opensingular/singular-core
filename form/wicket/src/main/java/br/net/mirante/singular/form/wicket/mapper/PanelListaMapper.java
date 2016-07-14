@@ -10,6 +10,9 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
+import java.io.Serializable;
+import java.util.Optional;
+
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -18,12 +21,13 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.view.SView;
+import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -47,7 +51,7 @@ public class PanelListaMapper extends AbstractListaMapper {
         final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
         final SIList<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
-        final SView view = ctx.getView();
+        final SViewListByForm view = (SViewListByForm) ctx.getView();
 
         final ViewMode viewMode = ctx.getViewMode();
         final SType<?> currentType = ctx.getCurrentInstance().getType();
@@ -90,7 +94,7 @@ public class PanelListaMapper extends AbstractListaMapper {
 
     private static final class PanelElementsView extends ElementsView {
 
-        private final SView view;
+        private final SViewListByForm view;
         private final Form<?> form;
         private final WicketBuildContext ctx;
         private final UIBuilderWicket wicketBuilder;
@@ -99,7 +103,7 @@ public class PanelListaMapper extends AbstractListaMapper {
                                   IModel<SIList<SInstance>> model,
                                   UIBuilderWicket wicketBuilder,
                                   WicketBuildContext ctx,
-                                  SView view,
+                                  SViewListByForm view,
                                   Form<?> form) {
             super(id, model);
             this.wicketBuilder = wicketBuilder;
@@ -133,7 +137,20 @@ public class PanelListaMapper extends AbstractListaMapper {
         private void buildHeader(Item<SInstance> item, BSGrid grid, ViewMode viewMode) {
             final BSRow header = grid.newRow();
             header.add($b.classAppender("list-item-header"));
-            header.newCol(11);
+            final BSCol title = header.newCol(11).newGrid().newColInRow();
+            Model model = new Model() {
+                @Override
+                public Serializable getObject() {
+                    if (view.getHeaderPath() != null) {
+                        return Optional.ofNullable(Value.of(item.getModelObject(), view.getHeaderPath())).orElse("").toString();
+                    } else {
+                        return "";
+                    }
+                }
+            };
+            title.newTemplateTag(tp -> "<span wicket:id='_title' ></span>")
+                    .add(new Label("_title", model));
+
             final BSGrid btnGrid = header.newCol(1).newGrid();
             header.add($b.classAppender("list-icons"));
 
