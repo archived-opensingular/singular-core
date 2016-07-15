@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.TypeBuilder;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
-public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelII extends STypeDocumentacaoPeticaoPrimariaSimplificadaNivelI {
+public class STypeDocumentacaoPeticaoPrimariaSimplificadaNivelII extends STypeEmbalagem {
 
     @Override
     protected void onLoadType(TypeBuilder builder) {

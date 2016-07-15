@@ -45,6 +45,7 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
         final STypeIngredienteAtivoPeticaoPrimariaSimplificada ingredienteAtivoPeticao = this.addField("ingredienteAtivoPeticao", STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
         final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnicoPeticao   = this.addField("produtoTecnicoPeticao", STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
         final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado        = this.addField("produtoFormulado", STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
+        final STypeEmbalagem                                   embalagem               = this.addField("embalagem", STypeEmbalagem.class);
         final STypeAnexosPeticaoPrimariaSimplificada           anexos                  = this.addField("anexos", STypeAnexosPeticaoPrimariaSimplificada.class);
 
         tipoPeticao
@@ -218,24 +219,16 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .dependsOn(nivel)
                 .exists(typeValIsNotEqualsTo(nivel, "I"));
 
-        anexos
+
+
+        embalagem
                 .asAtr()
-                .dependsOn(nivel)
-                .exists(typeValIsNotNull(nivel));
-        anexos
-                .documentacaoI
-                .asAtr()
+                .label("Embalagem")
                 .dependsOn(nivel)
                 .exists(typeValIsEqualsTo(nivel, "I"));
 
-        anexos.documentacaoI
-                .modelosBulas
-                .asAtr()
-                .dependsOn(tipoPeticao)
-                .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
-
-        anexos.documentacaoI
-                .modelosRotulos
+        embalagem
+                .modeloRotuloBula
                 .asAtr()
                 .dependsOn(tipoPeticao)
                 .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
@@ -267,6 +260,7 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                     .newBlock().add(ingredienteAtivoPeticao)
                     .newBlock().add(produtoTecnicoPeticao)
                     .newBlock().add(produtoFormulado)
+                    .newBlock().add(embalagem)
                     .newBlock().add(anexos);
 
         });

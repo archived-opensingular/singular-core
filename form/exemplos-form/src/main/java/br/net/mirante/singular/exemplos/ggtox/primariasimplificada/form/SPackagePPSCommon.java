@@ -14,7 +14,7 @@ public class SPackagePPSCommon extends SPackage {
         pb.createType(STypeIngredienteAtivo.class);
         pb.createType(STypeDadosGeraisPeticaoPrimariaSimplificada.class);
         pb.createType(STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
-        pb.createType(STypeDocumentacaoPeticaoPrimariaSimplificadaNivelI.class);
+        pb.createType(STypeEmbalagem.class);
         pb.createType(STypeDocumentacaoPeticaoPrimariaSimplificadaNivelII.class);
         pb.createType(STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIII.class);
         pb.createType(STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV.class);

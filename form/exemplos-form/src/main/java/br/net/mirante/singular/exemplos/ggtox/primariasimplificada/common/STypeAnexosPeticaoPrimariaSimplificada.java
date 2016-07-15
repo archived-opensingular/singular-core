@@ -10,7 +10,6 @@ import br.net.mirante.singular.form.TypeBuilder;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeAnexosPeticaoPrimariaSimplificada extends STypeComposite<SIComposite> {
 
-    public STypeDocumentacaoPeticaoPrimariaSimplificadaNivelI   documentacaoI;
     public STypeDocumentacaoPeticaoPrimariaSimplificadaNivelII  documentacaoII;
     public STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIII documentacaoIII;
     public STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV  documentacaoIV;
@@ -27,7 +26,6 @@ public class STypeAnexosPeticaoPrimariaSimplificada extends STypeComposite<SICom
                 .asAtr()
                 .label("Anexos");
 
-        documentacaoI       = addField("documentacaoI", STypeDocumentacaoPeticaoPrimariaSimplificadaNivelI.class);
         documentacaoII      = addField("documentacaoII", STypeDocumentacaoPeticaoPrimariaSimplificadaNivelII.class);
         documentacaoIII     = addField("documentacaoIII", STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIII.class);
         documentacaoIV      = addField("documentacaoIV", STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV.class);
