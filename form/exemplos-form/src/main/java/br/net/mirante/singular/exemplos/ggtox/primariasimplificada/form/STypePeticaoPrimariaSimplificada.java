@@ -223,9 +223,8 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
 
         embalagem
                 .asAtr()
-                .label("Embalagem")
                 .dependsOn(nivel)
-                .exists(typeValIsEqualsTo(nivel, "I"));
+                .exists(typeValIsNotNull(nivel));
 
         embalagem
                 .modeloRotuloBula
@@ -234,19 +233,6 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
 
         anexos
-                .documentacaoII
-                .asAtr()
-                .dependsOn(nivel)
-                .exists(typeValIsEqualsTo(nivel, "II"));
-
-        anexos
-                .documentacaoIII
-                .asAtr()
-                .dependsOn(nivel)
-                .exists(typeValIsEqualsTo(nivel, "III"));
-
-        anexos
-                .documentacaoIV
                 .asAtr()
                 .dependsOn(nivel)
                 .exists(typeValIsEqualsTo(nivel, "IV"));

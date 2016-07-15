@@ -18,6 +18,10 @@ public class STypeEmbalagem extends STypeComposite<SIComposite> {
 
         super.onLoadType(builder);
 
+        this
+                .asAtr()
+                .label("Embalagem");
+
         marcaComercial = addFieldString("marcaComercial");
         modeloRotuloBula = addFieldAttachment("modeloRotuloBula");
         embalagens = addFieldListOfAttachment("embalagens", "embalagem");

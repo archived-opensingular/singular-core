@@ -4,15 +4,15 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
+import br.net.mirante.singular.form.STypeAttachmentList;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.TypeBuilder;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeAnexosPeticaoPrimariaSimplificada extends STypeComposite<SIComposite> {
 
-    public STypeDocumentacaoPeticaoPrimariaSimplificadaNivelII  documentacaoII;
-    public STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIII documentacaoIII;
-    public STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV  documentacaoIV;
+    public STypeAttachmentList informacoesSobreCulturaIndicacao;
+    public STypeAttachmentList pareceresTecnicosAvaliacoesDasEmpresas;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -26,9 +26,21 @@ public class STypeAnexosPeticaoPrimariaSimplificada extends STypeComposite<SICom
                 .asAtr()
                 .label("Anexos");
 
-        documentacaoII      = addField("documentacaoII", STypeDocumentacaoPeticaoPrimariaSimplificadaNivelII.class);
-        documentacaoIII     = addField("documentacaoIII", STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIII.class);
-        documentacaoIV      = addField("documentacaoIV", STypeDocumentacaoPeticaoPrimariaSimplificadaNivelIV.class);
+        informacoesSobreCulturaIndicacao = addFieldListOfAttachment("informacoesSobreCulturaIndicacao", "informacaoSobreCulturaIndicacao");
+        pareceresTecnicosAvaliacoesDasEmpresas = addFieldListOfAttachment("pareceresTecnicosAvaliacoesDasEmpresas", "parecerTecnicoAvaliacaoDaEmpresa");
+
+        informacoesSobreCulturaIndicacao
+                .asAtr()
+                .label("Informações sobre cultura e indicação")
+                .asAtrBootstrap()
+                .colPreference(12);
+
+        pareceresTecnicosAvaliacoesDasEmpresas
+                .asAtr()
+                .label("Parecer técnicos de Avaliação da Empresa")
+                .asAtrBootstrap()
+                .colPreference(12);
+
 
     }
 }
