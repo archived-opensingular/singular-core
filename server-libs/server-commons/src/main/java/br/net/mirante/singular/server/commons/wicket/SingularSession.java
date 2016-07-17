@@ -40,7 +40,6 @@ public class SingularSession extends AuthenticatedWebSession {
             return new Roles(getUserDetails().getRoles().toArray(new String[0]));
         }
         return new Roles();
-
     }
 
     public List<String> getRoleIds() {

@@ -5,8 +5,11 @@ import br.net.mirante.singular.server.commons.config.SingularServerConfiguration
 import br.net.mirante.singular.server.commons.spring.security.SecurityUtil;
 import br.net.mirante.singular.server.commons.wicket.SingularApplication;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
+import br.net.mirante.singular.server.commons.wicket.error.Page500;
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import org.apache.wicket.core.request.handler.IPageClassRequestHandler;
+import org.apache.wicket.core.request.handler.PageProvider;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
@@ -42,6 +45,12 @@ public class SingularServerContextListener extends AbstractRequestCycleListener 
     private void redirect403(RequestCycle cycle) {
         cycle.getOriginalResponse().reset();
         cycle.setResponsePage(new Error403Page());
+    }
+
+    @Override
+    public IRequestHandler onException(RequestCycle cycle, Exception ex) {
+//        return super.onException(cycle, ex);
+        return new RenderPageRequestHandler(new PageProvider(new Page500(ex)));
     }
 
     private boolean isPageRequest(IRequestHandler handler) {
