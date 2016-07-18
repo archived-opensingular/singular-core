@@ -40,5 +40,9 @@ public class SingularPropertiesTest {
 
             });
         });
+        SingularPropertiesImpl.get().setSingularServerHome(null);
+        SingularPropertiesImpl.get().reload();
+
     }
+
 }

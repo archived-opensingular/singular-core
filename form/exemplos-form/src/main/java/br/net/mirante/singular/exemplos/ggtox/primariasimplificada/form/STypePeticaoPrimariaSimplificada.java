@@ -45,6 +45,8 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
         final STypeIngredienteAtivoPeticaoPrimariaSimplificada ingredienteAtivoPeticao = this.addField("ingredienteAtivoPeticao", STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
         final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnicoPeticao   = this.addField("produtoTecnicoPeticao", STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
         final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado        = this.addField("produtoFormulado", STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
+        final STypeEstudosResiduos                             estudosResiduos        = this.addField("estudosResiduos", STypeEstudosResiduos.class);
+        final STypeEmbalagem                                   embalagem               = this.addField("embalagem", STypeEmbalagem.class);
         final STypeAnexosPeticaoPrimariaSimplificada           anexos                  = this.addField("anexos", STypeAnexosPeticaoPrimariaSimplificada.class);
 
         tipoPeticao
@@ -61,6 +63,7 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
         final List<Integer> produtoTecnicoOpcional    = Arrays.asList(1, 3, 4);
         final List<Integer> naoTemRotuloBula          = Arrays.asList(2, 7, 8);
         final List<Integer> produtoTecnicoMultiplo    = Arrays.asList(5, 6);
+        final List<Integer> precisaEstudoResiduos     = Arrays.asList(1, 4, 5, 6);
 
         tipoPeticao
                 .withUpdateListener(si -> {
@@ -218,42 +221,24 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .dependsOn(nivel)
                 .exists(typeValIsNotEqualsTo(nivel, "I"));
 
-        anexos
+        estudosResiduos
+                .asAtr()
+                .dependsOn(tipoPeticao)
+                .exists(typeValIsIn(idTipoPeticao, precisaEstudoResiduos));
+
+
+        embalagem
                 .asAtr()
                 .dependsOn(nivel)
                 .exists(typeValIsNotNull(nivel));
-        anexos
-                .documentacaoI
-                .asAtr()
-                .dependsOn(nivel)
-                .exists(typeValIsEqualsTo(nivel, "I"));
 
-        anexos.documentacaoI
-                .modelosBulas
-                .asAtr()
-                .dependsOn(tipoPeticao)
-                .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
-
-        anexos.documentacaoI
-                .modelosRotulos
+        embalagem
+                .modeloRotuloBula
                 .asAtr()
                 .dependsOn(tipoPeticao)
                 .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
 
         anexos
-                .documentacaoII
-                .asAtr()
-                .dependsOn(nivel)
-                .exists(typeValIsEqualsTo(nivel, "II"));
-
-        anexos
-                .documentacaoIII
-                .asAtr()
-                .dependsOn(nivel)
-                .exists(typeValIsEqualsTo(nivel, "III"));
-
-        anexos
-                .documentacaoIV
                 .asAtr()
                 .dependsOn(nivel)
                 .exists(typeValIsEqualsTo(nivel, "IV"));
@@ -267,6 +252,8 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                     .newBlock().add(ingredienteAtivoPeticao)
                     .newBlock().add(produtoTecnicoPeticao)
                     .newBlock().add(produtoFormulado)
+                    .newBlock().add(estudosResiduos)
+                    .newBlock().add(embalagem)
                     .newBlock().add(anexos);
 
         });
