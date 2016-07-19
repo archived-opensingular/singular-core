@@ -40,7 +40,7 @@ CREATE TABLE DBSINGULAR.TB_TIPO_FORMULARIO (
 /* Table: TB_ARQUIVO_PETICAO                                    */
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_ARQUIVO_PETICAO (
-   CO_ARQUIVO_PETICAO   VARCHAR(40)               NOT NULL,
+   CO_ARQUIVO_PETICAO   VARCHAR(36)               NOT NULL,
    DS_SHA1                 VARCHAR(40) NOT NULL,
    BL_ARQUIVO_PETICAO     BLOB         NOT NULL,
    NU_TAMANHO           BIGINT        NOT NULL,
