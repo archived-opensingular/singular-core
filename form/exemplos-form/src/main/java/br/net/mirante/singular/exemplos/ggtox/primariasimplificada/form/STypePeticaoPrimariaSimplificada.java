@@ -1,7 +1,24 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
+import static br.net.mirante.singular.form.util.SingularPredicates.*;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.*;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeAnexosPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeDadosGeraisPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeEmbalagem;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeEstudosResiduos;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeIngredienteAtivoPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoFormuladoPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoTecnicoPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeRepresentanteLegal;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeRequerente;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
@@ -14,14 +31,6 @@ import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.view.SViewSelectionByRadio;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static br.net.mirante.singular.form.util.SingularPredicates.*;
 
 @SInfoType(name = "STypePeticaoPrimariaSimplificada", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite> {
@@ -57,7 +66,7 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                     Stream.of(TipoPeticaoPrimariaGGTOX.values()).forEach(tp -> builder.add().set(idTipoPeticao, tp.getId()).set(descricaoTipoPeticao, tp.getDescricao()));
                 });
 
-        final List<Integer> apenasNivel1              = Arrays.asList(3, 7, 8);
+        final List<Integer> apenasNivel1              = Arrays.asList(7, 8);
         final List<Integer> numeroProcessoIgualMatriz = Arrays.asList(7, 8);
         final List<Integer> naoPossuiProdutoFormulado = Arrays.asList(7, 8);
         final List<Integer> produtoTecnicoOpcional    = Arrays.asList(1, 3, 4);

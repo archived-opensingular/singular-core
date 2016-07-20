@@ -1,14 +1,14 @@
 package br.net.mirante.singular.form.builder.selection;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.provider.LookupOptionsProvider;
 import br.net.mirante.singular.form.provider.Provider;
 import br.net.mirante.singular.form.provider.SimpleProvider;
 import br.net.mirante.singular.form.provider.TextQueryProvider;
-
-import java.io.Serializable;
-import java.util.Arrays;
 
 public class ProviderBuilder<TYPE extends Serializable, ROOT_TYPE extends SInstance> extends AbstractBuilder {
 
