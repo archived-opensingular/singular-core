@@ -8,7 +8,7 @@ package br.net.mirante.singular.util.wicket.datatable;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.net.mirante.singular.util.wicket.model.ValueModel;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
@@ -41,6 +41,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
     private boolean advanceTable         = false;
     private boolean condensedTable       = false;
     private boolean showNoRecordsToolbar = true;
+    private List<Behavior> behaviors = new ArrayList<>();
 
     public BSDataTableBuilder() {
     }
@@ -142,6 +143,11 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
 
     public BSDataTableBuilder<T, S, ?> withNoRecordsToolbar() {
         showNoRecordsToolbar = false;
+        return this;
+    }
+
+    public BSDataTableBuilder<T, S, ?> add(Behavior behavior) {
+        behaviors.add(behavior);
         return this;
     }
 

@@ -72,9 +72,10 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
         cell
                 .newTemplateTag(tp -> ""
-                        + "<i"
-                        + " wicket:id='_remover_'"
-                        + " style='" + MapperCommons.ICON_STYLE + " 'class='singular-remove-btn " + Icone.REMOVE + "' />")
+                        + "<button wicket:id='_remover_' class='singular-remove-btn'>"
+                        + "     <i "
+                        + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + Icone.REMOVE + "' />"
+                        + "</button>")
                 .add(btn);
         return btn;
     }
