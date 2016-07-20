@@ -45,6 +45,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     }
 
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
+        WicketBuildContext child = ctx;
         if (ctx.getParent() == null || ctx.isShowBreadcrumb()) {
             ctx.init(this, viewMode);
             BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs()) {
@@ -56,9 +57,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
             BSRow row = ctx.getContainer().newGrid().newRow();
             row.newCol().appendTag("div", panel);
-            WicketBuildContext child = ctx.createChild(row.newCol(), true, ctx.getModel());
+            child = ctx.createChild(row.newCol(), true, ctx.getModel());
             child.annotation(ctx.annotation());
-            ctx = child;
         }
 
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
@@ -67,7 +67,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
             ctx.init(this, viewMode);
             new AnnotationBuilder(this).build(ctx, viewMode, mapper);
         } else {
-            mapper.buildView(ctx.init(this, viewMode));
+            mapper.buildView(child.init(this, viewMode));
         }
 
     }
