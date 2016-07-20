@@ -129,9 +129,10 @@ public class WicketBuildContext implements Serializable {
     private List<WicketBuildContext> contextChain() {
         List<WicketBuildContext> contextChain = newArrayList(this);
         WicketBuildContext ctx = this;
+        contextChain.add(this);
         while (ctx.getParent() != null) {
             ctx = ctx.getParent();
-            contextChain.add(ctx);
+            contextChain.add(ctx.getParent());
         }
         return contextChain;
     }
