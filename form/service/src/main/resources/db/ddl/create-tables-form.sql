@@ -34,4 +34,15 @@ CREATE TABLE DBSINGULAR.TB_TIPO_FORMULARIO (
    SG_TIPO_FORMULARIO   VARCHAR(200)         NOT NULL,
    NU_VERSAO_CACHE      INT                  NOT NULL,
    CONSTRAINT PK_TIPO_FORMULARIO PRIMARY KEY (CO_TIPO_FORMULARIO)
-)
+);
+
+/*==============================================================*/
+/* Table: TB_ARQUIVO_PETICAO                                    */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_ARQUIVO_PETICAO (
+   CO_ARQUIVO_PETICAO   VARCHAR(36)               NOT NULL,
+   DS_SHA1                 VARCHAR(40) NOT NULL,
+   BL_ARQUIVO_PETICAO     BLOB         NOT NULL,
+   NU_TAMANHO           BIGINT        NOT NULL,
+   CONSTRAINT PK_ARQUIVO_PETICAO PRIMARY KEY (CO_ARQUIVO_PETICAO)
+);

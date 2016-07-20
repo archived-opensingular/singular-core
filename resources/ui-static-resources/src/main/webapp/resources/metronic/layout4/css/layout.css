@@ -1979,6 +1979,10 @@ Theme Panel
   margin-bottom: 15px;
   background-color: #eaeef2;
   padding: 10px 10px 5px; }
+  .list-table-body td button {
+    border: 0;
+    padding: 0;
+    background: none; }
   .list-table-body .singular-remove-btn {
     top: 5px;
     position: relative; }
