@@ -11,11 +11,15 @@ import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewListByTable;
 
+import java.util.UUID;
+
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeIngredienteAtivo extends STypeComposite<SIComposite> {
 
+    public static final String FIELD_NAME_ID = "idAtivo";
     public static final String FIELD_NAME_NOME_COMUM_PTBR = "nomeComumPortugues";
 
+    public STypeString                                         idAtivo;
     public STypeString                                         nomeQuimicoInternacional;
     public STypeString                                         nomeQuimico;
     public STypeString                                         nomeComum;
@@ -32,6 +36,11 @@ public class STypeIngredienteAtivo extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
+        this.withInitListener( si -> {
+                    si.getField(idAtivo).setValue(UUID.randomUUID().toString());
+                });
+
+        idAtivo = addFieldString("idAtivo");
         nomeQuimicoInternacional = addFieldString("nomeQuimicoInternacional");
         nomeQuimico = addFieldString("nomeQuimico");
         nomeComum = addFieldString("nomeComum");
@@ -43,6 +52,11 @@ public class STypeIngredienteAtivo extends STypeComposite<SIComposite> {
         sinonimia = sinonimias.getElementsType();
         nomeSinonimia = sinonimia.addFieldString("nome");
         formulasBrutasEstruturais = addFieldListOfAttachment("formulasBrutasEstruturais", "formulaBrutaEstrutural");
+
+
+        idAtivo
+                .asAtr()
+                .visible(false);
 
         nomeQuimicoInternacional
                 .asAtr()

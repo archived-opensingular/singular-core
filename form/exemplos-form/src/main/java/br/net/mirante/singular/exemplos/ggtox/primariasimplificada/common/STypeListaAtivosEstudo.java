@@ -12,14 +12,11 @@ import br.net.mirante.singular.form.converter.SInstanceConverter;
 import br.net.mirante.singular.form.provider.Provider;
 import br.net.mirante.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.validation.IInstanceValidatable;
-import br.net.mirante.singular.form.validation.IInstanceValidator;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
@@ -42,7 +39,7 @@ public class STypeListaAtivosEstudo extends STypeList<STypeIngredienteAtivo, SIC
                     public void fillInstance(SIComposite ins, AtivoSelect obj) {
                         SIList<SIComposite> ativos = findListAtivosPeticao(ins);
                         for (SIComposite si : ativos) {
-                            if (si.getId().equals(obj.getId())) {
+                            if (si.getField(STypeIngredienteAtivo.FIELD_NAME_ID).getValue().equals(obj.getId())) {
                                 Value.hydrate(ins, Value.dehydrate(si));
                             }
                         }
@@ -58,26 +55,6 @@ public class STypeListaAtivosEstudo extends STypeList<STypeIngredienteAtivo, SIC
                 .asAtrProvider()
                 .provider(new AtivosProvider());
 
-//        this
-//                .addInstanceValidator(validatable -> {
-//                    SIList<SIComposite> list = validatable.getInstance();
-//
-//                    for (Iterator<SIComposite> it = list.iterator(); it.hasNext(); ){
-//                        SIComposite ativoEstudo = it.next();
-//                        boolean match = false;
-//                        Value.Content ae = Value.dehydrate(ativoEstudo);
-//                        for (SIComposite ativo :  findListAtivosPeticao(validatable.getInstance())){
-//                            Value.Content a = Value.dehydrate(ativo);
-//                            if (a.equals(ae)){
-//                                match = true;
-//                            }
-//                        }
-//                        if (!match){
-//                            validatable.error("Ativo referenciado no estudo não foi cadastado na seção de ativos: "+ ativoEstudo.getField(STypeIngredienteAtivo.FIELD_NAME_NOME_COMUM_PTBR).getValue());
-//                            break;
-//                        }
-//                    }
-//                });
 
     }
 
@@ -121,23 +98,23 @@ public class STypeListaAtivosEstudo extends STypeList<STypeIngredienteAtivo, SIC
     }
 
     public static class AtivoSelect implements Serializable {
-        private Integer id;
+        private String id;
         private String descricao;
 
-        public AtivoSelect(Integer id, String descricao) {
+        public AtivoSelect(String id, String descricao) {
             this.id = id;
             this.descricao = descricao;
         }
 
         public static AtivoSelect fromInstance(SIComposite ins) {
-            return new AtivoSelect(ins.getId(), (String) ins.getField(STypeIngredienteAtivo.FIELD_NAME_NOME_COMUM_PTBR).getValue());
+            return new AtivoSelect((String) ins.getField(STypeIngredienteAtivo.FIELD_NAME_ID).getValue(), (String) ins.getField(STypeIngredienteAtivo.FIELD_NAME_NOME_COMUM_PTBR).getValue());
         }
 
-        public Integer getId() {
+        public String getId() {
             return id;
         }
 
-        public void setId(Integer id) {
+        public void setId(String id) {
             this.id = id;
         }
 
