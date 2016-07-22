@@ -5,11 +5,15 @@ import static br.net.mirante.singular.form.util.SingularPredicates.*;
 import br.net.mirante.singular.exemplos.SelectBuilder;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.provider.Provider;
+import br.net.mirante.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.type.core.STypeBoolean;
 import br.net.mirante.singular.form.type.core.STypeDecimal;
 import br.net.mirante.singular.form.type.core.STypeInteger;
@@ -17,6 +21,10 @@ import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+
+import java.util.List;
 
 
 @SInfoType(spackage = SPackagePPSCommon.class)
@@ -33,35 +41,40 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
         this.asAtr()
                 .label("Estudo de Resíduos");
 
-        culturaConformeMatriz = addFieldBoolean("culturaConformeMatriz");
+
         cultura = new Cultura();
         amostra = new Amostra();
 
-        culturaConformeMatriz
-                .asAtr().label("Cultura conforme a matriz")
-                .asAtrBootstrap().newRow();
+
 
         amostra.root
-                .asAtr().dependsOn(cultura.culturaConformeEstudoPublicado)
-                .exists(typeValIsNotEqualsTo(cultura.culturaConformeEstudoPublicado, Boolean.TRUE));
+                .asAtr().dependsOn(cultura.tipoEstudo)
+                .exists(typeValIsEqualsTo(cultura.tipoEstudo, Cultura.ESTUDO_NOVO));
 
     }
 
     class Cultura {
 
+        public static final String ESTUDO_PUBLICADO = "Publicado pela ANVISA";
+        public static final String ESTUDO_MATRIZ = "Conforme matriz";
+        public static final String ESTUDO_NOVO = "Novo";
+
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
         private final STypeComposite<SIComposite> rootType;
-        private final STypeBoolean culturaConformeEstudoPublicado;
+        final STypeString tipoEstudo;
+        final STypeListaAtivosEstudo ativos;
 
         public Cultura() {
             root = addFieldListOfComposite("culturas", "cultura");
             rootType = root.getElementsType();
-            culturaConformeEstudoPublicado = rootType.addFieldBoolean("culturaConformeEstudoPublicado");
-            final STypeString estudoPublicado = rootType.addFieldString("estudoPublicado");
+
             final STypeString nomeCultura = rootType.addFieldString("nomeCultura");
             final STypeString nomeOutraCultura = rootType.addFieldString("nomeOutraCultura");
-            final STypeBoolean outraCultura = rootType.addFieldBoolean("outraCultura");
             final STypeString emprego = rootType.addFieldString("emprego");
+            final STypeBoolean outraCultura = rootType.addFieldBoolean("outraCultura");
+            ativos = rootType.addField("ativos", STypeListaAtivosEstudo.class);
+            tipoEstudo = rootType.addFieldString("tipoEstudo");
+            final STypeString estudoPublicado = rootType.addFieldString("estudoPublicado");
             final STypeString numeroEstudo = rootType.addFieldString("numeroEstudo");
             final STypeBoolean adjuvante = rootType.addFieldBoolean("adjuvante");
             final STypeInteger valorConcentracao = rootType.addFieldInteger("valorConcentracao");
@@ -73,51 +86,66 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
                             .col(nomeCultura).col(emprego))
                     .asAtr().exists(typeValIsNotEqualsTo(culturaConformeMatriz, Boolean.TRUE));
 
-            culturaConformeEstudoPublicado
-                    .asAtr().label("Cultura conforme estudo publicado")
-                    .asAtrBootstrap().newRow();
-
-            estudoPublicado
-                    .asAtr().label("Código do estudo publicado")
-                    .dependsOn(culturaConformeEstudoPublicado)
-                    .exists(typeValIsTrue(culturaConformeEstudoPublicado))
-                    .asAtrBootstrap().newRow();
-
-//            existsWhenTrue(culturaConformeEstudoPublicado, nomeCultura, outraCultura, emprego, numeroEstudo, adjuvante, estudoResiduo);
-
             nomeCultura
                     .selectionOf(culturas())
                     .asAtr().label("Nome da cultura")
                     .required()
-                    .dependsOn(outraCultura, culturaConformeEstudoPublicado)
-                    .exists(allMatches(typeValIsNotEqualsTo(culturaConformeEstudoPublicado, Boolean.TRUE), typeValIsNotEqualsTo(outraCultura, Boolean.TRUE)))
-                    .asAtrBootstrap().newRow();
-
-            outraCultura
-                    .asAtr().label("Outra cultura")
-                    .dependsOn(culturaConformeEstudoPublicado)
-                    .exists(typeValIsNotEqualsTo(culturaConformeEstudoPublicado, Boolean.TRUE))
-                    .asAtrBootstrap().newRow();
+                    .dependsOn(outraCultura, tipoEstudo)
+                    .exists(allMatches(typeValIsNotEqualsTo(outraCultura, Boolean.TRUE)));
 
             nomeOutraCultura
                     .asAtr().label("Nome da cultura")
                     .required()
                     .dependsOn(outraCultura)
-                    .exists(typeValIsTrue(outraCultura))
+                    .exists(typeValIsTrue(outraCultura));
+
+            emprego
+                    .selectionOf(empregos())
+                    .asAtr().label("Emprego");
+
+            outraCultura
+                    .asAtr().label("Outra cultura")
+                    .asAtrBootstrap()
+                    .newRow();
+
+
+            ativos
+                    .asAtr()
+                    .required()
+                    .label("Ativos do estudo (dentre os informados na seção de ativos)");
+
+
+
+
+            tipoEstudo
+                    .withRadioView()
+                    .selectionOf(ESTUDO_MATRIZ, ESTUDO_PUBLICADO, ESTUDO_NOVO)
+                    .asAtr()
+                    .label("Estudo")
+                    .asAtrBootstrap()
+                    .newRow();
+
+
+
+            estudoPublicado
+                    .asAtr().label("Código do estudo publicado pela ANVISA")
+                    .dependsOn(tipoEstudo)
+                    .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_PUBLICADO))
                     .asAtrBootstrap().newRow();
+
 
             numeroEstudo
                     .asAtr().label("Número do estudo")
-                    .dependsOn(culturaConformeEstudoPublicado)
-                    .exists(typeValIsNotEqualsTo(culturaConformeEstudoPublicado, Boolean.TRUE))
+                    .dependsOn(tipoEstudo)
+                    .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
                     .asAtrBootstrap().newRow();
 
             adjuvante
                     .withRadioView()
                     .asAtr().label("Adjuvante")
                     .required()
-                    .dependsOn(culturaConformeEstudoPublicado)
-                    .exists(typeValIsNotEqualsTo(culturaConformeEstudoPublicado, Boolean.TRUE))
+                    .dependsOn(tipoEstudo)
+                    .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
                     .asAtrBootstrap().newRow();
 
             valorConcentracao
@@ -131,17 +159,11 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
                     .dependsOn(adjuvante)
                     .exists(typeValIsTrue(adjuvante));
 
-            emprego
-                    .selectionOf(empregos())
-                    .asAtr().label("Emprego")
-                    .dependsOn(culturaConformeEstudoPublicado)
-                    .exists(typeValIsNotEqualsTo(culturaConformeEstudoPublicado, Boolean.TRUE))
-                    .asAtrBootstrap().newRow();
 
             estudoResiduo
                     .asAtr().label("Estudo de resíduo")
-                    .dependsOn(culturaConformeEstudoPublicado)
-                    .exists(typeValIsNotEqualsTo(culturaConformeEstudoPublicado, Boolean.TRUE));
+                    .dependsOn(tipoEstudo)
+                    .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO));
         }
 
     }

@@ -14,6 +14,8 @@ import br.net.mirante.singular.form.view.SViewListByTable;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeIngredienteAtivo extends STypeComposite<SIComposite> {
 
+    public static final String FIELD_NAME_NOME_COMUM_PTBR = "nomeComumPortugues";
+
     public STypeString                                         nomeQuimicoInternacional;
     public STypeString                                         nomeQuimico;
     public STypeString                                         nomeComum;
@@ -33,7 +35,7 @@ public class STypeIngredienteAtivo extends STypeComposite<SIComposite> {
         nomeQuimicoInternacional = addFieldString("nomeQuimicoInternacional");
         nomeQuimico = addFieldString("nomeQuimico");
         nomeComum = addFieldString("nomeComum");
-        nomeComumPortugues = addFieldString("nomeComumPortugues");
+        nomeComumPortugues = addFieldString(FIELD_NAME_NOME_COMUM_PTBR);
         entidadeAprovadora = addFieldString("entidadeAprovadora");
         numeroCAS = addFieldString("numeroCAS");
         grupoQuimico = addFieldString("grupoQuimico");

@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeIngredienteAtivoPeticaoPrimariaSimplificada extends STypeComposite<SIComposite> {
 
+    public static final String FIELD_NAME_LIST_ATIVOS = "ingredientesAtivos";
 
     @Override
     protected void onLoadType(TypeBuilder builder) {
@@ -17,16 +18,13 @@ public class STypeIngredienteAtivoPeticaoPrimariaSimplificada extends STypeCompo
                 .asAtrAnnotation()
                 .setAnnotated();
 
-        final STypeList<STypeIngredienteAtivo, SIComposite> ingredientesAtivos  = this.addFieldListOf("ingredientesAtivos", STypeIngredienteAtivo.class);
+        final STypeList<STypeIngredienteAtivo, SIComposite> ingredientesAtivos  = this.addFieldListOf(FIELD_NAME_LIST_ATIVOS, STypeIngredienteAtivo.class);
 
         ingredientesAtivos.withView(new SViewListByMasterDetail()
+                .col(ingredientesAtivos.getElementsType().nomeComumPortugues)
                 .col(ingredientesAtivos.getElementsType().numeroCAS, "CAS")
-                .col(ingredientesAtivos.getElementsType().nomeQuimico, "Nome químico")
-                .col(ingredientesAtivos.getElementsType().grupoQuimico, "Grupo químico"));
+                .col(ingredientesAtivos.getElementsType().nomeQuimico, "Nome químico"));
 
-//        ingredientesAtivos
-//                .asAtr()
-//                .label("Ingredientes Ativos");
 
     }
 }
