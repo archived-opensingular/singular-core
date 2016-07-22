@@ -14,6 +14,8 @@ import br.net.mirante.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -145,6 +147,26 @@ public class STypeListaAtivosEstudo extends STypeList<STypeIngredienteAtivo, SIC
 
         public void setDescricao(String descricao) {
             this.descricao = descricao;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+
+            if (o == null || getClass() != o.getClass()) return false;
+
+            AtivoSelect that = (AtivoSelect) o;
+
+            return new EqualsBuilder()
+                    .append(id, that.id)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(id)
+                    .toHashCode();
         }
     }
 
