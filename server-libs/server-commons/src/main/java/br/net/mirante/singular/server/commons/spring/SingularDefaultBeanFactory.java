@@ -6,6 +6,7 @@ import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.persistence.dao.FileDao;
 import br.net.mirante.singular.form.persistence.dao.FormDAO;
+import br.net.mirante.singular.form.persistence.service.AttachmentPersistenceService;
 import br.net.mirante.singular.form.service.FormService;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
@@ -51,7 +52,12 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean(name = SDocument.FILE_PERSISTENCE_SERVICE)
-    public IAttachmentPersistenceHandler filePersistenceService() {
+    public IAttachmentPersistenceHandler attachmentPersistenceService() {
+        return new AttachmentPersistenceService();
+    }
+
+    @Bean
+    public FileDao fileDao() {
         return new FileDao();
     }
 

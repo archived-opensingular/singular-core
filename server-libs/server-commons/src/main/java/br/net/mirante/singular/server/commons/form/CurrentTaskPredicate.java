@@ -32,6 +32,10 @@ public class CurrentTaskPredicate implements Predicate<SInstance>{
         return new NoCurrentTaskPredicate();
     }
 
+    public static CurrentTaskPredicate hasCurrentTask(){
+        return new ExistsCurrentTaskPredicate();
+    }
+
     public CurrentTaskPredicate(boolean negate, ITaskDefinition ... referenceTasks) {
         this.negate = negate;
         this.referenceTasks = referenceTasks;
@@ -97,5 +101,18 @@ class NoCurrentTaskPredicate extends CurrentTaskPredicate {
     public boolean test(SInstance x) {
         updateCurrentTask(x);
         return !getCurrentTask().isPresent();
+    }
+}
+
+class ExistsCurrentTaskPredicate extends CurrentTaskPredicate {
+
+    public ExistsCurrentTaskPredicate() {
+        super(false);
+    }
+
+    @Override
+    public boolean test(SInstance x) {
+        updateCurrentTask(x);
+        return getCurrentTask().isPresent();
     }
 }

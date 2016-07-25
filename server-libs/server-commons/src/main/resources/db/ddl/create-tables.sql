@@ -271,16 +271,6 @@ CREATE TABLE DBSINGULAR.TB_PETICAO (
    ID_PESSOA_REPRESENTADA            CHAR(32)             null,
    CONSTRAINT PK_PETICAO PRIMARY KEY (CO_PETICAO)
 );
-/*==============================================================*/
-/* Table: TB_ARQUIVO_PETICAO                                    */
-/*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_ARQUIVO_PETICAO (
-   CO_ARQUIVO_PETICAO   VARCHAR(40)               NOT NULL,
-   DS_SHA1                 VARCHAR(40) NOT NULL,
-   BL_ARQUIVO_PETICAO     BLOB         NOT NULL,
-   NU_TAMANHO           BIGINT        NOT NULL,
-   CONSTRAINT PK_ARQUIVO_PETICAO PRIMARY KEY (CO_ARQUIVO_PETICAO)
-);
 
 /*==============================================================*/
 /* Table: TB_DASHBOARD                                          */
