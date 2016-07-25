@@ -24,6 +24,11 @@ public class SingularServerConfiguration implements ServletContextAware {
     private String processGroupCod;
     private String definitionsBasePackage;
     private Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap = new HashMap<>(0);
+    private String[] defaultPublicUrls;
+
+    public String[] getDefaultPublicUrls() {
+        return defaultPublicUrls;
+    }
 
     public IServerContext[] getContexts() {
         return contexts;
@@ -65,6 +70,7 @@ public class SingularServerConfiguration implements ServletContextAware {
         FormInitializer formInitializer = (FormInitializer) servletContext.getAttribute(SingularInitializer.SERVLET_ATTRIBUTE_FORM_CONFIGURATION_CONFIGURATION);
         FlowInitializer flowInitializer = (FlowInitializer) servletContext.getAttribute(SingularInitializer.SERVLET_ATTRIBUTE_FLOW_CONFIGURATION_CONFIGURATION);
         this.contexts = webInitializer.serverContexts();
+        this.defaultPublicUrls = webInitializer.getDefaultPublicUrls();
         this.springMVCServletMapping = springHibernateInitializer.springMVCServletMapping();
         Optional.ofNullable(formInitializer)
                 .ifPresent(fi ->

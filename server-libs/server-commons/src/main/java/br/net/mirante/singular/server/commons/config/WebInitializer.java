@@ -1,6 +1,8 @@
 package br.net.mirante.singular.server.commons.config;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -56,6 +58,18 @@ public abstract class WebInitializer {
     private void addOpenSessionInView(ServletContext servletContext) {
         FilterRegistration.Dynamic opensessioninview = servletContext.addFilter("opensessioninview", OpenSessionInViewFilter.class);
         opensessioninview.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
+    }
+
+    protected String[] getDefaultPublicUrls() {
+        List<String> urls = new ArrayList<>();
+        urls.add("/rest/*");
+        urls.add("/resources/*");
+        urls.add("/index.html");
+        for (IServerContext ctx : serverContexts()){
+            urls.add(ctx.getUrlPath() + "/wicket/resource/*");
+            urls.add(ctx.getUrlPath() + "/public/*");
+        }
+        return urls.toArray(new String[urls.size()]);
     }
 
 
