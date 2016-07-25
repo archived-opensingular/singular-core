@@ -1,26 +1,16 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
 
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.*;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.provider.SSimpleProvider;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.view.SViewByBlock;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
-import java.util.List;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SInfoPackage;
+import br.net.mirante.singular.form.SPackage;
 
 
 @SInfoPackage(name = SPackagePeticaoPrimariaSimplificada.PACOTE)
 public class SPackagePeticaoPrimariaSimplificada extends SPackage {
 
-    public static final String PACOTE        = "mform.peticao";
-    public static final String TIPO          = "PeticaoPrimariaSimplificada";
+    public static final String PACOTE = "mform.peticao";
+    public static final String TIPO = "PeticaoPrimariaSimplificada";
     public static final String NOME_COMPLETO = PACOTE + "." + TIPO;
 
     public SPackagePeticaoPrimariaSimplificada() {
