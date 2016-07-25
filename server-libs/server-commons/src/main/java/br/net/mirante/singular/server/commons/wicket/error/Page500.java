@@ -9,7 +9,7 @@ import org.wicketstuff.annotation.mount.MountPath;
  * Created by nuk on 01/07/16.
  */
 @StatelessComponent
-@MountPath("error/500")
+@MountPath("public/error/500")
 public class Page500 extends Template {
 
     private Exception exception;

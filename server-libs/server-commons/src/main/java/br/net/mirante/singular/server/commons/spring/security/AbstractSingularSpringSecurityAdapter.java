@@ -11,7 +11,10 @@ public abstract class AbstractSingularSpringSecurityAdapter extends WebSecurityC
 
 
     protected String[] getDefaultPublicUrls() {
-        return new String[]{"/rest/**", "/resources/**", "/index.html", getContext().getUrlPath() + "/wicket/resource/**"};
+        return new String[]{
+                "/rest/**", "/resources/**", "/public/**", "/index.html", "**/public/error/**",
+                getContext().getUrlPath() + "/wicket/resource/**",
+                getContext().getUrlPath() + "/public/**"};
     }
 
 }
