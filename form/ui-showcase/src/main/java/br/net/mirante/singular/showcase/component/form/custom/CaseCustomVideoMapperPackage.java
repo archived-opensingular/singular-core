@@ -36,12 +36,15 @@ public class CaseCustomVideoMapperPackage extends SPackage {
         STypeComposite<SIComposite> tipoMyForm = pb.createCompositeType("testForm");
 
         tipoMyForm.addFieldString("video")
+            .addInstanceValidator(v -> {
+                if (!v.getInstance().getValue().toLowerCase().endsWith(".mp4"))
+                    v.error("The URL must point to a MP4 file");
+            })
             //@destacar
             .withCustomMapper(() -> new VideoMapper())
-            .asAtr().label("Vídeo");
-
+            .asAtr().label("Vídeo").required(true);
     }
-
+    
     private static final class VideoMapper implements IWicketComponentMapper {
         @Override
         public void buildView(WicketBuildContext ctx) {

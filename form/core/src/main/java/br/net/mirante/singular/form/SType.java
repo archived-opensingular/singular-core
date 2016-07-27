@@ -28,6 +28,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.commons.lambda.ISupplier;
 import br.net.mirante.singular.form.builder.selection.SelectionBuilder;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.context.UIComponentMapper;
@@ -92,7 +93,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     private SView view;
 
-    private Supplier<? extends UIComponentMapper> customMapperFactory;
+    private ISupplier<? extends UIComponentMapper> customMapperFactory;
 
     /** Indica se o tipo está no meio da execução do seu método {@link #onLoadType(TypeBuilder)}. */
     private boolean callingOnLoadType;
@@ -865,7 +866,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     public boolean hasValidation() {
         return isRequired() ||
                 getAttributeValue(SPackageBasic.ATR_REQUIRED_FUNCTION) != null ||
-                !hasValidationInternal();
+                hasValidationInternal();
     }
 
     private boolean hasValidationInternal() {
@@ -873,12 +874,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
                 (superType != null && superType.hasValidationInternal());
     }
 
-    public <T extends UIComponentMapper> SType<I> withCustomMapper(Supplier<T> factory) {
+    public <T extends UIComponentMapper> SType<I> withCustomMapper(ISupplier<T> factory) {
         this.customMapperFactory = factory;
         return this;
     }
 
-    public Supplier<? extends UIComponentMapper> getCustomMapperFactory() {
+    public ISupplier<? extends UIComponentMapper> getCustomMapperFactory() {
         return customMapperFactory;
     }
 
