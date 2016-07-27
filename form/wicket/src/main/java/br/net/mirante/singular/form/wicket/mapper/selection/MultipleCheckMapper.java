@@ -14,7 +14,7 @@ import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.wicket.model.MultipleSelectMInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.MultipleSelectSInstanceAwareModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 @SuppressWarnings("serial")
@@ -24,7 +24,7 @@ public class MultipleCheckMapper extends MultipleSelectMapper {
     protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, List<?> opcoesValue) {
         return new CheckBoxMultipleChoice(
                 model.getObject().getName(),
-                new MultipleSelectMInstanceAwareModel(model),
+                new MultipleSelectSInstanceAwareModel(model),
                 opcoesValue, renderer(model))
                 .setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
     }

@@ -25,7 +25,7 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerInputGroup;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
@@ -43,7 +43,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
                 .setConverter(new ConverterImpl())
                 .setTextFieldConfigurer((FormComponent<?> c) -> c
                     .setLabel(labelModel)
-                    .setDefaultModel(new MInstanciaValorModel<>(model))
+                    .setDefaultModel(new SInstanceValueModel<>(model))
                     .setOutputMarkupId(true)
                     .add(new InputMaskBehavior(Masks.FULL_DATE))));
         return datepicker.getTextField();

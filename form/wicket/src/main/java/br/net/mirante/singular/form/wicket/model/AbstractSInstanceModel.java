@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.SInstance;
 import org.apache.wicket.model.IModel;
 
 public abstract class AbstractSInstanceModel<I extends SInstance>
-    implements IModel<I>, IMInstanciaAwareModel<I> {
+    implements IModel<I>, ISInstanceAwareModel<I> {
 
     @Override
     public final SInstance getMInstancia() {

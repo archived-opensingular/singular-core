@@ -23,7 +23,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class DecimalMapper extends StringMapper {
@@ -37,7 +37,7 @@ public class DecimalMapper extends StringMapper {
 
         Integer decimalMaximo = getDecimalMaximo(model);
         TextField<String> comp = new TextField<String>(model.getObject().getName(),
-            new MInstanciaValorModel<>(model), String.class) {
+            new SInstanceValueModel<>(model), String.class) {
             @Override
             public IConverter getConverter(Class type) {
                 return new BigDecimalConverter(decimalMaximo);

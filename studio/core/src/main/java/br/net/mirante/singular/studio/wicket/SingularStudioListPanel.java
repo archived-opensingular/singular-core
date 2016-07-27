@@ -3,7 +3,7 @@ package br.net.mirante.singular.studio.wicket;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -131,7 +131,7 @@ public class SingularStudioListPanel extends SingularStudioPanel {
 
             @Override
             public IModel<SInstance> model(SInstance object) {
-                return new MInstanceRootModel<>(object);
+                return new SInstanceRootModel<>(object);
             }
         };
     }

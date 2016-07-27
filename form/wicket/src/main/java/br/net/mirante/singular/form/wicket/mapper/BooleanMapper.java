@@ -11,8 +11,8 @@ import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
-import br.net.mirante.singular.form.wicket.model.AtributoModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.AttributeModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
@@ -33,7 +33,7 @@ public class BooleanMapper implements IWicketComponentMapper {
 
         final IModel<? extends SInstance> model = ctx.getModel();
         final BSControls formGroup = ctx.getContainer().newFormGroup();
-        final AtributoModel<String> labelModel = new AtributoModel<>(model, SPackageBasic.ATR_LABEL);
+        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
 
         switch (ctx.getViewMode()) {
             case VISUALIZATION:
@@ -46,9 +46,9 @@ public class BooleanMapper implements IWicketComponentMapper {
     }
 
     private void buildForEdition(WicketBuildContext ctx, IModel<? extends SInstance> model, BSControls formGroup,
-                                 AtributoModel<String> labelModel) {
+                                 AttributeModel<String> labelModel) {
 
-        final CheckBox input = new CheckBox(model.getObject().getName(), new MInstanciaValorModel<>(model));
+        final CheckBox input = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
         final Label label = buildLabel("_", labelModel);
         adjustJSEvents(label);
         formGroup.appendCheckbox(input, label);
@@ -58,7 +58,7 @@ public class BooleanMapper implements IWicketComponentMapper {
     }
 
     private void buildForVisualization(IModel<? extends SInstance> model, BSControls formGroup,
-                                       AtributoModel<String> labelModel) {
+                                       AttributeModel<String> labelModel) {
         final Boolean checked;
 
         final SInstance mi = model.getObject();
@@ -78,7 +78,7 @@ public class BooleanMapper implements IWicketComponentMapper {
         tp.add(wellBorder.add(buildLabel("label", labelModel)));
     }
 
-    protected Label buildLabel(String id, AtributoModel<String> labelModel) {
+    protected Label buildLabel(String id, AttributeModel<String> labelModel) {
         return (Label) new Label(id, labelModel.getObject())
             .setEscapeModelStrings(false);
     }

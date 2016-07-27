@@ -20,9 +20,9 @@ import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.AtributoModel;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.AttributeModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 
@@ -72,14 +72,14 @@ public class RangeSliderMapper implements IWicketComponentMapper {
     }
 
     private BSLabel buildLabel(IModel<? extends SInstance> model) {
-        final AtributoModel<String> labelModel = new AtributoModel<>(model, SPackageBasic.ATR_LABEL);
+        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
         return new BSLabel("label", labelModel);
     }
 
     private IModel<? extends SInstance> resolveModel(SIComposite mi, String path) {
         final SInstance SInstance = mi.getField(path);
-        final MInstanceRootModel<?> rootModel = new MInstanceRootModel<>(SInstance);
-        return new MInstanciaValorModel<>(rootModel);
+        final SInstanceRootModel<?> rootModel = new SInstanceRootModel<>(SInstance);
+        return new SInstanceValueModel<>(rootModel);
     }
 
     private BSControls createFormGroup(WicketBuildContext ctx) {

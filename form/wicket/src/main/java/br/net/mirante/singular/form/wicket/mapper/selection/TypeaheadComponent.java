@@ -43,8 +43,8 @@ import br.net.mirante.singular.form.provider.Provider;
 import br.net.mirante.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewAutoComplete;
-import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.AbstractSInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 
@@ -129,14 +129,14 @@ public class TypeaheadComponent extends Panel {
                 }
             }
         }));
-        c.add(valueField = new TextField<>("value_field", new AbstractMInstanceAwareModel<String>() {
+        c.add(valueField = new TextField<>("value_field", new AbstractSInstanceAwareModel<String>() {
 
             private String lastId;
             private Object lastValue;
 
             @Override
             public SInstance getMInstancia() {
-                return IMInstanciaAwareModel.optionalCast(model).map(IMInstanciaAwareModel::getMInstancia).orElse(null);
+                return ISInstanceAwareModel.optionalCast(model).map(ISInstanceAwareModel::getMInstancia).orElse(null);
             }
 
             @Override
@@ -308,7 +308,7 @@ public class TypeaheadComponent extends Panel {
     }
 
     private SInstance instance() {
-        return IMInstanciaAwareModel.optionalCast(model).map(IMInstanciaAwareModel::getMInstancia).orElse(null);
+        return ISInstanceAwareModel.optionalCast(model).map(ISInstanceAwareModel::getMInstancia).orElse(null);
     }
 
     private PackageResourceReference resourceRef(String resourceName) {

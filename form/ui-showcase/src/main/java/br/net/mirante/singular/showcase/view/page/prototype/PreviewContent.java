@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.view.template.Content;
 import org.apache.wicket.Page;
@@ -33,9 +33,9 @@ public class PreviewContent extends Content {
 
     private Page backPage;
 
-    private MInstanceRootModel<SIComposite> model;
+    private SInstanceRootModel<SIComposite> model;
 
-    public PreviewContent(String id, MInstanceRootModel<SIComposite> model, Page backpage) {
+    public PreviewContent(String id, SInstanceRootModel<SIComposite> model, Page backpage) {
         super(id);
         this.model = model;
         this.backPage = backpage;

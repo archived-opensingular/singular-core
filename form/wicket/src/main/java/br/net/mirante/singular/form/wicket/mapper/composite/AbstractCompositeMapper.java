@@ -19,13 +19,12 @@ import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackPanel;
 import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
@@ -87,7 +86,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             }
         }
 
-        protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row, final SInstanceCampoModel<SInstance> mCampo) {
+        protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row, final SInstanceFieldModel<SInstance> mCampo) {
 
             final SInstance iCampo   = mCampo.getObject();
             final ViewMode  viewMode = ctx.getViewMode();
@@ -129,8 +128,8 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
                     : iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
         }
 
-        protected SInstanceCampoModel<SInstance> fieldModel(SType<?> tCampo) {
-            return new SInstanceCampoModel<>(model, tCampo.getNameSimple());
+        protected SInstanceFieldModel<SInstance> fieldModel(SType<?> tCampo) {
+            return new SInstanceFieldModel<>(model, tCampo.getNameSimple());
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
@@ -179,7 +178,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
                     row = grid.newRow();
                 }
 
-                final SInstanceCampoModel<SInstance> instanceModel = fieldModel(tCampo);
+                final SInstanceFieldModel<SInstance> instanceModel = fieldModel(tCampo);
 
                 rowColTotal += getPrefColspan(ctx, instanceModel.getObject());
                 if (rowColTotal > BSGrid.MAX_COLS) {

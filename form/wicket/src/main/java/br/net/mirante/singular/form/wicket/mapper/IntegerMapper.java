@@ -17,7 +17,7 @@ import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class IntegerMapper extends StringMapper {
@@ -31,7 +31,7 @@ public class IntegerMapper extends StringMapper {
         Optional<Integer> size = Optional.ofNullable(
             model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
         TextField<Integer> comp = new TextField<>(model.getObject().getName(),
-            new MInstanciaValorModel<>(model), Integer.class);
+            new SInstanceValueModel<>(model), Integer.class);
         formGroup.appendInputText(comp.setLabel(labelModel).setOutputMarkupId(true)
             .add(new InputMaskBehavior(Masks.NUMERIC, new HashMap<String, Object>() {
                 {

@@ -25,7 +25,7 @@ import br.net.mirante.singular.form.provider.Provider;
 import br.net.mirante.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
-import br.net.mirante.singular.form.wicket.model.SelectMInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.SelectSInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
@@ -38,7 +38,7 @@ public class SelectMapper extends AbstractControlsFieldComponentMapper {
         final IModel<? extends SInstance> model = ctx.getModel();
         
         final DropDownChoice<Serializable> dropDownChoice = new DropDownChoice<Serializable>(ctx.getCurrentInstance().getName(),
-                new SelectMInstanceAwareModel(model),
+                new SelectSInstanceAwareModel(model),
                 new DefaultOptionsProviderLoadableDetachableModel(model),
                 new SingularChoiceRenderer(model)) {
             @Override

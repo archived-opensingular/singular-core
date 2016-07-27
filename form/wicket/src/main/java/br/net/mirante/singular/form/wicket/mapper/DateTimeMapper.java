@@ -19,7 +19,7 @@ import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewDateTime;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.datetime.DateTimeContainer;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class DateTimeMapper extends AbstractControlsFieldComponentMapper {
@@ -33,7 +33,7 @@ public class DateTimeMapper extends AbstractControlsFieldComponentMapper {
         if(view instanceof SViewDateTime){
             dateTimerView = (SViewDateTime) view;
         }
-        final DateTimeContainer dateTimeContainer = new DateTimeContainer(model.getObject().getName(), new MInstanciaValorModel<>(model), dateTimerView);
+        final DateTimeContainer dateTimeContainer = new DateTimeContainer(model.getObject().getName(), new SInstanceValueModel<>(model), dateTimerView);
         formGroup.appendDiv(dateTimeContainer);
         return dateTimeContainer;
     }

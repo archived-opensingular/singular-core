@@ -7,7 +7,7 @@ package br.net.mirante.singular.form.wicket.behavior;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SInstanceViewState;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
@@ -91,8 +91,8 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
     private static SInstance resolveInstance(Component component) {
         if (component != null) {
             IModel<?> model = component.getDefaultModel();
-            if (model != null && IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
-                return ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            if (model != null && ISInstanceAwareModel.class.isAssignableFrom(model.getClass())) {
+                return ((ISInstanceAwareModel<?>) model).getMInstancia();
             }
         }
         return null;

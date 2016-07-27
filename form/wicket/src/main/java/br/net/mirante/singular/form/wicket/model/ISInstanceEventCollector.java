@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.event.SInstanceEvent;
 
 import java.util.List;
 
-public interface IMInstanceEventCollector<I extends SInstance> extends IMInstanciaAwareModel<I> {
+public interface ISInstanceEventCollector<I extends SInstance> extends ISInstanceAwareModel<I> {
     List<SInstanceEvent> getInstanceEvents();
     void clearInstanceEvents();
 }

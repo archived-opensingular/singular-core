@@ -9,8 +9,8 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.util.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.maps.MarkableGoogleMapsPanel;
 import org.apache.wicket.model.IModel;
@@ -34,7 +34,7 @@ public class LatitudeLongitudeMapper implements IWicketComponentMapper {
     }
 
     private IModel<SInstance> createValorModel(IModel<? extends SInstance> root, String path) {
-        return new MInstanciaValorModel<>(new SInstanceCampoModel<>(root, path));
+        return new SInstanceValueModel<>(new SInstanceFieldModel<>(root, path));
     }
 
 }

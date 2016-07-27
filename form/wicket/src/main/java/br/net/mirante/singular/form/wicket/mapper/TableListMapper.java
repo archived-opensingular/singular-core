@@ -37,7 +37,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
@@ -231,7 +231,7 @@ public class TableListMapper extends AbstractListaMapper {
                 final STypeComposite<?> ct = ci.getType();
 
                 for (SType<?> ft : ct.getFields()) {
-                    final IModel<SInstance> fm = new SInstanceCampoModel<>(item.getModel(), ft.getNameSimple());
+                    final IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
                     wicketBuilder.build(ctx.createChild(row.newCol(), true, fm), viewMode);
                 }
             } else {

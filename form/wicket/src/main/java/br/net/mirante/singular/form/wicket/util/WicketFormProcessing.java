@@ -43,7 +43,7 @@ import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,
@@ -225,7 +225,7 @@ public class WicketFormProcessing {
             final Predicate<SInstance> shouldntGoDepper = i -> !isParentsVisible(i);
 
             final Consumer<MarkupContainer> refreshDependentComponentsConsumer = rc -> rc.visitChildren(Component.class, (c, visit) -> {
-                IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
+                ISInstanceAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
                     final SInstance ins = model.getMInstancia();
                     if (shouldntGoDepper.test(ins)) {
                         visit.dontGoDeeper();

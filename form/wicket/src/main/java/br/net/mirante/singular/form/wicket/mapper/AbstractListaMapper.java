@@ -30,7 +30,7 @@ import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.view.AbstractSViewListWithControls;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceListItemModel;
 import br.net.mirante.singular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
@@ -92,7 +92,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
             List<IModel<SInstance>> list  = new ArrayList<>();
             SIList<SInstance>       sList = getModelObject();
             for (int i = 0; i < sList.size(); i++)
-                list.add(new SInstanceItemListaModel<>(getDefaultModel(), i));
+                list.add(new SInstanceListItemModel<>(getDefaultModel(), i));
             return list.iterator();
         }
 
@@ -139,13 +139,13 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
             final int         index = item.getIndex();
             SIList<SInstance> lista = modelLista.getObject();
             lista.addNewAt(index);
-            List<SInstanceItemListaModel<?>> itemModels = new ArrayList<>();
+            List<SInstanceListItemModel<?>> itemModels = new ArrayList<>();
             for (Component child : elementsView) {
                 IModel<?> childModel = child.getDefaultModel();
-                if (childModel instanceof SInstanceItemListaModel<?>)
-                    itemModels.add((SInstanceItemListaModel<?>) childModel);
+                if (childModel instanceof SInstanceListItemModel<?>)
+                    itemModels.add((SInstanceListItemModel<?>) childModel);
             }
-            for (SInstanceItemListaModel<?> itemModel : itemModels)
+            for (SInstanceListItemModel<?> itemModel : itemModels)
                 if (itemModel.getIndex() >= index)
                     itemModel.setIndex(itemModel.getIndex() + 1);
             target.add(form);
@@ -170,13 +170,13 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
             final int         index = item.getIndex();
             SIList<SInstance> lista = elementsView.getModelObject();
             lista.remove(index);
-            List<SInstanceItemListaModel<?>> itemModels = new ArrayList<>();
+            List<SInstanceListItemModel<?>> itemModels = new ArrayList<>();
             for (Component child : elementsView) {
                 IModel<?> childModel = child.getDefaultModel();
-                if (childModel instanceof SInstanceItemListaModel<?>)
-                    itemModels.add((SInstanceItemListaModel<?>) childModel);
+                if (childModel instanceof SInstanceListItemModel<?>)
+                    itemModels.add((SInstanceListItemModel<?>) childModel);
             }
-            for (SInstanceItemListaModel<?> itemModel : itemModels)
+            for (SInstanceListItemModel<?> itemModel : itemModels)
                 if (itemModel.getIndex() > index)
                     itemModel.setIndex(itemModel.getIndex() - 1);
                 else if (itemModel.getIndex() == index)

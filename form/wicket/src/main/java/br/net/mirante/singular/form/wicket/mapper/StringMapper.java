@@ -20,7 +20,7 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.CountDownBehaviour;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class StringMapper extends AbstractControlsFieldComponentMapper {
@@ -32,7 +32,7 @@ public class StringMapper extends AbstractControlsFieldComponentMapper {
         FormComponent<?> comp;
 
         formGroup.appendInputText(comp = new TextField<>(model.getObject().getName(),
-            new MInstanciaValorModel<>(model), String.class).setLabel(labelModel));
+            new SInstanceValueModel<>(model), String.class).setLabel(labelModel));
 
         Optional<Integer> maxSize = Optional.ofNullable(
             model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));

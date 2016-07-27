@@ -33,7 +33,7 @@ import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackCompactPanel;
-import br.net.mirante.singular.form.wicket.model.AtributoModel;
+import br.net.mirante.singular.form.wicket.model.AttributeModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
@@ -58,11 +58,11 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
     public void buildView(WicketBuildContext ctx) {
 
         final IModel<? extends SInstance> model = ctx.getModel();
-        final IModel<String> labelModel = new AtributoModel<>(model, SPackageBasic.ATR_LABEL);
+        final IModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
 
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
         final BSContainer<?> container = ctx.getContainer();
-        final AtributoModel<String> subtitle = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
+        final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
         final ViewMode viewMode = ctx.getViewMode();
         final BSLabel label = new BSLabel("label", labelModel);
         final BSControls formGroup = container.newFormGroup();

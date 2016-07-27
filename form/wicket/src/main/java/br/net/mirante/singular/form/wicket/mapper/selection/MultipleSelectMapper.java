@@ -23,10 +23,9 @@ import br.net.mirante.singular.form.converter.SInstanceConverter;
 import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.provider.Provider;
 import br.net.mirante.singular.form.provider.ProviderContext;
-import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
-import br.net.mirante.singular.form.wicket.model.MultipleSelectMInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.MultipleSelectSInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
@@ -67,7 +66,7 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, final List<?> opcoesValue) {
-        return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectMInstanceAwareModel(model), opcoesValue, renderer(model));
+        return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectSInstanceAwareModel(model), opcoesValue, renderer(model));
     }
 
     protected Component formGroupAppender(BSControls formGroup,

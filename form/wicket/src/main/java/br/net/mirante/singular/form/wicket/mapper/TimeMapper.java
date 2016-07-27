@@ -4,8 +4,8 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.STypeTime;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MIDateTimeModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SIDateTimeModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +28,7 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final TextField<String> time = new TextField<>("time",
-                new MIDateTimeModel.TimeModel(new MInstanciaValorModel<>(ctx.getModel())));
+                new SIDateTimeModel.TimeModel(new SInstanceValueModel<>(ctx.getModel())));
         time.add(new Behavior() {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {

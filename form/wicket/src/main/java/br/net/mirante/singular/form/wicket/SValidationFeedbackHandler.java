@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
@@ -287,9 +287,9 @@ public class SValidationFeedbackHandler implements Serializable {
         }
 
         if (rootInstance.isEmpty()) {
-            IMInstanciaAwareModel
+            ISInstanceAwareModel
                     .optionalCast(rootContainer.getDefaultModel())
-                    .map(IMInstanciaAwareModel::getMInstancia)
+                    .map(ISInstanceAwareModel::getMInstancia)
                     .ifPresent(rootInstance::add);
         }
 

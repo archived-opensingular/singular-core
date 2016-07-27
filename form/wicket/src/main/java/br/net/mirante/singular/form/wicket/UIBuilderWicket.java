@@ -85,7 +85,7 @@ import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapp
 import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.BreadPanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -255,8 +255,8 @@ class AnnotationBuilder {
         ;
     }
 
-    private MInstanceRootModel<SInstance> modelFor(SInstance instance) {
-        MInstanceRootModel<SInstance> model = new MInstanceRootModel<>();
+    private SInstanceRootModel<SInstance> modelFor(SInstance instance) {
+        SInstanceRootModel<SInstance> model = new SInstanceRootModel<>();
         model.setObject(instance);
         return model;
     }

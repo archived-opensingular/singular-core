@@ -20,7 +20,7 @@ import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewTextArea;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.CountDownBehaviour;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class TextAreaMapper extends StringMapper {
@@ -35,7 +35,7 @@ public class TextAreaMapper extends StringMapper {
             SViewTextArea mTextAreaView = (SViewTextArea) view;
 
             final SInstance mi = model.getObject();
-            FormComponent<?> textArea = new TextArea<>(mi.getName(), new MInstanciaValorModel<>(model));
+            FormComponent<?> textArea = new TextArea<>(mi.getName(), new SInstanceValueModel<>(model));
             textArea.setLabel(labelModel);
             formGroup.appendTextarea(textArea, mTextAreaView.getLines());
 

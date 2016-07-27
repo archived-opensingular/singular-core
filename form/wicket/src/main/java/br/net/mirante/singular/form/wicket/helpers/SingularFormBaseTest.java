@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -55,11 +55,11 @@ public abstract class SingularFormBaseTest {
     }
 
     @SuppressWarnings("unchecked")
-    protected <I extends SInstance> Stream<IMInstanciaAwareModel<I>> findModelsByType(SType<I> type) {
+    protected <I extends SInstance> Stream<ISInstanceAwareModel<I>> findModelsByType(SType<I> type) {
         return findFormComponentsByType(type)
             .map(it -> it.getModel())
-            .filter(it -> it instanceof IMInstanciaAwareModel)
-            .map(it -> (IMInstanciaAwareModel<I>) it);
+            .filter(it -> it instanceof ISInstanceAwareModel)
+            .map(it -> (ISInstanceAwareModel<I>) it);
     }
 
     protected Stream<FormComponent> findFormComponentsByType(SType type) {

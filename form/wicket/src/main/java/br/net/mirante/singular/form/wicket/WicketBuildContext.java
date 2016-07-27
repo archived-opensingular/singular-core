@@ -37,8 +37,8 @@ import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
@@ -200,19 +200,19 @@ public class WicketBuildContext implements Serializable {
      */
     public void configure(IWicketComponentMapper mapper, FormComponent<?> formComponent) {
         final IModel defaultModel = formComponent.getDefaultModel();
-        if (defaultModel != null && IMInstanciaAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
+        if (defaultModel != null && ISInstanceAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
             WicketFormUtils.setCellContainer(formComponent, getContainer());
             formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
             if (formComponent.getLabel() == null) {
                 // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
                 formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
             }
-            final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
+            final ISInstanceAwareModel<?> model = (ISInstanceAwareModel<?>) defaultModel;
             // final SType<?> tipo = model.getMInstancia().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
             mapper.addAjaxUpdate(
                 formComponent,
-                IMInstanciaAwareModel.getInstanceModel(model),
+                ISInstanceAwareModel.getInstanceModel(model),
                 new OnFieldUpdatedListener());
         }
     }
@@ -266,8 +266,8 @@ public class WicketBuildContext implements Serializable {
 
     protected static <T> String resolveSimpleLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
-        if (model instanceof IMInstanciaAwareModel<?>) {
-            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+        if (model instanceof ISInstanceAwareModel<?>) {
+            SInstance instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
             return instancia.asAtr().getLabel();
         }
         return "[" + formComponent.getId() + "]";
@@ -280,8 +280,8 @@ public class WicketBuildContext implements Serializable {
      */
     protected static <T> String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
-        if (model instanceof IMInstanciaAwareModel<?>) {
-            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+        if (model instanceof ISInstanceAwareModel<?>) {
+            SInstance instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
             List<String> labels = new ArrayList<>();
             while (instancia != null) {
                 labels.add(instancia.asAtr().getLabel());
@@ -348,7 +348,7 @@ public class WicketBuildContext implements Serializable {
     public void rebuild(List<String> nomesTipo) {
         IModel<? extends SInstance> originalModel = getModel();
         for (String nomeTipo : nomesTipo) {
-            SInstanceCampoModel<SInstance> subtree = new SInstanceCampoModel<>(originalModel, nomeTipo);
+            SInstanceFieldModel<SInstance> subtree = new SInstanceFieldModel<>(originalModel, nomeTipo);
             setModel(subtree);
             getUiBuilderWicket().build(this, viewMode);
         }

@@ -15,7 +15,7 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.form.YearMonthField;
 
@@ -24,7 +24,7 @@ public class YearMonthMapper extends AbstractControlsFieldComponentMapper {
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
 
-        YearMonthField comp = new YearMonthField(model.getObject().getName(), new MInstanciaValorModel<>(model));
+        YearMonthField comp = new YearMonthField(model.getObject().getName(), new SInstanceValueModel<>(model));
         formGroup.appendDatepicker(comp.setLabel(labelModel)
             .setOutputMarkupId(true).add(new InputMaskBehavior(InputMaskBehavior.Masks.SHORT_DATE)),
             new HashMap<String, String>() {

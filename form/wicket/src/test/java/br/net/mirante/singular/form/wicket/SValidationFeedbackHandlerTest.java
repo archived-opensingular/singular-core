@@ -10,7 +10,6 @@ import org.apache.wicket.Page;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTester;
-import org.apache.wicket.util.visit.Visits;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +22,7 @@ import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.test.base.TestPanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -87,7 +86,7 @@ public class SValidationFeedbackHandlerTest {
             return dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
         });
 
-        IModel<SIComposite> mCurriculo = new MInstanceRootModel<SIComposite>(instancia);
+        IModel<SIComposite> mCurriculo = new SInstanceRootModel<SIComposite>(instancia);
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
         singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
 

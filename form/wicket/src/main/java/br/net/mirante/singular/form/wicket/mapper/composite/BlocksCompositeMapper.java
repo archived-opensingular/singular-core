@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.type.core.SPackageBootstrap;
 import br.net.mirante.singular.form.view.Block;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
@@ -87,7 +87,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
         private BSRow buildBlockAndGetCurrentRow(SType<?> field, BSGrid grid, BSRow row) {
             final Boolean                        newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
-            final SInstanceCampoModel<SInstance> im     = fieldModel(field);
+            final SInstanceFieldModel<SInstance> im     = fieldModel(field);
             if (newRow != null && newRow) {
                 row = grid.newRow();
             }

@@ -11,9 +11,9 @@ import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -53,8 +53,8 @@ public class AnnotationComponent extends Panel {
     private Component referencedComponent;
     BSContainer mainGrid;
     private final WicketBuildContext context;
-    private MInstanciaValorModel textModel, approvedModel;
-    private MInstanceRootModel model;
+    private SInstanceValueModel textModel, approvedModel;
+    private SInstanceRootModel model;
     private Label comment_field, approval_field;
     private boolean keepOpened = false;
     private ActionAjaxButton openModalButton;
@@ -76,14 +76,14 @@ public class AnnotationComponent extends Panel {
     private void createModels(AbstractSInstanceModel referenced) {
         final SIAnnotation target = annotated(referenced).annotation();
         target.setTargetId(referenced.getMInstancia().getId());
-        model = new MInstanceRootModel(target);
+        model = new SInstanceRootModel(target);
         setDefaultModel(model);
         createSubModels();
     }
 
     private void createSubModels() {
-        textModel = new MInstanciaValorModel(new SInstanceCampoModel<>(model,"text"));
-        approvedModel = new MInstanciaValorModel(new SInstanceCampoModel<>(model,"isApproved"));
+        textModel = new SInstanceValueModel(new SInstanceFieldModel<>(model,"text"));
+        approvedModel = new SInstanceValueModel(new SInstanceFieldModel<>(model,"isApproved"));
     }
 
     @Override
@@ -109,7 +109,7 @@ public class AnnotationComponent extends Panel {
         });
     }
 
-    protected static Label createApprovalLabel(final MInstanciaValorModel model) {
+    protected static Label createApprovalLabel(final SInstanceValueModel model) {
         return new Label("approval_field", new Model(){
             @Override
             public Serializable getObject() {
@@ -301,13 +301,13 @@ public class AnnotationComponent extends Panel {
 
 class AnnotationModalWindow extends BFModalWindow{
 
-    private MInstanciaValorModel textModel, approvedModel ;
+    private SInstanceValueModel textModel, approvedModel ;
     private WicketBuildContext context;
     private AnnotationComponent parentComponent;
     private AbstractSInstanceModel referenced;
 
     public AnnotationModalWindow(String id,
-                                 MInstanceRootModel model,
+                                 SInstanceRootModel model,
                                  AbstractSInstanceModel referenced,
                                  WicketBuildContext context,
                                  AnnotationComponent parentComponent) {
@@ -322,8 +322,8 @@ class AnnotationModalWindow extends BFModalWindow{
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        textModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(getDefaultModel(),"text"));
-        approvedModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(getDefaultModel(),"isApproved"));
+        textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getDefaultModel(),"text"));
+        approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getDefaultModel(),"isApproved"));
 
         setBody(createBody());
 

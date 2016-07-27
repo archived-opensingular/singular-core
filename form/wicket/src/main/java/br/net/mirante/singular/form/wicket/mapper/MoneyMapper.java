@@ -23,10 +23,9 @@ import org.apache.wicket.util.convert.IConverter;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.MoneyMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
@@ -42,7 +41,7 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
         final IModel<? extends SInstance> model = ctx.getModel();
         Integer decimalMaximo = getDecimalMaximo(model);
         TextField<String> comp = new TextField<String>(model.getObject().getName(),
-                new MInstanciaValorModel<>(model), String.class) {
+                new SInstanceValueModel<>(model), String.class) {
             @Override
             public IConverter getConverter(Class type) {
                 return new MoneyConverter(decimalMaximo);

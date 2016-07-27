@@ -19,7 +19,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
-import br.net.mirante.singular.form.wicket.model.SelectMInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.SelectSInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
@@ -32,7 +32,7 @@ public class RadioMapper extends SelectMapper {
         final String id = model.getObject().getName();
 
         RadioChoice<Serializable> rc = new RadioChoice<Serializable>(id,
-            new SelectMInstanceAwareModel(model),
+            new SelectSInstanceAwareModel(model),
             new DefaultOptionsProviderLoadableDetachableModel(model),
             new SingularChoiceRenderer(model)) {
 

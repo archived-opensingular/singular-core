@@ -22,8 +22,8 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.AbstractListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.MapperCommons;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
-import br.net.mirante.singular.form.wicket.model.MTipoModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.form.wicket.model.STypeModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceListItemModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
@@ -161,7 +161,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             @Override
             public IModel<SInstance> model(SInstance object) {
-                return new SInstanceItemListaModel<>(model, model.getObject().indexOf(object));
+                return new SInstanceListItemModel<>(model, model.getObject().indexOf(object));
             }
         };
     }
@@ -204,7 +204,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         for (ColumnType columnType : columnTypes) {
             final String         label      = columnType.getCustomLabel();
             final IModel<String> labelModel = $m.ofValue(label);
-            propertyColumnAppender(builder, labelModel, new MTipoModel(columnType.getType()), columnType.getDisplayFunction());
+            propertyColumnAppender(builder, labelModel, new STypeModel(columnType.getType()), columnType.getDisplayFunction());
         }
 
         actionColumnAppender(builder, model, modal, ctx, viewMode, view);

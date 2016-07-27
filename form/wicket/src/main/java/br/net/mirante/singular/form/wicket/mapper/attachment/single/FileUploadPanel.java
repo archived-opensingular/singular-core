@@ -35,7 +35,7 @@ import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadLink;
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadUtil;
 import br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
@@ -105,8 +105,8 @@ public class FileUploadPanel extends Panel implements Loggable {
         return (SIAttachment) getDefaultModelObject();
     }
 
-    private IMInstanciaAwareModel<List<FileUpload>> dummyModel(final IModel<SIAttachment> model) {
-        return new IMInstanciaAwareModel<List<FileUpload>>() {
+    private ISInstanceAwareModel<List<FileUpload>> dummyModel(final IModel<SIAttachment> model) {
+        return new ISInstanceAwareModel<List<FileUpload>>() {
             //@formatter:off
             @Override public List<FileUpload> getObject() { return null; }
             @Override public void setObject(List<FileUpload> object) {}

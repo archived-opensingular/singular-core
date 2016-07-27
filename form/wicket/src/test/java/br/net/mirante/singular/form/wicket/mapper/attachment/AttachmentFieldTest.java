@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -50,7 +50,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         FileUploadField uploadField = (FileUploadField) findFirstComponentWithId(page, "fileUpload");
 
         //Recupera o model do fileupload
-        IMInstanciaAwareModel model = (IMInstanciaAwareModel) uploadField.getModel();
+        ISInstanceAwareModel model = (ISInstanceAwareModel) uploadField.getModel();
 
         // Verifica se a visibilidade está ok
         tester.assertVisible(choose.getPageRelativePath());
@@ -80,7 +80,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         //Recupera os componentes
         FileUploadField uploadField = (FileUploadField) findFirstComponentWithId(page, "fileUpload");
         //Recupera o model do fileupload
-        IMInstanciaAwareModel model = (IMInstanciaAwareModel) uploadField.getModel();
+        ISInstanceAwareModel model = (ISInstanceAwareModel) uploadField.getModel();
 
         File file = createTempFileAndSetOnField(uploadField);
 

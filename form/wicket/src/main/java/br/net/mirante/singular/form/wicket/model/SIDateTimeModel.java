@@ -12,13 +12,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public interface MIDateTimeModel {
+public interface SIDateTimeModel {
 
-    abstract class AbstractDateTimeModel implements IMInstanciaAwareModel<String> {
+    abstract class AbstractDateTimeModel implements ISInstanceAwareModel<String> {
 
-        final IMInstanciaAwareModel<Date> model;
+        final ISInstanceAwareModel<Date> model;
 
-        AbstractDateTimeModel(IMInstanciaAwareModel<Date> model) {
+        AbstractDateTimeModel(ISInstanceAwareModel<Date> model) {
             this.model = model;
         }
 
@@ -39,7 +39,7 @@ public interface MIDateTimeModel {
 
     class DateModel extends AbstractDateTimeModel {
 
-        public DateModel(IMInstanciaAwareModel<Date> model) {
+        public DateModel(ISInstanceAwareModel<Date> model) {
             super(model);
         }
 
@@ -78,7 +78,7 @@ public interface MIDateTimeModel {
 
     class TimeModel extends AbstractDateTimeModel {
 
-        public TimeModel(IMInstanciaAwareModel<Date> model) {
+        public TimeModel(ISInstanceAwareModel<Date> model) {
             super(model);
         }
 

@@ -6,7 +6,7 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
 import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.showcase.view.template.Content;
 import br.net.mirante.singular.showcase.view.template.Template;
 import org.apache.wicket.Page;
@@ -15,10 +15,10 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 
 public class PreviewPage extends Template {
 
-    private MInstanceRootModel<SIComposite> model;
+    private SInstanceRootModel<SIComposite> model;
     private Page backpage;
 
-    public PreviewPage(MInstanceRootModel<SIComposite>  model, Page backpage){
+    public PreviewPage(SInstanceRootModel<SIComposite> model, Page backpage){
         this.model = model;
         this.backpage = backpage;
     }
