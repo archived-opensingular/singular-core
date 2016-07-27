@@ -81,19 +81,19 @@ public class BSFormHorizontal extends BSContainer<BSFormHorizontal> {
         return this;
     }
 
-    public BSFormHorizontal appendGroupLabelControlsFeedback(int labelColspan, Component labelFor, Serializable labelValueOrModel, int controlsColspan, IBSComponentFactory<BSControls> factory) {
+    public BSFormHorizontal appendGroupLabelControlsFeedback(int labelColspan, Component labelFor, Serializable labelValueOrModel, int controlsColspan, Component feedback, IBSComponentFactory<BSControls> factory) {
         newGroup()
             .appendLabel(labelColspan, labelFor, labelValueOrModel)
             .newControls(controlsColspan, factory)
-            .appendFeedback();
+            .appendFeedback(feedback);
         return this;
     }
 
-    public BSFormHorizontal appendGroupLabelControlsFeedback(int labelColspan, Serializable labelValueOrModel, int controlsColspan, IBSComponentFactory<BSControls> factory) {
+    public BSFormHorizontal appendGroupLabelControlsFeedback(int labelColspan, Serializable labelValueOrModel, int controlsColspan, Component feedback, IBSComponentFactory<BSControls> factory) {
         newGroup()
             .appendLabel(labelColspan, labelValueOrModel)
             .newControls(controlsColspan, factory)
-            .appendFeedback();
+            .appendFeedback(feedback);
         return this;
     }
 
