@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.server.commons.wicket.view.template;
 
+import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.MENU_CONTEXT;
 import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_LIST_MENU;
 
 import java.io.Serializable;
@@ -37,18 +38,19 @@ public class MenuSessionConfig implements Serializable {
         return Collections.unmodifiableMap(map);
     }
 
-    public void initialize(List<ProcessGroupEntity> categorias) {
+    public void initialize(List<ProcessGroupEntity> categorias, String menuContext) {
         for (ProcessGroupEntity categoria : categorias) {
-            final List<MenuGroup> menuGroupDTOs = listMenus(categoria);
+            final List<MenuGroup> menuGroupDTOs = listMenus(categoria, menuContext);
             addMenu(categoria, menuGroupDTOs);
         }
 
         initialized = true;
     }
 
-    private List<MenuGroup> listMenus(ProcessGroupEntity processGroup) {
+    private List<MenuGroup> listMenus(ProcessGroupEntity processGroup, String menuContext) {
 
-        final String url = processGroup.getConnectionURL() + PATH_LIST_MENU;
+        final String url = processGroup.getConnectionURL() + PATH_LIST_MENU
+                + "?" + MENU_CONTEXT + "=" + menuContext;
         try {
             return Arrays.asList(new RestTemplate().getForObject(url, MenuGroup[].class));
         } catch (Exception e) {

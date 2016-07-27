@@ -1,6 +1,9 @@
 package br.net.mirante.singular.server.commons.wicket.view.template;
 
+import java.util.Arrays;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
@@ -15,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
+import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
+import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.SingularApplication;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
@@ -31,6 +36,12 @@ public class Menu extends Panel {
     public static final String MENU_CACHE = "MENU_CACHE";
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(Menu.class);
+
+    protected List<ProcessGroupEntity> categorias;
+
+    @SuppressWarnings("rawtypes")
+    @Inject
+    protected PetitionService petitionService;
 
     public Menu(String id) {
         super(id);
@@ -111,4 +122,30 @@ public class Menu extends Panel {
 
         return menuSessionConfig;
     }
+
+    protected void loadMenuGroups() {
+        categorias = buscarCategorias();
+        final MenuSessionConfig menuSessionConfig = getMenuSessionConfig();
+        if (!menuSessionConfig.isInitialized()) {
+            menuSessionConfig.initialize(categorias, getMenuContext());
+        }
+    }
+
+    public String getMenuContext() {
+        return "";
+    }
+
+    protected List<ProcessGroupEntity> getCategorias() {
+        final ProcessGroupEntity categoriaSelecionada = SingularSession.get().getCategoriaSelecionada();
+        if (categoriaSelecionada == null) {
+            return categorias;
+        } else {
+            return Arrays.asList(categoriaSelecionada);
+        }
+    }
+
+    protected List<ProcessGroupEntity> buscarCategorias() {
+        return petitionService.listarTodosGruposProcesso();
+    }
+
 }

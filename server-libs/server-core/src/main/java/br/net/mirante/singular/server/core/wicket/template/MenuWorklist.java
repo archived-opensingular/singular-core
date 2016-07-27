@@ -24,7 +24,6 @@ import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
-import br.net.mirante.singular.server.commons.wicket.view.template.MenuSessionConfig;
 import br.net.mirante.singular.server.core.wicket.concluida.ConcluidaPage;
 import br.net.mirante.singular.server.core.wicket.inicio.InicioPage;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
@@ -67,14 +66,6 @@ public class MenuWorklist extends MenuAnalise {
         menu.add(new AddContadoresBehaviour(itens));
 
         return menu;
-    }
-
-    private void loadMenuGroups() {
-        final MenuSessionConfig menuSessionConfig = getMenuSessionConfig();
-        if (!menuSessionConfig.isInitialized()) {
-            final List<ProcessGroupEntity> categorias = petitionService.listarTodosGruposProcesso();
-            menuSessionConfig.initialize(categorias);
-        }
     }
 
     private List<MenuGroup> listMenus(ProcessGroupEntity processGroup) {

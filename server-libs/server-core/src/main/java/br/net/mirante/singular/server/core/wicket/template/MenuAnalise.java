@@ -4,13 +4,10 @@ package br.net.mirante.singular.server.core.wicket.template;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
-import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Menu;
 import br.net.mirante.singular.server.core.wicket.concluida.ConcluidaPage;
@@ -24,10 +21,6 @@ import br.net.mirante.singular.util.wicket.resource.Icone;
 @SuppressWarnings("serial")
 public class MenuAnalise extends Menu {
 
-    @SuppressWarnings("rawtypes")
-    @Inject
-    private PetitionService petitionService;
-
     public MenuAnalise(String id) {
         super(id);
     }
@@ -35,6 +28,8 @@ public class MenuAnalise extends Menu {
     @SuppressWarnings("unchecked")
     @Override
     protected MetronicMenu buildMenu() {
+
+        loadMenuGroups();
 
         final MetronicMenu menu = new MetronicMenu("menu");
         //TODO prover solução melhor para todos os contextos de aplicação
@@ -55,4 +50,5 @@ public class MenuAnalise extends Menu {
 
         return menu;
     }
+
 }

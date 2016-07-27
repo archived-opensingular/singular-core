@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.net.mirante.singular.flow.core.Flow;
@@ -32,9 +33,9 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
 
-    @RequestMapping(value = PATH_LIST_MENU, method = RequestMethod.GET)
     @Override
-    public List<MenuGroup> listMenu() {
+    @RequestMapping(value = PATH_LIST_MENU, method = RequestMethod.GET)
+    public List<MenuGroup> listMenu(@RequestParam(MENU_CONTEXT) String context) {
 
         List<MenuGroup> groupDTOs = new ArrayList<>();
         Map<String, List<ProcessDefinition>> definitionMap = new HashMap<>();
@@ -60,12 +61,12 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
             groupDTOs.add(menuGroupDTO);
         });
 
-        customizeMenu(groupDTOs);
+        customizeMenu(groupDTOs, context);
 
         return groupDTOs;
     }
 
-    protected void customizeMenu(List<MenuGroup> groupDTOs) {
+    protected void customizeMenu(List<MenuGroup> groupDTOs, String menuContext) {
 
     }
 
