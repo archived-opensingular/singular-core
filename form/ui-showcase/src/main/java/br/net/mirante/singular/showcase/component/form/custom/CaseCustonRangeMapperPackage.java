@@ -33,7 +33,7 @@ public class CaseCustonRangeMapperPackage extends SPackage {
 
         faixaIdade.asAtr().label("Faixa de Idade");
         //@destacar
-        faixaIdade.withCustomMapper(new RangeSliderMapper(valorInicial, valorFinal));
+        faixaIdade.withCustomMapper(() -> new RangeSliderMapper(valorInicial, valorFinal));
 
     }
 }
