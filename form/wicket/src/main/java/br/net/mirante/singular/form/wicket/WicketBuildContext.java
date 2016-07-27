@@ -407,6 +407,10 @@ public class WicketBuildContext implements Serializable {
     public IModel<? extends SInstance> getModel() {
         return model;
     }
+    
+    public IModel<?> getValueModel() {
+        return new MInstanciaValorModel<>(getModel());
+    }
 
     public void setModel(IModel<? extends SInstance> model) {
         this.model = model;
