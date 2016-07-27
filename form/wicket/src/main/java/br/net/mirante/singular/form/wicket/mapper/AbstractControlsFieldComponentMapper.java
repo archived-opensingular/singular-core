@@ -32,7 +32,6 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackCompactPanel;
 import br.net.mirante.singular.form.wicket.model.AttributeModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
@@ -88,18 +87,19 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
         if (viewMode.isEdition()) {
             input = appendInput(ctx, formGroup, labelModel);
-            SValidationFeedbackCompactPanel feedback = new SValidationFeedbackCompactPanel("feedback", ctx.getContainer());
-            SValidationFeedbackHandler.bindTo(ctx.getContainer())
-                .addInstanceModel(model)
-                .addListener(new ISValidationFeedbackHandlerListener() {
+            formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback",
+                feedback -> new ISValidationFeedbackHandlerListener() {
                     @Override
-                    public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
+                    public void onFeedbackChanged(SValidationFeedbackHandler handler,
+                                                  Optional<AjaxRequestTarget> target,
+                                                  Component fenceContainer,
+                                                  Collection<SInstance> baseInstances,
+                                                  Collection<IValidationError> oldErrors,
+                                                  Collection<IValidationError> newErrors) {
                         if (target.isPresent())
                             target.get().add(feedback);
                     }
-                });
-
-            formGroup.appendFeedback(feedback);
+                }));
             formGroup.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {

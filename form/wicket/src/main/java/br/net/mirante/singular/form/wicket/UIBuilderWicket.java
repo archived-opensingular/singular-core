@@ -7,10 +7,10 @@ package br.net.mirante.singular.form.wicket;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.wicket.Component;
 
+import br.net.mirante.singular.commons.lambda.ISupplier;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeAttachmentList;
@@ -129,8 +129,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     }
 
     private IWicketComponentMapper resolveMapper(SInstance instancia) {
-
-        final Supplier<? extends UIComponentMapper> customMapperFactory = instancia.getType().getCustomMapperFactory();
+        final ISupplier<? extends UIComponentMapper> customMapperFactory = instancia.getType().getCustomMapperFactory();
         final UIComponentMapper customMapper = (customMapperFactory != null) ? customMapperFactory.get() : null;
 
         if (customMapper != null) {
@@ -194,9 +193,9 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 class AnnotationBuilder {
     //private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class.getName());
 
-    private UIBuilderWicket     parent;
-    private WicketBuildContext  mainCtx;
-    private BSRow               mainGrid;
+    private UIBuilderWicket    parent;
+    private WicketBuildContext mainCtx;
+    private BSRow              mainGrid;
 
     AnnotationBuilder(UIBuilderWicket parent) {
         this.parent = parent;
