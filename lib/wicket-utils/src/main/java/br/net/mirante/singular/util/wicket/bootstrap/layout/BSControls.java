@@ -214,13 +214,18 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return factory.newFeedbackPanel(id, fence, filter);
     }
 
-    public Label newHelpBlock(IModel<String> textModel) {
-        return super.newTag("span", true, "class='help-block'", newComponent(id -> new Label(id, textModel)));
+    public Label newHelpBlock(IModel<String> textModel, boolean escapeLabelString) {
+        return super.newTag("span", true, "class='help-block'", newComponent(id -> (Label) new Label(id, textModel).setEscapeModelStrings(escapeLabelString)));
     }
-
-    public BSControls appendHelpBlock(IModel<String> textModel) {
-        newHelpBlock(textModel);
+    public Label newHelpBlock(IModel<String> textModel) {
+        return newHelpBlock(textModel, true);
+    }
+    public BSControls appendHelpBlock(IModel<String> textModel, boolean escapeLabelString) {
+        newHelpBlock(textModel, escapeLabelString);
         return this;
+    }
+    public BSControls appendHelpBlock(IModel<String> textModel) {
+        return appendHelpBlock(textModel, true);
     }
 
     public BSControls appendDiv(Component typeahead) {

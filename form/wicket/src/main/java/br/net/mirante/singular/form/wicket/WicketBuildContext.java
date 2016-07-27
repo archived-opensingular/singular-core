@@ -38,6 +38,7 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
@@ -406,6 +407,10 @@ public class WicketBuildContext implements Serializable {
 
     public IModel<? extends SInstance> getModel() {
         return model;
+    }
+    
+    public IModel<?> getValueModel() {
+        return new MInstanciaValorModel<>(getModel());
     }
 
     public void setModel(IModel<? extends SInstance> model) {
