@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.Stream.Builder;
 
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -409,7 +410,7 @@ public class WicketBuildContext implements Serializable {
     }
     
     public IModel<?> getValueModel() {
-        return new MInstanciaValorModel<>(getModel());
+        return new SInstanceValueModel<>(getModel());
     }
 
     public void setModel(IModel<? extends SInstance> model) {
