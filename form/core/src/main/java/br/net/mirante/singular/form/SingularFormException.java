@@ -9,8 +9,6 @@ package br.net.mirante.singular.form;
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.type.core.STypeString;
 
-import java.util.ArrayList;
-
 public class SingularFormException extends SingularException {
 
     public SingularFormException() {

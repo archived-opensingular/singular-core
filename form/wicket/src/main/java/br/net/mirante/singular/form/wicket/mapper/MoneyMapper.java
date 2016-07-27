@@ -5,18 +5,6 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.wicket.behavior.MoneyMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.convert.IConverter;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -26,7 +14,23 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-public class MoneyMapper extends ControlsFieldComponentAbstractMapper {
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.IConverter;
+
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.view.SView;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.behavior.MoneyMaskBehavior;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
+
+public class MoneyMapper extends AbstractControlsFieldComponentMapper {
 
     private static final int DEFAULT_INTEGER_DIGITS = 9;
     private static final int DEFAULT_DIGITS = 2;
@@ -34,7 +38,8 @@ public class MoneyMapper extends ControlsFieldComponentAbstractMapper {
     private static final String PRECISION = "precision";
 
     @Override
-    public Component appendInput() {
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
         Integer decimalMaximo = getDecimalMaximo(model);
         TextField<String> comp = new TextField<String>(model.getObject().getName(),
                 new MInstanciaValorModel<>(model), String.class) {

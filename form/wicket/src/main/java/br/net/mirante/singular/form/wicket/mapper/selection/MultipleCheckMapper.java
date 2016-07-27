@@ -25,7 +25,7 @@ public class MultipleCheckMapper extends MultipleSelectMapper {
         return new CheckBoxMultipleChoice(
                 model.getObject().getName(),
                 new MultipleSelectMInstanceAwareModel(model),
-                opcoesValue, renderer())
+                opcoesValue, renderer(model))
                 .setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
     }
 

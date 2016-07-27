@@ -5,35 +5,35 @@
 
 package br.net.mirante.singular.form.wicket.mapper.attachment.single;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
+import br.net.mirante.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadLink;
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 
-
-public class AttachmentMapper extends ControlsFieldComponentAbstractMapper {
+public class AttachmentMapper extends AbstractControlsFieldComponentMapper {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Component appendInput() {
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
         final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDITION);
         formGroup.appendDiv(container);
         return container.getUploadField();
     }
 
     @Override
-    public void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
-    }
+    public void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {}
 
     @Override
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
@@ -42,7 +42,8 @@ public class AttachmentMapper extends ControlsFieldComponentAbstractMapper {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Component appendReadOnlyInput() {
+    public Component appendReadOnlyInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
 
         String markup = "";
         markup += " <div wicket:id='well'> ";
