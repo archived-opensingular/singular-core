@@ -5,31 +5,39 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.TextField;
-
 import java.util.HashMap;
 import java.util.Optional;
 
-import static br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
+import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class IntegerMapper extends StringMapper {
 
     private static final int DEFAULT_SIZE = 9;
 
     @Override
-    public Component appendInput() {
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
+
         Optional<Integer> size = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
+            model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
         TextField<Integer> comp = new TextField<>(model.getObject().getName(),
-                new MInstanciaValorModel<>(model), Integer.class);
+            new MInstanciaValorModel<>(model), Integer.class);
         formGroup.appendInputText(comp.setLabel(labelModel).setOutputMarkupId(true)
-                .add(new InputMaskBehavior(Masks.NUMERIC, new HashMap<String, Object>() {{
+            .add(new InputMaskBehavior(Masks.NUMERIC, new HashMap<String, Object>() {
+                {
                     put(InputMaskBehavior.MAX_LENGTH_ATTR, size.orElse(DEFAULT_SIZE));
-                }})));
+                }
+            })));
         return comp;
     }
 }

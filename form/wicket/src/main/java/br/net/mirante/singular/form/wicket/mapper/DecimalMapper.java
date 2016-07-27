@@ -5,17 +5,6 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.json.JsonFunction;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.convert.IConverter;
-
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -23,29 +12,45 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.json.JsonFunction;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.IConverter;
+
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+
 public class DecimalMapper extends StringMapper {
 
     private static final int DEFAULT_INTEGER_DIGITS = 9;
-    private static final int DEFAULT_DIGITS = 2;
+    private static final int DEFAULT_DIGITS         = 2;
 
     @Override
-    public Component appendInput() {
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
+
         Integer decimalMaximo = getDecimalMaximo(model);
         TextField<String> comp = new TextField<String>(model.getObject().getName(),
-                new MInstanciaValorModel<>(model), String.class) {
+            new MInstanciaValorModel<>(model), String.class) {
             @Override
             public IConverter getConverter(Class type) {
                 return new BigDecimalConverter(decimalMaximo);
             }
         };
         formGroup.appendInputText(comp.setLabel(labelModel).setOutputMarkupId(true)
-                .add(new InputMaskBehavior(withOptionsOf(model), true)));
+            .add(new InputMaskBehavior(withOptionsOf(model), true)));
         return comp;
     }
 
     private Map<String, Object> withOptionsOf(IModel<? extends SInstance> model) {
         Optional<Integer> inteiroMaximo = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_INTEGER_MAX_LENGTH));
+            model.getObject().getAttributeValue(SPackageBasic.ATR_INTEGER_MAX_LENGTH));
         Integer decimal = getDecimalMaximo(model);
         Map<String, Object> options = defaultOptions();
         options.put("integerDigits", inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS));
@@ -55,7 +60,7 @@ public class DecimalMapper extends StringMapper {
 
     private Integer getDecimalMaximo(IModel<? extends SInstance> model) {
         Optional<Integer> decimalMaximo = Optional.ofNullable(
-                model.getObject().getAttributeValue(SPackageBasic.ATR_FRACTIONAL_MAX_LENGTH));
+            model.getObject().getAttributeValue(SPackageBasic.ATR_FRACTIONAL_MAX_LENGTH));
         return (Integer) decimalMaximo.orElse(DEFAULT_DIGITS);
     }
 
@@ -68,8 +73,8 @@ public class DecimalMapper extends StringMapper {
         options.put("autoGroup", true);
         options.put("digitsOptional", true);
         options.put("onBeforePaste", new JsonFunction("function (pastedValue, opts) {" +
-                "                return pastedValue.replace(/[^0-9,]/g, '');" +
-                "            }"));
+            "                return pastedValue.replace(/[^0-9,]/g, '');" +
+            "            }"));
 
         return options;
     }
@@ -116,7 +121,7 @@ public class DecimalMapper extends StringMapper {
         public String convertToString(Object value, Locale locale) {
             if (value == null) {
                 return "";
-            }else if (value instanceof String) {
+            } else if (value instanceof String) {
                 value = convertToObject((String) value, locale);
             }
 

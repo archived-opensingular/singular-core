@@ -6,22 +6,29 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.core.STypeDateTime;
-import br.net.mirante.singular.form.view.SViewDateTime;
-import br.net.mirante.singular.form.wicket.mapper.datetime.DateTimeContainer;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.core.STypeDateTime;
+import br.net.mirante.singular.form.view.SView;
+import br.net.mirante.singular.form.view.SViewDateTime;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.mapper.datetime.DateTimeContainer;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
-public class DateTimeMapper extends ControlsFieldComponentAbstractMapper {
+public class DateTimeMapper extends AbstractControlsFieldComponentMapper {
 
     @Override
-    public Component appendInput() {
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final SView view = ctx.getView();
+        
         SViewDateTime dateTimerView = null;
         if(view instanceof SViewDateTime){
             dateTimerView = (SViewDateTime) view;

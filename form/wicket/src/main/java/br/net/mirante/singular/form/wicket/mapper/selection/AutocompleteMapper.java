@@ -5,7 +5,10 @@ import br.net.mirante.singular.form.converter.SInstanceConverter;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewAutoComplete;
 import br.net.mirante.singular.form.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
@@ -17,10 +20,13 @@ import java.io.Serializable;
  *
  * @author Fabricio Buzeto
  */
-public class AutocompleteMapper extends ControlsFieldComponentAbstractMapper {
+public class AutocompleteMapper extends AbstractControlsFieldComponentMapper {
 
     @Override
-    public Component appendInput() {
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final SView view = ctx.getView();
+        
         validateView(view);
         SViewAutoComplete.Mode fetch = SViewAutoComplete.Mode.STATIC;
         if(view instanceof SViewAutoComplete){
