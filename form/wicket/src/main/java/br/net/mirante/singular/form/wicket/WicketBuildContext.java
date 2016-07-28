@@ -83,8 +83,8 @@ public class WicketBuildContext implements Serializable {
 
     private SView                                                        view;
 
-    public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends SInstance> model) {
-        this(null, container, bodyContainer, false, model);
+    public WicketBuildContext(BSCol container, BSContainer externalContainer, IModel<? extends SInstance> model) {
+        this(null, container, externalContainer, false, model);
     }
 
     public WicketBuildContext(WicketBuildContext          parent,
