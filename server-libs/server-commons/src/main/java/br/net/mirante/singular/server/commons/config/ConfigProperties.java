@@ -15,6 +15,7 @@ public class ConfigProperties {
     public static final  String     SINGULAR_SERVIDOR_ENDERECO    = "singular.servidor.endereco";
     public static final  String     SINGULAR_MODULE_FORM_ENDERECO = "singular.module.form.endereco";
     public static final  String     SINGULAR_DEV_MODE             = "singular.config.dev";
+    public static final  String     SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
 
     /**
      * Permite acesso as propriedades configuradas para servidor de peticionamento como um todo:
