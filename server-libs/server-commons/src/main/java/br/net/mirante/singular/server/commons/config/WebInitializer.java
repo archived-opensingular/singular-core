@@ -64,6 +64,7 @@ public abstract class WebInitializer {
         List<String> urls = new ArrayList<>();
         urls.add("/rest/*");
         urls.add("/resources/*");
+        urls.add("/public/*");
         urls.add("/index.html");
         for (IServerContext ctx : serverContexts()){
             urls.add(ctx.getUrlPath() + "/wicket/resource/*");
