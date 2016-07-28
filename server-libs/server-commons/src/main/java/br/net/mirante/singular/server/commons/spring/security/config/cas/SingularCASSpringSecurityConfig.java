@@ -25,7 +25,7 @@ public abstract class SingularCASSpringSecurityConfig extends AbstractSingularSp
 
     @Inject
     @Named("peticionamentoUserDetailService")
-    private Optional<SingularUserDetailsService> peticionamentoUserDetailService;
+    protected Optional<SingularUserDetailsService> peticionamentoUserDetailService;
 
     @Bean
     public SingularLogoutHandler singularLogoutHandler() {
@@ -64,7 +64,6 @@ public abstract class SingularCASSpringSecurityConfig extends AbstractSingularSp
                 .jee().j2eePreAuthenticatedProcessingFilter(j2eeFilter)
                 .and()
                 .authorizeRequests()
-                .antMatchers(getDefaultPublicUrls()).permitAll()
                 .antMatchers(getContext().getContextPath()).authenticated();
 
     }

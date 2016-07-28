@@ -1,20 +1,28 @@
 package br.net.mirante.singular.server.commons.spring.security;
 
 import br.net.mirante.singular.server.commons.config.IServerContext;
-import br.net.mirante.singular.server.commons.config.ServerContext;
+import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import javax.inject.Inject;
+
 public abstract class AbstractSingularSpringSecurityAdapter extends WebSecurityConfigurerAdapter {
+
+    @Inject
+    protected SingularServerConfiguration singularServerConfiguration;
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(getDefaultPublicUrls());
+    }
 
 
     protected abstract IServerContext getContext();
 
 
-    protected String[] getDefaultPublicUrls() {
-        return new String[]{
-                "/rest/**", "/resources/**", "/public/**", "/index.html", "**/public/error/**",
-                getContext().getUrlPath() + "/wicket/resource/**",
-                getContext().getUrlPath() + "/public/**"};
+    public String[] getDefaultPublicUrls() {
+        return singularServerConfiguration.getDefaultPublicUrls();
     }
 
 }
