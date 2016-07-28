@@ -58,19 +58,19 @@ public class SingularPredicates {
         return i -> vals.stream().filter(v -> v.equals(Value.of(i, type))).count() > 0;
     }
 
-    public static <T> Predicate<SInstance> typeValIsEqualsTo(STypeSimple<? extends SISimple<?>, T> type, T val) {
+    public static <T> Predicate<SInstance> typeValIsEqualsTo(STypeSimple<? extends SISimple<T>, T> type, T val) {
         return i -> val.equals(Value.of(i, type));
     }
 
-    public static <T> Predicate<SInstance> typeValIsNotEqualsTo(STypeSimple<? extends SISimple<?>, T> type, T val) {
+    public static <T> Predicate<SInstance> typeValIsNotEqualsTo(STypeSimple<? extends SISimple<T>, T> type, T val) {
         return i -> !val.equals(Value.of(i, type));
     }
 
-    public static Predicate<SInstance> typeValIsTrue(STypeSimple<? extends SISimple<?>, Boolean> type) {
+    public static Predicate<SInstance> typeValIsTrue(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
         return i -> Boolean.TRUE.equals(Value.of(i, type));
     }
 
-    public static Predicate<SInstance> typeValIsFalse(STypeSimple<? extends SISimple<?>, Boolean> type) {
+    public static Predicate<SInstance> typeValIsFalse(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
         return i -> Boolean.FALSE.equals(Value.of(i, type));
     }
 

@@ -11,13 +11,13 @@ import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import br.net.mirante.singular.util.wicket.model.NullOrEmptyModel;
 import org.apache.wicket.model.IModel;
 
-public class AtributoModel<T> implements IReadOnlyModel<T> {
+public class AttributeModel<T> implements IReadOnlyModel<T> {
 
     private final IModel<?> model;
     private final String    nomeCompletoAtributo;
     private final Class<T>  classeValorAtributo;
 
-    public AtributoModel(IModel<?> model, AtrRef<?, ?, T> atrRef) {
+    public AttributeModel(IModel<?> model, AtrRef<?, ?, T> atrRef) {
         this.model = model;
         this.nomeCompletoAtributo = atrRef.getNameFull();
         this.classeValorAtributo = atrRef.getValueClass();
@@ -25,8 +25,8 @@ public class AtributoModel<T> implements IReadOnlyModel<T> {
 
     @Override
     public T getObject() {
-        if (model instanceof IMInstanciaAwareModel<?>)
-            return ((IMInstanciaAwareModel<?>) model).getMInstancia().getAttributeValue(nomeCompletoAtributo, classeValorAtributo);
+        if (model instanceof ISInstanceAwareModel<?>)
+            return ((ISInstanceAwareModel<?>) model).getMInstancia().getAttributeValue(nomeCompletoAtributo, classeValorAtributo);
 
         return null;
     }

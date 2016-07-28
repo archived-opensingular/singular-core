@@ -8,13 +8,13 @@ import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
 
-public class SelectMInstanceAwareModel extends AbstractMInstanceAwareModel<Serializable> {
+public class SelectSInstanceAwareModel extends AbstractSInstanceAwareModel<Serializable> {
 
     private static final long serialVersionUID = -4455601838581324870L;
 
     private final IModel<? extends SInstance> model;
 
-    public SelectMInstanceAwareModel(IModel<? extends SInstance> model) {
+    public SelectSInstanceAwareModel(IModel<? extends SInstance> model) {
         this.model = model;
     }
 
@@ -24,8 +24,8 @@ public class SelectMInstanceAwareModel extends AbstractMInstanceAwareModel<Seria
     }
 
     public SInstance getProviderMInstancia() {
-        if (model instanceof SInstanceItemListaModel) {
-            return ((SInstanceItemListaModel) model).getRootTarget();
+        if (model instanceof SInstanceListItemModel) {
+            return ((SInstanceListItemModel) model).getRootTarget();
         } else {
             return model.getObject();
         }

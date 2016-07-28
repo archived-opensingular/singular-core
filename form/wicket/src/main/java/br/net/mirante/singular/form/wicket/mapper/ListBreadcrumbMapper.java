@@ -15,9 +15,9 @@ import br.net.mirante.singular.form.view.SViewBreadcrumb;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.form.wicket.model.MTipoModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.form.wicket.model.STypeModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceListItemModel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
@@ -226,7 +226,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                                     adding = true;
                                     pushStatus();
                                     SInstance sInstance = sil.addNew();
-                                    IModel<? extends SInstance> itemModel = new SInstanceCampoModel<>(ctx.getRootContext().getModel(), sInstance.getPathFromRoot());
+                                    IModel<? extends SInstance> itemModel = new SInstanceFieldModel<>(ctx.getRootContext().getModel(), sInstance.getPathFromRoot());
                                     showCrud(ctx, target, itemModel);
                                 }
                             }
@@ -307,7 +307,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 @Override
                 public IModel<SInstance> model(SInstance object) {
                     IModel<SIList<SInstance>> listaModel = $m.get(() -> (SIList<SInstance>) model.getObject());
-                    return new SInstanceItemListaModel<>(listaModel, listaModel.getObject().indexOf(object));
+                    return new SInstanceListItemModel<>(listaModel, listaModel.getObject().indexOf(object));
                 }
             };
         }
@@ -355,7 +355,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     labelModel = $m.ofValue((String) columnType.getType().getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
                 }
 
-                propertyColumnAppender(builder, labelModel, new MTipoModel(columnType.getType()), columnType.getDisplayValueFunction());
+                propertyColumnAppender(builder, labelModel, new STypeModel(columnType.getType()), columnType.getDisplayValueFunction());
             }
 
             actionColumnAppender(builder, model, ctx, viewMode, view);

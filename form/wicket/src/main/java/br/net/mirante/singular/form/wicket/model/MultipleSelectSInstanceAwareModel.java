@@ -11,20 +11,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class MultipleSelectMInstanceAwareModel extends AbstractMInstanceAwareModel<List<Serializable>> {
+public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareModel<List<Serializable>> {
 
     private static final long serialVersionUID = -4455601838581324870L;
 
     private final IModel<? extends SInstance>     model;
-    private final List<SelectMInstanceAwareModel> selects;
+    private final List<SelectSInstanceAwareModel> selects;
 
-    public MultipleSelectMInstanceAwareModel(IModel<? extends SInstance> model) {
+    public MultipleSelectSInstanceAwareModel(IModel<? extends SInstance> model) {
         this.model = model;
         this.selects = new ArrayList<>();
         if (model.getObject() instanceof SIList) {
             final SIList list = (SIList) model.getObject();
             for (int i = 0; i < list.size(); i += 1) {
-                selects.add(new SelectMInstanceAwareModel(new SInstanceItemListaModel<>(model, i)));
+                selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i)));
             }
         } else {
             throw new SingularFormException("Este model somente deve ser utilizado para tipo lista");
@@ -51,7 +51,7 @@ public class MultipleSelectMInstanceAwareModel extends AbstractMInstanceAwareMod
                 final Serializable o = objects.get(i);
                 final SInstance newElement = list.addNew();
                 model.getObject().asAtrProvider().getConverter().fillInstance(newElement, o);
-                selects.add(new SelectMInstanceAwareModel(new SInstanceItemListaModel<>(model, i)));
+                selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i)));
             }
         } else {
             throw new SingularFormException("Este model somente deve ser utilizado para tipo lista");

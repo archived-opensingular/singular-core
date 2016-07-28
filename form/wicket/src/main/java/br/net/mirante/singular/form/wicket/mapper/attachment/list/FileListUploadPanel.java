@@ -12,8 +12,8 @@ import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadLink;
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadUtil;
 import br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceListItemModel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.commons.collections.iterators.TransformIterator;
@@ -30,7 +30,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -41,7 +40,6 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -230,8 +228,8 @@ public class FileListUploadPanel extends Panel implements Loggable {
         return contextPath + FileUploadServlet.UPLOAD_URL;
     }
 
-    private IMInstanciaAwareModel dummyModel() {
-        return new IMInstanciaAwareModel() {
+    private ISInstanceAwareModel dummyModel() {
+        return new ISInstanceAwareModel() {
             @Override
             public Object getObject() {
                 return null;
@@ -331,20 +329,20 @@ public class FileListUploadPanel extends Panel implements Loggable {
         @SuppressWarnings("unchecked")
         @Override
         protected Iterator<IModel<SIAttachment>> getItemModels() {
-            return new TransformIterator(model.getObject().iterator(), input -> new SInstanceItemListaModel<>(model, model.getObject().indexOf((SInstance) input)));
+            return new TransformIterator(model.getObject().iterator(), input -> new SInstanceListItemModel<>(model, model.getObject().indexOf((SInstance) input)));
         }
 
         @Override
         protected void populateItem(Item<SIAttachment> item) {
-            IMInstanciaAwareModel itemModel = (SInstanceItemListaModel) item.getModel();
+            ISInstanceAwareModel itemModel = (SInstanceListItemModel) item.getModel();
             item.add(new DownloadLink("downloadLink", itemModel, downloader));
             item.add(new RemoveButton(itemModel));
         }
 
         private class RemoveButton extends AjaxButton {
-            private final IMInstanciaAwareModel itemModel;
+            private final ISInstanceAwareModel itemModel;
 
-            public RemoveButton(IMInstanciaAwareModel itemModel) {
+            public RemoveButton(ISInstanceAwareModel itemModel) {
                 super("remove_btn");
                 this.itemModel = itemModel;
             }

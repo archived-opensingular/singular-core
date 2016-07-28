@@ -16,7 +16,6 @@ import java.util.List;
 public class PicklistMapper extends MultipleSelectMapper {
 
     @Override
-    @SuppressWarnings("rawtypes")
     protected Component formGroupAppender(BSControls formGroup,
                                           IModel<? extends SInstance> model,
                                           final List<?> opcoesValue) {

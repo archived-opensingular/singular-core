@@ -5,6 +5,17 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeList;
@@ -12,32 +23,24 @@ import br.net.mirante.singular.form.converter.SInstanceConverter;
 import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.provider.Provider;
 import br.net.mirante.singular.form.provider.ProviderContext;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
-import br.net.mirante.singular.form.wicket.model.MultipleSelectMInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
+import br.net.mirante.singular.form.wicket.model.MultipleSelectSInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.ListMultipleChoice;
-import org.apache.wicket.model.IModel;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 @SuppressWarnings("serial")
-public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
+public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Component appendInput() {
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
         final List<Serializable> opcoesValue = new ArrayList<>();
 
         if (model.getObject().getType() instanceof STypeList) {
             final Provider provider = model.getObject().asAtrProvider().getProvider();
-            if(provider != null) {
+            if (provider != null) {
                 opcoesValue.addAll(provider.load(ProviderContext.of(ctx.getCurrentInstance())));
             }
         }
@@ -48,9 +51,9 @@ public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
         if (!model.getObject().isEmptyOfData()) {
             final SIList list = (SIList) model.getObject();
             for (int i = 0; i < list.size(); i += 1) {
-                SInstance                ins          = list.get(i);
-                final SInstanceConverter converter    = list.asAtrProvider().getConverter();
-                final Serializable       converterted = converter.toObject(ins);
+                SInstance ins = list.get(i);
+                final SInstanceConverter converter = list.asAtrProvider().getConverter();
+                final Serializable converterted = converter.toObject(ins);
                 if (!opcoesValue.contains(converterted)) {
                     opcoesValue.add(i, converterted);
                 }
@@ -61,12 +64,11 @@ public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
 
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, final List<?> opcoesValue) {
-        return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectMInstanceAwareModel(model), opcoesValue, renderer());
+        return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectSInstanceAwareModel(model), opcoesValue, renderer(model));
     }
 
-    @SuppressWarnings("rawtypes")
     protected Component formGroupAppender(BSControls formGroup,
                                           IModel<? extends SInstance> model,
                                           final List<?> opcoesValue) {
@@ -75,23 +77,22 @@ public class MultipleSelectMapper extends ControlsFieldComponentAbstractMapper {
         return choices;
     }
 
-    @SuppressWarnings("rawtypes")
-    protected IChoiceRenderer<Serializable> renderer() {
+    protected IChoiceRenderer<Serializable> renderer(IModel<? extends SInstance> model) {
         return new SingularChoiceRenderer(model);
     }
 
     @Override
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final StringBuilder output = new StringBuilder();
-        final SInstance     mi     = model.getObject();
+        final SInstance mi = model.getObject();
         if (mi instanceof SIList) {
             final Collection children = ((SIList) mi).getChildren();
-            final Iterator   iterator = children.iterator();
-            boolean          first    = true;
+            final Iterator iterator = children.iterator();
+            boolean first = true;
             while (iterator.hasNext()) {
-                final SInstance    val       = (SInstance) iterator.next();
+                final SInstance val = (SInstance) iterator.next();
                 final Serializable converted = mi.asAtrProvider().getConverter().toObject(val);
-                final String       label     = mi.asAtrProvider().getDisplayFunction().apply(converted);
+                final String label = mi.asAtrProvider().getDisplayFunction().apply(converted);
                 if (first) {
                     output.append(label);
                     first = false;

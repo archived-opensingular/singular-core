@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.Stream.Builder;
 
@@ -27,6 +28,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
+import br.net.mirante.singular.commons.lambda.ISupplier;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.view.SView;
@@ -35,10 +37,13 @@ import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackCompactPanel;
+import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackPanel;
 import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
@@ -48,35 +53,35 @@ import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 @SuppressWarnings({ "serial", "rawtypes" })
 public class WicketBuildContext implements Serializable {
 
-    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
+    static final HintKey<HashMap<String, Integer>>                       COL_WIDTHS                                    = () -> new HashMap<>();
 
-    public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {};
+    public static final MetaDataKey<WicketBuildContext>                  METADATA_KEY                                  = new MetaDataKey<WicketBuildContext>() {};
 
-    public static final HintKey<IModel<String>> TITLE_KEY                                     = () -> null;
-    public static final HintKey<Boolean>        RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
+    public static final HintKey<IModel<String>>                          TITLE_KEY                                     = () -> null;
+    public static final HintKey<Boolean>                                 RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
 
-    private final WicketBuildContext                parent;
-    private final List<WicketBuildContext>          children = newArrayList();
-    private final BSContainer<?>                    container;
-    private final HashMap<HintKey<?>, Serializable> hints    = new HashMap<>();
-    private final boolean                           hintsInherited;
-    private final BSContainer                       externalContainer;
+    private final WicketBuildContext                                     parent;
+    private final List<WicketBuildContext>                               children                                      = newArrayList();
+    private final BSContainer<?>                                         container;
+    private final HashMap<HintKey<?>, Serializable>                      hints                                         = new HashMap<>();
+    private final boolean                                                hintsInherited;
+    private final BSContainer                                            externalContainer;
 
-    private IModel<? extends SInstance>           model;
-    private UIBuilderWicket                       uiBuilderWicket;
-    private ViewMode                              viewMode;
-    private AnnotationMode                        annotation              = AnnotationMode.NONE;
-    private HashMap<Integer, AnnotationComponent> annotations             = newHashMap();
-    private HashMap<Integer, Component>           annotationsTargetBuffer = newHashMap();
-    private BSContainer                           annotationContainer;
+    private IModel<? extends SInstance>                                  model;
+    private UIBuilderWicket                                              uiBuilderWicket;
+    private ViewMode                                                     viewMode;
+    private AnnotationMode                                               annotation                                    = AnnotationMode.NONE;
+    private HashMap<Integer, AnnotationComponent>                        annotations                                   = newHashMap();
+    private HashMap<Integer, Component>                                  annotationsTargetBuffer                       = newHashMap();
+    private BSContainer                                                  annotationContainer;
 
     private boolean                                                      showBreadcrumb;
-    private boolean                                                      titleInBlock     = false;
-    private List<String>                                                 breadCrumbs      = newArrayList();
-    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
+    private boolean                                                      titleInBlock                                  = false;
+    private List<String>                                                 breadCrumbs                                   = newArrayList();
+    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus                              = newLinkedList();
     private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus        selectedBreadCrumbStatus;
 
-    private SView view;
+    private SView                                                        view;
 
     public AnnotationMode annotation() {
         return annotation;
@@ -200,19 +205,19 @@ public class WicketBuildContext implements Serializable {
      */
     public void configure(IWicketComponentMapper mapper, FormComponent<?> formComponent) {
         final IModel defaultModel = formComponent.getDefaultModel();
-        if (defaultModel != null && IMInstanciaAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
+        if (defaultModel != null && ISInstanceAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
             WicketFormUtils.setCellContainer(formComponent, getContainer());
             formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
             if (formComponent.getLabel() == null) {
                 // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
                 formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
             }
-            final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
+            final ISInstanceAwareModel<?> model = (ISInstanceAwareModel<?>) defaultModel;
             // final SType<?> tipo = model.getMInstancia().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
             mapper.addAjaxUpdate(
                 formComponent,
-                IMInstanciaAwareModel.getInstanceModel(model),
+                ISInstanceAwareModel.getInstanceModel(model),
                 new OnFieldUpdatedListener());
         }
     }
@@ -266,8 +271,8 @@ public class WicketBuildContext implements Serializable {
 
     protected static <T> String resolveSimpleLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
-        if (model instanceof IMInstanciaAwareModel<?>) {
-            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+        if (model instanceof ISInstanceAwareModel<?>) {
+            SInstance instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
             return instancia.asAtr().getLabel();
         }
         return "[" + formComponent.getId() + "]";
@@ -280,8 +285,8 @@ public class WicketBuildContext implements Serializable {
      */
     protected static <T> String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
-        if (model instanceof IMInstanciaAwareModel<?>) {
-            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+        if (model instanceof ISInstanceAwareModel<?>) {
+            SInstance instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
             List<String> labels = new ArrayList<>();
             while (instancia != null) {
                 labels.add(instancia.asAtr().getLabel());
@@ -325,6 +330,30 @@ public class WicketBuildContext implements Serializable {
         return container;
     }
 
+    public SValidationFeedbackPanel createFeedbackPanel(String id) {
+        return createFeedbackPanel(id, null);
+    }
+    public SValidationFeedbackPanel createFeedbackPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
+        return createFeedbackCompactPanel(() -> new SValidationFeedbackPanel(id, getContainer()), listenerFunc);
+    }
+    public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id) {
+        return createFeedbackCompactPanel(id, null);
+    }
+    public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
+        return createFeedbackCompactPanel(() -> new SValidationFeedbackCompactPanel(id, getContainer()), listenerFunc);
+    }
+    private <C extends Component> C createFeedbackCompactPanel(ISupplier<C> factory, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
+        C feedback = factory.get();
+        SValidationFeedbackHandler handler = SValidationFeedbackHandler.bindTo(getContainer())
+            .addInstanceModel(getModel());
+        if (listenerFunc != null) {
+            ISValidationFeedbackHandlerListener listener = listenerFunc.apply(feedback);
+            if (listener != null)
+                handler.addListener(listener);
+        }
+        return feedback;
+    }
+
     public BSContainer<?> getExternalContainer() {
         return externalContainer;
     }
@@ -348,7 +377,7 @@ public class WicketBuildContext implements Serializable {
     public void rebuild(List<String> nomesTipo) {
         IModel<? extends SInstance> originalModel = getModel();
         for (String nomeTipo : nomesTipo) {
-            SInstanceCampoModel<SInstance> subtree = new SInstanceCampoModel<>(originalModel, nomeTipo);
+            SInstanceFieldModel<SInstance> subtree = new SInstanceFieldModel<>(originalModel, nomeTipo);
             setModel(subtree);
             getUiBuilderWicket().build(this, viewMode);
         }
@@ -406,6 +435,10 @@ public class WicketBuildContext implements Serializable {
 
     public IModel<? extends SInstance> getModel() {
         return model;
+    }
+
+    public IModel<?> getValueModel() {
+        return new SInstanceValueModel<>(getModel());
     }
 
     public void setModel(IModel<? extends SInstance> model) {

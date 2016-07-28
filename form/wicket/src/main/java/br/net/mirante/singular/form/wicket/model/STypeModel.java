@@ -5,39 +5,27 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.model.IModel;
 
-public class MTipoElementosModel
-    implements IReadOnlyModel<SType<SInstance>> {
+/**
+ * Model
+ */
+public class STypeModel
+        implements IReadOnlyModel<SType<?>> {
 
-    private Object rootTarget;
+    private transient Object rootTarget;
 
-    public MTipoElementosModel(Object rootTarget) {
+    public STypeModel(Object rootTarget) {
         this.rootTarget = rootTarget;
     }
 
     @Override
-    public SType<SInstance> getObject() {
-        return getTipoElementos(rootTarget);
+    public SType<?> getObject() {
+        return (SType<?>) rootTarget;
     }
 
-    @SuppressWarnings("unchecked")
-    public static SType<SInstance> getTipoElementos(Object obj) {
-        if (obj instanceof SIList<?>)
-            return ((SIList<SInstance>) obj).getElementsType();
-        if (obj instanceof STypeList<?, ?>)
-            return ((STypeList<SType<SInstance>, SInstance>) obj).getElementsType();
-        if (obj instanceof IModel<?>)
-            return getTipoElementos(((IModel<?>) obj).getObject());
-
-        throw new IllegalArgumentException();
-    }
 
     @Override
     public void detach() {
@@ -62,7 +50,7 @@ public class MTipoElementosModel
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MTipoElementosModel other = (MTipoElementosModel) obj;
+        STypeModel other = (STypeModel) obj;
         if (rootTarget == null) {
             if (other.rootTarget != null)
                 return false;

@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -86,12 +86,12 @@ public abstract class WicketFormUtils {
             .findAny()
             .get();
         return streamDescendants(rootContainer)
-            .filter(c -> c.getDefaultModel() instanceof IMInstanciaAwareModel<?>)
+            .filter(c -> c.getDefaultModel() instanceof ISInstanceAwareModel<?>)
             .filter(c -> predicate.test(c, instanciaIfAware(c.getDefaultModel()).orElse(null)));
     }
     private static Optional<SInstance> instanciaIfAware(IModel<?> model) {
-        return (model instanceof IMInstanciaAwareModel<?>)
-            ? Optional.ofNullable(((IMInstanciaAwareModel<?>) model).getMInstancia())
+        return (model instanceof ISInstanceAwareModel<?>)
+            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getMInstancia())
             : Optional.empty();
     }
 
@@ -116,8 +116,8 @@ public abstract class WicketFormUtils {
                 return;
             } else if (model.getObject() instanceof SInstance) {
                 instance = (SInstance) model.getObject();
-            } else if (model instanceof IMInstanciaAwareModel<?>) {
-                instance = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            } else if (model instanceof ISInstanceAwareModel<?>) {
+                instance = ((ISInstanceAwareModel<?>) model).getMInstancia();
             } else {
                 return;
             }
@@ -147,8 +147,8 @@ public abstract class WicketFormUtils {
     }
 
     public static Optional<SInstance> resolveInstance(final IModel<?> model) {
-        return (model instanceof IMInstanciaAwareModel<?>)
-            ? Optional.ofNullable(((IMInstanciaAwareModel<?>) model).getMInstancia())
+        return (model instanceof ISInstanceAwareModel<?>)
+            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getMInstancia())
             : Optional.empty();
     }
 

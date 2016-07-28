@@ -15,15 +15,15 @@ import org.apache.wicket.model.IObjectClassAwareModel;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public class MInstanciaValorModel<T>
+public class SInstanceValueModel<T>
     implements
     IModel<T>,
     IObjectClassAwareModel<T>,
-    IMInstanciaAwareModel<T> {
+        ISInstanceAwareModel<T> {
 
     private IModel<? extends SInstance> instanciaModel;
 
-    public MInstanciaValorModel(IModel<? extends SInstance> instanciaModel) {
+    public SInstanceValueModel(IModel<? extends SInstance> instanciaModel) {
         this.instanciaModel = instanciaModel;
     }
 
@@ -85,7 +85,7 @@ public class MInstanciaValorModel<T>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MInstanciaValorModel<?> other = (MInstanciaValorModel<?>) obj;
+        SInstanceValueModel<?> other = (SInstanceValueModel<?>) obj;
         if (instanciaModel == null) {
             if (other.instanciaModel != null)
                 return false;

@@ -19,7 +19,7 @@ import br.net.mirante.singular.showcase.component.Resource;
  */
 @CaseItem(componentName = "Custom Mapper", subCaseName = "Range Slider", group = Group.CUSTOM,
 resources = {@Resource(RangeSliderMapper.class), @Resource(value = RangeSliderMapper.class, extension = "js")})
-public class CaseCustonRangeMapperPackage extends SPackage {
+public class CaseCustomRangeMapperPackage extends SPackage {
 
     @Override
     protected void onLoadPackage(PackageBuilder pb) {
@@ -33,7 +33,7 @@ public class CaseCustonRangeMapperPackage extends SPackage {
 
         faixaIdade.asAtr().label("Faixa de Idade");
         //@destacar
-        faixaIdade.withCustomMapper(new RangeSliderMapper(valorInicial, valorFinal));
+        faixaIdade.withCustomMapper(() -> new RangeSliderMapper(valorInicial, valorFinal));
 
     }
 }

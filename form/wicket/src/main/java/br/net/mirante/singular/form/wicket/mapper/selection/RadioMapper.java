@@ -5,32 +5,36 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
-import br.net.mirante.singular.form.wicket.model.SelectMInstanceAwareModel;
-import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.RadioChoice;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
 
 import java.io.Serializable;
 
-import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
-import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.RadioChoice;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
+
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
+import br.net.mirante.singular.form.wicket.model.SelectSInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class RadioMapper extends SelectMapper {
 
     @Override
-    public Component appendInput() {
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final SViewSelectionByRadio radioView = (SViewSelectionByRadio) ctx.getView();
+        final String id = model.getObject().getName();
 
-        final SViewSelectionByRadio radioView = (SViewSelectionByRadio) view;
-        final String                id        = model.getObject().getName();
-
-        RadioChoice rc = new RadioChoice<Serializable>(id,
-                new SelectMInstanceAwareModel(model),
-                new DefaultOptionsProviderLoadableDetachableModel(model),
-                new SingularChoiceRenderer(model)) {
+        RadioChoice<Serializable> rc = new RadioChoice<Serializable>(id,
+            new SelectSInstanceAwareModel(model),
+            new DefaultOptionsProviderLoadableDetachableModel(model),
+            new SingularChoiceRenderer(model)) {
 
             @Override
             protected IValueMap getAdditionalAttributesForLabel(int index, Serializable choice) {

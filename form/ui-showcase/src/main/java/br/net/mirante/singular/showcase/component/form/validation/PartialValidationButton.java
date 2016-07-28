@@ -15,7 +15,7 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 
 public class PartialValidationButton extends AjaxButton {
@@ -35,7 +35,7 @@ public class PartialValidationButton extends AjaxButton {
         WicketFormProcessing.updateValidationFeedbackOnDescendants(
             Optional.ofNullable(target),
             form,
-            new MInstanceRootModel<>(obrigatorio1),
+            new SInstanceRootModel<>(obrigatorio1),
             validationContext.getErrorsByInstanceId());
     }
     //@destacar:fim

@@ -14,7 +14,7 @@ import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.internal.xml.MElement;
 import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.showcase.dao.form.Prototype;
@@ -50,7 +50,7 @@ public class PrototypeContent extends Content {
         dictionary.loadPackage(SPackagePrototype.class);
     }
 
-    private MInstanceRootModel<SIComposite> model;
+    private SInstanceRootModel<SIComposite> model;
     private SingularFormPanel<String> singularFormPanel;
 
     public PrototypeContent(String id, StringValue idValue) {
@@ -119,7 +119,7 @@ public class PrototypeContent extends Content {
                         return dictionary.getType(SPackagePrototype.META_FORM_COMPLETE);
                     }
                 });
-                model = new MInstanceRootModel<>(currentInstance);
+                model = new SInstanceRootModel<>(currentInstance);
 
                 return currentInstance;
             }

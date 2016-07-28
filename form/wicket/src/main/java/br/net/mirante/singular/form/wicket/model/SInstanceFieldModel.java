@@ -7,12 +7,12 @@ package br.net.mirante.singular.form.wicket.model;
 
 import br.net.mirante.singular.form.SInstance;
 
-public class SInstanceCampoModel<I extends SInstance>
+public class SInstanceFieldModel<I extends SInstance>
     extends AbstractSInstanceCampoModel<I> {
 
     private String propertyExpression;
 
-    public SInstanceCampoModel(Object rootTarget, String propertyExpression) {
+    public SInstanceFieldModel(Object rootTarget, String propertyExpression) {
         super(rootTarget);
         this.propertyExpression = propertyExpression;
     }
@@ -38,7 +38,7 @@ public class SInstanceCampoModel<I extends SInstance>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        SInstanceCampoModel<?> other = (SInstanceCampoModel<?>) obj;
+        SInstanceFieldModel<?> other = (SInstanceFieldModel<?>) obj;
         if (propertyExpression == null) {
             if (other.propertyExpression != null)
                 return false;

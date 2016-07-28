@@ -5,30 +5,37 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.form.YearMonthField;
+import java.time.YearMonth;
+import java.util.HashMap;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
-import java.time.YearMonth;
-import java.util.HashMap;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.form.YearMonthField;
 
-public class YearMonthMapper extends ControlsFieldComponentAbstractMapper {
+public class YearMonthMapper extends AbstractControlsFieldComponentMapper {
 
-    public Component appendInput() {
-        YearMonthField comp = new YearMonthField(model.getObject().getName(), new MInstanciaValorModel<>(model));
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
+
+        YearMonthField comp = new YearMonthField(model.getObject().getName(), new SInstanceValueModel<>(model));
         formGroup.appendDatepicker(comp.setLabel(labelModel)
-                        .setOutputMarkupId(true).add(new InputMaskBehavior(InputMaskBehavior.Masks.SHORT_DATE)),
-                new HashMap<String, String>() {{
+            .setOutputMarkupId(true).add(new InputMaskBehavior(InputMaskBehavior.Masks.SHORT_DATE)),
+            new HashMap<String, String>() {
+                {
                     put("data-date-format", "mm/yyyy");
                     put("data-date-start-view", "months");
                     put("data-date-min-view-mode", "months");
                     put("data-date-start-date", "01/1900");
                     put("data-date-end-date", "12/2999");
-                }});
+                }
+            });
         return comp;
     }
 

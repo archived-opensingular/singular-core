@@ -5,15 +5,10 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.provider.AtrProvider;
-import br.net.mirante.singular.form.provider.Provider;
-import br.net.mirante.singular.form.provider.ProviderContext;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
-import br.net.mirante.singular.form.wicket.model.SelectMInstanceAwareModel;
-import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -22,18 +17,28 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.provider.AtrProvider;
+import br.net.mirante.singular.form.provider.Provider;
+import br.net.mirante.singular.form.provider.ProviderContext;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
+import br.net.mirante.singular.form.wicket.model.SelectSInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
-public class SelectMapper extends ControlsFieldComponentAbstractMapper {
+public class SelectMapper extends AbstractControlsFieldComponentMapper {
 
     private static final long serialVersionUID = 3837032981059048504L;
 
     @Override
-    public Component appendInput() {
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
+        
         final DropDownChoice<Serializable> dropDownChoice = new DropDownChoice<Serializable>(ctx.getCurrentInstance().getName(),
-                new SelectMInstanceAwareModel(model),
+                new SelectSInstanceAwareModel(model),
                 new DefaultOptionsProviderLoadableDetachableModel(model),
                 new SingularChoiceRenderer(model)) {
             @Override

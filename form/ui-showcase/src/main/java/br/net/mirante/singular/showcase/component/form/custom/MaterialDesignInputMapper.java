@@ -15,8 +15,8 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.AtributoModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.AttributeModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
@@ -29,13 +29,13 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
         final IModel<? extends SInstance> model = ctx.getModel();
         final BSControls formGroup = ctx.getContainer().newFormGroup();
         final SInstance mi = ctx.getCurrentInstance();
-        final BSLabel label = new BSLabel("label", new AtributoModel<>(model, SPackageBasic.ATR_LABEL));
+        final BSLabel label = new BSLabel("label", new AttributeModel<>(model, SPackageBasic.ATR_LABEL));
 
         if(ctx.getViewMode().isVisualization()){
             formGroup.appendLabel(label);
             formGroup.appendTag("div", new BOutputPanel(mi.getName(), getOutputString(mi)));
         } else {
-            formGroup.appendInputText(new TextField<>(mi.getName(), new MInstanciaValorModel<>(model)));
+            formGroup.appendInputText(new TextField<>(mi.getName(), new SInstanceValueModel<>(model)));
             formGroup.appendLabel(label);
             formGroup.add(new AttributeAppender("class", " form-md-line-input form-md-floating-label"));
         }

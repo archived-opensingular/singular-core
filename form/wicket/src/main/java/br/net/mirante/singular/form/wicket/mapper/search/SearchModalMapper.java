@@ -5,17 +5,23 @@
 
 package br.net.mirante.singular.form.wicket.mapper.search;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.view.SViewSearchModal;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentAbstractMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
-public class SearchModalMapper extends ControlsFieldComponentAbstractMapper {
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.view.SView;
+import br.net.mirante.singular.form.view.SViewSearchModal;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
-    public Component appendInput() {
+public class SearchModalMapper extends AbstractControlsFieldComponentMapper {
+
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final SView view = ctx.getView();
+
         if (view instanceof SViewSearchModal) {
             final SearchModalPanel selectModalBusca = new SearchModalPanel("SelectModalBusca", ctx);
             formGroup.appendDiv(selectModalBusca);
@@ -40,4 +46,3 @@ public class SearchModalMapper extends ControlsFieldComponentAbstractMapper {
     }
 
 }
-

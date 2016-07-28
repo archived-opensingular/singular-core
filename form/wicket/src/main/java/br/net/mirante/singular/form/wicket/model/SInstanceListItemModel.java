@@ -7,13 +7,13 @@ package br.net.mirante.singular.form.wicket.model;
 
 import br.net.mirante.singular.form.SInstance;
 
-public class SInstanceItemListaModel<I extends SInstance>
+public class SInstanceListItemModel<I extends SInstance>
     extends AbstractSInstanceItemListaModel<I>
 {
 
     private int index;
 
-    public SInstanceItemListaModel(Object rootTarget, int index) {
+    public SInstanceListItemModel(Object rootTarget, int index) {
         super(rootTarget);
         this.index = index;
     }

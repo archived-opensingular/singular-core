@@ -44,7 +44,7 @@ import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.showcase.dao.form.Prototype;
 import br.net.mirante.singular.showcase.dao.form.PrototypeDAO;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
@@ -167,7 +167,7 @@ public class PrototypeListContent extends Content
                     Icone.EYE, this::viewXml);
     }
 
-    private MInstanceRootModel<SIComposite> getMInstance(Prototype prototype) {
+    private SInstanceRootModel<SIComposite> getMInstance(Prototype prototype) {
         String xml = prototype.getXml();
         RefType refType = new RefType() {
             protected SType<?> retrieve() {
@@ -175,7 +175,7 @@ public class PrototypeListContent extends Content
             }
         };
         SIComposite instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
-        return new MInstanceRootModel<>(instance);
+        return new SInstanceRootModel<>(instance);
     }
 
     private BaseDataProvider<Prototype, String> createDataProvider() {

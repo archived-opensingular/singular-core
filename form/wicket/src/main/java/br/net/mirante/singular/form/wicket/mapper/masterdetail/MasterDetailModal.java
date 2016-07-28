@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
-import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceListItemModel;
 import br.net.mirante.singular.form.wicket.util.FormStateUtil;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
@@ -114,7 +114,7 @@ class MasterDetailModal extends BFModalWindow {
 
     void showNew(AjaxRequestTarget target) {
         closeCallback = this::revert;
-        currentInstance = new SInstanceItemListaModel<>(listModel, listModel.getObject().indexOf(listModel.getObject().addNew()));
+        currentInstance = new SInstanceListItemModel<>(listModel, listModel.getObject().indexOf(listModel.getObject().addNew()));
         actionLabel.setObject(view.getNewActionLabel());
         MasterDetailModal.this.configureNewContent(actionLabel.getObject(), target);
     }

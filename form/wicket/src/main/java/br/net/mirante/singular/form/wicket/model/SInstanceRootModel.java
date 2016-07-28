@@ -26,17 +26,17 @@ import java.util.Objects;
  * @see {@link InstanceSerializableRef}
  * @author Daniel C. Bordin
  */
-public class MInstanceRootModel<I extends SInstance> extends AbstractSInstanceModel<I> implements IMInstanceEventCollector<I> {
+public class SInstanceRootModel<I extends SInstance> extends AbstractSInstanceModel<I> implements ISInstanceEventCollector<I> {
 
     private final InstanceSerializableRef<I> instanceRef;
 
     private transient ISInstanceListener.EventCollector instanceListener;
 
-    public MInstanceRootModel() {
+    public SInstanceRootModel() {
         instanceRef = new InstanceSerializableRef<I>();
     }
 
-    public MInstanceRootModel(I object) {
+    public SInstanceRootModel(I object) {
         instanceRef = new InstanceSerializableRef<I>(object);
     }
 
@@ -97,7 +97,7 @@ public class MInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MInstanceRootModel<?> other = (MInstanceRootModel<?>) obj;
+        SInstanceRootModel<?> other = (SInstanceRootModel<?>) obj;
         return Objects.equals(instanceRef.get(), other.instanceRef.get());
     }
 }

@@ -4,7 +4,6 @@ import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.core.SIString;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
@@ -12,7 +11,7 @@ import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.panel.FormPanel;
@@ -74,7 +73,7 @@ public class TestFormWicketBuild  {
             return tipoCidade;
         });
 
-        IModel<SIString> mCidade = new MInstanceRootModel<SIString>(instancia);
+        IModel<SIString> mCidade = new SInstanceRootModel<SIString>(instancia);
         mCidade.getObject().setValue("Brasilia");
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
         singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
@@ -99,7 +98,7 @@ public class TestFormWicketBuild  {
             return dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
         });
 
-        IModel<SIComposite> mCurriculo = new MInstanceRootModel<SIComposite>(instancia);
+        IModel<SIComposite> mCurriculo = new SInstanceRootModel<SIComposite>(instancia);
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
 //        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 

@@ -11,8 +11,8 @@ import br.net.mirante.singular.form.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.form.wicket.model.AbstractMInstanceAwareModel;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.AbstractSInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,7 +29,7 @@ public class SearchModalPanel extends Panel {
     public static final String MODAL_TRIGGER_ID = "modalTrigger";
 
     private final WicketBuildContext            ctx;
-    private final IMInstanciaAwareModel<String> valueModel;
+    private final ISInstanceAwareModel<String> valueModel;
     private final SViewSearchModal              view;
 
     private TextField<String> valueField;
@@ -39,7 +39,7 @@ public class SearchModalPanel extends Panel {
         super(id);
         this.ctx = ctx;
         this.view = (SViewSearchModal) ctx.getView();
-        this.valueModel = new AbstractMInstanceAwareModel<String>() {
+        this.valueModel = new AbstractSInstanceAwareModel<String>() {
             @Override
             public String getObject() {
                 final SInstance mi = getMInstancia();

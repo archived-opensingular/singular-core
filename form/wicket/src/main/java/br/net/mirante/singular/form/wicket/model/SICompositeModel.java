@@ -13,13 +13,13 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 
-public class MICompostoModel<T extends SIComposite>
+public class SICompositeModel<T extends SIComposite>
     extends AbstractSInstanceModel<T>
     implements IComponentInheritedModel<T> {
 
     private Object target;
 
-    public MICompostoModel(Object target) {
+    public SICompositeModel(Object target) {
         this.target = target;
     }
 
@@ -51,7 +51,7 @@ public class MICompostoModel<T extends SIComposite>
         return new AttachedCompoundPropertyModel(component);
     }
     public <S extends SInstance> IModel<S> bind(String property) {
-        return new SInstanceCampoModel<S>(this, property);
+        return new SInstanceFieldModel<S>(this, property);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class MICompostoModel<T extends SIComposite>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MICompostoModel<?> other = (MICompostoModel<?>) obj;
+        SICompositeModel<?> other = (SICompositeModel<?>) obj;
         if (target == null) {
             if (other.target != null)
                 return false;
@@ -83,22 +83,22 @@ public class MICompostoModel<T extends SIComposite>
         implements IWrapModel<C> {
         private final Component owner;
         public AttachedCompoundPropertyModel(Component owner) {
-            super(MICompostoModel.this);
+            super(SICompositeModel.this);
             this.owner = owner;
         }
         @Override
         protected String propertyExpression() {
-            return MICompostoModel.this.propertyExpression(owner);
+            return SICompositeModel.this.propertyExpression(owner);
         }
         @Override
         public IModel<T> getWrappedModel() {
-            return MICompostoModel.this;
+            return SICompositeModel.this;
         }
 
         @Override
         public void detach() {
             super.detach();
-            MICompostoModel.this.detach();
+            SICompositeModel.this.detach();
         }
         @Override
         public int hashCode() {
@@ -127,8 +127,8 @@ public class MICompostoModel<T extends SIComposite>
                 return false;
             return true;
         }
-        private MICompostoModel<?> getOuterType() {
-            return MICompostoModel.this;
+        private SICompositeModel<?> getOuterType() {
+            return SICompositeModel.this;
         }
     }
 }

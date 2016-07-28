@@ -34,7 +34,7 @@ import br.net.mirante.singular.form.view.SViewTab;
 import br.net.mirante.singular.form.wicket.ISValidationFeedbackHandlerListener;
 import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.form.wicket.panel.BSPanelGrid;
 
 public class TabMapper extends DefaultCompositeMapper {
@@ -70,7 +70,7 @@ public class TabMapper extends DefaultCompositeMapper {
             protected void onTabCreated(BSTab tab, Component tabComponent) {
                 super.onTabCreated(tab, tabComponent);
                 ISupplier<List<IModel<? extends SInstance>>> subtreeModels = () -> tab.getSubtree().stream()
-                    .map(it -> new SInstanceCampoModel<>(tab.getModel(), it))
+                    .map(it -> new SInstanceFieldModel<>(tab.getModel(), it))
                     .collect(toList());
                 SValidationFeedbackHandler.bindTo(tabComponent)
                     .addInstanceModels(subtreeModels.get())
@@ -215,7 +215,7 @@ public class TabMapper extends DefaultCompositeMapper {
 
     private void renderTab(List<String> nomesTipo, BSPanelGrid panel, WicketBuildContext ctx) {
         for (String nomeTipo : nomesTipo) {
-            final SInstanceCampoModel<SInstance> subtree = new SInstanceCampoModel<>(ctx.getModel(), nomeTipo);
+            final SInstanceFieldModel<SInstance> subtree = new SInstanceFieldModel<>(ctx.getModel(), nomeTipo);
             final WicketBuildContext childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), true, subtree);
             childContext.init(ctx.getUiBuilderWicket(), ctx.getViewMode());
             childContext.getUiBuilderWicket().build(childContext, childContext.getViewMode());

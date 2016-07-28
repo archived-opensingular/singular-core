@@ -27,7 +27,7 @@ import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -45,7 +45,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     /**
      * Instancia root do pacote
      */
-    private final MInstanceRootModel<SInstance> rootInstance;
+    private final SInstanceRootModel<SInstance> rootInstance;
 
     /**
      * ViewMode, por padrão é de edição
@@ -72,7 +72,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
      */
     public SingularFormPanel(String id, SFormConfig<FORM_KEY> singularFormConfig) {
         super(id);
-        this.rootInstance = new MInstanceRootModel<>();
+        this.rootInstance = new SInstanceRootModel<>();
         this.singularFormConfig = Objects.requireNonNull(singularFormConfig);
         this.documentFactoryRef = singularFormConfig.getDocumentFactory().getDocumentFactoryRef();
     }

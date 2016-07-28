@@ -21,26 +21,29 @@ import org.apache.wicket.util.convert.IConverter;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerInputGroup;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 @SuppressWarnings("serial")
-public class DateMapper extends ControlsFieldComponentAbstractMapper {
+public class DateMapper extends AbstractControlsFieldComponentMapper {
 
     private static final Logger LOGGER = Logger.getLogger(DateMapper.class.getName());
 
     @SuppressWarnings("unchecked")
     @Override
-    public Component appendInput() {
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
         BSDatepickerInputGroup datepicker = formGroup
             .newComponent(id -> (BSDatepickerInputGroup) new BSDatepickerInputGroup(id)
                 .setConverter(new ConverterImpl())
                 .setTextFieldConfigurer((FormComponent<?> c) -> c
                     .setLabel(labelModel)
-                    .setDefaultModel(new MInstanciaValorModel<>(model))
+                    .setDefaultModel(new SInstanceValueModel<>(model))
                     .setOutputMarkupId(true)
                     .add(new InputMaskBehavior(Masks.FULL_DATE))));
         return datepicker.getTextField();

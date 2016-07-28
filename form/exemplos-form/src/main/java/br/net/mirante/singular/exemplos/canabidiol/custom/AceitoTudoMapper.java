@@ -9,7 +9,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 
 import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
-import br.net.mirante.singular.form.wicket.model.AtributoModel;
+import br.net.mirante.singular.form.wicket.model.AttributeModel;
 
 /**
  * Mapper customizado para substituir os "\n"
@@ -18,7 +18,7 @@ import br.net.mirante.singular.form.wicket.model.AtributoModel;
 public class AceitoTudoMapper extends BooleanMapper {
 
     @Override
-    protected Label buildLabel(String id, AtributoModel<String> labelModel) {
+    protected Label buildLabel(String id, AttributeModel<String> labelModel) {
         String s = labelModel.getObject();
         s = s.replace("\n", "<br />");
         Label label = new Label(id, Model.of(s));
