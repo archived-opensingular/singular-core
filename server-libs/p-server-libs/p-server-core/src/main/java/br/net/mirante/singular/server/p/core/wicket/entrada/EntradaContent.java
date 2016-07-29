@@ -88,7 +88,7 @@ public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
     private void appendCumprirExigenciaAction(BSActionColumn<PeticaoDTO, String> actionColumn) {
         actionColumn
                 .appendStaticAction(getMessage("label.table.column.requirement"),
-                        Icone.PENCIL, (pet, id) -> criarLink(pet, id, ViewMode.EDITION, AnnotationMode.READ_ONLY));
+                        Icone.PENCIL, (pet, id) -> criarLink(pet, id, ViewMode.EDIT, AnnotationMode.READ_ONLY));
     }
 
     private WebMarkupContainer criarLink(PeticaoDTO peticao, String id, ViewMode vm, AnnotationMode annotationMode) {

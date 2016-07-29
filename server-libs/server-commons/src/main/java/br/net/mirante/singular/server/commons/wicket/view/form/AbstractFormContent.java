@@ -47,7 +47,7 @@ public abstract class AbstractFormContent extends Content {
     private final BSModalBorder closeModal = construirCloseModal();
     protected IModel<String> msgFlowModel = new Model<>();
     protected IModel<String> transitionNameModel = new Model<>();
-    protected ViewMode viewMode = ViewMode.EDITION;
+    protected ViewMode viewMode = ViewMode.EDIT;
     protected AnnotationMode annotationMode = AnnotationMode.NONE;
     protected SingularFormPanel<String> singularFormPanel;
     @Inject
@@ -213,7 +213,7 @@ public abstract class AbstractFormContent extends Content {
     }
 
     private boolean isReadOnly() {
-        return viewMode == ViewMode.VISUALIZATION && annotationMode != AnnotationMode.EDIT;
+        return viewMode == ViewMode.READ_ONLY && annotationMode != AnnotationMode.EDIT;
     }
 
     protected BSModalBorder construirCloseModal() {
