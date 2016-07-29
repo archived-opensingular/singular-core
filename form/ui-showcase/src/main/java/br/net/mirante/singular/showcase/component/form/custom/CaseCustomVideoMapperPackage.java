@@ -7,6 +7,8 @@ package br.net.mirante.singular.showcase.component.form.custom;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
+import java.net.URL;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.media.video.Video;
@@ -37,8 +39,11 @@ public class CaseCustomVideoMapperPackage extends SPackage {
 
         tipoMyForm.addFieldString("video")
             .addInstanceValidator(v -> {
-                if (!v.getInstance().getValue().toLowerCase().endsWith(".mp4"))
-                    v.error("The URL must point to a MP4 file");
+                try {
+                    new URL(v.getInstance().getValue());
+                } catch (Exception e) {
+                    v.error("URL inválida");
+                }
             })
             //@destacar
             .withCustomMapper(() -> new VideoMapper())
@@ -55,8 +60,8 @@ public class CaseCustomVideoMapperPackage extends SPackage {
                         .appendComponent(id -> new BSFormGroup(id, BSGridSize.MD)
                             .appendControls(12, controlsId -> new BSControls(controlsId)
                                 .appendLabel(new Label("label", labelModel))
-                                .appendInputText(new TextField<>("url", ctx.getValueModel()))
-                                .appendFeedback(ctx.createFeedbackPanel("feedback"))
+                                .appendInputText(ctx.configure(this, new TextField<>("url", ctx.getValueModel())))
+                                .appendFeedback(ctx.createFeedbackCompactPanel("feedback"))
                                 .appendHelpBlock($m.ofValue("Exemplos: "
                                     + "<ul>"
                                     + " <li>http://techslides.com/demos/sample-videos/small.mp4</li>"

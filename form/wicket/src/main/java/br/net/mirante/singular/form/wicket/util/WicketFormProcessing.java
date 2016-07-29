@@ -284,10 +284,7 @@ public class WicketFormProcessing {
     }
 
     private static void updateAttributes(final SInstance fieldInstance, ISInstanceListener.EventCollector eventCollector) {
-        // atualizar documento e recuperar os IDs das instancias com atributos alterados
-        final SType<?>  fieldType = fieldInstance.getType();
         final SDocument document  = fieldInstance.getDocument();
-
         document.updateAttributes(eventCollector);
     }
 
@@ -308,6 +305,4 @@ public class WicketFormProcessing {
                 SValidationFeedbackHandler.get(comp).updateValidationMessages(target);
         });
     }
-
-
 }

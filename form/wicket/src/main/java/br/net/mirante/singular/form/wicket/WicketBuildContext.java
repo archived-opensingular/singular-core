@@ -214,7 +214,7 @@ public class WicketBuildContext implements Serializable {
      * @param mapper        o mapper
      * @param formComponent o componente que tem como model IMInstanciaAwareModel
      */
-    public void configure(IWicketComponentMapper mapper, FormComponent<?> formComponent) {
+    public <C extends FormComponent<?>> C configure(IWicketComponentMapper mapper, C formComponent) {
         final IModel defaultModel = formComponent.getDefaultModel();
         if (defaultModel != null && ISInstanceAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
             WicketFormUtils.setCellContainer(formComponent, getContainer());
@@ -231,6 +231,7 @@ public class WicketBuildContext implements Serializable {
                 ISInstanceAwareModel.getInstanceModel(model),
                 new OnFieldUpdatedListener());
         }
+        return formComponent;
     }
 
     public void configureContainer(IModel<String> title) {
@@ -338,21 +339,20 @@ public class WicketBuildContext implements Serializable {
     }
 
     public SValidationFeedbackPanel createFeedbackPanel(String id) {
-        return createFeedbackPanel(id, null);
+        return createFeedbackPanel(id, feedback -> ISValidationFeedbackHandlerListener.refresh(feedback));
     }
     public SValidationFeedbackPanel createFeedbackPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
-        return createFeedbackCompactPanel(() -> new SValidationFeedbackPanel(id, getContainer()), listenerFunc);
+        return createFeedbackPanel(() -> new SValidationFeedbackPanel(id, getContainer()), listenerFunc);
     }
     public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id) {
-        return createFeedbackCompactPanel(id, null);
+        return createFeedbackCompactPanel(id, feedback -> ISValidationFeedbackHandlerListener.refresh(feedback));
     }
     public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
-        return createFeedbackCompactPanel(() -> new SValidationFeedbackCompactPanel(id, getContainer()), listenerFunc);
+        return createFeedbackPanel(() -> new SValidationFeedbackCompactPanel(id, getContainer()), listenerFunc);
     }
-    private <C extends Component> C createFeedbackCompactPanel(ISupplier<C> factory, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
+    private <C extends Component> C createFeedbackPanel(ISupplier<C> factory, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
         C feedback = factory.get();
-        SValidationFeedbackHandler handler = SValidationFeedbackHandler.bindTo(getContainer())
-            .addInstanceModel(getModel());
+        SValidationFeedbackHandler handler = SValidationFeedbackHandler.bindTo(getContainer()).addInstanceModel(getModel());
         if (listenerFunc != null) {
             ISValidationFeedbackHandlerListener listener = listenerFunc.apply(feedback);
             if (listener != null)
