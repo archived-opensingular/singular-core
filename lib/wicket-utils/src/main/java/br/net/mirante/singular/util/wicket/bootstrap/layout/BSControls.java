@@ -195,7 +195,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendFeedback(Component feedbackComponent) {
-        return super.appendTag("span", true, "class='help-block'", feedbackComponent);
+        return super.appendTag("span", true, "class='help-block feedback'", feedbackComponent);
     }
     public BSControls appendFeedback(Component fence, IFeedbackMessageFilter filter, IConsumer<Component> feedbackComponentConsumer) {
         IFeedbackPanelFactory factory = ObjectUtils.defaultIfNull(feedbackPanelFactory, IFeedbackPanelFactory.DEFAULT);

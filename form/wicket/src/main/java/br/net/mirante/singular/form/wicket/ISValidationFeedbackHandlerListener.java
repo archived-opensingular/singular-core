@@ -18,7 +18,10 @@ public interface ISValidationFeedbackHandlerListener extends Serializable {
                            Component container,
                            Collection<SInstance> baseInstances,
                            Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors);
-    
+
+    static ISValidationFeedbackHandlerListener refresh(Component... components) {
+        return withTarget(t -> t.add(components));
+    }
     static ISValidationFeedbackHandlerListener withTarget(IConsumer<AjaxRequestTarget> withTarget) {
         return new ISValidationFeedbackHandlerListener() {
             @Override

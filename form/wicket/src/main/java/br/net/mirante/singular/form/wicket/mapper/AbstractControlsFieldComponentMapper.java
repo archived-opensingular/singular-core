@@ -8,26 +8,20 @@ package br.net.mirante.singular.form.wicket.mapper;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.wicket.ISValidationFeedbackHandlerListener;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
-import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
@@ -87,19 +81,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
         if (viewMode.isEdition()) {
             input = appendInput(ctx, formGroup, labelModel);
-            formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback",
-                feedback -> new ISValidationFeedbackHandlerListener() {
-                    @Override
-                    public void onFeedbackChanged(SValidationFeedbackHandler handler,
-                                                  Optional<AjaxRequestTarget> target,
-                                                  Component fenceContainer,
-                                                  Collection<SInstance> baseInstances,
-                                                  Collection<IValidationError> oldErrors,
-                                                  Collection<IValidationError> newErrors) {
-                        if (target.isPresent())
-                            target.get().add(feedback);
-                    }
-                }));
+            formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
             formGroup.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {

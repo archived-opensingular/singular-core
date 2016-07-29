@@ -6,6 +6,17 @@
 package br.net.mirante.singular.form.wicket.mapper.composite;
 
 
+import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import java.util.HashMap;
+import java.util.Optional;
+
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
@@ -17,24 +28,12 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackPanel;
 import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-
-import java.util.HashMap;
-import java.util.Optional;
-
-import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public abstract class AbstractCompositeMapper implements IWicketComponentMapper {
 
@@ -74,7 +73,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
                 final BSContainer<?>       rootContainer   = ctx.getContainer();
                 SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(rootContainer);
                 feedbackHandler.findNestedErrorsMaxLevel();
-                grid.appendTag("div", new SValidationFeedbackPanel("feedback", rootContainer).setShowBox(true));
+                grid.appendTag("div", ctx.createFeedbackPanel("feedback").setShowBox(true));
             }
 
             buildFields(ctx, grid);
