@@ -50,7 +50,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     /**
      * ViewMode, por padrão é de edição
      */
-    private ViewMode viewMode = ViewMode.EDITION;
+    private ViewMode viewMode = ViewMode.EDIT;
 
     /**
      * Permite apresentar anotações em conjunto.

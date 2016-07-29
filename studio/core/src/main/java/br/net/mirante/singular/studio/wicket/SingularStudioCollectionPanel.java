@@ -17,7 +17,7 @@ public class SingularStudioCollectionPanel extends Panel {
     private final CollectionCanvas canvas;
     private boolean showList = true;
     private FormKey formKey = null;
-    private ViewMode viewMode = ViewMode.EDITION;
+    private ViewMode viewMode = ViewMode.EDIT;
     private AnnotationMode annotationMode = AnnotationMode.NONE;
 
     public SingularStudioCollectionPanel(String content, CollectionCanvas canvas) {

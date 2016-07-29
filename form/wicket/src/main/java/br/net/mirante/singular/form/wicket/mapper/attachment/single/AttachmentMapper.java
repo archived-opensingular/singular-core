@@ -27,7 +27,7 @@ public class AttachmentMapper extends AbstractControlsFieldComponentMapper {
     @SuppressWarnings("unchecked")
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDITION);
+        final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDIT);
         formGroup.appendDiv(container);
         return container.getUploadField();
     }

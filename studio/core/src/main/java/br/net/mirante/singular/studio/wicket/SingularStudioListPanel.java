@@ -99,7 +99,7 @@ public class SingularStudioListPanel extends SingularStudioPanel {
                     ac.appendAction(
                             $m.ofValue(getString("label.table.column.view")),
                             Icone.EYE,
-                            (ajaxRequestTarget, model) -> showForm(ajaxRequestTarget, model.getObject().getAttributeValue(ATR_FORM_KEY), ViewMode.VISUALIZATION));
+                            (ajaxRequestTarget, model) -> showForm(ajaxRequestTarget, model.getObject().getAttributeValue(ATR_FORM_KEY), ViewMode.READ_ONLY));
                     ac.appendAction(
                             $m.ofValue(getString("label.table.column.edit")),
                             Icone.PENCIL,

@@ -222,8 +222,7 @@ class AnnotationBuilder {
     private WicketBuildContext createMainColumn(WicketBuildContext ctx, BSRow superRow) {
         BSCol supercol = superRow.newCol(0).setCssClass("sannotation-form-col");
         final BSGrid formGrid = supercol.newGrid();
-        return new WicketBuildContext(ctx, formGrid, ctx.getExternalContainer(),
-            false, ctx.getModel());
+        return ctx.createChild(formGrid, false, ctx.getModel());
     }
 
     private BSGrid createAnnotationColumn(BSRow superRow) {

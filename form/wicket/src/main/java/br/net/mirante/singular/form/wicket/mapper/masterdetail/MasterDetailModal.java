@@ -1,5 +1,13 @@
 package br.net.mirante.singular.form.wicket.mapper.masterdetail;
 
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
@@ -16,39 +24,30 @@ import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-
-import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 class MasterDetailModal extends BFModalWindow {
 
-    protected final IModel<SIList<SInstance>>    listModel;
-    protected final IModel<String>               listaLabel;
-    protected final WicketBuildContext           ctx;
-    protected final UIBuilderWicket              wicketBuilder;
-    protected final Component                    table;
-    protected final ViewMode                     viewMode;
-    protected       IModel<SInstance>            currentInstance;
-    protected       IConsumer<AjaxRequestTarget> closeCallback;
-    protected       SViewListByMasterDetail      view;
-    protected       BSContainer<?>               containerExterno;
-    protected       FormStateUtil.FormState      formState;
-    protected       IModel<String>               actionLabel;
-    protected       ActionAjaxButton             addButton;
-
+    protected final IModel<String>         listaLabel;
+    protected final WicketBuildContext     ctx;
+    protected final UIBuilderWicket        wicketBuilder;
+    protected final Component              table;
+    protected final ViewMode               viewMode;
+    protected IModel<SInstance>            currentInstance;
+    protected IConsumer<AjaxRequestTarget> closeCallback;
+    protected SViewListByMasterDetail      view;
+    protected BSContainer<?>               containerExterno;
+    protected FormStateUtil.FormState      formState;
+    protected IModel<String>               actionLabel;
+    protected ActionAjaxButton             addButton;
 
     MasterDetailModal(String id,
-                      IModel<? extends SInstance> model,
-                      IModel<String> listaLabel,
-                      WicketBuildContext ctx,
-                      ViewMode viewMode,
-                      SViewListByMasterDetail view,
-                      BSContainer<?> containerExterno) {
-        super(id, true, false);
+        IModel<SIList<SInstance>> model,
+        IModel<String> listaLabel,
+        WicketBuildContext ctx,
+        ViewMode viewMode,
+        SViewListByMasterDetail view,
+        BSContainer<?> containerExterno) {
+        super(id, model, true, false);
 
         this.wicketBuilder = ctx.getUiBuilderWicket();
         this.listaLabel = listaLabel;
@@ -56,7 +55,6 @@ class MasterDetailModal extends BFModalWindow {
         this.table = ctx.getContainer();
         this.viewMode = viewMode;
         this.view = view;
-        this.listModel = $m.get(() -> (SIList<SInstance>) model.getObject());
         this.containerExterno = containerExterno;
 
         setSize(BSModalBorder.Size.NORMAL);
@@ -113,8 +111,9 @@ class MasterDetailModal extends BFModalWindow {
     }
 
     void showNew(AjaxRequestTarget target) {
+        SIList<SInstance> list = getModelObject();
         closeCallback = this::revert;
-        currentInstance = new SInstanceListItemModel<>(listModel, listModel.getObject().indexOf(listModel.getObject().addNew()));
+        currentInstance = new SInstanceListItemModel<>(getModel(), list.indexOf(list.addNew()));
         actionLabel.setObject(view.getNewActionLabel());
         MasterDetailModal.this.configureNewContent(actionLabel.getObject(), target);
     }
@@ -135,23 +134,24 @@ class MasterDetailModal extends BFModalWindow {
     }
 
     private void revert(AjaxRequestTarget target) {
-        listModel.getObject().remove(listModel.getObject().size() - 1);
+        SIList<SInstance> list = getModelObject();
+        list.remove(list.size() - 1);
     }
 
     private void configureNewContent(String prefix, AjaxRequestTarget target) {
 
         setTitleText($m.ofValue((prefix + " " + listaLabel.getObject()).trim()));
 
-        final BSContainer<?> modalBody     = new BSContainer<>("bogoMips");
-        ViewMode             viewModeModal = viewMode;
+        final BSContainer<?> modalBody = new BSContainer<>("bogoMips");
+        ViewMode viewModeModal = viewMode;
 
         setBody(modalBody);
 
         if (!view.isEditEnabled()) {
-            viewModeModal = ViewMode.VISUALIZATION;
+            viewModeModal = ViewMode.READ_ONLY;
         }
 
-        final WicketBuildContext context = new WicketBuildContext(ctx, modalBody, containerExterno, true, currentInstance);
+        final WicketBuildContext context = ctx.createChild(modalBody, containerExterno, true, currentInstance);
 
         wicketBuilder.build(context, viewModeModal);
 
@@ -186,4 +186,12 @@ class MasterDetailModal extends BFModalWindow {
         return js;
     }
 
+    @SuppressWarnings("unchecked")
+    public IModel<SIList<SInstance>> getModel() {
+        return (IModel<SIList<SInstance>>) super.getDefaultModel();
+    }
+    @SuppressWarnings("unchecked")
+    public SIList<SInstance> getModelObject() {
+        return (SIList<SInstance>) super.getDefaultModelObject();
+    }
 }

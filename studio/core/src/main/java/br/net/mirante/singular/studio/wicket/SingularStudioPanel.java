@@ -72,7 +72,7 @@ public abstract class SingularStudioPanel extends Panel implements Loggable {
     }
 
    protected void showForm(AjaxRequestTarget target, FormKey formKey) {
-        panelControl.showForm(target, formKey, ViewMode.EDITION, AnnotationMode.NONE);
+        panelControl.showForm(target, formKey, ViewMode.EDIT, AnnotationMode.NONE);
     }
 
     protected void showForm(AjaxRequestTarget target, FormKey formKey, ViewMode viewMode) {

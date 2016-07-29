@@ -65,7 +65,7 @@ public class WicketBuildContext implements Serializable {
     private final BSContainer<?>                                         container;
     private final HashMap<HintKey<?>, Serializable>                      hints                                         = new HashMap<>();
     private final boolean                                                hintsInherited;
-    private final BSContainer                                            externalContainer;
+    private final BSContainer<?>                                         externalContainer;
 
     private IModel<? extends SInstance>                                  model;
     private UIBuilderWicket                                              uiBuilderWicket;
@@ -87,11 +87,11 @@ public class WicketBuildContext implements Serializable {
         this(null, container, externalContainer, false, model);
     }
 
-    public WicketBuildContext(WicketBuildContext          parent,
-                              BSContainer<?>              container,
-                              BSContainer                 externalContainer,
-                              boolean                     hintsInherited,
-                              IModel<? extends SInstance> model) {
+    protected WicketBuildContext(WicketBuildContext parent,
+        BSContainer<?> container,
+        BSContainer externalContainer,
+        boolean hintsInherited,
+        IModel<? extends SInstance> model) {
 
         this.parent = parent;
         if (parent != null) {
@@ -104,6 +104,14 @@ public class WicketBuildContext implements Serializable {
         WicketFormUtils.markAsCellContainer(container);
         container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
         container.setMetaData(METADATA_KEY, this);
+    }
+
+    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
+        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model);
+    }
+
+    public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
+        return new WicketBuildContext(this, childContainer, externalContainer, hintsInherited, model);
     }
 
     public WicketBuildContext init(UIBuilderWicket uiBuilderWicket, ViewMode viewMode) {
@@ -223,10 +231,6 @@ public class WicketBuildContext implements Serializable {
                 ISInstanceAwareModel.getInstanceModel(model),
                 new OnFieldUpdatedListener());
         }
-    }
-
-    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
-        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model);
     }
 
     public void configureContainer(IModel<String> title) {

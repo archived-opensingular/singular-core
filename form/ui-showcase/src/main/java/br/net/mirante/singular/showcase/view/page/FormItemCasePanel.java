@@ -54,7 +54,7 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
     private final BFModalBorder viewXmlModal = new BFModalBorder("viewXmlModal");
 
     private SingularFormPanel<String> singularFormPanel = null;
-    private ViewMode viewMode = ViewMode.EDITION;
+    private ViewMode viewMode = ViewMode.EDIT;
 
     @Inject
     @Named("formConfigWithoutDatabase")
@@ -177,7 +177,7 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
             final AjaxButton ab = new AjaxButton(id) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    viewMode = ViewMode.VISUALIZATION;
+                    viewMode = ViewMode.READ_ONLY;
                     singularFormPanel.updateContainer();
                     target.add(form);
                 }
@@ -215,7 +215,7 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
             final AjaxButton ab = new AjaxButton(id) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    viewMode = ViewMode.EDITION;
+                    viewMode = ViewMode.EDIT;
                     singularFormPanel.updateContainer();
                     target.add(form);
                 }

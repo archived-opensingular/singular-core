@@ -46,7 +46,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
     private Long   idExampleData;
     private String typeName;
-    private ViewMode viewMode = ViewMode.EDITION;
+    private ViewMode viewMode = ViewMode.EDIT;
 
     private AnnotationMode annotation = AnnotationMode.NONE;
     private ExampleDataDTO currentModel;

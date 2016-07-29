@@ -117,7 +117,7 @@ public class SingularStudioFormPanel extends SingularStudioPanel {
 
             @Override
             public boolean isVisible() {
-                return viewMode == ViewMode.EDITION || annotationMode == AnnotationMode.EDIT;
+                return viewMode == ViewMode.EDIT || annotationMode == AnnotationMode.EDIT;
             }
         });
     }

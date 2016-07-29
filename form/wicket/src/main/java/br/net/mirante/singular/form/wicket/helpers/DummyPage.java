@@ -35,7 +35,7 @@ import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 public class DummyPage extends WebPage {
 
     final public SFormConfig<String> mockFormConfig = new MockFormConfig();
-    protected ViewMode viewMode = ViewMode.EDITION;
+    protected ViewMode viewMode = ViewMode.EDIT;
     protected AnnotationMode annotationMode = AnnotationMode.NONE;
     protected SIComposite currentInstance;
     protected Consumer<STypeComposite> typeBuilder;
@@ -94,8 +94,8 @@ public class DummyPage extends WebPage {
         return singularValidationButton;
     }
 
-    public void setAsVisualizationView() {  viewMode = ViewMode.VISUALIZATION;  }
-    public void setAsEditView() {  viewMode = ViewMode.EDITION;  }
+    public void setAsVisualizationView() {  viewMode = ViewMode.READ_ONLY;  }
+    public void setAsEditView() {  viewMode = ViewMode.EDIT;  }
 
     public void enableAnnotation() { annotationMode = AnnotationMode.EDIT; }
 
