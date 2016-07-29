@@ -51,7 +51,7 @@ public class MoneyMapperTest {
 
     /*@Test
     public void testVisualizationRendering() {
-        FormTester formTester = startPage(ViewMode.VISUALIZATION);
+        FormTester formTester = startPage(ViewMode.READ_ONLY);
 
         Optional<String> money = findId(formTester.getForm(), "money");
         assertTrue(money.isPresent());
