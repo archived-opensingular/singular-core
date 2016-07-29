@@ -25,6 +25,8 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSFormGroup;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
 import br.net.mirante.singular.util.wicket.model.IMappingModel;
+import org.apache.wicket.validation.validator.UrlValidator;
+import sun.net.util.URLUtil;
 
 /**
  * Custom String Mapper
@@ -39,9 +41,7 @@ public class CaseCustomVideoMapperPackage extends SPackage {
 
         tipoMyForm.addFieldString("video")
             .addInstanceValidator(v -> {
-                try {
-                    new URL(v.getInstance().getValue());
-                } catch (Exception e) {
+                if (!new UrlValidator().isValid(v.getInstance().getValue())){
                     v.error("URL inválida");
                 }
             })
