@@ -88,7 +88,7 @@ public class SValidationFeedbackHandlerTest {
 
         IModel<SIComposite> mCurriculo = new SInstanceRootModel<SIComposite>(instancia);
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
-        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
+        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDIT);
 
 //        Visits.visit(testPanel, (c, v) -> {
 //            System.out.println(c.getMetaData(SValidationFeedbackHandler.MDK) + " " + c.getPageRelativePath());

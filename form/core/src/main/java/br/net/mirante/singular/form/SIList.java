@@ -14,13 +14,13 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class SIList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
-    private List<E> values;
+    private List<E>  values;
 
     private SType<E> elementsType;
 
-    public SIList() {
-    }
+    public SIList() {}
 
+    @SuppressWarnings("unchecked")
     static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
         //        MILista<I> lista = new MILista<>();
         SIList<I> lista = (SIList<I>) elementsType.getDictionary().getType(STypeList.class).newInstance();
@@ -103,9 +103,9 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         E instance = addNew();
         try {
             instance.setValue(value);
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             //Senão conseguiu converter o valor, então desfaz a inclusão
-            values.remove(values.size()-1);
+            values.remove(values.size() - 1);
             throw e;
         }
         return instance;
@@ -196,11 +196,14 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public void setValue(Object obj) {
-        if (obj instanceof SIList) {
+        if (obj instanceof SIList<?>) {
+            @SuppressWarnings("unchecked")
+            SIList<E> list = (SIList<E>) obj;
+
             clearInstance();
-            values = newArrayList(((SIList) obj).getValues());
-            elementsType = ((SIList) obj).getElementsType();
-            ((SIList) obj).getValue().clear();
+            values = newArrayList(list.getValues());
+            elementsType = list.getElementsType();
+            list.getValue().clear();
         } else {
             throw new SingularFormException("SList só suporta valores de mesmo tipo da lista", this);
         }
@@ -280,8 +283,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public int hashCode() {
-        final int prime  = 31;
-        int       result = 1;
+        final int prime = 31;
+        int result = 1;
         result = prime * result + ((elementsType == null) ? 0 : elementsType.hashCode());
         for (E e : this)
             result = prime * result + (e == null ? 0 : e.hashCode());
@@ -317,7 +320,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public E first() {
-        if (hasValues()) return values.get(0);
+        if (hasValues())
+            return values.get(0);
         return null;
     }
 
@@ -326,10 +330,12 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public E last() {
-        if (hasValues()) return values.get(values.size() - 1);
+        if (hasValues())
+            return values.get(values.size() - 1);
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public E remove(E e) {
         return (E) remove(values.indexOf(e));
     }

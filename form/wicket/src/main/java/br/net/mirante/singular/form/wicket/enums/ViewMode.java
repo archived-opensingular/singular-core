@@ -8,14 +8,14 @@ package br.net.mirante.singular.form.wicket.enums;
 
 public enum ViewMode {
 
-    EDITION,
-    VISUALIZATION;
+    EDIT,
+    READ_ONLY;
 
     public boolean isEdition() {
-        return this.equals(EDITION);
+        return this.equals(EDIT);
     }
 
     public boolean isVisualization() {
-        return this.equals(VISUALIZATION);
+        return this.equals(READ_ONLY);
     }
 }

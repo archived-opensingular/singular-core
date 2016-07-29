@@ -50,7 +50,7 @@ public class CaseCustomVideoMapperPackage extends SPackage {
         public void buildView(WicketBuildContext ctx) {
             final IMappingModel<String> labelModel = IMappingModel.of(ctx.getModel()).map(it -> it.asAtr().getLabel());
             switch (ctx.getViewMode()) {
-                case EDITION:
+                case EDIT:
                     ctx.getContainer()
                         .appendComponent(id -> new BSFormGroup(id, BSGridSize.MD)
                             .appendControls(12, controlsId -> new BSControls(controlsId)
@@ -63,7 +63,7 @@ public class CaseCustomVideoMapperPackage extends SPackage {
                                     + " <li>http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4</li>"
                                     + "</ul>"), false)));
                     break;
-                case VISUALIZATION:
+                case READ_ONLY:
                     Video video = new Video("video", ctx.getModel().getObject().getValueWithDefault(String.class));
                     video.setWidth(320);
                     ctx.getContainer().appendTag("video", video);

@@ -65,7 +65,7 @@ public class WicketBuildContext implements Serializable {
     private final BSContainer<?>                                         container;
     private final HashMap<HintKey<?>, Serializable>                      hints                                         = new HashMap<>();
     private final boolean                                                hintsInherited;
-    private final BSContainer                                            externalContainer;
+    private final BSContainer<?>                                         externalContainer;
 
     private IModel<? extends SInstance>                                  model;
     private UIBuilderWicket                                              uiBuilderWicket;
@@ -82,6 +82,59 @@ public class WicketBuildContext implements Serializable {
     private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus        selectedBreadCrumbStatus;
 
     private SView                                                        view;
+
+    public WicketBuildContext(BSCol container, BSContainer externalContainer, IModel<? extends SInstance> model) {
+        this(null, container, externalContainer, false, model);
+    }
+
+    protected WicketBuildContext(WicketBuildContext parent,
+        BSContainer<?> container,
+        BSContainer externalContainer,
+        boolean hintsInherited,
+        IModel<? extends SInstance> model) {
+
+        this.parent = parent;
+        if (parent != null) {
+            parent.children.add(this);
+        }
+        this.container = container;
+        this.hintsInherited = hintsInherited;
+        this.externalContainer = externalContainer;
+        this.model = model;
+        WicketFormUtils.markAsCellContainer(container);
+        container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
+        container.setMetaData(METADATA_KEY, this);
+    }
+
+    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
+        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model);
+    }
+
+    public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
+        return new WicketBuildContext(this, childContainer, externalContainer, hintsInherited, model);
+    }
+
+    public WicketBuildContext init(UIBuilderWicket uiBuilderWicket, ViewMode viewMode) {
+
+        final SInstance instance = getCurrentInstance();
+
+        this.view = ViewResolver.resolve(instance);
+        this.uiBuilderWicket = uiBuilderWicket;
+        this.viewMode = viewMode;
+
+        if (isRootContext()) {
+            initContainerBehavior();
+        }
+
+        if (getContainer().getDefaultModel() == null) {
+            getContainer().setDefaultModel(getModel());
+        }
+
+        WicketFormUtils.setInstanceId(getContainer(), instance);
+        WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
+
+        return this;
+    }
 
     public AnnotationMode annotation() {
         return annotation;
@@ -141,48 +194,6 @@ public class WicketBuildContext implements Serializable {
         }
         return contextChain;
     }
-
-    public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends SInstance> model) {
-        this(null, container, bodyContainer, false, model);
-    }
-
-    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer,
-        boolean hintsInherited, IModel<? extends SInstance> model) {
-        this.parent = parent;
-        if (parent != null) {
-            parent.children.add(this);
-        }
-        this.container = container;
-        this.hintsInherited = hintsInherited;
-        this.externalContainer = externalContainer;
-        this.model = model;
-        WicketFormUtils.markAsCellContainer(container);
-        container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
-        container.setMetaData(METADATA_KEY, this);
-    }
-
-    public WicketBuildContext init(UIBuilderWicket uiBuilderWicket, ViewMode viewMode) {
-
-        final SInstance instance = getCurrentInstance();
-
-        this.view = ViewResolver.resolve(instance);
-        this.uiBuilderWicket = uiBuilderWicket;
-        this.viewMode = viewMode;
-
-        if (isRootContext()) {
-            initContainerBehavior();
-        }
-
-        if (getContainer().getDefaultModel() == null) {
-            getContainer().setDefaultModel(getModel());
-        }
-
-        WicketFormUtils.setInstanceId(getContainer(), instance);
-        WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
-
-        return this;
-    }
-
     /**
      * Adiciona um behavior que executa o update atributes do SDocument em toda requisição.
      * <p>
@@ -220,10 +231,6 @@ public class WicketBuildContext implements Serializable {
                 ISInstanceAwareModel.getInstanceModel(model),
                 new OnFieldUpdatedListener());
         }
-    }
-
-    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
-        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model);
     }
 
     public void configureContainer(IModel<String> title) {

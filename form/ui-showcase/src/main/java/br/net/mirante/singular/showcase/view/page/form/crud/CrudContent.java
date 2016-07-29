@@ -173,14 +173,14 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
                             setResponsePage(FormPage.class, new PageParameters()
                                     .add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName())
                                     .add(FormPage.MODEL_ID, model.getObject().getId())
-                                    .add(FormPage.VIEW_MODE, ViewMode.EDITION));
+                                    .add(FormPage.VIEW_MODE, ViewMode.EDIT));
                         }))
                 .appendColumn($action.get().appendAction(getMessage("label.table.column.visualizar"), Icone.EYE,
                         (target, model) -> {
                             setResponsePage(FormPage.class, new PageParameters()
                                     .add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName())
                                     .add(FormPage.MODEL_ID, model.getObject().getId())
-                                    .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION));
+                                    .add(FormPage.VIEW_MODE, ViewMode.READ_ONLY));
                         }));
         addAnnotationColumnIfNeeded(builder);
         addAnnotationEditColumnIfNeeded(builder);
@@ -200,7 +200,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             setResponsePage(FormPage.class, new PageParameters()
                     .add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName())
                     .add(FormPage.MODEL_ID, model.getObject().getId())
-                    .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
+                    .add(FormPage.VIEW_MODE, ViewMode.READ_ONLY)
                     .add(FormPage.ANNOTATION, AnnotationMode.EDIT));
         }));
     }
@@ -216,7 +216,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             setResponsePage(FormPage.class, new PageParameters()
                     .add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName())
                     .add(FormPage.MODEL_ID, model.getObject().getId())
-                    .add(FormPage.VIEW_MODE, ViewMode.EDITION)
+                    .add(FormPage.VIEW_MODE, ViewMode.EDIT)
                     .add(FormPage.ANNOTATION, AnnotationMode.READ_ONLY));
         }));
     }

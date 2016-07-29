@@ -76,7 +76,7 @@ public class TestFormWicketBuild  {
         IModel<SIString> mCidade = new SInstanceRootModel<SIString>(instancia);
         mCidade.getObject().setValue("Brasilia");
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
-        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
+        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDIT);
 
         tester.startComponentInPage(testPanel);
         Assertions.assertThat(mCidade.getObject().getValue()).isEqualTo("Brasilia");

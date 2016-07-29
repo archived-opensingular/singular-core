@@ -36,10 +36,10 @@ public class BooleanMapper implements IWicketComponentMapper {
         final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
 
         switch (ctx.getViewMode()) {
-            case VISUALIZATION:
+            case READ_ONLY:
                 buildForVisualization(model, formGroup, labelModel);
                 break;
-            case EDITION:
+            case EDIT:
                 buildForEdition(ctx, model, formGroup, labelModel);
                 break;
         }

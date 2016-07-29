@@ -61,12 +61,6 @@
         </dependency>
 
         <dependency>
-            <groupId>y.ed</groupId>
-            <artifactId>yfiles</artifactId>
-            <version>3.0.0.1</version>
-        </dependency>
-
-        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>1</version>
