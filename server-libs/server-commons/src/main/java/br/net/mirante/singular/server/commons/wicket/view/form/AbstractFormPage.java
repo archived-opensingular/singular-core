@@ -193,7 +193,7 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
 
     protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
         List<MTransition> trans = petitionService.listCurrentTaskTransitions(config.getFormId());
-        if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDITION.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
+        if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
             int index = 0;
             for (MTransition t : trans) {
                 if (t.getMetaDataValue(ServerContextMetaData.KEY) != null && t.getMetaDataValue(ServerContextMetaData.KEY).isEnabledOn(SingularSession.get().getServerContext())) {
@@ -354,7 +354,7 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
                 });
 
         confirmarAcaoFlowModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm",
-                new SingularSaveButton("confirm-btn", instanceModel, ViewMode.EDITION.equals(viewMode)) {
+                new SingularSaveButton("confirm-btn", instanceModel, ViewMode.EDIT.equals(viewMode)) {
                     protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
                                                        IModel<? extends SInstance> instanceModel) {
                         try {

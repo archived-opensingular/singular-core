@@ -19,7 +19,7 @@ public class FormPageConfig implements Serializable {
     private Class<? extends ProcessDefinition> processDefinition;
 
     private FormPageConfig() {
-        viewMode = ViewMode.VISUALIZATION;
+        viewMode = ViewMode.READ_ONLY;
         annotationMode = AnnotationMode.NONE;
         contextParams = new HashMap<>();
     }

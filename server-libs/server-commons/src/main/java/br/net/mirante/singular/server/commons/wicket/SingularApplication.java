@@ -2,6 +2,8 @@ package br.net.mirante.singular.server.commons.wicket;
 
 import java.util.Locale;
 
+import br.net.mirante.singular.server.commons.wicket.error.Page500;
+import br.net.mirante.singular.server.commons.wicket.error.Page500Content;
 import br.net.mirante.singular.server.commons.wicket.listener.SingularServerContextListener;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
@@ -11,6 +13,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.settings.ExceptionSettings;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.time.Duration;
@@ -48,6 +51,8 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
 
         // Don't forget to check your Application server for this
         getApplicationSettings().setDefaultMaximumUploadSize(Bytes.megabytes(10));
+        getApplicationSettings().setInternalErrorPage(Page500.class);
+        getExceptionSettings().setUnexpectedExceptionDisplay(ExceptionSettings.SHOW_INTERNAL_ERROR_PAGE);
 
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(true);
@@ -112,3 +117,4 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
     protected abstract String[] getPackagesToScan();
 
 }
+

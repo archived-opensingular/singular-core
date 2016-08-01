@@ -86,7 +86,7 @@ public abstract class DispatcherPage extends WebPage {
                 } else {
                     logger.warn("Atividade atual possui uma estratégia de página não suportada. A página default será utilizada.");
                 }
-            } else if (!ViewMode.VISUALIZATION.equals(cfg.getViewMode())) {
+            } else if (!ViewMode.READ_ONLY.equals(cfg.getViewMode())) {
                 throw new SingularServerException("Página invocada para uma atividade que não é do tipo MTaskUserExecutable");
             }
         }

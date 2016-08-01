@@ -50,11 +50,11 @@ public abstract class Template extends SingularTemplate {
         add(new SingularJSBehavior());
     }
 
-    protected Menu configureMenu(String id) {
+    protected WebMarkupContainer configureMenu(String id) {
         return new Menu(id);
     }
 
-    protected Header configureHeader(String id) {
+    protected WebMarkupContainer configureHeader(String id) {
         return new Header(id, withMenu(), withTopAction(), withSideBar(), getSkinOptions());
     }
 

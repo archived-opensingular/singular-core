@@ -1,0 +1,47 @@
+<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<wicket:extend>
+    <style type="text/css">
+        .error-panel {
+            background-color: white;
+            padding: 2em;
+        }
+
+        .error-disclaimer-title {
+            text-align: center;
+        }
+
+        .error-disclaimer-text {
+            font-size: 1.2em;
+        }
+
+        .error-code-container {
+            font-size: 2em;
+            text-align: center;
+        }
+
+        .error-code {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+    </style>
+    <div class="error-panel">
+
+        <h1 class="error-disclaimer-title">Você encontrou um erro</h1>
+
+        <p class="error-disclaimer-text">
+            Algo que não esperávamos ocorreu enquanto você estava utilizando o sistema.
+        </p>
+        <p class="error-disclaimer-text">
+            Pedimos desculpas por isso e vamos descobrir como corrigir.
+        </p>
+        <p class="error-disclaimer-text">
+            Você pode nos ajudar, informando o código abaixo que vai nos auxiliar a encontrar a origem do problema.
+        </p>
+        <p class="error-code-container">
+            Código de Erro: <span wicket:id="codigo-erro" class="error-code"/>
+        </p>
+
+    </div>
+</wicket:extend>
+</html>

@@ -5,11 +5,11 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 
 public enum FormActions {
 
-    FORM_ANALYSIS(1, ViewMode.VISUALIZATION, AnnotationMode.EDIT),
-    FORM_FILL(2, ViewMode.EDITION, AnnotationMode.NONE),
-    FORM_VIEW(3, ViewMode.VISUALIZATION, AnnotationMode.NONE),
-    FORM_FILL_WITH_ANALYSIS(4, ViewMode.EDITION, AnnotationMode.READ_ONLY),
-    FORM_ANALYSIS_VIEW(5, ViewMode.VISUALIZATION, AnnotationMode.READ_ONLY);
+    FORM_ANALYSIS(1, ViewMode.READ_ONLY, AnnotationMode.EDIT),
+    FORM_FILL(2, ViewMode.EDIT, AnnotationMode.NONE),
+    FORM_VIEW(3, ViewMode.READ_ONLY, AnnotationMode.NONE),
+    FORM_FILL_WITH_ANALYSIS(4, ViewMode.EDIT, AnnotationMode.READ_ONLY),
+    FORM_ANALYSIS_VIEW(5, ViewMode.READ_ONLY, AnnotationMode.READ_ONLY);
 
     private Integer id;
     private ViewMode viewMode;

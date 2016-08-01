@@ -186,7 +186,7 @@
 
     <error-page>
         <error-code>404</error-code>
-        <location>/</location>
+        <location>/public/error/500</location>
     </error-page>
 
     <error-page>
