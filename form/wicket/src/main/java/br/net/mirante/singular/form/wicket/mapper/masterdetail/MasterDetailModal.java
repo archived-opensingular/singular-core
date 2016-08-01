@@ -57,7 +57,7 @@ class MasterDetailModal extends BFModalWindow {
         this.view = view;
         this.containerExterno = containerExterno;
 
-        setSize(BSModalBorder.Size.NORMAL);
+        setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
 
         actionLabel = $m.ofValue("");
         this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton = new ActionAjaxButton("btn") {

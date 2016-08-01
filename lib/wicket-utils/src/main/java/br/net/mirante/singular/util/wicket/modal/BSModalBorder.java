@@ -78,7 +78,7 @@ public class BSModalBorder extends Border {
         }
     }
 
-    public enum Size {
+    public static enum Size {
         NORMAL("modal-belver"), LARGE("modal-lg"), SMALL("modal-sm"), FULL("modal-full"), FIT("modal-fit");
         protected final String styleClass;
         private Size(String styleClass) {
