@@ -39,7 +39,7 @@ public class SelectMapper extends AbstractControlsFieldComponentMapper {
         
         final DropDownChoice<Serializable> dropDownChoice = new DropDownChoice<Serializable>(ctx.getCurrentInstance().getName(),
                 new SelectSInstanceAwareModel(model),
-                new DefaultOptionsProviderLoadableDetachableModel(model),
+                getChoicesDetachableModel(model),
                 new SingularChoiceRenderer(model)) {
             @Override
             protected String getNullValidDisplayValue() {
@@ -69,6 +69,10 @@ public class SelectMapper extends AbstractControlsFieldComponentMapper {
             }
         }
         return StringUtils.EMPTY;
+    }
+
+    protected LoadableDetachableModel<List<Serializable>> getChoicesDetachableModel(IModel<? extends SInstance> model){
+        return new DefaultOptionsProviderLoadableDetachableModel(model);
     }
 
 

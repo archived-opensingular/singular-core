@@ -5,11 +5,6 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import java.util.Collection;
-import java.util.Optional;
-
-import org.apache.wicket.Component;
-
 import br.net.mirante.singular.commons.lambda.ISupplier;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
@@ -80,6 +75,7 @@ import br.net.mirante.singular.form.wicket.mapper.masterdetail.ListMasterDetailM
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.AutocompleteMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.BooleanRadioMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.BooleanSelectMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.MultipleCheckMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
@@ -91,6 +87,10 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import org.apache.wicket.Component;
+
+import java.util.Collection;
+import java.util.Optional;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -152,6 +152,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeSimple.class,     SViewSelectionByRadio.class,           RadioMapper::new)
                 .register(STypeSimple.class,     SViewSelectionBySelect.class,          SelectMapper::new)
                 .register(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new)
+                .register(STypeBoolean.class,     SViewSelectionBySelect.class,         BooleanSelectMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
                 .register(STypeInteger.class,                                           IntegerMapper::new)
