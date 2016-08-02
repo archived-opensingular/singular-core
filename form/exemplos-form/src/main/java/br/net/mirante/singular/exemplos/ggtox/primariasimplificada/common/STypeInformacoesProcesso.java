@@ -7,10 +7,11 @@ import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
-public class STypeEmbalagem extends STypeComposite<SIComposite> {
+public class STypeInformacoesProcesso extends STypeComposite<SIComposite> {
 
     public STypeString marcaComercial;
-    public STypeAttachment modeloRotuloBula;
+    public STypeAttachment modeloRotulo;
+    public STypeAttachment modeloBula;
     public STypeAttachmentList embalagens;
 
     @Override
@@ -20,10 +21,11 @@ public class STypeEmbalagem extends STypeComposite<SIComposite> {
 
         this
                 .asAtr()
-                .label("Embalagem");
+                .label("Informações do Processo");
 
         marcaComercial = addFieldString("marcaComercial");
-        modeloRotuloBula = addFieldAttachment("modeloRotuloBula");
+        modeloRotulo = addFieldAttachment("modeloRotulo");
+        modeloBula = addFieldAttachment("modeloBula");
         embalagens = addFieldListOfAttachment("embalagens", "embalagem");
 
         marcaComercial
@@ -32,9 +34,15 @@ public class STypeEmbalagem extends STypeComposite<SIComposite> {
                 .asAtrBootstrap()
                 .colPreference(12);
 
-        modeloRotuloBula
+        modeloRotulo
                 .asAtr()
-                .label("Modelo de Rótulo e Bula")
+                .label("Modelo de Rótulo")
+                .asAtrBootstrap()
+                .colPreference(12);
+
+        modeloBula
+                .asAtr()
+                .label("Modelo de Bula")
                 .asAtrBootstrap()
                 .colPreference(12);
 

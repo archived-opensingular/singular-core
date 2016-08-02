@@ -31,13 +31,13 @@ public class STypeAnexosPeticaoPrimariaSimplificada extends STypeComposite<SICom
 
         informacoesSobreCulturaIndicacao
                 .asAtr()
-                .label("Informações sobre cultura e indicação")
+                .label("Informações Sobre Cultura e Indicação")
                 .asAtrBootstrap()
                 .colPreference(12);
 
         pareceresTecnicosAvaliacoesDasEmpresas
                 .asAtr()
-                .label("Parecer técnicos de Avaliação da Empresa")
+                .label("Parecer Técnico de Avaliação da Empresa (PATE)")
                 .asAtrBootstrap()
                 .colPreference(12);
 

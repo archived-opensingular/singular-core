@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeAnexosPeticaoPrimariaSimplificada;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeDadosGeraisPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeEmbalagem;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeInformacoesProcesso;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeEstudosResiduos;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeIngredienteAtivoPeticaoPrimariaSimplificada;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoFormuladoPeticaoPrimariaSimplificada;
@@ -55,7 +55,7 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
         final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnicoPeticao   = this.addField("produtoTecnicoPeticao", STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
         final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado        = this.addField("produtoFormulado", STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
         final STypeEstudosResiduos                             estudosResiduos        = this.addField("estudosResiduos", STypeEstudosResiduos.class);
-        final STypeEmbalagem                                   embalagem               = this.addField("embalagem", STypeEmbalagem.class);
+        final STypeInformacoesProcesso embalagem               = this.addField("embalagem", STypeInformacoesProcesso.class);
         final STypeAnexosPeticaoPrimariaSimplificada           anexos                  = this.addField("anexos", STypeAnexosPeticaoPrimariaSimplificada.class);
 
         tipoPeticao
@@ -242,7 +242,14 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .exists(typeValIsNotNull(nivel));
 
         embalagem
-                .modeloRotuloBula
+                .modeloRotulo
+                .asAtr()
+                .dependsOn(tipoPeticao)
+                .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
+
+
+        embalagem
+                .modeloBula
                 .asAtr()
                 .dependsOn(tipoPeticao)
                 .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));

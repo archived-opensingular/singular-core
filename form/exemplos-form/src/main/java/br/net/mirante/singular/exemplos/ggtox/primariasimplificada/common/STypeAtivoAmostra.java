@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.converter.SInstanceConverter;
@@ -20,14 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
-public class STypeListaAtivosEstudo extends STypeList<STypeIngredienteAtivo, SIComposite> {
+public class STypeAtivoAmostra extends STypeIngredienteAtivo {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
-
-        this
-                .setElementsType(STypeIngredienteAtivo.class);
 
         this
                 .selectionOf(AtivoSelect.class)

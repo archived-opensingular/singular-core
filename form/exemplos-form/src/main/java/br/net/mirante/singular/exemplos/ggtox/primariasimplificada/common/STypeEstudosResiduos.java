@@ -5,15 +5,11 @@ import static br.net.mirante.singular.form.util.SingularPredicates.*;
 import br.net.mirante.singular.exemplos.SelectBuilder;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.provider.Provider;
-import br.net.mirante.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.type.core.STypeBoolean;
 import br.net.mirante.singular.form.type.core.STypeDecimal;
 import br.net.mirante.singular.form.type.core.STypeInteger;
@@ -21,18 +17,16 @@ import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
+import br.net.mirante.singular.form.view.SViewListByTable;
 
-import java.util.List;
+import java.util.Optional;
 
 
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
 
-    private Cultura cultura;
+    private EstudoResiduo estudoResiduo;
     private STypeBoolean culturaConformeMatriz;
-    private Amostra amostra;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -41,60 +35,71 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
         this.asAtr()
                 .label("Estudo de Resíduos");
 
+        estudoResiduo = new EstudoResiduo(this);
 
-        cultura = new Cultura();
-        amostra = new Amostra();
-
-
-
-        amostra.root
-                .asAtr().dependsOn(cultura.tipoEstudo)
-                .exists(typeValIsEqualsTo(cultura.tipoEstudo, Cultura.ESTUDO_NOVO));
-
+        estudoResiduo.
+                amostra
+                .root
+                .asAtr().dependsOn(estudoResiduo.tipoEstudo)
+                .exists(typeValIsEqualsTo(estudoResiduo.tipoEstudo, EstudoResiduo.ESTUDO_NOVO));
     }
 
-    class Cultura {
+    class EstudoResiduo {
 
         public static final String ESTUDO_PUBLICADO = "Publicado pela ANVISA";
         public static final String ESTUDO_MATRIZ = "Conforme matriz";
         public static final String ESTUDO_NOVO = "Novo";
+        public static final String NOME_CULTURA_FIELD_NAME = "nomeCultura";
+        public static final String NOME_OUTRA_CULTURA_FIELD_NAME = "nomeOutraCultura";
 
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
         private final STypeComposite<SIComposite> rootType;
         final STypeString tipoEstudo;
-        final STypeListaAtivosEstudo ativos;
+        public final Amostra amostra;
 
-        public Cultura() {
-            root = addFieldListOfComposite("culturas", "cultura");
+        public EstudoResiduo(STypeComposite<SIComposite> parentType) {
+            root = parentType.addFieldListOfComposite("culturas", "cultura");
             rootType = root.getElementsType();
 
-            final STypeString nomeCultura = rootType.addFieldString("nomeCultura");
-            final STypeString nomeOutraCultura = rootType.addFieldString("nomeOutraCultura");
+            final STypeString nomeCultura = rootType.addFieldString(NOME_CULTURA_FIELD_NAME);
+            final STypeString nomeOutraCultura = rootType.addFieldString(NOME_OUTRA_CULTURA_FIELD_NAME);
             final STypeString emprego = rootType.addFieldString("emprego");
             final STypeBoolean outraCultura = rootType.addFieldBoolean("outraCultura");
-            ativos = rootType.addField("ativos", STypeListaAtivosEstudo.class);
+            final STypeBoolean parteComestivel = rootType.addFieldBoolean("parteComestivel");
+            final STypeInteger intervaloPretendido = rootType.addFieldInteger("intervaloPretendido");
+            final STypeComposite<SIComposite> norma = rootType.addFieldComposite("norma");
+            final STypeInteger idNorma = norma.addFieldInteger("idNorma");
+            final STypeString descricaoNorma = norma.addFieldString("descricaoNorma");
+            final STypeString observacoes = rootType.addFieldString("observacoes");
+
             tipoEstudo = rootType.addFieldString("tipoEstudo");
             final STypeString estudoPublicado = rootType.addFieldString("estudoPublicado");
             final STypeString numeroEstudo = rootType.addFieldString("numeroEstudo");
+            final STypeComposite<SIComposite> dosagemAmostra = rootType.addFieldComposite("dosagemAmostra");
+            final STypeInteger idDosagem = dosagemAmostra.addFieldInteger("idDosagem");
+            final STypeString siglaDosagem = dosagemAmostra.addFieldString("siglaDosagem");
             final STypeBoolean adjuvante = rootType.addFieldBoolean("adjuvante");
-            final STypeInteger valorConcentracao = rootType.addFieldInteger("valorConcentracao");
-            final STypeString unidadeConcentracao = rootType.addFieldString("unidadeConcentracao");
+            amostra = new Amostra(rootType);
             final STypeAttachment estudoResiduo = rootType.addFieldAttachment("estudoResiduo");
 
             root
                     .withView(new SViewListByMasterDetail()
-                            .col(nomeCultura).col(emprego))
+                            .col("Cultura", si -> (String)Optional.ofNullable(Value.of(si, NOME_CULTURA_FIELD_NAME)).orElse(Value.of(si, NOME_OUTRA_CULTURA_FIELD_NAME)))
+                            .col(emprego)
+                            .col(tipoEstudo)
+                            .largeSize()
+                    )
                     .asAtr().exists(typeValIsNotEqualsTo(culturaConformeMatriz, Boolean.TRUE));
 
             nomeCultura
                     .selectionOf(culturas())
-                    .asAtr().label("Nome da cultura")
+                    .asAtr().label("Nome da Cultura")
                     .required()
                     .dependsOn(outraCultura, tipoEstudo)
                     .exists(allMatches(typeValIsNotEqualsTo(outraCultura, Boolean.TRUE)));
 
             nomeOutraCultura
-                    .asAtr().label("Nome da cultura")
+                    .asAtr().label("Nome da Cultura")
                     .required()
                     .dependsOn(outraCultura)
                     .exists(typeValIsTrue(outraCultura));
@@ -106,14 +111,46 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
             outraCultura
                     .asAtr().label("Outra cultura")
                     .asAtrBootstrap()
-                    .newRow();
+                    .colPreference(6);
 
-
-            ativos
+            parteComestivel
                     .asAtr()
-                    .required()
-                    .label("Ativos do estudo (dentre os informados na seção de ativos)");
+                    .label("Parte Comestível?")
+                    .asAtrBootstrap()
+                    .colPreference(6);
 
+            intervaloPretendido
+                    .asAtr()
+                    .label("Intervalo de Segurança Pretendido (em dias)")
+                    .asAtrBootstrap()
+                    .colPreference(6);
+
+            norma
+                    .asAtr()
+                    .label("Norma")
+                    .asAtrBootstrap()
+                    .colPreference(4);
+
+            norma
+                    .selection()
+                    .id(idNorma)
+                    .display(descricaoNorma)
+                    .simpleProvider( builder -> {
+                        builder.add().set(idNorma, 1).set(descricaoNorma, "RDC - 216 - 4 Estudos");
+                        builder.add().set(idNorma, 2).set(descricaoNorma, "3 Estudos (X e 2X)");
+                        builder.add().set(idNorma, 3).set(descricaoNorma, "2 Estudos (X e 2X)");
+                        builder.add().set(idNorma, 4).set(descricaoNorma, "Sem informações");
+                        builder.add().set(idNorma, 5).set(descricaoNorma, "Produto de ocorrência natural na planta");
+                    });
+
+            observacoes
+                    .asAtr()
+                    .label("Observações")
+                    .asAtrBootstrap()
+                    .colPreference(12);
+
+            observacoes
+                    .withTextAreaView();
 
 
 
@@ -125,43 +162,55 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
                     .asAtrBootstrap()
                     .newRow();
 
-
-
             estudoPublicado
-                    .asAtr().label("Código do estudo publicado pela ANVISA")
+                    .asAtr().label("Código do Estudo Publicado pela ANVISA")
                     .dependsOn(tipoEstudo)
                     .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_PUBLICADO))
                     .asAtrBootstrap().newRow();
 
 
             numeroEstudo
-                    .asAtr().label("Número do estudo")
+                    .asAtr().label("Número do Estudo")
                     .dependsOn(tipoEstudo)
                     .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
-                    .asAtrBootstrap().newRow();
+                    .asAtrBootstrap()
+                    .colPreference(4);
+
+            dosagemAmostra
+                    .asAtr()
+                    .dependsOn(tipoEstudo)
+                    .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
+                    .label("Dosagem das Amostras")
+                    .asAtrBootstrap()
+                    .colPreference(4);
+
+            dosagemAmostra
+                    .selection()
+                    .id(idDosagem)
+                    .display(siglaDosagem)
+                    .simpleProvider( builder ->{
+                        builder.add().set(idDosagem, 1).set(siglaDosagem, "g/hectare");
+                        builder.add().set(idDosagem, 2).set(siglaDosagem, "g/m3");
+                    });
 
             adjuvante
-                    .withRadioView()
+                    .withSelectView()
+                    .selectionOf(Boolean.class)
+                    .selfId()
+                    .display( bool -> bool ? "Sim" : "Não")
+                    .simpleConverter();
+
+            adjuvante
                     .asAtr().label("Adjuvante")
                     .required()
                     .dependsOn(tipoEstudo)
                     .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
-                    .asAtrBootstrap().newRow();
-
-            valorConcentracao
-                    .asAtr().label("Concentração")
-                    .dependsOn(adjuvante)
-                    .exists(typeValIsTrue(adjuvante))
-                    .asAtrBootstrap().newRow();
-
-            unidadeConcentracao
-                    .asAtr().label("Unidade de medida")
-                    .dependsOn(adjuvante)
-                    .exists(typeValIsTrue(adjuvante));
+                    .asAtrBootstrap()
+                    .colPreference(4);
 
 
             estudoResiduo
-                    .asAtr().label("Estudo de resíduo")
+                    .asAtr().label("Estudo de Resíduo")
                     .dependsOn(tipoEstudo)
                     .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO));
         }
@@ -173,53 +222,72 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
         private final STypeComposite<SIComposite> rootType;
 
-        public Amostra() {
-            root = cultura.rootType.addFieldListOfComposite("amostras", "amostra");
+        public Amostra(STypeComposite<SIComposite> parentType) {
+            root = parentType.addFieldListOfComposite("amostras", "amostra");
             rootType = root.getElementsType();
-            final STypeInteger dose = rootType.addFieldInteger("dose");
+            final STypeString id = rootType.addFieldString("id");
+            final STypeDecimal dose = rootType.addFieldDecimal("dose");
             final STypeInteger aplicacoes = rootType.addFieldInteger("aplicacoes");
-            final STypeInteger id = rootType.addFieldInteger("id");
             final STypeInteger dat = rootType.addFieldInteger("dat");
-            final STypeDecimal lod = rootType.addFieldDecimal("lod");
             final STypeDecimal loq = rootType.addFieldDecimal("loq");
             final STypeDecimal residuo = rootType.addFieldDecimal("residuo");
+            STypeAtivoAmostra ativo = rootType.addField("ativos", STypeAtivoAmostra.class);
             final STypeComposite<?> estado = rootType.addFieldComposite("estado");
             final STypeString siglaUF = estado.addFieldString("sigla");
-            final STypeString nome = estado.addFieldString("nome");
+            estado.addFieldString("nome");
             final STypeComposite<?> cidade = rootType.addFieldComposite("cidade");
-            final STypeInteger id1 = cidade.addFieldInteger("id");
-            final STypeString nome1 = cidade.addFieldString("nome");
+            cidade.addFieldInteger("id");
+            cidade.addFieldString("nome");
             final STypeString uf = cidade.addFieldString("UF");
             final STypeBoolean tempoMaior30Dias = rootType.addFieldBoolean("tempoMaior30Dias");
             final STypeAttachment estudoEstabilidade = rootType.addFieldAttachment("estudoEstabilidade");
             final STypeBoolean metabolito = rootType.addFieldBoolean("metabolito");
-            final STypeDecimal lodMetabolito = rootType.addFieldDecimal("lodMetabolito");
-            final STypeDecimal loqMetabolito = rootType.addFieldDecimal("loqMetabolito");
-            final STypeDecimal residuoMetabolito = rootType.addFieldDecimal("residuoMetabolito");
+            final STypeList<STypeComposite<SIComposite>, SIComposite> metabolitos = rootType.addFieldListOfComposite("metabolitos", "metabolito");
+            final STypeString descricaoMetabolito = metabolitos.getElementsType().addFieldString("descricao");
+            final STypeDecimal loqMetabolito = metabolitos.getElementsType().addFieldDecimal("loqMetabolito");
+            final STypeDecimal residuoMetabolito = metabolitos.getElementsType().addFieldDecimal("residuoMetabolito");
 
             root
                     .withView(new SViewListByMasterDetail()
-                            .col(dose))
+                            .col(id, "Id")
+                            .col(dose, "Dose")
+                            .col(aplicacoes, "Aplicações")
+                            .col(ativo.nomeComumPortugues, "Ingrediente Ativo")
+                            .col(residuo, "Residuo")
+                            .col(dat, "DAT")
+                    )
                     .asAtr().label("Amostras");
 
+            id
+                    .asAtr()
+                    .label("ID da Amostra")
+                    .required()
+                    .asAtrBootstrap()
+                    .colPreference(4);
+
+
             dose
-                    .asAtr().label("Dose")
+                    .asAtrBootstrap()
+                    .colPreference(4)
+                    .asAtr()
+                    .label("Dose")
                     .required();
 
             aplicacoes
-                    .asAtr().label("Número de aplicações")
+                    .asAtrBootstrap()
+                    .colPreference(4)
+                    .asAtr()
+                    .label("Número de Aplicações")
                     .required();
 
-            id
-                    .asAtr().label("ID da amostra")
-                    .required();
+
 
             dat
-                    .asAtr().label("DAT");
+                    .asAtr()
+                    .label("DAT")
+                    .asAtrBootstrap()
+                    .colPreference(4);
 
-            lod
-                    .asAtr().label("LoD (mg/KG)")
-                    .fractionalMaxLength(4);
 
             loq
                     .asAtr().label("LoQ (mg/KG)")
@@ -228,6 +296,14 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
             residuo
                     .asAtr().label("Resíduo")
                     .fractionalMaxLength(4);
+
+            ativo
+                    .asAtr()
+                    .required()
+                    .label("Ingrediente Ativo da Amostra (informados na seção de ativos)")
+                    .asAtrBootstrap()
+                    .colPreference(6);
+
 
             estado
                     .asAtr()
@@ -261,12 +337,12 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
                     .simpleProvider(i -> SelectBuilder.buildMunicipiosFiltrado((String) Value.of(i, (STypeSimple) estado.getField(siglaUF.getNameSimple()))));
 
             tempoMaior30Dias
-                    .asAtr().label("Tempo entre análise e colheita maior que 30 dias")
+                    .asAtr().label("Tempo Entre Análise e Colheita Maior que 30 Dias")
                     .asAtrBootstrap().colPreference(6)
                     .newRow();
 
             estudoEstabilidade
-                    .asAtr().label("Estudo de estabilidade")
+                    .asAtr().label("Estudo de Estabilidade")
                     .dependsOn(tempoMaior30Dias)
                     .exists(typeValIsTrue(tempoMaior30Dias));
 
@@ -275,24 +351,22 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
                     .asAtr().label("Metabólito")
                     .required();
 
-            lodMetabolito
-                    .asAtr().label("LoD (mg/KG)")
+            metabolitos
+                    .withView(SViewListByTable::new)
+                    .asAtr()
+                    .label("Metabólitos")
                     .dependsOn(metabolito)
-                    .exists(typeValIsTrue(metabolito))
-                    .fractionalMaxLength(4)
-                    .asAtrBootstrap()
-                    .newRow();
+                    .exists(typeValIsTrue(metabolito));
+
+            descricaoMetabolito
+                    .asAtr().label("Descrição");
 
             loqMetabolito
                     .asAtr().label("LoQ (mg/KG)")
-                    .dependsOn(metabolito)
-                    .exists(typeValIsTrue(metabolito))
                     .fractionalMaxLength(4);
 
             residuoMetabolito
                     .asAtr().label("Resíduo")
-                    .dependsOn(metabolito)
-                    .exists(typeValIsTrue(metabolito))
                     .fractionalMaxLength(4);
         }
     }
