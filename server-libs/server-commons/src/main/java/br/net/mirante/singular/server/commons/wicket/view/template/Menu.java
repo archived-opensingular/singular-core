@@ -1,7 +1,12 @@
 package br.net.mirante.singular.server.commons.wicket.view.template;
 
-import java.util.Arrays;
+import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
+import static br.net.mirante.singular.server.commons.util.Parameters.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -11,18 +16,27 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.service.dto.ItemBox;
+import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
+import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.wicket.SingularApplication;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
+import br.net.mirante.singular.util.wicket.menu.MetronicMenuGroup;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
@@ -140,12 +154,126 @@ public class Menu extends Panel {
         if (categoriaSelecionada == null) {
             return categorias;
         } else {
-            return Arrays.asList(categoriaSelecionada);
+            return Collections.singletonList(categoriaSelecionada);
         }
     }
 
     protected List<ProcessGroupEntity> buscarCategorias() {
         return petitionService.listarTodosGruposProcesso();
+    }
+
+    protected void buildMenuGroup(MetronicMenu menu, ProcessGroupEntity processGroup) {
+        for (MenuGroup menuGroup : getMenuSessionConfig().getMenusPorCategoria(processGroup)) {
+            List<MenuItemConfig> subMenus;
+            if (menuGroup.getItemBoxes() == null) {
+                subMenus = buildDefaultSubMenus(menuGroup, processGroup);
+            } else {
+                subMenus = buildSubMenus(menuGroup, processGroup);
+            }
+
+            if (!subMenus.isEmpty()) {
+                buildMenus(menu, menuGroup, processGroup, subMenus);
+            }
+        }
+    }
+
+    protected List<MenuItemConfig> buildDefaultSubMenus(MenuGroup menuGroup, ProcessGroupEntity processGroup) {
+        return Collections.emptyList();
+    }
+
+    private void buildMenus(MetronicMenu menu, MenuGroup menuGroup,
+                            ProcessGroupEntity processGroup, List<MenuItemConfig> subMenus) {
+        MetronicMenuGroup group = new MetronicMenuGroup(Icone.LAYERS, menuGroup.getLabel());
+        menu.addItem(group);
+        final List<Pair<Component, ISupplier<String>>> itens = new ArrayList<>();
+
+        for (MenuItemConfig t : subMenus) {
+            PageParameters pageParameters = new PageParameters();
+            pageParameters.add(PROCESS_GROUP_PARAM_NAME, processGroup.getCod());
+            pageParameters.add(MENU_PARAM_NAME, menuGroup.getLabel());
+            pageParameters.add(ITEM_PARAM_NAME, t.name);
+
+            MetronicMenuItem i = new MetronicMenuItem(t.icon, t.name, t.pageClass, t.page, pageParameters);
+            group.addItem(i);
+            itens.add(Pair.of(i.getHelper(), t.counterSupplier));
+        }
+        menu.add(new AddContadoresBehaviour(itens));
+    }
+
+    private List<MenuItemConfig> buildSubMenus(MenuGroup menuGroup, ProcessGroupEntity processGroup) {
+
+        List<String> siglas = menuGroup.getProcesses().stream()
+                .map(ProcessDTO::getAbbreviation)
+                .collect(Collectors.toList());
+
+        List<String> tipos = menuGroup.getProcesses().stream()
+                .map(ProcessDTO::getFormName)
+                .collect(Collectors.toList());
+
+        List<MenuItemConfig> configs = new ArrayList<>();
+
+        for (ItemBox itemBoxDTO : menuGroup.getItemBoxes()) {
+            final ISupplier<String> countSupplier = createCountSupplier(itemBoxDTO, siglas, processGroup, tipos);
+            configs.add(MenuItemConfig.of(getBoxPageClass(), itemBoxDTO.getName(), itemBoxDTO.getIcone(), countSupplier));
+
+        }
+
+        return configs;
+    }
+
+    private ISupplier<String> createCountSupplier(ItemBox itemBoxDTO, List<String> siglas, ProcessGroupEntity processGroup, List<String> tipos) {
+        return () -> {
+            final String connectionURL = processGroup.getConnectionURL();
+            final String url           = connectionURL + PATH_BOX_SEARCH + itemBoxDTO.getCountEndpoint();
+            long         qtd;
+            try {
+                QuickFilter filter = new QuickFilter()
+                        .withProcessesAbbreviation(siglas)
+                        .withTypesNames(tipos)
+                        .withRascunho(itemBoxDTO.isShowDraft())
+                        .withIdUsuarioLogado(getIdUsuarioLogado());
+                qtd = new RestTemplate().postForObject(url, filter, Long.class);
+            } catch (Exception e) {
+                LOGGER.error("Erro ao acessar serviço: " + url, e);
+                qtd = 0;
+            }
+
+            return String.valueOf(qtd);
+        };
+    }
+
+    protected String getIdUsuarioLogado() {
+        return null;
+    }
+
+    public Class<? extends WebPage> getBoxPageClass() {
+        return null;
+    }
+
+    protected static class MenuItemConfig {
+        public IRequestablePage                  page;
+        public String                            name;
+        public Class<? extends IRequestablePage> pageClass;
+        public Icone                             icon;
+        public ISupplier<String>                 counterSupplier;
+
+        public static MenuItemConfig of(Class<? extends IRequestablePage> pageClass, String name, Icone icon, ISupplier<String> counterSupplier) {
+            MenuItemConfig mic = new MenuItemConfig();
+            mic.pageClass = pageClass;
+            mic.name = name;
+            mic.icon = icon;
+            mic.counterSupplier = counterSupplier;
+            return mic;
+        }
+
+        static MenuItemConfig of(IRequestablePage page, String name, Icone icon, ISupplier<String> counterSupplier) {
+            MenuItemConfig mic = new MenuItemConfig();
+            mic.page = page;
+            mic.name = name;
+            mic.icon = icon;
+            mic.counterSupplier = counterSupplier;
+            return mic;
+        }
     }
 
 }

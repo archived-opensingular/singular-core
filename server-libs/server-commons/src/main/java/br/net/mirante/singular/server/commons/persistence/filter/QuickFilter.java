@@ -9,7 +9,7 @@ public class QuickFilter implements Serializable {
     private String  filter;
     private boolean rascunho;
 
-    private String       idPessoaRepresentada;
+    private String       idUsuarioLogado;
     private int          first;
     private int          count;
     private String       sortProperty;
@@ -27,12 +27,12 @@ public class QuickFilter implements Serializable {
         return this;
     }
 
-    public String getIdPessoaRepresentada() {
-        return idPessoaRepresentada;
+    public String getIdUsuarioLogado() {
+        return idUsuarioLogado;
     }
 
-    public QuickFilter withIdPessoaRepresentada(String idPessoaRepresentada) {
-        this.idPessoaRepresentada = idPessoaRepresentada;
+    public QuickFilter withIdUsuarioLogado(String idUsuarioLogado) {
+        this.idUsuarioLogado = idUsuarioLogado;
         return this;
     }
 
