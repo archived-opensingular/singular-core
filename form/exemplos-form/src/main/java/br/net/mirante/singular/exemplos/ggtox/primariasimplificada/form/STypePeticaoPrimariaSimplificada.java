@@ -7,6 +7,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.listeners.IngredienteAtivoUpdateListener;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.AtivoAmostraValidator;
+import br.net.mirante.singular.form.SIList;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX;
@@ -44,6 +47,8 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .label("Petição primaria Simplificada")
                 .displayString("Petição de ${tipoPeticao.nome}, nível ${nivel}");
 
+        this.addInstanceValidator(new AtivoAmostraValidator());
+
         final STypeComposite<SIComposite>                      tipoPeticao             = this.addFieldComposite("tipoPeticao");
         final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger("id");
         final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString("nome");
@@ -54,8 +59,8 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
         final STypeIngredienteAtivoPeticaoPrimariaSimplificada ingredienteAtivoPeticao = this.addField("ingredienteAtivoPeticao", STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
         final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnicoPeticao   = this.addField("produtoTecnicoPeticao", STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
         final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado        = this.addField("produtoFormulado", STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
-        final STypeEstudosResiduos                             estudosResiduos        = this.addField("estudosResiduos", STypeEstudosResiduos.class);
-        final STypeInformacoesProcesso embalagem               = this.addField("embalagem", STypeInformacoesProcesso.class);
+        final STypeEstudosResiduos                             estudosResiduos         = this.addField("estudosResiduos", STypeEstudosResiduos.class);
+        final STypeInformacoesProcesso                         informacoesProcesso     = this.addField("informacoesProcesso", STypeInformacoesProcesso.class);
         final STypeAnexosPeticaoPrimariaSimplificada           anexos                  = this.addField("anexos", STypeAnexosPeticaoPrimariaSimplificada.class);
 
         tipoPeticao
@@ -121,6 +126,10 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
         ingredienteAtivoPeticao
                 .asAtr()
                 .label("Ingrediente Ativo");
+
+        ingredienteAtivoPeticao
+                .ingredientesAtivos
+                .withUpdateListener(new IngredienteAtivoUpdateListener<>());
 
         produtoTecnicoPeticao
                 .asAtr()
@@ -236,19 +245,19 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                 .exists(typeValIsIn(idTipoPeticao, precisaEstudoResiduos));
 
 
-        embalagem
+        informacoesProcesso
                 .asAtr()
                 .dependsOn(nivel)
                 .exists(typeValIsNotNull(nivel));
 
-        embalagem
+        informacoesProcesso
                 .modeloRotulo
                 .asAtr()
                 .dependsOn(tipoPeticao)
                 .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
 
 
-        embalagem
+        informacoesProcesso
                 .modeloBula
                 .asAtr()
                 .dependsOn(tipoPeticao)
@@ -269,10 +278,11 @@ public class STypePeticaoPrimariaSimplificada extends STypeComposite<SIComposite
                     .newBlock().add(produtoTecnicoPeticao)
                     .newBlock().add(produtoFormulado)
                     .newBlock().add(estudosResiduos)
-                    .newBlock().add(embalagem)
+                    .newBlock().add(informacoesProcesso)
                     .newBlock().add(anexos);
 
         });
+
     }
 
 

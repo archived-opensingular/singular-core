@@ -4,6 +4,7 @@ import static br.net.mirante.singular.form.util.SingularPredicates.*;
 
 import br.net.mirante.singular.exemplos.SelectBuilder;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.ResiduoValidator;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
@@ -26,7 +27,6 @@ import java.util.Optional;
 public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
 
     private EstudoResiduo estudoResiduo;
-    private STypeBoolean culturaConformeMatriz;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -44,7 +44,7 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
                 .exists(typeValIsEqualsTo(estudoResiduo.tipoEstudo, EstudoResiduo.ESTUDO_NOVO));
     }
 
-    class EstudoResiduo {
+    public class EstudoResiduo {
 
         public static final String ESTUDO_PUBLICADO = "Publicado pela ANVISA";
         public static final String ESTUDO_MATRIZ = "Conforme matriz";
@@ -84,12 +84,11 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
 
             root
                     .withView(new SViewListByMasterDetail()
-                            .col("Cultura", si -> (String)Optional.ofNullable(Value.of(si, NOME_CULTURA_FIELD_NAME)).orElse(Value.of(si, NOME_OUTRA_CULTURA_FIELD_NAME)))
-                            .col(emprego)
-                            .col(tipoEstudo)
-                            .largeSize()
-                    )
-                    .asAtr().exists(typeValIsNotEqualsTo(culturaConformeMatriz, Boolean.TRUE));
+                                    .col("Cultura", si -> (String) Optional.ofNullable(Value.of(si, NOME_CULTURA_FIELD_NAME)).orElse(Value.of(si, NOME_OUTRA_CULTURA_FIELD_NAME)))
+                                    .col(emprego)
+                                    .col(tipoEstudo)
+                                    .largeSize()
+                    );
 
             nomeCultura
                     .selectionOf(culturas())
@@ -217,10 +216,11 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
 
     }
 
-    class Amostra {
+    public class Amostra {
 
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
         private final STypeComposite<SIComposite> rootType;
+        public final STypeAtivoAmostra ativoAmostra;
 
         public Amostra(STypeComposite<SIComposite> parentType) {
             root = parentType.addFieldListOfComposite("amostras", "amostra");
@@ -231,7 +231,7 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
             final STypeInteger dat = rootType.addFieldInteger("dat");
             final STypeDecimal loq = rootType.addFieldDecimal("loq");
             final STypeDecimal residuo = rootType.addFieldDecimal("residuo");
-            STypeAtivoAmostra ativo = rootType.addField("ativos", STypeAtivoAmostra.class);
+            ativoAmostra = rootType.addField("ativos", STypeAtivoAmostra.class);
             final STypeComposite<?> estado = rootType.addFieldComposite("estado");
             final STypeString siglaUF = estado.addFieldString("sigla");
             estado.addFieldString("nome");
@@ -252,7 +252,7 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
                             .col(id, "Id")
                             .col(dose, "Dose")
                             .col(aplicacoes, "Aplicações")
-                            .col(ativo.nomeComumPortugues, "Ingrediente Ativo")
+                            .col(ativoAmostra.nomeComumPortugues, "Ingrediente Ativo")
                             .col(residuo, "Residuo")
                             .col(dat, "DAT")
                     )
@@ -294,10 +294,13 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
                     .fractionalMaxLength(4);
 
             residuo
+                    .addInstanceValidator(new ResiduoValidator(loq))
                     .asAtr().label("Resíduo")
                     .fractionalMaxLength(4);
 
-            ativo
+
+
+            ativoAmostra
                     .asAtr()
                     .required()
                     .label("Ingrediente Ativo da Amostra (informados na seção de ativos)")
@@ -366,6 +369,7 @@ public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
                     .fractionalMaxLength(4);
 
             residuoMetabolito
+                    .addInstanceValidator(new ResiduoValidator(loqMetabolito))
                     .asAtr().label("Resíduo")
                     .fractionalMaxLength(4);
         }
