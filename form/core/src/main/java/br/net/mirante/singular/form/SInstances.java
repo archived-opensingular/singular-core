@@ -28,6 +28,13 @@ import br.net.mirante.singular.form.type.core.STypeBoolean;
  */
 public abstract class SInstances {
 
+    public static SIComposite getRootInstance(SInstance instance) {
+        if (instance.getParent() == null){
+            return (SIComposite) instance;
+        }
+        return getRootInstance(instance.getParent());
+    }
+
     public static interface IVisit<R> extends Serializable {
         void stop();
         void stop(R result);
