@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 
@@ -41,12 +43,22 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         return Petition.class;
     }
 
-
-    public List<? extends TaskInstanceDTO> findTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
-        return buildQuery(sortProperty, ascending, siglaFluxo, idsPerfis, filtroRapido, concluidas, false).setMaxResults(count).setFirstResult(first).list();
+    public List<? extends TaskInstanceDTO> findTasks(int first, int count, String sortProperty, boolean ascending,
+                                                     String siglaFluxo, List<String> idsPerfis, String filtroRapido,
+                                                     boolean concluidas) {
+        return buildQuery(sortProperty, ascending, Collections.singletonList(siglaFluxo), idsPerfis, filtroRapido, concluidas, false)
+                .setMaxResults(count).setFirstResult(first).list();
     }
 
-    protected Query buildQuery(String sortProperty, boolean ascending, String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas, boolean count) {
+    public List<TaskInstanceDTO> findTasks(QuickFilter filter, boolean concluidas, List<String> idsPerfis) {
+        return buildQuery(filter.getSortProperty(), filter.isAscending(), filter.getProcessesAbbreviation(), idsPerfis, filter.getFilter(), concluidas, false)
+                .setMaxResults(filter.getCount())
+                .setFirstResult(filter.getFirst())
+                .list();
+    }
+
+    protected Query buildQuery(String sortProperty, boolean ascending, List<String> processTypes, List<String> idsPerfis,
+                               String filtroRapido, boolean concluidas, boolean count) {
         String selectClause =
                 count ?
                         " count( distinct ti )" :
@@ -123,8 +135,8 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
 
-    public Integer countTasks(String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
-        return ((Number) buildQuery(null, true, siglaFluxo, idsPerfis, filtroRapido, concluidas, true).uniqueResult()).intValue();
+    public Long countTasks(List<String> processTypes, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
+        return ((Number) buildQuery(null, true, processTypes, idsPerfis, filtroRapido, concluidas, true).uniqueResult()).longValue();
     }
 
     @SuppressWarnings("unchecked")

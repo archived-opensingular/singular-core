@@ -196,13 +196,21 @@ public class PetitionService<T extends AbstractPetitionEntity> {
         }
     }
 
+    public List<TaskInstanceDTO> listTasks(QuickFilter filter, boolean concluidas, List<String> idsPerfis) {
+        return taskInstanceDAO.findTasks(filter, concluidas, idsPerfis);
+    }
+
+    public Long countTasks(QuickFilter filter, boolean concluidas, List<String> idsPerfis) {
+        return taskInstanceDAO.countTasks(filter.getProcessesAbbreviation(), idsPerfis, filter.getFilter(), concluidas);
+    }
+
     public List<? extends TaskInstanceDTO> listTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
         return taskInstanceDAO.findTasks(first, count, sortProperty, ascending, siglaFluxo, idsPerfis, filtroRapido, concluidas);
     }
 
 
-    public Integer countTasks(String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
-        return taskInstanceDAO.countTasks(siglaFluxo, idsPerfis, filtroRapido, concluidas);
+    public Long countTasks(String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
+        return taskInstanceDAO.countTasks(Collections.singletonList(siglaFluxo), idsPerfis, filtroRapido, concluidas);
     }
 
     public List<MTransition> listCurrentTaskTransitions(String petitionId) {
