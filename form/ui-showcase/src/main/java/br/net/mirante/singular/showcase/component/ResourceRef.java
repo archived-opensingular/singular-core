@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.LinkedList;
 import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
@@ -22,8 +23,8 @@ import br.net.mirante.singular.commons.base.SingularUtil;
 public class ResourceRef implements Serializable {
 
     private final Class<?> referenceClass;
-    private final String resourcePath;
-    private final String displayName;
+    private final String   resourcePath;
+    private final String   displayName;
 
     public ResourceRef(Class<?> referenceClass, String resourcePath) {
         this(referenceClass, resourcePath, resourcePath);
@@ -65,11 +66,23 @@ public class ResourceRef implements Serializable {
     }
 
     public static Optional<ResourceRef> forClassWithExtension(Class<?> target, String extension) {
-        return verifyExists(new ResourceRef(target, target.getSimpleName() + '.' + extension));
-    }
+        final LinkedList<String> alternatives = new LinkedList<>();
 
-    private static Optional<ResourceRef> verifyExists(ResourceRef ref) {
-        return ref.exists() ? Optional.of(ref) : Optional.empty();
+        final String basePath = target.getSimpleName() + '.' + extension;
+        alternatives.add(basePath);
+
+        final StringBuilder sb = new StringBuilder(basePath);
+        for (Class<?> clazz = target; clazz.isMemberClass(); clazz = clazz.getEnclosingClass()) {
+            sb.insert(0, '$');
+            sb.insert(0, clazz.getEnclosingClass().getSimpleName());
+            alternatives.addFirst(sb.toString());
+        }
+        for (String path : alternatives) {
+            ResourceRef ref = new ResourceRef(target, path);
+            if (ref.exists())
+                return Optional.of(ref);
+        }
+        return Optional.empty();
     }
 
     public String getExtension() {
