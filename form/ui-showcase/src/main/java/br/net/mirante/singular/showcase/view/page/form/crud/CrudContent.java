@@ -292,9 +292,14 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     }
 
     private String getDefinicao(String typeName) {
-        final SPackage pacote          = dictionaryLoader.loadTypeOrException(typeName).getPackage();
-        StringBuilder  definicaoOutput = new StringBuilder();
-        pacote.debug(definicaoOutput);
+
+        final StringBuilder  definicaoOutput = new StringBuilder();
+
+        Optional.ofNullable(dictionaryLoader.findEntryByType(typeName))
+                .map(ShowcaseTypeLoader.TemplateEntry::getType)
+                .map(SType::getPackage)
+                .ifPresent(pckg -> pckg.debug(definicaoOutput));
+
         return definicaoOutput.toString();
     }
 
