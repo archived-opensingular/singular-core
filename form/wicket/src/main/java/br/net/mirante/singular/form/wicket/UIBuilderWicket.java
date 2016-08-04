@@ -15,14 +15,7 @@ import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.context.UIBuilder;
 import br.net.mirante.singular.form.context.UIComponentMapper;
-import br.net.mirante.singular.form.type.core.STypeBoolean;
-import br.net.mirante.singular.form.type.core.STypeDate;
-import br.net.mirante.singular.form.type.core.STypeDateTime;
-import br.net.mirante.singular.form.type.core.STypeDecimal;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeMonetary;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.core.STypeTime;
+import br.net.mirante.singular.form.type.core.*;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.type.util.STypeLatitudeLongitude;
@@ -49,23 +42,7 @@ import br.net.mirante.singular.form.view.SViewTextArea;
 import br.net.mirante.singular.form.view.ViewMapperRegistry;
 import br.net.mirante.singular.form.view.ViewResolver;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
-import br.net.mirante.singular.form.wicket.mapper.DateMapper;
-import br.net.mirante.singular.form.wicket.mapper.DateTimeMapper;
-import br.net.mirante.singular.form.wicket.mapper.DecimalMapper;
-import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
-import br.net.mirante.singular.form.wicket.mapper.LatitudeLongitudeMapper;
-import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
-import br.net.mirante.singular.form.wicket.mapper.MoneyMapper;
-import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
-import br.net.mirante.singular.form.wicket.mapper.ReadOnlyControlsFieldComponentMapper;
-import br.net.mirante.singular.form.wicket.mapper.StringMapper;
-import br.net.mirante.singular.form.wicket.mapper.TabMapper;
-import br.net.mirante.singular.form.wicket.mapper.TableListMapper;
-import br.net.mirante.singular.form.wicket.mapper.TelefoneNacionalMapper;
-import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
-import br.net.mirante.singular.form.wicket.mapper.TimeMapper;
-import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
+import br.net.mirante.singular.form.wicket.mapper.*;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.mapper.attachment.list.AttachmentListMapper;
 import br.net.mirante.singular.form.wicket.mapper.attachment.single.AttachmentMapper;
@@ -186,6 +163,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeDateTime.class,    SViewDateTime.class,                  DateTimeMapper::new)
                 .register(STypeTime.class,                                              TimeMapper::new)
                 .register(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new)
+                .register(STypeHTML.class,                                              RichTextMapper::new)
                 .register(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         //@formatter:on
     }

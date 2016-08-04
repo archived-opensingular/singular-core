@@ -15,21 +15,28 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 public class BOutputPanel extends Panel {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7120790446032810735L;
-    
+
     private final IModel<String> outputText;
+
+    private Label outputTextLabel;
 
     public BOutputPanel(String id, IModel<String> outputText) {
         super(id);
         this.outputText = outputText;
+        this.outputTextLabel = new Label("output", outputText);
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        final BSWellBorder well = BSWellBorder.small("well");
-        add(well.add(new Label("output", outputText)));
+        add(BSWellBorder.small("well").add(outputTextLabel));
     }
+
+    public Label getOutputTextLabel() {
+        return outputTextLabel;
+    }
+
 }
