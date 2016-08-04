@@ -227,7 +227,11 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     public SInstance remove(int index) {
         SInstance child = getChecking(index, null);
         child.internalOnRemove();
-        return values.remove(index);
+        E ins = values.remove(index);
+        if (asAtr().getUpdateListener() != null) {
+            asAtr().getUpdateListener().accept(this);
+        }
+        return ins;
     }
 
     public Object getValueAt(int index) {
