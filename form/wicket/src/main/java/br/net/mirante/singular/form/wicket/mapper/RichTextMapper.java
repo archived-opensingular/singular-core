@@ -10,6 +10,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 public class RichTextMapper extends StringMapper {
 
     @Override
@@ -28,6 +30,7 @@ public class RichTextMapper extends StringMapper {
     }
 
     private void addLogicToReplaceWithCKEditor(Component textarea) {
+        textarea.add($b.attr("style", "display:none"));
         textarea.add(new CKEditorInitBehaviour());
     }
 

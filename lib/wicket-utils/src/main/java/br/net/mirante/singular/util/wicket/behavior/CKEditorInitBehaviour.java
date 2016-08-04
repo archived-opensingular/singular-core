@@ -6,16 +6,14 @@ public class CKEditorInitBehaviour extends InitScriptBehaviour {
 
     @Override
     public String getScript(Component component) {
+        return String.format(getScriptString(), component.getMarkupId(true));
+    }
 
-        String js = "";
-
-        js += " (function(id){";
-//        js += "     if( typeof CKEDITOR.instances[id] === 'undefined' ) { ";
-        js += "         CKEDITOR.replace(id, {skin : 'office2013', language : 'pt-br'} );";
-//        js += "     }";
-        js += " }('%s'));";
-
-        return String.format(js, component.getMarkupId(true));
+    public String getScriptString() {
+        return ""
+                + " (function(id) { "
+                + "         CKEDITOR.replace(id, {skin : 'office2013', language : 'pt-br'} );"
+                + " }('%s')); ";
     }
 
 }
