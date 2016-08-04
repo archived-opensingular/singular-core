@@ -68,7 +68,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
                 for (CaseBase cb : item.getCases()) {
                     if (cb instanceof CaseBaseForm) {
                         CaseBaseForm c = (CaseBaseForm) cb;
-                        if (c.getSubCaseName() == null) {
+                        if (StringUtils.isEmpty(c.getSubCaseName())) {
                             add(itemName, c, group.getTipo());
                         } else {
                             add(itemName + " - " + c.getSubCaseName(), c, group.getTipo());
@@ -105,7 +105,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
     }
 
     public void add(String displayName, CaseBaseForm c, ShowCaseType tipo) {
-        add(c.getTypeName(), displayName, () -> c.getCaseType(), tipo);
+        add(c.getTypeName(), displayName, c::getCaseType, tipo);
     }
 
     private void add(String typeName, String displayName, Supplier<SType<?>> typeSupplier, ShowCaseType tipo) {
