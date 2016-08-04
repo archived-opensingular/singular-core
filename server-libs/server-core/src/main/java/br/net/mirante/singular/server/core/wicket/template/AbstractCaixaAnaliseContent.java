@@ -1,10 +1,6 @@
 package br.net.mirante.singular.server.core.wicket.template;
 
-import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.COD_PROCESS_INSTANCE;
-import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.LAST_VERSION;
-import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.PROCESS_ABBREVIATION;
-import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.RELOCATE_TASK;
-import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.USERNAME;
+import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.*;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -21,6 +17,7 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -129,7 +126,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         actionColumn
                 .appendStaticAction(getMessage("label.table.column.view"),
                         Icone.EYE, this::criarLinkVisualizar)
-                .appendAction(getMessage("label.table.column.history"),
+                .appendStaticAction(getMessage("label.table.column.history"),
                         Icone.HISTORY, this::criarLinkHistorico);
 
         return actionColumn;
@@ -212,10 +209,11 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         target.add(listTable);
     }
 
-    protected void criarLinkHistorico(AjaxRequestTarget target, IModel<T> model) {
+    protected WebMarkupContainer criarLinkHistorico(T peticao, String id) {
         PageParameters pageParameters = new PageParameters();
-        pageParameters.add(Parameters.INSTANCE_ID, model.getObject().getProcessInstanceId());
-        setResponsePage(getHistoricoPage(), pageParameters);
+        pageParameters.add(Parameters.INSTANCE_ID, peticao.getProcessInstanceId());
+
+        return new BookmarkablePageLink(id, getHistoricoPage(), pageParameters);
     }
 
     protected MetronicStatusColumn.BagdeType badgeMapper(IModel<Object> cellModel, IModel<T> rowModel) {

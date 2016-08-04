@@ -4,10 +4,12 @@ package br.net.mirante.singular.server.commons.persistence.dto;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 
 public class TaskInstanceDTO implements Serializable {
 
@@ -29,6 +31,7 @@ public class TaskInstanceDTO implements Serializable {
     private boolean possuiPermissao = true;
     private String processGroupCod;
     private String processGroupContext;
+    private List<BoxItemAction> actions;
 
 
     public TaskInstanceDTO(Integer processInstanceId, Integer taskInstanceId, Integer taskId, Integer versionStamp,
@@ -229,5 +232,13 @@ public class TaskInstanceDTO implements Serializable {
 
     public void setProcessGroupContext(String processGroupContext) {
         this.processGroupContext = processGroupContext;
+    }
+
+    public List<BoxItemAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<BoxItemAction> actions) {
+        this.actions = actions;
     }
 }

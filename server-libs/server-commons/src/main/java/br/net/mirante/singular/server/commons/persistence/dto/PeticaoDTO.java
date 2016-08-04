@@ -7,7 +7,7 @@ public class PeticaoDTO implements Serializable {
 
     private static final long serialVersionUID = -5971923724359749797L;
 
-    private Long cod;
+    private Long codPeticao;
     private String description;
     private String situation;
     private String processName;
@@ -22,11 +22,11 @@ public class PeticaoDTO implements Serializable {
     public PeticaoDTO() {
     }
 
-    public PeticaoDTO(Long cod, String description, String situation,
+    public PeticaoDTO(Long codPeticao, String description, String situation,
                       String processName, Date creationDate, String type, String processType,
                       Date situationBeginDate, Date processBeginDate,
                       Date editionDate) {
-        this.cod = cod;
+        this.codPeticao = codPeticao;
         this.description = description;
         this.situation = situation;
         this.processName = processName;
@@ -38,12 +38,12 @@ public class PeticaoDTO implements Serializable {
         this.editionDate = editionDate;
     }
 
-    public Long getCod() {
-        return cod;
+    public Long getCodPeticao() {
+        return codPeticao;
     }
 
-    public void setCod(Long cod) {
-        this.cod = cod;
+    public void setCodPeticao(Long codPeticao) {
+        this.codPeticao = codPeticao;
     }
 
     public String getDescription() {

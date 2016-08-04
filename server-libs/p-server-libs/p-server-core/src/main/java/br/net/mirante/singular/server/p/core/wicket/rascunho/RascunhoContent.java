@@ -52,7 +52,7 @@ public class RascunhoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 
     @Override
     protected void appendPropertyColumns(BSDataTableBuilder<PeticaoDTO, String, IColumn<PeticaoDTO, String>> builder) {
-        builder.appendPropertyColumn(getMessage("label.table.column.number"), "p.id", PeticaoDTO::getCod);
+        builder.appendPropertyColumn(getMessage("label.table.column.number"), "p.id", PeticaoDTO::getCodPeticao);
         builder.appendPropertyColumn(getMessage("label.table.column.description"), "p.description", PeticaoDTO::getDescription);
         builder.appendPropertyColumn(getMessage("label.table.column.process"), "p.processName", PeticaoDTO::getProcessName);
         builder.appendPropertyColumn(getMessage("label.table.column.edition.date"), "p.editionDate", PeticaoDTO::getEditionDate);

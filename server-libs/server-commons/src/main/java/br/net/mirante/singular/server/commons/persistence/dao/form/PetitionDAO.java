@@ -69,7 +69,7 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
         if (count) {
             hql.append("SELECT count(p) ");
         } else {
-            hql.append(" SELECT p.cod as cod ");
+            hql.append(" SELECT p.cod as codPeticao ");
             hql.append(" , p.description as description ");
             hql.append(" , task.name as situation ");
             hql.append(" , p.processName as processName ");

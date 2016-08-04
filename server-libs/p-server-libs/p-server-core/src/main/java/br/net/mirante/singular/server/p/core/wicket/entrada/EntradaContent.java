@@ -95,7 +95,7 @@ public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
         String href = DispatcherPageUtil.
                 baseURL(getBaseUrl())
                 .formAction(FormActions.FORM_FILL_WITH_ANALYSIS.getId())
-                .formId(peticao.getCod())
+                .formId(peticao.getCodPeticao())
                 .param(SIGLA_FORM_NAME, peticao.getType())
                 .build();
         WebMarkupContainer link = new WebMarkupContainer(id);

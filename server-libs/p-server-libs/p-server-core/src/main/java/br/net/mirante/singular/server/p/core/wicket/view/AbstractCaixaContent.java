@@ -30,13 +30,13 @@ import org.apache.wicket.model.Model;
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
-import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
@@ -118,7 +118,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
     }
 
     protected String getBaseUrl() {
-        return getModuleContext() + ConfigProperties.get(ConfigProperties.SINGULAR_MODULE_FORM_ENDERECO);
+        return getModuleContext() + SingularSession.get().getServerContext().getUrlPath();
     }
 
     protected String getProcessGroupCod() {

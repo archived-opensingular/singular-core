@@ -2,7 +2,6 @@ package br.net.mirante.singular.server.commons.config;
 
 
 import java.util.Optional;
-import java.util.Properties;
 
 import br.net.mirante.singular.commons.base.SingularProperties;
 
@@ -13,7 +12,6 @@ import br.net.mirante.singular.commons.base.SingularProperties;
 public class ConfigProperties {
 
     public static final  String     SINGULAR_SERVIDOR_ENDERECO    = "singular.servidor.endereco";
-    public static final  String     SINGULAR_MODULE_FORM_ENDERECO = "singular.module.form.endereco";
     public static final  String     SINGULAR_DEV_MODE             = "singular.config.dev";
     public static final  String     SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
 

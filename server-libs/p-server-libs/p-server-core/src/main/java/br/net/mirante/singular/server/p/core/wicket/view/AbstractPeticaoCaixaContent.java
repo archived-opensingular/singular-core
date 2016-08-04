@@ -39,12 +39,12 @@ public abstract class AbstractPeticaoCaixaContent<T extends PeticaoDTO> extends 
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl())
                 .formAction(formActions.getId())
-                .formId(peticao.getCod())
+                .formId(peticao.getCodPeticao())
                 .params(getCriarLinkParameters(peticao))
                 .build();
 
         WebMarkupContainer link = new WebMarkupContainer(id);
-        link.add($b.attr("target", String.format("_%s", peticao.getCod())));
+        link.add($b.attr("target", String.format("_%s", peticao.getCodPeticao())));
         link.add($b.attr("href", href));
         return link;
     }

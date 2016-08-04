@@ -1,5 +1,14 @@
 package br.net.mirante.singular.server.commons.wicket.historico;
 
+import java.util.Iterator;
+
+import javax.inject.Inject;
+
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.persistence.service.ProcessRetrieveService;
@@ -8,13 +17,6 @@ import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-
-import javax.inject.Inject;
-import java.util.Iterator;
 
 public abstract class AbstractHistoricoContent extends Content {
 
@@ -50,12 +52,16 @@ public abstract class AbstractHistoricoContent extends Content {
         listTable = setupDataTable();
         queue(listTable);
 
-        queue(new Link("btnCancelar") {
+        queue(getBtnCancelar());
+    }
+
+    protected Link getBtnCancelar() {
+        return new Link("btnCancelar") {
             @Override
             public void onClick() {
                 setResponsePage(getBackPage());
             }
-        });
+        };
     }
 
     protected abstract Class<? extends Page> getBackPage();

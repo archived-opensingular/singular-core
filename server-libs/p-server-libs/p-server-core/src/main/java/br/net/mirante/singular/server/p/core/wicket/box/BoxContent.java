@@ -26,7 +26,9 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -46,12 +48,14 @@ import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.core.wicket.ModuleLink;
+import br.net.mirante.singular.server.core.wicket.historico.HistoricoPage;
 import br.net.mirante.singular.server.p.core.wicket.model.BoxItemModel;
 import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
@@ -119,7 +123,19 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
             }
         }
 
+        actionColumn.appendStaticAction(getMessage("label.table.column.history"),
+                Icone.HISTORY, this::criarLinkHistorico);
+
         builder.appendColumn(actionColumn);
+    }
+
+    private MarkupContainer criarLinkHistorico(BoxItemModel boxItemModel, String id) {
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.add(Parameters.INSTANCE_ID, boxItemModel.getProcessInstanceId());
+
+        BookmarkablePageLink historiLink = new BookmarkablePageLink(id, HistoricoPage.class, pageParameters);
+        historiLink.setVisible(boxItemModel.getProcessBeginDate() != null);
+        return historiLink;
     }
 
     @Override

@@ -23,7 +23,16 @@ public class BoxItemModel extends LinkedHashMap<String, Object> implements Seria
     }
 
     public Long getCod() {
-        return ((Integer) get("cod")).longValue();
+        return ((Integer) get("codPeticao")).longValue();
+    }
+
+    public Long getProcessInstanceId() {
+        Object processInstanceId = get("processInstanceId");
+        if (processInstanceId != null) {
+            return ((Integer) processInstanceId).longValue();
+        } else {
+            return null;
+        }
     }
 
     public String getProcessBeginDate() {

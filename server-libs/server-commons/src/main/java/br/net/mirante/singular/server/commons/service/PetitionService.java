@@ -67,7 +67,7 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     }
 
     public void delete(PeticaoDTO peticao) {
-        petitionDAO.delete(petitionDAO.find(peticao.getCod()));
+        petitionDAO.delete(petitionDAO.find(peticao.getCodPeticao()));
     }
 
     public void delete(Long idPeticao) {
@@ -107,7 +107,7 @@ public class PetitionService<T extends AbstractPetitionEntity> {
         actions.add(createPopupBoxItemAction(item, FormActions.FORM_FILL, ACTION_EDIT));
         actions.add(createPopupBoxItemAction(item, FormActions.FORM_VIEW, ACTION_VIEW));
         actions.add(createDeleteAction(item));
-        actions.add(BoxItemAction.newExecuteInstante(item.get("cod"), ACTION_RELOCATE));
+        actions.add(BoxItemAction.newExecuteInstante(item.get("codPeticao"), ACTION_RELOCATE));
 
         appendItemActions(item, actions);
 
@@ -127,7 +127,7 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     }
 
     private BoxItemAction createDeleteAction(Map<String, Object> item) {
-        String endpointUrl = PATH_BOX_ACTION + DELETE + "?id=" + item.get("cod");
+        String endpointUrl = PATH_BOX_ACTION + DELETE + "?id=" + item.get("codPeticao");
 
         final BoxItemAction boxItemAction = new BoxItemAction();
         boxItemAction.setName(ACTION_DELETE);
@@ -136,11 +136,17 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     }
 
     protected BoxItemAction createPopupBoxItemAction(Map<String, Object> item, FormActions formAction, String actionName) {
+        Object cod = item.get("codPeticao");
+        Object type = item.get("type");
+        return createPopupBoxItemAction(cod, type, formAction, actionName);
+    }
+
+    private BoxItemAction createPopupBoxItemAction(Object cod, Object type, FormActions formAction, String actionName) {
         String endpoint = DispatcherPageUtil
                 .baseURL("")
                 .formAction(formAction.getId())
-                .formId(item.get("cod"))
-                .param(SIGLA_FORM_NAME, item.get("type"))
+                .formId(cod)
+                .param(SIGLA_FORM_NAME, type)
                 .build();
 
         final BoxItemAction boxItemAction = new BoxItemAction();
@@ -197,7 +203,32 @@ public class PetitionService<T extends AbstractPetitionEntity> {
     }
 
     public List<TaskInstanceDTO> listTasks(QuickFilter filter, boolean concluidas, List<String> idsPerfis) {
-        return taskInstanceDAO.findTasks(filter, concluidas, idsPerfis);
+        List<TaskInstanceDTO> tasks = taskInstanceDAO.findTasks(filter, concluidas, idsPerfis);
+        tasks.forEach(this::checkTaskActions);
+        return tasks;
+    }
+
+    private void checkTaskActions(TaskInstanceDTO task) {
+        List<BoxItemAction> actions = new ArrayList<>();
+        actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE));
+        actions.add(createPopupBoxItemAction(task.getCodPeticao(), task.getType(), FormActions.FORM_VIEW, ACTION_VIEW));
+
+        appendTaskActions(task, actions);
+
+        String processKey = task.getProcessType();
+        final ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(processKey);
+        final ActionConfig actionConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
+        if (actionConfig != null) {
+            actions = actions.stream()
+                    .filter(itemAction -> actionConfig.containsAction(itemAction.getName()))
+                    .collect(Collectors.toList());
+        }
+
+        task.setActions(actions);
+    }
+
+    protected void appendTaskActions(TaskInstanceDTO task, List<BoxItemAction> actions) {
+
     }
 
     public Long countTasks(QuickFilter filter, boolean concluidas, List<String> idsPerfis) {
