@@ -35,13 +35,13 @@ public class SingularEventsHandlers extends Behavior {
         ADD_MOUSEDOWN_HANDLERS {
             @Override
             String getScript(Component component) {
-                return "window.SEH.addMousedownHandlers("+component.getMarkupId(true)+");";
+                return "window.SEH.addMousedownHandlers('"+component.getMarkupId(true)+"');";
             }
         },
         ADD_TEXT_FIELD_HANDLERS {
             @Override
             String getScript(Component component) {
-                return "window.SEH.addTextFieldHandlers("+component.getMarkupId(true)+");";
+                return "window.SEH.addTextFieldHandlers('"+component.getMarkupId(true)+"');";
             }
         };
 

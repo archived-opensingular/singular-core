@@ -13,7 +13,7 @@
         var contex = {};
 
         function addMousedownHandlers(input) {
-            var inputJQueryRef = $(input);
+            var inputJQueryRef = $('#'+input);
             inputJQueryRef.on('mousedown', function () {
                 if (contex.hasOwnProperty(SINGULAR_BLUR_KEY)) {
                     window.clearTimeout(contex[SINGULAR_BLUR_KEY]);
@@ -26,7 +26,7 @@
         }
 
         function addTextFieldHandlers(input) {
-            var inputJQueryRef = $(input);
+            var inputJQueryRef = $('#'+input);
             inputJQueryRef.on('blur', function (event) {
                 if (!contex.hasOwnProperty(SINGULAR_CHANGE_KEY)) {
                     contex[SINGULAR_BLUR_KEY] = window.setTimeout(function () {
