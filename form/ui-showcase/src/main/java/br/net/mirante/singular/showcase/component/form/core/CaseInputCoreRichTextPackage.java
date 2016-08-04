@@ -23,6 +23,7 @@ public class CaseInputCoreRichTextPackage extends SPackage {
                 .asAtrBootstrap()
                 .colPreference(12)
                 .asAtr()
+                .required()
                 .label("Parecer");
 
     }
