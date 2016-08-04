@@ -35,7 +35,6 @@ public class ShowCaseTable {
 
     private final Map<Group, List<Class<?>>> casePorGrupo = new LinkedHashMap<>();
 
-    @SuppressWarnings("unchecked")
     public ShowCaseTable() {
 
         Reflections reflections = new Reflections("br.net.mirante.singular.showcase.component");
