@@ -429,11 +429,11 @@ public class WicketBuildContext implements Serializable {
     }
 
     public UIBuilderWicket getUiBuilderWicket() {
-        return uiBuilderWicket;
+        return (uiBuilderWicket != null) ? uiBuilderWicket : getParent().getUiBuilderWicket();
     }
 
     public ViewMode getViewMode() {
-        return viewMode;
+        return (viewMode != null) ? viewMode : getParent().getViewMode();
     }
 
     public SView getView() {

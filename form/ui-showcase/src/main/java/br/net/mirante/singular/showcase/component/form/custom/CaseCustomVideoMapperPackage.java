@@ -7,11 +7,10 @@ package br.net.mirante.singular.showcase.component.form.custom;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
-import java.net.URL;
-
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.media.video.Video;
+import org.apache.wicket.validation.validator.UrlValidator;
 
 import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.SIComposite;
@@ -25,8 +24,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSFormGroup;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
 import br.net.mirante.singular.util.wicket.model.IMappingModel;
-import org.apache.wicket.validation.validator.UrlValidator;
-import sun.net.util.URLUtil;
 
 /**
  * Custom String Mapper
@@ -41,7 +38,7 @@ public class CaseCustomVideoMapperPackage extends SPackage {
 
         tipoMyForm.addFieldString("video")
             .addInstanceValidator(v -> {
-                if (!new UrlValidator().isValid(v.getInstance().getValue())){
+                if (!new UrlValidator().isValid(v.getInstance().getValue())) {
                     v.error("URL inválida");
                 }
             })
@@ -49,7 +46,7 @@ public class CaseCustomVideoMapperPackage extends SPackage {
             .withCustomMapper(() -> new VideoMapper())
             .asAtr().label("Vídeo").required(true);
     }
-    
+
     private static final class VideoMapper implements IWicketComponentMapper {
         @Override
         public void buildView(WicketBuildContext ctx) {
