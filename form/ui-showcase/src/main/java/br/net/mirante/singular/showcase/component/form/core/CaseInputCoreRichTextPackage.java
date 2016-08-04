@@ -20,10 +20,7 @@ public class CaseInputCoreRichTextPackage extends SPackage {
         final STypeHTML         parecer    = tipoMyForm.addField("parecer", STypeHTML.class);
 
         parecer
-                .asAtrBootstrap()
-                .colPreference(12)
                 .asAtr()
-                .required()
                 .label("Parecer");
 
     }
