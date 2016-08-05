@@ -49,11 +49,11 @@ public class PanelListaMapper extends AbstractListaMapper {
 
     public MetronicPanel newpanel(String id, WicketBuildContext ctx) {
         final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
-        final SIList<?> iLista = listaModel.getObject();
-        final IModel<String> label = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
-        final SViewListByForm view = (SViewListByForm) ctx.getView();
+        final SIList<?>                 iLista     = listaModel.getObject();
+        final IModel<String>            label      = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
+        final SViewListByForm           view       = (SViewListByForm) ctx.getView();
 
-        final ViewMode viewMode = ctx.getViewMode();
+        final ViewMode viewMode    = ctx.getViewMode();
         final SType<?> currentType = ctx.getCurrentInstance().getType();
 
         addMinimumSize(currentType, iLista);
@@ -94,10 +94,10 @@ public class PanelListaMapper extends AbstractListaMapper {
 
     private static final class PanelElementsView extends ElementsView {
 
-        private final SViewListByForm view;
-        private final Form<?> form;
+        private final SViewListByForm    view;
+        private final Form<?>            form;
         private final WicketBuildContext ctx;
-        private final UIBuilderWicket wicketBuilder;
+        private final UIBuilderWicket    wicketBuilder;
 
         private PanelElementsView(String id,
                                   IModel<SIList<SInstance>> model,
@@ -125,7 +125,7 @@ public class PanelListaMapper extends AbstractListaMapper {
 
         @Override
         protected void populateItem(Item<SInstance> item) {
-            final BSGrid grid = new BSGrid("_r");
+            final BSGrid   grid     = new BSGrid("_r");
             final ViewMode viewMode = ctx.getViewMode();
 
             buildHeader(item, grid, viewMode);
@@ -152,22 +152,20 @@ public class PanelListaMapper extends AbstractListaMapper {
                     .add(new Label("_title", model));
 
             final BSGrid btnGrid = header.newCol(1).newGrid();
+
             header.add($b.classAppender("list-icons"));
 
-            if ((view instanceof SViewListByForm) && (((SViewListByForm) view).isInsertEnabled())
-                    && viewMode.isEdition()) {
-                appendInserirButton(this, form, item, btnGrid.newColInRow())
-                        .add($b.classAppender("pull-right"));
+            if ((view != null) && (view.isInsertEnabled()) && viewMode.isEdition()) {
+                appendInserirButton(this, form, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
             }
 
             final BSCol btnCell = btnGrid.newColInRow();
-            if ((view instanceof SViewListByForm) && ((SViewListByForm) view).isDeleteEnabled()
-                    && viewMode.isEdition()) {
-                appendRemoverButton(this, form, item, btnCell)
-                        .add($b.classAppender("pull-right"));
+
+            if ((view != null) && view.isDeleteEnabled() && viewMode.isEdition()) {
+                appendRemoverIconButton(this, form, item, btnCell).add($b.classAppender("pull-right"));
             }
 
-            if (viewMode == ViewMode.EDITION) {
+            if (viewMode == ViewMode.EDIT) {
                 btnCell
                         .newTemplateTag(tp -> ""
                                 + "<i"
@@ -186,4 +184,13 @@ public class PanelListaMapper extends AbstractListaMapper {
             wicketBuilder.build(ctx.createChild(body.newCol(12), true, item.getModel()), viewMode);
         }
     }
+
+    protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
+        final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
+        cell
+                .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + Icone.REMOVE + "' />")
+                .add(btn);
+        return btn;
+    }
+
 }
