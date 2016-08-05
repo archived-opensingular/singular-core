@@ -5,31 +5,40 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+
+import java.io.Serializable;
+import java.util.Optional;
+
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.PackageResourceReference;
+
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.view.AbstractSViewListWithControls;
-import br.net.mirante.singular.form.view.SView;
+import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.*;
-import com.google.common.base.Strings;
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-
-import java.util.Set;
-
-import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public class PanelListaMapper extends AbstractListaMapper {
 
@@ -42,7 +51,7 @@ public class PanelListaMapper extends AbstractListaMapper {
         final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
         final SIList<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
-        final SView view = ctx.getView();
+        final SViewListByForm view = (SViewListByForm) ctx.getView();
 
         final ViewMode viewMode = ctx.getViewMode();
         final SType<?> currentType = ctx.getCurrentInstance().getType();
@@ -59,14 +68,22 @@ public class PanelListaMapper extends AbstractListaMapper {
                 (content, form) -> {
 
                     TemplatePanel list = content.newTemplateTag(t -> ""
-                            + "    <ul class='list-group'>"
+                            + "    <ul class='list-group list-by-form'>"
                             + "      <li wicket:id='_e' class='list-group-item' style='margin-bottom:15px'>"
                             + "         <div wicket:id='_r'></div>"
                             + "      </li>"
-                            + "    </ul>");
-                    list.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
-                    list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form));
-//                    content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
+                            + "      <div wicket:id='_empty' class='list-by-form-empty-state'>"
+                            + "         <span>Nenhum item foi adicionado</span>"
+                            + "      </div>"
+                            + "    </ul>"
+                    );
+                    final PanelElementsView elements = new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form);
+                    elements.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
+                    list.add(elements);
+                    final WebMarkupContainer empty = new WebMarkupContainer("_empty");
+                    empty.add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())));
+                    list.add(empty);
+                    content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
                     content.getParent().add(dependsOnModifier(listaModel));
                 },
                 (f, form) -> buildFooter(f, form, ctx)
@@ -77,7 +94,7 @@ public class PanelListaMapper extends AbstractListaMapper {
 
     private static final class PanelElementsView extends ElementsView {
 
-        private final SView view;
+        private final SViewListByForm view;
         private final Form<?> form;
         private final WicketBuildContext ctx;
         private final UIBuilderWicket wicketBuilder;
@@ -86,7 +103,7 @@ public class PanelListaMapper extends AbstractListaMapper {
                                   IModel<SIList<SInstance>> model,
                                   UIBuilderWicket wicketBuilder,
                                   WicketBuildContext ctx,
-                                  SView view,
+                                  SViewListByForm view,
                                   Form<?> form) {
             super(id, model);
             this.wicketBuilder = wicketBuilder;
@@ -96,14 +113,46 @@ public class PanelListaMapper extends AbstractListaMapper {
         }
 
         @Override
+        public void renderHead(IHeaderResponse response) {
+            super.renderHead(response);
+            PackageResourceReference cssFile =
+                    new PackageResourceReference(this.getClass(), "PanelElementsView.js");
+            JavaScriptHeaderItem javascriptItem = JavaScriptHeaderItem.forReference(cssFile);
+
+            response.render(javascriptItem);
+            response.render(OnDomReadyHeaderItem.forScript("appendListItemEvent();"));
+        }
+
+        @Override
         protected void populateItem(Item<SInstance> item) {
             final BSGrid grid = new BSGrid("_r");
-            final BSRow row = grid.newRow();
             final ViewMode viewMode = ctx.getViewMode();
 
-            wicketBuilder.build(ctx.createChild(row.newCol(11), true, item.getModel()), viewMode);
+            buildHeader(item, grid, viewMode);
+            buildBody(item, grid, viewMode);
 
-            final BSGrid btnGrid = row.newCol(1).newGrid();
+            item.add(grid);
+        }
+
+        private void buildHeader(Item<SInstance> item, BSGrid grid, ViewMode viewMode) {
+            final BSRow header = grid.newRow();
+            header.add($b.classAppender("list-item-header"));
+            final BSCol title = header.newCol(11).newGrid().newColInRow();
+            Model model = new Model() {
+                @Override
+                public Serializable getObject() {
+                    if (view.getHeaderPath() != null) {
+                        return Optional.ofNullable(Value.of(item.getModelObject(), view.getHeaderPath())).orElse("").toString();
+                    } else {
+                        return "";
+                    }
+                }
+            };
+            title.newTemplateTag(tp -> "<span wicket:id='_title' ></span>")
+                    .add(new Label("_title", model));
+
+            final BSGrid btnGrid = header.newCol(1).newGrid();
+            header.add($b.classAppender("list-icons"));
 
             if ((view instanceof SViewListByForm) && (((SViewListByForm) view).isInsertEnabled())
                     && viewMode.isEdition()) {
@@ -111,13 +160,30 @@ public class PanelListaMapper extends AbstractListaMapper {
                         .add($b.classAppender("pull-right"));
             }
 
+            final BSCol btnCell = btnGrid.newColInRow();
             if ((view instanceof SViewListByForm) && ((SViewListByForm) view).isDeleteEnabled()
                     && viewMode.isEdition()) {
-                appendRemoverButton(this, form, item, btnGrid.newColInRow())
+                appendRemoverButton(this, form, item, btnCell)
                         .add($b.classAppender("pull-right"));
             }
 
-            item.add(grid);
+            if (viewMode == ViewMode.EDITION) {
+                btnCell
+                        .newTemplateTag(tp -> ""
+                                + "<i"
+                                + " style='" + MapperCommons.ICON_STYLE + " 'class='" + Icone.PENCIL + " pull-right' />");
+            } else {
+                btnCell
+                        .newTemplateTag(tp -> ""
+                                + "<i"
+                                + " style='" + MapperCommons.ICON_STYLE + " 'class='" + Icone.EYE + " pull-right' />");
+            }
+        }
+
+        private void buildBody(Item<SInstance> item, BSGrid grid, ViewMode viewMode) {
+            final BSRow body = grid.newRow();
+            body.add($b.classAppender("list-item-body"));
+            wicketBuilder.build(ctx.createChild(body.newCol(12), true, item.getModel()), viewMode);
         }
     }
 }

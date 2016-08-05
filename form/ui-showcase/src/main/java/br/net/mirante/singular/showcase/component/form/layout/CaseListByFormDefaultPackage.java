@@ -37,7 +37,7 @@ public class CaseListByFormDefaultPackage extends SPackage {
 
         {
             experiencias
-                    .withView(SViewListByForm::new)
+                    .withView(new SViewListByForm(empresa))
                     .asAtr().label("Experiências profissionais");
             dtInicioExperiencia
                     .asAtr().label("Data inicial")
