@@ -19,5 +19,6 @@ public class DefaultActions {
     public static final ItemAction EDIT = new ItemAction(ACTION_EDIT, "Alterar", Icone.PENCIL, ItemActionType.POPUP);
     public static final ItemAction DELETE = new ItemAction(ACTION_DELETE, "Excluir", Icone.MINUS, ItemActionType.ENDPOINT, CONFIRMATION_DELETE);
     public static final ItemAction VIEW = new ItemAction(ACTION_VIEW, "Visualizar", Icone.EYE, ItemActionType.POPUP);
+    public static final ItemAction ANALYSE = new ItemAction(ACTION_ANALYSE, "Analisar", Icone.PENCIL, ItemActionType.POPUP);
 
 }

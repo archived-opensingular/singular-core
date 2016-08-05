@@ -11,5 +11,6 @@ public class ServerActionConstants {
     public static final String ACTION_EDIT = "alterar";
     public static final String ACTION_DELETE = "excluir";
     public static final String ACTION_VIEW = "visualizar";
+    public static final String ACTION_ANALYSE = "analisar";
 
 }

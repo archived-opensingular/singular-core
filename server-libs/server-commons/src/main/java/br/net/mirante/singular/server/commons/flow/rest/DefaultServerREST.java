@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.form.spring.SpringServiceRegistry;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
@@ -40,6 +41,9 @@ public class DefaultServerREST {
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
 
+    @Inject
+    private SpringServiceRegistry springServiceRegistry;
+
     @RequestMapping(value = PATH_BOX_ACTION + DELETE, method = RequestMethod.POST)
     public ActionResponse excluir(@RequestBody Long id) {
         try {
@@ -56,8 +60,11 @@ public class DefaultServerREST {
     @RequestMapping(value = PATH_BOX_ACTION + EXECUTE, method = RequestMethod.POST)
     public ActionResponse execute(@RequestParam Long id, @RequestBody Action action) {
         try {
-            IController controller = getActionController(id, action);
-            return controller.execute(id, action);
+            final AbstractPetitionEntity petition = petitionService.find(id);
+            final ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(petition.getProcessType());
+
+            IController controller = getActionController(processDefinition, action);
+            return controller.execute(petition, action);
         } catch (Exception e) {
             final String msg = String.format("Erro ao executar a ação %s para o id %d.", action.getName(), id);
             LOGGER.error(msg, e);
@@ -66,12 +73,11 @@ public class DefaultServerREST {
 
     }
 
-    private IController getActionController(Long id, Action action) {
-        final AbstractPetitionEntity petition = petitionService.find(id);
-        final ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(petition.getProcessType());
+    private IController getActionController(ProcessDefinition<?> processDefinition, Action action) {
         final ActionConfig actionConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
 
-        return actionConfig.getCustomAction(action.getName());
+        Class<? extends IController> controllerClass = actionConfig.getAction(action.getName());
+        return springServiceRegistry.lookupService(controllerClass);
     }
 
 }

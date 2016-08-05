@@ -46,6 +46,7 @@ import br.net.mirante.singular.server.commons.service.dto.ItemActionType;
 import br.net.mirante.singular.server.commons.service.dto.ItemBox;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.core.wicket.ModuleLink;
 import br.net.mirante.singular.server.core.wicket.historico.HistoricoPage;
@@ -131,7 +132,9 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     private MarkupContainer criarLinkHistorico(BoxItemModel boxItemModel, String id) {
         PageParameters pageParameters = new PageParameters();
-        pageParameters.add(Parameters.INSTANCE_ID, boxItemModel.getProcessInstanceId());
+        if (boxItemModel.getProcessInstanceId() != null) {
+            pageParameters.add(Parameters.INSTANCE_ID, boxItemModel.getProcessInstanceId());
+        }
 
         BookmarkablePageLink historiLink = new BookmarkablePageLink(id, HistoricoPage.class, pageParameters);
         historiLink.setVisible(boxItemModel.getProcessBeginDate() != null);
@@ -174,11 +177,11 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 confirmationModal.show(target);
             };
         } else {
-            return (target, model) -> executeDynamicAction(itemAction, baseUrl, additionalParams, model.getObject());
+            return (target, model) -> executeDynamicAction(itemAction, baseUrl, additionalParams, model.getObject(), target);
         }
     }
 
-    private void executeDynamicAction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItem) {
+    private void executeDynamicAction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItem, AjaxRequestTarget target) {
         final BoxItemAction boxAction = boxItem.getActionByName(itemAction.getName());
 
         String url = baseUrl
@@ -191,6 +194,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         } catch (Exception e) {
             LOGGER.error("Erro ao acessar serviço: " + url, e);
             addToastrErrorMessage("Não foi possível executar esta ação.");
+        } finally {
+            target.add(tabela);
         }
     }
 
@@ -207,6 +212,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         if (boxAction.isUseExecute()) {
             Action action = new Action();
             action.setName(boxAction.getName());
+            action.setIdUsuario(SingularSession.get().getUsername());
+            action.setLastVersion(boxItem.getVersionStamp());
             return action;
         } else {
             return boxItem.getCod();
@@ -227,7 +234,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         confirmationModal.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue(confirmation.getConfirmationButtonLabel()), new AjaxButton("delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                executeDynamicAction(itemAction, baseUrl, additionalParams, currentModel.getObject());
+                executeDynamicAction(itemAction, baseUrl, additionalParams, currentModel.getObject(), target);
                 target.add(tabela);
                 confirmationModal.hide(target);
             }

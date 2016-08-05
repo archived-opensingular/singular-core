@@ -27,7 +27,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.config.ServerContext;
 import br.net.mirante.singular.server.commons.form.FormActions;
@@ -159,8 +158,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
     protected boolean isAlocadoParaUsuarioLogado(T peticao) {
         return !SingularSession.get().getUsername().equals(
                 Optional.ofNullable(peticao)
-                        .map(T::getUsuarioAlocado)
-                        .map(MUser::getCodUsuario)
+                        .map(T::getCodUsuarioAlocado)
                         .orElse(null));
     }
 

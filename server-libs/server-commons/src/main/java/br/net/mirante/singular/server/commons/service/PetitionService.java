@@ -204,13 +204,20 @@ public class PetitionService<T extends AbstractPetitionEntity> {
 
     public List<TaskInstanceDTO> listTasks(QuickFilter filter, boolean concluidas, List<String> idsPerfis) {
         List<TaskInstanceDTO> tasks = taskInstanceDAO.findTasks(filter, concluidas, idsPerfis);
-        tasks.forEach(this::checkTaskActions);
+        tasks.forEach(t -> checkTaskActions(t, filter));
         return tasks;
     }
 
-    private void checkTaskActions(TaskInstanceDTO task) {
+    protected void checkTaskActions(TaskInstanceDTO task, QuickFilter filter) {
         List<BoxItemAction> actions = new ArrayList<>();
-        actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE));
+        if (task.getCodUsuarioAlocado() == null) {
+            actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE));
+        }
+
+        if (filter.getIdUsuarioLogado().equalsIgnoreCase(task.getCodUsuarioAlocado())) {
+            actions.add(createPopupBoxItemAction(task.getCodPeticao(), task.getType(), FormActions.FORM_ANALYSIS, ACTION_ANALYSE));
+        }
+
         actions.add(createPopupBoxItemAction(task.getCodPeticao(), task.getType(), FormActions.FORM_VIEW, ACTION_VIEW));
 
         appendTaskActions(task, actions);

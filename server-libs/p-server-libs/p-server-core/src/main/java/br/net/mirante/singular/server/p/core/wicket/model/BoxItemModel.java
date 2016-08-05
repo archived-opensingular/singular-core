@@ -26,6 +26,15 @@ public class BoxItemModel extends LinkedHashMap<String, Object> implements Seria
         return ((Integer) get("codPeticao")).longValue();
     }
 
+    public Integer getVersionStamp() {
+        Object versionStamp = get("versionStamp");
+        if (versionStamp != null) {
+            return ((Integer) versionStamp);
+        } else {
+            return null;
+        }
+    }
+
     public Long getProcessInstanceId() {
         Object processInstanceId = get("processInstanceId");
         if (processInstanceId != null) {
