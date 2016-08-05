@@ -35,6 +35,10 @@ public class FormAnnotationVersionEntity extends BaseEntity<Long> {
     @Column(name = "CO_AUTOR_INCLUSAO")
     private Integer inclusionActor;
 
+    public FormAnnotationVersionEntity() {
+        setInclusionDate(new Date());
+    }
+
     @Override
     public Long getCod() {
         return cod;

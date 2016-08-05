@@ -17,9 +17,8 @@ CREATE TABLE DBSINGULAR.TB_FORMULARIO (
    CO_TIPO_FORMULARIO   INT                  NULL,
    CO_COLECAO           INT                  NULL,
    CO_VERSAO_ATUAL      INT                  NULL,
-   CONSTRAINT PK_FORMULARIO PRIMARY KEY NONCLUSTERED (CO_FORMULARIO)
-)
-go
+   CONSTRAINT PK_FORMULARIO PRIMARY KEY (CO_FORMULARIO)
+);
 
 /*==============================================================*/
 /* Table: TB_COLECAO                                            */
@@ -61,10 +60,9 @@ CREATE TABLE DBSINGULAR.TB_VERSAO_FORMULARIO (
    DT_INCLUSAO          SMALLDATETIME        NOT NULL,
    XML_CONTEUDO         VARCHAR(MAX)         NOT NULL,
    CO_AUTOR_INCLUSAO    INT                  NULL,
-   NU_VERSAO_CACHE      INT                  NOT NULL,
+   NU_VERSAO_CACHE      INT                  NULL, -- deve ser no null apos implementação
    CONSTRAINT PK_TB_VERSAO_FORMULARIO PRIMARY KEY (CO_VERSAO_FORMULARIO)
-)
-go
+);
 
 /*==============================================================*/
 /* Table: TB_VERSAO_ANOTACAO_FORMULARIO                         */
@@ -76,8 +74,7 @@ CREATE TABLE DBSINGULAR.TB_VERSAO_ANOTACAO_FORMULARIO (
    XML_ANOTACAO         VARCHAR(MAX)         NOT NULL,
    CO_AUTOR_INCLUSAO    INT                  NULL,
    CONSTRAINT PK_TB_VERSAO_ANOTACAO_FORMULAR PRIMARY KEY (CO_VERSAO_ANOTACAO_FORM)
-)
-go
+);
 
 /*==============================================================*/
 /* Table: TB_ANEXO_FORMULARIO                                   */
@@ -86,10 +83,8 @@ CREATE TABLE TB_ANEXO_FORMULARIO (
    CO_ANEXO_FORMULARIO  INT                  NOT NULL,
    CO_VERSAO_FORMULARIO INT                  IDENTITY,
    TX_SHA1              CHAR(40)             NOT NULL,
-   CONSTRAINT PK_TB_ANEXO_FORMULARIO PRIMARY KEY NONCLUSTERED (CO_ANEXO_FORMULARIO)
-)
-go
-
+   CONSTRAINT PK_TB_ANEXO_FORMULARIO PRIMARY KEY (CO_ANEXO_FORMULARIO)
+);
 /*==============================================================*/
 /* Table: TB_CONTEUDO_ARQUIVO                                   */
 /*==============================================================*/
@@ -98,9 +93,8 @@ CREATE TABLE DBSINGULAR.TB_CONTEUDO_ARQUIVO (
    NU_BYTES             NUMERIC(10)          NOT NULL,
    DT_INCLUSAO          DATETIME             NOT NULL,
    BL_CONTEUDO          IMAGE                NOT NULL,
-   CONSTRAINT PK_TB_CONTEUDO_ARQUIVO PRIMARY KEY NONCLUSTERED (TX_SHA1)
-)
-go
+   CONSTRAINT PK_TB_CONTEUDO_ARQUIVO PRIMARY KEY (TX_SHA1)
+);
 
 /*==============================================================*/
 /* Table: TB_ARQUIVO                                            */
@@ -112,5 +106,4 @@ CREATE TABLE TB_ARQUIVO (
    NU_BYTES             INT                  NOT NULL,
    DT_CRIACAO           SMALLDATETIME        NOT NULL,
    CONSTRAINT PK_TB_ARQUIVO PRIMARY KEY (CO_ARQUIVO)
-)
-go
+);

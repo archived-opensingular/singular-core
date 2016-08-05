@@ -43,6 +43,10 @@ public class FormVersionEntity extends BaseEntity<Long> {
     @OneToMany(mappedBy = "formVersionEntity")
     private List<FormAnnotationVersionEntity> formAnnotationVersionEntities;
 
+    public FormVersionEntity() {
+        setInclusionDate(new Date());
+    }
+
     @Override
     public Long getCod() {
         return cod;
