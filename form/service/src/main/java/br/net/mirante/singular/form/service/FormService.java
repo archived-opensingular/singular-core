@@ -11,18 +11,29 @@ import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.internal.xml.MElement;
 import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.persistence.*;
+import br.net.mirante.singular.form.persistence.dao.FormAnnotationVersionDAO;
 import br.net.mirante.singular.form.persistence.dao.FormDAO;
+import br.net.mirante.singular.form.persistence.dao.FormVersionDAO;
+import br.net.mirante.singular.form.persistence.entity.FormAnnotationVersionEntity;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
+import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 @Transactional
-public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService{
+public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
 
     @Inject
     private FormDAO formDAO;
+
+    @Inject
+    private FormVersionDAO formVersionDAO;
+
+    @Inject
+    private FormAnnotationVersionDAO formAnnotationVersionDAO;
 
     public FormService() {
         super(FormKeyLong.class);
@@ -30,35 +41,55 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     @Override
     public SInstance loadFormInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
-        FormEntity entity = formDAO.find(checkKey(key, null,"a chave não fosse nula").longValue());
-        if(entity == null){
+
+        FormEntity entity = formDAO.find(checkKey(key, null, "a chave não fosse nula").longValue());
+
+        if (entity == null) {
             return null;
         }
-        SInstance instance = MformPersistenciaXML.fromXML(refType, entity.getXml(), documentFactory);
-        
-        MformPersistenciaXML.annotationLoadFromXml(instance, entity.getXmlAnnotations());
+
+        SInstance instance = MformPersistenciaXML.fromXML(refType, entity.getCurrentFormVersionEntity().getXml(), documentFactory);
+
+        MformPersistenciaXML.annotationLoadFromXml(instance, entity.getCurrentFormVersionEntity().getLatestFormAnnotationVersionEntity().map(FormAnnotationVersionEntity::getXml).orElse(StringUtils.EMPTY));
 
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
         return instance;
     }
-    
+
     @Override
     protected FormKeyLong insertInternal(SInstance instance) {
-        FormEntity entity = new FormEntity();
-        entity.setXml(extractContent(instance));
-        entity.setXmlAnnotations(extractAnnotations(instance));
+
+        final FormEntity                  entity                      = new FormEntity();
+        final FormVersionEntity           formVersionEntity           = new FormVersionEntity();
+        final FormAnnotationVersionEntity formAnnotationVersionEntity = new FormAnnotationVersionEntity();
+
+        formVersionEntity.setFormEntity(entity);
+        formAnnotationVersionEntity.setFormVersionEntity(formVersionEntity);
+        entity.setCurrentFormVersionEntity(formVersionEntity);
+
+        formVersionEntity.setXml(extractContent(instance));
+        formAnnotationVersionEntity.setXml(extractAnnotations(instance));
+
         formDAO.saveOrUpdate(entity);
+        formVersionDAO.saveOrUpdate(formVersionEntity);
+        formAnnotationVersionDAO.saveOrUpdate(formAnnotationVersionEntity);
+
         return new FormKeyLong(entity.getCod());
     }
 
     @Override
     protected void updateInternal(FormKeyLong key, SInstance instance) {
-        FormEntity entity = formDAO.find(key.longValue());
-        if(entity == null){
+        final FormEntity entity = formDAO.find(key.longValue());
+
+        if (entity == null) {
             throw addInfo(new SingularFormPersistenceException("Form não encontrado")).add("key", key);
         }
-        entity.setXml(extractContent(instance));
-        entity.setXmlAnnotations(extractAnnotations(instance));
+
+        entity.getCurrentFormVersionEntity().setXml(extractContent(instance));
+        entity.getCurrentFormVersionEntity().getLatestFormAnnotationVersionEntity().ifPresent(formAnnotationVersionEntity -> {
+            formAnnotationVersionEntity.setXml(extractAnnotations(instance));
+            formAnnotationVersionDAO.saveOrUpdate(formAnnotationVersionEntity);
+        });
         formDAO.saveOrUpdate(entity);
     }
 
@@ -67,13 +98,13 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         throw new RuntimeException("Metodo nao implementado");
     }
 
-    private String extractAnnotations(SInstance instance){
+    private String extractAnnotations(SInstance instance) {
         AtrAnnotation annotatedInstance = instance.as(AtrAnnotation::new);
         return extractContent(annotatedInstance.persistentAnnotations());
     }
 
-    private String extractContent(SInstance instance){
-        if(instance == null){
+    private String extractContent(SInstance instance) {
+        if (instance == null) {
             return null;
         }
         instance.getDocument().persistFiles();
