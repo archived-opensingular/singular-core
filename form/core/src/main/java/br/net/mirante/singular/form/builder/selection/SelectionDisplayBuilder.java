@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 public class SelectionDisplayBuilder<TYPE extends Serializable, ROOT_TYPE extends SInstance, ELEMENT_TYPE extends SInstance> extends AbstractBuilder {
 
-    public SelectionDisplayBuilder(SType type) {
+    public SelectionDisplayBuilder(SType<?> type) {
         super(type);
     }
 

@@ -16,7 +16,7 @@ public class TestViewResolver {
 
     private static final String textoTeste = "stringzonamuitolocabemgrandeparaevitarproblemascomarrayoutofboundsnessestestesunitariosaqui";
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V> STypeList<T, X> createSimpleList(
             PackageBuilder pb, String name, Class<T> type, int size, Function<Integer, Object> valueProvider) {
         T simpleType = pb.createType(name, type);

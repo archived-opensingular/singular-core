@@ -19,26 +19,25 @@ import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.internal.xml.MElement;
 import br.net.mirante.singular.form.io.PersistenceBuilderXML;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.validation.IValidationError;
 
 public abstract class SInstance implements SAttributeEnabled {
 
-    private SInstance parent;
+    private SInstance              parent;
 
-    private AttributeInstanceInfo attributeInstanceInfo;
+    private AttributeInstanceInfo  attributeInstanceInfo;
 
-    private SType<?> type;
+    private SType<?>               type;
 
     private Map<String, SInstance> attributes;
 
-    private SDocument document;
+    private SDocument              document;
 
-    private Integer id;
+    private Integer                id;
 
     /** Mapa de bits de flags. Veja {@link InstanceFlags} */
-    private int flags;
+    private int                    flags;
 
     public SType<?> getType() {
         return type;
@@ -143,7 +142,7 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public final void init() {
         //Não deve chamar o init se estiver no modo de leitura do XML
-        if(getDocument().getLastId() != -1) {
+        if (getDocument().getLastId() != -1) {
             ((SType) getType()).init(() -> this);
         }
     }
@@ -562,8 +561,8 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     StringBuilder toStringInternal() {
         StringBuilder sb = new StringBuilder();
-        String name  = getClass().getName();
-        if(name.startsWith(SInstance.class.getPackage().getName())) {
+        String name = getClass().getName();
+        if (name.startsWith(SInstance.class.getPackage().getName())) {
             sb.append(getClass().getSimpleName());
         } else {
             sb.append(getClass().getName());
