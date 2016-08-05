@@ -23,7 +23,7 @@ public class CaseInputCoreBooleanPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         tipoMyForm.addFieldBoolean("aceitaTermos")
-            .asAtr().label("Aceito os termos e condições");
+            .asAtr().label("Aceito os termos e condições").required(true);
 
         tipoMyForm.addFieldBoolean("receberNotificacoes")
             //@destacar
