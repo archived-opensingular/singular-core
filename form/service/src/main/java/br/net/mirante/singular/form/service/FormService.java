@@ -84,4 +84,10 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
             return "";
         }
     }
+
+    @Override
+    public FormKey newVersion(SInstance instance, boolean keepAnnotations) {
+        //TODO: FORM_ANNOTATION_VERSION
+        return null;
+    }
 }

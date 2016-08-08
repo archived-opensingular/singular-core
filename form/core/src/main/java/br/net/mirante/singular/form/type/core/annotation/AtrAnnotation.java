@@ -5,10 +5,16 @@
 
 package br.net.mirante.singular.form.type.core.annotation;
 
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.SAttributeEnabled;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.STranslatorForAttribute;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -19,6 +25,10 @@ import static com.google.common.collect.Lists.newArrayList;
  * @author Fabricio Buzeto
  */
 public class AtrAnnotation extends STranslatorForAttribute {
+
+    public static enum DefaultAnnotationClassifier implements AnnotationClassifier {
+        DEFAULT_ANNOTATION;
+    }
     public AtrAnnotation() {}
     public AtrAnnotation(SAttributeEnabled alvo) {
         super(alvo);
@@ -29,7 +39,25 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @return this
      */
     public AtrAnnotation setAnnotated() {
-        setAttributeValue(SPackageBasic.ATR_ANNOTATED, true);
+       setAnnotated(DefaultAnnotationClassifier.DEFAULT_ANNOTATION);
+        return this;
+    }
+
+    /**
+     * MArca o tipo como anotado definindo o tipo da anotação
+     * @return this
+     */
+    public <T extends Enum & AnnotationClassifier> AtrAnnotation setAnnotated(T ... classifiersParam) {
+        List<String> classifiers = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
+        if (classifiers == null){
+            classifiers = new ArrayList<>();
+            setAttributeValue(SPackageBasic.ATR_ANNOTATED, classifiers);
+        }
+        for (T classifier : classifiersParam){
+            if (!classifiers.contains(classifier.name())){
+                classifiers.add(classifier.name());
+            }
+        }
         return this;
     }
 
@@ -46,8 +74,8 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @return true if type is annotated
      */
     public boolean isAnnotated() {
-        Boolean v = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
-        return v != null && v ;
+        List<String> list = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
+        return list != null && !list.isEmpty() ;
     }
     /**
      * @return the label set, if any

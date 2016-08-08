@@ -10,7 +10,7 @@ import java.util.Optional;
  *
  * @author Daniel C. Bordin
  */
-public interface BasicFormPersistence<INSTANCE extends SInstance> {
+public interface BasicFormPersistence<INSTANCE extends SInstance>  {
 
     /**
      * Converte uma string representando a chave para o obejto de chave utilizado pela persitência. Dispara exception se
@@ -52,4 +52,22 @@ public interface BasicFormPersistence<INSTANCE extends SInstance> {
      * @return Chave da instância criada ou atualizada.
      */
     public FormKey insertOrUpdate(INSTANCE instance);
+
+    /**
+     * Salva as alterações na versão atual e incrementa versão do formulário
+     * e replica as anotações em suas versões iniciais
+     * @param instance
+     * @return
+     */
+    public default FormKey newVersion(INSTANCE instance){
+        return newVersion(instance, true);
+    }
+
+    /**
+     * Salva as alterações na versão atual e incrementa versão do formulário
+     * e das anotações vinculadas
+     * @param instance
+     * @return
+     */
+    public FormKey newVersion(INSTANCE instance, boolean keepAnnotations);
 }
