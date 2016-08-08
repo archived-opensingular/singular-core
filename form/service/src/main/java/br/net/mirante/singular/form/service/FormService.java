@@ -18,6 +18,7 @@ import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -25,17 +26,19 @@ import javax.transaction.Transactional;
 @Transactional
 public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
 
-    @Inject
-    private FormDAO formDAO;
+    private final FormDAO                  formDAO;
+    private final FormVersionDAO           formVersionDAO;
+    private final FormAnnotationVersionDAO formAnnotationVersionDAO;
 
     @Inject
-    private FormVersionDAO formVersionDAO;
-
-    @Inject
-    private FormAnnotationVersionDAO formAnnotationVersionDAO;
-
-    public FormService() {
+    public FormService(FormDAO formDAO, FormVersionDAO formVersionDAO, FormAnnotationVersionDAO formAnnotationVersionDAO) {
         super(FormKeyLong.class);
+        Assert.notNull(formDAO);
+        Assert.notNull(formVersionDAO);
+        Assert.notNull(formAnnotationVersionDAO);
+        this.formDAO = formDAO;
+        this.formVersionDAO = formVersionDAO;
+        this.formAnnotationVersionDAO = formAnnotationVersionDAO;
     }
 
     @Override
