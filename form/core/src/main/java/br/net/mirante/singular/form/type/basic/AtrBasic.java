@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 
 import org.apache.commons.lang3.ObjectUtils;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.SAttributeEnabled;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STranslatorForAttribute;
@@ -68,7 +69,7 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE, value);
         return this;
     }
-    
+
     public AtrBasic integerMaxLength(Integer value) {
         setAttributeValue(SPackageBasic.ATR_INTEGER_MAX_LENGTH, value);
         return this;
@@ -144,6 +145,12 @@ public class AtrBasic extends STranslatorForAttribute {
     public boolean exists() {
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
     }
+
+    public AtrBasic updateListener(IConsumer<SInstance> listener) {
+        setAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER, listener);
+        return this;
+    }
+
     //    public AtrBasic onChange(Function<IBehavior<MInstancia>, IBehavior<MInstancia>> behaviorFunction) {
     //        IBehavior<MInstancia> existingBehavior = getOnChange();
     //        IBehavior<MInstancia> newBehavior = behaviorFunction.apply(IBehavior.noopIfNull(existingBehavior));
@@ -185,7 +192,12 @@ public class AtrBasic extends STranslatorForAttribute {
     public Long getMaxFileSize() {
         return getAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE);
     }
-    
+
+    @SuppressWarnings("unchecked")
+    public IConsumer<SInstance> getUpdateListener() {
+        return getAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER);
+    }
+
     public boolean isVisible() {
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_VISIBLE));
     }

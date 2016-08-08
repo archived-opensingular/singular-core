@@ -5,18 +5,20 @@
 
 package br.net.mirante.singular.form.validation;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static java.lang.Boolean.TRUE;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+
+import br.net.mirante.singular.form.ICompositeInstance;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SInstanceViewState;
+import br.net.mirante.singular.form.SInstances;
+import br.net.mirante.singular.form.SType;
 
 public class InstanceValidationContext {
 
@@ -89,7 +91,7 @@ public class InstanceValidationContext {
      * @return true se estiver OK
      */
     protected boolean isFilledIfRequired(SInstance instance) {
-        if (!TRUE.equals(instance.getAttributeValue(SPackageBasic.ATR_REQUIRED))) {
+        if (!instance.isRequired()) {
             return true;
         }
         if (instance instanceof ICompositeInstance) {

@@ -883,17 +883,19 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return customMapperFactory;
     }
 
+    @SuppressWarnings("unchecked")
     public IConsumer<SInstance> getUpdateListener() {
         return asAtr().getAttributeValue(ATR_UPDATE_LISTENER);
     }
 
-    public void withInitListener(IConsumer<I> initListener) {
+    public SType<I> withInitListener(IConsumer<I> initListener) {
         this.asAtr().setAttributeValue(SPackageBasic.ATR_INIT_LISTENER, initListener);
+        return this;
     }
 
     public SelectionBuilder typelessSelection() {
         this.setView(SViewSelectionBySelect::new);
-        return new SelectionBuilder(this);
+        return new SelectionBuilder<>(this);
     }
 
     public void withSelectionFromProvider(Class<SimpleProvider> providerClass) {

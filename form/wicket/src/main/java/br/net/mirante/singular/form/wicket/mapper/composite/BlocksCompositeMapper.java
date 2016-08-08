@@ -1,17 +1,11 @@
 package br.net.mirante.singular.form.wicket.mapper.composite;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.SPackageBootstrap;
-import br.net.mirante.singular.form.view.Block;
-import br.net.mirante.singular.form.view.SViewByBlock;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.StyleAttributeModifier;
@@ -20,7 +14,17 @@ import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 
-import java.util.*;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.type.core.SPackageBootstrap;
+import br.net.mirante.singular.form.view.Block;
+import br.net.mirante.singular.form.view.SViewByBlock;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 
 
 public class BlocksCompositeMapper extends AbstractCompositeMapper {
@@ -56,7 +60,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 appendBlock(grid, block, portlet);
             }
 
-            for (SType f : type.getFields()) {
+            for (SType<?> f : type.getFields()) {
                 if (!addedTypes.contains(f.getNameSimple())) {
                     remainingTypes.add(f.getNameSimple());
                 }
@@ -196,7 +200,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                     if (block.getTypes().size() == 1) {
                         final SIComposite sic        = ctx.getCurrentInstance();
                         final SInstance   firstChild = sic.getField(block.getTypes().get(0));
-                        if (firstChild.getAttributeValue(SPackageBasic.ATR_REQUIRED)) {
+                        if (firstChild.isRequired()) {
                             oldClasses.add("singular-form-required");
                         } else {
                             oldClasses.remove("singular-form-required");

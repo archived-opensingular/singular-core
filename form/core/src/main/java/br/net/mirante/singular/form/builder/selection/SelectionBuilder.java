@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 public class SelectionBuilder<TYPE extends Serializable, ROOT_TYPE extends SInstance, ELEMENT_TYPE extends SInstance> extends AbstractBuilder {
 
-    public SelectionBuilder(SType type) {
+    public SelectionBuilder(SType<?> type) {
         super(type);
     }
 

@@ -59,7 +59,7 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
         getApplicationSettings().setDefaultMaximumUploadSize(Bytes.MAX);
 
         getMarkupSettings().setStripWicketTags(true);
-        getMarkupSettings().setStripComments(true);
+        getMarkupSettings().setStripComments(false);
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
 
 

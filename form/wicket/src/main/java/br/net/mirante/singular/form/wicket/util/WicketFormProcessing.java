@@ -31,6 +31,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
 
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SInstances;
 import br.net.mirante.singular.form.SType;
@@ -52,10 +53,8 @@ import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
  */
 public class WicketFormProcessing {
 
-    public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
-    };
-    public final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {
-    };
+    public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {};
+    public final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {};
 
     public static void onFormError(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance) {
         container.visitChildren((c, v) -> {
@@ -86,7 +85,7 @@ public class WicketFormProcessing {
                 return setAndReturn.apply(false);
 
             final SInstance baseInstance = baseInstanceModel.getObject();
-            final SDocument document     = baseInstance.getDocument();
+            final SDocument document = baseInstance.getDocument();
 
             // Validação do valor do componente
             boolean hasErrors = false;
@@ -100,10 +99,10 @@ public class WicketFormProcessing {
             }
 
             updateValidationFeedbackOnDescendants(
-                    target,
-                    container,
-                    baseInstanceModel,
-                    document.getValidationErrorsByInstanceId());
+                target,
+                container,
+                baseInstanceModel,
+                document.getValidationErrorsByInstanceId());
 
             if (hasErrors)
                 return setAndReturn.apply(false);
@@ -125,11 +124,11 @@ public class WicketFormProcessing {
      */
     protected static String getIndexesKey(String path) {
 
-        final Pattern indexFinder    = Pattern.compile("(\\[\\d\\])");
+        final Pattern indexFinder = Pattern.compile("(\\[\\d\\])");
         final Pattern bracketsFinder = Pattern.compile("[\\[\\]]");
 
-        final Matcher       matcher = indexFinder.matcher(path);
-        final StringBuilder key     = new StringBuilder();
+        final Matcher matcher = indexFinder.matcher(path);
+        final StringBuilder key = new StringBuilder();
 
         while (matcher.find()) {
             key.append(bracketsFinder.matcher(matcher.group()).replaceAll(StringUtils.EMPTY));
@@ -150,7 +149,7 @@ public class WicketFormProcessing {
         final InstanceValidationContext validationContext = new InstanceValidationContext();
         validationContext.validateSingle(fieldInstance.getObject());
         SValidationFeedbackHandler.findNearest(formComponent)
-                .ifPresent(it -> it.updateValidationMessages(target));
+            .ifPresent(it -> it.updateValidationMessages(target));
     }
 
     public static void onFieldProcess(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstanceModel) {
@@ -173,29 +172,29 @@ public class WicketFormProcessing {
             // limpa erros de instancias dependentes, e limpa o valor caso de este não seja válido para o provider
             for (SType<?> dependentType : fieldInstance.getType().getDependentTypes()) {
                 fieldInstance.findNearest(dependentType)
-                        .ifPresent(it -> it.getDocument().clearValidationErrors(it.getId()));
+                    .ifPresent(it -> it.getDocument().clearValidationErrors(it.getId()));
             }
 
             WicketBuildContext
-                    .findNearest(formComponent)
-                    .map(WicketBuildContext::getRootContainer)
-                    .ifPresent(nearestContainer -> {
-                        updateValidationFeedbackOnDescendants(
-                                target,
-                                nearestContainer,
-                                fieldInstanceModel,
-                                validationContext.getErrorsByInstanceId());
-                    });
+                .findNearest(formComponent)
+                .map(WicketBuildContext::getRootContainer)
+                .ifPresent(nearestContainer -> {
+                    updateValidationFeedbackOnDescendants(
+                        target,
+                        nearestContainer,
+                        fieldInstanceModel,
+                        validationContext.getErrorsByInstanceId());
+                });
         }
 
         if (target.isPresent()) {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
-                    .map(SInstanceEvent::getSource)
-                    .map(SInstance::getId)
-                    .collect(toSet());
+                .map(SInstanceEvent::getSource)
+                .map(SInstance::getId)
+                .collect(toSet());
 
-            final Predicate<SType<?>> isDependent         = (type) -> fieldInstance.getType().isDependentType(type);
+            final Predicate<SType<?>> isDependent = (type) -> fieldInstance.getType().isDependentType(type);
             final Predicate<SType<?>> isElementsDependent = (type) -> (type instanceof STypeList) && isDependent.test(((STypeList<?, ?>) type).getElementsType());
 
             final Predicate<SInstance> shouldRefreshPredicate = childInstance -> {
@@ -212,9 +211,9 @@ public class WicketFormProcessing {
 
                 if (isDependent.test(type) || isElementsDependent.test(type)) {
                     final Function<SInstance, String> pathFull = inst -> SInstances
-                            .findAncestor(inst, STypeList.class)
-                            .map(SInstance::getPathFull)
-                            .orElse(null);
+                        .findAncestor(inst, STypeList.class)
+                        .map(SInstance::getPathFull)
+                        .orElse(null);
                     final boolean bothInList = Objects.equals(pathFull.apply(childInstance), pathFull.apply(fieldInstance));
                     return !bothInList || Objects.equals(getIndexesKey(childInstance.getPathFull()), getIndexesKey(fieldInstance.getPathFull()));
                 }
@@ -234,9 +233,9 @@ public class WicketFormProcessing {
                             //SInstance inst = model.getMInstancia();
                             //inst.clearInstance();
                             refreshComponentOrCellContainer(target, c);
-                            if (ins.getType().getUpdateListener() != null) {
-                                ins.getType().getUpdateListener().accept(ins);
-                            }
+                            IConsumer<SInstance> updateListener = ins.asAtr().getUpdateListener();
+                            if (updateListener != null)
+                                updateListener.accept(ins);
                         }
                     }
                 });
@@ -246,16 +245,16 @@ public class WicketFormProcessing {
              * Componentes no formulario "chapado"
              */
             WicketBuildContext.findTopLevel(formComponent)
-                    .map(WicketBuildContext::getContainer)
-                    .ifPresent(refreshDependentComponentsConsumer);
+                .map(WicketBuildContext::getContainer)
+                .ifPresent(refreshDependentComponentsConsumer);
 
             /**
              * Componentes em modais
              */
             WicketBuildContext.findNearest(formComponent)
-                    .ifPresent(ctx -> ctx.streamParentContexts()
-                            .map(parctx -> parctx.getExternalContainer())
-                            .forEach(refreshDependentComponentsConsumer));
+                .ifPresent(ctx -> ctx.streamParentContexts()
+                    .map(parctx -> parctx.getExternalContainer())
+                    .forEach(refreshDependentComponentsConsumer));
 
         }
 
@@ -268,7 +267,7 @@ public class WicketFormProcessing {
         if (si == null) {
             return false;
         }
-        if(si.getParent() == null){
+        if (si.getParent() == null) {
             return true;
         }
         for (SInstance i = si.getParent(); i.getParent() != null; i = i.getParent()) {
@@ -284,14 +283,15 @@ public class WicketFormProcessing {
     }
 
     private static void updateAttributes(final SInstance fieldInstance, ISInstanceListener.EventCollector eventCollector) {
-        final SDocument document  = fieldInstance.getDocument();
+        final SDocument document = fieldInstance.getDocument();
         document.updateAttributes(eventCollector);
     }
 
     private static void refreshComponentOrCellContainer(Optional<AjaxRequestTarget> target, Component component) {
         if (target.isPresent() && component != null) {
+            Component comp = ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component);
             target.get()
-                    .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
+                .add(WicketFormUtils.resolveRefreshingComponent(comp));
         }
     }
 

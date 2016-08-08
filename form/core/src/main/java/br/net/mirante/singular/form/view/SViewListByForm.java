@@ -5,6 +5,20 @@
 
 package br.net.mirante.singular.form.view;
 
+import br.net.mirante.singular.form.SType;
+
 public class SViewListByForm extends AbstractSViewListWithControls<SViewListByForm> {
 
+    private String headerPath;
+
+    public SViewListByForm() {
+    }
+
+    public SViewListByForm(SType header) {
+        this.headerPath = header.getNameSimple();
+    }
+
+    public String getHeaderPath() {
+        return headerPath;
+    }
 }
