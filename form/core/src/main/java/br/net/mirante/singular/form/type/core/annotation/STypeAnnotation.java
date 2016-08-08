@@ -21,7 +21,8 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
 
     public static final String          FIELD_TEXT          = "text",
                                         FIELD_TARGET_ID     = "targetId",
-                                        FIELD_APPROVED      = "isApproved"
+                                        FIELD_APPROVED      = "isApproved",
+                                        FIELD_CLASSIFIER     = "classifier"
                                         ;
 
     public STypeAnnotation() {
@@ -33,6 +34,7 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
         super.onLoadType(tb);
 
         addFieldString(FIELD_TEXT);
+        addFieldString(FIELD_CLASSIFIER);
         addFieldBoolean(FIELD_APPROVED);
         addFieldInteger(FIELD_TARGET_ID);
     }

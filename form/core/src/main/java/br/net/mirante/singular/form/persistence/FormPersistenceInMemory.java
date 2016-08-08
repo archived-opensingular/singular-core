@@ -63,4 +63,10 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     public long countAll() {
         return collection.values().size();
     }
+
+    @Override
+    public FormKey newVersion(INSTANCE instance, boolean keepAnnotations) {
+        //TODO: FORM_ANNOTATION_VERSION
+        return null;
+    }
 }
