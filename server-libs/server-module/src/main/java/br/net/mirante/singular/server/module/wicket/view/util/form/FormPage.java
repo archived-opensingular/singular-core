@@ -2,7 +2,7 @@ package br.net.mirante.singular.server.module.wicket.view.util.form;
 
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
+import br.net.mirante.singular.server.commons.persistence.entity.form.OldPetitionEntity;
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import org.apache.wicket.model.IModel;
@@ -16,7 +16,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 @MountPath("/view")
-public class FormPage extends AbstractFormPage<Petition> {
+public class FormPage extends AbstractFormPage<OldPetitionEntity> {
 
 
     @Inject
@@ -27,7 +27,7 @@ public class FormPage extends AbstractFormPage<Petition> {
     }
 
     public FormPage(FormPageConfig config) {
-        super(Petition.class, config);
+        super(OldPetitionEntity.class, config);
     }
 
     @Override
@@ -47,10 +47,10 @@ public class FormPage extends AbstractFormPage<Petition> {
     }
 
     @Override
-    protected void onNewPetitionCreation(Petition petition, FormPageConfig config) {
-        super.onNewPetitionCreation(petition, config);
+    protected void onNewPetitionCreation(OldPetitionEntity oldPetitionEntity, FormPageConfig config) {
+        super.onNewPetitionCreation(oldPetitionEntity, config);
         if (config.containsProcessDefinition()) {
-            petition.setProcessType(Flow.getProcessDefinition(config.getProcessDefinition()).getKey());
+            oldPetitionEntity.setProcessType(Flow.getProcessDefinition(config.getProcessDefinition()).getKey());
         }
     }
 
@@ -58,7 +58,7 @@ public class FormPage extends AbstractFormPage<Petition> {
     protected String getIdentifier() {
         return Optional.ofNullable(currentModel)
                 .map(IModel::getObject)
-                .map(Petition::getCod)
+                .map(OldPetitionEntity::getCod)
                 .map(Object::toString).orElse(null);
 
     }

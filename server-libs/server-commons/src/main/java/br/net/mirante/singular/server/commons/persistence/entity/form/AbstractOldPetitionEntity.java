@@ -20,8 +20,8 @@ import br.net.mirante.singular.support.persistence.util.Constants;
 
 @Deprecated
 @MappedSuperclass
-@Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
-public class AbstractPetitionEntity extends BaseEntity<Long> {
+@Table(schema = Constants.SCHEMA, name = "TB_PETICAO_OLD")
+public class AbstractOldPetitionEntity extends BaseEntity<Long> {
 
     @Id
     @Column(name = "CO_PETICAO")
@@ -57,7 +57,7 @@ public class AbstractPetitionEntity extends BaseEntity<Long> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date editionDate;
 
-    public AbstractPetitionEntity() {
+    public AbstractOldPetitionEntity() {
     }
 
     @Override

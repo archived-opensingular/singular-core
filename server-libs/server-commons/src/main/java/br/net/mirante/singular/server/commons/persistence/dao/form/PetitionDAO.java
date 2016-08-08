@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.net.mirante.singular.server.commons.persistence.entity.form.OldPetitionEntity;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -14,17 +15,16 @@ import org.hibernate.transform.AliasToEntityMapResultTransformer;
 
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractOldPetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 
 
-public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Long> {
+public class PetitionDAO<T extends AbstractOldPetitionEntity> extends BaseDAO<T, Long> {
 
     public PetitionDAO() {
-        super((Class<T>) Petition.class);
+        super((Class<T>) OldPetitionEntity.class);
     }
 
     public PetitionDAO(Class<T> tipo) {
@@ -32,7 +32,7 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
     }
 
     @SuppressWarnings("unchecked")
-    public List<AbstractPetitionEntity> list(String type) {
+    public List<AbstractOldPetitionEntity> list(String type) {
         Criteria crit = getSession().createCriteria(tipo);
         crit.add(Restrictions.eq("type", type));
         return crit.list();

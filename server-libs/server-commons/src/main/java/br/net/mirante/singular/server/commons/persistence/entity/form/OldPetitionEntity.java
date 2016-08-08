@@ -7,7 +7,7 @@ import br.net.mirante.singular.support.persistence.util.Constants;
 
 @Deprecated
 @Entity
-@Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
-public class Petition extends AbstractPetitionEntity {
+@Table(schema = Constants.SCHEMA, name = "TB_PETICAO_OLD")
+public class OldPetitionEntity extends AbstractOldPetitionEntity {
 
 }

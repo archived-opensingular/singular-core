@@ -19,7 +19,7 @@ import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.metadata.ServerContextMetaData;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractOldPetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
@@ -47,7 +47,7 @@ import java.util.Objects;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
-public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends Template {
+public abstract class AbstractFormPage<T extends AbstractOldPetitionEntity> extends Template {
 
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
     private static final   Logger LOGGER                  = LoggerFactory.getLogger(AbstractFormPage.class);
@@ -165,7 +165,7 @@ public abstract class AbstractFormPage<T extends AbstractPetitionEntity> extends
             }
 
             @Override
-            protected IModel<? extends AbstractPetitionEntity> getFormModel() {
+            protected IModel<? extends AbstractOldPetitionEntity> getFormModel() {
                 return currentModel;
             }
 

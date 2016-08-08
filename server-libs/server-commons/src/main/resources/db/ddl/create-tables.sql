@@ -257,7 +257,7 @@ CREATE TABLE DBSINGULAR.TB_GRUPO_PROCESSO (
 /*==============================================================*/
 /* Table: TB_PETICAO                                            */
 /*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_PETICAO (
+CREATE TABLE DBSINGULAR.TB_PETICAO_OLD (
    CO_PETICAO           BIGINT               IDENTITY,
    TP_PETICAO           VARCHAR(300)         NOT NULL,
    TP_PROCESSO_PETICAO  VARCHAR(300)         NULL,
