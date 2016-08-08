@@ -310,14 +310,13 @@ CREATE TABLE DBSINGULAR.RL_PAPEL_TAREFA (
    CONSTRAINT PK_RL_PAPEL_TAREFA PRIMARY KEY (CO_PAPEL_TAREFA)
 );
 
-
 /*==============================================================*/
 /* Table: TB_RASCUNHO                                           */
 /*==============================================================*/
 
 CREATE SEQUENCE DBSINGULAR.SQ_CO_RASCUNHO  START WITH 1 INCREMENT BY 1;
 
-CREATE TABLE TB_RASCUNHO (
+CREATE TABLE DBSINGULAR.TB_RASCUNHO (
    CO_RASCUNHO           BIGINT               NOT NULL,
    CO_VERSAO_FORMULARIO  BIGINT               NOT NULL,
    CO_DEFINICAO_PROCESSO BIGINT               NOT NULL,
@@ -351,11 +350,11 @@ CREATE TABLE DBSINGULAR.TB_PETICAO (
 /*==============================================================*/
 CREATE SEQUENCE DBSINGULAR.SQ_CO_HISTORICO  START WITH 1 INCREMENT BY 1;
 
-CREATE TABLE TB_HISTORICO_CONTEUDO_PETICAO (
+CREATE TABLE DBSINGULAR.TB_HISTORICO_CONTEUDO_PETICAO (
    CO_HISTORICO         BIGINT                  NOT NULL,
    CO_PETICAO           BIGINT                  NOT NULL,
    DT_HISTORICO         SMALLDATETIME        NOT NULL,
-   CO_AUTOR             BIGINT                  NOT,
+   CO_AUTOR             BIGINT                  NULL,
    CO_VERSAO_FORMULARIO BIGINT                  NULL,
    CO_ANOTACAO_FORMULARIO BIGINT                  NULL,
    CO_INSTANCIA_TAREFA  BIGINT                  NULL,
