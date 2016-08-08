@@ -1,5 +1,7 @@
 package br.net.mirante.singular.server.commons.spring;
 
+import br.net.mirante.singular.form.persistence.dao.FormAnnotationVersionDAO;
+import br.net.mirante.singular.form.persistence.dao.FormVersionDAO;
 import org.springframework.context.annotation.Bean;
 
 import br.net.mirante.singular.flow.core.service.IUserService;
@@ -62,8 +64,8 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public IFormService formService() {
-        return new FormService();
+    public IFormService formService(FormDAO formDAO, FormVersionDAO formVersionDAO, FormAnnotationVersionDAO formAnnotationVersionDAO) {
+        return new FormService(formDAO, formVersionDAO, formAnnotationVersionDAO);
     }
 
     @Bean
