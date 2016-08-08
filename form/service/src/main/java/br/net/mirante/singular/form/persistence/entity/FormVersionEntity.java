@@ -104,6 +104,7 @@ public class FormVersionEntity extends BaseEntity<Long> {
         this.formAnnotationVersionEntities = formAnnotationVersionEntities;
     }
 
+    @Deprecated
     public Optional<FormAnnotationVersionEntity> getLatestFormAnnotationVersionEntity() {
         if (getFormAnnotationVersionEntities() != null) {
             return getFormAnnotationVersionEntities()
