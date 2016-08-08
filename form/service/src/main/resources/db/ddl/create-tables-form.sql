@@ -99,7 +99,7 @@ CREATE TABLE DBSINGULAR.TB_CONTEUDO_ARQUIVO (
 /*==============================================================*/
 /* Table: TB_ARQUIVO                                            */
 /*==============================================================*/
-CREATE TABLE TB_ARQUIVO (
+CREATE TABLE DBSINGULAR.TB_ARQUIVO (
    CO_ARQUIVO           INT                  NOT NULL,
    NO_ARQUIVO           VARCHAR(200)         NOT NULL,
    TX_SHA1              CHAR(40)             NOT NULL,
