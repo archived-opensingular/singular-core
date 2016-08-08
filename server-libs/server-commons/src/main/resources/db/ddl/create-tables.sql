@@ -309,3 +309,56 @@ CREATE TABLE DBSINGULAR.RL_PAPEL_TAREFA (
    CO_DEFINICAO_TAREFA  BIGINT               NOT NULL,
    CONSTRAINT PK_RL_PAPEL_TAREFA PRIMARY KEY (CO_PAPEL_TAREFA)
 );
+
+
+/*==============================================================*/
+/* Table: TB_RASCUNHO                                           */
+/*==============================================================*/
+
+CREATE SEQUENCE DBSINGULAR.SQ_CO_RASCUNHO  START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE TB_RASCUNHO (
+   CO_RASCUNHO           BIGINT               NOT NULL,
+   CO_VERSAO_FORMULARIO  BIGINT               NOT NULL,
+   CO_DEFINICAO_PROCESSO BIGINT               NOT NULL,
+   CO_PETICIONANTE       BIGINT               NOT NULL,
+   DT_INICIO             SMALLDATETIME        NOT NULL,
+   ST_PETICIONADO        CHAR                 NULL DEFAULT 'N'
+   CONSTRAINT CKC_ST_PETICIONADO_TB_RASCU CHECK (ST_PETICIONADO IS NULL OR (ST_PETICIONADO IN ('S','N'))),
+   CONSTRAINT PK_TB_RASCUNHO PRIMARY KEY (CO_RASCUNHO)
+);
+
+/*==============================================================*/
+/* Table: TB_PETICAO                                            */
+/*==============================================================*/
+
+CREATE SEQUENCE DBSINGULAR.SQ_CO_PETICAO  START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE DBSINGULAR.TB_PETICAO (
+   CO_PETICAO                   BIGINT  NOT NULL,
+   CO_INSTANCIA_PROCESSO        BIGINT  NOT NULL,
+   CO_VERSAO_FORMULARIO_ATUAL   BIGINT  NOT NULL,
+   CO_ANOTACAO_FORMULARIO_ATUAL BIGINT  NULL,
+   CO_DEFINICAO_PROCESSO        BIGINT  NOT NULL,
+   CO_PETICIONANTE              BIGINT  NOT NULL,
+   CO_RASCUNHO_ATUAL            BIGINT  NULL,
+   CONSTRAINT PK_TB_PETICAO PRIMARY KEY (CO_PETICAO)
+);
+
+
+/*==============================================================*/
+/* TB_HISTORICO_CONTEUDO_PETICAO                         */
+/*==============================================================*/
+CREATE SEQUENCE DBSINGULAR.SQ_CO_HISTORICO  START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE TB_HISTORICO_CONTEUDO_PETICAO (
+   CO_HISTORICO         BIGINT                  NOT NULL,
+   CO_PETICAO           BIGINT                  NOT NULL,
+   DT_HISTORICO         SMALLDATETIME        NOT NULL,
+   CO_AUTOR             BIGINT                  NOT,
+   CO_VERSAO_FORMULARIO BIGINT                  NULL,
+   CO_ANOTACAO_FORMULARIO BIGINT                  NULL,
+   CO_INSTANCIA_TAREFA  BIGINT                  NULL,
+   CO_PETICIONANTE      BIGINT                  NULL,
+   CONSTRAINT PK_TB_HISTORICO_CONTEUDO_PETIC PRIMARY KEY (CO_HISTORICO)
+);

@@ -5,6 +5,7 @@ import javax.persistence.Table;
 
 import br.net.mirante.singular.support.persistence.util.Constants;
 
+@Deprecated
 @Entity
 @Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
 public class Petition extends AbstractPetitionEntity {

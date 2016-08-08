@@ -18,6 +18,7 @@ import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import br.net.mirante.singular.support.persistence.util.Constants;
 
+@Deprecated
 @MappedSuperclass
 @Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
 public class AbstractPetitionEntity extends BaseEntity<Long> {
