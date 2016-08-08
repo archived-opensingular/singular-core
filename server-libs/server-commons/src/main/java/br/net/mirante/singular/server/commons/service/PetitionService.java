@@ -149,6 +149,8 @@ public class PetitionService<T extends AbstractOldPetitionEntity> {
         return boxItemAction;
     }
 
+    //TODO: FORM_ANNOTATION_VERSION
+    //TODO CONSIDERAR QUE AS ANOTAÇÕES PODEM OU NÃO SER SALVAS
     public FormKey saveOrUpdate(T peticao, SInstance instance) {
         FormKey key;
         if (instance != null) {
