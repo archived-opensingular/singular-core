@@ -95,7 +95,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         return formEntity.getCurrentFormVersionEntity().getLatestFormAnnotationVersionEntity().map(FormAnnotationVersionEntity::getXml).orElse(StringUtils.EMPTY);
     }
 
-    private FormEntity loadFormEntity(FormKey key) {
+    @Override
+    public FormEntity loadFormEntity(FormKey key) {
         final FormEntity entity = formDAO.find(checkKey(key, null, "a chave não fosse nula").longValue());
         if (entity == null) {
             throw addInfo(new SingularFormPersistenceException("Form não encontrado")).add("key", key);

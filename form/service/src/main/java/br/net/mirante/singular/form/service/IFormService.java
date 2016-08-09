@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.persistence.BasicFormPersistence;
 import br.net.mirante.singular.form.persistence.FormKey;
-import br.net.mirante.singular.form.persistence.FormKeyInt;
+import br.net.mirante.singular.form.persistence.entity.FormEntity;
 
 /**
  * Service for Form instances
@@ -17,5 +17,7 @@ import br.net.mirante.singular.form.persistence.FormKeyInt;
 public interface IFormService extends BasicFormPersistence<SInstance> {
 
     SInstance loadFormInstance(FormKey key, RefType refType, SDocumentFactory documentFactory);
+
+    FormEntity loadFormEntity(FormKey key);
 
 }
