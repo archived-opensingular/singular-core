@@ -10,7 +10,16 @@ import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequence
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
@@ -38,7 +47,7 @@ public class DraftEntity extends BaseEntity<Long> {
     private Date startDate;
 
     @Column(name = "CO_PETICIONANTE")
-    private Long peticionante;
+    private PetitionerEntity petitioner;
 
     @Type(type = GenericEnumUserType.CLASS_NAME, parameters = @org.hibernate.annotations.Parameter(name = "enumClass", value = SimNao.ENUM_CLASS_NAME))
     @Column(name = "ST_PETICIONADO")
@@ -85,11 +94,11 @@ public class DraftEntity extends BaseEntity<Long> {
         this.peticionado = peticionado;
     }
 
-    public Long getPeticionante() {
-        return peticionante;
+    public PetitionerEntity getPetitioner() {
+        return petitioner;
     }
 
-    public void setPeticionante(Long peticionante) {
-        this.peticionante = peticionante;
+    public void setPetitioner(PetitionerEntity petitioner) {
+        this.petitioner = petitioner;
     }
 }

@@ -15,6 +15,11 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.form.persistence.entity.FormEntity;
+import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionerEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.flow.core.Flow;
@@ -44,7 +49,7 @@ import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 
 @Transactional
-public class PetitionService<T extends AbstractOldPetitionEntity> {
+public class PetitionService<T extends PetitionEntity> {
 
     @Inject
     private PetitionDAO<T> petitionDAO;
@@ -156,12 +161,19 @@ public class PetitionService<T extends AbstractOldPetitionEntity> {
         if (instance != null) {
             key = formPersistenceService.insertOrUpdate(instance);
             Long keyAsLong = ((FormKeyNumber) key).longValue();
-            if (peticao.getCodForm() != null && !peticao.getCodForm().equals(keyAsLong)) {
+            if (!keyAsLong.equals(Optional
+                    .ofNullable(peticao)
+                    .map(PetitionEntity::getCurrentDraftEntity)
+                    .map(DraftEntity::getFormVersionEntity)
+                    .map(FormVersionEntity::getFormEntity)
+                    .map(FormEntity::getCod)
+                    .orElse(keyAsLong))) { //chave diferente de null e diferente da chave retornada.
                 throw new SingularServerException("Tentado criar novo formulário mas a petição já possui um");
             }
-            peticao.setCodForm(keyAsLong);
+            //TODO BUD: VINCULAR VERSÃO DO FORM E DO RASCUNHO, criar rascunho se não existir
+//            peticao.setCodForm(keyAsLong);
         } else {
-            peticao.setCodForm(null);
+//            peticao.setCodForm(null);
             key = null;
         }
 

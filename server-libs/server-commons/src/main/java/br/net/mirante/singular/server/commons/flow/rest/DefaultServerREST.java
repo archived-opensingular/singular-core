@@ -7,6 +7,8 @@ package br.net.mirante.singular.server.commons.flow.rest;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.service.PetitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,9 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractOldPetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.OldPetitionEntity;
-import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 
 @AutoScanDisabled
@@ -35,7 +34,7 @@ public class DefaultServerREST {
     public static final String EXECUTE = "/execute";
 
     @Inject
-    protected PetitionService<OldPetitionEntity> petitionService;
+    protected PetitionService<PetitionEntity> petitionService;
 
     @Inject
     private SingularServerConfiguration singularServerConfiguration;

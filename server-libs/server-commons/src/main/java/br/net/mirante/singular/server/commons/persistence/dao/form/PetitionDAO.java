@@ -1,11 +1,12 @@
 package br.net.mirante.singular.server.commons.persistence.dao.form;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import br.net.mirante.singular.server.commons.persistence.entity.form.OldPetitionEntity;
+import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
+import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -13,18 +14,15 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 
-import br.net.mirante.singular.flow.core.TaskType;
-import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractOldPetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
-import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
-import br.net.mirante.singular.support.persistence.BaseDAO;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
-public class PetitionDAO<T extends AbstractOldPetitionEntity> extends BaseDAO<T, Long> {
+public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
     public PetitionDAO() {
-        super((Class<T>) OldPetitionEntity.class);
+        super((Class<T>) PetitionEntity.class);
     }
 
     public PetitionDAO(Class<T> tipo) {
@@ -32,7 +30,7 @@ public class PetitionDAO<T extends AbstractOldPetitionEntity> extends BaseDAO<T,
     }
 
     @SuppressWarnings("unchecked")
-    public List<AbstractOldPetitionEntity> list(String type) {
+    public List<T> list(String type) {
         Criteria crit = getSession().createCriteria(tipo);
         crit.add(Restrictions.eq("type", type));
         return crit.list();
