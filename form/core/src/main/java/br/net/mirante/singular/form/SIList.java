@@ -14,11 +14,12 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class SIList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
-    private List<E>  values;
+    private List<E> values;
 
     private SType<E> elementsType;
 
-    public SIList() {}
+    public SIList() {
+    }
 
     @SuppressWarnings("unchecked")
     static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
@@ -204,6 +205,9 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             values = newArrayList(list.getValues());
             elementsType = list.getElementsType();
             list.getValue().clear();
+        } else if (obj instanceof List) {
+            clearInstance();
+            values = newArrayList((List<E>) obj);
         } else {
             throw new SingularFormException("SList só suporta valores de mesmo tipo da lista", this);
         }
@@ -287,8 +291,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
+        final int prime  = 31;
+        int       result = 1;
         result = prime * result + ((elementsType == null) ? 0 : elementsType.hashCode());
         for (E e : this)
             result = prime * result + (e == null ? 0 : e.hashCode());

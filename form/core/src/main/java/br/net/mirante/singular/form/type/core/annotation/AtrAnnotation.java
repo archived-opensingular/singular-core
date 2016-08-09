@@ -12,7 +12,6 @@ import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STranslatorForAttribute;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.util.transformer.Value;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -52,7 +51,8 @@ public class AtrAnnotation extends STranslatorForAttribute {
         List<String> classifiers = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
         if (classifiers == null){
             classifiers = new ArrayList<>();
-            setAttributeValue(SPackageBasic.ATR_ANNOTATED, classifiers);}
+            setAttributeValue(SPackageBasic.ATR_ANNOTATED, classifiers);
+        }
         for (T classifier : classifiersParam){
             if (!classifiers.contains(classifier.name())){
                 classifiers.add(classifier.name());
