@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -88,29 +87,20 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected void onInitialize() {
 
         T petition;
+
         if (StringUtils.isBlank(config.getFormId())) {
-            try {
-                petition = petitionClass.newInstance();
-            } catch (Exception e) {
-                throw new SingularServerException("Error creating new petition instance", e);
-            }
-            petition.setType(config.getFormType());
-            if (config.containsProcessDefinition()) {
-                petition.setProcessType(Flow.getProcessDefinition(config.getProcessDefinition()).getKey());
-            }
-            petition.setCreationDate(new Date());
-            petition.setProcessName(getTypeLabel(config.getFormType()));
+            petition = petitionService.createNewPetitionWithoutSave(petitionClass, config);
             onNewPetitionCreation(petition, config);
         } else {
             petition = petitionService.find(Long.valueOf(config.getFormId()));
         }
 
-        if (petition.getCodForm() != null) {
-            FormKey formKey = formService.keyFromObject(petition.getCodForm());
+        if (petition.getCod() != null) {
+            FormKey formKey = formService.keyFromObject(petition.getCod());
             formModel.setObject(formKey);
         }
-        currentModel.setObject(petition);
 
+        currentModel.setObject(petition);
         super.onInitialize();
     }
 
@@ -290,9 +280,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected void configureLazyFlowIfNeeded(IModel<? extends SInstance> currentInstance, T petition, FormPageConfig cfg) {
-        if (petition.getProcessType() == null && cfg.isWithLazyProcessResolver()) {
+        if (petition.getProcessDefinitionEntity() == null && cfg.isWithLazyProcessResolver()) {
             final Class<? extends ProcessDefinition> dc = cfg.getLazyFlowDefinitionResolver().resolve(cfg, (SIComposite) currentInstance.getObject());
-            petition.setProcessType(Flow.getProcessDefinition(dc).getKey());
+            petition.setProcessDefinitionEntity(Flow.getProcessDefinition(dc).getEntityProcessDefinition());
         }
     }
 

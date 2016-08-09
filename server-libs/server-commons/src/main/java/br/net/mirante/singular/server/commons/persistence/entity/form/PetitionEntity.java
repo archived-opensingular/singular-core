@@ -1,5 +1,6 @@
 package br.net.mirante.singular.server.commons.persistence.entity.form;
 
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.form.persistence.entity.FormAnnotationVersionEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
@@ -37,7 +38,7 @@ public class PetitionEntity extends BaseEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
-    private ProcessDefinitionEntity processDefinitionEntity;
+    private IEntityProcessDefinition processDefinitionEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_RASCUNHO_ATUAL")
@@ -79,11 +80,11 @@ public class PetitionEntity extends BaseEntity<Long> {
         this.currentFormAnnotationVersionEntity = currentFormAnnotationVersionEntity;
     }
 
-    public ProcessDefinitionEntity getProcessDefinitionEntity() {
+    public IEntityProcessDefinition getProcessDefinitionEntity() {
         return processDefinitionEntity;
     }
 
-    public void setProcessDefinitionEntity(ProcessDefinitionEntity processDefinitionEntity) {
+    public void setProcessDefinitionEntity(IEntityProcessDefinition processDefinitionEntity) {
         this.processDefinitionEntity = processDefinitionEntity;
     }
 

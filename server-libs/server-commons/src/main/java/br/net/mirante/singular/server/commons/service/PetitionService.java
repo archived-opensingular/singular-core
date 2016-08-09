@@ -16,10 +16,13 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
+import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
+import br.net.mirante.singular.server.commons.persistence.dao.flow.FormTypeDAO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
+import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.flow.core.Flow;
@@ -61,6 +64,9 @@ public class PetitionService<T extends PetitionEntity> {
 
     @Inject
     private TaskInstanceDAO taskInstanceDAO;
+
+    @Inject
+    private FormTypeDAO formTypeDAO;
 
     public T find(Long cod) {
         return petitionDAO.find(cod);
@@ -251,6 +257,48 @@ public class PetitionService<T extends PetitionEntity> {
 
     public ProcessGroupEntity findByProcessGroupCod(String cod) {
         return grupoProcessoDAO.get(cod);
+    }
+
+    public FormTypeEntity getOrCreateNewFormTypeEntity(String abbreviation) {
+        FormTypeEntity formType = formTypeDAO.findFormTypeByAbbreviation(abbreviation);
+        if (formType == null) {
+            formType = createNewFormTypeEntity(abbreviation);
+        }
+        return formType;
+    }
+
+    private FormTypeEntity createNewFormTypeEntity(String abbreviation) {
+        FormTypeEntity formType;
+        formType = new FormTypeEntity();
+        formType.setAbbreviation(abbreviation);
+        formType.setCacheVersionNumber(1L);//?????????????????????
+        formTypeDAO.saveOrUpdate(formType);
+        return formType;
+    }
+
+    public T createNewPetitionWithoutSave(Class<T> petitionClass, FormPageConfig config) {
+
+        T petition;
+
+        try {
+            petition = petitionClass.newInstance();
+        } catch (Exception e) {
+            throw new SingularServerException("Error creating new petition instance", e);
+        }
+
+        final FormVersionEntity formVersionEntity = new FormVersionEntity();
+        final FormEntity        formEntity        = new FormEntity();
+
+        formEntity.setFormType(getOrCreateNewFormTypeEntity(config.getFormType()));
+        formVersionEntity.setFormEntity(formEntity);
+
+        if (config.containsProcessDefinition()) {
+            petition.setProcessDefinitionEntity(Flow.getProcessDefinition(config.getProcessDefinition()).getEntityProcessDefinition());
+        }
+
+//        petition.setProcessName(getTypeLabel(config.getFormType()));
+
+        return petition;
     }
 
 }
