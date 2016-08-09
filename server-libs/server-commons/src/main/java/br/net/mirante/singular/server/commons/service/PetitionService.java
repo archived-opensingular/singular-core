@@ -178,12 +178,14 @@ public class PetitionService<T extends PetitionEntity> {
             }
             //TODO BUD: VINCULAR VERSÃO DO FORM E DO RASCUNHO, criar rascunho se não existir
 //            peticao.setCodForm(keyAsLong);
+            peticao.setCurrentFormVersionEntity(formPersistenceService.loadFormEntity(key).getCurrentFormVersionEntity());
         } else {
 //            peticao.setCodForm(null);
             key = null;
         }
 
         petitionDAO.saveOrUpdate(peticao);
+
         return key;
     }
 
