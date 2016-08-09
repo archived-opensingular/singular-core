@@ -38,7 +38,7 @@ public class PetitionEntity extends BaseEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
-    private IEntityProcessDefinition processDefinitionEntity;
+    private ProcessDefinitionEntity processDefinitionEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_RASCUNHO_ATUAL")
@@ -80,11 +80,11 @@ public class PetitionEntity extends BaseEntity<Long> {
         this.currentFormAnnotationVersionEntity = currentFormAnnotationVersionEntity;
     }
 
-    public IEntityProcessDefinition getProcessDefinitionEntity() {
+    public ProcessDefinitionEntity getProcessDefinitionEntity() {
         return processDefinitionEntity;
     }
 
-    public void setProcessDefinitionEntity(IEntityProcessDefinition processDefinitionEntity) {
+    public void setProcessDefinitionEntity(ProcessDefinitionEntity processDefinitionEntity) {
         this.processDefinitionEntity = processDefinitionEntity;
     }
 
@@ -103,4 +103,6 @@ public class PetitionEntity extends BaseEntity<Long> {
     public void setPeticionante(Long peticionante) {
         this.peticionante = peticionante;
     }
+
+
 }

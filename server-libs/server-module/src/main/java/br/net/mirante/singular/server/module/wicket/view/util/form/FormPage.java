@@ -41,17 +41,10 @@ public class FormPage extends AbstractFormPage<PetitionEntity> {
             if (getIdentifier() == null) {
                 return new ResourceModel("label.form.content.title", "Nova Solicitação").getObject();
             } else {
-                return currentModel.getObject().getDescription();
+//                return currentModel.getObject().getDescription();
+                return "";
             }
         });
-    }
-
-    @Override
-    protected void onNewPetitionCreation(PetitionEntity petitionEntity, FormPageConfig config) {
-        super.onNewPetitionCreation(petitionEntity, config);
-        if (config.containsProcessDefinition()) {
-            petitionEntity.setProcessType(Flow.getProcessDefinition(config.getProcessDefinition()).getKey());
-        }
     }
 
     @Override

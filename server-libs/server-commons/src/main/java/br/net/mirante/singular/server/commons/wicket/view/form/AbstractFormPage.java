@@ -15,6 +15,7 @@ import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
@@ -202,7 +203,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance) {
         T petition = currentModel.getObject();
         if (currentInstance.getObject() instanceof SIComposite) {
-            petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
+//            petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
         }
         return petition;
     }
@@ -282,7 +283,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected void configureLazyFlowIfNeeded(IModel<? extends SInstance> currentInstance, T petition, FormPageConfig cfg) {
         if (petition.getProcessDefinitionEntity() == null && cfg.isWithLazyProcessResolver()) {
             final Class<? extends ProcessDefinition> dc = cfg.getLazyFlowDefinitionResolver().resolve(cfg, (SIComposite) currentInstance.getObject());
-            petition.setProcessDefinitionEntity(Flow.getProcessDefinition(dc).getEntityProcessDefinition());
+            petition.setProcessDefinitionEntity((ProcessDefinitionEntity) Flow.getProcessDefinition(dc).getEntityProcessDefinition());
         }
     }
 

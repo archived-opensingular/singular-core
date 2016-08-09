@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
+import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.FormTypeDAO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
@@ -210,11 +211,12 @@ public class PetitionService<T extends PetitionEntity> {
     public FormKey saveAndExecuteTransition(String transitionName, T peticao, SInstance instance) {
         try {
 
-            FormKey key = saveOrUpdate(peticao, instance);
-
+            final FormKey                            key   = saveOrUpdate(peticao, instance);
             final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(peticao).getClass();
-            ProcessInstance                          pi    = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
+            final ProcessInstance                    pi    = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
+
             pi.executeTransition(transitionName);
+
             return key;
         } catch (Exception e) {
             throw new SingularServerException(e.getMessage(), e);
@@ -268,8 +270,7 @@ public class PetitionService<T extends PetitionEntity> {
     }
 
     private FormTypeEntity createNewFormTypeEntity(String abbreviation) {
-        FormTypeEntity formType;
-        formType = new FormTypeEntity();
+        final FormTypeEntity formType = new FormTypeEntity();
         formType.setAbbreviation(abbreviation);
         formType.setCacheVersionNumber(1L);//?????????????????????
         formTypeDAO.saveOrUpdate(formType);
@@ -290,10 +291,12 @@ public class PetitionService<T extends PetitionEntity> {
         final FormEntity        formEntity        = new FormEntity();
 
         formEntity.setFormType(getOrCreateNewFormTypeEntity(config.getFormType()));
+        formEntity.setCurrentFormVersionEntity(formVersionEntity);
+
         formVersionEntity.setFormEntity(formEntity);
 
         if (config.containsProcessDefinition()) {
-            petition.setProcessDefinitionEntity(Flow.getProcessDefinition(config.getProcessDefinition()).getEntityProcessDefinition());
+            petition.setProcessDefinitionEntity((ProcessDefinitionEntity) Flow.getProcessDefinition(config.getProcessDefinition()).getEntityProcessDefinition());
         }
 
 //        petition.setProcessName(getTypeLabel(config.getFormType()));

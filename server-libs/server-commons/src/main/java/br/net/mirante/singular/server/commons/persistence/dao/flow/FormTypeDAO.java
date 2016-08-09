@@ -3,7 +3,9 @@ package br.net.mirante.singular.server.commons.persistence.dao.flow;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class FormTypeDAO extends BaseDAO<FormTypeEntity, Integer> {
 
     public FormTypeDAO() {
