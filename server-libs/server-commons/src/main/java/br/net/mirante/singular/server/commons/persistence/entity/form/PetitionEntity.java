@@ -47,6 +47,9 @@ public class PetitionEntity extends BaseEntity<Long> {
     @Column(name = "CO_PETICIONANTE")
     private Long peticionante;
 
+    @Column(name = "DS_PETICAO")
+    private String description;
+
     @Override
     public Long getCod() {
         return cod;
@@ -104,5 +107,11 @@ public class PetitionEntity extends BaseEntity<Long> {
         this.peticionante = peticionante;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

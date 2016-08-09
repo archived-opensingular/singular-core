@@ -46,6 +46,10 @@ public class DraftEntity extends BaseEntity<Long> {
     @Column(name = "DT_INICIO")
     private Date startDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DT_EDICAO")
+    private Date editionDate;
+
     @Column(name = "CO_PETICIONANTE")
     private PetitionerEntity petitioner;
 
@@ -101,4 +105,13 @@ public class DraftEntity extends BaseEntity<Long> {
     public void setPetitioner(PetitionerEntity petitioner) {
         this.petitioner = petitioner;
     }
+
+    public Date getEditionDate() {
+        return editionDate;
+    }
+
+    public void setEditionDate(Date editionDate) {
+        this.editionDate = editionDate;
+    }
+
 }
