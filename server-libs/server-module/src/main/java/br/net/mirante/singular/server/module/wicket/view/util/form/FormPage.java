@@ -2,7 +2,7 @@ package br.net.mirante.singular.server.module.wicket.view.util.form;
 
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
-import br.net.mirante.singular.server.commons.persistence.entity.form.OldPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import org.apache.wicket.model.IModel;
@@ -16,7 +16,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 @MountPath("/view")
-public class FormPage extends AbstractFormPage<OldPetitionEntity> {
+public class FormPage extends AbstractFormPage<PetitionEntity> {
 
 
     @Inject
@@ -27,7 +27,7 @@ public class FormPage extends AbstractFormPage<OldPetitionEntity> {
     }
 
     public FormPage(FormPageConfig config) {
-        super(OldPetitionEntity.class, config);
+        super(PetitionEntity.class, config);
     }
 
     @Override
@@ -47,10 +47,10 @@ public class FormPage extends AbstractFormPage<OldPetitionEntity> {
     }
 
     @Override
-    protected void onNewPetitionCreation(OldPetitionEntity oldPetitionEntity, FormPageConfig config) {
-        super.onNewPetitionCreation(oldPetitionEntity, config);
+    protected void onNewPetitionCreation(PetitionEntity petitionEntity, FormPageConfig config) {
+        super.onNewPetitionCreation(petitionEntity, config);
         if (config.containsProcessDefinition()) {
-            oldPetitionEntity.setProcessType(Flow.getProcessDefinition(config.getProcessDefinition()).getKey());
+            petitionEntity.setProcessType(Flow.getProcessDefinition(config.getProcessDefinition()).getKey());
         }
     }
 
@@ -58,7 +58,7 @@ public class FormPage extends AbstractFormPage<OldPetitionEntity> {
     protected String getIdentifier() {
         return Optional.ofNullable(currentModel)
                 .map(IModel::getObject)
-                .map(OldPetitionEntity::getCod)
+                .map(PetitionEntity::getCod)
                 .map(Object::toString).orElse(null);
 
     }

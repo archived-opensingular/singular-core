@@ -8,6 +8,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -29,7 +30,6 @@ import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractOldPetitionEntity;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
@@ -271,7 +271,7 @@ public abstract class AbstractFormContent extends Content {
 
     protected abstract void saveForm(IModel<? extends SInstance> currentInstance);
 
-    protected abstract IModel<? extends AbstractOldPetitionEntity> getFormModel();
+    protected abstract IModel<? extends PetitionEntity> getFormModel();
 
     protected abstract boolean hasProcess();
 

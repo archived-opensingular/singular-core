@@ -5,14 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.net.mirante.singular.server.commons.persistence.entity.form.OldPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractOldPetitionEntity;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 
@@ -37,8 +36,8 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         };
     }
 
-    protected Class<? extends AbstractOldPetitionEntity> getPetitionEntityClass() {
-        return OldPetitionEntity.class;
+    protected Class<? extends PetitionEntity> getPetitionEntityClass() {
+        return PetitionEntity.class;
     }
 
 

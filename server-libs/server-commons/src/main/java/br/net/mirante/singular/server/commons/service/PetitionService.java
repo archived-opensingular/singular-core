@@ -43,7 +43,6 @@ import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceD
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractOldPetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;

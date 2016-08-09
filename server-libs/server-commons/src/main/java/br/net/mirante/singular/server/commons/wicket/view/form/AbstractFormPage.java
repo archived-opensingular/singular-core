@@ -19,7 +19,7 @@ import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.metadata.ServerContextMetaData;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractOldPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
@@ -47,7 +47,7 @@ import java.util.Objects;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
-public abstract class AbstractFormPage<T extends AbstractOldPetitionEntity> extends Template {
+public abstract class AbstractFormPage<T extends PetitionEntity> extends Template {
 
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
     private static final   Logger LOGGER                  = LoggerFactory.getLogger(AbstractFormPage.class);
@@ -165,7 +165,7 @@ public abstract class AbstractFormPage<T extends AbstractOldPetitionEntity> exte
             }
 
             @Override
-            protected IModel<? extends AbstractOldPetitionEntity> getFormModel() {
+            protected IModel<? extends PetitionEntity> getFormModel() {
                 return currentModel;
             }
 
@@ -289,7 +289,7 @@ public abstract class AbstractFormPage<T extends AbstractOldPetitionEntity> exte
         configureLazyFlowIfNeeded(currentInstance, currentModel.getObject(), config);
     }
 
-    protected void configureLazyFlowIfNeeded(IModel<? extends SInstance> currentInstance, T petition, FormPageConfig cfg){
+    protected void configureLazyFlowIfNeeded(IModel<? extends SInstance> currentInstance, T petition, FormPageConfig cfg) {
         if (petition.getProcessType() == null && cfg.isWithLazyProcessResolver()) {
             final Class<? extends ProcessDefinition> dc = cfg.getLazyFlowDefinitionResolver().resolve(cfg, (SIComposite) currentInstance.getObject());
             petition.setProcessType(Flow.getProcessDefinition(dc).getKey());

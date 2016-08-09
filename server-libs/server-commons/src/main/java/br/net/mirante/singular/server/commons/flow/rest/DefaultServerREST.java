@@ -66,7 +66,7 @@ public class DefaultServerREST {
     }
 
     private IController getActionController(Long id, Action action) {
-        final AbstractOldPetitionEntity petition          = petitionService.find(id);
+        final PetitionEntity petition          = petitionService.find(id);
         final ProcessDefinition<?>      processDefinition = Flow.getProcessDefinitionWith(petition.getProcessType());
         final ActionConfig              actionConfig      = processDefinition.getMetaDataValue(ActionConfig.KEY);
 
