@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,8 +31,8 @@ public class DefaultServerREST {
     static final Logger LOGGER = LoggerFactory.getLogger(DefaultServerREST.class);
 
     public static final String PATH_BOX_ACTION = "/box/action";
-    public static final String DELETE = "/delete";
-    public static final String EXECUTE = "/execute";
+    public static final String DELETE          = "/delete";
+    public static final String EXECUTE         = "/execute";
 
     @Inject
     protected PetitionService<PetitionEntity> petitionService;
@@ -66,9 +67,10 @@ public class DefaultServerREST {
     }
 
     private IController getActionController(Long id, Action action) {
-        final PetitionEntity petition          = petitionService.find(id);
-        final ProcessDefinition<?>      processDefinition = Flow.getProcessDefinitionWith(petition.getProcessType());
-        final ActionConfig              actionConfig      = processDefinition.getMetaDataValue(ActionConfig.KEY);
+
+        final PetitionEntity       petition          = petitionService.find(id);
+        final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(petition);
+        final ActionConfig         actionConfig      = processDefinition.getMetaDataValue(ActionConfig.KEY);
 
         return actionConfig.getCustomAction(action.getName());
     }

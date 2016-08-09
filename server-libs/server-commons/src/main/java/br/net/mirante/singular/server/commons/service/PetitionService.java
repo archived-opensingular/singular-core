@@ -19,7 +19,7 @@ import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionerEntity;
+import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.flow.core.Flow;
@@ -115,9 +115,9 @@ public class PetitionService<T extends PetitionEntity> {
 
         appendItemActions(item, actions);
 
-        String processKey = (String) item.get("processType");
+        String                     processKey        = (String) item.get("processType");
         final ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(processKey);
-        final ActionConfig actionConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
+        final ActionConfig         actionConfig      = processDefinition.getMetaDataValue(ActionConfig.KEY);
         if (actionConfig != null) {
             actions = actions.stream()
                     .filter(itemAction -> actionConfig.containsAction(itemAction.getName()))
@@ -181,13 +181,19 @@ public class PetitionService<T extends PetitionEntity> {
     }
 
     public FormKey send(T peticao, SInstance instance) {
-        ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(peticao.getProcessType());
-        ProcessInstance      processInstance   = processDefinition.newInstance();
-        processInstance.setDescription(peticao.getDescription());
 
-        ProcessInstanceEntity processEntity = processInstance.saveEntity();
+        final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
+        final ProcessInstance      processInstance   = processDefinition.newInstance();
+
+        //TODO falta a descrição da petição
+        //processInstance.setDescription(peticao.getDescription());
+        processInstance.setDescription("Descrição temporaria");
+
+        final ProcessInstanceEntity processEntity = processInstance.saveEntity();
+
         peticao.setProcessInstanceEntity(processEntity);
-        FormKey key = saveOrUpdate(peticao, instance);
+
+        final FormKey key = saveOrUpdate(peticao, instance);
 
         processInstance.start();
 
@@ -200,7 +206,7 @@ public class PetitionService<T extends PetitionEntity> {
 
             FormKey key = saveOrUpdate(peticao, instance);
 
-            final Class<? extends ProcessDefinition> clazz = Flow.getProcessDefinitionWith(peticao.getProcessType()).getClass();
+            final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(peticao).getClass();
             ProcessInstance                          pi    = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
             pi.executeTransition(transitionName);
             return key;
