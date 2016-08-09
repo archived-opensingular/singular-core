@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.document;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import br.net.mirante.singular.form.type.core.annotation.AnnotationClassifier;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -324,15 +326,27 @@ public class SDocument {
         this.rootRefType = rootRefType;
     }
 
-    public SIAnnotation annotation(Integer id) {
+    public <T extends Enum & AnnotationClassifier> SIAnnotation annotation(Integer id, T classifier) {
         if (annotations == null)
             return null;
         for (SIAnnotation a : (List<SIAnnotation>) annotations.getValues()) {
-            if (id.equals(a.getTargetId())) {
+            if (id.equals(a.getTargetId()) && classifier.name().equals(a.getClassifier())) {
                 return a;
             }
         }
         return null;
+    }
+
+    public <T extends Enum & AnnotationClassifier> List<SIAnnotation> annotationsAnyClassifier(Integer id) {
+        List<SIAnnotation> siAnnotationList = new ArrayList<SIAnnotation>();
+        if (annotations == null)
+            return null;
+        for (SIAnnotation a : (List<SIAnnotation>) annotations.getValues()) {
+            if (id.equals(a.getTargetId())) {
+                siAnnotationList.add(a);
+            }
+        }
+        return siAnnotationList;
     }
 
     public void setAnnotations(SIList annotations) {

@@ -38,7 +38,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * Marks this type as annotated
      * @return this
      */
-    public AtrAnnotation setAnnotated() {
+    public <T extends Enum & AnnotationClassifier> AtrAnnotation setAnnotated() {
        setAnnotated(DefaultAnnotationClassifier.DEFAULT_ANNOTATION);
         return this;
     }
@@ -119,32 +119,41 @@ public class AtrAnnotation extends STranslatorForAttribute {
     /**
      * @return Current annotation if this instance, if none is present one is created.
      */
-    public SIAnnotation annotation() {
-        createAttributeIfNeeded();
-        return target().getDocument().annotation(target().getId());
+    public <T extends Enum & AnnotationClassifier> SIAnnotation annotation() {
+        return annotation(DefaultAnnotationClassifier.DEFAULT_ANNOTATION);
+    }
+
+    public <T extends Enum & AnnotationClassifier> SIAnnotation annotation(T classifier) {
+        createAttributeIfNeeded(classifier);
+        return target().getDocument().annotation(target().getId(), classifier);
     }
 
     /**
      * @return True if an anotation was filled for this instance.
      */
     public boolean hasAnnotation(){
-        SIAnnotation atr = target().getDocument().annotation(target().getId());
-        return atr != null && hasValue(atr);
+        List<SIAnnotation> atrList = target().getDocument().annotationsAnyClassifier(target().getId());
+        return atrList != null && hasValue(atrList);
     }
 
-    private boolean hasValue(SIAnnotation atr) {
-        return StringUtils.isNotBlank(atr.getText()) || atr.getApproved() != null;
+    private boolean hasValue(List<SIAnnotation> atrList) {
+        boolean truth = false;
+        for (SIAnnotation atr : atrList) {
+             truth |= StringUtils.isNotBlank(atr.getText()) || atr.getApproved() != null;
+        }
+        return truth;
     }
 
-    private void createAttributeIfNeeded() {
-        if(target().getDocument().annotation(target().getId()) == null){
-            newAnnotation();
+    private <T extends Enum & AnnotationClassifier> void createAttributeIfNeeded(T classifier) {
+        if (target().getDocument().annotation(target().getId(), classifier) == null) {
+            newAnnotation(classifier);
         }
     }
 
-    private SIAnnotation newAnnotation() {
+    private  <T extends Enum & AnnotationClassifier> SIAnnotation newAnnotation(T classifier) {
         SIAnnotation a = target().getDocument().newAnnotation();
         a.setTargetId(target().getId());
+        a.setClassifier(classifier.name());
         return a;
     }
 
