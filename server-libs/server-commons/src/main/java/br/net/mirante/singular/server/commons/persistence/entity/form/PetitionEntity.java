@@ -1,8 +1,6 @@
 package br.net.mirante.singular.server.commons.persistence.entity.form;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
-import br.net.mirante.singular.form.persistence.entity.FormAnnotationVersionEntity;
-import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
+import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
@@ -10,7 +8,14 @@ import br.net.mirante.singular.support.persistence.util.Constants;
 import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
@@ -29,12 +34,8 @@ public class PetitionEntity extends BaseEntity<Long> {
     private ProcessInstanceEntity processInstanceEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_FORMULARIO_ATUAL")
-    private FormVersionEntity currentFormVersionEntity;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_ANOTACAO_FORMULARIO_ATUAL")
-    private FormAnnotationVersionEntity currentFormAnnotationVersionEntity;
+    @JoinColumn(name = "CO_FORMULARIO")
+    private FormEntity form;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
@@ -67,20 +68,12 @@ public class PetitionEntity extends BaseEntity<Long> {
         this.processInstanceEntity = processInstanceEntity;
     }
 
-    public FormVersionEntity getCurrentFormVersionEntity() {
-        return currentFormVersionEntity;
+    public FormEntity getForm() {
+        return form;
     }
 
-    public void setCurrentFormVersionEntity(FormVersionEntity currentFormVersionEntity) {
-        this.currentFormVersionEntity = currentFormVersionEntity;
-    }
-
-    public FormAnnotationVersionEntity getCurrentFormAnnotationVersionEntity() {
-        return currentFormAnnotationVersionEntity;
-    }
-
-    public void setCurrentFormAnnotationVersionEntity(FormAnnotationVersionEntity currentFormAnnotationVersionEntity) {
-        this.currentFormAnnotationVersionEntity = currentFormAnnotationVersionEntity;
+    public void setForm(FormEntity form) {
+        this.form = form;
     }
 
     public ProcessDefinitionEntity getProcessDefinitionEntity() {
