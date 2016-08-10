@@ -1,17 +1,16 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.form.SAttributeEnabled;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.persistence.FormKey;
+import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.form.service.IFormService;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
@@ -19,8 +18,8 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
-import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.metadata.ServerContextMetaData;
+import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
@@ -38,32 +37,17 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.flow.RedirectToUrlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
-public abstract class AbstractFormPage<T extends PetitionEntity> extends Template {
+public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
 
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
-    private static final   Logger LOGGER                  = LoggerFactory.getLogger(AbstractFormPage.class);
-
-    protected final FormPageConfig      config;
-    protected       AbstractFormContent content;
-
-    protected final IModel<T>       currentModel = $m.ofValue();
-    protected final IModel<FormKey> formModel    = $m.ofValue();
-
-    private final Class<T> petitionClass;
-
-    @Inject
-    @Named("formConfigWithDatabase")
-    private SFormConfig<String> singularFormConfig;
 
     @Inject
     protected PetitionService<T> petitionService;
@@ -71,12 +55,21 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     @Inject
     private IFormService formService;
 
+    protected final Class<T>        petitionClass;
+    protected final FormPageConfig  config;
+    protected final IModel<T>       currentModel;
+    protected final IModel<FormKey> formModel;
+
+    protected AbstractFormContent content;
+
     public AbstractFormPage(Class<T> petitionClass, FormPageConfig config) {
         if (config == null) {
             throw new RedirectToUrlException("/singular");
         }
         this.petitionClass = Objects.requireNonNull(petitionClass);
         this.config = Objects.requireNonNull(config);
+        this.currentModel = $m.ofValue();
+        this.formModel = $m.ofValue();
         Objects.requireNonNull(config.getFormType());
     }
 
@@ -88,7 +81,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     @Override
     protected void onInitialize() {
 
-        T petition;
+        final T petition;
 
         if (StringUtils.isBlank(config.getFormId())) {
             petition = petitionService.createNewPetitionWithoutSave(petitionClass, config);
@@ -98,12 +91,19 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         }
 
         if (petition.getCod() != null) {
-            FormKey formKey = formService.keyFromObject(petition.getCod());
-            formModel.setObject(formKey);
+            formModel.setObject(formService.keyFromObject(getFormVersionFromDraftOrPetition(petition).getFormEntity()));
         }
 
         currentModel.setObject(petition);
+
         super.onInitialize();
+    }
+
+
+    private FormVersionEntity getFormVersionFromDraftOrPetition(T petition) {
+        return Optional.ofNullable(petition.getCurrentDraftEntity())
+                .map(DraftEntity::getFormVersionEntity)
+                .orElse(petition.getCurrentFormVersionEntity());
     }
 
     @Override
@@ -153,7 +153,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
             @Override
             protected void saveForm(IModel<? extends SInstance> currentInstance) {
-                AbstractFormPage.this.saveDraft(currentInstance);
+                AbstractFormPage.this.saveForm(currentInstance);
             }
 
             @Override
@@ -175,7 +175,6 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return content;
     }
 
-
     protected abstract IModel<?> getContentSubtitleModel();
 
     protected abstract String getIdentifier();
@@ -184,7 +183,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
-        List<MTransition> trans = petitionService.listCurrentTaskTransitions(config.getFormId());
+        final List<MTransition> trans = petitionService.listCurrentTaskTransitions(config.getFormId());
         if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
             int index = 0;
             for (MTransition t : trans) {
@@ -217,7 +216,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         if (formModel.getObject() == null) {
             return documentFactory.createInstance(refType);
         } else {
-            return formService.loadFormInstance(formModel.getObject(), refType, documentFactory);
+            return formService.loadSInstance(formModel.getObject(), refType, documentFactory);
         }
     }
 
@@ -266,7 +265,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return enviarModal;
     }
 
-    protected void saveDraft(IModel<? extends SInstance> currentInstance) {
+    protected void saveForm(IModel<? extends SInstance> currentInstance) {
         onBeforeSave(currentInstance);
         formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject()));
     }
@@ -350,7 +349,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                             addToastrSuccessMessageWorklist("message.action.success", transitionName);
                             target.appendJavaScript("window.close();");
                         } catch (Exception e) { // org.hibernate.StaleObjectStateException
-                            LOGGER.error("Erro ao salvar o XML", e);
+                            getLogger().error("Erro ao salvar o XML", e);
                             addToastrErrorMessage("message.save.concurrent_error");
                         }
                     }
@@ -364,15 +363,6 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                 });
         confirmarAcaoFlowModal.add(new Label("flow-msg", String.format("Tem certeza que deseja %s ?", transitionName)));
         return confirmarAcaoFlowModal;
-    }
-
-    private String getTypeLabel(String typeName) {
-        return singularFormConfig
-                .getTypeLoader()
-                .loadType(typeName)
-                .map(SAttributeEnabled::asAtr)
-                .map(AtrBasic::getLabel)
-                .orElseThrow(() -> new SingularServerException("Não foi possivel carregar o tipo"));
     }
 
 }

@@ -6,24 +6,25 @@ import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
 import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import br.net.mirante.singular.form.SAttributeEnabled;
+import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
+import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.FormTypeDAO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.flow.core.Flow;
@@ -68,6 +69,10 @@ public class PetitionService<T extends PetitionEntity> {
 
     @Inject
     private FormTypeDAO formTypeDAO;
+
+    @Inject
+    @Named("formConfigWithDatabase")
+    private SFormConfig<String> singularFormConfig;
 
     public T find(Long cod) {
         return petitionDAO.find(cod);
@@ -163,19 +168,26 @@ public class PetitionService<T extends PetitionEntity> {
     //TODO: FORM_ANNOTATION_VERSION
     //TODO CONSIDERAR QUE AS ANOTAÇÕES PODEM OU NÃO SER SALVAS
     public FormKey saveOrUpdate(T peticao, SInstance instance) {
+
         FormKey key;
+
         if (instance != null) {
+
             key = formPersistenceService.insertOrUpdate(instance);
-            Long keyAsLong = ((FormKeyNumber) key).longValue();
-            if (!keyAsLong.equals(Optional
-                    .ofNullable(peticao)
-                    .map(PetitionEntity::getCurrentDraftEntity)
-                    .map(DraftEntity::getFormVersionEntity)
-                    .map(FormVersionEntity::getFormEntity)
-                    .map(FormEntity::getCod)
-                    .orElse(keyAsLong))) { //chave diferente de null e diferente da chave retornada.
-                throw new SingularServerException("Tentado criar novo formulário mas a petição já possui um");
+
+            final DraftEntity draftEntity = peticao.getCurrentDraftEntity();
+
+            if (draftEntity != null) {
+                draftEntity.set
             }
+
+
+            getFormCodFromDraft(peticao).ifPresent(draftFormKey -> {
+                if (!draftFormKey.equals(((FormKeyNumber) key).longValue())) {
+                    throw new SingularServerException("Tentado criar novo formulário mas a petição já possui um");
+                }
+            });
+
             //TODO BUD: VINCULAR VERSÃO DO FORM E DO RASCUNHO, criar rascunho se não existir
 //            peticao.setCodForm(keyAsLong);
             peticao.setCurrentFormVersionEntity(formPersistenceService.loadFormEntity(key).getCurrentFormVersionEntity());
@@ -188,6 +200,16 @@ public class PetitionService<T extends PetitionEntity> {
 
         return key;
     }
+
+    private Optional<Long> getFormCodFromDraft(T petition) {
+        return Optional
+                .ofNullable(petition)
+                .map(PetitionEntity::getCurrentDraftEntity)
+                .map(DraftEntity::getFormVersionEntity)
+                .map(FormVersionEntity::getFormEntity)
+                .map(FormEntity::getCod);
+    }
+
 
     public FormKey send(T peticao, SInstance instance) {
 
@@ -287,21 +309,46 @@ public class PetitionService<T extends PetitionEntity> {
             throw new SingularServerException("Error creating new petition instance", e);
         }
 
+        if (config.containsProcessDefinition()) {
+            petition.setProcessDefinitionEntity((ProcessDefinitionEntity) Flow.getProcessDefinition(config.getProcessDefinition()).getEntityProcessDefinition());
+        }
+
+        petition.setCurrentDraftEntity(createNewDraftWithoutSave(config));
+        petition.setDescription(getTypeLabel(config));
+
+        return petition;
+    }
+
+
+    private String getTypeLabel(FormPageConfig config) {
+        return singularFormConfig
+                .getTypeLoader()
+                .loadType(config.getFormType())
+                .map(SAttributeEnabled::asAtr)
+                .map(AtrBasic::getLabel)
+                .orElseThrow(() -> new SingularServerException("Não foi possivel carregar o tipo"));
+    }
+
+
+    public DraftEntity createNewDraftWithoutSave(FormPageConfig config) {
+
+        final DraftEntity       draftEntity       = new DraftEntity();
         final FormVersionEntity formVersionEntity = new FormVersionEntity();
         final FormEntity        formEntity        = new FormEntity();
 
         formEntity.setFormType(getOrCreateNewFormTypeEntity(config.getFormType()));
         formEntity.setCurrentFormVersionEntity(formVersionEntity);
-
         formVersionEntity.setFormEntity(formEntity);
+        draftEntity.setStartDate(new Date());
+        draftEntity.setEditionDate(new Date());
+        draftEntity.setFormVersionEntity(formVersionEntity);
+        draftEntity.setPeticionado(SimNao.NAO);
 
         if (config.containsProcessDefinition()) {
-            petition.setProcessDefinitionEntity((ProcessDefinitionEntity) Flow.getProcessDefinition(config.getProcessDefinition()).getEntityProcessDefinition());
+            draftEntity.setProcessDefinitionEntity((ProcessDefinitionEntity) Flow.getProcessDefinition(config.getProcessDefinition()).getEntityProcessDefinition());
         }
 
-//        petition.setProcessName(getTypeLabel(config.getFormType()));
-
-        return petition;
+        return draftEntity;
     }
 
 }
