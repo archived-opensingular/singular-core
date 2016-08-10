@@ -16,7 +16,7 @@ import br.net.mirante.singular.form.persistence.entity.FormEntity;
  */
 public interface IFormService extends BasicFormPersistence<SInstance> {
 
-    SInstance loadFormInstance(FormKey key, RefType refType, SDocumentFactory documentFactory);
+    SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory);
 
     FormEntity loadFormEntity(FormKey key);
 
