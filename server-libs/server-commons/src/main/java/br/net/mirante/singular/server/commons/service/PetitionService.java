@@ -7,18 +7,23 @@ import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_
 import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.FormTypeDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionerEntity;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
+import br.net.mirante.singular.support.persistence.GenericDAO;
 import br.net.mirante.singular.support.persistence.enums.SimNao;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +71,9 @@ public class PetitionService<T extends PetitionEntity> {
 
     @Inject
     private DraftDAO draftDAO;
+
+    @Inject
+    private GenericDAO genericDAO;
 
     public T find(Long cod) {
         return petitionDAO.find(cod);
@@ -161,24 +169,42 @@ public class PetitionService<T extends PetitionEntity> {
     //TODO: FORM_ANNOTATION_VERSION
     //TODO CONSIDERAR QUE AS ANOTAÇÕES PODEM OU NÃO SER SALVAS
     public FormKey saveOrUpdate(T peticao, SInstance instance) {
-        FormKey key;
-        if (instance != null) {
-            key = formPersistenceService.insertOrUpdate(instance);
-            final DraftEntity draftEntity = peticao.getCurrentDraftEntity();
-            if (draftEntity != null) {
-                draftEntity.setFormVersionEntity(formPersistenceService.loadFormEntity(key).getCurrentFormVersionEntity());
-                draftEntity.setEditionDate(new Date());
-                draftDAO.saveOrUpdate(draftEntity);
-            } else {
-                peticao.setCurrentFormVersionEntity(formPersistenceService.loadFormEntity(key).getCurrentFormVersionEntity());
-            }
-            petitionDAO.saveOrUpdate(peticao);
-        } else {
-            key = null;
+
+        if (instance == null) {
+            return null;
         }
+
+        final FormKey     key         = formPersistenceService.insertOrUpdate(instance);
+        final DraftEntity draftEntity = peticao.getCurrentDraftEntity();
+
+        if (draftEntity != null) {
+            saveDraft(key, draftEntity);
+        } else {
+            loadAndSetFormEntityFromKey(key, peticao::setForm);
+        }
+
+        savePetitioner(peticao::getPetitioner);
+        petitionDAO.saveOrUpdate(peticao);
+
         return key;
     }
 
+    private void saveDraft(FormKey key, DraftEntity draftEntity) {
+        loadAndSetFormEntityFromKey(key, draftEntity::setForm);
+        savePetitioner(draftEntity::getPetitioner);
+        draftEntity.setEditionDate(new Date());
+        draftDAO.saveOrUpdate(draftEntity);
+    }
+
+    private void loadAndSetFormEntityFromKey(FormKey key, Consumer<FormEntity> consumer) {
+        consumer.accept(formPersistenceService.loadFormEntity(key));
+    }
+
+    private void savePetitioner(Supplier<PetitionerEntity> petitionerSupplier) {
+        Optional.ofNullable(petitionerSupplier.get()).ifPresent(genericDAO::saveOrUpdate);
+    }
+
+    //TODO consolidar versão do draft na petição e deletar draft atual
     public FormKey send(T peticao, SInstance instance) {
 
         final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
@@ -287,7 +313,7 @@ public class PetitionService<T extends PetitionEntity> {
 
     public DraftEntity createNewDraftWithoutSave(FormPageConfig config) {
 
-        final DraftEntity       draftEntity       = new DraftEntity();
+        final DraftEntity draftEntity = new DraftEntity();
 
         draftEntity.setStartDate(new Date());
         draftEntity.setEditionDate(new Date());

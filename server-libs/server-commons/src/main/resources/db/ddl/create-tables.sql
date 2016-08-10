@@ -258,16 +258,17 @@ CREATE TABLE DBSINGULAR.TB_GRUPO_PROCESSO (
 /*==============================================================*/
 /* Table: TB_PETICIONANTE                                       */
 /*==============================================================*/
+CREATE SEQUENCE DBSINGULAR.SQ_CO_PETICIONANTE START WITH 1 INCREMENT BY 1;
+
 CREATE TABLE DBSINGULAR.TB_PETICIONANTE (
-   CO_PETICIONANTE      INT                  NOT NULL,
+   CO_PETICIONANTE      BIGINT                  NOT NULL,
    DS_NOME              VARCHAR(200)         NOT NULL,
    ID_PESSOA            VARCHAR(32)          NOT NULL,
    NU_CPF_CNPJ          VARCHAR(14)          NULL,
    TP_PESSOA            CHAR(1)              NOT NULL DEFAULT 'J'
       CONSTRAINT CKC_TP_PESSOA_TB_PETIC CHECK (TP_PESSOA IN ('J','F')),
    CONSTRAINT PK_TB_PETICIONANTE PRIMARY KEY (CO_PETICIONANTE)
-)
-go
+);
 
 /*==============================================================*/
 /* Table: TB_DASHBOARD                                          */
@@ -334,7 +335,7 @@ CREATE SEQUENCE DBSINGULAR.SQ_CO_PETICAO  START WITH 1 INCREMENT BY 1;
 CREATE TABLE DBSINGULAR.TB_PETICAO (
    CO_PETICAO                   BIGINT  NOT NULL,
    CO_INSTANCIA_PROCESSO        BIGINT  NULL,
-   CO_FORMULARIO                BIGINT  NOT NULL,
+   CO_FORMULARIO                BIGINT  NULL,
    CO_DEFINICAO_PROCESSO        BIGINT  NOT NULL,
    CO_PETICIONANTE              BIGINT  NULL,
    CO_RASCUNHO_ATUAL            BIGINT  NULL,

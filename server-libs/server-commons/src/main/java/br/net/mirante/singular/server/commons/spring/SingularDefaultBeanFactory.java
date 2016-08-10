@@ -2,8 +2,8 @@ package br.net.mirante.singular.server.commons.spring;
 
 import br.net.mirante.singular.form.persistence.dao.FormAnnotationVersionDAO;
 import br.net.mirante.singular.form.persistence.dao.FormVersionDAO;
+import br.net.mirante.singular.support.persistence.GenericDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.springframework.context.annotation.Bean;
 

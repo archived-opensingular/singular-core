@@ -45,8 +45,9 @@ public class PetitionEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_RASCUNHO_ATUAL")
     private DraftEntity currentDraftEntity;
 
-    @Column(name = "CO_PETICIONANTE")
-    private Long peticionante;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CO_PETICIONANTE")
+    private PetitionerEntity petitioner;
 
     @Column(name = "DS_PETICAO")
     private String description;
@@ -92,12 +93,12 @@ public class PetitionEntity extends BaseEntity<Long> {
         this.currentDraftEntity = currentDraftEntity;
     }
 
-    public Long getPeticionante() {
-        return peticionante;
+    public PetitionerEntity getPetitioner() {
+        return petitioner;
     }
 
-    public void setPeticionante(Long peticionante) {
-        this.peticionante = peticionante;
+    public void setPetitioner(PetitionerEntity petitioner) {
+        this.petitioner = petitioner;
     }
 
     public String getDescription() {

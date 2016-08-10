@@ -52,7 +52,8 @@ public class DraftEntity extends BaseEntity<Long> {
     @Column(name = "DT_EDICAO")
     private Date editionDate;
 
-    @Column(name = "CO_PETICIONANTE")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CO_PETICIONANTE")
     private PetitionerEntity petitioner;
 
     @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
