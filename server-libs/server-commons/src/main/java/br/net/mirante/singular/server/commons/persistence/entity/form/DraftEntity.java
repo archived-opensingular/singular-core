@@ -1,13 +1,15 @@
 package br.net.mirante.singular.server.commons.persistence.entity.form;
 
-import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
+import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.enums.PersonType;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import br.net.mirante.singular.support.persistence.enums.SimNao;
 import br.net.mirante.singular.support.persistence.util.Constants;
 import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -35,8 +37,8 @@ public class DraftEntity extends BaseEntity<Long> {
     private Long cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_FORMULARIO")
-    private FormVersionEntity formVersionEntity;
+    @JoinColumn(name = "CO_FORMULARIO")
+    private FormEntity form;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
@@ -53,7 +55,10 @@ public class DraftEntity extends BaseEntity<Long> {
     @Column(name = "CO_PETICIONANTE")
     private PetitionerEntity petitioner;
 
-    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = @org.hibernate.annotations.Parameter(name = "enumClass", value = SimNao.ENUM_CLASS_NAME))
+    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
+            @Parameter(name = "enumClass", value = SimNao.ENUM_CLASS_NAME),
+            @Parameter(name = "identifierMethod", value = "getCodigo"),
+            @Parameter(name = "valueOfMethod", value = "valueOfEnum")})
     @Column(name = "ST_PETICIONADO")
     private SimNao peticionado;
 
@@ -66,12 +71,12 @@ public class DraftEntity extends BaseEntity<Long> {
         this.cod = cod;
     }
 
-    public FormVersionEntity getFormVersionEntity() {
-        return formVersionEntity;
+    public FormEntity getForm() {
+        return form;
     }
 
-    public void setFormVersionEntity(FormVersionEntity formVersionEntity) {
-        this.formVersionEntity = formVersionEntity;
+    public void setForm(FormEntity form) {
+        this.form = form;
     }
 
     public ProcessDefinitionEntity getProcessDefinitionEntity() {
