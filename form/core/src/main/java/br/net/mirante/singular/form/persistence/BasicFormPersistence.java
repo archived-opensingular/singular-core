@@ -53,6 +53,9 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      */
     public FormKey insertOrUpdate(INSTANCE instance);
 
+
+    public boolean isPersistent(INSTANCE instance);
+
     /**
      * Salva as alterações na versão atual e incrementa versão do formulário
      * e replica as anotações em suas versões iniciais
