@@ -31,7 +31,6 @@ public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
     public static AjaxUpdateInputBehavior forValidate(IModel<SInstance> model, IAjaxUpdateListener listener) {
         return new AjaxUpdateInputBehavior(IWicketComponentMapper.SINGULAR_VALIDATE_EVENT, model, true, listener);
     }
-
     public static AjaxUpdateInputBehavior forProcess(IModel<SInstance> model, IAjaxUpdateListener listener) {
         return new AjaxUpdateInputBehavior(IWicketComponentMapper.SINGULAR_PROCESS_EVENT, model, false, listener);
     }
@@ -39,9 +38,8 @@ public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
     @Override
     protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
         super.updateAjaxAttributes(attributes);
-        //Habilitando desbloqueio para inputs
         //if (validateOnly)
-        attributes.getExtraParameters().put("forceDisableAJAXPageBlock", true);
+        //    attributes.getExtraParameters().put("forceDisableAJAXPageBlock", true);
     }
 
     @Override
