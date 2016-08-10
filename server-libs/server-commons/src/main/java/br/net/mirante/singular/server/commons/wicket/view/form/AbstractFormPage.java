@@ -3,14 +3,15 @@ package br.net.mirante.singular.server.commons.wicket.view.form;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.form.SAttributeEnabled;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.service.IFormService;
+import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
@@ -152,7 +153,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
             @Override
             protected void saveForm(IModel<? extends SInstance> currentInstance) {
-                AbstractFormPage.this.saveForm(currentInstance);
+                AbstractFormPage.this.saveDraft(currentInstance);
             }
 
             @Override
@@ -203,7 +204,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance) {
         T petition = currentModel.getObject();
         if (currentInstance.getObject() instanceof SIComposite) {
-//            petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
+            petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
         }
         return petition;
     }
@@ -265,11 +266,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return enviarModal;
     }
 
-    protected void saveForm(IModel<? extends SInstance> currentInstance) {
+    protected void saveDraft(IModel<? extends SInstance> currentInstance) {
         onBeforeSave(currentInstance);
-        FormKey key = petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance),
-                currentInstance.getObject());
-        formModel.setObject(key);
+        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject()));
     }
 
     protected void onBeforeSend(IModel<? extends SInstance> currentInstance) {
@@ -289,14 +288,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void send(IModel<? extends SInstance> currentInstance) {
         onBeforeSend(currentInstance);
-        FormKey key = petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject());
-        formModel.setObject(key);
+        formModel.setObject(petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject()));
     }
 
     protected void executeTransition(String transitionName, IModel<? extends SInstance> currentInstance) {
-        FormKey key = petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(),
-                currentInstance.getObject());
-        formModel.setObject(key);
+        formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject()));
     }
 
     protected boolean hasProcess() {
@@ -371,9 +367,12 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     private String getTypeLabel(String typeName) {
-        STypeComposite<?> type = (STypeComposite<?>) singularFormConfig
-                .getTypeLoader().loadType(typeName).orElseThrow(() -> new SingularServerException("Não foi possivel carregar o tipo"));
-        return type.asAtr().getLabel();
+        return singularFormConfig
+                .getTypeLoader()
+                .loadType(typeName)
+                .map(SAttributeEnabled::asAtr)
+                .map(AtrBasic::getLabel)
+                .orElseThrow(() -> new SingularServerException("Não foi possivel carregar o tipo"));
     }
 
 }

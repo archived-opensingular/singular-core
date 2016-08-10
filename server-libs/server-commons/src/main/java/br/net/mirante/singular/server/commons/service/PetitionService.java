@@ -194,9 +194,7 @@ public class PetitionService<T extends PetitionEntity> {
         final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
         final ProcessInstance      processInstance   = processDefinition.newInstance();
 
-        //TODO falta a descrição da petição
-        //processInstance.setDescription(peticao.getDescription());
-        processInstance.setDescription("Descrição temporaria");
+        processInstance.setDescription(peticao.getDescription());
 
         final ProcessInstanceEntity processEntity = processInstance.saveEntity();
 
