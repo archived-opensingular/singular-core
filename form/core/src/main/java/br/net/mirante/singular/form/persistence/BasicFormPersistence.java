@@ -54,6 +54,12 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
     public FormKey insertOrUpdate(INSTANCE instance);
 
 
+    /**
+     * Informa se a SInstance passada por parâmetro possui uma chave associada.
+     * Caso contrário é considerado um formulário não persistence
+     * @param instance
+     * @return
+     */
     public boolean isPersistent(INSTANCE instance);
 
     /**

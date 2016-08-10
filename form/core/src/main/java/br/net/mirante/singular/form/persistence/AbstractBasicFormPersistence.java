@@ -159,6 +159,11 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
         return (KEY) key;
     }
 
+    @Override
+    public boolean isPersistent(INSTANCE instance) {
+        return readKeyAttribute(instance, null) != null;
+    }
+
     /**
      * Método chamado para adicionar informção do serviço de persistência à exception. Pode ser ser sobreescito para
      * acrescimo de maiores informações.
