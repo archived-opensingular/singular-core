@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.commons.service;
 
 
+import static br.net.mirante.singular.form.persistence.SPackageFormPersistence.ATR_FORM_KEY;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
@@ -13,14 +14,17 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.persistence.SingularFormPersistenceException;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
+import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.FormTypeDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionerEntity;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import br.net.mirante.singular.support.persistence.GenericDAO;
@@ -168,20 +172,22 @@ public class PetitionService<T extends PetitionEntity> {
 
     //TODO: FORM_ANNOTATION_VERSION
     //TODO CONSIDERAR QUE AS ANOTAÇÕES PODEM OU NÃO SER SALVAS
-    public FormKey saveOrUpdate(T peticao, SInstance instance, boolean createNewDraftIfNull) {
+    public FormKey saveOrUpdate(T peticao, SInstance instance, boolean createNewDraftIfDoesntExists) {
 
         if (instance == null) {
             return null;
         }
 
-        final FormKey     key         = formPersistenceService.insertOrUpdate(instance);
-        final DraftEntity draftEntity = peticao.getCurrentDraftEntity();
+        final FormKey key;
 
-        if (draftEntity != null) {
-            saveDraft(key, draftEntity);
-        } else if (createNewDraftIfNull) {
-            peticao.setCurrentDraftEntity(saveDraft(key, createNewDraftWithoutSave()));
+        if (peticao.getCurrentDraftEntity() != null) {
+            key = formPersistenceService.insertOrUpdate(instance);
+            saveOrUpdateDraft(key, peticao.getCurrentDraftEntity());
+        } else if (createNewDraftIfDoesntExists) {
+            key = formPersistenceService.insert(instance);
+            peticao.setCurrentDraftEntity(saveOrUpdateDraft(key, createNewDraftWithoutSave()));
         } else {
+            key = formPersistenceService.insertOrUpdate(instance);
             loadAndSetFormEntityFromKey(key, peticao::setForm);
         }
 
@@ -194,7 +200,7 @@ public class PetitionService<T extends PetitionEntity> {
         return key;
     }
 
-    private DraftEntity saveDraft(FormKey key, DraftEntity draftEntity) {
+    private DraftEntity saveOrUpdateDraft(FormKey key, DraftEntity draftEntity) {
         loadAndSetFormEntityFromKey(key, draftEntity::setForm);
         draftEntity.setEditionDate(new Date());
         draftDAO.saveOrUpdate(draftEntity);
@@ -205,17 +211,17 @@ public class PetitionService<T extends PetitionEntity> {
         consumer.accept(formPersistenceService.loadFormEntity(key));
     }
 
-    //TODO consolidar versão do draft na petição e deletar draft atual
+    private FormKey preparePetitionForTransition(T petition, SInstance instance) {
+        if (petition.getCurrentDraftEntity() != null) {
+            return consolidateDraft(petition, instance);
+        } else {
+            return saveOrUpdate(petition, instance, false);
+        }
+    }
+
     public FormKey send(T peticao, SInstance instance) {
 
-        final FormKey key;
-
-        if (peticao.getCurrentDraftEntity() != null) {
-            key = consolidateDraft(peticao, instance);
-        } else {
-            key = saveOrUpdate(peticao, instance, false);
-        }
-
+        final FormKey              key               = preparePetitionForTransition(peticao, instance);
         final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
         final ProcessInstance      processInstance   = processDefinition.newInstance();
 
@@ -230,24 +236,38 @@ public class PetitionService<T extends PetitionEntity> {
         return key;
     }
 
-    public FormKey consolidateDraft(T petition, SInstance instance) {
-        final DraftEntity draftEntity = petition.getCurrentDraftEntity();
-        draftEntity.setPeticionado(SimNao.SIM);
+    public FormKey consolidateDraft(T petition, SInstance draftInstance) {
+
+        final SDocumentFactory documentFactory = draftInstance.getDocument().getDocumentFactoryRef().get();
+        final RefType          refType         = draftInstance.getDocument().getRootRefType().orElse(null);
+
+        if (documentFactory == null || refType == null) {
+            throw new SingularFormPersistenceException("Não foi possivel resolver as dependencias para consolidar o rascunho.");
+        }
+
+        final FormKey   petitionFormKey      = formPersistenceService.keyFromObject(petition.getForm().getCod());
+        final SInstance petitionFormInstance = formPersistenceService.loadSInstance(petitionFormKey, refType, documentFactory);
+
+        Value.copyValues(draftInstance, petitionFormInstance);
+
+//        loadAndSetFormEntityFromKey(formPersistenceService.newVersion(petitionFormInstance), petition::setForm);
+        loadAndSetFormEntityFromKey(formPersistenceService.insertOrUpdate(petitionFormInstance), petition::setForm);
+
+        final DraftEntity currentDraftEntity = petition.getCurrentDraftEntity();
+
+        genericDAO.delete(currentDraftEntity);
         petition.setCurrentDraftEntity(null);
-        genericDAO.saveOrUpdate(draftEntity);
-        return saveOrUpdate(petition, instance, false);
+
+        return saveOrUpdate(petition, petitionFormInstance, false);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public FormKey saveAndExecuteTransition(String transitionName, T peticao, SInstance instance) {
         try {
-
-            final FormKey                            key   = saveOrUpdate(peticao, instance, false);
+            final FormKey                            key   = preparePetitionForTransition(peticao, instance);
             final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(peticao).getClass();
             final ProcessInstance                    pi    = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
-
             pi.executeTransition(transitionName);
-
             return key;
         } catch (Exception e) {
             throw new SingularServerException(e.getMessage(), e);
@@ -257,7 +277,6 @@ public class PetitionService<T extends PetitionEntity> {
     public List<? extends TaskInstanceDTO> listTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
         return taskInstanceDAO.findTasks(first, count, sortProperty, ascending, siglaFluxo, idsPerfis, filtroRapido, concluidas);
     }
-
 
     public Integer countTasks(String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
         return taskInstanceDAO.countTasks(siglaFluxo, idsPerfis, filtroRapido, concluidas);
@@ -333,7 +352,6 @@ public class PetitionService<T extends PetitionEntity> {
         final DraftEntity draftEntity = new DraftEntity();
         draftEntity.setStartDate(new Date());
         draftEntity.setEditionDate(new Date());
-        draftEntity.setPeticionado(SimNao.NAO);
         return draftEntity;
     }
 

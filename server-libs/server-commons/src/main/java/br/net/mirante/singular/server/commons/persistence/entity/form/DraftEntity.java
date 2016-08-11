@@ -48,13 +48,6 @@ public class DraftEntity extends BaseEntity<Long> {
     @Column(name = "DT_EDICAO")
     private Date editionDate;
 
-    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
-            @Parameter(name = "enumClass", value = SimNao.ENUM_CLASS_NAME),
-            @Parameter(name = "identifierMethod", value = "getCodigo"),
-            @Parameter(name = "valueOfMethod", value = "valueOfEnum")})
-    @Column(name = "ST_PETICIONADO")
-    private SimNao peticionado;
-
     @Override
     public Long getCod() {
         return cod;
@@ -78,14 +71,6 @@ public class DraftEntity extends BaseEntity<Long> {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
-    }
-
-    public SimNao getPeticionado() {
-        return peticionado;
-    }
-
-    public void setPeticionado(SimNao peticionado) {
-        this.peticionado = peticionado;
     }
 
     public Date getEditionDate() {
