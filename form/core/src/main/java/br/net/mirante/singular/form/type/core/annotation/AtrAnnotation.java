@@ -200,15 +200,17 @@ public class AtrAnnotation extends STranslatorForAttribute {
      */
     public Map<String, SIList<SIAnnotation>> persistentAnnotationsClassified() {
         Map<String, SIList<SIAnnotation>> classifiedAnnotations = new HashMap<>();
-        Iterator<SIAnnotation> it = ((SInstance) getTarget()).getDocument().annotations().iterator();
-        while(it.hasNext()){
-            SIAnnotation annotation = it.next();
-            SIList<SIAnnotation> list = classifiedAnnotations.get(annotation.getClassifier());
-            if (list == null){
-                list = dictionary().newInstance(STypeAnnotationList.class);
-                classifiedAnnotations.put(annotation.getClassifier(), list);
+        if (hasAnnotation()) {
+            Iterator<SIAnnotation> it = ((SInstance) getTarget()).getDocument().annotations().iterator();
+            while (it.hasNext()) {
+                SIAnnotation annotation = it.next();
+                SIList<SIAnnotation> list = classifiedAnnotations.get(annotation.getClassifier());
+                if (list == null) {
+                    list = dictionary().newInstance(STypeAnnotationList.class);
+                    classifiedAnnotations.put(annotation.getClassifier(), list);
+                }
+                list.addNew(a -> Value.hydrate(a, Value.dehydrate(annotation)));
             }
-            list.addNew(a -> Value.hydrate(a, Value.dehydrate(annotation)));
         }
         return classifiedAnnotations;
     }
