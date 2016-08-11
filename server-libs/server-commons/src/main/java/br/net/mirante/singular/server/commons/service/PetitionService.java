@@ -166,11 +166,11 @@ public class PetitionService<T extends PetitionEntity> {
             key = formPersistenceService.insertOrUpdate(instance);
             final DraftEntity draftEntity = peticao.getCurrentDraftEntity();
             if (draftEntity != null) {
-                draftEntity.setFormVersionEntity(formPersistenceService.loadFormEntity(key).getCurrentFormVersionEntity());
+                draftEntity.setForm(formPersistenceService.loadFormEntity(key));
                 draftEntity.setEditionDate(new Date());
                 draftDAO.saveOrUpdate(draftEntity);
             } else {
-                peticao.setCurrentFormVersionEntity(formPersistenceService.loadFormEntity(key).getCurrentFormVersionEntity());
+                peticao.setForm(formPersistenceService.loadFormEntity(key));
             }
             petitionDAO.saveOrUpdate(peticao);
         } else {

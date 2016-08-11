@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.persistence.FormKey;
+import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
@@ -105,8 +106,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     private FormVersionEntity getFormVersionFromDraftOrPetition(T petition) {
         return Optional.ofNullable(petition.getCurrentDraftEntity())
-                .map(DraftEntity::getFormVersionEntity)
-                .orElse(petition.getCurrentFormVersionEntity());
+                .map(DraftEntity::getForm)
+                .map(FormEntity::getCurrentFormVersionEntity)
+                .orElse(petition.getForm().getCurrentFormVersionEntity());
     }
 
     @Override
