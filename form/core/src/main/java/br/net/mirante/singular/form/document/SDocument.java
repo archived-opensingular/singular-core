@@ -349,7 +349,7 @@ public class SDocument {
         return siAnnotationList;
     }
 
-    public void setAnnotations(SIList annotations) {
+    private void setAnnotations(SIList annotations) {
         this.annotations = annotations;
     }
 
@@ -378,7 +378,7 @@ public class SDocument {
             setAnnotations(newAnnotationList());
     }
 
-    public SIList annotations() {
+    public SIList<SIAnnotation> annotations() {
         return annotations;
     }
 

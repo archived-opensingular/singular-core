@@ -12,10 +12,17 @@ import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STranslatorForAttribute;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.util.transformer.Value;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -173,15 +180,44 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @param annotations to be loaded into the instance.
      */
     public void loadAnnotations(SIList annotations) {
-        target().getDocument().setAnnotations(annotations);
+        Iterator<SIAnnotation> it = annotations.iterator();
+        while (it.hasNext()){
+            SIAnnotation annotation = it.next();
+            target().getDocument().annotations().addNew(a -> Value.hydrate(a, Value.dehydrate(annotation)));
+        }
     }
 
     /**
      * @return A ready to persist object containing all annotations from this instance and its children.
      */
-    public SIList persistentAnnotations() {
-        return ((SInstance)getTarget()).getDocument().annotations();
+    public SIList persistentAnnotationsClassified(String classifier) {
+      return persistentAnnotationsClassified().get(classifier);
     }
+
+    /**
+     * @return A ready to persist object containing all annotations from this instance and its children
+     * mapped by its classifier
+     */
+    public Map<String, SIList<SIAnnotation>> persistentAnnotationsClassified() {
+        Map<String, SIList<SIAnnotation>> classifiedAnnotations = new HashMap<>();
+        Iterator<SIAnnotation> it = ((SInstance) getTarget()).getDocument().annotations().iterator();
+        while(it.hasNext()){
+            SIAnnotation annotation = it.next();
+            SIList<SIAnnotation> list = classifiedAnnotations.get(annotation.getClassifier());
+            if (list == null){
+                list = dictionary().newInstance(STypeAnnotationList.class);
+                classifiedAnnotations.put(annotation.getClassifier(), list);
+            }
+            list.addNew(a -> Value.hydrate(a, Value.dehydrate(annotation)));
+        }
+        return classifiedAnnotations;
+    }
+
+    public SIList<SIAnnotation> persistentAnnotations() {
+        return  ((SInstance) getTarget()).getDocument().annotations();
+    }
+
+
 
     private SIList newAnnotationList() {
         return (SIList) annotationListType().newInstance();

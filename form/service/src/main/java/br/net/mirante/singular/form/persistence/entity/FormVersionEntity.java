@@ -41,7 +41,7 @@ public class FormVersionEntity extends BaseEntity<Long> {
     private Long cacheVersion;
 
     @OneToMany(mappedBy = "formVersionEntity")
-    private List<FormAnnotationVersionEntity> formAnnotationVersionEntities;
+    private List<FormAnnotationEntity> formAnnotations;
 
     public FormVersionEntity() {
         setInclusionDate(new Date());
@@ -96,23 +96,12 @@ public class FormVersionEntity extends BaseEntity<Long> {
         this.cacheVersion = cacheVersion;
     }
 
-    public List<FormAnnotationVersionEntity> getFormAnnotationVersionEntities() {
-        return formAnnotationVersionEntities;
+    public List<FormAnnotationEntity> getFormAnnotations() {
+        return formAnnotations;
     }
 
-    public void setFormAnnotationVersionEntities(List<FormAnnotationVersionEntity> formAnnotationVersionEntities) {
-        this.formAnnotationVersionEntities = formAnnotationVersionEntities;
-    }
-
-    @Deprecated
-    public Optional<FormAnnotationVersionEntity> getLatestFormAnnotationVersionEntity() {
-        if (getFormAnnotationVersionEntities() != null) {
-            return getFormAnnotationVersionEntities()
-                    .stream()
-                    .sorted((a, b) -> b.getInclusionDate().compareTo(a.getInclusionDate()))
-                    .findFirst();
-        }
-        return Optional.empty();
+    public void setFormAnnotations(List<FormAnnotationEntity> formAnnotations) {
+        this.formAnnotations = formAnnotations;
     }
 
 }

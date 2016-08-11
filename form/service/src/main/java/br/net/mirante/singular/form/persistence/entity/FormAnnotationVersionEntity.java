@@ -20,9 +20,13 @@ public class FormAnnotationVersionEntity extends BaseEntity<Long> {
     @GeneratedValue(generator = PK_GENERATOR_NAME)
     private Long cod;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_FORMULARIO")
-    private FormVersionEntity formVersionEntity;
+    @ManyToOne
+    @JoinColumns(value = {
+            @JoinColumn(name = "CO_VERSAO_FORMULARIO", referencedColumnName = "CO_VERSAO_FORMULARIO"),
+            @JoinColumn(name = "CO_CHAVE_ANOTACAO", referencedColumnName = "CO_CHAVE_ANOTACAO")
+    }
+    )
+    private FormAnnotationEntity formAnnotationEntity;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INCLUSAO")
@@ -48,12 +52,12 @@ public class FormAnnotationVersionEntity extends BaseEntity<Long> {
         this.cod = cod;
     }
 
-    public FormVersionEntity getFormVersionEntity() {
-        return formVersionEntity;
+    public FormAnnotationEntity getFormAnnotationEntity() {
+        return formAnnotationEntity;
     }
 
-    public void setFormVersionEntity(FormVersionEntity formVersionEntity) {
-        this.formVersionEntity = formVersionEntity;
+    public void setFormAnnotationEntity(FormAnnotationEntity formAnnotationEntity) {
+        this.formAnnotationEntity = formAnnotationEntity;
     }
 
     public Date getInclusionDate() {
