@@ -4,15 +4,12 @@ import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.form.SAttributeEnabled;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
-import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
@@ -42,7 +39,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -95,7 +91,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         }
 
         if (petition.getCod() != null) {
-            formModel.setObject(formService.keyFromObject(getFormVersionFromDraftOrPetition(petition).getFormEntity()));
+            formModel.setObject(formService.keyFromObject(getFormEntityDraftOrPetition(petition).getCod()));
         }
 
         currentModel.setObject(petition);
@@ -103,12 +99,10 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         super.onInitialize();
     }
 
-
-    private FormVersionEntity getFormVersionFromDraftOrPetition(T petition) {
+    private FormEntity getFormEntityDraftOrPetition(T petition) {
         return Optional.ofNullable(petition.getCurrentDraftEntity())
                 .map(DraftEntity::getForm)
-                .map(FormEntity::getCurrentFormVersionEntity)
-                .orElse(petition.getForm().getCurrentFormVersionEntity());
+                .orElse(petition.getForm());
     }
 
     @Override
@@ -285,8 +279,12 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void configureLazyFlowIfNeeded(IModel<? extends SInstance> currentInstance, T petition, FormPageConfig cfg) {
         if (petition.getProcessDefinitionEntity() == null && cfg.isWithLazyProcessResolver()) {
-            final Class<? extends ProcessDefinition> dc = cfg.getLazyFlowDefinitionResolver().resolve(cfg, (SIComposite) currentInstance.getObject());
-            petition.setProcessDefinitionEntity((ProcessDefinitionEntity) Flow.getProcessDefinition(dc).getEntityProcessDefinition());
+            final Class<? extends ProcessDefinition> dc                      = cfg.getLazyFlowDefinitionResolver().resolve(cfg, (SIComposite) currentInstance.getObject());
+            final ProcessDefinitionEntity            entityProcessDefinition = (ProcessDefinitionEntity) Flow.getProcessDefinition(dc).getEntityProcessDefinition();
+            petition.setProcessDefinitionEntity(entityProcessDefinition);
+            if (petition.getCurrentDraftEntity() != null) {
+                petition.getCurrentDraftEntity().setProcessDefinitionEntity(entityProcessDefinition);
+            }
         }
     }
 

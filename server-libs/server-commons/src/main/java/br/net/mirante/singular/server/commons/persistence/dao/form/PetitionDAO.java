@@ -68,8 +68,8 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
             hql.append(" , p.description as description ");
             hql.append(" , task.name as situation ");
             hql.append(" , processDefinitionEntity.name as processName ");
-            hql.append(" , currentFormVersion.inclusionDate as creationDate ");
-            hql.append(" , formType.abbreviation as type ");
+            hql.append(" , case when currentFormDraftVersionEntity is null then currentFormVersion.inclusionDate else currentFormDraftVersionEntity.inclusionDate end as creationDate ");
+            hql.append(" , case when formDraftType is null then formType.abbreviation else formDraftType.abbreviation end as type ");
             hql.append(" , processDefinitionEntity.key as processType ");
             hql.append(" , ta.beginDate as situationBeginDate ");
             hql.append(" , pie.beginDate as processBeginDate ");
@@ -88,10 +88,13 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         hql.append(" FROM ").append(tipo.getName()).append(" p ");
         hql.append(" LEFT JOIN p.processInstanceEntity pie ");
         hql.append(" LEFT JOIN p.currentDraftEntity currentDraftEntity ");
-        hql.append(" LEFT JOIN p.currentFormVersionEntity currentFormVersion ");
+        hql.append(" LEFT JOIN currentDraftEntity.form formDraftEntity");
+        hql.append(" LEFT JOIN formDraftEntity.currentFormVersionEntity currentFormDraftVersionEntity");
+        hql.append(" LEFT JOIN p.form formEntity ");
+        hql.append(" LEFT JOIN formEntity.currentFormVersionEntity currentFormVersion ");
         hql.append(" LEFT JOIN p.processDefinitionEntity processDefinitionEntity ");
-        hql.append(" LEFT JOIN currentFormVersion.formEntity formEntity  ");
         hql.append(" LEFT JOIN formEntity.formType formType  ");
+        hql.append(" LEFT JOIN formDraftEntity.formType formDraftType  ");
         hql.append(" LEFT JOIN pie.tasks ta ");
         hql.append(" LEFT JOIN ta.task task ");
     }
