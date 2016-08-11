@@ -110,7 +110,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             input = appendReadOnlyInput(ctx, formGroup, labelModel);
         }
 
-        if (ctx.annotation().enabled()) {
+        if (ctx.getAnnotationMode().enabled()) {
             if (input.getDefaultModel() != null) {
                 ctx.updateAnnotations(input, (SInstance) input.getDefaultModel().getObject());
             }

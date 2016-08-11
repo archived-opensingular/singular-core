@@ -132,11 +132,11 @@ public class WicketBuildContext implements Serializable {
         return this;
     }
 
-    public AnnotationMode annotation() {
+    public AnnotationMode getAnnotationMode() {
         return annotation;
     }
 
-    public void annotation(AnnotationMode mode) {
+    public void setAnnotationMode(AnnotationMode mode) {
         Objects.requireNonNull(mode);
         annotation = mode;
     }

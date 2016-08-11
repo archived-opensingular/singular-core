@@ -133,11 +133,11 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
      */
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer(), getRootInstance());
-        ctx.annotation(annotation());
+        ctx.setAnnotationMode(getAnnotationMode());
         getSingularFormContext().getUIBuilder().build(ctx, getViewMode());
     }
 
-    public AnnotationMode annotation(){return annotation;};
+    public AnnotationMode getAnnotationMode(){return annotation;};
 
     /**
      * Constrói o body container

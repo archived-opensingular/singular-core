@@ -151,7 +151,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         }
 
         private boolean renderAnnotations() {
-            return ctx.getRootContext().annotation().enabled() &&
+            return ctx.getRootContext().getAnnotationMode().enabled() &&
                     instance.asAtrAnnotation().isAnnotated();
         }
 

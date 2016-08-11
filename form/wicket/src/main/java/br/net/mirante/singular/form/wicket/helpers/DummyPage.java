@@ -53,7 +53,7 @@ public class DummyPage extends WebPage {
         public ViewMode getViewMode() { return viewMode;    }
 
         @Override
-        public AnnotationMode annotation() {    return annotationMode;  }
+        public AnnotationMode getAnnotationMode() {    return annotationMode;  }
     };
 
     private Optional<SType<?>> buildBaseType() {
