@@ -48,4 +48,7 @@ public class GenericDAO extends SimpleDAO {
         return criteria.list();
     }
 
+    public <PK extends Serializable, T extends BaseEntity<PK>> void delete(T entity) {
+        getSession().delete(entity);
+    }
 }
