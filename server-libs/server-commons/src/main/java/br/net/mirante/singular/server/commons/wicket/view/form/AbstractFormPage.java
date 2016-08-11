@@ -4,6 +4,7 @@ import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.document.RefType;
@@ -279,12 +280,15 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void configureLazyFlowIfNeeded(IModel<? extends SInstance> currentInstance, T petition, FormPageConfig cfg) {
         if (petition.getProcessDefinitionEntity() == null && cfg.isWithLazyProcessResolver()) {
-            final Class<? extends ProcessDefinition> dc                      = cfg.getLazyFlowDefinitionResolver().resolve(cfg, (SIComposite) currentInstance.getObject());
-            final ProcessDefinitionEntity            entityProcessDefinition = (ProcessDefinitionEntity) Flow.getProcessDefinition(dc).getEntityProcessDefinition();
-            petition.setProcessDefinitionEntity(entityProcessDefinition);
-            if (petition.getCurrentDraftEntity() != null) {
-                petition.getCurrentDraftEntity().setProcessDefinitionEntity(entityProcessDefinition);
-            }
+            cfg.getLazyFlowDefinitionResolver().resolve(cfg, (SIComposite) currentInstance.getObject())
+                    .map(Flow::getProcessDefinition)
+                    .map(ProcessDefinition::getEntityProcessDefinition)
+                    .ifPresent(processDefinitionEntity -> {
+                        petition.setProcessDefinitionEntity((ProcessDefinitionEntity) processDefinitionEntity);
+                        if (petition.getCurrentDraftEntity() != null) {
+                            petition.getCurrentDraftEntity().setProcessDefinitionEntity((ProcessDefinitionEntity) processDefinitionEntity);
+                        }
+                    });
         }
     }
 

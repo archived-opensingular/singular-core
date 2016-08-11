@@ -72,8 +72,8 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public IFormService formService(FormDAO formDAO, FormVersionDAO formVersionDAO, FormAnnotationDAO formAnnotationDAO, FormAnnotationVersionDAO formAnnotationVersionDAO) {
-        return new FormService(formDAO, formVersionDAO, formAnnotationDAO, formAnnotationVersionDAO);
+    public IFormService formService(FormDAO formDAO, FormVersionDAO formVersionDAO, FormAnnotationDAO formAnnotationDAO, FormAnnotationVersionDAO formAnnotationVersionDAO, GenericDAO genericDAO) {
+        return new FormService(formDAO, formVersionDAO, formAnnotationDAO, formAnnotationVersionDAO, genericDAO);
     }
 
     @Bean
