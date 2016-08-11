@@ -24,11 +24,14 @@ import br.net.mirante.singular.form.persistence.entity.*;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.support.persistence.GenericDAO;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -107,8 +110,11 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     private void saveOrUpdateFormAnnotation(SInstance instance, FormVersionEntity formVersionEntity) {
-        Map<String, String>               classifiedAnnotationsXML      = extractAnnotations(instance);
-        Map<String, FormAnnotationEntity> classifiedAnnotationsEntities = formVersionEntity.getFormAnnotations().stream().collect(Collectors.toMap(FormAnnotationEntity::getClassifier, f -> f));
+        Map<String, String> classifiedAnnotationsXML = extractAnnotations(instance);
+        Map<String, FormAnnotationEntity> classifiedAnnotationsEntities = Optional.ofNullable(formVersionEntity.getFormAnnotations())
+                .orElse(new ArrayList<>(0))
+                .stream()
+                .collect(Collectors.toMap(FormAnnotationEntity::getClassifier, f -> f));
         for (Map.Entry<String, String> entry : classifiedAnnotationsXML.entrySet()) {
             saveOrUpdateFormAnnotation(entry.getKey(), entry.getValue(), formVersionEntity, classifiedAnnotationsEntities.get(entry.getKey()));
         }
