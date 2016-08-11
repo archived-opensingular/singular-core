@@ -40,10 +40,6 @@ public class DraftEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_FORMULARIO")
     private FormEntity form;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
-    private ProcessDefinitionEntity processDefinitionEntity;
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INICIO")
     private Date startDate;
@@ -51,10 +47,6 @@ public class DraftEntity extends BaseEntity<Long> {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_EDICAO")
     private Date editionDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_PETICIONANTE")
-    private PetitionerEntity petitioner;
 
     @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
             @Parameter(name = "enumClass", value = SimNao.ENUM_CLASS_NAME),
@@ -80,14 +72,6 @@ public class DraftEntity extends BaseEntity<Long> {
         this.form = form;
     }
 
-    public ProcessDefinitionEntity getProcessDefinitionEntity() {
-        return processDefinitionEntity;
-    }
-
-    public void setProcessDefinitionEntity(ProcessDefinitionEntity processDefinitionEntity) {
-        this.processDefinitionEntity = processDefinitionEntity;
-    }
-
     public Date getStartDate() {
         return startDate;
     }
@@ -102,14 +86,6 @@ public class DraftEntity extends BaseEntity<Long> {
 
     public void setPeticionado(SimNao peticionado) {
         this.peticionado = peticionado;
-    }
-
-    public PetitionerEntity getPetitioner() {
-        return petitioner;
-    }
-
-    public void setPetitioner(PetitionerEntity petitioner) {
-        this.petitioner = petitioner;
     }
 
     public Date getEditionDate() {

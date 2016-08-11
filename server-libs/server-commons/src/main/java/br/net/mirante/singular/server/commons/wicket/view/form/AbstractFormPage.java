@@ -4,7 +4,6 @@ import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.document.RefType;
@@ -81,22 +80,16 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     @Override
     protected void onInitialize() {
-
         final T petition;
-
         if (StringUtils.isBlank(config.getFormId())) {
-            petition = petitionService.createNewPetitionWithoutSave(petitionClass, config);
-            onNewPetitionCreation(petition, config);
+            petition = petitionService.createNewPetitionWithoutSave(petitionClass, config, this::onNewPetitionCreation);
         } else {
             petition = petitionService.find(Long.valueOf(config.getFormId()));
         }
-
         if (petition.getCod() != null) {
             formModel.setObject(formService.keyFromObject(getFormEntityDraftOrPetition(petition).getCod()));
         }
-
         currentModel.setObject(petition);
-
         super.onInitialize();
     }
 
@@ -267,7 +260,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void saveForm(IModel<? extends SInstance> currentInstance) {
         onBeforeSave(currentInstance);
-        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject()));
+        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), true));
     }
 
     protected void onBeforeSend(IModel<? extends SInstance> currentInstance) {
@@ -285,9 +278,6 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                     .map(ProcessDefinition::getEntityProcessDefinition)
                     .ifPresent(processDefinitionEntity -> {
                         petition.setProcessDefinitionEntity((ProcessDefinitionEntity) processDefinitionEntity);
-                        if (petition.getCurrentDraftEntity() != null) {
-                            petition.getCurrentDraftEntity().setProcessDefinitionEntity((ProcessDefinitionEntity) processDefinitionEntity);
-                        }
                     });
         }
     }
