@@ -127,8 +127,8 @@ public class Value {
             SInstance campo = ((SIComposite) instanciaComposta).getField(path);
             if (campo instanceof SISimple) {
                 return Value.of((SISimple<T>) campo);
-            } else if(campo instanceof SIList){
-                return (T) ofList((SIList)campo);
+            } else if (campo instanceof SIList) {
+                return (T) ofList((SIList) campo);
             }
         }
         return null;
@@ -251,6 +251,10 @@ public class Value {
 
     public <T> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.notNull(instancia, tipo);
+    }
+
+    public static void copyValues(SInstance origin, SInstance target) {
+        hydrate(target, dehydrate(origin));
     }
 
     public static class Content implements Serializable {
