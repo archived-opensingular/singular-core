@@ -47,6 +47,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     private final FormAnnotationDAO        formAnnotationDAO;
     private final FormAnnotationVersionDAO formAnnotationVersionDAO;
     private final GenericDAO               genericDAO;
+    private final Boolean KEEP_ANNOTATIONS = true;
 
     @Inject
     public FormService(FormDAO formDAO,
@@ -79,7 +80,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     @Override
     protected FormKeyLong insertInternal(SInstance instance) {
         final FormEntity entity = saveNewFormEntity(instance);
-        saveOrUpdateFormVersion(instance, entity, new FormVersionEntity());
+        saveOrUpdateFormVersion(instance, entity, new FormVersionEntity(), KEEP_ANNOTATIONS);
         return new FormKeyLong(entity.getCod());
     }
 
@@ -101,13 +102,14 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         return formTypeEntity;
     }
 
-    private void saveOrUpdateFormVersion(final SInstance instance, final FormEntity entity, final FormVersionEntity formVersionEntity) {
+    private void saveOrUpdateFormVersion(final SInstance instance, final FormEntity entity, final FormVersionEntity formVersionEntity, boolean keepAnnotations) {
         formVersionEntity.setFormEntity(entity);
         formVersionEntity.setXml(extractContent(instance));
         formVersionDAO.saveOrUpdate(formVersionEntity);
         entity.setCurrentFormVersionEntity(formVersionEntity);
-        saveOrUpdateFormAnnotation(instance, formVersionEntity);
-
+        if (keepAnnotations) {
+            saveOrUpdateFormAnnotation(instance, formVersionEntity);
+        }
     }
 
     private void saveOrUpdateFormAnnotation(SInstance instance, FormVersionEntity formVersionEntity) {
@@ -174,7 +176,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     protected void updateInternal(FormEntity entity, SInstance instance) {
-        saveOrUpdateFormVersion(instance, entity, entity.getCurrentFormVersionEntity());
+        saveOrUpdateFormVersion(instance, entity, entity.getCurrentFormVersionEntity(), KEEP_ANNOTATIONS);
         formDAO.saveOrUpdate(entity);
     }
 
@@ -216,7 +218,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     public FormKey newVersion(SInstance instance, boolean keepAnnotations) {
         FormKey formKey = readKeyAttribute(instance, null);
         FormEntity formEntity = loadFormEntity(formKey);
-        saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity());
+        saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity(), keepAnnotations);
         return formKey;
     }
 
