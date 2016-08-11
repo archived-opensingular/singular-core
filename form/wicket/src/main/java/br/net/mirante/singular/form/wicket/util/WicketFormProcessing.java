@@ -289,8 +289,9 @@ public class WicketFormProcessing {
 
     private static void refreshComponentOrCellContainer(Optional<AjaxRequestTarget> target, Component component) {
         if (target.isPresent() && component != null) {
+            Component comp = ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component);
             target.get()
-                .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
+                .add(WicketFormUtils.resolveRefreshingComponent(comp));
         }
     }
 

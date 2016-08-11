@@ -38,8 +38,8 @@ public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
     @Override
     protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
         super.updateAjaxAttributes(attributes);
-        if (validateOnly)
-            attributes.getExtraParameters().put("forceDisableAJAXPageBlock", true);
+        //if (validateOnly)
+        //    attributes.getExtraParameters().put("forceDisableAJAXPageBlock", true);
     }
 
     @Override

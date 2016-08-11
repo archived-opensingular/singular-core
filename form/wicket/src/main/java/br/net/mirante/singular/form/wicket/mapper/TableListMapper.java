@@ -5,9 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel.*;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
 
 import java.util.Set;
 
@@ -28,7 +27,6 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewListByTable;
 import br.net.mirante.singular.form.wicket.ISValidationFeedbackHandlerListener;
@@ -90,7 +88,7 @@ public class TableListMapper extends AbstractListaMapper {
 
         final SType<SInstance> elementsType = list.getObject().getElementsType();
 
-        if (!(elementsType instanceof STypeComposite) && elementsType.getAttributeValue(SPackageBasic.ATR_REQUIRED)) {
+        if (!(elementsType instanceof STypeComposite) && elementsType.asAtr().isRequired()) {
             title.add($b.classAppender("singular-form-required"));
         }
 

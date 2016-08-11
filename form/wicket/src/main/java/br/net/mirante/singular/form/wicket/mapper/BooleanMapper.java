@@ -5,6 +5,19 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
+
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
@@ -16,16 +29,6 @@ import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
-import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.model.IModel;
-
-import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS;
-import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 
 public class BooleanMapper implements IWicketComponentMapper {
 
@@ -55,6 +58,18 @@ public class BooleanMapper implements IWicketComponentMapper {
         input.add(DisabledClassBehavior.getInstance());
         formGroup.appendFeedback(formGroup, new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING), IConsumer.noop());
         ctx.configure(this, input);
+
+        label.add(new ClassAttributeModifier() {
+            @Override
+            protected Set<String> update(Set<String> oldClasses) {
+                if (model.getObject().isRequired()) {
+                    oldClasses.add("singular-form-required");
+                } else {
+                    oldClasses.remove("singular-form-required");
+                }
+                return oldClasses;
+            }
+        });
     }
 
     private void buildForVisualization(IModel<? extends SInstance> model, BSControls formGroup,
