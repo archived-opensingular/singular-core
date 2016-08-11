@@ -25,6 +25,7 @@ import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.support.persistence.GenericDAO;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -213,38 +214,39 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     @Override
     public FormKey newVersion(SInstance instance, boolean keepAnnotations) {
-        //TODO: FORM_ANNOTATION_VERSION
-        return null;
+        FormKey formKey = readKeyAttribute(instance, null);
+        FormEntity formEntity = loadFormEntity(formKey);
+        saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity());
+        return formKey;
     }
 
     @Override
     public AnnotationKey insertAnnotation(AnnotationKey annotationKey, SIAnnotation instance) {
-
-        return null;
+        throw new NotImplementedException("Não implementado");
     }
 
     @Override
     public void deleteAnnotation(AnnotationKey annotationKey) {
-
+        throw new NotImplementedException("Não implementado");
     }
 
     @Override
     public void updateAnnotation(AnnotationKey annotationKey, SIAnnotation instance) {
-
+        throw new NotImplementedException("Não implementado");
     }
 
     @Override
     public AnnotationKey insertOrUpdateAnnotation(AnnotationKey annotationKey, SIAnnotation instance) {
-        return null;
+        throw new NotImplementedException("Não implementado");
     }
 
     @Override
     public AnnotationKey newAnnotationVersion(AnnotationKey key, SIAnnotation instance) {
-        return null;
+        throw new NotImplementedException("Não implementado");
     }
 
     @Override
     public AnnotationKey keyFromClassifier(FormKey formKey, String classifier) {
-        return null;
+        throw new NotImplementedException("Não implementado");
     }
 }
