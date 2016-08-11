@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 import br.net.mirante.singular.server.commons.service.IServerMetadataREST;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
+import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 
 @AutoScanDisabled
@@ -33,9 +35,12 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
 
+    @Inject
+    private PermissionResolverService permissionResolverService;
+
     @Override
     @RequestMapping(value = PATH_LIST_MENU, method = RequestMethod.GET)
-    public List<MenuGroup> listMenu(@RequestParam(MENU_CONTEXT) String context) {
+    public List<MenuGroup> listMenu(@RequestParam(MENU_CONTEXT) String context, @RequestParam(USER) String user) {
 
         List<MenuGroup> groupDTOs = new ArrayList<>();
         Map<String, List<ProcessDefinition>> definitionMap = new HashMap<>();
@@ -49,6 +54,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
 
         definitionMap.forEach((category, definitions) -> {
             MenuGroup menuGroupDTO = new MenuGroup();
+            menuGroupDTO.setId("CAIXA_" + SingularUtil.normalize(category).toUpperCase());
             menuGroupDTO.setLabel(category);
             menuGroupDTO.setProcesses(new ArrayList<>());
             definitions.forEach(d ->
@@ -61,12 +67,18 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
             groupDTOs.add(menuGroupDTO);
         });
 
-        customizeMenu(groupDTOs, context);
+        filterAccessRight(groupDTOs, user);
+
+        customizeMenu(groupDTOs, context, user);
 
         return groupDTOs;
     }
 
-    protected void customizeMenu(List<MenuGroup> groupDTOs, String menuContext) {
+    protected void filterAccessRight(List<MenuGroup> groupDTOs, String user) {
+        permissionResolverService.filterBoxWithPermissions(groupDTOs, user);
+    }
+
+    protected void customizeMenu(List<MenuGroup> groupDTOs, String menuContext, String user) {
 
     }
 

@@ -10,9 +10,18 @@ import java.util.List;
 
 public class MenuGroup implements Serializable {
 
+    private String id;
     private String label;
     private List<ItemBox> itemBoxes;
     private List<ProcessDTO> processes;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getLabel() {
         return label;

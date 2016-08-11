@@ -17,6 +17,7 @@ import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
+import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
 
 public class SingularDefaultBeanFactory {
@@ -76,5 +77,9 @@ public class SingularDefaultBeanFactory {
         return new SingularDefaultUserService();
     }
 
+    @Bean
+    public PermissionResolverService getPermissionResolverService() {
+        return new PermissionResolverService();
+    }
 
 }

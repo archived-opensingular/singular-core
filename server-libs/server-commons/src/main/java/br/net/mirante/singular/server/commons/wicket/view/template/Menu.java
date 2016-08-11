@@ -141,7 +141,7 @@ public class Menu extends Panel {
         categorias = buscarCategorias();
         final MenuSessionConfig menuSessionConfig = getMenuSessionConfig();
         if (!menuSessionConfig.isInitialized()) {
-            menuSessionConfig.initialize(categorias, getMenuContext());
+            menuSessionConfig.initialize(categorias, getMenuContext(), getIdUsuarioLogado());
         }
     }
 

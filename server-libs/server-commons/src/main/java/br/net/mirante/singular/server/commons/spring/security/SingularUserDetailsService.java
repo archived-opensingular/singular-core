@@ -1,6 +1,11 @@
 package br.net.mirante.singular.server.commons.spring.security;
 
-import br.net.mirante.singular.server.commons.config.IServerContext;
+import java.util.Collection;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,9 +16,7 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import java.util.Collection;
+import br.net.mirante.singular.server.commons.config.IServerContext;
 
 @Transactional
 public interface SingularUserDetailsService extends UserDetailsService, UserDetailsContextMapper {
@@ -38,5 +41,7 @@ public interface SingularUserDetailsService extends UserDetailsService, UserDeta
     public SingularUserDetails loadUserByUsername(String username, IServerContext context) throws UsernameNotFoundException;
 
     public IServerContext[] getContexts();
+
+    public List<String> pesquisarPerfis(String idUsuarioLogado);
 
 }

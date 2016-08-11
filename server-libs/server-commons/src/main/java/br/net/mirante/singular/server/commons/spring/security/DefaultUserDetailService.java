@@ -1,16 +1,19 @@
 package br.net.mirante.singular.server.commons.spring.security;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.server.commons.config.IServerContext;
 import br.net.mirante.singular.server.commons.config.ServerContext;
-
 import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Optional;
 
 public class DefaultUserDetailService implements SingularUserDetailsService {
 
@@ -27,5 +30,10 @@ public class DefaultUserDetailService implements SingularUserDetailsService {
     @Override
     public IServerContext[] getContexts() {
         return ServerContext.values();
+    }
+
+    @Override
+    public List<String> pesquisarPerfis(String idUsuarioLogado) {
+        return Collections.emptyList();
     }
 }

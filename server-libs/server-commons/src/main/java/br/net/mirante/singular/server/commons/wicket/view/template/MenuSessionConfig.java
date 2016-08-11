@@ -5,8 +5,7 @@
 
 package br.net.mirante.singular.server.commons.wicket.view.template;
 
-import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.MENU_CONTEXT;
-import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_LIST_MENU;
+import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.*;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -38,19 +37,20 @@ public class MenuSessionConfig implements Serializable {
         return Collections.unmodifiableMap(map);
     }
 
-    public void initialize(List<ProcessGroupEntity> categorias, String menuContext) {
+    public void initialize(List<ProcessGroupEntity> categorias, String menuContext, String idUsername) {
         for (ProcessGroupEntity categoria : categorias) {
-            final List<MenuGroup> menuGroupDTOs = listMenus(categoria, menuContext);
+            final List<MenuGroup> menuGroupDTOs = listMenus(categoria, menuContext, idUsername);
             addMenu(categoria, menuGroupDTOs);
         }
 
         initialized = true;
     }
 
-    private List<MenuGroup> listMenus(ProcessGroupEntity processGroup, String menuContext) {
+    private List<MenuGroup> listMenus(ProcessGroupEntity processGroup, String menuContext, String idUsername) {
 
         final String url = processGroup.getConnectionURL() + PATH_LIST_MENU
-                + "?" + MENU_CONTEXT + "=" + menuContext;
+                + "?" + MENU_CONTEXT + "=" + menuContext
+                + "&" + USER + "=" + idUsername;
         try {
             return Arrays.asList(new RestTemplate().getForObject(url, MenuGroup[].class));
         } catch (Exception e) {
@@ -88,5 +88,9 @@ public class MenuSessionConfig implements Serializable {
 
     public boolean isInitialized() {
         return initialized;
+    }
+
+    public void reset() {
+        this.initialized = false;
     }
 }

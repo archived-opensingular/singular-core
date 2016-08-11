@@ -13,8 +13,9 @@ public interface IServerMetadataREST {
 
     String PATH_LIST_MENU = "/server/menu/list";
     String MENU_CONTEXT = "menuContext";
+    String USER = "user";
     String PATH_BOX_SEARCH = "/box/search";
 
-    List<MenuGroup> listMenu(String context);
+    List<MenuGroup> listMenu(String context, String user);
 
 }
