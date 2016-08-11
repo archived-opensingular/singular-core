@@ -82,6 +82,21 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
+    public FormVersionDAO formVersionDAO() {
+        return new FormVersionDAO();
+    }
+
+    @Bean
+    public FormAnnotationDAO formAnnotationDAO() {
+        return new FormAnnotationDAO();
+    }
+
+    @Bean
+    public FormAnnotationVersionDAO formAnnotationVersionDAO() {
+        return new FormAnnotationVersionDAO();
+    }
+
+    @Bean
     public IUserService userService() {
         return new SingularDefaultUserService();
     }
