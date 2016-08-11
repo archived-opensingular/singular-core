@@ -169,18 +169,16 @@ public class PetitionService<T extends PetitionEntity> {
     //TODO: FORM_ANNOTATION_VERSION
     //TODO CONSIDERAR QUE AS ANOTAÇÕES PODEM OU NÃO SER SALVAS
     public FormKey saveOrUpdate(T peticao, SInstance instance) {
-        FormKey key;
-        if (instance != null) {
-            key = formPersistenceService.insertOrUpdate(instance);
-            final DraftEntity draftEntity = peticao.getCurrentDraftEntity();
-            if (draftEntity != null) {
-                draftEntity.setFormVersionEntity(formPersistenceService.loadFormEntity(key).getCurrentFormVersionEntity());
-                draftEntity.setEditionDate(new Date());
-                draftDAO.saveOrUpdate(draftEntity);
-            } else {
-                peticao.setCurrentFormVersionEntity(formPersistenceService.loadFormEntity(key).getCurrentFormVersionEntity());
-            }
-            petitionDAO.saveOrUpdate(peticao);
+
+        if (instance == null) {
+            return null;
+        }
+
+        final FormKey     key         = formPersistenceService.insertOrUpdate(instance);
+        final DraftEntity draftEntity = peticao.getCurrentDraftEntity();
+
+        if (draftEntity != null) {
+            saveDraft(key, draftEntity);
         } else {
             loadAndSetFormEntityFromKey(key, peticao::setForm);
         }
