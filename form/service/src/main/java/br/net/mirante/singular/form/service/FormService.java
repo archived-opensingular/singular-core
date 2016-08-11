@@ -20,11 +20,15 @@ import br.net.mirante.singular.form.persistence.dao.FormAnnotationDAO;
 import br.net.mirante.singular.form.persistence.dao.FormAnnotationVersionDAO;
 import br.net.mirante.singular.form.persistence.dao.FormDAO;
 import br.net.mirante.singular.form.persistence.dao.FormVersionDAO;
-import br.net.mirante.singular.form.persistence.entity.*;
+import br.net.mirante.singular.form.persistence.entity.FormAnnotationEntity;
+import br.net.mirante.singular.form.persistence.entity.FormAnnotationPK;
+import br.net.mirante.singular.form.persistence.entity.FormAnnotationVersionEntity;
+import br.net.mirante.singular.form.persistence.entity.FormEntity;
+import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
+import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.support.persistence.GenericDAO;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -32,7 +36,6 @@ import org.springframework.util.Assert;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,11 +45,11 @@ import java.util.stream.Collectors;
 @Transactional
 public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
 
-    private final FormDAO                  formDAO;
-    private final FormVersionDAO           formVersionDAO;
-    private final FormAnnotationDAO        formAnnotationDAO;
+    private final FormDAO formDAO;
+    private final FormVersionDAO formVersionDAO;
+    private final FormAnnotationDAO formAnnotationDAO;
     private final FormAnnotationVersionDAO formAnnotationVersionDAO;
-    private final GenericDAO               genericDAO;
+    private final GenericDAO genericDAO;
     private final Boolean KEEP_ANNOTATIONS = true;
 
     @Inject
@@ -70,8 +73,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     @Override
     public SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
-        final FormEntity entity   = loadFormEntity(key);
-        final SInstance  instance = MformPersistenciaXML.fromXML(refType, entity.getCurrentFormVersionEntity().getXml(), documentFactory);
+        final FormEntity entity = loadFormEntity(key);
+        final SInstance instance = MformPersistenciaXML.fromXML(refType, entity.getCurrentFormVersionEntity().getXml(), documentFactory);
         loadCurrentXmlAnnotationOrEmpty(instance, entity);
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
         return instance;
@@ -93,7 +96,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     private FormTypeEntity getOrCreateNewFormTypeEntity(final String typeAbbreviation) {
         FormTypeEntity formTypeEntity = genericDAO.findByUniqueProperty(FormTypeEntity.class, "abbreviation", typeAbbreviation);
-        if(formTypeEntity == null){
+        if (formTypeEntity == null) {
             formTypeEntity = new FormTypeEntity();
             formTypeEntity.setAbbreviation(typeAbbreviation);
             formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES
@@ -138,7 +141,6 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         formAnnotationEntity.getCod().setFormVersionEntity(formVersionEntity);
         formAnnotationDAO.save(formAnnotationEntity);
         saveOrUpdateFormAnnotationVersion(xml, formAnnotationEntity, new FormAnnotationVersionEntity());
-
     }
 
     private void saveOrUpdateFormAnnotationVersion(String xml, FormAnnotationEntity formAnnotationEntity, FormAnnotationVersionEntity formAnnotationVersionEntity) {
@@ -147,6 +149,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         formAnnotationVersionEntity.setInclusionActor(1);
         formAnnotationVersionEntity.setXml(xml);
         formAnnotationVersionDAO.saveOrUpdate(formAnnotationVersionEntity);
+        formAnnotationEntity.setAnnotationCurrentVersion(formAnnotationVersionEntity);
+        formAnnotationDAO.save(formAnnotationEntity);
     }
 
 
@@ -192,8 +196,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
      * @return
      */
     private Map<String, String> extractAnnotations(SInstance instance) {
-        AtrAnnotation       annotatedInstance = instance.as(AtrAnnotation::new);
-        Map<String, String> mapClassifierXml  = new HashMap<>();
+        AtrAnnotation annotatedInstance = instance.as(AtrAnnotation::new);
+        Map<String, String> mapClassifierXml = new HashMap<>();
         for (Map.Entry<String, SIList<SIAnnotation>> entry : annotatedInstance.persistentAnnotationsClassified().entrySet()) {
             mapClassifierXml.put(entry.getKey(), extractContent(entry.getValue()));
         }
