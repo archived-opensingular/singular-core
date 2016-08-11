@@ -87,7 +87,7 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
     }
 
     @Override
-    public final void delete(FormKey key) {
+    public void delete(FormKey key) {
         deleteInternal(checkKey(key, null, " o parâmetro key não fosse null"));
     }
 
@@ -137,7 +137,7 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
      * Lê o {@link FormKey} de uma instância e verifica se é da classe esperada. Se for diferente de null e não for da
      * classe espera, então dispara uma Exception.
      */
-    protected final KEY readKeyAttribute(INSTANCE instance, String msgRequired) {
+    protected KEY readKeyAttribute(INSTANCE instance, String msgRequired) {
         if (instance == null) {
             throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null"));
         }
@@ -145,7 +145,7 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
         return checkKey(key, instance, msgRequired);
     }
 
-    protected final KEY checkKey(FormKey key, INSTANCE instance, String msgRequired) {
+    protected KEY checkKey(FormKey key, INSTANCE instance, String msgRequired) {
         if (key == null) {
             if (msgRequired != null) {
                 throw addInfo(new SingularFormPersistenceException("Era esperado que " + msgRequired)).add("key", null)
