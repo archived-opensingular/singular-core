@@ -245,27 +245,26 @@ public class PetitionService<T extends PetitionEntity> {
             throw new SingularFormPersistenceException("Não foi possivel resolver as dependencias para consolidar o rascunho.");
         }
 
-        final SInstance petitionFormInstance;
-        final FormKey   petitionFormKey;
+        FormKey petitionFormKey;
 
         if (petition.getForm() != null) {
             petitionFormKey = formPersistenceService.keyFromObject(petition.getForm().getCod());
-            petitionFormInstance = formPersistenceService.loadSInstance(petitionFormKey, refType, documentFactory);
+            final SInstance petitionFormInstance = formPersistenceService.loadSInstance(petitionFormKey, refType, documentFactory);
             Value.copyValues(draftInstance, petitionFormInstance);
-//          loadAndSetFormEntityFromKey(formPersistenceService.newVersion(petitionFormInstance), petition::setForm);
-            loadAndSetFormEntityFromKey(formPersistenceService.insertOrUpdate(petitionFormInstance), petition::setForm);
+            petitionFormKey = formPersistenceService.newVersion(petitionFormInstance);
+            loadAndSetFormEntityFromKey(petitionFormKey, petition::setForm);
         } else {
             petitionFormKey = formPersistenceService.insert(draftInstance);
-            petitionFormInstance = draftInstance;
             loadAndSetFormEntityFromKey(petitionFormKey, petition::setForm);
         }
 
         final DraftEntity currentDraftEntity = petition.getCurrentDraftEntity();
 
-        genericDAO.delete(currentDraftEntity);
         petition.setCurrentDraftEntity(null);
+        genericDAO.delete(currentDraftEntity);
+        genericDAO.saveOrUpdate(petition);
 
-        return saveOrUpdate(petition, petitionFormInstance, false);
+        return petitionFormKey;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

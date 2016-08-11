@@ -265,6 +265,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void onBeforeSend(IModel<? extends SInstance> currentInstance) {
         configureLazyFlowIfNeeded(currentInstance, currentModel.getObject(), config);
+        saveForm(currentInstance);
     }
 
     protected void onBeforeSave(IModel<? extends SInstance> currentInstance) {
@@ -288,6 +289,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected void executeTransition(String transitionName, IModel<? extends SInstance> currentInstance) {
+        saveForm(currentInstance);
         formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject()));
     }
 
