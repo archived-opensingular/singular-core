@@ -254,6 +254,7 @@ public class Value {
     }
 
     public static void copyValues(SInstance origin, SInstance target) {
+        target.clearInstance();
         hydrate(target, dehydrate(origin));
     }
 
