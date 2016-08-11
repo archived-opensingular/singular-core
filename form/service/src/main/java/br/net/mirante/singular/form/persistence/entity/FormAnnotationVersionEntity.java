@@ -13,10 +13,10 @@ import java.util.Date;
 @Table(name = "TB_VERSAO_ANOTACAO_FORMULARIO", schema = Constants.SCHEMA)
 public class FormAnnotationVersionEntity extends BaseEntity<Long> {
 
-    public static final String PK_GENERATOR_NAME = "GENERATED_CO_VERSAO_ANOTACAO_FORM";
+    public static final String PK_GENERATOR_NAME = "GENERATED_CO_VERSAO_ANOTACAO";
 
     @Id
-    @Column(name = "CO_VERSAO_ANOTACAO_FORM")
+    @Column(name = "CO_VERSAO_ANOTACAO")
     @GeneratedValue(generator = PK_GENERATOR_NAME)
     private Long cod;
 
