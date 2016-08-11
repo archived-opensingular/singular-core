@@ -11,6 +11,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessGroup;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the TB_GRUPO_PROCESSO database table.

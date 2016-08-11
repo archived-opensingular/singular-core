@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.support.persistence.util.Constants;

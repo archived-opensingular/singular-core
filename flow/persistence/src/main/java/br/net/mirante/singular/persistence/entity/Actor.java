@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import br.net.mirante.singular.support.persistence.util.Constants;
 
 /**
