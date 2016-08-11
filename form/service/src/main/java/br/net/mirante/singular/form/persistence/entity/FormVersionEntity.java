@@ -40,7 +40,7 @@ public class FormVersionEntity extends BaseEntity<Long> {
     @Column(name = "NU_VERSAO_CACHE")
     private Long cacheVersion;
 
-    @OneToMany(mappedBy = "formVersionEntity")
+    @OneToMany(mappedBy = "cod.formVersionEntity")
     private List<FormAnnotationEntity> formAnnotations;
 
     public FormVersionEntity() {

@@ -4,7 +4,6 @@ import br.net.mirante.singular.form.persistence.entity.FormAnnotationVersionEnti
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.springframework.stereotype.Repository;
 
-@Repository
 public class FormAnnotationVersionDAO extends BaseDAO<FormAnnotationVersionEntity, Long> {
 
     public FormAnnotationVersionDAO() {
