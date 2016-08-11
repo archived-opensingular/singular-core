@@ -39,6 +39,7 @@ class MasterDetailModal extends BFModalWindow {
     protected FormStateUtil.FormState      formState;
     protected IModel<String>               actionLabel;
     protected ActionAjaxButton             addButton;
+    private IConsumer<AjaxRequestTarget>   onHideCallback;
 
     MasterDetailModal(String id,
         IModel<SIList<SInstance>> model,
@@ -170,6 +171,12 @@ class MasterDetailModal extends BFModalWindow {
         super.show(target);
         target.appendJavaScript(getConfigureBackdropScript());
     }
+    @Override
+    public void hide(AjaxRequestTarget target) {
+        super.hide(target);
+        if (onHideCallback != null)
+            onHideCallback.accept(target);
+    }
 
     private String getConfigureBackdropScript() {
         String js = "";
@@ -193,5 +200,9 @@ class MasterDetailModal extends BFModalWindow {
     @SuppressWarnings("unchecked")
     public SIList<SInstance> getModelObject() {
         return (SIList<SInstance>) super.getDefaultModelObject();
+    }
+    public MasterDetailModal setOnHideCallback(IConsumer<AjaxRequestTarget> onHideCallback) {
+        this.onHideCallback = onHideCallback;
+        return this;
     }
 }
