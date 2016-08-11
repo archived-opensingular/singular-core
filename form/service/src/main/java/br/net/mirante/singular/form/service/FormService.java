@@ -84,7 +84,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     private FormEntity saveNewFormEntity(SInstance instance) {
         final FormEntity entity = new FormEntity();
-        entity.setFormType(getOrCreateNewFormTypeEntity(instance.getType().getNameSimple()));
+        entity.setFormType(getOrCreateNewFormTypeEntity(instance.getType().getName()));
         formDAO.saveOrUpdate(entity);
         return entity;
     }
