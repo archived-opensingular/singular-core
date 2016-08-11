@@ -124,7 +124,7 @@ public abstract class AbstractFormContent extends Content {
             }
 
             @Override
-            public AnnotationMode annotation() {
+            public AnnotationMode getAnnotationMode() {
                 return annotationMode;
             }
         };

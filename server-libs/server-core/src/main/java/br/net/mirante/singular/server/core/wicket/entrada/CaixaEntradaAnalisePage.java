@@ -5,7 +5,7 @@ import br.net.mirante.singular.server.core.wicket.template.ServerTemplate;
 import org.wicketstuff.annotation.mount.MountPath;
 
 @MountPath("caixaentrada")
-public class EntradaAnalisePage extends ServerTemplate {
+public class CaixaEntradaAnalisePage extends ServerTemplate {
 
 
     @Override

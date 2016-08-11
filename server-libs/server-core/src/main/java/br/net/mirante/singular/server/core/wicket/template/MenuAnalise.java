@@ -14,7 +14,7 @@ import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Menu;
 import br.net.mirante.singular.server.core.wicket.concluida.ConcluidaPage;
-import br.net.mirante.singular.server.core.wicket.entrada.EntradaAnalisePage;
+import br.net.mirante.singular.server.core.wicket.entrada.CaixaEntradaAnalisePage;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuGroup;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;
@@ -39,7 +39,7 @@ public class MenuAnalise extends Menu {
         final MetronicMenu menu = new MetronicMenu("menu");
         //TODO prover solução melhor para todos os contextos de aplicação
         final MetronicMenuGroup group = new MetronicMenuGroup(Icone.LAYERS, "Petições");
-        final MetronicMenuItem entrada = new MetronicMenuItem(Icone.DOCS, "Caixa de Entrada", EntradaAnalisePage.class);
+        final MetronicMenuItem entrada = new MetronicMenuItem(Icone.DOCS, "Caixa de Entrada", CaixaEntradaAnalisePage.class);
         final MetronicMenuItem concluidas = new MetronicMenuItem(Icone.DOCS, "Concluídas", ConcluidaPage.class);
 
         menu.addItem(group);
