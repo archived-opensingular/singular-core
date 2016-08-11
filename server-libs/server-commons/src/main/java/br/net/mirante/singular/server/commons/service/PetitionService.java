@@ -207,6 +207,14 @@ public class PetitionService<T extends PetitionEntity> {
     //TODO consolidar versão do draft na petição e deletar draft atual
     public FormKey send(T peticao, SInstance instance) {
 
+        final FormKey key;
+
+        if (peticao.getCurrentDraftEntity() != null) {
+            key = consolidateDraft(peticao, instance);
+        } else {
+            key = saveOrUpdate(peticao, instance);
+        }
+
         final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
         final ProcessInstance      processInstance   = processDefinition.newInstance();
 
@@ -216,11 +224,17 @@ public class PetitionService<T extends PetitionEntity> {
 
         peticao.setProcessInstanceEntity(processEntity);
 
-        final FormKey key = saveOrUpdate(peticao, instance);
-
         processInstance.start();
 
         return key;
+    }
+
+    public FormKey consolidateDraft(T petition, SInstance instance) {
+        final DraftEntity draftEntity = petition.getCurrentDraftEntity();
+        draftEntity.setPeticionado(SimNao.SIM);
+        petition.setCurrentDraftEntity(null);
+        genericDAO.saveOrUpdate(draftEntity);
+        return saveOrUpdate(petition, instance);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
