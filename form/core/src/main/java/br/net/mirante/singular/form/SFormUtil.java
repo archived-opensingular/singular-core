@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.joining;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 
 import br.net.mirante.singular.commons.internal.function.SupplierUtil;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.type.core.SPackageBootstrap;
 import br.net.mirante.singular.form.type.country.brazil.SPackageCountryBrazil;
 import br.net.mirante.singular.form.type.util.SPackageUtil;
@@ -163,14 +162,18 @@ public final class SFormUtil {
      * mediante a leitura das anotações {@link SInfoType} e {@link SInfoPackage}.
      */
     public static String getTypeName(Class<? extends SType<?>> typeClass) {
+        Class<? extends SPackage> packageClass = getTypePackage(typeClass);
+        String packageName = getInfoPackageNameOrException(packageClass);
+        return packageName + '.' + getTypeSimpleName(typeClass);
+    }
+
+    public static String getTypeSimpleName(Class<? extends SType<?>> typeClass) {
         SInfoType infoType = getInfoType(typeClass);
         if (StringUtils.isBlank(infoType.name())) {
             throw new SingularFormException("O tipo " + typeClass.getName() + " não define o nome do tipo por meio da anotação @"
                 + SInfoType.class.getSimpleName());
         }
-        Class<? extends SPackage> packageClass = getTypePackage(typeClass);
-        String packageName = getInfoPackageNameOrException(packageClass);
-        return packageName + '.' + infoType.name();
+        return infoType.name();
     }
 
     static SInfoType getInfoType(Class<? extends SType<?>> typeClass) {
