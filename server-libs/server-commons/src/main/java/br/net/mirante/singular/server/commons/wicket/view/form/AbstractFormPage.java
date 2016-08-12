@@ -324,44 +324,28 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         tp.add(singularButton);
     }
 
-    private BSModalBorder buildFlowConfirmationModal(String buttonId, BSContainer<?> modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
-        TemplatePanel tpModal = modalContainer.newTemplateTag(
-                tt -> "<div wicket:id='flow-modal" + buttonId + "' class='portlet-body form'>\n" +
-                        "<div wicket:id='flow-msg'/>\n" + "</div>\n");
-        BSModalBorder confirmarAcaoFlowModal = new BSModalBorder("flow-modal" + buttonId, getMessage("label.button.confirm"));
-        tpModal.add(confirmarAcaoFlowModal);
-        confirmarAcaoFlowModal
-                .addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.cancel", new AjaxButton("cancel-btn") {
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        confirmarAcaoFlowModal.hide(target);
-                    }
-                });
+    /**
+     * @param idSuffix -> button id suffix
+     * @param mc       -> modal container
+     * @param tn       -> transition name
+     * @param im       -> instance model
+     * @param vm       -> view mode
+     * @return
+     */
+    private BSModalBorder buildFlowConfirmationModal(String idSuffix, BSContainer<?> mc, String tn, IModel<? extends SInstance> im, ViewMode vm) {
+        final FlowConfirmModalBuilder flowConfirmModalBuilder = resolveFlowConfirmModalBuilder(tn);
+        final TemplatePanel           modalTemplatePanel      = mc.newTemplateTag(t -> flowConfirmModalBuilder.getMarkup(idSuffix));
+        final BSModalBorder           modal                   = flowConfirmModalBuilder.build(idSuffix, tn, im, vm);
+        modalTemplatePanel.add(modal);
+        return modal;
+    }
 
-        confirmarAcaoFlowModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm",
-                new SingularSaveButton("confirm-btn", instanceModel, ViewMode.EDIT.equals(viewMode)) {
-                    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
-                                                       IModel<? extends SInstance> instanceModel) {
-                        try {
-                            AbstractFormPage.this.executeTransition(transitionName, instanceModel);
-                            target.appendJavaScript("Singular.atualizarContentWorklist();");
-                            addToastrSuccessMessageWorklist("message.action.success", transitionName);
-                            target.appendJavaScript("window.close();");
-                        } catch (Exception e) { // org.hibernate.StaleObjectStateException
-                            getLogger().error("Erro ao salvar o XML", e);
-                            addToastrErrorMessage("message.save.concurrent_error");
-                        }
-                    }
-
-                    @Override
-                    protected void onValidationError(AjaxRequestTarget target, Form<?> form,
-                                                     IModel<? extends SInstance> instanceModel) {
-                        confirmarAcaoFlowModal.hide(target);
-                        target.add(form);
-                    }
-                });
-        confirmarAcaoFlowModal.add(new Label("flow-msg", String.format("Tem certeza que deseja %s ?", transitionName)));
-        return confirmarAcaoFlowModal;
+    /**
+     * @param tn -> the transition name
+     * @return the FlowConfirmModalBuilder
+     */
+    protected FlowConfirmModalBuilder resolveFlowConfirmModalBuilder(String tn) {
+        return new SimpleMessageFlowConfirmModalBuilder(this);
     }
 
 }
