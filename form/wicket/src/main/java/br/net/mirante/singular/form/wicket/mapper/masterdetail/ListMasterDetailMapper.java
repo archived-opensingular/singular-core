@@ -238,8 +238,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         });
     }
 
-    private ActionConfig<?> buildRemoveActionConfig() {
-        return new ActionConfig<>()
+    private ActionConfig buildRemoveActionConfig() {
+        return new ActionConfig<SInstance>()
             .styleClasses(Model.of("list-detail-remove"))
             .iconeModel(Model.of(Icone.REMOVE))
             .title(Model.of("Remover"));
@@ -253,7 +253,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         };
     }
 
-    private ActionConfig<?> buildViewOrEditActionConfig(ViewMode viewMode, SViewListByMasterDetail view) {
+    private ActionConfig buildViewOrEditActionConfig(ViewMode viewMode, SViewListByMasterDetail view) {
         final Icone openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL : Icone.EYE;
         return new ActionConfig<>()
             .iconeModel(Model.of(openModalIcon))
@@ -265,7 +265,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         return (target, rowModel) -> modal.showExisting(target, rowModel, ctx);
     }
 
-    private ActionConfig<?> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
+    private ActionConfig buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
         return new ActionConfig<>()
             .iconeModel(IReadOnlyModel.of(() -> Icone.EXCLAMATION_TRIANGLE))
             .styleClasses(Model.of("red"))
