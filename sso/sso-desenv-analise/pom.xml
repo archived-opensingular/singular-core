@@ -23,4 +23,8 @@
       </dependency>
     </dependencies>
 
+    <build>
+        <finalName>sso#analise</finalName>
+    </build>
+
 </project>

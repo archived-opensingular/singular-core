@@ -23,4 +23,8 @@
       </dependency>
     </dependencies>
 
+    <build>
+        <finalName>sso#peticionamento</finalName>
+    </build>
+
 </project>
