@@ -7,6 +7,7 @@ package br.net.mirante.singular.util.wicket.datatable.column;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static org.apache.commons.lang3.StringUtils.*;
 
 import java.io.Serializable;
 
@@ -21,6 +22,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.commons.lambda.IBiFunction;
+import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
@@ -31,11 +33,11 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BSActionPanel<T> extends Panel {
 
-    public static final String LINK_ID  = "link";
-    public static final String ICONE_ID = "icone";
-    public static final String LABEL_ID = "label";
+    public static final String  LINK_ID  = "link";
+    public static final String  ICONE_ID = "icone";
+    public static final String  LABEL_ID = "label";
 
-    private final RepeatingView actions = new RepeatingView("actions");
+    private final RepeatingView actions  = new RepeatingView("actions");
 
     public BSActionPanel(String id) {
         super(id);
@@ -44,13 +46,13 @@ public class BSActionPanel<T> extends Panel {
 
     public BSActionPanel<T> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, MarkupContainer link) {
         return appendAction(new ActionConfig<>().labelModel(labelModel).iconeModel(iconeModel)
-                .stripeModel(null).link(link).styleClasses($m.ofValue("black")).withText(true));
+            .stripeModel(null).link(link).styleClasses($m.ofValue("black")).withText(true));
     }
 
     public BSActionPanel<T> appendAction(ActionConfig<?> actionConfig) {
 
         actions.add(new WebMarkupContainer(actions.newChildId())
-                .add(actionConfig.link.add($b.attrAppender("class", actionConfig.styleClasses, " "))));
+            .add(actionConfig.link.add($b.attrAppender("class", actionConfig.styleClasses, " "))));
 
         if (actionConfig.stripeModel != null) {
             actionConfig.link.add($b.attrAppender("class", actionConfig.stripeModel, " "));
@@ -127,21 +129,20 @@ public class BSActionPanel<T> extends Panel {
         }
     }
 
-
     public static class ActionConfig<T> implements Serializable {
 
-        protected IModel<?> labelModel = $m.ofValue("");
-        protected IModel<Icone>   iconeModel;
-        protected IModel<String>  iconeStyle;
-        protected IModel<String>  iconeClass;
-        protected IModel<String>  stripeModel;
-        protected MarkupContainer link;
-        protected IModel<String> styleClasses = $m.ofValue("btn default btn-xs black");
-        protected IModel<String> style;
-        protected IModel<String> title;
-        protected boolean withText = false;
+        protected IModel<?>                               labelModel   = $m.ofValue("");
+        protected IModel<Icone>                           iconeModel;
+        protected IModel<String>                          iconeStyle;
+        protected IModel<String>                          iconeClass;
+        protected IModel<String>                          stripeModel;
+        protected MarkupContainer                         link;
+        protected IModel<String>                          styleClasses = $m.ofValue("btn default btn-xs black");
+        protected IModel<String>                          style;
+        protected IModel<String>                          title;
+        protected boolean                                 withText     = false;
         protected IBiFunction<T, String, MarkupContainer> linkFactory;
-        protected IFunction<IModel, Boolean> visibleFor = m -> Boolean.TRUE;
+        protected IFunction<IModel, Boolean>              visibleFor   = m -> Boolean.TRUE;
 
         public ActionConfig<T> labelModel(IModel<?> labelModel) {
             this.labelModel = labelModel;
@@ -207,7 +208,11 @@ public class BSActionPanel<T> extends Panel {
             return visibleFor.apply(rowModel);
         }
 
+        public ActionConfig<T> configure(IConsumer<ActionConfig<T>> configurer) {
+            if (configurer != null)
+                configurer.accept(this);
+            return this;
+        }
     }
-
 
 }

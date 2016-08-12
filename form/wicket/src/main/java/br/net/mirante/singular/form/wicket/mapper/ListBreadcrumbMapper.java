@@ -370,7 +370,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
             builder.appendActionColumn($m.ofValue(""), actionColumn -> {
                 if (viewMode.isEdition() && view.isDeleteEnabled()) {
-                    actionColumn.appendAction(new BSActionPanel.ActionConfig<>()
+                    actionColumn.appendAction(new BSActionPanel.ActionConfig()
                                     .iconeModel(Model.of(Icone.MINUS), Model.of(MapperCommons.ICON_STYLE))
                                     .styleClasses(Model.of("red"))
                                     .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
@@ -382,7 +382,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 }
                 final Icone openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
                 actionColumn.appendAction(
-                        new BSActionPanel.ActionConfig<>()
+                        new BSActionPanel.ActionConfig()
                                 .iconeModel(Model.of(openModalIcon), Model.of(MapperCommons.ICON_STYLE))
                                 .styleClasses(Model.of("blue-madison"))
                                 .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
