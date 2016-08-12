@@ -1,21 +1,25 @@
 jQuery(document).ready(function () {
 
         Wicket.Event.subscribe('/ajax/call/beforeSend', function (evt, attrs, jqXHR, settings) {
-            var showLoading = enableAJAXPageBlock;
+        	var blockImmediately = $('#'+attrs.c).is('button,input[type=button],input[type=submit],a,i');
+        	var showLoading = enableAJAXPageBlock;
             if(attrs && attrs['ep']){
-                $.each(attrs['ep'], function(i,v){
-                    console.log("v",v);
+                $.each(attrs['ep'], function(i,v){ //console.log("v",v);
                     if(v["name"] == "forceDisableAJAXPageBlock"){
-                        showLoading = !v["value"];
-                        console.log('showLoading', showLoading);
+                        showLoading = !v["value"]; //console.log('showLoading', showLoading);
+                    }
+                    if(v["name"] == "forceImmediateAJAXPageBlock"){
+                    	blockImmediately = v["value"]; //console.log('showLoading', showLoading);
                     }
                 });
             }
 
             if (showLoading) {
-                $('#blocking_overlay').show();
+            	if (blockImmediately) {
+            		$('#blocking_overlay').css('opacity', '0.2').show();
+            	}
                 window.blocking_overlay_timeoutId = setTimeout(function () {
-                    $('#blocking_overlay').css('opacity', '0.5');
+                	$('#blocking_overlay').css('opacity', '0.5').show();
                     App.startPageLoading({animate: true});
                 }, 1200);
             }
