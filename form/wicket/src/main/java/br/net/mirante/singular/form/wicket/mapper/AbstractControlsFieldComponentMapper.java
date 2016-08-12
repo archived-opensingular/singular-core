@@ -110,7 +110,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             input = appendReadOnlyInput(ctx, formGroup, labelModel);
         }
 
-        if (ctx.annotation().enabled()) {
+        if (ctx.getAnnotationMode().enabled()) {
             if (input.getDefaultModel() != null) {
                 ctx.updateAnnotations(input, (SInstance) input.getDefaultModel().getObject());
             }
@@ -140,18 +140,16 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
     }
 
     /**
-     * Filtra os eventos, disparando somente um
+     * Filtra os eventos (validate e process) garantindo que somente um será disparado
      * <p>
-     * quando um blur acontecer, verifica se um change está agendado se não agenda um blur
-     * quando um change acontecer, verifica se um blur está agendado e renive dando prioridade ao change
+     * Quando algum blur acontecer, verifica se algum change está agendado, caso não esteja, agenda um blur
+     * Quando algum change acontecer, verifica se algum blur está agendado, caso tenha limpa o blur dando dando prioridade ao change
      * <p>
-     * a verificação é adicionada nas 2 pontas porque quando exite mascara o blur acontece antes do change
-     * quando não tem, acontece o contrario.
-     *
-     * @param comp
+     * @param comp o Componente a ser configurado.
      */
     @Override
     public void adjustJSEvents(Component comp) {
         comp.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS));
     }
+
 }

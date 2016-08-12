@@ -19,20 +19,13 @@ import org.hibernate.criterion.Restrictions;
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 
-@Transactional(Transactional.TxType.MANDATORY)
-public class BaseDAO<T extends BaseEntity, ID extends Serializable> implements Loggable, Serializable {
 
-    @Inject
-    protected transient SessionFactory sessionFactory;
+public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends SimpleDAO {
 
     protected Class<T> tipo;
 
     public BaseDAO(Class<T> tipo) {
         this.tipo = tipo;
-    }
-
-    protected Session getSession() {
-        return sessionFactory.getCurrentSession();
     }
 
     public ID save(T novoObj) {
@@ -57,22 +50,6 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> implements L
         } else {
             return (T) getSession().createCriteria(tipo).add(Restrictions.idEq(id)).uniqueResult();
         }
-    }
-
-    public Query setParametersQuery(Query query, Map<String, Object> params) {
-        for (Map.Entry<String, Object> parameter : params.entrySet()) {
-            if (parameter.getValue() instanceof Collection<?>) {
-                query.setParameterList(parameter.getKey(),
-                        (Collection<?>) parameter.getValue());
-            } else if (parameter.getValue() instanceof Integer) {
-                query.setInteger(parameter.getKey(), (Integer) parameter.getValue());
-            } else if (parameter.getValue() instanceof Date) {
-                query.setDate(parameter.getKey(), (Date) parameter.getValue());
-            } else {
-                query.setParameter(parameter.getKey(), parameter.getValue());
-            }
-        }
-        return query;
     }
 
     public List<T> listAll() {

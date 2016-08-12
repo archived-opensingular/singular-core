@@ -14,11 +14,12 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class SIList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
-    private List<E>  values;
+    private List<E> values;
 
     private SType<E> elementsType;
 
-    public SIList() {}
+    public SIList() {
+    }
 
     @SuppressWarnings("unchecked")
     static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
@@ -82,8 +83,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @SuppressWarnings("unchecked")
-    public E addElement(Object e) {
-        E instance = (E) e;
+    public E addElement(E e) {
+        E instance = e;
         instance.setDocument(getDocument());
         return addInternal(instance, true, -1);
     }
@@ -199,11 +200,17 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         if (obj instanceof SIList<?>) {
             @SuppressWarnings("unchecked")
             SIList<E> list = (SIList<E>) obj;
-
             clearInstance();
-            values = newArrayList(list.getValues());
+            for (E o : list){
+                addElement(o);
+            }
             elementsType = list.getElementsType();
             list.getValue().clear();
+        } else if (obj instanceof List) {
+            clearInstance();
+            for (Object o : (List)obj){
+                addValue(o);
+            }
         } else {
             throw new SingularFormException("SList só suporta valores de mesmo tipo da lista", this);
         }
@@ -287,8 +294,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
+        final int prime  = 31;
+        int       result = 1;
         result = prime * result + ((elementsType == null) ? 0 : elementsType.hashCode());
         for (E e : this)
             result = prime * result + (e == null ? 0 : e.hashCode());

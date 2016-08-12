@@ -11,11 +11,17 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STranslatorForAttribute;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.util.transformer.Value;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -29,40 +35,27 @@ public class AtrAnnotation extends STranslatorForAttribute {
     public static enum DefaultAnnotationClassifier implements AnnotationClassifier {
         DEFAULT_ANNOTATION;
     }
-    public AtrAnnotation() {}
+
+    public AtrAnnotation() {
+    }
+
     public AtrAnnotation(SAttributeEnabled alvo) {
         super(alvo);
     }
 
     /**
      * Marks this type as annotated
+     *
      * @return this
      */
-    public AtrAnnotation setAnnotated() {
-       setAnnotated(DefaultAnnotationClassifier.DEFAULT_ANNOTATION);
-        return this;
-    }
-
-    /**
-     * MArca o tipo como anotado definindo o tipo da anotação
-     * @return this
-     */
-    public <T extends Enum & AnnotationClassifier> AtrAnnotation setAnnotated(T ... classifiersParam) {
-        List<String> classifiers = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
-        if (classifiers == null){
-            classifiers = new ArrayList<>();
-            setAttributeValue(SPackageBasic.ATR_ANNOTATED, classifiers);
-        }
-        for (T classifier : classifiersParam){
-            if (!classifiers.contains(classifier.name())){
-                classifiers.add(classifier.name());
-            }
-        }
+    public <T extends Enum & AnnotationClassifier> AtrAnnotation setAnnotated() {
+        setAnnotated(DefaultAnnotationClassifier.DEFAULT_ANNOTATION);
         return this;
     }
 
     /**
      * Sets the label for this annotation
+     *
      * @return this
      */
     public AtrAnnotation label(String label) {
@@ -75,8 +68,28 @@ public class AtrAnnotation extends STranslatorForAttribute {
      */
     public boolean isAnnotated() {
         List<String> list = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
-        return list != null && !list.isEmpty() ;
+        return list != null && !list.isEmpty();
     }
+
+    /**
+     * MArca o tipo como anotado definindo o tipo da anotação
+     *
+     * @return this
+     */
+    public <T extends Enum & AnnotationClassifier> AtrAnnotation setAnnotated(T... classifiersParam) {
+        List<String> classifiers = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
+        if (classifiers == null) {
+            classifiers = new ArrayList<>();
+        }
+        for (T classifier : classifiersParam) {
+            if (!classifiers.contains(classifier.name())) {
+                classifiers.add(classifier.name());
+            }
+        }
+        setAttributeValue(SPackageBasic.ATR_ANNOTATED, classifiers);
+        return this;
+    }
+
     /**
      * @return the label set, if any
      */
@@ -119,32 +132,41 @@ public class AtrAnnotation extends STranslatorForAttribute {
     /**
      * @return Current annotation if this instance, if none is present one is created.
      */
-    public SIAnnotation annotation() {
-        createAttributeIfNeeded();
-        return target().getDocument().annotation(target().getId());
+    public <T extends Enum & AnnotationClassifier> SIAnnotation annotation() {
+        return annotation(DefaultAnnotationClassifier.DEFAULT_ANNOTATION);
+    }
+
+    public <T extends Enum & AnnotationClassifier> SIAnnotation annotation(T classifier) {
+        createAttributeIfNeeded(classifier);
+        return target().getDocument().annotation(target().getId(), classifier);
     }
 
     /**
-     * @return True if an anotation was filled for this instance.
+     * @return True if this SIinstance is an annotated type and if the anotation has any value.
      */
-    public boolean hasAnnotation(){
-        SIAnnotation atr = target().getDocument().annotation(target().getId());
-        return atr != null && hasValue(atr);
+    public boolean hasAnnotation() {
+        List<SIAnnotation> atrList = target().getDocument().annotationsAnyClassifier(target().getId());
+        return atrList != null && hasValue(atrList);
     }
 
-    private boolean hasValue(SIAnnotation atr) {
-        return StringUtils.isNotBlank(atr.getText()) || atr.getApproved() != null;
+    private boolean hasValue(List<SIAnnotation> atrList) {
+        boolean truth = false;
+        for (SIAnnotation atr : atrList) {
+            truth |= StringUtils.isNotBlank(atr.getText()) || atr.getApproved() != null;
+        }
+        return truth;
     }
 
-    private void createAttributeIfNeeded() {
-        if(target().getDocument().annotation(target().getId()) == null){
-            newAnnotation();
+    private <T extends Enum & AnnotationClassifier> void createAttributeIfNeeded(T classifier) {
+        if (target().getDocument().annotation(target().getId(), classifier) == null) {
+            newAnnotation(classifier);
         }
     }
 
-    private SIAnnotation newAnnotation() {
+    private <T extends Enum & AnnotationClassifier> SIAnnotation newAnnotation(T classifier) {
         SIAnnotation a = target().getDocument().newAnnotation();
         a.setTargetId(target().getId());
+        a.setClassifier(classifier.name());
         return a;
     }
 
@@ -153,7 +175,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      */
     public List<SIAnnotation> allAnnotations() {
         SIList sList = persistentAnnotations();
-        if(sList == null) return newArrayList();
+        if (sList == null) return newArrayList();
         return sList.getValues();
     }
 
@@ -161,18 +183,68 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * Loads a collection of annotations onte this instance and its children.
      * The <code>targetId</code> field of the annotation denotes which field that annotation
      * is referring to.
+     *
      * @param annotations to be loaded into the instance.
      */
     public void loadAnnotations(SIList annotations) {
-        target().getDocument().setAnnotations(annotations);
+        Iterator<SIAnnotation> it = annotations.iterator();
+        while (it.hasNext()) {
+            SIAnnotation annotation = it.next();
+            Value.copyValues(annotation, target().getDocument().newAnnotation());
+        }
     }
 
     /**
      * @return A ready to persist object containing all annotations from this instance and its children.
      */
-    public SIList persistentAnnotations() {
-        return ((SInstance)getTarget()).getDocument().annotations();
+    public SIList persistentAnnotationsClassified(String classifier) {
+        return persistentAnnotationsClassified().get(classifier);
     }
+
+    /**
+     * @return A ready to persist object containing all annotations from this instance and its children
+     * mapped by its classifier
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, SIList<SIAnnotation>> persistentAnnotationsClassified() {
+        Map<String, SIList<SIAnnotation>> classifiedAnnotations = new HashMap<>();
+        SIList<SIAnnotation> annotationsSIList = ((SInstance) getTarget()).getDocument().annotations();
+        if (annotationsSIList != null) {
+            Iterator<SIAnnotation> it = annotationsSIList.iterator();
+            while (it.hasNext()) {
+                SIAnnotation annotation = it.next();
+                SIList<SIAnnotation> list = classifiedAnnotations.get(annotation.getClassifier());
+                if (list == null) {
+                    list = newAnnotationListFromExisting(annotationsSIList);
+                    classifiedAnnotations.put(annotation.getClassifier(), list);
+                }
+                list.addNew(a -> Value.hydrate(a, Value.dehydrate(annotation)));
+            }
+        }
+        return classifiedAnnotations;
+    }
+
+    public SIList<SIAnnotation> persistentAnnotations() {
+        return ((SInstance) getTarget()).getDocument().annotations();
+    }
+
+    /**
+     * Cria uma nova lista de anotações utilizando as configurações de registry e document
+     * da lista passada por parâmetro.
+     * Essa método tem por objetivo evitar que a nova lista criada fique sem os serviços
+     * locais e service registry já configurados na lista original
+     *
+     * @param annotationList
+     * @return
+     */
+    private SIList newAnnotationListFromExisting(SIList<SIAnnotation> annotationList) {
+        RefType refTypeAnnotation = annotationList.getDocument().getRootRefType().get().createSubReference(STypeAnnotationList.class);
+        if (annotationList.getDocument().getDocumentFactoryRef() != null) {
+            return (SIList) annotationList.getDocument().getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
+        }
+        return (SIList) SDocumentFactory.empty().createInstance(refTypeAnnotation);
+    }
+
 
     private SIList newAnnotationList() {
         return (SIList) annotationListType().newInstance();
@@ -190,49 +262,53 @@ public class AtrAnnotation extends STranslatorForAttribute {
         return (SInstance) getTarget();
     }
 
-    public void clear() {   annotation().clear();    }
+    public void clear() {
+        annotation().clear();
+    }
 
     public boolean hasAnnotationOnTree() {
-        if(hasAnnotation()) return true;
-        if(target() instanceof SIComposite){
+        if (hasAnnotation()) return true;
+        if (target() instanceof SIComposite) {
             return hasAnnotationsOnChildren((SIComposite) target());
         }
         return false;
     }
 
     private boolean hasAnnotationsOnChildren(SIComposite parent) {
-        for(SInstance si: parent.getAllFields()){
-            if(si.asAtrAnnotation().hasAnnotationOnTree()) return true;
+        for (SInstance si : parent.getAllFields()) {
+            if (si.asAtrAnnotation().hasAnnotationOnTree()) return true;
         }
         return false;
     }
 
     public boolean hasAnyRefusal() {
-        if(hasAnnotation() && !annotation().getApproved()){    return true;}
-        if(target() instanceof SIComposite){
+        if (hasAnnotation() && !annotation().getApproved()) {
+            return true;
+        }
+        if (target() instanceof SIComposite) {
             return hasAnyRefusalOnChildren((SIComposite) target());
         }
         return false;
     }
 
     private boolean hasAnyRefusalOnChildren(SIComposite parent) {
-        for(SInstance si: parent.getAllFields()){
-            if(si.asAtrAnnotation().hasAnyRefusal()) return true;
+        for (SInstance si : parent.getAllFields()) {
+            if (si.asAtrAnnotation().hasAnyRefusal()) return true;
         }
         return false;
     }
 
     public boolean isOrHasAnnotatedChild() {
-        if(isAnnotated()) return true;
-        if(target() instanceof SIComposite){
+        if (isAnnotated()) return true;
+        if (target() instanceof SIComposite) {
             return hasAnnotatedChildren((SIComposite) target());
         }
         return false;
     }
 
     private boolean hasAnnotatedChildren(SIComposite parent) {
-        for(SInstance si: parent.getAllFields()){
-            if(si.asAtrAnnotation().isOrHasAnnotatedChild()) return true;
+        for (SInstance si : parent.getAllFields()) {
+            if (si.asAtrAnnotation().isOrHasAnnotatedChild()) return true;
         }
         return false;
     }

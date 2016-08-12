@@ -61,7 +61,7 @@ public class TabMapper extends DefaultCompositeMapper {
 
             @Override
             public Collection<Component> toUpdadeOnTab() {
-                if (ctx.getRootContext().annotation().enabled()) {
+                if (ctx.getRootContext().getAnnotationMode().enabled()) {
                     return newArrayList(ctx.updateOnRefresh());
                 }
                 return newArrayList();
@@ -173,7 +173,7 @@ public class TabMapper extends DefaultCompositeMapper {
         }
 
         private void defineState() {
-            if (ctx.getRootContext().annotation().enabled()) {
+            if (ctx.getRootContext().getAnnotationMode().enabled()) {
                 subtree.forEach(this::checkSubtree);
             }
 
@@ -185,7 +185,7 @@ public class TabMapper extends DefaultCompositeMapper {
                 AtrAnnotation annotatedField = field.asAtrAnnotation();
                 if (annotatedField.hasAnnotationOnTree()) {
                     checkAnnotation(annotatedField);
-                } else if (ctx.getRootContext().annotation().editable() &&
+                } else if (ctx.getRootContext().getAnnotationMode().editable() &&
                     annotatedField.isOrHasAnnotatedChild()) {
                     isAnnotated = true;
                 }

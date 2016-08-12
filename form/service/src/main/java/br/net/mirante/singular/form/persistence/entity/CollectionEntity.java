@@ -20,9 +20,9 @@ import br.net.mirante.singular.support.persistence.util.Constants;
 import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 @Entity
-@GenericGenerator(name = CollectionEntiry.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@GenericGenerator(name = CollectionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_COLECAO", schema = Constants.SCHEMA)
-public class CollectionEntiry extends BaseEntity<Long> {
+public class CollectionEntity extends BaseEntity<Long> {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_COLECAO";
 

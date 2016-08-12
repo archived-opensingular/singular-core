@@ -67,7 +67,7 @@ public class SingularStudioFormPanel extends SingularStudioPanel {
                 singularFormPanel = new SingularFormPanel<Class<SType<?>>>("singular-form-panel", studioCollectionToolboxBean) {
 
                     @Override
-                    public AnnotationMode annotation() {
+                    public AnnotationMode getAnnotationMode() {
                         return annotationMode;
                     }
 

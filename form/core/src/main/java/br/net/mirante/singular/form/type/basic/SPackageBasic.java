@@ -98,6 +98,7 @@ public class SPackageBasic extends SPackage {
         pb.createType(STypeSupplier.class);
         pb.createType(STypeConsumer.class);
         pb.createType(STypePhraseBreak.class);
+        pb.createType(STypeAnnotationClassifierList.class);
 
         pb.createAttributeIntoType(SType.class, ATR_DEFAULT_IF_NULL);
         pb.createAttributeIntoType(SType.class, ATR_REQUIRED);

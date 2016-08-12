@@ -91,12 +91,12 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
             BSRow row = ctx.getContainer().newGrid().newRow();
             row.newCol().appendTag("div", panel);
             child = ctx.createChild(row.newCol(), true, ctx.getModel());
-            child.annotation(ctx.annotation());
+            child.setAnnotationMode(ctx.getAnnotationMode());
         }
 
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
-        if (ctx.annotation().enabled()) {
+        if (ctx.getAnnotationMode().enabled()) {
             ctx.init(this, viewMode);
             new AnnotationBuilder(this).build(ctx, viewMode, mapper);
         } else {

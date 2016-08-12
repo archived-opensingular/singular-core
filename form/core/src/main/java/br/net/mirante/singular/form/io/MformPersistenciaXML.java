@@ -253,10 +253,18 @@ public class MformPersistenciaXML {
 
     /** Gera um XML representando as anotações se existirem. */
     public static Optional<MElement> annotationToXml(SInstance instance) {
+        return annotationToXml(instance, null);
+    }
+
+    /** Gera um XML representando as anotações se existirem. */
+    public static Optional<MElement> annotationToXml(SInstance instance, String classifier) {
         AtrAnnotation      annotatedInstance = instance.asAtrAnnotation();
-        List<SIAnnotation> allAnnotations    = annotatedInstance.allAnnotations();
-        if (!allAnnotations.isEmpty()) {
-            return Optional.of(MformPersistenciaXML.toXML(annotatedInstance.persistentAnnotations()));
+        if (annotatedInstance.hasAnnotation()) {
+            if (classifier != null) {
+                return Optional.of(MformPersistenciaXML.toXML(annotatedInstance.persistentAnnotationsClassified(classifier)));
+            } else {
+                return Optional.of((MformPersistenciaXML.toXML(annotatedInstance.persistentAnnotations())));
+            }
         }
         return Optional.empty();
     }
