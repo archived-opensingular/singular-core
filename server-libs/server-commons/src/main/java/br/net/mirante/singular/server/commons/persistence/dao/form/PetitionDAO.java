@@ -1,10 +1,12 @@
 package br.net.mirante.singular.server.commons.persistence.dao.form;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
+import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -12,19 +14,15 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 
-import br.net.mirante.singular.flow.core.TaskType;
-import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
-import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
-import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
-import br.net.mirante.singular.support.persistence.BaseDAO;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
-public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Long> {
+public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
     public PetitionDAO() {
-        super((Class<T>) Petition.class);
+        super((Class<T>) PetitionEntity.class);
     }
 
     public PetitionDAO(Class<T> tipo) {
@@ -32,25 +30,22 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
     }
 
     @SuppressWarnings("unchecked")
-    public List<AbstractPetitionEntity> list(String type) {
+    public List<T> list(String type) {
         Criteria crit = getSession().createCriteria(tipo);
         crit.add(Restrictions.eq("type", type));
         return crit.list();
     }
 
     public Long countQuickSearch(QuickFilter filtro, List<String> siglasProcesso, List<String> formNames) {
-        Query query = createQuery(filtro, siglasProcesso, true, formNames);
-        return (Long) query.uniqueResult();
+        return (Long) createQuery(filtro, siglasProcesso, true, formNames).uniqueResult();
     }
 
     public List<PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso, List<String> formNames) {
-        Query query = createQuery(filtro, siglasProcesso, false, formNames);
+        final Query query = createQuery(filtro, siglasProcesso, false, formNames);
         query.setFirstResult(filtro.getFirst());
         query.setMaxResults(filtro.getCount());
         query.setResultTransformer(new AliasToBeanResultTransformer(getResultClass()));
-
         return query.list();
-
     }
 
     protected Class<? extends PeticaoDTO> getResultClass() {
@@ -58,50 +53,64 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
     }
 
     public List<Map<String, Object>> quickSearchMap(QuickFilter filter, List<String> processesAbbreviation, List<String> formNames) {
-        Query query = createQuery(filter, processesAbbreviation, false, formNames);
+        final Query query = createQuery(filter, processesAbbreviation, false, formNames);
         query.setFirstResult(filter.getFirst());
         query.setMaxResults(filter.getCount());
         query.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
         return query.list();
     }
 
-    protected void buildSelectClause(StringBuilder hql, boolean count) {
+    private void buildSelectClause(StringBuilder hql, boolean count) {
         if (count) {
             hql.append("SELECT count(p) ");
         } else {
             hql.append(" SELECT p.cod as cod ");
             hql.append(" , p.description as description ");
             hql.append(" , task.name as situation ");
-            hql.append(" , p.processName as processName ");
-            hql.append(" , p.creationDate as creationDate ");
-            hql.append(" , p.type as type ");
-            hql.append(" , p.processType as processType ");
+            hql.append(" , processDefinitionEntity.name as processName ");
+            hql.append(" , case when currentFormDraftVersionEntity is null then currentFormVersion.inclusionDate else currentFormDraftVersionEntity.inclusionDate end as creationDate ");
+            hql.append(" , case when formDraftType is null then formType.abbreviation else formDraftType.abbreviation end as type ");
+            hql.append(" , processDefinitionEntity.key as processType ");
             hql.append(" , ta.beginDate as situationBeginDate ");
             hql.append(" , pie.beginDate as processBeginDate ");
-            hql.append(" , p.editionDate as editionDate ");
+            hql.append(" , currentDraftEntity.editionDate as editionDate ");
+            appendCustomSelectClauses(hql);
         }
     }
 
-    protected void buildFromClause(StringBuilder hql) {
-        hql.append(" FROM " + tipo.getName() + " p ");
+    /**
+     * Append Custom Select Clauses
+     */
+    protected void appendCustomSelectClauses(StringBuilder hql) {
+    }
+
+    private void buildFromClause(StringBuilder hql) {
+        hql.append(" FROM ").append(tipo.getName()).append(" p ");
         hql.append(" LEFT JOIN p.processInstanceEntity pie ");
+        hql.append(" LEFT JOIN p.currentDraftEntity currentDraftEntity ");
+        hql.append(" LEFT JOIN currentDraftEntity.form formDraftEntity");
+        hql.append(" LEFT JOIN formDraftEntity.currentFormVersionEntity currentFormDraftVersionEntity");
+        hql.append(" LEFT JOIN p.form formEntity ");
+        hql.append(" LEFT JOIN formEntity.currentFormVersionEntity currentFormVersion ");
+        hql.append(" LEFT JOIN p.processDefinitionEntity processDefinitionEntity ");
+        hql.append(" LEFT JOIN formEntity.formType formType  ");
+        hql.append(" LEFT JOIN formDraftEntity.formType formDraftType  ");
         hql.append(" LEFT JOIN pie.tasks ta ");
         hql.append(" LEFT JOIN ta.task task ");
     }
 
-    protected void buildWhereClause(StringBuilder hql,
-                                    Map<String, Object> params,
-                                    QuickFilter filtro,
-                                    List<String> siglasProcesso,
-                                    List<String> formNames) {
+    private void buildWhereClause(StringBuilder hql,
+                                  Map<String, Object> params,
+                                  QuickFilter filtro,
+                                  List<String> siglasProcesso,
+                                  List<String> formNames) {
         hql.append(" WHERE 1=1 ");
 
-        if (siglasProcesso != null
-                && !siglasProcesso.isEmpty()) {
-            hql.append(" AND ( p.processType in (:siglasProcesso) ");
+        if (siglasProcesso != null && !siglasProcesso.isEmpty()) {
+            hql.append(" AND ( processDefinitionEntity.key  in (:siglasProcesso) ");
             params.put("siglasProcesso", siglasProcesso);
             if (formNames != null && !formNames.isEmpty()) {
-                hql.append(" OR p.type in (:formNames) ");
+                hql.append(" OR formType.abbreviation in (:formNames)) ");
                 params.put("formNames", formNames);
             } else {
                 hql.append(" ) ");
@@ -110,16 +119,16 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
 
         if (filtro.hasFilter()) {
             hql.append(" AND ( upper(p.description) like upper(:filter) ");
-            hql.append(" OR upper(p.processName) like upper(:filter) ");
+            hql.append(" OR upper(processDefinitionEntity.name) like upper(:filter) ");
             hql.append(" OR upper(task.name) like upper(:filter) ");
             if (filtro.isRascunho()) {
-                hql.append(" OR " + JPAQueryUtil.formattDateTimeClause("p.creationDate", "filter"));
-                hql.append(" OR " + JPAQueryUtil.formattDateTimeClause("p.editionDate", "filter"));
+                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("currentFormVersion.inclusionDate", "filter"));
+                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("currentDraftEntity.editionDate", "filter"));
             } else {
-                hql.append(" OR " + JPAQueryUtil.formattDateTimeClause("ta.beginDate", "filter"));
-                hql.append(" OR " + JPAQueryUtil.formattDateTimeClause("pie.beginDate", "filter"));
+                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("ta.beginDate", "filter"));
+                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("pie.beginDate", "filter"));
             }
-            hql.append(" OR p.id like :filter ");
+            hql.append(" OR p.id like :filter ) ");
             params.put("cleanFilter", "%" + filtro.getFilter().replaceAll("/", "").replaceAll("\\.", "").replaceAll("\\-", "").replaceAll(":", "") + "%");
             params.put("filter", "%" + filtro.getFilter() + "%");
         }
@@ -137,11 +146,23 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
             params.put("tipoEnd", TaskType.End);
         }
 
+//        if (filtro.getIdPessoaRepresentada() != null) {
+//            hql.append(" AND p.peticionante = :peticionante ");
+//            params.put("peticionante", filtro.getIdPessoaRepresentada());
+//        }
+
+        appendCustomWhereClauses(hql, params, filtro);
+
         if (filtro.getSortProperty() != null) {
             hql.append(mountSort(filtro.getSortProperty(), filtro.isAscending()));
         }
     }
 
+    /**
+     * Append Custom Where Clauses
+     */
+    protected void appendCustomWhereClauses(StringBuilder hql, Map<String, Object> params, QuickFilter filter) {
+    }
 
     private Query createQuery(QuickFilter filtro, List<String> siglasProcesso, boolean count, List<String> formNames) {
 
@@ -152,13 +173,12 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
         buildFromClause(hql);
         buildWhereClause(hql, params, filtro, siglasProcesso, formNames);
 
-        Query query = getSession().createQuery(hql.toString());
+        final Query query = getSession().createQuery(hql.toString());
 
         setParametersQuery(query, params);
 
         return query;
     }
-
 
     protected String mountSort(String sortProperty, boolean ascending) {
         return " ORDER BY " + sortProperty + (ascending ? " asc " : " desc ");
@@ -171,4 +191,5 @@ public class PetitionDAO<T extends AbstractPetitionEntity> extends BaseDAO<T, Lo
                 .setMaxResults(1)
                 .uniqueResult();
     }
+
 }

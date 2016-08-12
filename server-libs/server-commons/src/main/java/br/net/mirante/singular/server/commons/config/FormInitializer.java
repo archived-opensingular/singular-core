@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.commons.config;
 
-import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
 import br.net.mirante.singular.form.spring.SpringTypeLoader;
 import br.net.mirante.singular.server.commons.form.SingularServerDocumentFactory;
@@ -11,31 +11,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import javax.servlet.ServletContext;
-import java.util.Map;
+import java.util.List;
 
 public abstract class FormInitializer {
 
-    public static final Logger logger = LoggerFactory.getLogger(FormInitializer.class);
-    static final String SINGULAR_FORM = "[SINGULAR][FORM] %s";
+    public static final Logger logger        = LoggerFactory.getLogger(FormInitializer.class);
+    static final        String SINGULAR_FORM = "[SINGULAR][FORM] %s";
 
-    protected Class<? extends SpringSDocumentFactory> documentFactory(){
+    protected Class<? extends SpringSDocumentFactory> documentFactory() {
         return SingularServerDocumentFactory.class;
     }
 
-    protected Class<? extends SpringTypeLoader> typeLoader(){
+    protected Class<? extends SpringTypeLoader> typeLoader() {
         return SingularServerSpringTypeLoader.class;
     }
 
-    protected Class<?> formConfigFactory(){
+    protected Class<?> formConfigFactory() {
         return SingularServerFormConfigFactory.class;
     }
 
-    /**
-     * Alterar para receber lista de tipos
-     * @return
-     */
-    @Deprecated
-    protected abstract Map<Class<? extends SPackage>, String> formPackagesMap();
+    protected abstract List<Class<? extends SType<?>>> getTypes();
 
     public void init(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         Class<?> documentFactory = documentFactory();

@@ -131,7 +131,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         }
     }
 
-    public IBiFunction<BoxItemModel,String,MarkupContainer> linkFunction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
+    public IBiFunction<BoxItemModel, String, MarkupContainer> linkFunction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
         return (boxItemModel, id) -> {
             String url = mountStaticUrl(itemAction, baseUrl, additionalParams, boxItemModel);
 
@@ -198,8 +198,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     }
 
     protected BSModalBorder construirModalConfirmationBorder(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
-        final ItemActionConfirmation confirmation = itemAction.getConfirmation();
-        BSModalBorder confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
+        final ItemActionConfirmation confirmation      = itemAction.getConfirmation();
+        BSModalBorder                confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
         confirmationModal.addOrReplace(new Label("message", $m.ofValue(confirmation.getConfirmationMessage())));
         confirmationModal.addButton(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
@@ -267,7 +267,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         } else {
             return getProcesses()
                     .stream()
-                    .map(ProcessDTO::getAbbreviation)
+                    .map(ProcessDTO::getAbbreviations)
+                    .flatMap(List::stream)
                     .collect(Collectors.toList());
         }
     }
@@ -285,8 +286,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     @Override
     protected List<BoxItemModel> quickSearch(QuickFilter filter, List<String> siglasProcesso, List<String> formNames) {
-        final String connectionURL  = getProcessGroup().getConnectionURL();
-        final String url            = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
+        final String connectionURL = getProcessGroup().getConnectionURL();
+        final String url           = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
         try {
             return (List<BoxItemModel>) Arrays
                     .asList(new RestTemplate().postForObject(url, filter, Map[].class))
@@ -328,8 +329,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     @Override
     protected long countQuickSearch(QuickFilter filter, List<String> processesNames, List<String> formNames) {
-        final String connectionURL  = getProcessGroup().getConnectionURL();
-        final String url            = connectionURL + PATH_BOX_SEARCH + getCountEndpoint();
+        final String connectionURL = getProcessGroup().getConnectionURL();
+        final String url           = connectionURL + PATH_BOX_SEARCH + getCountEndpoint();
         try {
             return new RestTemplate().postForObject(url, filter, Long.class);
         } catch (Exception e) {
