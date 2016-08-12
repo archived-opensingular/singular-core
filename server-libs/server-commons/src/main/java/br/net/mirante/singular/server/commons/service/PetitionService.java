@@ -33,6 +33,7 @@ import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcesso
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionerDAO;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
@@ -42,7 +43,6 @@ import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import br.net.mirante.singular.support.persistence.GenericDAO;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
@@ -87,7 +87,8 @@ public class PetitionService<T extends PetitionEntity> {
     private DraftDAO draftDAO;
 
     @Inject
-    private GenericDAO genericDAO;
+    private PetitionerDAO petitionerDAO;
+
 
     public T find(Long cod) {
         return petitionDAO.find(cod);
@@ -200,7 +201,7 @@ public class PetitionService<T extends PetitionEntity> {
         }
 
         if (peticao.getPetitioner() != null) {
-            genericDAO.saveOrUpdate(peticao.getPetitioner());
+            petitionerDAO.saveOrUpdate(peticao.getPetitioner());
         }
 
         petitionDAO.saveOrUpdate(peticao);
@@ -269,8 +270,8 @@ public class PetitionService<T extends PetitionEntity> {
         final DraftEntity currentDraftEntity = petition.getCurrentDraftEntity();
 
         petition.setCurrentDraftEntity(null);
-        genericDAO.delete(currentDraftEntity);
-        genericDAO.saveOrUpdate(petition);
+        draftDAO.delete(currentDraftEntity);
+        petitionDAO.saveOrUpdate(petition);
 
         return petitionFormKey;
     }

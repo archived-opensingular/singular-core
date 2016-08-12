@@ -2,8 +2,8 @@ package br.net.mirante.singular.server.commons.spring;
 
 import br.net.mirante.singular.form.persistence.dao.FormAnnotationDAO;
 import br.net.mirante.singular.form.persistence.dao.FormAnnotationVersionDAO;
+import br.net.mirante.singular.form.persistence.dao.FormTypeDAO;
 import br.net.mirante.singular.form.persistence.dao.FormVersionDAO;
-import br.net.mirante.singular.support.persistence.GenericDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.springframework.context.annotation.Bean;
@@ -72,8 +72,8 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public IFormService formService(FormDAO formDAO, FormVersionDAO formVersionDAO, FormAnnotationDAO formAnnotationDAO, FormAnnotationVersionDAO formAnnotationVersionDAO, GenericDAO genericDAO) {
-        return new FormService(formDAO, formVersionDAO, formAnnotationDAO, formAnnotationVersionDAO, genericDAO);
+    public IFormService formService(FormDAO formDAO, FormVersionDAO formVersionDAO, FormAnnotationDAO formAnnotationDAO, FormAnnotationVersionDAO formAnnotationVersionDAO, FormTypeDAO formTypeDAO) {
+        return new FormService(formDAO, formVersionDAO, formAnnotationDAO, formAnnotationVersionDAO, formTypeDAO);
     }
 
     @Bean
@@ -94,6 +94,11 @@ public class SingularDefaultBeanFactory {
     @Bean
     public FormAnnotationVersionDAO formAnnotationVersionDAO() {
         return new FormAnnotationVersionDAO();
+    }
+
+    @Bean
+    public FormTypeDAO formTypeDAO() {
+        return new FormTypeDAO();
     }
 
     @Bean
