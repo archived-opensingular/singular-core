@@ -14,6 +14,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 import br.net.mirante.singular.commons.util.Loggable;
@@ -66,6 +67,37 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
 
     public void evict(Object o) {
         getSession().evict(o);
+    }
+
+    public <T> List<T> findByProperty(String propertyName, String value) {
+        return findByProperty(propertyName, value, null, null);
+    }
+
+    public <T> List<T> findByProperty(String propertyName, String value, Integer maxResults) {
+        return findByProperty(propertyName, value, null, maxResults);
+    }
+
+    public <T> T findByUniqueProperty(String propertyName, Object value) {
+        return (T) getSession().createCriteria(tipo).add(Restrictions.eq(propertyName, value)).setMaxResults(1).uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> findByProperty(String propertyName, String value, MatchMode matchMode, Integer maxResults) {
+        Criteria criteria = getSession().createCriteria(tipo);
+
+        if (matchMode == null) {
+            matchMode = MatchMode.EXACT;
+        }
+
+        if (value != null && !value.isEmpty()) {
+            criteria.add(Restrictions.ilike(propertyName, value, matchMode));
+        }
+
+        if (maxResults != null) {
+            criteria.setMaxResults(maxResults);
+        }
+
+        return criteria.list();
     }
 
 }

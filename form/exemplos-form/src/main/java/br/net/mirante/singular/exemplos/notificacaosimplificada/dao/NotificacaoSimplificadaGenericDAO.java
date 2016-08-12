@@ -1,4 +1,4 @@
-package br.net.mirante.singular.support.persistence;
+package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
 import br.net.mirante.singular.support.persistence.SimpleDAO;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Repository
-public class GenericDAO extends SimpleDAO {
+public class NotificacaoSimplificadaGenericDAO extends SimpleDAO {
 
     public <PK extends Serializable, T extends BaseEntity<PK>> void saveOrUpdate(T entity) {
         getSession().saveOrUpdate(entity);

@@ -19,6 +19,7 @@ import br.net.mirante.singular.form.persistence.SingularFormPersistenceException
 import br.net.mirante.singular.form.persistence.dao.FormAnnotationDAO;
 import br.net.mirante.singular.form.persistence.dao.FormAnnotationVersionDAO;
 import br.net.mirante.singular.form.persistence.dao.FormDAO;
+import br.net.mirante.singular.form.persistence.dao.FormTypeDAO;
 import br.net.mirante.singular.form.persistence.dao.FormVersionDAO;
 import br.net.mirante.singular.form.persistence.entity.FormAnnotationEntity;
 import br.net.mirante.singular.form.persistence.entity.FormAnnotationPK;
@@ -28,7 +29,6 @@ import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
-import br.net.mirante.singular.support.persistence.GenericDAO;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -49,7 +49,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     private final FormVersionDAO formVersionDAO;
     private final FormAnnotationDAO formAnnotationDAO;
     private final FormAnnotationVersionDAO formAnnotationVersionDAO;
-    private final GenericDAO genericDAO;
+    private final FormTypeDAO formTypeDAO;
     private final Boolean KEEP_ANNOTATIONS = true;
 
     @Inject
@@ -57,18 +57,18 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
                        FormVersionDAO formVersionDAO,
                        FormAnnotationDAO formAnnotationDAO,
                        FormAnnotationVersionDAO formAnnotationVersionDAO,
-                       GenericDAO genericDAO) {
+                       FormTypeDAO formTypeDAO) {
         super(FormKeyLong.class);
         Assert.notNull(formDAO);
         Assert.notNull(formVersionDAO);
         Assert.notNull(formAnnotationDAO);
         Assert.notNull(formAnnotationVersionDAO);
-        Assert.notNull(genericDAO);
+        Assert.notNull(formTypeDAO);
         this.formDAO = formDAO;
         this.formVersionDAO = formVersionDAO;
         this.formAnnotationVersionDAO = formAnnotationVersionDAO;
         this.formAnnotationDAO = formAnnotationDAO;
-        this.genericDAO = genericDAO;
+        this.formTypeDAO = formTypeDAO;
     }
 
     @Override
@@ -95,12 +95,12 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     private FormTypeEntity getOrCreateNewFormTypeEntity(final String typeAbbreviation) {
-        FormTypeEntity formTypeEntity = genericDAO.findByUniqueProperty(FormTypeEntity.class, "abbreviation", typeAbbreviation);
+        FormTypeEntity formTypeEntity = formTypeDAO.findByAbreviation(typeAbbreviation);
         if (formTypeEntity == null) {
             formTypeEntity = new FormTypeEntity();
             formTypeEntity.setAbbreviation(typeAbbreviation);
             formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES
-            genericDAO.saveOrUpdate(formTypeEntity);
+            formTypeDAO.saveOrUpdate(formTypeEntity);
         }
         return formTypeEntity;
     }

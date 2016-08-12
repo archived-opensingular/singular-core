@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import br.net.mirante.singular.support.persistence.GenericDAO;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.NotificacaoSimplificadaGenericDAO;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class DominioService {
     private VocabularioControladoDAO vocabularioControladoDAO;
 
     @Inject
-    private GenericDAO genericDAO;
+    private NotificacaoSimplificadaGenericDAO genericDAO;
 
     @Inject
     private EnderecoEmpresaInternacionalDAO enderecoEmpresaInternacionalDAO;
