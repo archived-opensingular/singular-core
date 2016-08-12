@@ -6,6 +6,7 @@ import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.persistence.FormKey;
@@ -39,6 +40,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -59,6 +61,10 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected final FormPageConfig  config;
     protected final IModel<T>       currentModel;
     protected final IModel<FormKey> formModel;
+
+    @Inject
+    @Named("formConfigWithDatabase")
+    protected SFormConfig<String> singularFormConfig;
 
     protected AbstractFormContent content;
 
