@@ -113,6 +113,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         if (keepAnnotations) {
             saveOrUpdateFormAnnotation(instance, formVersionEntity);
         }
+        formDAO.saveOrUpdate(entity);
     }
 
     private void saveOrUpdateFormAnnotation(SInstance instance, FormVersionEntity formVersionEntity) {

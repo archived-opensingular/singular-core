@@ -190,7 +190,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
         Iterator<SIAnnotation> it = annotations.iterator();
         while (it.hasNext()) {
             SIAnnotation annotation = it.next();
-            target().getDocument().annotations().addNew(a -> Value.hydrate(a, Value.dehydrate(annotation)));
+            Value.copyValues(annotation, target().getDocument().newAnnotation());
         }
     }
 
