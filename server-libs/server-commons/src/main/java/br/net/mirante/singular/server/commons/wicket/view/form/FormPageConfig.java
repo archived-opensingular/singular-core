@@ -7,11 +7,11 @@ import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.server.commons.flow.LazyFlowDefinitionResolver;
+import br.net.mirante.singular.server.commons.form.FormActions;
 
 public class FormPageConfig implements Serializable {
 
-    private ViewMode                           viewMode;
-    private AnnotationMode                     annotationMode;
+    private FormActions                        formAction;
     private String                             formId;
     private String                             formType;
     private HashMap<String, Object>            contextParams;
@@ -19,29 +19,25 @@ public class FormPageConfig implements Serializable {
     private Class<? extends ProcessDefinition> processDefinition;
 
     private FormPageConfig() {
-        viewMode = ViewMode.READ_ONLY;
-        annotationMode = AnnotationMode.NONE;
+        formAction = FormActions.FORM_VIEW;
         contextParams = new HashMap<>();
     }
 
     private static FormPageConfig newConfig(String formType,
                                             String formId,
-                                            AnnotationMode annotationMode,
-                                            ViewMode viewMode) {
+                                            FormActions formAction) {
         final FormPageConfig cfg = new FormPageConfig();
         cfg.formType = formType;
         cfg.formId = formId;
-        cfg.annotationMode = annotationMode;
-        cfg.viewMode = viewMode;
+        cfg.formAction = formAction;
         return cfg;
     }
 
     public static FormPageConfig newConfig(String formId,
                                            String formType,
-                                           AnnotationMode annotationMode,
-                                           ViewMode viewMode,
+                                           FormActions formAction,
                                            Class<? extends ProcessDefinition> processDefinition) {
-        final FormPageConfig cfg = newConfig(formType, formId, annotationMode, viewMode);
+        final FormPageConfig cfg = newConfig(formType, formId, formAction);
         cfg.processDefinition = processDefinition;
         return cfg;
     }
@@ -49,28 +45,19 @@ public class FormPageConfig implements Serializable {
 
     public static FormPageConfig newConfig(String formType,
                                            String formId,
-                                           AnnotationMode annotationMode,
-                                           ViewMode viewMode,
+                                           FormActions formAction,
                                            LazyFlowDefinitionResolver lazyFlowDefinitionResolver) {
-        final FormPageConfig cfg = newConfig(formType, formId, annotationMode, viewMode);
+        final FormPageConfig cfg = newConfig(formType, formId, formAction);
         cfg.lazyFlowDefinitionResolver = lazyFlowDefinitionResolver;
         return cfg;
     }
 
     public ViewMode getViewMode() {
-        return viewMode;
-    }
-
-    public void setViewMode(ViewMode viewMode) {
-        this.viewMode = viewMode;
+        return formAction.getViewMode();
     }
 
     public AnnotationMode getAnnotationMode() {
-        return annotationMode;
-    }
-
-    public void setAnnotationMode(AnnotationMode annotationMode) {
-        this.annotationMode = annotationMode;
+        return formAction.getAnnotationMode();
     }
 
     public String getFormId() {
@@ -117,4 +104,11 @@ public class FormPageConfig implements Serializable {
         return processDefinition != null;
     }
 
+    public FormActions getFormAction() {
+        return formAction;
+    }
+
+    public void setFormAction(FormActions formAction) {
+        this.formAction = formAction;
+    }
 }

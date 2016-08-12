@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,8 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.form.SFormUtil;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 import br.net.mirante.singular.server.commons.service.IServerMetadataREST;
+import br.net.mirante.singular.server.commons.service.dto.FormDTO;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
@@ -33,16 +38,20 @@ import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 public class DefaultServerMetadataREST implements IServerMetadataREST {
 
     @Inject
-    private SingularServerConfiguration singularServerConfiguration;
+    protected SingularServerConfiguration singularServerConfiguration;
 
     @Inject
-    private PermissionResolverService permissionResolverService;
+    protected PermissionResolverService permissionResolverService;
+
+    @Inject
+    @Named("formConfigWithDatabase")
+    protected SFormConfig<String> singularFormConfig;
 
     @Override
     @RequestMapping(value = PATH_LIST_MENU, method = RequestMethod.GET)
     public List<MenuGroup> listMenu(@RequestParam(MENU_CONTEXT) String context, @RequestParam(USER) String user) {
 
-        List<MenuGroup> groupDTOs = new ArrayList<>();
+        List<MenuGroup> groups = new ArrayList<>();
         Map<String, List<ProcessDefinition>> definitionMap = new HashMap<>();
         Flow.getDefinitions().forEach(d -> {
             if (!definitionMap.containsKey(d.getCategory())) {
@@ -53,25 +62,38 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         });
 
         definitionMap.forEach((category, definitions) -> {
-            MenuGroup menuGroupDTO = new MenuGroup();
-            menuGroupDTO.setId("CAIXA_" + SingularUtil.normalize(category).toUpperCase());
-            menuGroupDTO.setLabel(category);
-            menuGroupDTO.setProcesses(new ArrayList<>());
+            MenuGroup menuGroup = new MenuGroup();
+            menuGroup.setId("CAIXA_" + SingularUtil.normalize(category).toUpperCase());
+            menuGroup.setLabel(category);
+            menuGroup.setProcesses(new ArrayList<>());
+            menuGroup.setForms(new ArrayList<>());
             definitions.forEach(d ->
-                            menuGroupDTO
+                            menuGroup
                                     .getProcesses()
                                     .add(
                                             new ProcessDTO(d.getKey(), d.getName(), singularServerConfiguration.processDefinitionFormNameMap().get(d.getClass()))
                                     )
             );
-            groupDTOs.add(menuGroupDTO);
+
+            addForms(menuGroup);
+
+            groups.add(menuGroup);
         });
 
-        filterAccessRight(groupDTOs, user);
+        filterAccessRight(groups, user);
 
-        customizeMenu(groupDTOs, context, user);
+        customizeMenu(groups, context, user);
 
-        return groupDTOs;
+        return groups;
+    }
+
+    protected void addForms(MenuGroup menuGroup) {
+        for (String name : singularServerConfiguration.getFormPackagesTypeMap().values()) {
+            SType<?> sType = singularFormConfig.getTypeLoader().loadType(name).get();
+            Class<? extends SType<?>> sTypeClass = (Class<? extends SType<?>>) sType.getClass();
+            String label = sType.asAtr().getLabel();
+            menuGroup.getForms().add(new FormDTO(name, SFormUtil.getTypeSimpleName(sTypeClass), label));
+        }
     }
 
     protected void filterAccessRight(List<MenuGroup> groupDTOs, String user) {

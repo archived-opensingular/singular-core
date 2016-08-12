@@ -1,15 +1,13 @@
 package br.net.mirante.singular.server.module.wicket.view.util.dispatcher;
 
-import static br.net.mirante.singular.server.commons.util.Parameters.ACTION;
-import static br.net.mirante.singular.server.commons.util.Parameters.FORM_ID;
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static br.net.mirante.singular.server.commons.util.Parameters.*;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 import java.lang.reflect.Constructor;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -31,16 +29,22 @@ import br.net.mirante.singular.flow.core.ITaskPageStrategy;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskUserExecutable;
 import br.net.mirante.singular.flow.core.TaskInstance;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.SFormUtil;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.SingularServerTaskPageStrategy;
 import br.net.mirante.singular.server.commons.flow.SingularWebRef;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
+import br.net.mirante.singular.server.commons.wicket.error.AccessDeniedPage;
 import br.net.mirante.singular.server.commons.wicket.view.SingularHeaderResponseDecorator;
 import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
+import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
@@ -55,6 +59,10 @@ public abstract class DispatcherPage extends WebPage {
 
     @Inject
     private PetitionService<?> petitionService;
+
+    @Inject
+    @Named("formConfigWithDatabase")
+    protected SFormConfig<String> singularFormConfig;
 
     public DispatcherPage() {
         initPage();
@@ -119,11 +127,28 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     protected void dispatch(FormPageConfig config) {
-        if (config != null) {
+        if (config != null && !hasAccess(config)) {
+            redirectForbidden();
+        } else if (config != null) {
             dispatchForDestination(config, retrieveDestination(config));
         } else {
             closeAndReloadParent();
         }
+    }
+
+    protected boolean hasAccess(FormPageConfig config) {
+        SingularUserDetails userDetails = SingularSession.get().getUserDetails();
+        SType<?> sType = singularFormConfig.getTypeLoader().loadType(config.getFormType()).get();
+        Class<? extends SType<?>> sTypeClass = (Class<? extends SType<?>>) sType.getClass();
+        String typeSimpleName = SFormUtil.getTypeSimpleName(sTypeClass);
+
+        String roleNeeded = config.getFormAction().toString() + "_" + typeSimpleName.toUpperCase();
+
+        return userDetails.getRoles().contains(roleNeeded);
+    }
+
+    protected void redirectForbidden() {
+        setResponsePage(AccessDeniedPage.class);
     }
 
     private void dispatchForDestination(FormPageConfig config, WebPage destination) {
@@ -156,7 +181,7 @@ public abstract class DispatcherPage extends WebPage {
         return FormActions.getById(Integer.parseInt(action.toString("0")));
     }
 
-    private FormPageConfig parseParameters(Request r) {
+    protected FormPageConfig parseParameters(Request r) {
 
         final StringValue action   = getParam(r, ACTION);
         final StringValue formId   = getParam(r, FORM_ID);
@@ -166,14 +191,12 @@ public abstract class DispatcherPage extends WebPage {
             throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + "/singular");
         }
 
-        final FormActions formActions = resolveFormAction(action);
+        final FormActions formAction = resolveFormAction(action);
 
         final String         fi = formId.toString("");
-        final AnnotationMode am = formActions.getAnnotationMode() == null ? AnnotationMode.NONE : formActions.getAnnotationMode();
-        final ViewMode       vm = formActions.getViewMode();
         final String         fn = formName.toString();
 
-        final FormPageConfig cfg = buildConfig(r, fi, am, vm, fn);
+        final FormPageConfig cfg = buildConfig(r, fi, formAction, fn);
 
         if (cfg != null) {
             if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
@@ -186,7 +209,7 @@ public abstract class DispatcherPage extends WebPage {
 
     }
 
-    protected abstract FormPageConfig buildConfig(Request r, String formId, AnnotationMode annotationMode, ViewMode viewMode, String formType);
+    protected abstract FormPageConfig buildConfig(Request r, String formId, FormActions formAction, String formType);
 
     /**
      * Possibilita execução de qualquer ação antes de fazer o dispatch

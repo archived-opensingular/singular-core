@@ -32,6 +32,7 @@ import br.net.mirante.singular.server.commons.config.ServerContext;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.service.dto.FormDTO;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
@@ -75,6 +76,8 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
     protected DropdownMenu dropdownMenu = new DropdownMenu("_novos");
 
     private List<ProcessDTO> processes;
+
+    private List<FormDTO> forms;
 
     @Inject
     protected PetitionService petitionService;
@@ -245,5 +248,13 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
 
     public void setProcesses(List<ProcessDTO> processes) {
         this.processes = processes;
+    }
+
+    public List<FormDTO> getForms() {
+        return forms;
+    }
+
+    public void setForms(List<FormDTO> forms) {
+        this.forms = forms;
     }
 }

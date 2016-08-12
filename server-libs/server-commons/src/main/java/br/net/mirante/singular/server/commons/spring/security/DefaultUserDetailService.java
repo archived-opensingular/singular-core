@@ -33,7 +33,7 @@ public class DefaultUserDetailService implements SingularUserDetailsService {
     }
 
     @Override
-    public List<String> pesquisarPerfis(String idUsuarioLogado) {
+    public List<String> pesquisarAcessos(String idUsuarioLogado) {
         return Collections.emptyList();
     }
 }

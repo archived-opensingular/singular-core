@@ -1,0 +1,46 @@
+<!--
+  ~ Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+  ~ Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+  -->
+
+<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<wicket:extend>
+    <style type="text/css">
+        .error-panel {
+            background-color: white;
+            padding: 2em;
+        }
+
+        .error-disclaimer-title {
+            text-align: center;
+        }
+
+        .error-disclaimer-text {
+            font-size: 1.2em;
+        }
+
+        .error-code-container {
+            font-size: 2em;
+            text-align: center;
+        }
+
+        .error-code {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+    </style>
+    <div class="error-panel">
+
+        <h1 class="error-disclaimer-title">Acesso negado</h1>
+
+        <p class="error-disclaimer-text">
+            Você não tem acesso à pagina requisitada.
+        </p>
+        <p class="error-disclaimer-text">
+            Pedimos que você verifique suas permissões e tente novamente.
+        </p>
+
+    </div>
+</wicket:extend>
+</html>

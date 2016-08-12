@@ -34,6 +34,7 @@ import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.service.dto.FormDTO;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
@@ -60,6 +61,8 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
     private String menu;
 
     private List<ProcessDTO> processes;
+
+    private List<FormDTO> forms;
 
     @Inject
     protected PetitionService petitionService;
@@ -244,6 +247,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
         add(confirmationForm.add(confirmationModal));
         if (getMenu() != null) {
             setProcesses(Optional.ofNullable(getMenuSessionConfig().getMenuPorLabel(getMenu())).map(MenuGroup::getProcesses).orElse(new ArrayList<>(0)));
+            setForms(Optional.ofNullable(getMenuSessionConfig().getMenuPorLabel(getMenu())).map(MenuGroup::getForms).orElse(new ArrayList<>(0)));
             if (CollectionUtils.isEmpty(getProcesses())){
                 getLogger().warn("!! NENHUM PROCESSO ENCONTRADO PARA A MONTAGEM DO MENU !!");
             }
@@ -336,5 +340,13 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
 
     public void setMenu(String menu) {
         this.menu = menu;
+    }
+
+    public List<FormDTO> getForms() {
+        return forms;
+    }
+
+    public void setForms(List<FormDTO> forms) {
+        this.forms = forms;
     }
 }

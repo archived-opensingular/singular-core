@@ -14,6 +14,7 @@ public class MenuGroup implements Serializable {
     private String label;
     private List<ItemBox> itemBoxes;
     private List<ProcessDTO> processes;
+    private List<FormDTO> forms;
 
     public String getId() {
         return id;
@@ -57,5 +58,13 @@ public class MenuGroup implements Serializable {
         }
 
         return null;
+    }
+
+    public List<FormDTO> getForms() {
+        return forms;
+    }
+
+    public void setForms(List<FormDTO> forms) {
+        this.forms = forms;
     }
 }

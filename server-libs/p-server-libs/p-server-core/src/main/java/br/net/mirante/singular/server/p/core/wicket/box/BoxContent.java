@@ -40,6 +40,7 @@ import br.net.mirante.singular.server.commons.flow.rest.ActionResponse;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
+import br.net.mirante.singular.server.commons.service.dto.FormDTO;
 import br.net.mirante.singular.server.commons.service.dto.ItemAction;
 import br.net.mirante.singular.server.commons.service.dto.ItemActionConfirmation;
 import br.net.mirante.singular.server.commons.service.dto.ItemActionType;
@@ -85,17 +86,17 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     private void showNew() {
         if (isShowNew() && getMenu() != null) {
-            for (ProcessDTO process : getProcesses()) {
+            for (FormDTO form : getForms()) {
                 String url = DispatcherPageUtil
                         .baseURL(getBaseUrl())
                         .formAction(FormActions.FORM_FILL.getId())
                         .formId(null)
-                        .param(Parameters.SIGLA_FORM_NAME, process.getFormName())
+                        .param(Parameters.SIGLA_FORM_NAME, form.getName())
                         .params(getLinkParams())
                         .build();
 
-                if (getProcesses().size() > 1) {
-                    dropdownMenu.adicionarMenu(id -> new ModuleLink(id, $m.ofValue(process.getName()), url));
+                if (getForms().size() > 1) {
+                    dropdownMenu.adicionarMenu(id -> new ModuleLink(id, $m.ofValue(form.getDescription()), url));
                 } else {
                     adicionarBotaoGlobal(id -> new ModuleLink(id, getMessage("label.button.insert"), url));
                 }
@@ -296,12 +297,12 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     }
 
     private List<String> getFormNames() {
-        if (getProcesses() == null) {
+        if (getForms() == null) {
             return Collections.emptyList();
         } else {
-            return getProcesses()
+            return getForms()
                     .stream()
-                    .map(ProcessDTO::getFormName)
+                    .map(FormDTO::getName)
                     .collect(Collectors.toList());
         }
     }

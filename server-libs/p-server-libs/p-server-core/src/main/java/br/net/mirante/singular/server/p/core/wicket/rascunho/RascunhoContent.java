@@ -15,7 +15,7 @@ import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
-import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
+import br.net.mirante.singular.server.commons.service.dto.FormDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.core.wicket.ModuleLink;
@@ -79,21 +79,21 @@ public class RascunhoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
         super.onInitialize();
 
         if (getMenu() != null) {
-            for (ProcessDTO process : getProcesses()) {
-                if (getProcesses().size() > 1) {
+            for (FormDTO form : getForms()) {
+                if (getForms().size() > 1) {
                     String processUrl = DispatcherPageUtil
                             .baseURL(getBaseUrl())
                             .formAction(FormActions.FORM_FILL.getId())
                             .formId(null)
-                            .param(Parameters.SIGLA_FORM_NAME, process.getFormName())
+                            .param(Parameters.SIGLA_FORM_NAME, form.getName())
                             .build();
-                    dropdownMenu.adicionarMenu(id -> new ModuleLink(id, WicketUtils.$m.ofValue(process.getName()), processUrl));
+                    dropdownMenu.adicionarMenu(id -> new ModuleLink(id, WicketUtils.$m.ofValue(form.getDescription()), processUrl));
                 } else {
                     String url = DispatcherPageUtil
                             .baseURL(getBaseUrl())
                             .formAction(FormActions.FORM_FILL.getId())
                             .formId(null)
-                            .param(Parameters.SIGLA_FORM_NAME, process.getFormName())
+                            .param(Parameters.SIGLA_FORM_NAME, form.getName())
                             .build();
                     adicionarBotaoGlobal(id -> new ModuleLink(id, getMessage("label.button.insert"), url));
                 }
