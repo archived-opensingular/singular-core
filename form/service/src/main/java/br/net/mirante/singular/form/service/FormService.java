@@ -10,74 +10,71 @@ import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.internal.xml.MElement;
 import br.net.mirante.singular.form.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.persistence.AbstractBasicFormPersistence;
-import br.net.mirante.singular.form.persistence.AnnotationKey;
-import br.net.mirante.singular.form.persistence.FormKey;
-import br.net.mirante.singular.form.persistence.FormKeyLong;
-import br.net.mirante.singular.form.persistence.SPackageFormPersistence;
-import br.net.mirante.singular.form.persistence.SingularFormPersistenceException;
-import br.net.mirante.singular.form.persistence.dao.FormAnnotationDAO;
-import br.net.mirante.singular.form.persistence.dao.FormAnnotationVersionDAO;
-import br.net.mirante.singular.form.persistence.dao.FormDAO;
-import br.net.mirante.singular.form.persistence.dao.FormTypeDAO;
-import br.net.mirante.singular.form.persistence.dao.FormVersionDAO;
-import br.net.mirante.singular.form.persistence.entity.FormAnnotationEntity;
-import br.net.mirante.singular.form.persistence.entity.FormAnnotationPK;
-import br.net.mirante.singular.form.persistence.entity.FormAnnotationVersionEntity;
-import br.net.mirante.singular.form.persistence.entity.FormEntity;
-import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
-import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
+import br.net.mirante.singular.form.persistence.*;
+import br.net.mirante.singular.form.persistence.dao.*;
+import br.net.mirante.singular.form.persistence.entity.*;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
 public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
 
-    private final FormDAO formDAO;
-    private final FormVersionDAO formVersionDAO;
-    private final FormAnnotationDAO formAnnotationDAO;
-    private final FormAnnotationVersionDAO formAnnotationVersionDAO;
-    private final FormTypeDAO formTypeDAO;
-    private final Boolean KEEP_ANNOTATIONS = true;
+    @Inject
+    private FormDAO formDAO;
 
     @Inject
-    public FormService(FormDAO formDAO,
-                       FormVersionDAO formVersionDAO,
-                       FormAnnotationDAO formAnnotationDAO,
-                       FormAnnotationVersionDAO formAnnotationVersionDAO,
-                       FormTypeDAO formTypeDAO) {
+    private FormVersionDAO formVersionDAO;
+
+    @Inject
+    private FormAnnotationDAO formAnnotationDAO;
+
+    @Inject
+    private FormAnnotationVersionDAO formAnnotationVersionDAO;
+
+    @Inject
+    private FormTypeDAO formTypeDAO;
+
+    private final Boolean KEEP_ANNOTATIONS = true;
+
+    public FormService() {
         super(FormKeyLong.class);
-        Assert.notNull(formDAO);
-        Assert.notNull(formVersionDAO);
-        Assert.notNull(formAnnotationDAO);
-        Assert.notNull(formAnnotationVersionDAO);
-        Assert.notNull(formTypeDAO);
-        this.formDAO = formDAO;
-        this.formVersionDAO = formVersionDAO;
-        this.formAnnotationVersionDAO = formAnnotationVersionDAO;
-        this.formAnnotationDAO = formAnnotationDAO;
-        this.formTypeDAO = formTypeDAO;
+    }
+
+    @Override
+    public FormKey insert(SInstance instance) {
+        return super.insert(instance);
+    }
+
+    @Override
+    public FormKey insertOrUpdate(SInstance instance) {
+        return super.insertOrUpdate(instance);
+    }
+
+    private SInstance internalLoadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, FormVersionEntity formVersionEntity){
+        final SInstance  instance = MformPersistenciaXML.fromXML(refType,formVersionEntity.getXml(), documentFactory);
+        loadCurrentXmlAnnotationOrEmpty(instance, formVersionEntity);
+        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
+        return instance;
     }
 
     @Override
     public SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
         final FormEntity entity = loadFormEntity(key);
-        final SInstance instance = MformPersistenciaXML.fromXML(refType, entity.getCurrentFormVersionEntity().getXml(), documentFactory);
-        loadCurrentXmlAnnotationOrEmpty(instance, entity);
-        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
-        return instance;
+        return internalLoadSInstance(key, refType, documentFactory, entity.getCurrentFormVersionEntity());
+    }
+
+
+    @Override
+    public SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId) {
+        final FormVersionEntity formVersionEntity   = loadFormVersionEntity(key, versionId);
+        return internalLoadSInstance(key, refType, documentFactory, formVersionEntity);
     }
 
     @Override
@@ -95,7 +92,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     private FormTypeEntity getOrCreateNewFormTypeEntity(final String typeAbbreviation) {
-        FormTypeEntity formTypeEntity = formTypeDAO.findByAbreviation(typeAbbreviation);
+        FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(typeAbbreviation);
         if (formTypeEntity == null) {
             formTypeEntity = new FormTypeEntity();
             formTypeEntity.setAbbreviation(typeAbbreviation);
@@ -154,9 +151,9 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         formAnnotationDAO.save(formAnnotationEntity);
     }
 
-
-    private void loadCurrentXmlAnnotationOrEmpty(SInstance instance, FormEntity formEntity) {
-        for (FormAnnotationEntity formAnnotationEntity : formEntity.getCurrentFormVersionEntity().getFormAnnotations()) {
+    private void loadCurrentXmlAnnotationOrEmpty(SInstance instance, FormVersionEntity formVersionEntity) {
+        instance.as(AtrAnnotation::new).clear();
+        for (FormAnnotationEntity formAnnotationEntity : Optional.ofNullable(formVersionEntity).map(FormVersionEntity::getFormAnnotations).orElse(new ArrayList<>(0))) {
             MformPersistenciaXML.annotationLoadFromXml(instance,
                     Optional
                             .ofNullable(formAnnotationEntity.getAnnotationCurrentVersion())
@@ -173,6 +170,11 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         } else {
             return entity;
         }
+    }
+
+    @Override
+    public FormVersionEntity loadFormVersionEntity(FormKey key, Long versionId) {
+        return formVersionDAO.find(versionId);
     }
 
     @Override
@@ -197,8 +199,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
      * @return
      */
     private Map<String, String> extractAnnotations(SInstance instance) {
-        AtrAnnotation annotatedInstance = instance.as(AtrAnnotation::new);
-        Map<String, String> mapClassifierXml = new HashMap<>();
+        AtrAnnotation       annotatedInstance = instance.as(AtrAnnotation::new);
+        Map<String, String> mapClassifierXml  = new HashMap<>();
         for (Map.Entry<String, SIList<SIAnnotation>> entry : annotatedInstance.persistentAnnotationsClassified().entrySet()) {
             mapClassifierXml.put(entry.getKey(), extractContent(entry.getValue()));
         }
@@ -218,10 +220,14 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         }
     }
 
+    @Override
+    public FormKey newVersion(SInstance instance) {
+        return super.newVersion(instance);
+    }
 
     @Override
     public FormKey newVersion(SInstance instance, boolean keepAnnotations) {
-        FormKey formKey = readKeyAttribute(instance, null);
+        FormKey    formKey    = readKeyAttribute(instance, null);
         FormEntity formEntity = loadFormEntity(formKey);
         saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity(), keepAnnotations);
         return formKey;

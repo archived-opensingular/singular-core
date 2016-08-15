@@ -39,6 +39,9 @@ public class FormEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_VERSAO_ATUAL")
     private FormVersionEntity currentFormVersionEntity;
 
+    //NÃO MAPEAR A LISTA DE VERSÕES NESSA ENTIDADE.
+    // FAZER QUERY ESPECÍFICA NA ENTIDADE DE VERSOES DE FORMULARIO
+
     public Long getCod() {
         return cod;
     }

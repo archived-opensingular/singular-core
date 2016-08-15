@@ -12,4 +12,8 @@
 
     <bean id="formService" class="br.net.mirante.singular.form.service.FormService" />
     <bean id="formDAO" class="br.net.mirante.singular.form.persistence.dao.FormDAO" />
+    <bean id="formVersionDAO" class="br.net.mirante.singular.form.persistence.dao.FormVersionDAO" />
+    <bean id="formAnnotationDAO" class="br.net.mirante.singular.form.persistence.dao.FormAnnotationDAO" />
+    <bean id="formAnnotationVersionDAO" class="br.net.mirante.singular.form.persistence.dao.FormAnnotationVersionDAO" />
+    <bean id="formTypeDAO" class="br.net.mirante.singular.form.persistence.dao.FormTypeDAO" />
 </beans>
