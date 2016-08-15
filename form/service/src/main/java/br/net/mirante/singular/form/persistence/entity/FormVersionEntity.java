@@ -6,6 +6,7 @@ import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequence
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -40,8 +41,9 @@ public class FormVersionEntity extends BaseEntity<Long> {
     @Column(name = "NU_VERSAO_CACHE")
     private Long cacheVersion;
 
-    @OneToMany(mappedBy = "cod.formVersionEntity")
-    private List<FormAnnotationEntity> formAnnotations;
+    @OneToMany
+    @JoinColumn(referencedColumnName = "CO_VERSAO_FORMULARIO", name = "CO_VERSAO_FORMULARIO", insertable = false, updatable = false)
+    private List<FormAnnotationEntity> formAnnotations = new ArrayList<>(0);
 
     public FormVersionEntity() {
         setInclusionDate(new Date());
