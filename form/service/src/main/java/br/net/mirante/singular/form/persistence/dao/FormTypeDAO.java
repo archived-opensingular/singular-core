@@ -5,6 +5,8 @@
 package br.net.mirante.singular.form.persistence.dao;
 
 
+import org.hibernate.criterion.Restrictions;
+
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 
@@ -16,5 +18,13 @@ public class FormTypeDAO extends BaseDAO<FormTypeEntity, Long> {
 
     public FormTypeEntity findByAbreviation(String typeAbbreviation) {
         return this.findByUniqueProperty("abbreviation", typeAbbreviation);
+    }
+
+    public FormTypeEntity findFormTypeByAbbreviation(String abbreviation) {
+        return (FormTypeEntity) getSession()
+                .createCriteria(FormTypeEntity.class)
+                .add(Restrictions.eq("abbreviation", abbreviation))
+                .setMaxResults(1)
+                .uniqueResult();
     }
 }

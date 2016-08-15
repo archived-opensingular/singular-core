@@ -2,22 +2,12 @@ package br.net.mirante.singular.support.persistence;
 
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
-import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 
 
