@@ -18,6 +18,8 @@ import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.FormPetitionDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionerDAO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
@@ -25,6 +27,7 @@ import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
 import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
+import org.springframework.context.annotation.Bean;
 
 public class SingularDefaultBeanFactory {
 
@@ -36,6 +39,11 @@ public class SingularDefaultBeanFactory {
     @Bean
     public <T extends PetitionEntity> PetitionDAO<T> peticaoDAO() {
         return new PetitionDAO<T>();
+    }
+
+    @Bean
+    public FormPetitionDAO formPetitionDAO() {
+        return new FormPetitionDAO();
     }
 
     @Bean
@@ -74,8 +82,13 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public IFormService formService(FormDAO formDAO, FormVersionDAO formVersionDAO, FormAnnotationDAO formAnnotationDAO, FormAnnotationVersionDAO formAnnotationVersionDAO, FormTypeDAO formTypeDAO) {
-        return new FormService(formDAO, formVersionDAO, formAnnotationDAO, formAnnotationVersionDAO, formTypeDAO);
+    public IFormService formService() {
+        return new FormService();
+    }
+
+    @Bean
+    public PetitionerDAO petitionerDAO() {
+        return new PetitionerDAO();
     }
 
     @Bean
@@ -111,11 +124,6 @@ public class SingularDefaultBeanFactory {
     @Bean
     public PermissionResolverService getPermissionResolverService() {
         return new PermissionResolverService();
-    }
-
-    @Bean
-    public PetitionerDAO getPetitionerDAO() {
-        return new PetitionerDAO();
     }
 
 }
