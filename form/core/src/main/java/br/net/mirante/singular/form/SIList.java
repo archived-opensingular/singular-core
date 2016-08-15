@@ -14,11 +14,12 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class SIList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
-    private List<E>  values;
+    private List<E> values;
 
     private SType<E> elementsType;
 
-    public SIList() {}
+    public SIList() {
+    }
 
     @SuppressWarnings("unchecked")
     static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
@@ -82,8 +83,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @SuppressWarnings("unchecked")
-    public E addElement(Object e) {
-        E instance = (E) e;
+    public E addElement(E e) {
+        E instance = e;
         instance.setDocument(getDocument());
         return addInternal(instance, true, -1);
     }
@@ -168,11 +169,11 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return getChecking(pathReader);
     }
 
-    private SInstance getChecking(PathReader pathReader) {
+    private E getChecking(PathReader pathReader) {
         return getChecking(resolveIndex(pathReader), pathReader);
     }
 
-    private SInstance getChecking(int index, PathReader pathReader) {
+    private E getChecking(int index, PathReader pathReader) {
         if (index < 0 || index + 1 > size()) {
             String msg = "índice inválido: " + index + ((index < 0) ? " < 0" : " > que a lista (size= " + size() + ")");
             if (pathReader == null) {
@@ -199,11 +200,20 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         if (obj instanceof SIList<?>) {
             @SuppressWarnings("unchecked")
             SIList<E> list = (SIList<E>) obj;
-
             clearInstance();
-            values = newArrayList(list.getValues());
+            Iterator<E> it = list.iterator();
+            while (it.hasNext()){
+                E o = it.next();
+                it.remove();
+                addElement(o);
+            }
             elementsType = list.getElementsType();
             list.getValue().clear();
+        } else if (obj instanceof List) {
+            clearInstance();
+            for (Object o : (List)obj){
+                addValue(o);
+            }
         } else {
             throw new SingularFormException("SList só suporta valores de mesmo tipo da lista", this);
         }
@@ -224,14 +234,31 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         }
     }
 
-    public SInstance remove(int index) {
-        SInstance child = getChecking(index, null);
-        child.internalOnRemove();
-        E ins = values.remove(index);
+    /**
+     * Remove o elemento da lista e dispara o
+     * pós processamento do elemento da lista (listeners e desassociação do pai)
+     * @param index
+     * @return
+     */
+    public E remove(int index) {
+        E e = getChecking(index, null);
+        values.remove(index);
+        return internalRemove(e);
+    }
+
+    /**
+     * Processa a instancia com as rotinas necessárias após a desassociação
+     * do elemento da lista.
+     * @param e
+     * Instancia cuja remoção deve ser processada
+     * @return
+     */
+    private E internalRemove(E e){
+        e.internalOnRemove();
         if (asAtr().getUpdateListener() != null) {
             asAtr().getUpdateListener().accept(this);
         }
-        return ins;
+        return e;
     }
 
     public Object getValueAt(int index) {
@@ -273,7 +300,27 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public Iterator<E> iterator() {
-        return (values == null) ? Collections.emptyIterator() : values.iterator();
+        return (values == null) ? Collections.emptyIterator() : new Iterator<E>() {
+
+            Iterator<E> it = values.iterator();
+            E current;
+
+            @Override
+            public boolean hasNext() {
+                return it.hasNext();
+            }
+
+            @Override
+            public E next() {
+                return current = it.next();
+            }
+
+            @Override
+            public void remove() {
+                it.remove();
+                SIList.this.internalRemove(current);
+            }
+        };
     }
 
     @Override
@@ -287,8 +334,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
+        final int prime  = 31;
+        int       result = 1;
         result = prime * result + ((elementsType == null) ? 0 : elementsType.hashCode());
         for (E e : this)
             result = prime * result + (e == null ? 0 : e.hashCode());

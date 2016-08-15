@@ -143,7 +143,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
 
             @Override
-            public AnnotationMode annotation() {
+            public AnnotationMode getAnnotationMode() {
                 return annotation;
             }
         };

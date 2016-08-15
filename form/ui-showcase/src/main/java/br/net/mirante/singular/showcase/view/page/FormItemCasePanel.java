@@ -103,7 +103,7 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
             }
 
             @Override
-            public AnnotationMode annotation(){ return getCaseBase().getObject().annotation(); }
+            public AnnotationMode getAnnotationMode(){ return getCaseBase().getObject().annotation(); }
         };
 
         return singularFormPanel;

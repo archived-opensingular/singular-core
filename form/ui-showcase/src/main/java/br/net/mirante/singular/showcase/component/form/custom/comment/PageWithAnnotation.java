@@ -20,7 +20,7 @@ public class PageWithAnnotation {
          * para montar a página.
          * Este pode ser tanto em modo de leitura como em modo de escrita
          */
-        ctx.annotation(AnnotationMode.EDIT);
+        ctx.setAnnotationMode(AnnotationMode.EDIT);
     }
 
 

@@ -15,6 +15,7 @@ import java.io.InputStream;
 
 @Entity
 @Table(schema = Constants.SCHEMA, name = "TB_ARQUIVO_PETICAO")
+@Deprecated
 public class Attachment extends AbstractAttachmentEntity {
 
 }

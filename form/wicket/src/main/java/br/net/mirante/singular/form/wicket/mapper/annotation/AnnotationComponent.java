@@ -146,7 +146,7 @@ public class AnnotationComponent extends Panel {
             protected void onInitialize() {
                 super.onInitialize();
                 Label open_icon = new Label("open_icon");
-                if(context.getRootContext().annotation().editable()){
+                if(context.getRootContext().getAnnotationMode().editable()){
                     open_icon.add(new AttributeModifier("class",  $m.ofValue("fa fa-pencil")));
                 }else{
                     open_icon.add(new AttributeModifier("class",  $m.ofValue("fa fa-expand")));
@@ -201,7 +201,7 @@ public class AnnotationComponent extends Panel {
 
             @Override
             public boolean isVisible() {
-                return context.annotation().editable();
+                return context.getAnnotationMode().editable();
             }
         };
     }
@@ -242,7 +242,7 @@ public class AnnotationComponent extends Panel {
                     "'#"+openModalButton.getMarkupId()+"'," +
                     "`"+textModel.getObject()+"`, " +
                     " "+approvedModel.getObject()+", " +
-                    " "+!context.annotation().editable()+" "+
+                    " "+!context.getAnnotationMode().editable()+" "+
                 "); \n" ;
     }
 
@@ -327,7 +327,7 @@ class AnnotationModalWindow extends BFModalWindow{
 
         setBody(createBody());
 
-        if(context.annotation().editable()) {
+        if(context.getAnnotationMode().editable()) {
             this.addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"),
                     createOkButton(parentComponent)
             );
@@ -350,7 +350,7 @@ class AnnotationModalWindow extends BFModalWindow{
     }
 
     private void createFields(BSContainer modalBody) {
-        if(context.annotation().editable()){
+        if(context.getAnnotationMode().editable()){
             createCommentField(modalBody);
             createApprovedField(modalBody);
         }else{
