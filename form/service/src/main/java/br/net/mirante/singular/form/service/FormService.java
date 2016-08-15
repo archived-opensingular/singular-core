@@ -122,6 +122,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         for (Map.Entry<String, String> entry : classifiedAnnotationsXML.entrySet()) {
             saveOrUpdateFormAnnotation(entry.getKey(), entry.getValue(), formVersionEntity, classifiedAnnotationsEntities.get(entry.getKey()));
         }
+        formVersionDAO.saveOrUpdate(formVersionEntity);
     }
 
     private void saveOrUpdateFormAnnotation(String classifier, String xml, FormVersionEntity formVersionEntity, FormAnnotationEntity formAnnotationEntity) {
@@ -139,6 +140,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         formAnnotationEntity.getCod().setFormVersionEntity(formVersionEntity);
         formAnnotationDAO.save(formAnnotationEntity);
         saveOrUpdateFormAnnotationVersion(xml, formAnnotationEntity, new FormAnnotationVersionEntity());
+        formVersionEntity.getFormAnnotations().add(formAnnotationEntity);
     }
 
     private void saveOrUpdateFormAnnotationVersion(String xml, FormAnnotationEntity formAnnotationEntity, FormAnnotationVersionEntity formAnnotationVersionEntity) {
