@@ -262,6 +262,9 @@ public class AtrAnnotation extends STranslatorForAttribute {
         return (SInstance) getTarget();
     }
 
+    /**
+     * Limpa todas a anotações no documento atual
+     */
     public void clear() {
         persistentAnnotations().clearInstance();
     }
