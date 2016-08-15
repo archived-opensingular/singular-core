@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 
@@ -39,8 +40,8 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         };
     }
 
-    protected Class<? extends AbstractPetitionEntity> getPetitionEntityClass() {
-        return Petition.class;
+    protected Class<? extends PetitionEntity> getPetitionEntityClass() {
+        return PetitionEntity.class;
     }
 
     public List<? extends TaskInstanceDTO> findTasks(int first, int count, String sortProperty, boolean ascending,

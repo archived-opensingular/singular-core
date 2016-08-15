@@ -1,7 +1,7 @@
 package br.net.mirante.singular.server.core.wicket;
 
 import br.net.mirante.singular.server.commons.wicket.SingularApplication;
-import br.net.mirante.singular.server.core.wicket.entrada.EntradaAnalisePage;
+import br.net.mirante.singular.server.core.wicket.entrada.CaixaEntradaAnalisePage;
 import org.apache.wicket.Page;
 
 public class WorklistApplication extends SingularApplication {
@@ -12,6 +12,6 @@ public class WorklistApplication extends SingularApplication {
 
     @Override
     public Class<? extends Page> getHomePage() {
-        return EntradaAnalisePage.class;
+        return CaixaEntradaAnalisePage.class;
     }
 }

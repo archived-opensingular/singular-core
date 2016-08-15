@@ -254,22 +254,20 @@ CREATE TABLE DBSINGULAR.TB_GRUPO_PROCESSO (
    CONSTRAINT PK_GRUPO PRIMARY KEY (CO_GRUPO_PROCESSO)
 );
 
+
 /*==============================================================*/
-/* Table: TB_PETICAO                                            */
+/* Table: TB_PETICIONANTE                                       */
 /*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_PETICAO (
-   CO_PETICAO           BIGINT               IDENTITY,
-   TP_PETICAO           VARCHAR(300)         NOT NULL,
-   TP_PROCESSO_PETICAO  VARCHAR(300)         NULL,
-   NO_PROCESSO          VARCHAR(300)         NULL,
-   CO_FORMULARIO        BIGINT         NULL,
-   DS_PETICAO           VARCHAR(300)         NOT NULL,
-   DT_CRIACAO           DATETIME         NOT NULL,
-   DT_EDICAO           DATETIME         NULL,
-   NU_TRANSACAO_INTERNET VARCHAR(30)         NULL,
-   CO_INSTANCIA_PROCESSO BIGINT           NULL,
-   ID_PESSOA_REPRESENTADA            CHAR(32)             null,
-   CONSTRAINT PK_PETICAO PRIMARY KEY (CO_PETICAO)
+CREATE SEQUENCE DBSINGULAR.SQ_CO_PETICIONANTE START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE DBSINGULAR.TB_PETICIONANTE (
+   CO_PETICIONANTE      BIGINT                  NOT NULL,
+   DS_NOME              VARCHAR(200)         NOT NULL,
+   ID_PESSOA            VARCHAR(32)          NOT NULL,
+   NU_CPF_CNPJ          VARCHAR(14)          NULL,
+   TP_PESSOA            CHAR(1)              NOT NULL DEFAULT 'J'
+      CONSTRAINT CKC_TP_PESSOA_TB_PETIC CHECK (TP_PESSOA IN ('J','F')),
+   CONSTRAINT PK_TB_PETICIONANTE PRIMARY KEY (CO_PETICIONANTE)
 );
 
 /*==============================================================*/
@@ -308,4 +306,53 @@ CREATE TABLE DBSINGULAR.RL_PAPEL_TAREFA (
    CO_DEFINICAO_PAPEL   BIGINT               NOT NULL,
    CO_DEFINICAO_TAREFA  BIGINT               NOT NULL,
    CONSTRAINT PK_RL_PAPEL_TAREFA PRIMARY KEY (CO_PAPEL_TAREFA)
+);
+
+/*==============================================================*/
+/* Table: TB_RASCUNHO                                           */
+/*==============================================================*/
+
+CREATE SEQUENCE DBSINGULAR.SQ_CO_RASCUNHO  START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE DBSINGULAR.TB_RASCUNHO (
+   CO_RASCUNHO           BIGINT               NOT NULL,
+   CO_FORMULARIO         BIGINT               NOT NULL,
+   DT_INICIO             SMALLDATETIME        NOT NULL,
+   DT_EDICAO             SMALLDATETIME        NOT NULL
+   CONSTRAINT PK_TB_RASCUNHO PRIMARY KEY (CO_RASCUNHO)
+);
+
+/*==============================================================*/
+/* Table: TB_PETICAO                                            */
+/*==============================================================*/
+
+CREATE SEQUENCE DBSINGULAR.SQ_CO_PETICAO  START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE DBSINGULAR.TB_PETICAO (
+   CO_PETICAO                   BIGINT  NOT NULL,
+   CO_INSTANCIA_PROCESSO        BIGINT  NULL,
+   CO_FORMULARIO                BIGINT  NULL,
+   CO_DEFINICAO_PROCESSO        BIGINT  NULL,
+   CO_PETICIONANTE              BIGINT  NULL,
+   CO_RASCUNHO_ATUAL            BIGINT  NULL,
+   DS_PETICAO                   VARCHAR(200)  NULL,
+   CONSTRAINT PK_TB_PETICAO PRIMARY KEY (CO_PETICAO)
+);
+
+
+/*==============================================================*/
+/* TB_HISTORICO_CONTEUDO_PETICAO                         */
+/*==============================================================*/
+CREATE SEQUENCE DBSINGULAR.SQ_CO_HISTORICO  START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE DBSINGULAR.TB_HISTORICO_CONTEUDO_PETICAO (
+   CO_HISTORICO         BIGINT                  NOT NULL,
+   CO_PETICAO           BIGINT                  NOT NULL,
+   DT_HISTORICO         SMALLDATETIME        NOT NULL,
+   CO_AUTOR             BIGINT                  NULL,
+   CO_VERSAO_FORMULARIO BIGINT                  NULL,
+   CO_ANOTACAO_FORMULARIO BIGINT                  NULL,
+   CO_INSTANCIA_TAREFA  BIGINT                  NULL,
+   CO_PETICIONANTE      BIGINT                  NULL,
+   CONSTRAINT PK_TB_HISTORICO_CONTEUDO_PETIC PRIMARY KEY (CO_HISTORICO)
 );

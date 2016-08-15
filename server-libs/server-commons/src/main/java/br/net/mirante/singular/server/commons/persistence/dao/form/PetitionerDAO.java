@@ -4,6 +4,7 @@ package br.net.mirante.singular.server.commons.persistence.dao.form;
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionerEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
@@ -19,13 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 
-public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
+public class PetitionerDAO<T extends PetitionerEntity> extends BaseDAO<T, Long> {
 
-    public PetitionDAO() {
-        super((Class<T>) PetitionEntity.class);
+    public PetitionerDAO() {
+        super((Class<T>) PetitionerEntity.class);
     }
 
-    public PetitionDAO(Class<T> tipo) {
+    public PetitionerDAO(Class<T> tipo) {
         super(tipo);
     }
 
@@ -64,7 +65,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         if (count) {
             hql.append("SELECT count(p) ");
         } else {
-            hql.append(" SELECT p.cod as codPeticao ");
+            hql.append(" SELECT p.cod as cod ");
             hql.append(" , p.description as description ");
             hql.append(" , task.name as situation ");
             hql.append(" , processDefinitionEntity.name as processName ");

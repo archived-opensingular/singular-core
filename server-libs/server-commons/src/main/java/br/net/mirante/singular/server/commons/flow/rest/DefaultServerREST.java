@@ -7,6 +7,9 @@ package br.net.mirante.singular.server.commons.flow.rest;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,9 +22,6 @@ import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.spring.SpringServiceRegistry;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
-import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 
 @AutoScanDisabled
@@ -32,11 +32,11 @@ public class DefaultServerREST {
     static final Logger LOGGER = LoggerFactory.getLogger(DefaultServerREST.class);
 
     public static final String PATH_BOX_ACTION = "/box/action";
-    public static final String DELETE = "/delete";
-    public static final String EXECUTE = "/execute";
+    public static final String DELETE          = "/delete";
+    public static final String EXECUTE         = "/execute";
 
     @Inject
-    protected PetitionService<Petition> petitionService;
+    protected PetitionService<PetitionEntity> petitionService;
 
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
