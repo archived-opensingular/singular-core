@@ -1,12 +1,7 @@
 package br.net.mirante.singular.server.commons.service;
 
 
-import br.net.mirante.singular.flow.core.Flow;
-import br.net.mirante.singular.flow.core.MTask;
-import br.net.mirante.singular.flow.core.MTransition;
-import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.core.TaskInstance;
+import br.net.mirante.singular.flow.core.*;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
@@ -47,13 +42,7 @@ import br.net.mirante.singular.support.persistence.enums.SimNao;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -61,10 +50,7 @@ import java.util.stream.Collectors;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_DELETE;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_EDIT;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_RELOCATE;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_VIEW;
+import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
 
 @Transactional
 public class PetitionService<T extends PetitionEntity> {
@@ -183,6 +169,10 @@ public class PetitionService<T extends PetitionEntity> {
     }
 
     public FormKey saveOrUpdate(T peticao, SInstance instance, boolean createNewDraftIfDoesntExists, boolean mainForm) {
+        return saveOrUpdate(peticao, instance, createNewDraftIfDoesntExists, mainForm, null);
+    }
+
+    public FormKey saveOrUpdate(T peticao, SInstance instance, boolean createNewDraftIfDoesntExists, boolean mainForm, Consumer<T> onSave) {
 
         if (instance == null) {
             return null;
@@ -190,7 +180,8 @@ public class PetitionService<T extends PetitionEntity> {
 
         final FormKey key;
 
-        if (peticao.getCurrentDraftEntity() != null) {
+        if (peticao.getCurrentDraftEntity() != null
+                && peticao.getCurrentDraftEntity().getForm().getFormType().getAbbreviation().equals(instance.getType().getName())) {
             key = formPersistenceService.insertOrUpdate(instance);
             saveOrUpdateDraft(key, peticao.getCurrentDraftEntity());
         } else if (createNewDraftIfDoesntExists) {
@@ -206,6 +197,10 @@ public class PetitionService<T extends PetitionEntity> {
         }
 
         petitionDAO.saveOrUpdate(peticao);
+
+        if (onSave != null) {
+            onSave.accept(peticao);
+        }
 
         return key;
     }
@@ -299,21 +294,23 @@ public class PetitionService<T extends PetitionEntity> {
     private void copyValuesAndAnnotations(SInstance source, SInstance target) {
         Value.copyValues(source, target);
         SIList<SIAnnotation>   annotations = source.as(AtrAnnotation::new).persistentAnnotations();
-        Iterator<SIAnnotation> it          = annotations.iterator();
-        while (it.hasNext()) {
-            SIAnnotation sourceAnnotation = it.next();
-            //obtem o caminho completo da instancia anotada no formulario raiz
-            SInstances.findDescendantById(source, sourceAnnotation.getTargetId()).ifPresent( si -> {
-                String pathFromRoot =  si.getPathFromRoot();
-                //localiza a instancia correspondente no formulario destino
-                SInstance targetInstance = ((SIComposite) target).getField(pathFromRoot);
-                //Copiando todos os valores da anotação (inclusive o id na sinstance antiga)
-                SIAnnotation targetAnnotation = targetInstance.as(AtrAnnotation::new).annotation();
-                Value.copyValues(sourceAnnotation, targetAnnotation);
-                //Corrigindo o ID
-                targetAnnotation.setTargetId(targetInstance.getId());
-            });
+        if(annotations != null) {
+            Iterator<SIAnnotation> it = annotations.iterator();
+            while (it.hasNext()) {
+                SIAnnotation sourceAnnotation = it.next();
+                //obtem o caminho completo da instancia anotada no formulario raiz
+                SInstances.findDescendantById(source, sourceAnnotation.getTargetId()).ifPresent(si -> {
+                    String pathFromRoot = si.getPathFromRoot();
+                    //localiza a instancia correspondente no formulario destino
+                    SInstance targetInstance = ((SIComposite) target).getField(pathFromRoot);
+                    //Copiando todos os valores da anotação (inclusive o id na sinstance antiga)
+                    SIAnnotation targetAnnotation = targetInstance.as(AtrAnnotation::new).annotation();
+                    Value.copyValues(sourceAnnotation, targetAnnotation);
+                    //Corrigindo o ID
+                    targetAnnotation.setTargetId(targetInstance.getId());
+                });
 
+            }
         }
     }
 

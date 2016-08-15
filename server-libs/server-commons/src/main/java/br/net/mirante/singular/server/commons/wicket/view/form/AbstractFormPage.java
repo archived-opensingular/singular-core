@@ -56,7 +56,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected PetitionService<T> petitionService;
 
     @Inject
-    private IFormService formService;
+    protected IFormService formService;
 
     protected final Class<T>        petitionClass;
     protected final FormPageConfig  config;
@@ -271,7 +271,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void saveForm(IModel<? extends SInstance> currentInstance) {
         onBeforeSave(currentInstance);
-        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), true, isMainForm()));
+        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), true, isMainForm(), this::onSave));
+    }
+
+    protected void onSave(T petition){
+
     }
 
     protected void onBeforeSend(IModel<? extends SInstance> currentInstance) {
@@ -375,4 +379,16 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return formPageConfig.getAnnotationMode();
     }
 
+    protected FormKey loadFormKeyFromType(String typeName) {
+        final PetitionEntity petitionEntity = currentModel.getObject();
+        if (petitionEntity != null) {
+            return petitionEntity
+                    .getFormPetitionEntityByTypeName(typeName)
+                    .map(FormPetitionEntity::getForm)
+                    .map(FormEntity::getCod)
+                    .map(cod -> formService.keyFromObject(cod))
+                    .orElse(null);
+        }
+        return null;
+    }
 }
