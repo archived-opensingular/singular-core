@@ -160,8 +160,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         formAnnotationDAO.save(formAnnotationEntity);
     }
 
-
     private void loadCurrentXmlAnnotationOrEmpty(SInstance instance, FormEntity formEntity) {
+        instance.as(AtrAnnotation::new).clear();
         for (FormAnnotationEntity formAnnotationEntity : Optional.ofNullable(formEntity.getCurrentFormVersionEntity()).map(FormVersionEntity::getFormAnnotations).orElse(new ArrayList<>(0))) {
             MformPersistenciaXML.annotationLoadFromXml(instance,
                     Optional
