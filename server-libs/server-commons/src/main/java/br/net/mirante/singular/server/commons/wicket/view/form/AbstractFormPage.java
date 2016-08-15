@@ -77,7 +77,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         this.config = Objects.requireNonNull(config);
         this.currentModel = $m.ofValue();
         this.formModel = $m.ofValue();
-        Objects.requireNonNull(config.getFormType());
+        Objects.requireNonNull(getFormType(config));
     }
 
     @Override
@@ -94,7 +94,10 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             petition = petitionService.find(Long.valueOf(config.getFormId()));
         }
         if (petition.getCod() != null) {
-            formModel.setObject(formService.keyFromObject(getFormEntityDraftOrPetition(petition).getCod()));
+            final FormEntity formEntityDraftOrPetition = getFormEntityDraftOrPetition(petition);
+            if (formEntityDraftOrPetition != null) {
+                formModel.setObject(formService.keyFromObject(formEntityDraftOrPetition.getCod()));
+            }
         }
         currentModel.setObject(petition);
         super.onInitialize();
@@ -103,19 +106,19 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     private FormEntity getFormEntityDraftOrPetition(T petition) {
         return Optional.ofNullable(petition.getCurrentDraftEntity())
                 .map(DraftEntity::getForm)
-                .orElse(petition.getFormPetitionEntityByTypeName(config.getFormType()).map(FormPetitionEntity::getForm).orElse(null));
+                .orElse(petition.getFormPetitionEntityByTypeName(getFormType(config)).map(FormPetitionEntity::getForm).orElse(null));
     }
 
 
     @Override
     protected Content getContent(String id) {
 
-        if (config.getFormType() == null && config.getFormId() == null) {
+        if (getFormType(config) == null && config.getFormId() == null) {
             String urlServidorSingular = ConfigProperties.get(ConfigProperties.SINGULAR_SERVIDOR_ENDERECO);
             throw new RedirectToUrlException(urlServidorSingular);
         }
 
-        content = new AbstractFormContent(id, config.getFormType(), config.getViewMode(), config.getAnnotationMode()) {
+        content = new AbstractFormContent(id, getFormType(config), getViewMode(config), getAnnotationMode(config)) {
 
             @Override
             protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
@@ -358,6 +361,18 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected boolean isMainForm() {
         return true;
+    }
+
+    protected String getFormType(FormPageConfig formPageConfig) {
+        return formPageConfig.getFormType();
+    }
+
+    protected ViewMode getViewMode(FormPageConfig formPageConfig) {
+        return formPageConfig.getViewMode();
+    }
+
+    protected AnnotationMode getAnnotationMode(FormPageConfig formPageConfig) {
+        return formPageConfig.getAnnotationMode();
     }
 
 }
