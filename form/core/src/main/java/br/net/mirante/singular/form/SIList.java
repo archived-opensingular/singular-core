@@ -169,11 +169,11 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return getChecking(pathReader);
     }
 
-    private SInstance getChecking(PathReader pathReader) {
+    private E getChecking(PathReader pathReader) {
         return getChecking(resolveIndex(pathReader), pathReader);
     }
 
-    private SInstance getChecking(int index, PathReader pathReader) {
+    private E getChecking(int index, PathReader pathReader) {
         if (index < 0 || index + 1 > size()) {
             String msg = "índice inválido: " + index + ((index < 0) ? " < 0" : " > que a lista (size= " + size() + ")");
             if (pathReader == null) {
@@ -201,7 +201,10 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             @SuppressWarnings("unchecked")
             SIList<E> list = (SIList<E>) obj;
             clearInstance();
-            for (E o : list){
+            Iterator<E> it = list.iterator();
+            while (it.hasNext()){
+                E o = it.next();
+                it.remove();
                 addElement(o);
             }
             elementsType = list.getElementsType();
@@ -231,14 +234,31 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         }
     }
 
-    public SInstance remove(int index) {
-        SInstance child = getChecking(index, null);
-        child.internalOnRemove();
-        E ins = values.remove(index);
+    /**
+     * Remove o elemento da lista e dispara o
+     * pós processamento do elemento da lista (listeners e desassociação do pai)
+     * @param index
+     * @return
+     */
+    public E remove(int index) {
+        E e = getChecking(index, null);
+        values.remove(index);
+        return internalRemove(e);
+    }
+
+    /**
+     * Processa a instancia com as rotinas necessárias após a desassociação
+     * do elemento da lista.
+     * @param e
+     * Instancia cuja remoção deve ser processada
+     * @return
+     */
+    private E internalRemove(E e){
+        e.internalOnRemove();
         if (asAtr().getUpdateListener() != null) {
             asAtr().getUpdateListener().accept(this);
         }
-        return ins;
+        return e;
     }
 
     public Object getValueAt(int index) {
@@ -280,7 +300,27 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public Iterator<E> iterator() {
-        return (values == null) ? Collections.emptyIterator() : values.iterator();
+        return (values == null) ? Collections.emptyIterator() : new Iterator<E>() {
+
+            Iterator<E> it = values.iterator();
+            E current;
+
+            @Override
+            public boolean hasNext() {
+                return it.hasNext();
+            }
+
+            @Override
+            public E next() {
+                return current = it.next();
+            }
+
+            @Override
+            public void remove() {
+                it.remove();
+                SIList.this.internalRemove(current);
+            }
+        };
     }
 
     @Override
