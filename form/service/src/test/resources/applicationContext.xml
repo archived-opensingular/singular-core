@@ -10,14 +10,7 @@
     <context:component-scan base-package="br.net.mirante.singular"/>
     <import resource="conf/database.xml"/>
 
-    <bean id="formService" class="br.net.mirante.singular.form.service.FormService">
-        <constructor-arg ref="formDAO"/>
-        <constructor-arg ref="formVersionDAO"/>
-        <constructor-arg ref="formAnnotationDAO"/>
-        <constructor-arg ref="formAnnotationVersionDAO"/>
-        <constructor-arg ref="formTypeDAO"/>
-    </bean>
-
+    <bean id="formService" class="br.net.mirante.singular.form.service.FormService" />
     <bean id="formDAO" class="br.net.mirante.singular.form.persistence.dao.FormDAO" />
     <bean id="formVersionDAO" class="br.net.mirante.singular.form.persistence.dao.FormVersionDAO" />
     <bean id="formAnnotationDAO" class="br.net.mirante.singular.form.persistence.dao.FormAnnotationDAO" />
