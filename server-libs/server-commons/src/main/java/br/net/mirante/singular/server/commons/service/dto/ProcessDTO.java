@@ -6,26 +6,20 @@
 package br.net.mirante.singular.server.commons.service.dto;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 
 public class ProcessDTO implements Serializable {
 
-    private String       name;
-    private String       formName;
-    private List<String> abbreviations;
+    private String name;
+    private String formName;
+    private String abbreviation;
 
     public ProcessDTO() {
     }
 
-    public ProcessDTO(List<String> abbreviations, String name, String formName) {
-        this.abbreviations = abbreviations;
+    public ProcessDTO(String abbreviation, String name, String formName) {
+        this.abbreviation = abbreviation;
         this.name = name;
         this.formName = formName;
-    }
-
-    public ProcessDTO(String abbreviation, String name, String formName) {
-        this(Collections.singletonList(abbreviation), name, formName);
     }
 
     public String getName() {
@@ -40,8 +34,8 @@ public class ProcessDTO implements Serializable {
         return formName;
     }
 
-    public List<String> getAbbreviations() {
-        return abbreviations;
+    public String getAbbreviation() {
+        return abbreviation;
     }
 
 }

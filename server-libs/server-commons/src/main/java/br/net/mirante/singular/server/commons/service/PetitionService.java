@@ -1,6 +1,26 @@
 package br.net.mirante.singular.server.commons.service;
 
 
+import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
+import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
+import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTransition;
@@ -15,6 +35,7 @@ import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.SingularFormPersistenceException;
+import br.net.mirante.singular.form.persistence.dao.FormTypeDAO;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.form.service.IFormService;
@@ -28,7 +49,6 @@ import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
 import br.net.mirante.singular.server.commons.form.FormActions;
-import br.net.mirante.singular.server.commons.persistence.dao.flow.FormTypeDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
@@ -43,27 +63,6 @@ import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
-import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_DELETE;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_EDIT;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_RELOCATE;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_VIEW;
 
 @Transactional
 public class PetitionService<T extends PetitionEntity> {

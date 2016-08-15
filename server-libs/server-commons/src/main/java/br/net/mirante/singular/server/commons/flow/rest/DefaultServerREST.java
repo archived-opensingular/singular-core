@@ -7,9 +7,6 @@ package br.net.mirante.singular.server.commons.flow.rest;
 
 import javax.inject.Inject;
 
-import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
-import br.net.mirante.singular.server.commons.service.PetitionService;
-import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.spring.SpringServiceRegistry;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 
 @AutoScanDisabled
@@ -60,8 +59,8 @@ public class DefaultServerREST {
     @RequestMapping(value = PATH_BOX_ACTION + EXECUTE, method = RequestMethod.POST)
     public ActionResponse execute(@RequestParam Long id, @RequestBody Action action) {
         try {
-            final AbstractPetitionEntity petition = petitionService.find(id);
-            final ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(petition.getProcessType());
+            final PetitionEntity petition = petitionService.find(id);
+            final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(petition);
 
             IController controller = getActionController(processDefinition, action);
             return controller.execute(petition, action);

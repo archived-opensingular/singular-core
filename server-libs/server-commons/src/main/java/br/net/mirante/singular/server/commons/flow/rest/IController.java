@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.server.commons.flow.rest;
 
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 
 public abstract class IController {
 
-    public abstract ActionResponse execute(AbstractPetitionEntity petition, Action action);
+    public abstract ActionResponse execute(PetitionEntity petition, Action action);
 
     public boolean isExecutable() {
         return true;

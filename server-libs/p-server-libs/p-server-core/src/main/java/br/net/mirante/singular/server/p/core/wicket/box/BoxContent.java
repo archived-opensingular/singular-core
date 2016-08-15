@@ -291,8 +291,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         } else {
             return getProcesses()
                     .stream()
-                    .map(ProcessDTO::getAbbreviations)
-                    .flatMap(List::stream)
+                    .map(ProcessDTO::getAbbreviation)
                     .collect(Collectors.toList());
         }
     }

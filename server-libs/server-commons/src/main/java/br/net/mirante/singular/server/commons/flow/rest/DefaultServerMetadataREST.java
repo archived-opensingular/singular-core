@@ -88,7 +88,8 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     }
 
     protected void addForms(MenuGroup menuGroup) {
-        for (String name : singularServerConfiguration.getFormPackagesTypeMap().values()) {
+        for (Class<? extends SType<?>> formClass : singularServerConfiguration.getFormPackagesTypeMap()) {
+            String name = SFormUtil.getTypeName(formClass);
             SType<?> sType = singularFormConfig.getTypeLoader().loadType(name).get();
             Class<? extends SType<?>> sTypeClass = (Class<? extends SType<?>>) sType.getClass();
             String label = sType.asAtr().getLabel();

@@ -13,13 +13,13 @@ import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 
 @Controller
 public class AtribuirController extends IController implements Loggable {
 
     @Override
-    public ActionResponse execute(AbstractPetitionEntity petition, Action action) {
+    public ActionResponse execute(PetitionEntity petition, Action action) {
         try {
             ProcessInstance processInstance = Flow.getProcessInstance(petition.getProcessInstanceEntity());
             MUser user = Flow.getConfigBean().getUserService().saveUserIfNeeded(action.getIdUsuario());
