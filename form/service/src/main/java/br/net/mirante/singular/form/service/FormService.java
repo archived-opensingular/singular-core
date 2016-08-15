@@ -71,6 +71,12 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         this.formTypeDAO = formTypeDAO;
     }
 
+    @Transactional
+    @Override
+    public FormKey insert(SInstance instance) {
+        return super.insert(instance);
+    }
+
     @Override
     public SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
         final FormEntity entity = loadFormEntity(key);
@@ -156,7 +162,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
 
     private void loadCurrentXmlAnnotationOrEmpty(SInstance instance, FormEntity formEntity) {
-        for (FormAnnotationEntity formAnnotationEntity : formEntity.getCurrentFormVersionEntity().getFormAnnotations()) {
+        for (FormAnnotationEntity formAnnotationEntity : Optional.ofNullable(formEntity.getCurrentFormVersionEntity()).map(FormVersionEntity::getFormAnnotations).orElse(new ArrayList<>(0))) {
             MformPersistenciaXML.annotationLoadFromXml(instance,
                     Optional
                             .ofNullable(formAnnotationEntity.getAnnotationCurrentVersion())
