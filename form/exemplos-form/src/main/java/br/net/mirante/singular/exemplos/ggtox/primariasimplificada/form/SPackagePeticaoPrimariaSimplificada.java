@@ -23,6 +23,8 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         pb.loadPackage(SPackagePPSCommon.class);
         pb.createType(STypePeticaoPrimariaSimplificada.class);
         pb.createType(STypeParecer.class);
+        pb.createType(STypePublicacao.class);
+        pb.createType(STypeAnaliseGerencial.class);
     }
 
 }
