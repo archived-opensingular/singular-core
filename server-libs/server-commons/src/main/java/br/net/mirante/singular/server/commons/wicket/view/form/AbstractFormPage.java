@@ -21,6 +21,7 @@ import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.flow.metadata.ServerContextMetaData;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.FormPetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
@@ -102,8 +103,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     private FormEntity getFormEntityDraftOrPetition(T petition) {
         return Optional.ofNullable(petition.getCurrentDraftEntity())
                 .map(DraftEntity::getForm)
-                .orElse(petition.getForm());
+                .orElse(petition.getFormPetitionEntityByTypeName(config.getFormType()).map(FormPetitionEntity::getForm).orElse(null));
     }
+
 
     @Override
     protected Content getContent(String id) {
@@ -266,7 +268,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void saveForm(IModel<? extends SInstance> currentInstance) {
         onBeforeSave(currentInstance);
-        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), true));
+        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), true, isMainForm()));
     }
 
     protected void onBeforeSend(IModel<? extends SInstance> currentInstance) {
@@ -291,12 +293,12 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void send(IModel<? extends SInstance> currentInstance) {
         onBeforeSend(currentInstance);
-        formModel.setObject(petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject()));
+        formModel.setObject(petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), isMainForm()));
     }
 
     protected void executeTransition(String transitionName, IModel<? extends SInstance> currentInstance) {
         saveForm(currentInstance);
-        formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject()));
+        formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject(), isMainForm()));
     }
 
     protected boolean hasProcess() {
@@ -352,6 +354,10 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
      */
     protected FlowConfirmModalBuilder resolveFlowConfirmModalBuilder(String tn) {
         return new SimpleMessageFlowConfirmModalBuilder(this);
+    }
+
+    protected boolean isMainForm() {
+        return true;
     }
 
 }

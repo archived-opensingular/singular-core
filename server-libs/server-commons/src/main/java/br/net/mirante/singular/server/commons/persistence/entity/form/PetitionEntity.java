@@ -1,6 +1,5 @@
 package br.net.mirante.singular.server.commons.persistence.entity.form;
 
-import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
@@ -8,14 +7,9 @@ import br.net.mirante.singular.support.persistence.util.Constants;
 import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
@@ -34,10 +28,6 @@ public class PetitionEntity extends BaseEntity<Long> {
     private ProcessInstanceEntity processInstanceEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_FORMULARIO")
-    private FormEntity form;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
     private ProcessDefinitionEntity processDefinitionEntity;
 
@@ -51,6 +41,9 @@ public class PetitionEntity extends BaseEntity<Long> {
 
     @Column(name = "DS_PETICAO")
     private String description;
+
+    @OneToMany(mappedBy = "petition")
+    private List<FormPetitionEntity> formPetitionEntities;
 
     @Override
     public Long getCod() {
@@ -67,14 +60,6 @@ public class PetitionEntity extends BaseEntity<Long> {
 
     public void setProcessInstanceEntity(ProcessInstanceEntity processInstanceEntity) {
         this.processInstanceEntity = processInstanceEntity;
-    }
-
-    public FormEntity getForm() {
-        return form;
-    }
-
-    public void setForm(FormEntity form) {
-        this.form = form;
     }
 
     public ProcessDefinitionEntity getProcessDefinitionEntity() {
@@ -108,4 +93,25 @@ public class PetitionEntity extends BaseEntity<Long> {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public List<FormPetitionEntity> getFormPetitionEntities() {
+        return formPetitionEntities;
+    }
+
+    public void setFormPetitionEntities(List<FormPetitionEntity> formPetitionEntities) {
+        this.formPetitionEntities = formPetitionEntities;
+    }
+
+    public Optional<FormPetitionEntity> getFormPetitionEntityByTypeName(String typeName) {
+        if (getFormPetitionEntities() != null) {
+            return getFormPetitionEntities()
+                    .stream()
+                    .filter(fe -> fe.getForm().getFormType().getAbbreviation().equals(typeName))
+                    .findFirst();
+        } else {
+            return Optional.empty();
+        }
+    }
+
+
 }

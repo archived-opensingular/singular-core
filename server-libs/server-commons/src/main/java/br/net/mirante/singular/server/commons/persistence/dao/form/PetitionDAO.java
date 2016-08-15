@@ -7,6 +7,7 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEn
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -90,7 +91,8 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         hql.append(" LEFT JOIN p.currentDraftEntity currentDraftEntity ");
         hql.append(" LEFT JOIN currentDraftEntity.form formDraftEntity");
         hql.append(" LEFT JOIN formDraftEntity.currentFormVersionEntity currentFormDraftVersionEntity");
-        hql.append(" LEFT JOIN p.form formEntity ");
+        hql.append(" LEFT JOIN p.formPetitionEntities formPetitionEntity on formPetitionEntity.mainForm = :sim ");
+        hql.append(" LEFT JOIN formPetitionEntity.form formEntity ");
         hql.append(" LEFT JOIN formEntity.currentFormVersionEntity currentFormVersion ");
         hql.append(" LEFT JOIN p.processDefinitionEntity processDefinitionEntity ");
         hql.append(" LEFT JOIN formEntity.formType formType  ");
@@ -104,6 +106,9 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
                                   QuickFilter filtro,
                                   List<String> siglasProcesso,
                                   List<String> formNames) {
+
+        params.put("sim", SimNao.SIM);
+
         hql.append(" WHERE 1=1 ");
 
         if (siglasProcesso != null && !siglasProcesso.isEmpty()) {
@@ -174,7 +179,6 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         buildWhereClause(hql, params, filtro, siglasProcesso, formNames);
 
         final Query query = getSession().createQuery(hql.toString());
-
         setParametersQuery(query, params);
 
         return query;
