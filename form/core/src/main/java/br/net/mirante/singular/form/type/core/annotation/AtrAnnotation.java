@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -183,7 +184,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * Loads a collection of annotations onte this instance and its children.
      * The <code>targetId</code> field of the annotation denotes which field that annotation
      * is referring to.
-     *
+     * Se a intenção é recarregar as anotações é preciso chamar o método {@link AtrAnnotation#clear()} antes
      * @param annotations to be loaded into the instance.
      */
     public void loadAnnotations(SIList annotations) {
@@ -262,8 +263,11 @@ public class AtrAnnotation extends STranslatorForAttribute {
         return (SInstance) getTarget();
     }
 
+    /**
+     * Limpa todas a anotações no documento atual
+     */
     public void clear() {
-        annotation().clear();
+        Optional.ofNullable(persistentAnnotations()).ifPresent(SIList::clearInstance);
     }
 
     public boolean hasAnnotationOnTree() {

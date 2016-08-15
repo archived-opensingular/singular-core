@@ -130,7 +130,7 @@ public class AnnotationWicketTest {
             SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
 
             annotation1.setText("What's up doc?");
-
+            instance.asAtrAnnotation().clear();
             instance.asAtrAnnotation().loadAnnotations(backup);
         }
 
