@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STranslatorForAttribute;
+import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.type.basic.SPackageBasic;
@@ -165,10 +166,25 @@ public class AtrAnnotation extends STranslatorForAttribute {
     }
 
     private <T extends Enum & AnnotationClassifier> SIAnnotation newAnnotation(T classifier) {
+        isValidClassifier(classifier);
         SIAnnotation a = target().getDocument().newAnnotation();
         a.setTargetId(target().getId());
         a.setClassifier(classifier.name());
         return a;
+    }
+
+    private <T extends Enum & AnnotationClassifier> void isValidClassifier(T classifier) {
+        List<String> classifiers = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
+        if (classifiers == null || !classifiers.contains(classifier.name())) {
+            if (!DefaultAnnotationClassifier.DEFAULT_ANNOTATION.equals(classifier)) {
+                throw new SingularFormException(
+                        String.format(
+                                "Classificador de anotação desconhecido para o tipo: %s. Certifique-se que a tipo foi marcado como setAnnotated(%s) ",
+                                ((SInstance) this.getTarget()).getType().getName(), classifier.name()));
+
+            }
+
+        }
     }
 
     /**
@@ -185,6 +201,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * The <code>targetId</code> field of the annotation denotes which field that annotation
      * is referring to.
      * Se a intenção é recarregar as anotações é preciso chamar o método {@link AtrAnnotation#clear()} antes
+     *
      * @param annotations to be loaded into the instance.
      */
     public void loadAnnotations(SIList annotations) {

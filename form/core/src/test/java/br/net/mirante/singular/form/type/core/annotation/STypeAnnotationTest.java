@@ -81,13 +81,13 @@ public class STypeAnnotationTest {
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
         asAnnotation(instance, annotated2).annotation().setApproved(true);
         asAnnotation(instance, annotated4).annotation().setText("ukwatapheya");
-//        SIList persistent = instance.asAtrAnnotation().persistentAnnotations();
-//        assertThat(persistent.getType()).isInstanceOf(STypeAnnotationList.class);
-//        assertThat(persistent.getElementsType()).isInstanceOf(STypeAnnotation.class);
-//        assertThat(extractProperty("text").from(persistent.getValues()))
-//                .containsOnly("Abacate", null, "ukwatapheya");
-//        assertThat(extractProperty("approved").from(persistent.getValues()))
-//                .containsOnly(null, true);
+        SIList persistent = instance.asAtrAnnotation().persistentAnnotations();
+        assertThat(persistent.getType()).isInstanceOf(STypeAnnotationList.class);
+        assertThat(persistent.getElementsType()).isInstanceOf(STypeAnnotation.class);
+        assertThat(extractProperty("text").from(persistent.getValues()))
+                .containsOnly("Abacate", null, "ukwatapheya");
+        assertThat(extractProperty("approved").from(persistent.getValues()))
+                .containsOnly(null, true);
     }
 
     @Test public void loadsAnnotationsToAnewObject(){
@@ -101,16 +101,16 @@ public class STypeAnnotationTest {
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
-//        SIList         persistent   = instance.asAtrAnnotation().persistentAnnotations();
-//        FormSerialized serialized   = FormSerializationUtil.toSerializedObject(persistent);
-//        SIList         deserialized = (SIList) FormSerializationUtil.toInstance(serialized);
+        SIList         persistent   = instance.asAtrAnnotation().persistentAnnotations();
+        FormSerialized serialized   = FormSerializationUtil.toSerializedObject(persistent);
+        SIList         deserialized = (SIList) FormSerializationUtil.toInstance(serialized);
 
         SIComposite justCreated = baseCompositeField.newInstance();
 
-//        justCreated.asAtrAnnotation().loadAnnotations(deserialized);
-//        SIList anotherPersistent = justCreated.asAtrAnnotation().persistentAnnotations();
-//        assertThat(extractProperty("text").from(anotherPersistent.getValues()))
-//                .containsOnly("Abacate");
+        justCreated.asAtrAnnotation().loadAnnotations(deserialized);
+        SIList anotherPersistent = justCreated.asAtrAnnotation().persistentAnnotations();
+        assertThat(extractProperty("text").from(anotherPersistent.getValues()))
+                .containsOnly("Abacate");
     }
 
 
@@ -125,13 +125,13 @@ public class STypeAnnotationTest {
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
-//        SIList persistent = instance.asAtrAnnotation().persistentAnnotations();
-//        FormSerialized serialized = FormSerializationUtil.toSerializedObject(persistent);
-//        SIList deserialized = (SIList) FormSerializationUtil.toInstance(serialized);
-//        asAnnotation(instance, annotated1).clear();
-//        instance.asAtrAnnotation().loadAnnotations(deserialized);
-//        SIList anotherPersistent = instance.asAtrAnnotation().persistentAnnotations();
-//        assertThat(extractProperty("text").from(anotherPersistent.getValues())).containsOnly("Abacate");
+        SIList persistent = instance.asAtrAnnotation().persistentAnnotations();
+        FormSerialized serialized = FormSerializationUtil.toSerializedObject(persistent);
+        SIList deserialized = (SIList) FormSerializationUtil.toInstance(serialized);
+        asAnnotation(instance, annotated1).clear();
+        instance.asAtrAnnotation().loadAnnotations(deserialized);
+        SIList anotherPersistent = instance.asAtrAnnotation().persistentAnnotations();
+        assertThat(extractProperty("text").from(anotherPersistent.getValues())).containsOnly("Abacate");
     }
 
     @Test public void youCanEreaseAnnotationsFromASingleInstance(){
@@ -206,5 +206,4 @@ public class STypeAnnotationTest {
     private AtrAnnotation asAnnotation(SIComposite instance, STypeComposite<? extends SIComposite> field) {
         return instance.getDescendant(field).asAtrAnnotation();
     }
-
 }
