@@ -18,6 +18,7 @@ import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
+import br.net.mirante.singular.persistence.entity.TaskDefinitionEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.flow.metadata.ServerContextMetaData;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
@@ -106,9 +107,24 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     private FormEntity getFormEntityDraftOrPetition(T petition) {
         return Optional.ofNullable(petition.getCurrentDraftEntity())
                 .map(DraftEntity::getForm)
-                .orElse(petition.getFormPetitionEntityByTypeName(getFormType(config)).map(FormPetitionEntity::getForm).orElse(null));
+                .orElse(getFormPetitionEntity(petition).map(FormPetitionEntity::getForm).orElse(null));
     }
 
+    private Optional<FormPetitionEntity> getFormPetitionEntity(T petition) {
+        if (isMainForm()) {
+            return petitionService.findFormPetitionEntityByTypeName(petition.getCod(), getFormType(config));
+        } else {
+            return petitionService.findFormPetitionEntityByTypeNameAndTask(petition.getCod(), getFormType(config), getCurrentTaskDefinition(petition).map(TaskDefinitionEntity::getCod).orElse(null));
+        }
+    }
+
+    private Optional<TaskDefinitionEntity> getCurrentTaskDefinition(T petition) {
+        ProcessInstanceEntity processInstanceEntity = petition.getProcessInstanceEntity();
+        if (processInstanceEntity != null) {
+            return Optional.of(processInstanceEntity.getCurrentTask().getTask().getTaskDefinition());
+        }
+        return Optional.empty();
+    }
 
     @Override
     protected Content getContent(String id) {
@@ -274,7 +290,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), true, isMainForm(), this::onSave));
     }
 
-    protected void onSave(T petition){
+    protected void onSave(T petition) {
 
     }
 
@@ -380,10 +396,23 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected FormKey loadFormKeyFromType(String typeName) {
-        final PetitionEntity petitionEntity = currentModel.getObject();
+        final T petitionEntity = currentModel.getObject();
         if (petitionEntity != null) {
-            return petitionEntity
-                    .getFormPetitionEntityByTypeName(typeName)
+
+            final Optional<FormPetitionEntity> formPetitionEntityByTypeName;
+
+            if (isMainForm()) {
+                formPetitionEntityByTypeName = petitionService.findFormPetitionEntityByTypeName(petitionEntity.getCod(), typeName);
+            } else {
+                formPetitionEntityByTypeName = petitionService
+                        .findFormPetitionEntityByTypeNameAndTask(
+                                petitionEntity.getCod(),
+                                typeName,
+                                getCurrentTaskDefinition(petitionEntity).map(TaskDefinitionEntity::getCod).orElse(null)
+                        );
+            }
+
+            formPetitionEntityByTypeName
                     .map(FormPetitionEntity::getForm)
                     .map(FormEntity::getCod)
                     .map(cod -> formService.keyFromObject(cod))

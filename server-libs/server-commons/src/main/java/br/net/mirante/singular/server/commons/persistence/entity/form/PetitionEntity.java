@@ -9,7 +9,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
@@ -101,17 +100,5 @@ public class PetitionEntity extends BaseEntity<Long> {
     public void setFormPetitionEntities(List<FormPetitionEntity> formPetitionEntities) {
         this.formPetitionEntities = formPetitionEntities;
     }
-
-    public Optional<FormPetitionEntity> getFormPetitionEntityByTypeName(String typeName) {
-        if (getFormPetitionEntities() != null) {
-            return getFormPetitionEntities()
-                    .stream()
-                    .filter(fe -> fe.getForm().getFormType().getAbbreviation().equals(typeName))
-                    .findFirst();
-        } else {
-            return Optional.empty();
-        }
-    }
-
 
 }

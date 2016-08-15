@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.SingularFormPersistenceException;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
+import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
@@ -181,7 +182,7 @@ public class PetitionService<T extends PetitionEntity> {
         final FormKey key;
 
         if (peticao.getCurrentDraftEntity() != null
-                && peticao.getCurrentDraftEntity().getForm().getFormType().getAbbreviation().equals(instance.getType().getName())) {
+                && getFormType(peticao.getCurrentDraftEntity().getForm().getCod()).getAbbreviation().equals(instance.getType().getName())) {
             key = formPersistenceService.insertOrUpdate(instance);
             saveOrUpdateDraft(key, peticao.getCurrentDraftEntity());
         } else if (createNewDraftIfDoesntExists) {
@@ -205,20 +206,35 @@ public class PetitionService<T extends PetitionEntity> {
         return key;
     }
 
+    private FormTypeEntity getFormType(Long formEntityPK) {
+        return formPersistenceService.loadFormEntity(formPersistenceService.keyFromObject(formEntityPK)).getFormType();
+    }
+
     private Consumer<FormEntity> formSetterByName(boolean mainForm, String typeName, T petition) {
         return formEntity -> {
-            final Optional<FormPetitionEntity> optional           = petition.getFormPetitionEntityByTypeName(typeName);
-            final FormPetitionEntity           formPetitionEntity = optional.orElse(new FormPetitionEntity());
+
+            final Optional<FormPetitionEntity> optionalOfFormPetitionEntity = findFormPetitionEntityByTypeName(petition.getCod(), typeName);
+            final FormPetitionEntity           formPetitionEntity           = optionalOfFormPetitionEntity.orElse(new FormPetitionEntity());
+
             formPetitionEntity.setForm(formEntity);
             formPetitionEntity.setPetition(petition);
-            formPetitionEntity.setMainForm(mainForm ? SimNao.SIM : SimNao.NAO);
+
+            if (mainForm) {
+                formPetitionEntity.setMainForm(SimNao.SIM);
+            } else {
+                formPetitionEntity.setMainForm(SimNao.NAO);
+                formPetitionEntity.setTaskDefinitionEntity(petition.getProcessInstanceEntity().getCurrentTask().getTask().getTaskDefinition());
+            }
+
             formPetitionDAO.saveOrUpdate(formPetitionEntity);
-            if (!optional.isPresent()) {
+
+            if (!optionalOfFormPetitionEntity.isPresent()) {
                 if (petition.getFormPetitionEntities() == null) {
                     petition.setFormPetitionEntities(new ArrayList<>(1));
                 }
                 petition.getFormPetitionEntities().add(formPetitionEntity);
             }
+
         };
     }
 
@@ -269,7 +285,7 @@ public class PetitionService<T extends PetitionEntity> {
 
         FormKey                            petitionFormKey;
         final String                       typeName       = draftInstance.getType().getName();
-        final Optional<FormPetitionEntity> optionalOfForm = petition.getFormPetitionEntityByTypeName(typeName);
+        final Optional<FormPetitionEntity> optionalOfForm = findFormPetitionEntityByTypeName(petition.getCod(), typeName);
 
         if (optionalOfForm.isPresent()) {
             petitionFormKey = formPersistenceService.keyFromObject(optionalOfForm.get().getForm().getCod());
@@ -293,8 +309,8 @@ public class PetitionService<T extends PetitionEntity> {
 
     private void copyValuesAndAnnotations(SInstance source, SInstance target) {
         Value.copyValues(source, target);
-        SIList<SIAnnotation>   annotations = source.as(AtrAnnotation::new).persistentAnnotations();
-        if(annotations != null) {
+        SIList<SIAnnotation> annotations = source.as(AtrAnnotation::new).persistentAnnotations();
+        if (annotations != null) {
             Iterator<SIAnnotation> it = annotations.iterator();
             while (it.hasNext()) {
                 SIAnnotation sourceAnnotation = it.next();
@@ -391,6 +407,14 @@ public class PetitionService<T extends PetitionEntity> {
         draftEntity.setStartDate(new Date());
         draftEntity.setEditionDate(new Date());
         return draftEntity;
+    }
+
+    public Optional<FormPetitionEntity> findFormPetitionEntityByTypeName(Long petitionPK, String typeName) {
+        return Optional.ofNullable(formPetitionDAO.findFormPetitionEntityByTypeName(petitionPK, typeName));
+    }
+
+    public Optional<FormPetitionEntity> findFormPetitionEntityByTypeNameAndTask(Long petitionPK, String typeName, Integer taskDefinitionEntityPK) {
+        return Optional.ofNullable(formPetitionDAO.findFormPetitionEntityByTypeNameAndTask(petitionPK, typeName, taskDefinitionEntityPK));
     }
 
 }

@@ -2,6 +2,7 @@ package br.net.mirante.singular.server.commons.persistence.entity.form;
 
 
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
+import br.net.mirante.singular.persistence.entity.TaskDefinitionEntity;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import br.net.mirante.singular.support.persistence.enums.SimNao;
 import br.net.mirante.singular.support.persistence.util.Constants;
@@ -39,6 +40,10 @@ public class FormPetitionEntity extends BaseEntity<Long> {
             @org.hibernate.annotations.Parameter(name = "valueOfMethod", value = "valueOfEnum")})
     private SimNao mainForm;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CO_DEFINICAO_TAREFA")
+    private TaskDefinitionEntity taskDefinitionEntity;
+
     @Override
     public Long getCod() {
         return cod;
@@ -72,4 +77,11 @@ public class FormPetitionEntity extends BaseEntity<Long> {
         this.mainForm = mainForm;
     }
 
+    public TaskDefinitionEntity getTaskDefinitionEntity() {
+        return taskDefinitionEntity;
+    }
+
+    public void setTaskDefinitionEntity(TaskDefinitionEntity taskDefinitionEntity) {
+        this.taskDefinitionEntity = taskDefinitionEntity;
+    }
 }
