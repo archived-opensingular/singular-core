@@ -395,29 +395,23 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return formPageConfig.getAnnotationMode();
     }
 
-    protected FormKey loadFormKeyFromType(String typeName) {
+    protected FormKey loadFormKeyFromTypeAndTask(String typeName) {
+
         final T petitionEntity = currentModel.getObject();
+
         if (petitionEntity != null) {
-
-            final Optional<FormPetitionEntity> formPetitionEntityByTypeName;
-
-            if (isMainForm()) {
-                formPetitionEntityByTypeName = petitionService.findFormPetitionEntityByTypeName(petitionEntity.getCod(), typeName);
-            } else {
-                formPetitionEntityByTypeName = petitionService
-                        .findFormPetitionEntityByTypeNameAndTask(
-                                petitionEntity.getCod(),
-                                typeName,
-                                getCurrentTaskDefinition(petitionEntity).map(TaskDefinitionEntity::getCod).orElse(null)
-                        );
-            }
-
-            formPetitionEntityByTypeName
+            return petitionService
+                    .findFormPetitionEntityByTypeNameAndTask(
+                            petitionEntity.getCod(),
+                            typeName,
+                            getCurrentTaskDefinition(petitionEntity).map(TaskDefinitionEntity::getCod).orElse(null)
+                    )
                     .map(FormPetitionEntity::getForm)
                     .map(FormEntity::getCod)
                     .map(cod -> formService.keyFromObject(cod))
                     .orElse(null);
         }
+
         return null;
     }
 }
