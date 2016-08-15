@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -266,7 +267,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * Limpa todas a anotações no documento atual
      */
     public void clear() {
-        persistentAnnotations().clearInstance();
+        Optional.ofNullable(persistentAnnotations()).ifPresent(SIList::clearInstance);
     }
 
     public boolean hasAnnotationOnTree() {
