@@ -1,17 +1,8 @@
 package br.net.mirante.singular.server.commons.spring;
 
-import br.net.mirante.singular.form.persistence.dao.FormAnnotationDAO;
-import br.net.mirante.singular.form.persistence.dao.FormAnnotationVersionDAO;
-import br.net.mirante.singular.form.persistence.dao.FormTypeDAO;
-import br.net.mirante.singular.form.persistence.dao.FormVersionDAO;
-import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
-import org.springframework.context.annotation.Bean;
-
 import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.persistence.dao.FileDao;
-import br.net.mirante.singular.form.persistence.dao.FormDAO;
+import br.net.mirante.singular.form.persistence.dao.*;
 import br.net.mirante.singular.form.persistence.service.AttachmentPersistenceService;
 import br.net.mirante.singular.form.service.FormService;
 import br.net.mirante.singular.form.service.IFormService;
@@ -19,10 +10,14 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceH
 import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionerDAO;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
+import org.springframework.context.annotation.Bean;
 
 public class SingularDefaultBeanFactory {
 
@@ -72,8 +67,13 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public IFormService formService(FormDAO formDAO, FormVersionDAO formVersionDAO, FormAnnotationDAO formAnnotationDAO, FormAnnotationVersionDAO formAnnotationVersionDAO, FormTypeDAO formTypeDAO) {
-        return new FormService(formDAO, formVersionDAO, formAnnotationDAO, formAnnotationVersionDAO, formTypeDAO);
+    public IFormService formService() {
+        return new FormService();
+    }
+
+    @Bean
+    public PetitionerDAO petitionerDAO() {
+        return new PetitionerDAO();
     }
 
     @Bean
@@ -105,6 +105,5 @@ public class SingularDefaultBeanFactory {
     public IUserService userService() {
         return new SingularDefaultUserService();
     }
-
 
 }
