@@ -1,6 +1,5 @@
 package br.net.mirante.singular.form.persistence;
 
-import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 
 import java.lang.reflect.Constructor;
@@ -16,13 +15,10 @@ import static br.net.mirante.singular.form.persistence.SPackageFormPersistence.A
 public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, KEY extends FormKey>
         implements BasicFormPersistence<INSTANCE> {
 
-    private final Class<KEY> keyClass;
-
-    private final Constructor<KEY> keyConstructor;
-
-    private final Method convertMethod;
-
     private static final String CONVERTER_METHOD_NAME = "convertToKey";
+    private final Class<KEY> keyClass;
+    private final Constructor<KEY> keyConstructor;
+    private final Method convertMethod;
 
     public AbstractBasicFormPersistence(Class<KEY> keyClass) {
         this.keyClass = Objects.requireNonNull(keyClass);
