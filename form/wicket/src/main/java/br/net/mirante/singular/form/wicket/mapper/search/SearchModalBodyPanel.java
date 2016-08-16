@@ -1,9 +1,21 @@
 package br.net.mirante.singular.form.wicket.mapper.search;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.converter.SimpleSInstanceConverter;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.provider.*;
+import br.net.mirante.singular.form.provider.Config.Column;
+import br.net.mirante.singular.form.view.SViewSearchModal;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.IBSAction;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -15,30 +27,9 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.converter.SimpleSInstanceConverter;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.provider.Config;
-import br.net.mirante.singular.form.provider.Config.Column;
-import br.net.mirante.singular.form.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.provider.FilteredProvider;
-import br.net.mirante.singular.form.provider.InMemoryFilteredPagedProviderDecorator;
-import br.net.mirante.singular.form.provider.ProviderContext;
-import br.net.mirante.singular.form.view.SViewSearchModal;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.datatable.IBSAction;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Iterator;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 
@@ -183,7 +174,7 @@ class SearchModalBodyPanel extends Panel {
             }
         });
 
-        return new SingularFormPanel(FORM_PANEL_ID, parentSingularFormPanel.getSingularFormConfig()) {
+        return new SingularFormPanel(FORM_PANEL_ID, parentSingularFormPanel.getSingularFormConfig(), true) {
             @Override
             protected SInstance createInstance(SFormConfig singularFormConfig) {
                 RefType filterRefType = new RefType() {
