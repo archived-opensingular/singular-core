@@ -11,12 +11,20 @@ import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequence
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.util.Optional;
 
 @Entity
 @Table(schema = Constants.SCHEMA, name = "TB_FORMULARIO_PETICAO")
 @GenericGenerator(name = FormPetitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
-public class FormPetitionEntity extends BaseEntity<Long> {
+public class FormPetitionEntity extends BaseEntity<Long> implements Comparable<FormPetitionEntity> {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_FORMULARIO_PETICAO";
 
@@ -83,5 +91,10 @@ public class FormPetitionEntity extends BaseEntity<Long> {
 
     public void setTaskDefinitionEntity(TaskDefinitionEntity taskDefinitionEntity) {
         this.taskDefinitionEntity = taskDefinitionEntity;
+    }
+
+    @Override
+    public int compareTo(FormPetitionEntity o) {
+        return Optional.ofNullable(this.getCod()).orElse(0l).compareTo(Optional.ofNullable(o).map(BaseEntity::getCod).orElse(0l));
     }
 }

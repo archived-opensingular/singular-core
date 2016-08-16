@@ -2,6 +2,7 @@ package br.net.mirante.singular.server.commons.persistence.entity.form;
 
 import br.net.mirante.singular.form.persistence.entity.FormAnnotationVersionEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
+import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import br.net.mirante.singular.support.persistence.util.Constants;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(schema = Constants.SCHEMA, name = "TB_HISTORICO_CONTEUDO_PETICAO")
@@ -35,19 +37,23 @@ public class PetitionContentHistoryEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_VERSAO_FORMULARIO")
     private FormVersionEntity formVersionEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_ANOTACAO_FORMULARIO")
-    private FormAnnotationVersionEntity formAnnotationVersionEntity;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "RL_HIST_CONT_PET_VER_ANOTACAO", schema = Constants.SCHEMA,
+            joinColumns = @JoinColumn(name = "CO_HISTORICO"),
+            inverseJoinColumns = @JoinColumn(name = "CO_VERSAO_ANOTACAO"))
+    private List<FormAnnotationVersionEntity> formAnnotationsVersions;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_INSTANCIA_TAREFA")
     private TaskInstanceEntity taskInstanceEntity;
 
-    @Column(name = "CO_AUTOR")
-    private Long autor;
+    @ManyToOne
+    @JoinColumn(name = "CO_AUTOR")
+    private Actor actor;
 
-    @Column(name = "CO_PETICIONANTE")
-    private Long peticionante;
+    @ManyToOne
+    @JoinColumn(name = "CO_PETICIONANTE")
+    private PetitionerEntity petitionerEntity;
 
     @Override
     public Long getCod() {
@@ -82,12 +88,12 @@ public class PetitionContentHistoryEntity extends BaseEntity<Long> {
         this.formVersionEntity = formVersionEntity;
     }
 
-    public FormAnnotationVersionEntity getFormAnnotationVersionEntity() {
-        return formAnnotationVersionEntity;
+    public List<FormAnnotationVersionEntity> getFormAnnotationsVersions() {
+        return formAnnotationsVersions;
     }
 
-    public void setFormAnnotationVersionEntity(FormAnnotationVersionEntity formAnnotationVersionEntity) {
-        this.formAnnotationVersionEntity = formAnnotationVersionEntity;
+    public void setFormAnnotationsVersions(List<FormAnnotationVersionEntity> formAnnotationsVersions) {
+        this.formAnnotationsVersions = formAnnotationsVersions;
     }
 
     public TaskInstanceEntity getTaskInstanceEntity() {
@@ -98,20 +104,19 @@ public class PetitionContentHistoryEntity extends BaseEntity<Long> {
         this.taskInstanceEntity = taskInstanceEntity;
     }
 
-    public Long getAutor() {
-        return autor;
+    public Actor getActor() {
+        return actor;
     }
 
-    public void setAutor(Long autor) {
-        this.autor = autor;
+    public void setActor(Actor actor) {
+        this.actor = actor;
     }
 
-    public Long getPeticionante() {
-        return peticionante;
+    public PetitionerEntity getPetitionerEntity() {
+        return petitionerEntity;
     }
 
-    public void setPeticionante(Long peticionante) {
-        this.peticionante = peticionante;
+    public void setPetitionerEntity(PetitionerEntity petitionerEntity) {
+        this.petitionerEntity = petitionerEntity;
     }
-
 }

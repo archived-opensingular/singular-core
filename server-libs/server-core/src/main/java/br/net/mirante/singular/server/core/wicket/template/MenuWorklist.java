@@ -72,7 +72,7 @@ public class MenuWorklist extends MenuAnalise {
     private void loadMenuGroups() {
         final MenuSessionConfig menuSessionConfig = getMenuSessionConfig();
         if (!menuSessionConfig.isInitialized()) {
-            final List<ProcessGroupEntity> categorias = petitionService.listarTodosGruposProcesso();
+            final List<ProcessGroupEntity> categorias = petitionService.listAllProcessGroups();
             menuSessionConfig.initialize(categorias);
         }
     }

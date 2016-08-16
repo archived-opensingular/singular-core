@@ -201,7 +201,7 @@ public abstract class DispatcherPage extends WebPage {
         if (StringUtils.isBlank(petitionId)) {
             return null;
         } else {
-            return Flow.getTaskInstance(petitionService.findCurrentTaskByPetitionId(petitionId));
+            return Flow.getTaskInstance(petitionService.findCurrentTaskByPetitionId(Long.valueOf(petitionId)));
         }
     }
 

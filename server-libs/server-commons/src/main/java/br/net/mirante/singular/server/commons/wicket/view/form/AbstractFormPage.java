@@ -52,18 +52,14 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
 
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
-
+    protected final Class<T> petitionClass;
+    protected final FormPageConfig config;
+    protected final IModel<T> currentModel;
+    protected final IModel<FormKey> formModel;
     @Inject
     protected PetitionService<T> petitionService;
-
     @Inject
     protected IFormService formService;
-
-    protected final Class<T>        petitionClass;
-    protected final FormPageConfig  config;
-    protected final IModel<T>       currentModel;
-    protected final IModel<FormKey> formModel;
-
     @Inject
     @Named("formConfigWithDatabase")
     protected SFormConfig<String> singularFormConfig;
@@ -203,7 +199,10 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
-        final List<MTransition> trans = petitionService.listCurrentTaskTransitions(config.getFormId());
+        List<MTransition> trans = null;
+        if (StringUtils.isNotEmpty(config.getFormId())) {
+            trans = petitionService.listCurrentTaskTransitions(Long.valueOf(config.getFormId()));
+        }
         if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
             int index = 0;
             for (MTransition t : trans) {
@@ -365,8 +364,8 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
      */
     private BSModalBorder buildFlowConfirmationModal(String idSuffix, BSContainer<?> mc, String tn, IModel<? extends SInstance> im, ViewMode vm) {
         final FlowConfirmModalBuilder flowConfirmModalBuilder = resolveFlowConfirmModalBuilder(tn);
-        final TemplatePanel           modalTemplatePanel      = mc.newTemplateTag(t -> flowConfirmModalBuilder.getMarkup(idSuffix));
-        final BSModalBorder           modal                   = flowConfirmModalBuilder.build(idSuffix, tn, im, vm);
+        final TemplatePanel modalTemplatePanel = mc.newTemplateTag(t -> flowConfirmModalBuilder.getMarkup(idSuffix));
+        final BSModalBorder modal = flowConfirmModalBuilder.build(idSuffix, tn, im, vm);
         modalTemplatePanel.add(modal);
         return modal;
     }
