@@ -168,9 +168,11 @@ public abstract class DispatcherPage extends WebPage {
 
         final FormPageConfig cfg = buildConfig(r, fi, am, vm, fn);
 
-        cfg.setForceViewMainForm(forceViewMainForm.toBoolean(false));
 
         if (cfg != null) {
+
+            cfg.setForceViewMainForm(forceViewMainForm.toBoolean(false));
+
             if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
                 throw new SingularServerException("Nenhum fluxo está configurado");
             }
