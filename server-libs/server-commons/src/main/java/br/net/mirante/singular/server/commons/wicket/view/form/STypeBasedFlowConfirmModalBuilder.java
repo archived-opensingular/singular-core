@@ -47,7 +47,7 @@ public class STypeBasedFlowConfirmModalBuilder extends AbstractFlowConfirmModalB
     }
 
     private SingularFormPanel<String> buildSingularFormPanel() {
-        return new SingularFormPanel<String>("singular-form-panel", formConfig) {
+        return new SingularFormPanel<String>("singular-form-panel", formConfig, true) {
             @Override
             protected SInstance createInstance(SFormConfig singularFormConfig) {
                 if (formKey != null) {
