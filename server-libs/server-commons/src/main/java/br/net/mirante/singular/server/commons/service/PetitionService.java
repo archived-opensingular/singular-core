@@ -206,7 +206,7 @@ public class PetitionService<T extends PetitionEntity> {
         return key;
     }
 
-    private FormTypeEntity getFormType(Long formEntityPK) {
+    public FormTypeEntity getFormType(Long formEntityPK) {
         return formPersistenceService.loadFormEntity(formPersistenceService.keyFromObject(formEntityPK)).getFormType();
     }
 
