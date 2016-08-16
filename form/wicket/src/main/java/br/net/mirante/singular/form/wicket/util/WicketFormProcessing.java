@@ -5,30 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.util;
 
-import static java.util.stream.Collectors.*;
-
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import br.net.mirante.singular.commons.util.Loggable;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.MetaDataKey;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.Visits;
-
 import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SInstances;
 import br.net.mirante.singular.form.SType;
@@ -42,7 +20,27 @@ import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.Visits;
+
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.toSet;
 
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,
@@ -54,6 +52,8 @@ public class WicketFormProcessing implements Loggable {
     public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
     };
     public final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {
+    };
+    public final static MetaDataKey<Boolean> MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {
     };
 
     public static void onFormError(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance) {
@@ -289,6 +289,7 @@ public class WicketFormProcessing implements Loggable {
 
     private static void refreshComponentOrCellContainer(Optional<AjaxRequestTarget> target, Component component) {
         if (target.isPresent() && component != null) {
+            component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, true);
             target.get()
                     .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
         }

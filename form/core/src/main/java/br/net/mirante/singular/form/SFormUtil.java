@@ -5,37 +5,29 @@
 
 package br.net.mirante.singular.form;
 
-import static java.util.stream.Collectors.*;
+import br.net.mirante.singular.commons.internal.function.SupplierUtil;
+import br.net.mirante.singular.form.type.core.SPackageBootstrap;
+import br.net.mirante.singular.form.type.country.brazil.SPackageCountryBrazil;
+import br.net.mirante.singular.form.type.util.SPackageUtil;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import javax.lang.model.SourceVersion;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import javax.lang.model.SourceVersion;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableSet;
-
-import br.net.mirante.singular.commons.internal.function.SupplierUtil;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.SPackageBootstrap;
-import br.net.mirante.singular.form.type.country.brazil.SPackageCountryBrazil;
-import br.net.mirante.singular.form.type.util.SPackageUtil;
+import static java.util.stream.Collectors.joining;
 
 public final class SFormUtil {
 
     private static final Pattern idPattern = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
 
-    private SFormUtil() {}
+    private SFormUtil() {
+    }
 
     static boolean isValidSimpleName(String name) {
         return idPattern.matcher(name).matches();
@@ -119,8 +111,8 @@ public final class SFormUtil {
     }
 
     public static String generateUserFriendlyName(String simpleName) {
-        final Pattern lowerUpper = Pattern.compile("(.*?[a-z])([A-Z].*?)");
-        final Pattern prefixoSigla = Pattern.compile("([A-Z]+)([A-Z][a-z])");
+        final Pattern              lowerUpper            = Pattern.compile("(.*?[a-z])([A-Z].*?)");
+        final Pattern              prefixoSigla          = Pattern.compile("([A-Z]+)([A-Z][a-z])");
         final ImmutableSet<String> upperCaseSpecialCases = ImmutableSet.of("id", "url");
 
         return StringUtils.capitalize(Arrays.asList(simpleName).stream().map(s -> lowerUpper.matcher(s).replaceAll(
@@ -132,17 +124,18 @@ public final class SFormUtil {
     public static String generateUserFriendlyPath(SInstance instance) {
         return generateUserFriendlyPath(instance, null);
     }
+
     public static String generateUserFriendlyPath(SInstance instance, SInstance parentContext) {
         LinkedList<String> labels = new LinkedList<>();
-        SInstance child = null;
+        SInstance          child  = null;
         for (SInstance node = instance; node != null && !node.equals(parentContext); child = node, node = node.getParent()) {
 
             final String labelNode = node.asAtr().getLabel();
 
             if (node instanceof SIList<?>) {
-                SIList<?> lista = (SIList<?>) node;
-                String labelLista = lista.asAtr().getLabel();
-                int index = lista.indexOf(child) + 1;
+                SIList<?> lista      = (SIList<?>) node;
+                String    labelLista = lista.asAtr().getLabel();
+                int       index      = lista.indexOf(child) + 1;
                 labels.add(labelLista + ((index > 0) ? " [" + (index) + ']' : ""));
             } else {
                 if (StringUtils.isNotBlank(labelNode)) {
@@ -166,10 +159,10 @@ public final class SFormUtil {
         SInfoType infoType = getInfoType(typeClass);
         if (StringUtils.isBlank(infoType.name())) {
             throw new SingularFormException("O tipo " + typeClass.getName() + " não define o nome do tipo por meio da anotação @"
-                + SInfoType.class.getSimpleName());
+                    + SInfoType.class.getSimpleName());
         }
         Class<? extends SPackage> packageClass = getTypePackage(typeClass);
-        String packageName = getInfoPackageNameOrException(packageClass);
+        String                    packageName  = getInfoPackageNameOrException(packageClass);
         return packageName + '.' + infoType.name();
     }
 
@@ -177,7 +170,7 @@ public final class SFormUtil {
         SInfoType mFormTipo = typeClass.getAnnotation(SInfoType.class);
         if (mFormTipo == null) {
             throw new SingularFormException(
-                "O tipo '" + typeClass.getName() + " não possui a anotação @" + SInfoType.class.getSimpleName() + " em sua definição.");
+                    "O tipo '" + typeClass.getName() + " não possui a anotação @" + SInfoType.class.getSimpleName() + " em sua definição.");
         }
         return mFormTipo;
     }
@@ -186,7 +179,7 @@ public final class SFormUtil {
         Class<? extends SPackage> sPackage = getInfoType(typeClass).spackage();
         if (sPackage == null) {
             throw new SingularFormException(
-                "O tipo '" + typeClass.getName() + "' não define o atributo 'pacote' na anotação @" + SInfoType.class.getSimpleName());
+                    "O tipo '" + typeClass.getName() + "' não define o atributo 'pacote' na anotação @" + SInfoType.class.getSimpleName());
         }
         return sPackage;
     }
@@ -204,7 +197,7 @@ public final class SFormUtil {
         String packageName = getInfoPackageName(packageClass);
         if (packageName == null) {
             throw new SingularFormException("A classe " + packageClass.getName() + " não define o nome do pacote por meio da anotação @"
-                + SInfoPackage.class.getSimpleName());
+                    + SInfoPackage.class.getSimpleName());
         }
         return packageName;
     }
@@ -236,19 +229,19 @@ public final class SFormUtil {
     /**
      * Tentar descobrir um pacote padrões do singular ao qual provavelmente o
      * tipo informado pertence.
-     * 
+     *
      * @return null se o tipo não for de um pacote do singular ou senão for
-     *         encontrado um tipo compatível.
+     * encontrado um tipo compatível.
      */
     static Class<? extends SPackage> getSingularPackageForType(String pathFullName) {
         if (!pathFullName.startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX)) {
             return null;
         }
         Map<String, Class<? extends SPackage>> packages = getSingularPackages();
-        String selected = null;
+        String                                 selected = null;
         for (String candidate : packages.keySet()) {
             if (pathFullName.startsWith(candidate) && pathFullName.charAt(candidate.length()) == '.'
-                && (selected == null || selected.length() < candidate.length())) {
+                    && (selected == null || selected.length() < candidate.length())) {
                 selected = candidate;
             }
         }

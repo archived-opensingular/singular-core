@@ -8,13 +8,14 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewListByTable;
 
 import java.util.UUID;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
-public class STypeIngredienteAtivo extends STypeComposite<SIComposite> {
+public class STypeIngredienteAtivo extends STypePersistentComposite {
 
     public static final String FIELD_NAME_ID = "idAtivo";
     public static final String FIELD_NAME_NOME_COMUM_PTBR = "nomeComumPortugues";
