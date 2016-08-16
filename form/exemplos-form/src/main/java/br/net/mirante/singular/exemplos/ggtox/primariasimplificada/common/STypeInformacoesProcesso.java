@@ -2,12 +2,15 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.SInfoType;
+import br.net.mirante.singular.form.STypeAttachmentList;
+import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
-public class STypeInformacoesProcesso extends STypeComposite<SIComposite> {
+public class STypeInformacoesProcesso extends STypePersistentComposite {
 
     public STypeString marcaComercial;
     public STypeAttachment modeloRotulo;

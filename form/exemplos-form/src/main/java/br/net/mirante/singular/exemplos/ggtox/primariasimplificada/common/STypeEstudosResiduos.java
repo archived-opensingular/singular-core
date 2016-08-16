@@ -1,16 +1,10 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 
-import static br.net.mirante.singular.form.util.SingularPredicates.*;
-
 import br.net.mirante.singular.exemplos.SelectBuilder;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.ResiduoValidator;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.STypeSimple;
-import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeBoolean;
 import br.net.mirante.singular.form.type.core.STypeDecimal;
 import br.net.mirante.singular.form.type.core.STypeInteger;
@@ -22,9 +16,11 @@ import br.net.mirante.singular.form.view.SViewListByTable;
 
 import java.util.Optional;
 
+import static br.net.mirante.singular.form.util.SingularPredicates.*;
+
 
 @SInfoType(spackage = SPackagePPSCommon.class)
-public class STypeEstudosResiduos extends STypeComposite<SIComposite> {
+public class STypeEstudosResiduos extends STypePersistentComposite {
 
     private EstudoResiduo estudoResiduo;
 

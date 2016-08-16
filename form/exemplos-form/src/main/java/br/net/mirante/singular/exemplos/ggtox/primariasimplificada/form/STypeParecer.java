@@ -1,14 +1,13 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
-import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeHTML;
 
 
 @SInfoType(name = "STypeParecer", spackage = SPackagePeticaoPrimariaSimplificada.class)
-public class STypeParecer extends STypeComposite<SIComposite> {
+public class STypeParecer extends STypePersistentComposite {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {

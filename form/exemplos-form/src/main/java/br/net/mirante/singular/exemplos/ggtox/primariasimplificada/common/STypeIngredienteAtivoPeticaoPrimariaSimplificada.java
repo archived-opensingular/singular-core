@@ -4,13 +4,13 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
-public class STypeIngredienteAtivoPeticaoPrimariaSimplificada extends STypeComposite<SIComposite> {
+public class STypeIngredienteAtivoPeticaoPrimariaSimplificada extends STypePersistentComposite {
 
     public static final String FIELD_NAME_LIST_ATIVOS = "ingredientesAtivos";
     public STypeList<STypeIngredienteAtivo, SIComposite> ingredientesAtivos;
@@ -32,4 +32,6 @@ public class STypeIngredienteAtivoPeticaoPrimariaSimplificada extends STypeCompo
 
 
     }
+
+
 }

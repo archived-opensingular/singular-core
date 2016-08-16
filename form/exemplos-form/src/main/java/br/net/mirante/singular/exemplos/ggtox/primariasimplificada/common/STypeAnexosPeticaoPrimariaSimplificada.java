@@ -2,14 +2,13 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
-import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeAttachmentList;
-import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
-public class STypeAnexosPeticaoPrimariaSimplificada extends STypeComposite<SIComposite> {
+public class STypeAnexosPeticaoPrimariaSimplificada extends STypePersistentComposite {
 
     public STypeAttachmentList informacoesSobreCulturaIndicacao;
     public STypeAttachmentList pareceresTecnicosAvaliacoesDasEmpresas;
