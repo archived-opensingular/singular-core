@@ -103,10 +103,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     private FormEntity getFormEntityDraftOrPetition(T petition) {
         return Optional.ofNullable(petition.getCurrentDraftEntity())
                 .map(DraftEntity::getForm)
+                .filter(form -> petitionService.getFormType(form.getCod()).getAbbreviation().equals(getFormType(config)))
                 .orElse(getFormPetitionEntity(petition).map(FormPetitionEntity::getForm).orElse(null));
     }
 
-    private Optional<FormPetitionEntity> getFormPetitionEntity(T petition) {
+    public Optional<FormPetitionEntity> getFormPetitionEntity(T petition) {
         if (isMainForm()) {
             return petitionService.findFormPetitionEntityByTypeName(petition.getCod(), getFormType(config));
         } else {
