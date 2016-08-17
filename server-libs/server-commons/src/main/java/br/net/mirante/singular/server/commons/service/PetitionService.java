@@ -286,6 +286,8 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
         final ProcessInstance processInstance = processDefinition.newInstance();
 
+        savePetitionHistory(peticao.getCod(), key);
+
         processInstance.setDescription(peticao.getDescription());
 
         final ProcessInstanceEntity processEntity = processInstance.saveEntity();
@@ -293,7 +295,6 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         peticao.setProcessInstanceEntity(processEntity);
 
         processInstance.start();
-        savePetitionHistory(peticao.getCod(), key);
         return key;
     }
 
@@ -305,12 +306,14 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         PetitionContentHistoryEntity contentHistoryEntity = new PetitionContentHistoryEntity();
         contentHistoryEntity.setPetitionEntity(petitionEntity);
         contentHistoryEntity.setFormVersionEntity(formEntity.getCurrentFormVersionEntity());
-        contentHistoryEntity.setActor(taskInstance.getAllocatedUser());
+        if (taskInstance != null){
+            contentHistoryEntity.setActor(taskInstance.getAllocatedUser());
+            contentHistoryEntity.setTaskInstanceEntity(taskInstance);
+        }
         if (CollectionUtils.isNotEmpty(formEntity.getCurrentFormVersionEntity().getFormAnnotations())) {
             contentHistoryEntity.setFormAnnotationsVersions(formEntity.getCurrentFormVersionEntity().getFormAnnotations().stream().map(FormAnnotationEntity::getAnnotationCurrentVersion).collect(Collectors.toList()));
         }
         contentHistoryEntity.setPetitionerEntity(petitionEntity.getPetitioner());
-        contentHistoryEntity.setTaskInstanceEntity(taskInstance);
         contentHistoryEntity.setHistoryDate(new Date());
         petitionContentHistoryDAO.saveOrUpdate(contentHistoryEntity);
     }
@@ -375,10 +378,10 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     public FormKey saveAndExecuteTransition(String transitionName, T peticao, SInstance instance, boolean mainForm) {
         try {
             final FormKey key = preparePetitionForTransition(peticao, instance, mainForm);
+            savePetitionHistory(peticao.getCod(), key);
             final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(peticao).getClass();
             final ProcessInstance pi = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
             pi.executeTransition(transitionName);
-            savePetitionHistory(peticao.getCod(), key);
             return key;
         } catch (Exception e) {
             throw new SingularServerException(e.getMessage(), e);
