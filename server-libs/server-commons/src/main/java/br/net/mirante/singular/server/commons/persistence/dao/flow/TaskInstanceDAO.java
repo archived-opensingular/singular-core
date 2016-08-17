@@ -5,14 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.AbstractPetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.Petition;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 
@@ -37,8 +36,8 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         };
     }
 
-    protected Class<? extends AbstractPetitionEntity> getPetitionEntityClass() {
-        return Petition.class;
+    protected Class<? extends PetitionEntity> getPetitionEntityClass() {
+        return PetitionEntity.class;
     }
 
 
@@ -128,10 +127,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<TaskInstanceEntity> findCurrentTasksByPetitionId(String petitionId) {
-        if (StringUtils.isBlank(petitionId)){
-            return new ArrayList<>(0);
-        }
+    public List<TaskInstanceEntity> findCurrentTasksByPetitionId(Long petitionId) {
         StringBuilder sb = new StringBuilder();
 
         sb
@@ -144,7 +140,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                 .append("   and (ti.endDate is null OR task.type = :tipoEnd)  ");
 
         final Query query = getSession().createQuery(sb.toString());
-        query.setParameter("petitionId",  Long.valueOf(petitionId));
+        query.setParameter("petitionId",  petitionId);
         query.setParameter("tipoEnd", TaskType.End);
         return query.list();
     }

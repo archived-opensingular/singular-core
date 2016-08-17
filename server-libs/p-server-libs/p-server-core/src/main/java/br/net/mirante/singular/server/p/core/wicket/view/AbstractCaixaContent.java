@@ -285,7 +285,8 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
                 } else {
                     return getProcesses()
                             .stream()
-                            .map(ProcessDTO::getAbbreviation)
+                            .map(ProcessDTO::getAbbreviations)
+                            .flatMap(List::stream)
                             .collect(Collectors.toList());
                 }
             }

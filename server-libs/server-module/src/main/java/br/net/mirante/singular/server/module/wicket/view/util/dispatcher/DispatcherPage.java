@@ -1,15 +1,20 @@
 package br.net.mirante.singular.server.module.wicket.view.util.dispatcher;
 
-import static br.net.mirante.singular.server.commons.util.Parameters.ACTION;
-import static br.net.mirante.singular.server.commons.util.Parameters.FORM_ID;
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
-import java.lang.reflect.Constructor;
-
-import javax.inject.Inject;
-
+import br.net.mirante.singular.flow.core.*;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.flow.SingularServerTaskPageStrategy;
+import br.net.mirante.singular.server.commons.flow.SingularWebRef;
+import br.net.mirante.singular.server.commons.form.FormActions;
+import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.wicket.view.SingularHeaderResponseDecorator;
+import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
+import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
+import br.net.mirante.singular.server.commons.wicket.view.template.Template;
+import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
+import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -26,24 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import br.net.mirante.singular.flow.core.Flow;
-import br.net.mirante.singular.flow.core.ITaskPageStrategy;
-import br.net.mirante.singular.flow.core.MTask;
-import br.net.mirante.singular.flow.core.MTaskUserExecutable;
-import br.net.mirante.singular.flow.core.TaskInstance;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.server.commons.exception.SingularServerException;
-import br.net.mirante.singular.server.commons.flow.SingularServerTaskPageStrategy;
-import br.net.mirante.singular.server.commons.flow.SingularWebRef;
-import br.net.mirante.singular.server.commons.form.FormActions;
-import br.net.mirante.singular.server.commons.service.PetitionService;
-import br.net.mirante.singular.server.commons.wicket.view.SingularHeaderResponseDecorator;
-import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
-import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
-import br.net.mirante.singular.server.commons.wicket.view.template.Template;
-import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
+import javax.inject.Inject;
+import java.lang.reflect.Constructor;
+
+import static br.net.mirante.singular.server.commons.util.Parameters.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 @SuppressWarnings("serial")
 @MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
@@ -158,9 +150,10 @@ public abstract class DispatcherPage extends WebPage {
 
     private FormPageConfig parseParameters(Request r) {
 
-        final StringValue action   = getParam(r, ACTION);
-        final StringValue formId   = getParam(r, FORM_ID);
-        final StringValue formName = getParam(r, SIGLA_FORM_NAME);
+        final StringValue action            = getParam(r, ACTION);
+        final StringValue formId            = getParam(r, FORM_ID);
+        final StringValue formName          = getParam(r, SIGLA_FORM_NAME);
+        final StringValue forceViewMainForm = getParam(r, FORCE_VIEW_MAIN_FORM);
 
         if (action.isEmpty()) {
             throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + "/singular");
@@ -175,7 +168,11 @@ public abstract class DispatcherPage extends WebPage {
 
         final FormPageConfig cfg = buildConfig(r, fi, am, vm, fn);
 
+
         if (cfg != null) {
+
+            cfg.setForceViewMainForm(forceViewMainForm.toBoolean(false));
+
             if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
                 throw new SingularServerException("Nenhum fluxo está configurado");
             }
@@ -201,7 +198,7 @@ public abstract class DispatcherPage extends WebPage {
         if (StringUtils.isBlank(petitionId)) {
             return null;
         } else {
-            return Flow.getTaskInstance(petitionService.findCurrentTaskByPetitionId(petitionId));
+            return Flow.getTaskInstance(petitionService.findCurrentTaskByPetitionId(Long.valueOf(petitionId)));
         }
     }
 

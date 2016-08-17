@@ -16,4 +16,7 @@ public class Parameters {
     public static final String MENU_PARAM_NAME = "menu";
 
     public static final String ITEM_PARAM_NAME = "item";
+
+    public final static String FORCE_VIEW_MAIN_FORM = "fvmf";
+
 }

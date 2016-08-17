@@ -36,7 +36,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     @Override
     public List<MenuGroup> listMenu() {
 
-        List<MenuGroup> groupDTOs = new ArrayList<>();
+        List<MenuGroup>                      groupDTOs     = new ArrayList<>();
         Map<String, List<ProcessDefinition>> definitionMap = new HashMap<>();
         Flow.getDefinitions().forEach(d -> {
             if (!definitionMap.containsKey(d.getCategory())) {
@@ -51,11 +51,9 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
             menuGroupDTO.setLabel(category);
             menuGroupDTO.setProcesses(new ArrayList<>());
             definitions.forEach(d ->
-                            menuGroupDTO
-                                    .getProcesses()
-                                    .add(
-                                            new ProcessDTO(d.getKey(), d.getName(), singularServerConfiguration.processDefinitionFormNameMap().get(d.getClass()))
-                                    )
+                    menuGroupDTO
+                            .getProcesses()
+                            .add(new ProcessDTO(d.getKey(), d.getName(), singularServerConfiguration.processDefinitionFormNameMap().get(d.getClass())))
             );
             groupDTOs.add(menuGroupDTO);
         });

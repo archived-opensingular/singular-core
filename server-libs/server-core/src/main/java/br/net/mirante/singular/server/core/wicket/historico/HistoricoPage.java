@@ -4,7 +4,7 @@ package br.net.mirante.singular.server.core.wicket.historico;
 
 import br.net.mirante.singular.server.commons.wicket.historico.AbstractHistoricoContent;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
-import br.net.mirante.singular.server.core.wicket.entrada.EntradaAnalisePage;
+import br.net.mirante.singular.server.core.wicket.entrada.CaixaEntradaAnalisePage;
 import br.net.mirante.singular.server.core.wicket.template.ServerTemplate;
 import org.apache.wicket.Page;
 import org.wicketstuff.annotation.mount.MountPath;
@@ -21,7 +21,7 @@ public class HistoricoPage extends ServerTemplate {
 
             @Override
             protected Class<? extends Page> getBackPage() {
-                return EntradaAnalisePage.class;
+                return CaixaEntradaAnalisePage.class;
             }
         };
     }

@@ -1,7 +1,7 @@
 package br.net.mirante.singular.server.commons.form;
 
 import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SPackage;
+import br.net.mirante.singular.form.SFormUtil;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.spring.SpringTypeLoader;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 public class SingularServerSpringTypeLoader extends SpringTypeLoader<String> {
 
     private final Map<String, Supplier<SType<?>>> entries = new LinkedHashMap<>();
+
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
 
@@ -25,15 +26,16 @@ public class SingularServerSpringTypeLoader extends SpringTypeLoader<String> {
 
     @PostConstruct
     private void init() {
-        singularServerConfiguration.getFormPackagesTypeMap().entrySet().forEach(e -> add(e.getKey(), e.getValue()));
+        singularServerConfiguration.getFormPackagesTypeMap().forEach(this::add);
     }
 
-    private void add(Class<? extends SPackage> packageClass, String typeName) {
+    private void add(Class<? extends SType<?>> type) {
+        String typeName   = SFormUtil.getTypeName(type);
         String simpleName = StringUtils.defaultIfBlank(StringUtils.substringAfterLast(typeName, "."), typeName);
         add(typeName, simpleName, () -> {
             SDictionary d = SDictionary.create();
-            d.loadPackage(packageClass);
-            return d.getType(typeName);
+            d.loadPackage(SFormUtil.getTypePackage(type));
+            return d.getType(type);
         });
     }
 
