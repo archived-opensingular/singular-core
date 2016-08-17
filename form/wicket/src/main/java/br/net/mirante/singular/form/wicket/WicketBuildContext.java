@@ -25,6 +25,7 @@ import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
@@ -79,6 +80,8 @@ public class WicketBuildContext implements Serializable {
     private List<String>                                                 breadCrumbs      = newArrayList();
     private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
     private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus;
+
+    private IBSComponentFactory preFormPanelFactory;
 
     private SView view;
 
@@ -518,4 +521,13 @@ public class WicketBuildContext implements Serializable {
     public void setNested(boolean nested) {
         this.nested = nested;
     }
+
+    public <T extends Component> IBSComponentFactory<T> getPreFormPanelFactory() {
+        return preFormPanelFactory;
+    }
+
+    public <T extends Component> void setPreFormPanelFactory(IBSComponentFactory<T> preFormPanelFactory) {
+        this.preFormPanelFactory = preFormPanelFactory;
+    }
+
 }
