@@ -16,6 +16,7 @@ import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskDefinitionEntity;
@@ -187,9 +188,19 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             protected String getIdentifier() {
                 return AbstractFormPage.this.getIdentifier();
             }
+
+            @Override
+            protected void onBuildSingularFormPanel(SingularFormPanel singularFormPanel) {
+                AbstractFormPage.this.onBuildSingularFormPanel(singularFormPanel);
+
+            }
         };
 
         return content;
+    }
+
+    protected void onBuildSingularFormPanel(SingularFormPanel singularFormPanel) {
+
     }
 
     protected abstract IModel<?> getContentSubtitleModel();

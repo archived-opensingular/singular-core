@@ -1,24 +1,5 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
-import java.io.Serializable;
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
-
 import br.net.mirante.singular.form.RefService;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
@@ -30,10 +11,27 @@ import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.Optional;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public abstract class AbstractFormContent extends Content {
 
@@ -101,7 +99,11 @@ public abstract class AbstractFormContent extends Content {
     }
     
     protected abstract SInstance createInstance(SDocumentFactory documentFactory, RefType refType);
-    
+
+    protected void onBuildSingularFormPanel(SingularFormPanel singularFormPanel){
+
+    }
+
     private SingularFormPanel<String> buildSingularBasePanel() {
         singularFormPanel = new SingularFormPanel<String>("singular-panel", singularFormConfig) {
 
@@ -128,6 +130,8 @@ public abstract class AbstractFormContent extends Content {
                 return annotationMode;
             }
         };
+
+        onBuildSingularFormPanel(singularFormPanel);
 
         return singularFormPanel;
     }
