@@ -13,7 +13,7 @@ public class STypeParecer extends STypePersistentComposite {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         STypeHTML parecer = addField("parecer", STypeHTML.class);
-        parecer.asAtr().label("Parecer");
+        parecer.asAtr().label("Parecer").required();
     }
 
 }

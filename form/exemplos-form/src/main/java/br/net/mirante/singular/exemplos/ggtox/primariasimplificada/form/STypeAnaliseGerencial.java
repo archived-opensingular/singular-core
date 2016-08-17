@@ -13,6 +13,7 @@ public class STypeAnaliseGerencial extends STypePersistentComposite {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         final STypeHTML parecer = addField("parecer", STypeHTML.class);
+        parecer.asAtr().required();
         withView(new SViewByBlock(), vbb -> {
             vbb.newBlock("Parecer").add(parecer);
         });
