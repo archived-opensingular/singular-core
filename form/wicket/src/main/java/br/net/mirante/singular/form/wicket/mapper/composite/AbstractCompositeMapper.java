@@ -6,17 +6,6 @@
 package br.net.mirante.singular.form.wicket.mapper.composite;
 
 
-import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.*;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
-import java.util.HashMap;
-import java.util.Optional;
-
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
@@ -30,10 +19,19 @@ import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.*;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+
+import java.util.HashMap;
+import java.util.Optional;
+
+import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public abstract class AbstractCompositeMapper implements IWicketComponentMapper {
 
@@ -169,8 +167,19 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         }
 
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
-            BSRow row         = grid.newRow();
-            int   rowColTotal = 0;
+            BSRow row = grid.newRow();
+
+            final WicketBuildContext             rootContext = ctx.getRootContext();
+            final IBSComponentFactory<Component> factory     = rootContext.getPreFormPanelFactory();
+
+            if (factory != null) {
+                grid.newComponent(factory);
+                rootContext.setPreFormPanelFactory(null);
+                row = grid.newRow();
+            }
+
+            int rowColTotal = 0;
+
             for (SType<?> tCampo : type.getFields()) {
                 final Boolean newRow = tCampo.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
                 if (newRow != null && newRow) {

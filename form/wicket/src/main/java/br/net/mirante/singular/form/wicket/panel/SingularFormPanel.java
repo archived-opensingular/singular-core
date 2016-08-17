@@ -19,6 +19,7 @@ import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
@@ -61,6 +62,8 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     private transient SFormConfig<FORM_KEY> singularFormConfig;
 
     private final boolean nested;
+
+    private IBSComponentFactory preFormPanelFactory;
 
     /**
      * Construtor do painel
@@ -145,6 +148,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer(), getRootInstance());
         ctx.setAnnotationMode(getAnnotationMode());
         ctx.setNested(nested);
+        ctx.setPreFormPanelFactory(preFormPanelFactory);
         getSingularFormContext().getUIBuilder().build(ctx, getViewMode());
     }
 
@@ -211,4 +215,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
         return getRootInstance().getObject().asAtr().getSubtitle();
     }
 
+    public void setPreFormPanelFactory(IBSComponentFactory preFormPanelFactory) {
+        this.preFormPanelFactory = preFormPanelFactory;
+    }
 }

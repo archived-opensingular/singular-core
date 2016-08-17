@@ -11,9 +11,11 @@ import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.StyleAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.IEvent;
@@ -42,6 +44,15 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             final List<String> remainingTypes = new ArrayList<>();
             final List<String> addedTypes     = new ArrayList<>();
             final SViewByBlock view           = (SViewByBlock) ctx.getView();
+
+            final WicketBuildContext             rootContext = ctx.getRootContext();
+            final IBSComponentFactory<Component> factory     = rootContext.getPreFormPanelFactory();
+
+            if (factory != null) {
+                grid.newComponent(factory);
+                grid = grid.newGrid();
+                rootContext.setPreFormPanelFactory(null);
+            }
 
             for (int i = 0; i < view.getBlocks().size(); i++) {
                 final Block block = view.getBlocks().get(i);
