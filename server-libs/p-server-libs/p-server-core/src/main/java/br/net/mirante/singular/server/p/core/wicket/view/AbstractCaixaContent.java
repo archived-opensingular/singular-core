@@ -1,5 +1,7 @@
 package br.net.mirante.singular.server.p.core.wicket.view;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
     private List<ProcessDTO> processes;
 
     @Inject
-    protected PetitionService petitionService;
+    protected PetitionService<?> petitionService;
 
     /**
      * Form padrão
@@ -238,7 +240,12 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
     protected void onInitialize() {
         super.onInitialize();
         processGroup = petitionService.findByProcessGroupCod(getProcessGroupCod());
-        tabela = construirTabela(new BSDataTableBuilder<>(criarDataProvider()));
+        
+        BSDataTableBuilder<T, String, IColumn<T, String>> builder = new BSDataTableBuilder<>(criarDataProvider());
+        builder.setStripedRows(false).setBorderedTable(false);
+        tabela = construirTabela(builder);
+        tabela.add($b.classAppender("worklist"));
+        
         add(form.add(filtroRapido, pesquisarButton, botoes, dropdownMenu));
         add(tabela);
         add(confirmationForm.add(confirmationModal));
