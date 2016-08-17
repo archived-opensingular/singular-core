@@ -156,7 +156,7 @@ public class WicketBuildContext implements Serializable {
         this.annotationContainer = annotationContainer;
     }
 
-    public void add(AnnotationComponent c) {
+    public void addAnnotation(AnnotationComponent c) {
         Integer id = c.referenced().getMInstancia().getId();
         annotations.put(id, c);
     }

@@ -226,7 +226,7 @@ class AnnotationBuilder {
                     component.setReferencedComponent(target.get());
                 }
                 component.setMainGrid(mainGrid);
-                ctx.add(component);
+                ctx.addAnnotation(component);
                 return component;
             });
         ;
