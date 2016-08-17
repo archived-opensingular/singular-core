@@ -12,12 +12,13 @@ public class FormPageConfig implements Serializable {
 
     private ViewMode                           viewMode;
     private AnnotationMode                     annotationMode;
-    private String                             formId;
+    private String                             petitionId;
     private String                             formType;
     private HashMap<String, Object>            contextParams;
     private LazyFlowDefinitionResolver         lazyFlowDefinitionResolver;
     private Class<? extends ProcessDefinition> processDefinition;
     private boolean                            forceViewMainForm;
+    private Long                               formVersionPK;
 
     private FormPageConfig() {
         viewMode = ViewMode.READ_ONLY;
@@ -27,23 +28,26 @@ public class FormPageConfig implements Serializable {
     }
 
     private static FormPageConfig newConfig(String formType,
-                                            String formId,
+                                            String petitionId,
                                             AnnotationMode annotationMode,
-                                            ViewMode viewMode) {
+                                            ViewMode viewMode,
+                                            Long formVersionPK) {
         final FormPageConfig cfg = new FormPageConfig();
         cfg.formType = formType;
-        cfg.formId = formId;
+        cfg.petitionId = petitionId;
         cfg.annotationMode = annotationMode;
         cfg.viewMode = viewMode;
+        cfg.formVersionPK = formVersionPK;
         return cfg;
     }
 
-    public static FormPageConfig newConfig(String formId,
+    public static FormPageConfig newConfig(String petitionId,
                                            String formType,
                                            AnnotationMode annotationMode,
                                            ViewMode viewMode,
+                                           Long formVersionPK,
                                            Class<? extends ProcessDefinition> processDefinition) {
-        final FormPageConfig cfg = newConfig(formType, formId, annotationMode, viewMode);
+        final FormPageConfig cfg = newConfig(formType, petitionId, annotationMode, viewMode, formVersionPK);
         cfg.processDefinition = processDefinition;
         return cfg;
     }
@@ -53,8 +57,9 @@ public class FormPageConfig implements Serializable {
                                            String formId,
                                            AnnotationMode annotationMode,
                                            ViewMode viewMode,
+                                           Long formVersionPK,
                                            LazyFlowDefinitionResolver lazyFlowDefinitionResolver) {
-        final FormPageConfig cfg = newConfig(formType, formId, annotationMode, viewMode);
+        final FormPageConfig cfg = newConfig(formType, formId, annotationMode, viewMode, formVersionPK);
         cfg.lazyFlowDefinitionResolver = lazyFlowDefinitionResolver;
         return cfg;
     }
@@ -75,12 +80,12 @@ public class FormPageConfig implements Serializable {
         this.annotationMode = annotationMode;
     }
 
-    public String getFormId() {
-        return formId;
+    public String getPetitionId() {
+        return petitionId;
     }
 
-    public void setFormId(String formId) {
-        this.formId = formId;
+    public void setPetitionId(String petitionId) {
+        this.petitionId = petitionId;
     }
 
     public String getFormType() {
@@ -125,5 +130,9 @@ public class FormPageConfig implements Serializable {
 
     public void setForceViewMainForm(boolean forceViewMainForm) {
         this.forceViewMainForm = forceViewMainForm;
+    }
+
+    public Long getFormVersionPK() {
+        return formVersionPK;
     }
 }

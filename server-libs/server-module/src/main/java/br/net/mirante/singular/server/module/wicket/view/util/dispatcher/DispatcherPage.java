@@ -12,6 +12,7 @@ import br.net.mirante.singular.server.commons.wicket.view.SingularHeaderResponse
 import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
+import br.net.mirante.singular.server.commons.wicket.view.form.ReadOnlyFormPage;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
@@ -36,6 +37,7 @@ import java.lang.reflect.Constructor;
 
 import static br.net.mirante.singular.server.commons.util.Parameters.*;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 @MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
@@ -68,7 +70,7 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     private SingularWebRef retrieveSingularWebRef(FormPageConfig cfg) {
-        final TaskInstance ti = findCurrentTaskByPetitionId(cfg.getFormId());
+        final TaskInstance ti = findCurrentTaskByPetitionId(cfg.getPetitionId());
         if (ti != null) {
             final MTask task = ti.getFlowTask();
             if (task instanceof MTaskUserExecutable) {
@@ -91,7 +93,11 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     private WebPage retrieveDestination(FormPageConfig config) {
-        return retrieveDestinationUsingSingularWebRef(config, retrieveSingularWebRef(config));
+        if (config.getViewMode().isVisualization() && config.getFormVersionPK() != null) {
+            return new ReadOnlyFormPage($m.ofValue(config.getFormVersionPK()));
+        } else {
+            return retrieveDestinationUsingSingularWebRef(config, retrieveSingularWebRef(config));
+        }
     }
 
     private WebPage retrieveDestinationUsingSingularWebRef(FormPageConfig config, SingularWebRef ref) {
@@ -151,9 +157,10 @@ public abstract class DispatcherPage extends WebPage {
     private FormPageConfig parseParameters(Request r) {
 
         final StringValue action            = getParam(r, ACTION);
-        final StringValue formId            = getParam(r, FORM_ID);
+        final StringValue petitionId        = getParam(r, PETITION_ID);
         final StringValue formName          = getParam(r, SIGLA_FORM_NAME);
         final StringValue forceViewMainForm = getParam(r, FORCE_VIEW_MAIN_FORM);
+        final StringValue formVersionPK     = getParam(r, FORM_VERSION_KEY);
 
         if (action.isEmpty()) {
             throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + "/singular");
@@ -161,18 +168,16 @@ public abstract class DispatcherPage extends WebPage {
 
         final FormActions formActions = resolveFormAction(action);
 
-        final String         fi = formId.toString("");
-        final AnnotationMode am = formActions.getAnnotationMode() == null ? AnnotationMode.NONE : formActions.getAnnotationMode();
-        final ViewMode       vm = formActions.getViewMode();
-        final String         fn = formName.toString();
+        final String         pi  = petitionId.toString("");
+        final AnnotationMode am  = formActions.getAnnotationMode() == null ? AnnotationMode.NONE : formActions.getAnnotationMode();
+        final ViewMode       vm  = formActions.getViewMode();
+        final String         fn  = formName.toString();
+        final Long           fvk = formVersionPK.isEmpty() ? null : formVersionPK.toLong();
 
-        final FormPageConfig cfg = buildConfig(r, fi, am, vm, fn);
-
+        final FormPageConfig cfg = buildConfig(r, pi, am, vm, fn, fvk);
 
         if (cfg != null) {
-
             cfg.setForceViewMainForm(forceViewMainForm.toBoolean(false));
-
             if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
                 throw new SingularServerException("Nenhum fluxo está configurado");
             }
@@ -183,7 +188,7 @@ public abstract class DispatcherPage extends WebPage {
 
     }
 
-    protected abstract FormPageConfig buildConfig(Request r, String formId, AnnotationMode annotationMode, ViewMode viewMode, String formType);
+    protected abstract FormPageConfig buildConfig(Request r, String petitionId, AnnotationMode annotationMode, ViewMode viewMode, String formType, Long fvk);
 
     /**
      * Possibilita execução de qualquer ação antes de fazer o dispatch

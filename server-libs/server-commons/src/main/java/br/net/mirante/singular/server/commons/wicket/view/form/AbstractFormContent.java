@@ -155,7 +155,7 @@ public abstract class AbstractFormContent extends Content {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
                 try{
-                    saveForm(getCurrentInstance());
+                    saveForm(getFormInstance());
                     addToastrSuccessMessage("message.success");
                     atualizarContentWorklist(target);
                 }catch (HibernateOptimisticLockingFailureException e){

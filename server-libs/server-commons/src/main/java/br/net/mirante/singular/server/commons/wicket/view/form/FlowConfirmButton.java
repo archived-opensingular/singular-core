@@ -29,10 +29,11 @@ public class FlowConfirmButton extends SingularSaveButton implements Loggable {
     @Override
     protected void onValidationSuccess(AjaxRequestTarget ajaxRequestTarget, Form<?> form, IModel<? extends SInstance> model) {
         try {
-            formPage.executeTransition(transitionName, model);
-            ajaxRequestTarget.appendJavaScript("Singular.atualizarContentWorklist();");
-            formPage.addToastrSuccessMessageWorklist("message.action.success", transitionName);
-            ajaxRequestTarget.appendJavaScript("window.close();");
+            if (formPage.executeTransition(ajaxRequestTarget, form, transitionName, model)) {
+                ajaxRequestTarget.appendJavaScript("Singular.atualizarContentWorklist();");
+                formPage.addToastrSuccessMessageWorklist("message.action.success", transitionName);
+                ajaxRequestTarget.appendJavaScript("window.close();");
+            }
         } catch (Exception e) {
             getLogger().error("Erro ao salvar o XML", e);
             formPage.addToastrErrorMessage("message.save.concurrent_error");

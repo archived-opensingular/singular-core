@@ -53,17 +53,17 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
 
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
-    protected final Class<T> petitionClass;
-    protected final FormPageConfig config;
-    protected final IModel<T> currentModel;
-    protected final IModel<FormKey> formModel;
+    protected final Class<T>            petitionClass;
+    protected final FormPageConfig      config;
+    protected final IModel<T>           currentModel;
+    protected final IModel<FormKey>     formModel;
     @Inject
-    protected PetitionService<T> petitionService;
+    protected       PetitionService<T>  petitionService;
     @Inject
-    protected IFormService formService;
+    protected       IFormService        formService;
     @Inject
     @Named("formConfigWithDatabase")
-    protected SFormConfig<String> singularFormConfig;
+    protected       SFormConfig<String> singularFormConfig;
 
     protected AbstractFormContent content;
 
@@ -86,10 +86,10 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     @Override
     protected void onInitialize() {
         final T petition;
-        if (StringUtils.isBlank(config.getFormId())) {
+        if (StringUtils.isBlank(config.getPetitionId())) {
             petition = petitionService.createNewPetitionWithoutSave(petitionClass, config, this::onNewPetitionCreation);
         } else {
-            petition = petitionService.find(Long.valueOf(config.getFormId()));
+            petition = petitionService.find(Long.valueOf(config.getPetitionId()));
         }
         if (petition.getCod() != null) {
             final FormEntity formEntityDraftOrPetition = getFormEntityDraftOrPetition(petition);
@@ -127,7 +127,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     @Override
     protected Content getContent(String id) {
 
-        if (getFormType(config) == null && config.getFormId() == null) {
+        if (getFormType(config) == null && config.getPetitionId() == null) {
             String urlServidorSingular = ConfigProperties.get(ConfigProperties.SINGULAR_SERVIDOR_ENDERECO);
             throw new RedirectToUrlException(urlServidorSingular);
         }
@@ -212,8 +212,8 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
         List<MTransition> trans = null;
-        if (StringUtils.isNotEmpty(config.getFormId())) {
-            trans = petitionService.listCurrentTaskTransitions(Long.valueOf(config.getFormId()));
+        if (StringUtils.isNotEmpty(config.getPetitionId())) {
+            trans = petitionService.listCurrentTaskTransitions(Long.valueOf(config.getPetitionId()));
         }
         if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
             int index = 0;
@@ -305,9 +305,10 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     }
 
-    protected void onBeforeSend(IModel<? extends SInstance> currentInstance) {
+    protected boolean onBeforeSend(IModel<? extends SInstance> currentInstance) {
         configureLazyFlowIfNeeded(currentInstance, currentModel.getObject(), config);
         saveForm(currentInstance);
+        return true;
     }
 
     protected void onBeforeSave(IModel<? extends SInstance> currentInstance) {
@@ -326,13 +327,22 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected void send(IModel<? extends SInstance> currentInstance) {
-        onBeforeSend(currentInstance);
-        formModel.setObject(petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), isMainForm()));
+        if (onBeforeSend(currentInstance)) {
+            formModel.setObject(petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), isMainForm()));
+        }
     }
 
-    protected void executeTransition(String transitionName, IModel<? extends SInstance> currentInstance) {
+    protected boolean onBeforeExecuteTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
         saveForm(currentInstance);
-        formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject(), isMainForm()));
+        return true;
+    }
+
+    protected boolean executeTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
+        if (onBeforeExecuteTransition(ajaxRequestTarget, form, transitionName, currentInstance)) {
+            formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject(), isMainForm()));
+            return true;
+        }
+        return false;
     }
 
     protected boolean hasProcess() {
@@ -376,8 +386,8 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
      */
     private BSModalBorder buildFlowConfirmationModal(String idSuffix, BSContainer<?> mc, String tn, IModel<? extends SInstance> im, ViewMode vm) {
         final FlowConfirmModalBuilder flowConfirmModalBuilder = resolveFlowConfirmModalBuilder(tn);
-        final TemplatePanel modalTemplatePanel = mc.newTemplateTag(t -> flowConfirmModalBuilder.getMarkup(idSuffix));
-        final BSModalBorder modal = flowConfirmModalBuilder.build(idSuffix, tn, im, vm);
+        final TemplatePanel           modalTemplatePanel      = mc.newTemplateTag(t -> flowConfirmModalBuilder.getMarkup(idSuffix));
+        final BSModalBorder           modal                   = flowConfirmModalBuilder.build(idSuffix, tn, im, vm);
         modalTemplatePanel.add(modal);
         return modal;
     }

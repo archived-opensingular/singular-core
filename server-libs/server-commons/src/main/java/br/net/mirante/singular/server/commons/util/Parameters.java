@@ -5,7 +5,7 @@ public class Parameters {
 
     public static final String ACTION = "a";
 
-    public static final String FORM_ID = "k";
+    public static final String PETITION_ID = "k";
 
     public static final String SIGLA_FORM_NAME = "f";
 
@@ -18,5 +18,7 @@ public class Parameters {
     public static final String ITEM_PARAM_NAME = "item";
 
     public final static String FORCE_VIEW_MAIN_FORM = "fvmf";
+
+    public final static String FORM_VERSION_KEY = "fvk";
 
 }
