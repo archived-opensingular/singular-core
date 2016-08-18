@@ -1,13 +1,13 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
+import java.io.Serializable;
+import java.util.HashMap;
+
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.server.commons.flow.LazyFlowDefinitionResolver;
 import br.net.mirante.singular.server.commons.form.FormActions;
-
-import java.io.Serializable;
-import java.util.HashMap;
 
 public class FormPageConfig implements Serializable {
 
@@ -50,11 +50,11 @@ public class FormPageConfig implements Serializable {
 
 
     public static FormPageConfig newConfig(String formType,
-                                           String formId,
+                                           String petitionId,
                                            FormActions formAction,
                                            Long formVersionPK,
                                            LazyFlowDefinitionResolver lazyFlowDefinitionResolver) {
-        final FormPageConfig cfg = newConfig(formType, formId, formAction, formVersionPK);
+        final FormPageConfig cfg = newConfig(formType, petitionId, formAction, formVersionPK);
         cfg.lazyFlowDefinitionResolver = lazyFlowDefinitionResolver;
         return cfg;
     }

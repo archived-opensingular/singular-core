@@ -1,21 +1,14 @@
 package br.net.mirante.singular.server.module.wicket.view.util.dispatcher;
 
-import br.net.mirante.singular.flow.core.*;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.server.commons.exception.SingularServerException;
-import br.net.mirante.singular.server.commons.flow.SingularServerTaskPageStrategy;
-import br.net.mirante.singular.server.commons.flow.SingularWebRef;
-import br.net.mirante.singular.server.commons.form.FormActions;
-import br.net.mirante.singular.server.commons.service.PetitionService;
-import br.net.mirante.singular.server.commons.wicket.view.SingularHeaderResponseDecorator;
-import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
-import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
-import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
-import br.net.mirante.singular.server.commons.wicket.view.form.ReadOnlyFormPage;
-import br.net.mirante.singular.server.commons.wicket.view.template.Template;
-import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
+import static br.net.mirante.singular.server.commons.util.Parameters.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.lang.reflect.Constructor;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -32,12 +25,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import javax.inject.Inject;
-import java.lang.reflect.Constructor;
-
-import static br.net.mirante.singular.server.commons.util.Parameters.*;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.flow.core.Flow;
+import br.net.mirante.singular.flow.core.ITaskPageStrategy;
+import br.net.mirante.singular.flow.core.MTask;
+import br.net.mirante.singular.flow.core.MTaskUserExecutable;
+import br.net.mirante.singular.flow.core.TaskInstance;
+import br.net.mirante.singular.form.SFormUtil;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.flow.SingularServerTaskPageStrategy;
+import br.net.mirante.singular.server.commons.flow.SingularWebRef;
+import br.net.mirante.singular.server.commons.form.FormActions;
+import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
+import br.net.mirante.singular.server.commons.wicket.error.AccessDeniedPage;
+import br.net.mirante.singular.server.commons.wicket.view.SingularHeaderResponseDecorator;
+import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
+import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormPage;
+import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
+import br.net.mirante.singular.server.commons.wicket.view.form.ReadOnlyFormPage;
+import br.net.mirante.singular.server.commons.wicket.view.template.Template;
+import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
+import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
 
 @SuppressWarnings("serial")
 @MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
@@ -131,10 +143,10 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     protected boolean hasAccess(FormPageConfig config) {
-        SingularUserDetails userDetails = SingularSession.get().getUserDetails();
-        SType<?> sType = singularFormConfig.getTypeLoader().loadType(config.getFormType()).get();
-        Class<? extends SType<?>> sTypeClass = (Class<? extends SType<?>>) sType.getClass();
-        String typeSimpleName = SFormUtil.getTypeSimpleName(sTypeClass);
+        SingularUserDetails       userDetails    = SingularSession.get().getUserDetails();
+        SType<?>                  sType          = singularFormConfig.getTypeLoader().loadType(config.getFormType()).get();
+        Class<? extends SType<?>> sTypeClass     = (Class<? extends SType<?>>) sType.getClass();
+        String                    typeSimpleName = SFormUtil.getTypeSimpleName(sTypeClass);
 
         String permissionsNeeded = config.getFormAction().toString() + "_" + typeSimpleName.toUpperCase();
 
@@ -193,7 +205,7 @@ public abstract class DispatcherPage extends WebPage {
         final String         fn  = formName.toString();
         final Long           fvk = formVersionPK.isEmpty() ? null : formVersionPK.toLong();
 
-        final FormPageConfig cfg = buildConfig(r, fi, formAction, fn, fvk);
+        final FormPageConfig cfg = buildConfig(r, pi, formAction, fn, fvk);
 
         if (cfg != null) {
             cfg.setForceViewMainForm(forceViewMainForm.toBoolean(false));
@@ -207,7 +219,7 @@ public abstract class DispatcherPage extends WebPage {
 
     }
 
-    protected abstract FormPageConfig buildConfig(Request r, String formId, FormActions formAction, String formType, Long fvk);
+    protected abstract FormPageConfig buildConfig(Request r, String petitionId, FormActions formAction, String formType, Long fvk);
 
     /**
      * Possibilita execução de qualquer ação antes de fazer o dispatch

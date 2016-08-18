@@ -159,7 +159,7 @@ public class Menu extends Panel {
     }
 
     protected List<ProcessGroupEntity> buscarCategorias() {
-        return petitionService.listarTodosGruposProcesso();
+        return petitionService.listAllProcessGroups();
     }
 
     protected void buildMenuGroup(MetronicMenu menu, ProcessGroupEntity processGroup) {
