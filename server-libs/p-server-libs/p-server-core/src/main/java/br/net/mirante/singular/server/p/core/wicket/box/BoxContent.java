@@ -47,7 +47,6 @@ import br.net.mirante.singular.server.commons.service.dto.ItemActionType;
 import br.net.mirante.singular.server.commons.service.dto.ItemBox;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.util.Parameters;
-import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.core.wicket.ModuleLink;
 import br.net.mirante.singular.server.core.wicket.historico.HistoricoPage;
@@ -187,7 +186,6 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
         String url = baseUrl
                 + boxAction.getEndpoint()
-                + appendParameter("id", boxItem.getCod())
                 + appendParameters(additionalParams);
 
         try {
@@ -210,15 +208,14 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     }
 
     private Object buildCallObject(BoxItemAction boxAction, BoxItemModel boxItem) {
+        Action action = new Action();
+        action.setIdUsuario(getBoxPage().getIdUsuario());
         if (boxAction.isUseExecute()) {
-            Action action = new Action();
             action.setName(boxAction.getName());
-            action.setIdUsuario(SingularSession.get().getUsername());
             action.setLastVersion(boxItem.getVersionStamp());
-            return action;
-        } else {
-            return boxItem.getCod();
         }
+
+        return action;
     }
 
     protected BSModalBorder construirModalConfirmationBorder(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
@@ -277,12 +274,16 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     @Override
     protected QuickFilter montarFiltroBasico() {
-        BoxPage boxPage = (BoxPage) getPage();
+        BoxPage boxPage = getBoxPage();
         return boxPage.createFilter()
                 .withFilter(getFiltroRapidoModelObject())
                 .withProcessesAbbreviation(getProcessesNames())
                 .withTypesNames(getFormNames())
                 .withRascunho(isWithRascunho());
+    }
+
+    private BoxPage getBoxPage() {
+        return (BoxPage) getPage();
     }
 
     private List<String> getProcessesNames() {
@@ -346,7 +347,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     }
 
     private Map<String, String> getLinkParams() {
-        final BoxPage page = (BoxPage) getPage();
+        final BoxPage page = getBoxPage();
         return page.createLinkParams();
     }
 

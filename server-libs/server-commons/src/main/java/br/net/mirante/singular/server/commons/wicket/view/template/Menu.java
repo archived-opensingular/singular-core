@@ -231,6 +231,7 @@ public class Menu extends Panel {
                         .withProcessesAbbreviation(siglas)
                         .withTypesNames(tipos)
                         .withRascunho(itemBoxDTO.isShowDraft())
+                        .withIdPessoa(getIdPessoa())
                         .withIdUsuarioLogado(getIdUsuarioLogado());
                 qtd = new RestTemplate().postForObject(url, filter, Long.class);
             } catch (Exception e) {
@@ -240,6 +241,10 @@ public class Menu extends Panel {
 
             return String.valueOf(qtd);
         };
+    }
+
+    protected String getIdPessoa() {
+        return null;
     }
 
     protected String getIdUsuarioLogado() {

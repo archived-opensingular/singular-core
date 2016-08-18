@@ -1,9 +1,10 @@
 package br.net.mirante.singular.server.commons.form;
 
-import br.net.mirante.singular.form.spring.SpringFormConfig;
+import javax.inject.Inject;
+
 import org.springframework.context.annotation.Bean;
 
-import javax.inject.Inject;
+import br.net.mirante.singular.form.spring.SpringFormConfig;
 
 public class SingularServerFormConfigFactory {
 

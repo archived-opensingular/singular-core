@@ -5,6 +5,8 @@
 
 package br.net.mirante.singular.server.commons.flow.rest;
 
+import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_RELOCATE;
+
 import javax.xml.ws.WebServiceException;
 
 import org.springframework.stereotype.Controller;
@@ -35,5 +37,11 @@ public class AtribuirController extends IController implements Loggable {
             return new ActionResponse(resultMessage, false);
         }
     }
+
+    @Override
+    public String getActionName() {
+        return ACTION_RELOCATE;
+    }
+
 
 }

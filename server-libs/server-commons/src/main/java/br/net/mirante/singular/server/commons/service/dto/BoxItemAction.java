@@ -11,10 +11,13 @@ import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST
 import java.io.Serializable;
 import java.util.Map;
 
+import br.net.mirante.singular.server.commons.form.FormActions;
+
 public class BoxItemAction implements Serializable {
 
     private String name;
     private String endpoint;
+    private FormActions formAction;
     private boolean useExecute = false;
 
     public BoxItemAction() {
@@ -58,5 +61,13 @@ public class BoxItemAction implements Serializable {
 
     public void setUseExecute(boolean useExecute) {
         this.useExecute = useExecute;
+    }
+
+    public FormActions getFormAction() {
+        return formAction;
+    }
+
+    public void setFormAction(FormActions formAction) {
+        this.formAction = formAction;
     }
 }

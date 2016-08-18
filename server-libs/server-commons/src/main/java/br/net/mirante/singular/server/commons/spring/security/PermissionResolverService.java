@@ -11,7 +11,14 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.form.SFormUtil;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
+import br.net.mirante.singular.form.spring.SpringServiceRegistry;
 import br.net.mirante.singular.server.commons.form.FormActions;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.service.dto.FormDTO;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 
@@ -21,28 +28,61 @@ public class PermissionResolverService {
     @Named("peticionamentoUserDetailService")
     private SingularUserDetailsService peticionamentoUserDetailService;
 
+    @Inject
+    protected PetitionService<PetitionEntity> petitionService;
+
+    @Inject
+    private SpringServiceRegistry springServiceRegistry;
+
     public void filterBoxWithPermissions(List<MenuGroup> groupDTOs, String user) {
-        List<String> perfis = peticionamentoUserDetailService.pesquisarAcessos(user);
+        List<String> permissions = peticionamentoUserDetailService.searchPermissions(user);
 
         for (Iterator<MenuGroup> it = groupDTOs.iterator(); it.hasNext(); ) {
             MenuGroup menuGroup = it.next();
-            String perfil = menuGroup.getId().toUpperCase();
-            if (!perfis.contains(perfil)) {
+            String permission = menuGroup.getId().toUpperCase();
+            if (!permissions.contains(permission)) {
                 it.remove();
             } else {
-                filterForms(menuGroup, perfis);
+                filterForms(menuGroup, permissions);
             }
 
         }
     }
 
-    private void filterForms(MenuGroup menuGroup, List<String> perfis) {
+    private void filterForms(MenuGroup menuGroup, List<String> permissions) {
         for (Iterator<FormDTO> it = menuGroup.getForms().iterator(); it.hasNext(); ) {
             FormDTO form = it.next();
-            if (!perfis.contains(FormActions.FORM_FILL + "_" + form.getAbbreviation().toUpperCase())) {
+            String permissionNeeded = FormActions.FORM_FILL + "_" + form.getAbbreviation().toUpperCase();
+            if (!permissions.contains(permissionNeeded)) {
                 it.remove();
             }
         }
+    }
+
+    public boolean hasPermission(Long id, String idUsuario, String action) {
+        List<String> permissions = peticionamentoUserDetailService.searchPermissions(idUsuario);
+        PetitionEntity petitionEntity = petitionService.find(id);
+        FormTypeEntity formType = petitionEntity.getCurrentDraftEntity().getForm().getFormType();
+        String permissionNeeded = "ACTION_" + action + "_" + getAbbreviation(formType);
+        return permissions.contains(permissionNeeded.toUpperCase());
+    }
+
+    public List<String> searchPermissions(String idUsuario) {
+        return peticionamentoUserDetailService.searchPermissions(idUsuario);
+    }
+
+    public String getAbbreviation(FormTypeEntity formType) {
+        String formTypeName = formType.getAbbreviation();
+        return getAbbreviation(formTypeName);
+    }
+
+    public String getAbbreviation(String formTypeName) {
+        SType<?> sType = getSingularFormConfig().getTypeLoader().loadType(formTypeName).get();
+        return SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) sType.getClass()).toUpperCase();
+    }
+
+    private SFormConfig<String> getSingularFormConfig() {
+        return (SFormConfig<String>) springServiceRegistry.lookupService("formConfigWithDatabase");
     }
 
 }

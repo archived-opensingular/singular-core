@@ -35,7 +35,6 @@ import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.SingularFormPersistenceException;
-import br.net.mirante.singular.form.persistence.dao.FormTypeDAO;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
@@ -65,27 +64,6 @@ import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.support.persistence.enums.SimNao;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
-import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_DELETE;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_EDIT;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_RELOCATE;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_VIEW;
 
 @Transactional
 public class PetitionService<T extends PetitionEntity> {
@@ -206,6 +184,7 @@ public class PetitionService<T extends PetitionEntity> {
         final BoxItemAction boxItemAction = new BoxItemAction();
         boxItemAction.setName(actionName);
         boxItemAction.setEndpoint(endpoint);
+        boxItemAction.setFormAction(formAction);
         return boxItemAction;
     }
 

@@ -9,12 +9,14 @@ import static br.net.mirante.singular.server.commons.util.Parameters.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.dto.ItemBox;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
+import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.template.MenuSessionConfig;
@@ -31,8 +33,8 @@ public class BoxPage extends ServerTemplate {
         final String            menu              = getPageParameters().get(MENU_PARAM_NAME).toString();
         final String            item              = getPageParameters().get(ITEM_PARAM_NAME).toString();
         final MenuSessionConfig menuSessionConfig = SingularSession.get().getMenuSessionConfig();
-        final MenuGroup menuGroup         = menuSessionConfig.getMenuPorLabel(menu);
-        final ItemBox itemBoxDTO        = menuGroup.getItemPorLabel(item);
+        final MenuGroup         menuGroup         = menuSessionConfig.getMenuPorLabel(menu);
+        final ItemBox           itemBoxDTO        = menuGroup.getItemPorLabel(item);
 
         /**
          * itemBoxDTO pode ser nulo quando nenhum item está selecionado.
@@ -55,6 +57,13 @@ public class BoxPage extends ServerTemplate {
 
     protected QuickFilter createFilter() {
         return new QuickFilter();
+    }
+
+    protected String getIdUsuario() {
+        SingularUserDetails userDetails = SingularSession.get().getUserDetails();
+        return Optional.ofNullable(userDetails)
+                .map(SingularUserDetails::getUsername)
+                .orElse(null);
     }
 
 }

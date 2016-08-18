@@ -142,9 +142,9 @@ public abstract class DispatcherPage extends WebPage {
         Class<? extends SType<?>> sTypeClass = (Class<? extends SType<?>>) sType.getClass();
         String typeSimpleName = SFormUtil.getTypeSimpleName(sTypeClass);
 
-        String roleNeeded = config.getFormAction().toString() + "_" + typeSimpleName.toUpperCase();
+        String permissionsNeeded = config.getFormAction().toString() + "_" + typeSimpleName.toUpperCase();
 
-        return userDetails.getRoles().contains(roleNeeded);
+        return userDetails.getRoles().contains(permissionsNeeded);
     }
 
     protected void redirectForbidden() {

@@ -42,6 +42,6 @@ public interface SingularUserDetailsService extends UserDetailsService, UserDeta
 
     public IServerContext[] getContexts();
 
-    public List<String> pesquisarAcessos(String idUsuarioLogado);
+    public List<String> searchPermissions(String idUsuarioLogado);
 
 }

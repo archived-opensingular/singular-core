@@ -6,9 +6,9 @@ import java.util.List;
 
 public class QuickFilter implements Serializable {
 
-    private String  filter;
-    private boolean rascunho;
-
+    private String       filter;
+    private boolean      rascunho;
+    private String       idPessoa;
     private String       idUsuarioLogado;
     private int          first;
     private int          count;
@@ -33,6 +33,15 @@ public class QuickFilter implements Serializable {
 
     public QuickFilter withIdUsuarioLogado(String idUsuarioLogado) {
         this.idUsuarioLogado = idUsuarioLogado;
+        return this;
+    }
+
+    public String getIdPessoa() {
+        return idPessoa;
+    }
+
+    public QuickFilter withIdPessoa(String idPessoa) {
+        this.idPessoa = idPessoa;
         return this;
     }
 
