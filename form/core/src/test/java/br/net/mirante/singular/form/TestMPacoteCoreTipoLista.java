@@ -391,7 +391,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertException(() -> list.get(-1), INDICE_INVALIDO);
         assertException(() -> list.getField("[-1]"), " inválido");
         assertException(() -> list.getFieldOpt("[-1]"), " inválido");
-        for (int i = 0; i < size; i++) {
+        for (Integer i = 0; i < size; i++) {
             assertNotNull(list.get(i));
             assertEquals(i, list.get(i).getValue());
             assertEquals(i, list.getField("[" + i + "]").getValue());

@@ -61,6 +61,7 @@ public abstract class FormServiceTest {
         tipoPessoa = pb.createType("pessoa", STypeComposite.class);
         idade = tipoPessoa.addFieldInteger("idade");
         nome = tipoPessoa.addFieldString("nome");
+        tipoPessoa.asAtrAnnotation().setAnnotated();
 
         documentFactory = new SDocumentFactory() {
             @Override

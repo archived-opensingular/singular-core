@@ -1,8 +1,6 @@
 package br.net.mirante.singular.form.persistence;
 
 import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.core.SIString;
-import br.net.mirante.singular.form.type.core.STypeString;
 
 /**
  * Pacote com atributos e tipos para apoio na persistência de Collections de instâncias.
@@ -18,5 +16,6 @@ public class SPackageFormPersistence extends SPackage {
     protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeFormKey.class);
         pb.createAttributeIntoType(STypeComposite.class, ATR_FORM_KEY);
+        pb.createType(STypePersistentComposite.class);
     }
 }

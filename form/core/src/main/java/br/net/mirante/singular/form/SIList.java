@@ -132,7 +132,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return instance;
     }
 
-    public SInstance get(int index) {
+    public E get(int index) {
         return getChecking(index, null);
     }
 

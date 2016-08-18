@@ -3,7 +3,11 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 
 import br.net.mirante.singular.exemplos.SelectBuilder;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.SInfoType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeSimple;
+import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.provider.SSimpleProvider;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
@@ -14,7 +18,7 @@ import br.net.mirante.singular.form.type.util.STypeEMail;
 import br.net.mirante.singular.form.util.transformer.Value;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
-public class STypeEntidade extends STypeComposite<SIComposite> {
+public class STypeEntidade extends STypePersistentComposite {
 
     public static final String TIPO_PESSOA         = "tipoPessoa";
     public static final String CNPJ                = "cnpj";

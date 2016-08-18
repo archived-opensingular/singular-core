@@ -26,6 +26,6 @@ public interface IFormService extends BasicFormPersistence<SInstance>, BasicAnno
 
     FormEntity loadFormEntity(FormKey key);
 
-    FormVersionEntity loadFormVersionEntity(FormKey key, Long versionId);
+    FormVersionEntity loadFormVersionEntity(Long versionId);
 
 }

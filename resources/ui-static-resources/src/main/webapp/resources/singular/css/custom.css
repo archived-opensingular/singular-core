@@ -34,3 +34,11 @@
 .ms-selection {
     width: 49% !important;
 }
+
+.cke_dialog {
+    z-index: 20000 !important;
+}
+
+.cke_maximized {
+    z-index: 19999 !important;
+}

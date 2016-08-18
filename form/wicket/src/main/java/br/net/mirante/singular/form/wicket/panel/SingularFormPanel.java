@@ -5,18 +5,6 @@
 
 package br.net.mirante.singular.form.wicket.panel;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.FencedFeedbackPanel;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.resource.JQueryPluginResourceReference;
-
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefSDocumentFactory;
@@ -31,6 +19,18 @@ import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.resource.JQueryPluginResourceReference;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos
@@ -61,20 +61,34 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
 
     private transient SFormConfig<FORM_KEY> singularFormConfig;
 
+    private final boolean nested;
+
+    private IBSComponentFactory preFormPanelFactory;
+
     /**
      * Construtor do painel
      *
-     * @param id
-     *            o markup id wicket
-     * @param singularFormConfig
-     *            configuração para manipulação do documento a ser criado ou
-     *            recuperado.
+     * @param id                 o markup id wicket
+     * @param singularFormConfig configuração para manipulação do documento a ser criado ou
+     *                           recuperado.
      */
     public SingularFormPanel(String id, SFormConfig<FORM_KEY> singularFormConfig) {
+        this(id, singularFormConfig, false);
+    }
+
+    /**
+     * Construtor do painel
+     *
+     * @param id                 o markup id wicket
+     * @param singularFormConfig configuração para manipulação do documento a ser criado ou
+     *                           recuperado.
+     */
+    public SingularFormPanel(String id, SFormConfig<FORM_KEY> singularFormConfig, boolean nested) {
         super(id);
         this.rootInstance = new SInstanceRootModel<>();
         this.singularFormConfig = Objects.requireNonNull(singularFormConfig);
         this.documentFactoryRef = singularFormConfig.getDocumentFactory().getDocumentFactoryRef();
+        this.nested = nested;
     }
 
     /**
@@ -85,7 +99,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
         addOrReplace(container);
         buildContainer();
     }
-    
+
     @Override
     protected void onConfigure() {
         super.onConfigure();
@@ -103,9 +117,8 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
      * objetos passados no parâmetro singularFormConfig.
      * </p>
      *
-     * @param singularFormConfig
-     *            Configuração do formulário em termos de recuperação de
-     *            referências e configurador inicial da instancia e SDocument
+     * @param singularFormConfig Configuração do formulário em termos de recuperação de
+     *                           referências e configurador inicial da instancia e SDocument
      * @return Não pode ser Null
      */
     protected abstract SInstance createInstance(SFormConfig<FORM_KEY> singularFormConfig);
@@ -134,10 +147,14 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer(), getRootInstance());
         ctx.setAnnotationMode(getAnnotationMode());
+        ctx.setNested(nested);
+        ctx.setPreFormPanelFactory(preFormPanelFactory);
         getSingularFormContext().getUIBuilder().build(ctx, getViewMode());
     }
 
-    public AnnotationMode getAnnotationMode(){return annotation;};
+    public AnnotationMode getAnnotationMode() {
+        return annotation;
+    }
 
     /**
      * Constrói o body container
@@ -153,6 +170,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
 
     /**
      * Constroi o feedback panel
+     *
      * @return componente criado
      */
     private Component buildFeedbackPanel() {
@@ -197,4 +215,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
         return getRootInstance().getObject().asAtr().getSubtitle();
     }
 
+    public void setPreFormPanelFactory(IBSComponentFactory preFormPanelFactory) {
+        this.preFormPanelFactory = preFormPanelFactory;
+    }
 }

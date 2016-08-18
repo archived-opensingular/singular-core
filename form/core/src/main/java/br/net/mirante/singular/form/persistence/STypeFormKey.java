@@ -65,4 +65,9 @@ public class STypeFormKey extends STypeSimple<SISimple<FormKey>, FormKey> {
                     "value", originalValue);
         }
     }
+
+    @Override
+    public FormKey fromString(String value) {
+        return fromStringPersistence(value);
+    }
 }

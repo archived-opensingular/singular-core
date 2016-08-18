@@ -1,19 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.composite;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.StyleAttributeModifier;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.event.IEvent;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
-
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SType;
@@ -22,9 +8,21 @@ import br.net.mirante.singular.form.view.Block;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.StyleAttributeModifier;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.IEvent;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.Model;
+
+import java.util.*;
 
 
 public class BlocksCompositeMapper extends AbstractCompositeMapper {
@@ -46,6 +44,15 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             final List<String> remainingTypes = new ArrayList<>();
             final List<String> addedTypes     = new ArrayList<>();
             final SViewByBlock view           = (SViewByBlock) ctx.getView();
+
+            final WicketBuildContext             rootContext = ctx.getRootContext();
+            final IBSComponentFactory<Component> factory     = rootContext.getPreFormPanelFactory();
+
+            if (factory != null) {
+                grid.newComponent(factory);
+                grid = grid.newGrid();
+                rootContext.setPreFormPanelFactory(null);
+            }
 
             for (int i = 0; i < view.getBlocks().size(); i++) {
                 final Block block = view.getBlocks().get(i);
@@ -166,14 +173,17 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         public void onEvent(IEvent<?> event) {
             super.onEvent(event);
             if (AjaxRequestTarget.class.isAssignableFrom(event.getPayload().getClass())) {
-                final AjaxRequestTarget payload = (AjaxRequestTarget) event.getPayload();
-                if (isAnyChildrenVisible() != visible) {
-                    if (isAnyChildrenVisible()) {
-                        payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'block');");
-                        visible = true;
-                    } else {
-                        payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'none');");
-                        visible = false;
+                final Boolean isAnyFieldUpdated = getRequestCycle().getMetaData(WicketFormProcessing.MDK_FIELD_UPDATED);
+                if (isAnyFieldUpdated != null && isAnyFieldUpdated) {
+                    final AjaxRequestTarget payload = (AjaxRequestTarget) event.getPayload();
+                    if (isAnyChildrenVisible() != visible) {
+                        if (isAnyChildrenVisible()) {
+                            payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'block');");
+                            visible = true;
+                        } else {
+                            payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'none');");
+                            visible = false;
+                        }
                     }
                 }
             }
