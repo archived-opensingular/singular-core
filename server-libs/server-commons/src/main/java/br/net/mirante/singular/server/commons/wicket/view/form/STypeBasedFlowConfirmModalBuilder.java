@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.document.RefType;
 import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.wicket.model.IModel;
@@ -14,11 +15,11 @@ import org.apache.wicket.model.StringResourceModel;
 
 public class STypeBasedFlowConfirmModalBuilder extends AbstractFlowConfirmModalBuilder {
 
-    private final SFormConfig<String>       formConfig;
-    private final RefType                   refType;
-    private final FormKey                   formKey;
-    private final IFormService              formService;
-    private       SingularFormPanel<String> singularFormPanel;
+    private final SFormConfig<String>           formConfig;
+    private final RefType                       refType;
+    private final FormKey                       formKey;
+    private final IFormService                  formService;
+    private       SInstanceRootModel<SInstance> instanceModel;
 
     public STypeBasedFlowConfirmModalBuilder(AbstractFormPage formPage,
                                              SFormConfig<String> formConfig,
@@ -42,7 +43,7 @@ public class STypeBasedFlowConfirmModalBuilder extends AbstractFlowConfirmModalB
         final BSModalBorder modal = new BSModalBorder("flow-modal" + idSuffix, new StringResourceModel("label.button.confirm", formPage, null));
         addDefaultCancelButton(modal);
         addDefaultConfirmButton(tn, im, vm, modal);
-        modal.add(singularFormPanel = buildSingularFormPanel());
+        modal.add(buildSingularFormPanel());
         return modal;
     }
 
@@ -50,17 +51,21 @@ public class STypeBasedFlowConfirmModalBuilder extends AbstractFlowConfirmModalB
         return new SingularFormPanel<String>("singular-form-panel", formConfig, true) {
             @Override
             protected SInstance createInstance(SFormConfig singularFormConfig) {
-                if (formKey != null) {
-                    return formService.loadSInstance(formKey, refType, singularFormConfig.getDocumentFactory());
-                } else {
-                    return singularFormConfig.getDocumentFactory().createInstance(refType);
+                if (instanceModel == null) {
+                    instanceModel = new SInstanceRootModel<>();
+                    if (formKey != null) {
+                        instanceModel.setObject(formService.loadSInstance(formKey, refType, singularFormConfig.getDocumentFactory()));
+                    } else {
+                        instanceModel.setObject(singularFormConfig.getDocumentFactory().createInstance(refType));
+                    }
+                    return instanceModel.getObject();
                 }
+                return instanceModel.getObject();
             }
         };
     }
 
-    public SingularFormPanel<String> getSingularFormPanel() {
-        return singularFormPanel;
+    public SInstanceRootModel<SInstance> getInstanceModel() {
+        return instanceModel;
     }
-
 }
