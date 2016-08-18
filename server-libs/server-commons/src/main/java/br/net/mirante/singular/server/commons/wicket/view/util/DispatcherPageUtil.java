@@ -1,12 +1,15 @@
 package br.net.mirante.singular.server.commons.wicket.view.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Map;
-
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map;
+import java.util.Optional;
 
 public class DispatcherPageUtil {
 
@@ -80,4 +83,22 @@ public class DispatcherPageUtil {
 
     }
 
+    public static String getBaseURL() {
+
+        final RequestCycle requestCycle = RequestCycle.get();
+        final Request      request      = requestCycle.getRequest();
+        final String       currentPath  = request.getUrl().toString();
+
+        String fullUrl = requestCycle.getUrlRenderer().renderFullUrl(request.getUrl());
+
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(currentPath)) {
+            final int beginPath = fullUrl.lastIndexOf(currentPath);
+            fullUrl = fullUrl.substring(0, beginPath - 1);
+        }
+
+        final Optional<String> contextPath = Optional.ofNullable(requestCycle.getRequest().getContextPath());
+        final Optional<String> filterPath  = Optional.ofNullable(requestCycle.getRequest().getFilterPath());
+
+        return fullUrl + contextPath.orElse("") + filterPath.orElse("");
+    }
 }

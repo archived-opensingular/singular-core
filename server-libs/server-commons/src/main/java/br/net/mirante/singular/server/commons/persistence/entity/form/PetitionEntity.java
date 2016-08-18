@@ -1,15 +1,33 @@
 package br.net.mirante.singular.server.commons.persistence.entity.form;
 
+import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import br.net.mirante.singular.support.persistence.util.Constants;
 import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.apache.commons.collections.set.UnmodifiableSortedSet;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Entity
 @Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
@@ -42,8 +60,9 @@ public class PetitionEntity extends BaseEntity<Long> {
     @Column(name = "DS_PETICAO")
     private String description;
 
-    @OneToMany(mappedBy = "petition")
-    private List<FormPetitionEntity> formPetitionEntities;
+    @OneToMany(mappedBy = "petition", fetch = FetchType.EAGER)
+    @OrderBy(" CO_FORMULARIO_PETICAO ASC ")
+    private SortedSet<FormPetitionEntity> formPetitionEntities;
 
     @Override
     public Long getCod() {
@@ -94,24 +113,23 @@ public class PetitionEntity extends BaseEntity<Long> {
         this.description = description;
     }
 
-    public List<FormPetitionEntity> getFormPetitionEntities() {
+    public SortedSet<FormPetitionEntity> getFormPetitionEntities() {
         return formPetitionEntities;
     }
 
-    public void setFormPetitionEntities(List<FormPetitionEntity> formPetitionEntities) {
+    public void setFormPetitionEntities(SortedSet<FormPetitionEntity> formPetitionEntities) {
         this.formPetitionEntities = formPetitionEntities;
     }
 
-    public Optional<FormPetitionEntity> getFormPetitionEntityByTypeName(String typeName) {
-        if (getFormPetitionEntities() != null) {
-            return getFormPetitionEntities()
-                    .stream()
-                    .filter(fe -> fe.getForm().getFormType().getAbbreviation().equals(typeName))
-                    .findFirst();
-        } else {
-            return Optional.empty();
-        }
+    public FormEntity getMainForm() {
+        return Optional
+                .ofNullable(formPetitionEntities)
+                .orElse(new TreeSet<>())
+                .stream()
+                .filter(f -> SimNao.SIM.equals(f.getMainForm()))
+                .map(f -> f.getForm())
+                .findFirst()
+                .orElse(null);
     }
-
 
 }

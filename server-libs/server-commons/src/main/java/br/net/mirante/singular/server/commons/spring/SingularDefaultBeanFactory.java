@@ -19,8 +19,10 @@ import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcesso
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.FormPetitionDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionContentHistoryDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionerDAO;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
@@ -36,7 +38,12 @@ public class SingularDefaultBeanFactory {
 
     @Bean
     public <T extends PetitionEntity> PetitionDAO<T> peticaoDAO() {
-        return new PetitionDAO<T>();
+        return new PetitionDAO<>();
+    }
+
+    @Bean
+    public PetitionContentHistoryDAO petitionContentHistoryDAO() {
+        return new PetitionContentHistoryDAO();
     }
 
     @Bean

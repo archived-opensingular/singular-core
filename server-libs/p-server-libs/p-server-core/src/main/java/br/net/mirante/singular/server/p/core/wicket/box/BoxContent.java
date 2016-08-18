@@ -55,6 +55,7 @@ import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
@@ -118,9 +119,11 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         for (ItemAction itemAction : itemBoxDTO.getActions().values()) {
 
             if (itemAction.getType() == ItemActionType.POPUP) {
-                actionColumn.appendStaticAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), linkFunction(itemAction, getBaseUrl(), getLinkParams()), visibleFunction(itemAction));
+                actionColumn.appendStaticAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), linkFunction(itemAction, getBaseUrl(), getLinkParams()), visibleFunction(itemAction),
+                    c -> c.styleClasses($m.ofValue("worklist-action-btn")));
             } else if (itemAction.getType() == ItemActionType.ENDPOINT) {
-                actionColumn.appendAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), dynamicLinkFunction(itemAction, getProcessGroup().getConnectionURL(), getLinkParams()), visibleFunction(itemAction));
+                actionColumn.appendAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), dynamicLinkFunction(itemAction, getProcessGroup().getConnectionURL(), getLinkParams()), visibleFunction(itemAction),
+                    c -> c.styleClasses($m.ofValue("worklist-action-btn")));
             }
         }
 

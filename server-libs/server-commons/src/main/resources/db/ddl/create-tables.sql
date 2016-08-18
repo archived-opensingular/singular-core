@@ -258,7 +258,7 @@ CREATE TABLE DBSINGULAR.TB_GRUPO_PROCESSO (
 /*==============================================================*/
 /* Table: TB_PETICIONANTE                                       */
 /*==============================================================*/
-CREATE SEQUENCE DBSINGULAR.SQ_CO_PETICIONANTE START WITH 1 INCREMENT BY 1;
+
 
 CREATE TABLE DBSINGULAR.TB_PETICIONANTE (
    CO_PETICIONANTE      BIGINT                  NOT NULL,
@@ -312,13 +312,13 @@ CREATE TABLE DBSINGULAR.RL_PAPEL_TAREFA (
 /* Table: TB_RASCUNHO                                           */
 /*==============================================================*/
 
-CREATE SEQUENCE DBSINGULAR.SQ_CO_RASCUNHO  START WITH 1 INCREMENT BY 1;
+
 
 CREATE TABLE DBSINGULAR.TB_RASCUNHO (
    CO_RASCUNHO           BIGINT               NOT NULL,
    CO_FORMULARIO         BIGINT               NOT NULL,
    DT_INICIO             SMALLDATETIME        NOT NULL,
-   DT_EDICAO             SMALLDATETIME        NOT NULL
+   DT_EDICAO             SMALLDATETIME        NOT NULL,
    CONSTRAINT PK_TB_RASCUNHO PRIMARY KEY (CO_RASCUNHO)
 );
 
@@ -326,7 +326,7 @@ CREATE TABLE DBSINGULAR.TB_RASCUNHO (
 /* Table: TB_PETICAO                                            */
 /*==============================================================*/
 
-CREATE SEQUENCE DBSINGULAR.SQ_CO_PETICAO  START WITH 1 INCREMENT BY 1;
+
 
 CREATE TABLE DBSINGULAR.TB_PETICAO (
    CO_PETICAO                   BIGINT  NOT NULL,
@@ -342,7 +342,6 @@ CREATE TABLE DBSINGULAR.TB_PETICAO (
 /*==============================================================*/
 /* TB_HISTORICO_CONTEUDO_PETICAO                         */
 /*==============================================================*/
-CREATE SEQUENCE DBSINGULAR.SQ_CO_HISTORICO  START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE DBSINGULAR.TB_HISTORICO_CONTEUDO_PETICAO (
    CO_HISTORICO         BIGINT                  NOT NULL,
@@ -350,23 +349,42 @@ CREATE TABLE DBSINGULAR.TB_HISTORICO_CONTEUDO_PETICAO (
    DT_HISTORICO         SMALLDATETIME        NOT NULL,
    CO_AUTOR             BIGINT                  NULL,
    CO_VERSAO_FORMULARIO BIGINT                  NULL,
-   CO_ANOTACAO_FORMULARIO BIGINT                  NULL,
    CO_INSTANCIA_TAREFA  BIGINT                  NULL,
    CO_PETICIONANTE      BIGINT                  NULL,
    CONSTRAINT PK_TB_HISTORICO_CONTEUDO_PETIC PRIMARY KEY (CO_HISTORICO)
 );
 
 /*==============================================================*/
+/* Table: RL_HIST_CONT_PET_VER_ANOTACAO                         */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.RL_HIST_CONT_PET_VER_ANOTACAO
+(
+   CO_HISTORICO         INTEGER              NOT NULL,
+   CO_VERSAO_ANOTACAO   INTEGER              NOT NULL,
+   CONSTRAINT PK_RL_HIST_CONT_PET_VER_ANOTAC PRIMARY KEY (CO_HISTORICO, CO_VERSAO_ANOTACAO)
+);
+
+ALTER TABLE DBSINGULAR.RL_HIST_CONT_PET_VER_ANOTACAO
+   ADD CONSTRAINT FK_RL_HIST__REFERENCE_TB_HISTO FOREIGN KEY (CO_HISTORICO)
+      REFERENCES DBSINGULAR.TB_HISTORICO_CONTEUDO_PETICAO (CO_HISTORICO);
+
+ALTER TABLE DBSINGULAR.RL_HIST_CONT_PET_VER_ANOTACAO
+   ADD CONSTRAINT FK_RL_HIST__REFERENCE_TB_VERSA FOREIGN KEY (CO_VERSAO_ANOTACAO)
+      REFERENCES DBSINGULAR.TB_VERSAO_ANOTACAO_FORMULARIO (CO_VERSAO_ANOTACAO);
+
+
+/*==============================================================*/
 /* Table: TB_FORMULARIO_PETICAO                                 */
 /*==============================================================*/
-CREATE SEQUENCE DBSINGULAR.SQ_CO_FORMULARIO_PETICAO START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE DBSINGULAR.TB_FORMULARIO_PETICAO
 (
    CO_FORMULARIO_PETICAO INTEGER              NOT NULL,
    CO_PETICAO           INTEGER              NOT NULL,
    CO_FORMULARIO        INTEGER              NOT NULL,
+   CO_DEFINICAO_TAREFA  INTEGER,
    ST_FORM_PRINCIPAL    CHAR                 NOT NULL
       CONSTRAINT CKC_ST_FORM_PRINCIPAL_TB_FORMU CHECK (ST_FORM_PRINCIPAL IN ('S','N')),
    CONSTRAINT PK_TB_FORMULARIO_PETICAO PRIMARY KEY (CO_FORMULARIO_PETICAO)
 );
+

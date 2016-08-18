@@ -3,6 +3,8 @@ package br.net.mirante.singular.server.commons.wicket.view.form;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.persistence.FormKey;
+import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
@@ -14,12 +16,20 @@ public class STypeBasedFlowConfirmModalBuilder extends AbstractFlowConfirmModalB
 
     private final SFormConfig<String>       formConfig;
     private final RefType                   refType;
+    private final FormKey                   formKey;
+    private final IFormService              formService;
     private       SingularFormPanel<String> singularFormPanel;
 
-    public STypeBasedFlowConfirmModalBuilder(AbstractFormPage formPage, SFormConfig<String> formConfig, RefType refType) {
+    public STypeBasedFlowConfirmModalBuilder(AbstractFormPage formPage,
+                                             SFormConfig<String> formConfig,
+                                             RefType refType,
+                                             FormKey formKey,
+                                             IFormService formService) {
         super(formPage);
         this.formConfig = formConfig;
         this.refType = refType;
+        this.formKey = formKey;
+        this.formService = formService;
     }
 
     @Override
@@ -37,12 +47,20 @@ public class STypeBasedFlowConfirmModalBuilder extends AbstractFlowConfirmModalB
     }
 
     private SingularFormPanel<String> buildSingularFormPanel() {
-        return new SingularFormPanel<String>("singular-form-panel", formConfig) {
+        return new SingularFormPanel<String>("singular-form-panel", formConfig, true) {
             @Override
             protected SInstance createInstance(SFormConfig singularFormConfig) {
-                return singularFormConfig.getDocumentFactory().createInstance(refType);
+                if (formKey != null) {
+                    return formService.loadSInstance(formKey, refType, singularFormConfig.getDocumentFactory());
+                } else {
+                    return singularFormConfig.getDocumentFactory().createInstance(refType);
+                }
             }
         };
+    }
+
+    public SingularFormPanel<String> getSingularFormPanel() {
+        return singularFormPanel;
     }
 
 }

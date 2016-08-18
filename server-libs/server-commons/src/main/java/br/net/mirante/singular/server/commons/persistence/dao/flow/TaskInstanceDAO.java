@@ -139,10 +139,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<TaskInstanceEntity> findCurrentTasksByPetitionId(String petitionId) {
-        if (StringUtils.isBlank(petitionId)){
-            return new ArrayList<>(0);
-        }
+    public List<TaskInstanceEntity> findCurrentTasksByPetitionId(Long petitionId) {
         StringBuilder sb = new StringBuilder();
 
         sb
@@ -155,7 +152,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                 .append("   and (ti.endDate is null OR task.type = :tipoEnd)  ");
 
         final Query query = getSession().createQuery(sb.toString());
-        query.setParameter("petitionId",  Long.valueOf(petitionId));
+        query.setParameter("petitionId",  petitionId);
         query.setParameter("tipoEnd", TaskType.End);
         return query.list();
     }
