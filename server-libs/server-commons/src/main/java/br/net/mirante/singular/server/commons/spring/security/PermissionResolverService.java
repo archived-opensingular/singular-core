@@ -39,8 +39,8 @@ public class PermissionResolverService {
 
         for (Iterator<MenuGroup> it = groupDTOs.iterator(); it.hasNext(); ) {
             MenuGroup menuGroup = it.next();
-            String permission = menuGroup.getId().toUpperCase();
-            if (!permissions.contains(permission)) {
+            String permissionNeeded = menuGroup.getId().toUpperCase();
+            if (!permissions.contains(permissionNeeded)) {
                 it.remove();
             } else {
                 filterForms(menuGroup, permissions);

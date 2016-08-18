@@ -1,12 +1,10 @@
 package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 
 import br.net.mirante.singular.flow.core.TaskType;
@@ -68,7 +66,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                                 " au , " +
                                 " tv.name, " +
                                 " p.type, " +
-                                " p.processType, " +
+                                " pd.key, " +
                                 " p.cod," +
                                 " ti.beginDate,  " +
                                 " pi.beginDate, " +

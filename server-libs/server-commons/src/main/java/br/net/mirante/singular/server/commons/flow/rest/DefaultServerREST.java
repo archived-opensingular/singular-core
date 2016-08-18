@@ -5,7 +5,12 @@
 
 package br.net.mirante.singular.server.commons.flow.rest;
 
+import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
 import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_DELETE;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,8 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.spring.SpringServiceRegistry;
+import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
@@ -42,14 +50,20 @@ public class DefaultServerREST {
     public static final String DELETE          = "/delete";
     public static final String EXECUTE         = "/execute";
 
+    public static final String SEARCH_PETITIONS = "/searchPetitions";
+    public static final String COUNT_PETITIONS  = "/countPetitions";
+
+    public static final String SEARCH_TASKS = "/searchTasks";
+    public static final String COUNT_TASKS  = "/countTasks";
+
     @Inject
     protected PetitionService<PetitionEntity> petitionService;
 
     @Inject
-    private PermissionResolverService permissionResolverService;
+    protected PermissionResolverService permissionResolverService;
 
     @Inject
-    private SpringServiceRegistry springServiceRegistry;
+    protected SpringServiceRegistry springServiceRegistry;
 
     @Inject
     @Named("formConfigWithDatabase")
@@ -94,6 +108,55 @@ public class DefaultServerREST {
 
         Class<? extends IController> controllerClass = actionConfig.getAction(action.getName());
         return springServiceRegistry.lookupService(controllerClass);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    protected void filterActions(List<Map<String, Object>> result, String idUsuarioLogado) {
+
+        List<String> permissions = permissionResolverService.searchPermissions(idUsuarioLogado);
+
+        for (Map<String, Object> resultItem : result) {
+            List<BoxItemAction> actions = (List<BoxItemAction>) resultItem.get("actions");
+
+            for (Iterator<BoxItemAction> it = actions.iterator(); it.hasNext(); ) {
+                BoxItemAction action = it.next();
+                String permissionsNeeded;
+                String typeAbbreviation = permissionResolverService.getAbbreviation((String) resultItem.get("type"));
+                if (action.getFormAction() != null) {
+                    permissionsNeeded = action.getFormAction().toString() + "_" + typeAbbreviation;
+                } else {
+                    permissionsNeeded = "ACTION_" + action.getName().toUpperCase() + "_" + typeAbbreviation;
+                }
+                if (!permissions.contains(permissionsNeeded)) {
+                    it.remove();
+                }
+            }
+        }
+    }
+
+    @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_PETITIONS, method = RequestMethod.POST)
+    public List<Map<String, Object>> searchPeticoes(@RequestBody QuickFilter filter) {
+        List<Map<String, Object>> result = petitionService.quickSearchMap(filter);
+        filterActions(result, filter.getIdUsuarioLogado());
+        return result;
+    }
+
+    @RequestMapping(value = PATH_BOX_SEARCH + COUNT_PETITIONS, method = RequestMethod.POST)
+    public Long countPeticoes(@RequestBody QuickFilter filter) {
+        return petitionService.countQuickSearch(filter);
+    }
+
+    @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_TASKS, method = RequestMethod.POST)
+    public List<TaskInstanceDTO> searchTarefas(@RequestBody QuickFilter filter) {
+        List<String> idsPerfis = permissionResolverService.searchPermissions(filter.getIdUsuarioLogado());
+        return petitionService.listTasks(filter, false, idsPerfis);
+    }
+
+    @RequestMapping(value = PATH_BOX_SEARCH + COUNT_TASKS, method = RequestMethod.POST)
+    public Long countTarefas(@RequestBody QuickFilter filter) {
+        List<String> idsPerfis = permissionResolverService.searchPermissions(filter.getIdUsuarioLogado());
+        return petitionService.countTasks(filter, false, idsPerfis);
     }
 
 }

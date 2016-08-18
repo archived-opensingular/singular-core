@@ -63,7 +63,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
 
         definitionMap.forEach((category, definitions) -> {
             MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setId("CAIXA_" + SingularUtil.normalize(category).toUpperCase());
+            menuGroup.setId("BOX_" + SingularUtil.normalize(category).toUpperCase());
             menuGroup.setLabel(category);
             menuGroup.setProcesses(new ArrayList<>());
             menuGroup.setForms(new ArrayList<>());
