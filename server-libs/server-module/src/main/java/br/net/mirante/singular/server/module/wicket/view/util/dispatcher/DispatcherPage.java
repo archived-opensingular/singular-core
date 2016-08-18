@@ -150,7 +150,7 @@ public abstract class DispatcherPage extends WebPage {
 
         String permissionsNeeded = config.getFormAction().toString() + "_" + typeSimpleName.toUpperCase();
 
-        return userDetails.getRoles().contains(permissionsNeeded);
+        return userDetails.getPermissionsSingular().contains(permissionsNeeded);
     }
 
     protected void redirectForbidden() {

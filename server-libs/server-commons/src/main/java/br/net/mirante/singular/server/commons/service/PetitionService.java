@@ -6,6 +6,7 @@ import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
 import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -393,8 +394,8 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         }
     }
 
-    public List<TaskInstanceDTO> listTasks(QuickFilter filter, boolean concluidas, List<String> idsPerfis) {
-        List<TaskInstanceDTO> tasks = taskInstanceDAO.findTasks(filter, concluidas, idsPerfis);
+    public List<TaskInstanceDTO> listTasks(QuickFilter filter, boolean concluidas, List<Serializable> permissions) {
+        List<TaskInstanceDTO> tasks = taskInstanceDAO.findTasks(filter, concluidas, permissions);
         tasks.forEach(t -> checkTaskActions(t, filter));
         return tasks;
     }
@@ -429,17 +430,17 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     }
 
-    public Long countTasks(QuickFilter filter, boolean concluidas, List<String> idsPerfis) {
-        return taskInstanceDAO.countTasks(filter.getProcessesAbbreviation(), idsPerfis, filter.getFilter(), concluidas);
+    public Long countTasks(QuickFilter filter, boolean concluidas, List<Serializable> permissions) {
+        return taskInstanceDAO.countTasks(filter.getProcessesAbbreviation(), permissions, filter.getFilter(), concluidas);
     }
 
-    public List<? extends TaskInstanceDTO> listTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
-        return taskInstanceDAO.findTasks(first, count, sortProperty, ascending, siglaFluxo, idsPerfis, filtroRapido, concluidas);
+    public List<? extends TaskInstanceDTO> listTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<Serializable> permissions, String filtroRapido, boolean concluidas) {
+        return taskInstanceDAO.findTasks(first, count, sortProperty, ascending, siglaFluxo, permissions, filtroRapido, concluidas);
     }
 
 
-    public Long countTasks(String siglaFluxo, List<String> idsPerfis, String filtroRapido, boolean concluidas) {
-        return taskInstanceDAO.countTasks(Collections.singletonList(siglaFluxo), idsPerfis, filtroRapido, concluidas);
+    public Long countTasks(String siglaFluxo, List<Serializable> permissions, String filtroRapido, boolean concluidas) {
+        return taskInstanceDAO.countTasks(Collections.singletonList(siglaFluxo), permissions, filtroRapido, concluidas);
     }
 
     public List<MTransition> listCurrentTaskTransitions(Long petitionId) {

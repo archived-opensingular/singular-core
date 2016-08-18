@@ -1,14 +1,17 @@
 package br.net.mirante.singular.server.commons.spring.security;
 
 
-import br.net.mirante.singular.server.commons.config.IServerContext;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import br.net.mirante.singular.server.commons.config.IServerContext;
 
 public interface SingularUserDetails extends UserDetails {
 
@@ -20,7 +23,19 @@ public interface SingularUserDetails extends UserDetails {
 
     public String getDisplayName();
 
-    public List<String> getRoles();
+    public List<SingularPermission> getPermissions();
+
+    public default List<String> getPermissionsSingular() {
+        return getPermissions().stream()
+                .map(SingularPermission::getSingularId)
+                .collect(Collectors.toList());
+    }
+
+    public default List<Serializable> getPermissionsInternal() {
+        return getPermissions().stream()
+                .map(SingularPermission::getInternalId)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public default Collection<? extends GrantedAuthority> getAuthorities() {
@@ -33,16 +48,16 @@ public interface SingularUserDetails extends UserDetails {
     }
 
 
-    public void addRole(String role);
+    public void addPermission(SingularPermission role);
 
-    public default void addRoles(String... roles) {
-        addRoles(Arrays.asList(roles));
+    public default void addPermissions(SingularPermission... roles) {
+        addPermissions(Arrays.asList(roles));
     }
 
-    public default void addRoles(List<String> roles) {
+    public default void addPermissions(List<SingularPermission> roles) {
         if (roles != null) {
-            for (String role : roles) {
-                addRole(role);
+            for (SingularPermission role : roles) {
+                addPermission(role);
             }
         }
     }

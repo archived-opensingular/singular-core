@@ -5,9 +5,11 @@
 
 package br.net.mirante.singular.server.commons.spring.security;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +38,7 @@ public class PermissionResolverService {
     private Optional<SFormConfig<String>> singularFormConfig;
 
     public void filterBoxWithPermissions(List<MenuGroup> groupDTOs, String user) {
-        List<String> permissions = peticionamentoUserDetailService.searchPermissions(user);
+        List<String> permissions = searchPermissionsSingular(user);
 
         for (Iterator<MenuGroup> it = groupDTOs.iterator(); it.hasNext(); ) {
             MenuGroup menuGroup = it.next();
@@ -61,15 +63,27 @@ public class PermissionResolverService {
     }
 
     public boolean hasPermission(Long id, String idUsuario, String action) {
-        List<String> permissions = peticionamentoUserDetailService.searchPermissions(idUsuario);
+        List<String> permissions = searchPermissionsSingular(idUsuario);
         PetitionEntity petitionEntity = petitionService.find(id);
         FormTypeEntity formType = petitionEntity.getCurrentDraftEntity().getForm().getFormType();
         String permissionNeeded = "ACTION_" + action + "_" + getAbbreviation(formType);
         return permissions.contains(permissionNeeded.toUpperCase());
     }
 
-    public List<String> searchPermissions(String idUsuario) {
+    public List<SingularPermission> searchPermissions(String idUsuario) {
         return peticionamentoUserDetailService.searchPermissions(idUsuario);
+    }
+
+    public List<String> searchPermissionsSingular(String idUsuario) {
+        return peticionamentoUserDetailService.searchPermissions(idUsuario)
+                .stream().map(SingularPermission::getSingularId)
+                .collect(Collectors.toList());
+    }
+
+    public List<Serializable> searchPermissionsInternal(String idUsuario) {
+        return peticionamentoUserDetailService.searchPermissions(idUsuario)
+                .stream().map(SingularPermission::getInternalId)
+                .collect(Collectors.toList());
     }
 
     public String getAbbreviation(FormTypeEntity formType) {

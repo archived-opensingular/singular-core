@@ -8,6 +8,7 @@ package br.net.mirante.singular.server.commons.flow.rest;
 import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
 import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_DELETE;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +115,7 @@ public class DefaultServerREST {
     @SuppressWarnings("unchecked")
     protected void filterActions(List<Map<String, Object>> result, String idUsuarioLogado) {
 
-        List<String> permissions = permissionResolverService.searchPermissions(idUsuarioLogado);
+        List<String> permissions = permissionResolverService.searchPermissionsSingular(idUsuarioLogado);
 
         for (Map<String, Object> resultItem : result) {
             List<BoxItemAction> actions = (List<BoxItemAction>) resultItem.get("actions");
@@ -149,14 +150,14 @@ public class DefaultServerREST {
 
     @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_TASKS, method = RequestMethod.POST)
     public List<TaskInstanceDTO> searchTasks(@RequestBody QuickFilter filter) {
-        List<String> idsPerfis = permissionResolverService.searchPermissions(filter.getIdUsuarioLogado());
-        return petitionService.listTasks(filter, false, idsPerfis);
+        List<Serializable> permissions = permissionResolverService.searchPermissionsInternal(filter.getIdUsuarioLogado());
+        return petitionService.listTasks(filter, false, permissions);
     }
 
     @RequestMapping(value = PATH_BOX_SEARCH + COUNT_TASKS, method = RequestMethod.POST)
     public Long countTasks(@RequestBody QuickFilter filter) {
-        List<String> idsPerfis = permissionResolverService.searchPermissions(filter.getIdUsuarioLogado());
-        return petitionService.countTasks(filter, false, idsPerfis);
+        List<Serializable> permissions = permissionResolverService.searchPermissionsInternal(filter.getIdUsuarioLogado());
+        return petitionService.countTasks(filter, false, permissions);
     }
 
 }

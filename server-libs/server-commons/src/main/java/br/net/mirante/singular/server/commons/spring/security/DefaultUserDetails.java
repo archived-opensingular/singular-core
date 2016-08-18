@@ -1,32 +1,31 @@
 package br.net.mirante.singular.server.commons.spring.security;
 
 
-
-import br.net.mirante.singular.server.commons.config.IServerContext;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import br.net.mirante.singular.server.commons.config.IServerContext;
 
 public class DefaultUserDetails implements SingularUserDetails {
 
     private String displayName;
 
-    private List<String> roles = new ArrayList<>();
+    private List<SingularPermission> permissions = new ArrayList<>();
 
     private IServerContext serverContext;
 
     private String username;
 
-    public DefaultUserDetails(String username, List<String> roles, String displayName, IServerContext context) {
+    public DefaultUserDetails(String username, List<SingularPermission> roles, String displayName, IServerContext context) {
         this.username = username;
-        this.roles = roles;
+        this.permissions = roles;
         this.displayName = displayName;
         this.serverContext = context;
     }
 
     @Override
-    public void addRole(String role) {
-        roles.add(role);
+    public void addPermission(SingularPermission role) {
+        permissions.add(role);
     }
 
     @Override
@@ -40,8 +39,8 @@ public class DefaultUserDetails implements SingularUserDetails {
     }
 
     @Override
-    public List<String> getRoles() {
-        return roles;
+    public List<SingularPermission> getPermissions() {
+        return permissions;
     }
 
     @Override
