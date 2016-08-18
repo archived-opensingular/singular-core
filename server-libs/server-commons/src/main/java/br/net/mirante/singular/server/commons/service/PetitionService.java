@@ -2,12 +2,7 @@ package br.net.mirante.singular.server.commons.service;
 
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.flow.core.Flow;
-import br.net.mirante.singular.flow.core.MTask;
-import br.net.mirante.singular.flow.core.MTransition;
-import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.core.TaskInstance;
+import br.net.mirante.singular.flow.core.*;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
@@ -19,25 +14,17 @@ import br.net.mirante.singular.form.persistence.SingularFormPersistenceException
 import br.net.mirante.singular.form.persistence.entity.FormAnnotationEntity;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
-import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
-import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
-import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
-import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
+import br.net.mirante.singular.persistence.entity.*;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
-import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
-import br.net.mirante.singular.server.commons.persistence.dao.form.FormPetitionDAO;
-import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionContentHistoryDAO;
-import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
-import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionerDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.*;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
@@ -54,14 +41,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -69,10 +49,7 @@ import java.util.stream.Collectors;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_DELETE;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_EDIT;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_RELOCATE;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_VIEW;
+import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
 
 @Transactional
 public class PetitionService<T extends PetitionEntity> implements Loggable {
@@ -155,9 +132,9 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
         appendItemActions(item, actions);
 
-        String processKey = (String) item.get("processType");
+        String                     processKey        = (String) item.get("processType");
         final ProcessDefinition<?> processDefinition = Flow.getProcessDefinitionWith(processKey);
-        final ActionConfig actionConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
+        final ActionConfig         actionConfig      = processDefinition.getMetaDataValue(ActionConfig.KEY);
         if (actionConfig != null) {
             actions = actions.stream()
                     .filter(itemAction -> actionConfig.containsAction(itemAction.getName()))
@@ -237,7 +214,14 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     private Consumer<FormEntity> formSetterByName(boolean mainForm, String typeName, T petition) {
         return formEntity -> {
 
-            final Optional<FormPetitionEntity> optionalOfFormPetitionEntity = findFormPetitionEntityByTypeName(petition.getCod(), typeName);
+            final Optional<FormPetitionEntity> optionalOfFormPetitionEntity;
+
+            if (mainForm) {
+                optionalOfFormPetitionEntity = findFormPetitionEntityByTypeName(petition.getCod(), typeName);
+            } else {
+                optionalOfFormPetitionEntity = findFormPetitionEntityByTypeNameAndTask(petition.getCod(), typeName, getCurrentTaskDefinition(petition).map(TaskDefinitionEntity::getCod).orElse(null));
+            }
+
             final FormPetitionEntity formPetitionEntity = optionalOfFormPetitionEntity.orElse(new FormPetitionEntity());
 
             formPetitionEntity.setForm(formEntity);
@@ -282,9 +266,9 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     }
 
     public FormKey send(T peticao, SInstance instance, boolean mainForm) {
-        final FormKey key = preparePetitionForTransition(peticao, instance, mainForm);
+        final FormKey              key               = preparePetitionForTransition(peticao, instance, mainForm);
         final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
-        final ProcessInstance processInstance = processDefinition.newInstance();
+        final ProcessInstance      processInstance   = processDefinition.newInstance();
 
         savePetitionHistory(peticao.getCod(), key);
 
@@ -299,14 +283,14 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     }
 
     private void savePetitionHistory(Long petitionId, FormKey formKey) {
-        PetitionEntity petitionEntity =  petitionDAO.find(petitionId);
-        TaskInstanceEntity taskInstance = findCurrentTaskByPetitionId(petitionId);
-        FormEntity formEntity = formPersistenceService.loadFormEntity(formKey);
+        PetitionEntity     petitionEntity = petitionDAO.find(petitionId);
+        TaskInstanceEntity taskInstance   = findCurrentTaskByPetitionId(petitionId);
+        FormEntity         formEntity     = formPersistenceService.loadFormEntity(formKey);
         getLogger().info("Atualizando histórico da petição.");
         PetitionContentHistoryEntity contentHistoryEntity = new PetitionContentHistoryEntity();
         contentHistoryEntity.setPetitionEntity(petitionEntity);
         contentHistoryEntity.setFormVersionEntity(formEntity.getCurrentFormVersionEntity());
-        if (taskInstance != null){
+        if (taskInstance != null) {
             contentHistoryEntity.setActor(taskInstance.getAllocatedUser());
             contentHistoryEntity.setTaskInstanceEntity(taskInstance);
         }
@@ -321,15 +305,21 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     private FormKey consolidateDraft(T petition, SInstance draftInstance, boolean mainForm) {
 
         final SDocumentFactory documentFactory = draftInstance.getDocument().getDocumentFactoryRef().get();
-        final RefType refType = draftInstance.getDocument().getRootRefType().orElse(null);
+        final RefType          refType         = draftInstance.getDocument().getRootRefType().orElse(null);
 
         if (documentFactory == null || refType == null) {
             throw new SingularFormPersistenceException("Não foi possivel resolver as dependencias para consolidar o rascunho.");
         }
 
-        FormKey petitionFormKey;
-        final String typeName = draftInstance.getType().getName();
-        final Optional<FormPetitionEntity> optionalOfForm = findFormPetitionEntityByTypeName(petition.getCod(), typeName);
+        FormKey                            petitionFormKey;
+        final String                       typeName = draftInstance.getType().getName();
+        final Optional<FormPetitionEntity> optionalOfForm;
+
+        if (mainForm) {
+            optionalOfForm = findFormPetitionEntityByTypeName(petition.getCod(), typeName);
+        } else {
+            optionalOfForm = findFormPetitionEntityByTypeNameAndTask(petition.getCod(), typeName, getCurrentTaskDefinition(petition).map(TaskDefinitionEntity::getCod).orElse(null));
+        }
 
         if (optionalOfForm.isPresent()) {
             petitionFormKey = formPersistenceService.keyFromObject(optionalOfForm.get().getForm().getCod());
@@ -380,7 +370,7 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
             final FormKey key = preparePetitionForTransition(peticao, instance, mainForm);
             savePetitionHistory(peticao.getCod(), key);
             final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(peticao).getClass();
-            final ProcessInstance pi = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
+            final ProcessInstance                    pi    = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
             pi.executeTransition(transitionName);
             return key;
         } catch (Exception e) {
@@ -462,4 +452,11 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         return Optional.ofNullable(formPetitionDAO.findFormPetitionEntityByTypeNameAndTask(petitionPK, typeName, taskDefinitionEntityPK));
     }
 
+    private Optional<TaskDefinitionEntity> getCurrentTaskDefinition(T petition) {
+        ProcessInstanceEntity processInstanceEntity = petition.getProcessInstanceEntity();
+        if (processInstanceEntity != null) {
+            return Optional.of(processInstanceEntity.getCurrentTask().getTask().getTaskDefinition());
+        }
+        return Optional.empty();
+    }
 }
