@@ -46,6 +46,7 @@ public class STypeProdutoTecnico extends STypePersistentComposite {
                 .asAtr()
                 .label("Número Processo do Produto Técnico")
                 .required()
+                .maxLength(17)
                 .asAtrBootstrap()
                 .colPreference(6);
 

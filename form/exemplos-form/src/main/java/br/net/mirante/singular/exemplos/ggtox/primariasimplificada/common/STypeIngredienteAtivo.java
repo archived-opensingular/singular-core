@@ -9,6 +9,7 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
+import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewListByTable;
 
@@ -17,7 +18,7 @@ import java.util.UUID;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeIngredienteAtivo extends STypePersistentComposite {
 
-    public static final String FIELD_NAME_ID = "idAtivo";
+    public static final String FIELD_NAME_ID              = "idAtivo";
     public static final String FIELD_NAME_NOME_COMUM_PTBR = "nomeComumPortugues";
 
     public STypeString                                         idAtivo;
@@ -26,7 +27,7 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
     public STypeString                                         nomeComum;
     public STypeString                                         nomeComumPortugues;
     public STypeString                                         entidadeAprovadora;
-    public STypeString                                         numeroCAS;
+    public STypeInteger                                        numeroCAS;
     public STypeString                                         grupoQuimico;
     public STypeComposite<SIComposite>                         sinonimia;
     public STypeList<STypeComposite<SIComposite>, SIComposite> sinonimias;
@@ -37,9 +38,9 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        this.withInitListener( si -> {
-                    si.getField(idAtivo).setValue(UUID.randomUUID().toString());
-                });
+        this.withInitListener(si -> {
+            si.getField(idAtivo).setValue(UUID.randomUUID().toString());
+        });
 
         idAtivo = addFieldString("idAtivo");
         nomeQuimicoInternacional = addFieldString("nomeQuimicoInternacional");
@@ -47,7 +48,7 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
         nomeComum = addFieldString("nomeComum");
         nomeComumPortugues = addFieldString(FIELD_NAME_NOME_COMUM_PTBR);
         entidadeAprovadora = addFieldString("entidadeAprovadora");
-        numeroCAS = addFieldString("numeroCAS");
+        numeroCAS = addFieldInteger("numeroCAS");
         grupoQuimico = addFieldString("grupoQuimico");
         sinonimias = addFieldListOfComposite("sinonimias", "sinonimia");
         sinonimia = sinonimias.getElementsType();
@@ -106,7 +107,6 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
                 .label("Sinonímias");
         sinonimias
                 .withView(SViewListByTable::new);
-
 
 
         nomeSinonimia
