@@ -16,12 +16,12 @@ import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 public class STypeProdutoTecnico extends STypePersistentComposite {
 
     public STypeList<STypeFabricante, SIComposite> fabricantes;
-    public STypeFabricanteConformeMatriz fabricante;
-    public STypeString nomeProdutoTecnico;
-    public STypeAnvisaNumeroProcesso numeroProcessoProdutoTecnico;
-    public STypeBoolean finalidadeConformeMatriz;
-    public STypeBoolean classeConformeMatriz;
-    public STypeBoolean modoAcaoConformeMatriz;
+    public STypeFabricanteConformeMatriz           fabricante;
+    public STypeString                             nomeProdutoTecnico;
+    public STypeAnvisaNumeroProcesso               numeroProcessoProdutoTecnico;
+    public STypeBoolean                            finalidadeConformeMatriz;
+    public STypeBoolean                            classeConformeMatriz;
+    public STypeBoolean                            modoAcaoConformeMatriz;
 
     @Override
     protected void onLoadType(TypeBuilder builder) {
@@ -60,10 +60,10 @@ public class STypeProdutoTecnico extends STypePersistentComposite {
         fabricantes.withMiniumSizeOf(1);
         fabricantes.asAtr().label("Fabricantes");
         fabricantes.withView(new SViewListByMasterDetail()
-                        .col(fabricantes.getElementsType().cnpj)
-                        .col(fabricantes.getElementsType().nome)
-                        .col(fabricantes.getElementsType().cidade)
-                        .col(fabricantes.getElementsType().estado)
+                .col(fabricantes.getElementsType().cnpj)
+                .col(fabricantes.getElementsType().nome)
+                .col(fabricantes.getElementsType().cidade)
+                .col(fabricantes.getElementsType().estado)
         );
 
         fabricante = addField("fabricante", STypeFabricanteConformeMatriz.class);

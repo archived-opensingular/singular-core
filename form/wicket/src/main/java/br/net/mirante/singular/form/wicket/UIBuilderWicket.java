@@ -6,13 +6,7 @@
 package br.net.mirante.singular.form.wicket;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.STypeAttachmentList;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.STypeSimple;
-import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.context.UIBuilder;
 import br.net.mirante.singular.form.context.UIComponentMapper;
 import br.net.mirante.singular.form.type.core.*;
@@ -20,27 +14,7 @@ import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.type.util.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
-import br.net.mirante.singular.form.view.SMultiSelectionByCheckboxView;
-import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
-import br.net.mirante.singular.form.view.SMultiSelectionBySelectView;
-import br.net.mirante.singular.form.view.SView;
-import br.net.mirante.singular.form.view.SViewAttachmentList;
-import br.net.mirante.singular.form.view.SViewAutoComplete;
-import br.net.mirante.singular.form.view.SViewBooleanByRadio;
-import br.net.mirante.singular.form.view.SViewBreadcrumb;
-import br.net.mirante.singular.form.view.SViewByBlock;
-import br.net.mirante.singular.form.view.SViewDateTime;
-import br.net.mirante.singular.form.view.SViewListByForm;
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.view.SViewListByTable;
-import br.net.mirante.singular.form.view.SViewReadOnly;
-import br.net.mirante.singular.form.view.SViewSearchModal;
-import br.net.mirante.singular.form.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.view.SViewTab;
-import br.net.mirante.singular.form.view.SViewTextArea;
-import br.net.mirante.singular.form.view.ViewMapperRegistry;
-import br.net.mirante.singular.form.view.ViewResolver;
+import br.net.mirante.singular.form.view.*;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.*;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
@@ -50,14 +24,7 @@ import br.net.mirante.singular.form.wicket.mapper.composite.BlocksCompositeMappe
 import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import br.net.mirante.singular.form.wicket.mapper.masterdetail.ListMasterDetailMapper;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.AutocompleteMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.BooleanRadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.BooleanSelectMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleCheckMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.*;
 import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.BreadPanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
@@ -132,7 +99,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeBoolean.class,     SViewSelectionBySelect.class,         BooleanSelectMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
-                .register(STypeInteger.class,                                           IntegerMapper::new)
+                .register(STypeInteger.class,                                           () -> new NumberMapper<>(Integer.class))
+                .register(STypeLong.class,                                              () -> new NumberMapper<>(Long.class))
                 .register(STypeString.class,                                            StringMapper::new)
                 .register(STypeString.class,     SViewSearchModal.class,                SearchModalMapper::new)
                 .register(STypeString.class,     SViewTextArea.class,                   TextAreaMapper::new)

@@ -5,12 +5,12 @@
 
 package br.net.mirante.singular.commons.base;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The base class of all runtime exceptions for Singular.
- *
  */
 public class SingularException extends RuntimeException {
 
@@ -40,7 +40,7 @@ public class SingularException extends RuntimeException {
      * cause <code>Throwable</code>.
      *
      * @param cause the exception or error that caused this exception to be
-     * thrown
+     *              thrown
      */
     public SingularException(Throwable cause) {
         super(cause);
@@ -50,9 +50,9 @@ public class SingularException extends RuntimeException {
      * Constructs a new <code>SingularException</code> with specified
      * detail message and cause <code>Throwable</code>.
      *
-     * @param msg    the error message
-     * @param cause  the exception or error that caused this exception to be
-     * thrown
+     * @param msg   the error message
+     * @param cause the exception or error that caused this exception to be
+     *              thrown
      */
     public SingularException(String msg, Throwable cause) {
         super(msg, cause);
@@ -61,6 +61,7 @@ public class SingularException extends RuntimeException {
 
     /**
      * Adiciona um nova linha de informação extra na exception a ser exibida junto com a mensagem da mesma.
+     *
      * @param value Valor da informação (pode ser null)
      */
     public SingularException add(Object value) {
@@ -69,6 +70,7 @@ public class SingularException extends RuntimeException {
 
     /**
      * Adiciona um nova linha de informação extra na exception a ser exibida junto com a mensagem da mesma.
+     *
      * @param label Label da informação (pode ser null)
      * @param value Valor da informação (pode ser null)
      */
@@ -78,6 +80,7 @@ public class SingularException extends RuntimeException {
 
     /**
      * Adiciona um nova linha de informação extra na exception a ser exibida junto com a mensagem da mesma.
+     *
      * @param level Nível de indentação da informação
      * @param label Label da informação (pode ser null)
      * @param value Valor da informação (pode ser null)
@@ -88,7 +91,7 @@ public class SingularException extends RuntimeException {
                 entries = new ArrayList<>();
             }
             entries.add(new InfoEntry(level, label, value == null ? null : value.toString()));
-            }
+        }
         return this;
     }
 
@@ -130,8 +133,9 @@ public class SingularException extends RuntimeException {
     /**
      * Representa uma informação adicional sobre a Exception.
      */
-    private static final class InfoEntry {
-        public final int level;
+    private static final class InfoEntry implements Serializable {
+
+        public final int    level;
         public final String label;
         public final String value;
 
