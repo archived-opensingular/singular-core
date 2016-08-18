@@ -5,45 +5,17 @@
 
 package br.net.mirante.singular.form.type.basic;
 
-import java.util.ArrayList;
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.enums.PhraseBreak;
+import br.net.mirante.singular.form.type.core.*;
+import br.net.mirante.singular.form.type.core.annotation.STypeAnnotationClassifierList;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.form.AtrRef;
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIConsumer;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SIPredicate;
-import br.net.mirante.singular.form.SISupplier;
-import br.net.mirante.singular.form.SInfoPackage;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeBehavior;
-import br.net.mirante.singular.form.STypeConsumer;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.STypePredicate;
-import br.net.mirante.singular.form.STypeSimple;
-import br.net.mirante.singular.form.STypeSupplier;
-import br.net.mirante.singular.form.enums.PhraseBreak;
-import br.net.mirante.singular.form.type.core.SIBoolean;
-import br.net.mirante.singular.form.type.core.SIInteger;
-import br.net.mirante.singular.form.type.core.SILong;
-import br.net.mirante.singular.form.type.core.SIString;
-import br.net.mirante.singular.form.type.core.STypeBoolean;
-import br.net.mirante.singular.form.type.core.STypeDate;
-import br.net.mirante.singular.form.type.core.STypeDecimal;
-import br.net.mirante.singular.form.type.core.STypeFormula;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeLong;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.core.annotation.STypeAnnotationClassifierList;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @SInfoPackage(name = SPackageBasic.NAME)
@@ -147,6 +119,8 @@ public class SPackageBasic extends SPackage {
 
         pb.addAttribute(STypeInteger.class, ATR_MAX_LENGTH);
         pb.addAttribute(STypeInteger.class, ATR_EDIT_SIZE);
+
+        pb.addAttribute(STypeLong.class, ATR_MAX_LENGTH);
 
         pb.addAttribute(STypeDate.class, ATR_EDIT_SIZE, 10);
 

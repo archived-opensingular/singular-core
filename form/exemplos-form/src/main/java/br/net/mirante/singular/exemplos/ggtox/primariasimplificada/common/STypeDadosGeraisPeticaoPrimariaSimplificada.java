@@ -37,6 +37,7 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypePersistent
                 .asAtr()
                 .required()
                 .label("Número do processo da petição matriz")
+                .maxLength(17)
                 //TODO vincius help para dizer que o número do processo é anvisa
                 .asAtrBootstrap()
                 .colPreference(4);
@@ -53,6 +54,7 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypePersistent
                 .asAtr()
                 .required()
                 .label("Justificativa da solicitação")
+                .maxLength(500)
                 .asAtrBootstrap()
                 .colPreference(12);
 

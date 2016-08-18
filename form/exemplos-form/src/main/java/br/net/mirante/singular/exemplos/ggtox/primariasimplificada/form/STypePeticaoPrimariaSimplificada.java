@@ -95,7 +95,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
 
         nivel
                 .asAtr()
-                .exists(typeValIsNotNull(tipoPeticao))
+                .exists(typeValueIsNotNull(tipoPeticao))
                 .dependsOn(tipoPeticao);
 
         nivel
@@ -105,14 +105,14 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                     }
                 })
                 .asAtr()
-                .enabled(typeValIsNotIn(idTipoPeticao, apenasNivel1))
+                .enabled(typeValueIsNotIn(idTipoPeticao, apenasNivel1))
                 .required()
                 .label("Petição primária simplificada de nível");
 
         dadosGerais
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .exists(typeValIsNotNull(tipoPeticao));
+                .exists(typeValueIsNotNull(tipoPeticao));
 
         ingredienteAtivoPeticao
                 .asAtr()
@@ -125,18 +125,18 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
         produtoTecnicoPeticao
                 .asAtr()
                 .dependsOn(nivel, tipoPeticao)
-                .exists(typeValMatches(nivel, StringUtils::isNotEmpty));
+                .exists(typeValueMatches(nivel, StringUtils::isNotEmpty));
 
         produtoTecnicoPeticao
                 .produtoTecnicoNaoSeAplica
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .exists(typeValIsIn(idTipoPeticao, produtoTecnicoOpcional));
+                .exists(typeValueIsIn(idTipoPeticao, produtoTecnicoOpcional));
         produtoTecnicoPeticao
                 .produtosTecnicos
                 .asAtr()
                 .dependsOn(tipoPeticao, produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)
-                .exists(anyMatches(typeValIsNull(produtoTecnicoPeticao.produtoTecnicoNaoSeAplica), typeValIsFalse(produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)));
+                .exists(anyMatches(typeValueIsNull(produtoTecnicoPeticao.produtoTecnicoNaoSeAplica), typeValueIsFalse(produtoTecnicoPeticao.produtoTecnicoNaoSeAplica)));
 
         produtoTecnicoPeticao
                 .produtosTecnicos
@@ -159,7 +159,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .numeroProcessoProdutoTecnico
                 .asAtr()
                 .dependsOn(dadosGerais.numeroProcessoPeticaoMatriz, tipoPeticao)
-                .enabled(typeValIsNotIn(idTipoPeticao, numeroProcessoIgualMatriz));
+                .enabled(typeValueIsNotIn(idTipoPeticao, numeroProcessoIgualMatriz));
 
         produtoTecnicoPeticao
                 .produtosTecnicos
@@ -203,7 +203,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .fabricante
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(typeValIsIn(nivel, "I", "II"));
+                .exists(typeValueIsIn(nivel, "I", "II"));
 
         produtoTecnicoPeticao
                 .produtosTecnicos
@@ -211,53 +211,53 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .fabricantes
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(typeValIsNotIn(nivel, "I", "II"));
+                .exists(typeValueIsNotIn(nivel, "I", "II"));
 
         produtoFormulado
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(allMatches(typeValMatches(nivel, StringUtils::isNotEmpty), typeValIsNotIn(idTipoPeticao, naoPossuiProdutoFormulado)));
+                .exists(allMatches(typeValueMatches(nivel, StringUtils::isNotEmpty), typeValueIsNotIn(idTipoPeticao, naoPossuiProdutoFormulado)));
 
         produtoFormulado
                 .formulador
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(typeValIsEqualsTo(nivel, "I"));
+                .exists(typeValueIsEqualsTo(nivel, "I"));
 
         produtoFormulado
                 .formuladores
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(typeValIsNotEqualsTo(nivel, "I"));
+                .exists(typeValueIsNotEqualsTo(nivel, "I"));
 
         estudosResiduos
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .exists(typeValIsIn(idTipoPeticao, precisaEstudoResiduos));
+                .exists(typeValueIsIn(idTipoPeticao, precisaEstudoResiduos));
 
 
         informacoesProcesso
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(typeValIsNotNull(nivel));
+                .exists(typeValueIsNotNull(nivel));
 
         informacoesProcesso
                 .modeloRotulo
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
+                .exists(typeValueIsNotIn(idTipoPeticao, naoTemRotuloBula));
 
 
         informacoesProcesso
                 .modeloBula
                 .asAtr()
                 .dependsOn(tipoPeticao)
-                .exists(typeValIsNotIn(idTipoPeticao, naoTemRotuloBula));
+                .exists(typeValueIsNotIn(idTipoPeticao, naoTemRotuloBula));
 
         anexos
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(typeValIsEqualsTo(nivel, "IV"));
+                .exists(typeValueIsEqualsTo(nivel, "IV"));
 
         this.withView(new SViewByBlock(), blocks -> {
             blocks
