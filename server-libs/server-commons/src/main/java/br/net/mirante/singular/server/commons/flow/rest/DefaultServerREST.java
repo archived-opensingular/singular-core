@@ -136,25 +136,25 @@ public class DefaultServerREST {
     }
 
     @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_PETITIONS, method = RequestMethod.POST)
-    public List<Map<String, Object>> searchPeticoes(@RequestBody QuickFilter filter) {
+    public List<Map<String, Object>> searchPetitions(@RequestBody QuickFilter filter) {
         List<Map<String, Object>> result = petitionService.quickSearchMap(filter);
         filterActions(result, filter.getIdUsuarioLogado());
         return result;
     }
 
     @RequestMapping(value = PATH_BOX_SEARCH + COUNT_PETITIONS, method = RequestMethod.POST)
-    public Long countPeticoes(@RequestBody QuickFilter filter) {
+    public Long countPetitions(@RequestBody QuickFilter filter) {
         return petitionService.countQuickSearch(filter);
     }
 
     @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_TASKS, method = RequestMethod.POST)
-    public List<TaskInstanceDTO> searchTarefas(@RequestBody QuickFilter filter) {
+    public List<TaskInstanceDTO> searchTasks(@RequestBody QuickFilter filter) {
         List<String> idsPerfis = permissionResolverService.searchPermissions(filter.getIdUsuarioLogado());
         return petitionService.listTasks(filter, false, idsPerfis);
     }
 
     @RequestMapping(value = PATH_BOX_SEARCH + COUNT_TASKS, method = RequestMethod.POST)
-    public Long countTarefas(@RequestBody QuickFilter filter) {
+    public Long countTasks(@RequestBody QuickFilter filter) {
         List<String> idsPerfis = permissionResolverService.searchPermissions(filter.getIdUsuarioLogado());
         return petitionService.countTasks(filter, false, idsPerfis);
     }

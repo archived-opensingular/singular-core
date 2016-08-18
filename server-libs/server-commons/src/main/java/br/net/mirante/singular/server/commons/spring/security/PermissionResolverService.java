@@ -7,6 +7,7 @@ package br.net.mirante.singular.server.commons.spring.security;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -15,7 +16,6 @@ import br.net.mirante.singular.form.SFormUtil;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
-import br.net.mirante.singular.form.spring.SpringServiceRegistry;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
@@ -32,7 +32,8 @@ public class PermissionResolverService {
     protected PetitionService<PetitionEntity> petitionService;
 
     @Inject
-    private SpringServiceRegistry springServiceRegistry;
+    @Named("formConfigWithDatabase")
+    private Optional<SFormConfig<String>> singularFormConfig;
 
     public void filterBoxWithPermissions(List<MenuGroup> groupDTOs, String user) {
         List<String> permissions = peticionamentoUserDetailService.searchPermissions(user);
@@ -82,7 +83,7 @@ public class PermissionResolverService {
     }
 
     private SFormConfig<String> getSingularFormConfig() {
-        return (SFormConfig<String>) springServiceRegistry.lookupService("formConfigWithDatabase");
+        return singularFormConfig.get();
     }
 
 }
