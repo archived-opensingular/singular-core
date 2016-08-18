@@ -297,11 +297,15 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected void saveForm(IModel<? extends SInstance> currentInstance) {
-        onBeforeSave(currentInstance);
-        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), true, isMainForm(), this::onSave));
+        saveForm(currentInstance, null);
     }
 
-    protected void onSave(T petition) {
+    protected void saveForm(IModel<? extends SInstance> currentInstance, String transitionName) {
+        onBeforeSave(currentInstance);
+        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), true, isMainForm(), t -> onSave(t, transitionName)));
+    }
+
+    protected void onSave(T petition, String transitionName) {
 
     }
 
@@ -333,7 +337,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected boolean onBeforeExecuteTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
-        saveForm(currentInstance);
+        saveForm(currentInstance, transitionName);
         return true;
     }
 
