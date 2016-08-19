@@ -1,10 +1,8 @@
 package br.net.mirante.singular.server.commons.wicket;
 
-import java.util.Locale;
-
 import br.net.mirante.singular.server.commons.wicket.error.Page500;
-import br.net.mirante.singular.server.commons.wicket.error.Page500Content;
 import br.net.mirante.singular.server.commons.wicket.listener.SingularServerContextListener;
+import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
@@ -23,7 +21,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
-import br.net.mirante.singular.util.wicket.page.error.Error403Page;
+import java.util.Locale;
 
 public abstract class SingularApplication extends AuthenticatedWebApplication
         implements ApplicationContextAware {
@@ -76,6 +74,7 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
             new AnnotatedMountScanner().scanPackage(packageName).mount(this);
         }
 
+        getDebugSettings().setComponentPathAttributeName("wicketpath");
     }
 
     @Override

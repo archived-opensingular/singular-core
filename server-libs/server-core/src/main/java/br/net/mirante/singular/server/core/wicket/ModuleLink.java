@@ -18,7 +18,7 @@ public class ModuleLink extends Link {
     @Override
     protected void onConfigure() {
         super.onConfigure();
-        add($b.attr("target", "blank"));
+        add($b.attr("target", "_blank"));
     }
 
     @Override
