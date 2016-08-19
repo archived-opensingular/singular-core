@@ -151,13 +151,13 @@ public class DefaultServerREST {
     @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_TASKS, method = RequestMethod.POST)
     public List<TaskInstanceDTO> searchTasks(@RequestBody QuickFilter filter) {
         List<Serializable> permissions = permissionResolverService.searchPermissionsInternal(filter.getIdUsuarioLogado());
-        return petitionService.listTasks(filter, false, permissions);
+        return petitionService.listTasks(filter, permissions);
     }
 
     @RequestMapping(value = PATH_BOX_SEARCH + COUNT_TASKS, method = RequestMethod.POST)
     public Long countTasks(@RequestBody QuickFilter filter) {
         List<Serializable> permissions = permissionResolverService.searchPermissionsInternal(filter.getIdUsuarioLogado());
-        return petitionService.countTasks(filter, false, permissions);
+        return petitionService.countTasks(filter, permissions);
     }
 
 }

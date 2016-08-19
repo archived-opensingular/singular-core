@@ -24,7 +24,6 @@ import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
-import br.net.mirante.singular.server.commons.wicket.view.template.MenuSessionConfig;
 import br.net.mirante.singular.server.core.wicket.concluida.ConcluidaPage;
 import br.net.mirante.singular.server.core.wicket.inicio.InicioPage;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
@@ -62,8 +61,8 @@ public class MenuWorklist extends MenuAnalise {
 
         final List<Pair<Component, ISupplier<String>>> itens = new ArrayList<>();
 
-        itens.add(Pair.of(entrada.getHelper(), () -> String.valueOf(petitionService.countTasks(null, SingularSession.get().getRoleIds(), null, false))));
-        itens.add(Pair.of(concluidas.getHelper(), () -> String.valueOf(petitionService.countTasks(null, SingularSession.get().getRoleIds(), null, true))));
+        itens.add(Pair.of(entrada.getHelper(), () -> String.valueOf(petitionService.countTasks(null, SingularSession.get().getUserDetails().getPermissionsInternal(), null, false))));
+        itens.add(Pair.of(concluidas.getHelper(), () -> String.valueOf(petitionService.countTasks(null, SingularSession.get().getUserDetails().getPermissionsInternal(), null, true))));
         menu.add(new AddContadoresBehaviour(itens));
 
         return menu;

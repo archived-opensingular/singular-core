@@ -14,6 +14,7 @@ public class QuickFilter implements Serializable {
     private int          count;
     private String       sortProperty;
     private boolean      ascending;
+    private Boolean      endedTasks;
     private List<String> tasks;
     private List<String> processesAbbreviation;
     private List<String> typesNames;
@@ -129,6 +130,15 @@ public class QuickFilter implements Serializable {
 
     public QuickFilter withTypesNames(List<String> typesNames) {
         this.typesNames = typesNames;
+        return this;
+    }
+
+    public Boolean getEndedTasks() {
+        return endedTasks;
+    }
+
+    public QuickFilter withEndedTasks(Boolean endedTasks) {
+        this.endedTasks = endedTasks;
         return this;
     }
 }

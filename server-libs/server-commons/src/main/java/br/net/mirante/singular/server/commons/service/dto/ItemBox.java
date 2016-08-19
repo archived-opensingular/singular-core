@@ -19,6 +19,7 @@ public class ItemBox implements Serializable {
     private boolean showNewButton = false;
     private boolean quickFilter = true;
     private boolean showDraft = false;
+    private Boolean endedTasks;
     private String searchEndpoint;
     private String countEndpoint;
     private Icone icone;
@@ -132,5 +133,13 @@ public class ItemBox implements Serializable {
 
     public void setIcone(Icone icone) {
         this.icone = icone;
+    }
+
+    public Boolean getEndedTasks() {
+        return endedTasks;
+    }
+
+    public void setEndedTasks(Boolean endedTasks) {
+        this.endedTasks = endedTasks;
     }
 }

@@ -65,7 +65,7 @@ public class PermissionResolverService {
     public boolean hasPermission(Long id, String idUsuario, String action) {
         List<String> permissions = searchPermissionsSingular(idUsuario);
         PetitionEntity petitionEntity = petitionService.find(id);
-        FormTypeEntity formType = petitionEntity.getCurrentDraftEntity().getForm().getFormType();
+        FormTypeEntity formType = petitionEntity.getMainForm().getFormType();
         String permissionNeeded = "ACTION_" + action + "_" + getAbbreviation(formType);
         return permissions.contains(permissionNeeded.toUpperCase());
     }

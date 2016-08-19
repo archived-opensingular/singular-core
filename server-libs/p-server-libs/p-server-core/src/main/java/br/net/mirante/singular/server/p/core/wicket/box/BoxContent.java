@@ -55,7 +55,6 @@ import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
@@ -282,7 +281,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 .withFilter(getFiltroRapidoModelObject())
                 .withProcessesAbbreviation(getProcessesNames())
                 .withTypesNames(getFormNames())
-                .withRascunho(isWithRascunho());
+                .withRascunho(isWithRascunho())
+                .withEndedTasks(itemBoxDTO.getEndedTasks());
     }
 
     private BoxPage getBoxPage() {

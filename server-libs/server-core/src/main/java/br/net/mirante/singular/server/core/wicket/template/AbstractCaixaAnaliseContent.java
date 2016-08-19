@@ -4,6 +4,7 @@ import static br.net.mirante.singular.flow.core.ws.BaseSingularRest.*;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -229,8 +230,8 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         }
     }
     
-    protected List<String> getUserRoleIds() {
-        return SingularSession.get().getRoleIds();
+    protected List<Serializable> getUserRoleIds() {
+        return SingularSession.get().getUserDetails().getPermissionsInternal();
     }
 
     @Override

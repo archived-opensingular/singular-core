@@ -25,7 +25,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.flow.core.*;
+import br.net.mirante.singular.flow.core.Flow;
+import br.net.mirante.singular.flow.core.MTask;
+import br.net.mirante.singular.flow.core.MTransition;
+import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
@@ -41,13 +46,21 @@ import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.persistence.entity.*;
+import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
+import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
+import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
+import br.net.mirante.singular.persistence.entity.TaskDefinitionEntity;
+import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
-import br.net.mirante.singular.server.commons.persistence.dao.form.*;
+import br.net.mirante.singular.server.commons.persistence.dao.form.DraftDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.FormPetitionDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionContentHistoryDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
+import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionerDAO;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
@@ -60,19 +73,6 @@ import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.support.persistence.enums.SimNao;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
-import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
 
 @Transactional
 public class PetitionService<T extends PetitionEntity> implements Loggable {
@@ -408,8 +408,8 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         }
     }
 
-    public List<TaskInstanceDTO> listTasks(QuickFilter filter, boolean concluidas, List<Serializable> permissions) {
-        List<TaskInstanceDTO> tasks = taskInstanceDAO.findTasks(filter, concluidas, permissions);
+    public List<TaskInstanceDTO> listTasks(QuickFilter filter, List<Serializable> permissions) {
+        List<TaskInstanceDTO> tasks = taskInstanceDAO.findTasks(filter, permissions);
         tasks.forEach(t -> checkTaskActions(t, filter));
         return tasks;
     }
@@ -444,8 +444,8 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     }
 
-    public Long countTasks(QuickFilter filter, boolean concluidas, List<Serializable> permissions) {
-        return taskInstanceDAO.countTasks(filter.getProcessesAbbreviation(), permissions, filter.getFilter(), concluidas);
+    public Long countTasks(QuickFilter filter, List<Serializable> permissions) {
+        return taskInstanceDAO.countTasks(filter.getProcessesAbbreviation(), permissions, filter.getFilter(), filter.getEndedTasks());
     }
 
     public List<? extends TaskInstanceDTO> listTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<Serializable> permissions, String filtroRapido, boolean concluidas) {
