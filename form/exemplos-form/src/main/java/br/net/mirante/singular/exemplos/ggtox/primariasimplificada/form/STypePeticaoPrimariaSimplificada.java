@@ -35,7 +35,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
 
         this
                 .asAtr()
-                .label("Petição primaria Simplificada")
+                .label("Petição primária Simplificada")
                 .displayString("Petição de ${tipoPeticao.nome}, nível ${nivel}");
 
         this.addInstanceValidator(new AtivoAmostraValidator());

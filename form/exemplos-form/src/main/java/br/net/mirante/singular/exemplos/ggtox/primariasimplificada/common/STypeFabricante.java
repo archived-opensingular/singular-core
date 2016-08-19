@@ -21,12 +21,12 @@ public class STypeFabricante extends STypeEntidade {
 
         withInitListener(si -> si.findNearest(tipoPessoa)
                         .get()
-                        .setValue("Juridica")
+                        .setValue("Jurídica")
         );
 
         withUpdateListener(si -> si.findNearest(tipoPessoa)
                         .get()
-                        .setValue("Juridica")
+                        .setValue("Jurídica")
         );
 
         cnpj
