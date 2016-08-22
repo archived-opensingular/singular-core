@@ -23,7 +23,7 @@ public class STypeFormulador extends STypeEntidade {
 
         withInitListener(si -> si.findNearest(tipoPessoa)
                 .get()
-                .setValue("Juridica")
+                .setValue("Jurídica")
         );
 
         cnpj

@@ -37,7 +37,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                 amostra
                 .root
                 .asAtr().dependsOn(estudoResiduo.tipoEstudo)
-                .exists(typeValIsEqualsTo(estudoResiduo.tipoEstudo, EstudoResiduo.ESTUDO_NOVO));
+                .exists(typeValueIsEqualsTo(estudoResiduo.tipoEstudo, EstudoResiduo.ESTUDO_NOVO));
     }
 
     public class EstudoResiduo {
@@ -91,13 +91,13 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .asAtr().label("Nome da Cultura")
                     .required()
                     .dependsOn(outraCultura, tipoEstudo)
-                    .exists(allMatches(typeValIsNotEqualsTo(outraCultura, Boolean.TRUE)));
+                    .exists(allMatches(typeValueIsNotEqualsTo(outraCultura, Boolean.TRUE)));
 
             nomeOutraCultura
                     .asAtr().label("Nome da Cultura")
                     .required()
                     .dependsOn(outraCultura)
-                    .exists(typeValIsTrue(outraCultura));
+                    .exists(typeValueIsTrue(outraCultura));
 
             emprego
                     .selectionOf(empregos())
@@ -160,21 +160,21 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             estudoPublicado
                     .asAtr().label("Código do Estudo Publicado pela ANVISA")
                     .dependsOn(tipoEstudo)
-                    .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_PUBLICADO))
+                    .exists(typeValueIsEqualsTo(tipoEstudo, ESTUDO_PUBLICADO))
                     .asAtrBootstrap().newRow();
 
 
             numeroEstudo
                     .asAtr().label("Número do Estudo")
                     .dependsOn(tipoEstudo)
-                    .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
+                    .exists(typeValueIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
                     .asAtrBootstrap()
                     .colPreference(4);
 
             dosagemAmostra
                     .asAtr()
                     .dependsOn(tipoEstudo)
-                    .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
+                    .exists(typeValueIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
                     .label("Dosagem das Amostras")
                     .asAtrBootstrap()
                     .colPreference(4);
@@ -199,7 +199,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .asAtr().label("Adjuvante")
                     .required()
                     .dependsOn(tipoEstudo)
-                    .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
+                    .exists(typeValueIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
                     .asAtrBootstrap()
                     .colPreference(4);
 
@@ -207,7 +207,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             estudoResiduo
                     .asAtr().label("Estudo de Resíduo")
                     .dependsOn(tipoEstudo)
-                    .exists(typeValIsEqualsTo(tipoEstudo, ESTUDO_NOVO));
+                    .exists(typeValueIsEqualsTo(tipoEstudo, ESTUDO_NOVO));
         }
 
     }
@@ -343,7 +343,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             estudoEstabilidade
                     .asAtr().label("Estudo de Estabilidade")
                     .dependsOn(tempoMaior30Dias)
-                    .exists(typeValIsTrue(tempoMaior30Dias));
+                    .exists(typeValueIsTrue(tempoMaior30Dias));
 
             metabolito
                     .withRadioView()
@@ -355,7 +355,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .asAtr()
                     .label("Metabólitos")
                     .dependsOn(metabolito)
-                    .exists(typeValIsTrue(metabolito));
+                    .exists(typeValueIsTrue(metabolito));
 
             descricaoMetabolito
                     .asAtr().label("Descrição");
