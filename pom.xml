@@ -146,7 +146,7 @@
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
         <wicket.version>7.1.0</wicket.version>
-        <singular.version>1.0.0-SNAPSHOT</singular.version>
+        <singular.version>1.0.1-SNAPSHOT</singular.version>
         <singular.server.version>0.1.3-SNAPSHOT</singular.server.version>
         <cas.version>4.0.4</cas.version>
     </properties>
