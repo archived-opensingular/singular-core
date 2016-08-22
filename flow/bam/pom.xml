@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>flow-bam</artifactId>
@@ -80,17 +80,17 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-wicket</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-rest-client</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-bam-support</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
 
