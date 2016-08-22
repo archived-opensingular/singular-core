@@ -1,38 +1,10 @@
 package br.net.mirante.singular.server.module.wicket.view.util.dispatcher;
 
-import static br.net.mirante.singular.server.commons.util.Parameters.*;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
-import java.lang.reflect.Constructor;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
-import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.request.Request;
-import org.apache.wicket.request.flow.RedirectToUrlException;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.string.StringValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.wicketstuff.annotation.mount.MountPath;
-
-import br.net.mirante.singular.flow.core.Flow;
-import br.net.mirante.singular.flow.core.ITaskPageStrategy;
-import br.net.mirante.singular.flow.core.MTask;
-import br.net.mirante.singular.flow.core.MTaskUserExecutable;
-import br.net.mirante.singular.flow.core.TaskInstance;
+import br.net.mirante.singular.flow.core.*;
 import br.net.mirante.singular.form.SFormUtil;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.SingularServerTaskPageStrategy;
@@ -50,6 +22,30 @@ import br.net.mirante.singular.server.commons.wicket.view.form.ReadOnlyFormPage;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.server.module.wicket.view.util.form.FormPage;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.string.StringValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wicketstuff.annotation.mount.MountPath;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.lang.reflect.Constructor;
+import java.util.Optional;
+
+import static br.net.mirante.singular.server.commons.util.Parameters.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 @MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
@@ -144,13 +140,27 @@ public abstract class DispatcherPage extends WebPage {
 
     protected boolean hasAccess(FormPageConfig config) {
         SingularUserDetails       userDetails    = SingularSession.get().getUserDetails();
-        SType<?>                  sType          = singularFormConfig.getTypeLoader().loadType(config.getFormType()).get();
+        SType<?>                  sType          = loadType(config);
         Class<? extends SType<?>> sTypeClass     = (Class<? extends SType<?>>) sType.getClass();
         String                    typeSimpleName = SFormUtil.getTypeSimpleName(sTypeClass);
 
         String permissionsNeeded = config.getFormAction().toString() + "_" + typeSimpleName.toUpperCase();
 
         return userDetails.getPermissionsSingular().contains(permissionsNeeded);
+    }
+
+    private SType<?> loadType(FormPageConfig cfg) {
+        return singularFormConfig.getTypeLoader().loadTypeOrException(
+                Optional.ofNullable(cfg.getFormType()).orElseGet(() -> loadTypeNameFormFormVersionPK(cfg))
+        );
+    }
+
+    private String loadTypeNameFormFormVersionPK(FormPageConfig cfg) {
+        return Optional
+                .ofNullable(cfg.getFormVersionPK())
+                .map(petitionService::getFormTypeFromVersion)
+                .map(FormTypeEntity::getAbbreviation)
+                .orElseThrow(() -> new SingularServerException("Não possivel idenfiticar o tipo"));
     }
 
     protected void redirectForbidden() {
@@ -201,9 +211,9 @@ public abstract class DispatcherPage extends WebPage {
 
         final FormActions formAction = resolveFormAction(action);
 
-        final String         pi  = petitionId.toString("");
-        final String         fn  = formName.toString();
-        final Long           fvk = formVersionPK.isEmpty() ? null : formVersionPK.toLong();
+        final String pi  = petitionId.toString("");
+        final String fn  = formName.toString();
+        final Long   fvk = formVersionPK.isEmpty() ? null : formVersionPK.toLong();
 
         final FormPageConfig cfg = buildConfig(r, pi, formAction, fn, fvk);
 
