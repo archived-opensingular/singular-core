@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud.services;
 
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.spring.PeticaoPrimariaSimplificadaSpringConfiguration;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
@@ -24,10 +25,12 @@ import static br.net.mirante.singular.form.type.core.attachment.handlers.FileSys
 @Component("showcaseDocumentFactory")
 public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
 
-    private final static SpringServiceRegistry registry;
+    private final static SpringServiceRegistry NOTIFICACAO_SIMPLIFICADA_SPRING_CONFIG;
+    private final static SpringServiceRegistry PETICAO_PRIMARIA_SIMPIFICADA_SPRING_CONFIG;
 
     static {
-        registry = new SpringServiceRegistry(new AnnotationConfigApplicationContext(NotificaoSimplificadaSpringConfiguration.class));
+        NOTIFICACAO_SIMPLIFICADA_SPRING_CONFIG = new SpringServiceRegistry(new AnnotationConfigApplicationContext(NotificaoSimplificadaSpringConfiguration.class));
+        PETICAO_PRIMARIA_SIMPIFICADA_SPRING_CONFIG = new SpringServiceRegistry(new AnnotationConfigApplicationContext(PeticaoPrimariaSimplificadaSpringConfiguration.class));
     }
 
     @Override
@@ -35,12 +38,13 @@ public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
         try {
             document.setAttachmentPersistenceTemporaryHandler(of(newTemporaryHandler()));
         } catch (IOException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARNING,"Could not create temporary file folder, using memory instead",e);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not create temporary file folder, using memory instead", e);
             document.setAttachmentPersistenceTemporaryHandler(of(new InMemoryAttachmentPersitenceHandler()));
         }
         document.setAttachmentPersistencePermanentHandler(
                 of(getServiceRegistry().lookupService(IAttachmentPersistenceHandler.class)));
-        document.addServiceRegistry(registry);
+        document.addServiceRegistry(NOTIFICACAO_SIMPLIFICADA_SPRING_CONFIG);
+        document.addServiceRegistry(PETICAO_PRIMARIA_SIMPIFICADA_SPRING_CONFIG);
     }
 
 

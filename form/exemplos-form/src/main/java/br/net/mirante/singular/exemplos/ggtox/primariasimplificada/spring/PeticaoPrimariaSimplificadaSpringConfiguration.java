@@ -1,10 +1,11 @@
-package br.net.mirante.singular.exemplos.notificacaosimplificada.spring;
+package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.spring;
 
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.dao.DominioPPSDAO;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.service.DominioPPSService;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -18,34 +19,27 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-@AutoScanDisabled
 @Configuration
+@AutoScanDisabled
 @EnableTransactionManagement(proxyTargetClass = true)
-@ComponentScan("br.net.mirante.singular.exemplos.notificacaosimplificada")
-public class NotificaoSimplificadaSpringConfiguration {
+public class PeticaoPrimariaSimplificadaSpringConfiguration {
 
     @Value("classpath:data/exemplos/notificacaosimplificada/drops.sql")
     private Resource drops;
 
-    @Value("classpath:data/exemplos/notificacaosimplificada/create_tables.sql")
+    @Value("classpath:data/ggtox/db/ddl/create-constraints-ppstox.sql")
+    private Resource createConstraints;
+
+    @Value("classpath:data/ggtox/db/ddl/create-tables-ppstox.sql")
     private Resource createTables;
 
-    @Value("classpath:data/exemplos/notificacaosimplificada/inserts.sql")
+    @Value("classpath:data/ggtox/db/dml/insert-dados-ppstox.sql")
     private Resource inserts;
-
-    @Value("classpath:data/exemplos/notificacaosimplificada/insert_geral.sql")
-    private Resource insertGeral;
-
-    @Value("classpath:data/exemplos/notificacaosimplificada/create-tables-anvisa.sql")
-    private Resource createTablesAnvisa;
-
-    @Value("classpath:data/exemplos/notificacaosimplificada/insert-usuario.sql")
-    private Resource insertUsuario;
 
     @Bean
     public DriverManagerDataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl("jdbc:h2:file:./notificacaodb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1");
+        dataSource.setUrl("jdbc:h2:file:./ggtoxdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1");
         dataSource.setUsername("sa");
         dataSource.setPassword("sa");
         dataSource.setDriverClassName("org.h2.Driver");
@@ -57,7 +51,7 @@ public class NotificaoSimplificadaSpringConfiguration {
         final LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource);
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
-        sessionFactoryBean.setPackagesToScan("br.net.mirante.singular.exemplos.notificacaosimplificada.domain");
+        sessionFactoryBean.setPackagesToScan("br.net.mirante.singular.exemplos.ggtox.primariasimplificada.domain");
         return sessionFactoryBean;
     }
 
@@ -82,12 +76,20 @@ public class NotificaoSimplificadaSpringConfiguration {
         if (Boolean.valueOf(System.getProperty("anvisa.enabled.h2.inserts", "true"))) {
             populator.addScript(drops);
             populator.addScript(createTables);
+            populator.addScript(createConstraints);
             populator.addScript(inserts);
-            populator.addScript(insertGeral);
-            populator.addScript(createTablesAnvisa);
-            populator.addScript(insertUsuario);
         }
         return populator;
+    }
+
+    @Bean
+    public DominioPPSDAO dominioPPSDAO() {
+        return new DominioPPSDAO();
+    }
+
+    @Bean
+    public DominioPPSService dominioPPSService() {
+        return new DominioPPSService();
     }
 
     private Properties hibernateProperties() {
