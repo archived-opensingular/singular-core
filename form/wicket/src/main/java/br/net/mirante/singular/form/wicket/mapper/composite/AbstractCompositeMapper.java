@@ -62,6 +62,10 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         @Override
         public void buildView() {
 
+            if (renderAnnotations()) {
+                ctx.getContainer().appendTag("div", new AnnotationComponent("annotation", model, ctx));
+            }
+
             final BSGrid grid = createCompositeGrid(ctx);
 
             if (!findFeedbackAwareParent().isPresent()) {
@@ -72,10 +76,6 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             }
 
             buildFields(ctx, grid);
-
-            if (renderAnnotations()) {
-                grid.newRow().add(new AnnotationComponent("annotation", model, ctx));
-            }
         }
 
         private SIComposite getInstance() {

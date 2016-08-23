@@ -76,6 +76,9 @@ public class AnnotationComponent extends Panel {
 
         textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getModel(), "text"));
         approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getModel(), "isApproved"));
+        
+        add($b.classAppender("annotation-toggle-container btn-group open"));
+        add($b.attr("style", "position:absolute; top:-10px; right:17px;"));
     }
 
     @Override
@@ -222,13 +225,13 @@ public class AnnotationComponent extends Panel {
     @Override
     protected void onConfigure() {
         super.onConfigure();
-        if (keepOpened) {
-            this.add(WicketUtils.$b.attr("style", "float: left; display: block;"));
-        } else {
-            this.add(WicketUtils.$b.attr("style", "float: left; display: none;"));
-        }
-        keepOpened = false;
-        this.add(WicketUtils.$b.attrAppender("class", "portlet box sannotation-snipet-box", ""));
+//        if (keepOpened) {
+//            this.add(WicketUtils.$b.attr("style", "float: left; display: block;"));
+//        } else {
+//            this.add(WicketUtils.$b.attr("style", "float: left; display: none;"));
+//        }
+//        keepOpened = false;
+        //this.add(WicketUtils.$b.attrAppender("class", "portlet box sannotation-snipet-box", ""));
     }
 
     private static String getToggleButtonCSS(AtrAnnotation annotatedInstance) {
