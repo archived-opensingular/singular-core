@@ -3,7 +3,6 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 import br.net.mirante.singular.exemplos.SelectBuilder;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.domain.SubgrupoEntity;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.service.DominioPPSService;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.ResiduoValidator;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
@@ -16,6 +15,7 @@ import br.net.mirante.singular.form.view.SViewListByTable;
 
 import java.util.Optional;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon.ppsService;
 import static br.net.mirante.singular.form.util.SingularPredicates.*;
 
 
@@ -23,11 +23,6 @@ import static br.net.mirante.singular.form.util.SingularPredicates.*;
 public class STypeEstudosResiduos extends STypePersistentComposite {
 
     private EstudoResiduo estudoResiduo;
-
-    public static DominioPPSService ppsService(SInstance ins) {
-        return ins.getDocument().lookupService(DominioPPSService.class);
-    }
-
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -240,8 +235,10 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .id(idDosagem)
                     .display(siglaDosagem)
                     .simpleProvider(builder -> {
-                        builder.add().set(idDosagem, 1).set(siglaDosagem, "g/hectare");
-                        builder.add().set(idDosagem, 2).set(siglaDosagem, "g/m3");
+                        ppsService(builder.getCurrentInstance()).buscarTipoDeDose()
+                                .forEach(doseEntity -> builder.add()
+                                        .set(idDosagem, doseEntity.getCod())
+                                        .set(siglaDosagem, doseEntity.getNome()));
                     });
 
             adjuvante
