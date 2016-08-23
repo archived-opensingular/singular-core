@@ -8,4 +8,5 @@ package br.net.mirante.singular.support.persistence.util;
 public interface Constants {
 
     String SCHEMA = "DBSINGULAR";
+    String PPSTOX = "DBPPSTOX";
 }
