@@ -30,6 +30,7 @@ import br.net.mirante.singular.server.commons.service.dto.FormDTO;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
 import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
+import br.net.mirante.singular.server.commons.spring.security.SingularPermission;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 
 @AutoScanDisabled
@@ -105,5 +106,12 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
 
     }
 
-
+    @Override
+    @RequestMapping(value = PATH_LIST_PERMISSIONS, method = RequestMethod.GET)
+    public List<SingularPermission> listAllPermissions() {
+        List<SingularPermission> permissions = new ArrayList<>();
+        permissions.add(new SingularPermission("singular", null));
+        permissions.add(new SingularPermission("singular2", null));
+        return permissions;
+    }
 }

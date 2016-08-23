@@ -121,7 +121,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         return  processGroupContext+ ServerContext.WORKLIST.getUrlPath();
     }
 
-    protected BSActionColumn buildActionColumn() {
+    protected BSActionColumn<T, String> buildActionColumn() {
         final BSActionColumn<T, String> actionColumn = new BSActionColumn<>(getMessage("label.table.column.actions"));
         appendAtribuirAction(actionColumn);
         appendAnalisarAction(actionColumn);
