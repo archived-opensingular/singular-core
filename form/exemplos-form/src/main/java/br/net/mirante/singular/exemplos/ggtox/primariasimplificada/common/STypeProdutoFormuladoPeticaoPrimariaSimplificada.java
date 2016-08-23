@@ -34,6 +34,7 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersi
         tipoFormulacao = addFieldComposite("tipoFormulacao");
         STypeInteger idTipoFormulacao        = tipoFormulacao.addFieldInteger("idTipoFormulacao");
         STypeString  siglaTipoFormulacao     = tipoFormulacao.addFieldString("siglaTipoFormulacao");
+        STypeString  nomeTipoFormulacao      = tipoFormulacao.addFieldString("nomeTipoFormulacao");
         STypeString  descricaoTipoFormulacao = tipoFormulacao.addFieldString("descricaoTipoFormulacao");
 
         tipoFormulacao
@@ -45,12 +46,13 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersi
         tipoFormulacao
                 .selection()
                 .id(idTipoFormulacao)
-                .display("${siglaTipoFormulacao} - ${descricaoTipoFormulacao}")
+                .display("${siglaTipoFormulacao} - ${nomeTipoFormulacao}")
                 .simpleProvider(sb -> {
                     ppsService(sb.getCurrentInstance()).buscarTipoDeFormulacao()
                             .forEach(tipoFormulacaoEntity -> sb.add()
                                     .set(idTipoFormulacao, tipoFormulacaoEntity.getCod())
                                     .set(siglaTipoFormulacao, tipoFormulacaoEntity.getSigla())
+                                    .set(nomeTipoFormulacao, tipoFormulacaoEntity.getNome())
                                     .set(descricaoTipoFormulacao, tipoFormulacaoEntity.getDescricao()));
                 });
 
