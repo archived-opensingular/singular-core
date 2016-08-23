@@ -235,8 +235,10 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .id(idDosagem)
                     .display(siglaDosagem)
                     .simpleProvider(builder -> {
-                        builder.add().set(idDosagem, 1).set(siglaDosagem, "g/hectare");
-                        builder.add().set(idDosagem, 2).set(siglaDosagem, "g/m3");
+                        ppsService(builder.getCurrentInstance()).buscarTipoDeDose()
+                                .forEach(doseEntity -> builder.add()
+                                        .set(idDosagem, doseEntity.getCod())
+                                        .set(siglaDosagem, doseEntity.getNome()));
                     });
 
             adjuvante
