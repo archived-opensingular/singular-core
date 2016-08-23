@@ -1,9 +1,6 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.spring;
 
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
+import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,12 +15,13 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
+import javax.sql.DataSource;
+import java.util.Properties;
 
 @AutoScanDisabled
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
-@ComponentScan("br.net.mirante.singular.exemplos")
+@ComponentScan("br.net.mirante.singular.exemplos.notificacaosimplificada")
 public class NotificaoSimplificadaSpringConfiguration {
 
     @Value("classpath:data/exemplos/notificacaosimplificada/drops.sql")

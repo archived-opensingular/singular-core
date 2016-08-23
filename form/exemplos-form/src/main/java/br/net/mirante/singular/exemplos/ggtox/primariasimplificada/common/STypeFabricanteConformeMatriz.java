@@ -14,11 +14,11 @@ public class STypeFabricanteConformeMatriz extends STypeBoolean {
         super.onLoadType(tb);
 
         asAtr()
-                .label("Declaro que o(s) fabricante(s) estão conforme a petição Matriz.");
+                .label("Declaro que o(s) fabricante(s) está(ão) conforme a petição Matriz.");
 
         addInstanceValidator(validator -> {
             if (!(validator.getInstance().getValue() != null && validator.getInstance().getValue())) {
-                validator.error("É obrigatório declaracar que o(s) fabricante(s) estão conforme a matriz.");
+                validator.error("É obrigatório declarar que o(s) fabricante(s) está(ão) conforme a matriz.");
             }
         });
     }

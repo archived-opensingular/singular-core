@@ -6,86 +6,35 @@
 package br.net.mirante.singular.form.wicket;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.STypeAttachmentList;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.STypeSimple;
-import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.context.UIBuilder;
 import br.net.mirante.singular.form.context.UIComponentMapper;
-import br.net.mirante.singular.form.type.core.STypeBoolean;
-import br.net.mirante.singular.form.type.core.STypeDate;
-import br.net.mirante.singular.form.type.core.STypeDateTime;
-import br.net.mirante.singular.form.type.core.STypeDecimal;
-import br.net.mirante.singular.form.type.core.STypeHTML;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeMonetary;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.core.STypeTime;
+import br.net.mirante.singular.form.type.core.*;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.type.util.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.type.util.STypeYearMonth;
-import br.net.mirante.singular.form.view.SMultiSelectionByCheckboxView;
-import br.net.mirante.singular.form.view.SMultiSelectionByPicklistView;
-import br.net.mirante.singular.form.view.SMultiSelectionBySelectView;
-import br.net.mirante.singular.form.view.SView;
-import br.net.mirante.singular.form.view.SViewAttachmentList;
-import br.net.mirante.singular.form.view.SViewAutoComplete;
-import br.net.mirante.singular.form.view.SViewBooleanByRadio;
-import br.net.mirante.singular.form.view.SViewBreadcrumb;
-import br.net.mirante.singular.form.view.SViewByBlock;
-import br.net.mirante.singular.form.view.SViewDateTime;
-import br.net.mirante.singular.form.view.SViewListByForm;
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.view.SViewListByTable;
-import br.net.mirante.singular.form.view.SViewReadOnly;
-import br.net.mirante.singular.form.view.SViewSearchModal;
-import br.net.mirante.singular.form.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.view.SViewSelectionBySelect;
-import br.net.mirante.singular.form.view.SViewTab;
-import br.net.mirante.singular.form.view.SViewTextArea;
-import br.net.mirante.singular.form.view.ViewMapperRegistry;
-import br.net.mirante.singular.form.view.ViewResolver;
+import br.net.mirante.singular.form.view.*;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
-import br.net.mirante.singular.form.wicket.mapper.DateMapper;
-import br.net.mirante.singular.form.wicket.mapper.DateTimeMapper;
-import br.net.mirante.singular.form.wicket.mapper.DecimalMapper;
-import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
-import br.net.mirante.singular.form.wicket.mapper.LatitudeLongitudeMapper;
-import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
-import br.net.mirante.singular.form.wicket.mapper.MoneyMapper;
-import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
-import br.net.mirante.singular.form.wicket.mapper.ReadOnlyControlsFieldComponentMapper;
-import br.net.mirante.singular.form.wicket.mapper.RichTextMapper;
-import br.net.mirante.singular.form.wicket.mapper.StringMapper;
-import br.net.mirante.singular.form.wicket.mapper.TabMapper;
-import br.net.mirante.singular.form.wicket.mapper.TableListMapper;
-import br.net.mirante.singular.form.wicket.mapper.TelefoneNacionalMapper;
-import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
-import br.net.mirante.singular.form.wicket.mapper.TimeMapper;
-import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
+import br.net.mirante.singular.form.wicket.mapper.*;
+import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.mapper.attachment.list.AttachmentListMapper;
 import br.net.mirante.singular.form.wicket.mapper.attachment.single.AttachmentMapper;
 import br.net.mirante.singular.form.wicket.mapper.composite.BlocksCompositeMapper;
 import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import br.net.mirante.singular.form.wicket.mapper.masterdetail.ListMasterDetailMapper;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.AutocompleteMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.BooleanRadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.BooleanSelectMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleCheckMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.*;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.BreadPanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import org.apache.wicket.Component;
+
+import java.util.Collection;
+import java.util.Optional;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -150,7 +99,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeBoolean.class,     SViewSelectionBySelect.class,         BooleanSelectMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
-                .register(STypeInteger.class,                                           IntegerMapper::new)
+                .register(STypeInteger.class,                                           () -> new NumberMapper<>(Integer.class))
+                .register(STypeLong.class,                                              () -> new NumberMapper<>(Long.class))
                 .register(STypeString.class,                                            StringMapper::new)
                 .register(STypeString.class,     SViewSearchModal.class,                SearchModalMapper::new)
                 .register(STypeString.class,     SViewTextArea.class,                   TextAreaMapper::new)
@@ -185,36 +135,81 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         //@formatter:on
     }
+}
 
-    static class AnnotationBuilder {
-        //private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class.getName());
+class AnnotationBuilder {
+    //private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class.getName());
 
-        private UIBuilderWicket    parent;
-        private WicketBuildContext mainCtx;
-        private BSRow              mainGrid;
+    private UIBuilderWicket    parent;
+    private WicketBuildContext mainCtx;
+    private BSRow              mainGrid;
 
-        AnnotationBuilder(UIBuilderWicket parent) {
-            this.parent = parent;
+    AnnotationBuilder(UIBuilderWicket parent) {
+        this.parent = parent;
+    }
+
+    public void build(WicketBuildContext ctx, ViewMode viewMode, IWicketComponentMapper mapper) {
+        final BSContainer<?> parentCol = ctx.getContainer();
+        mainGrid = parentCol.newGrid().newRow();
+        mainGrid.setOutputMarkupId(true);
+
+        mainGrid.setCssClass("sannotation-form-row");
+        mainCtx = createMainColumn(ctx, mainGrid);
+        executeMainMapper(viewMode, mapper, mainCtx);
+
+        BSGrid annotationColumn = createAnnotationColumn(mainGrid);
+        mainCtx.setAnnotationContainer(annotationColumn);
+        addAnnotationsFor(ctx, annotationColumn, (SInstance) ctx.getCurrentInstance());
+    }
+
+    private void executeMainMapper(ViewMode viewMode, IWicketComponentMapper mapper, WicketBuildContext mainCtx) {
+        mapper.buildView(mainCtx.init(parent, viewMode));
+    }
+
+    private WicketBuildContext createMainColumn(WicketBuildContext ctx, BSRow superRow) {
+        BSCol supercol = superRow.newCol(0).setCssClass("sannotation-form-col");
+        final BSGrid formGrid = supercol.newGrid();
+        return ctx.createChild(formGrid, false, ctx.getModel());
+    }
+
+    private BSGrid createAnnotationColumn(BSRow superRow) {
+        return superRow.newCol(0).setCssClass("sannotation-master-col").newGrid();
+    }
+
+    private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, SInstance instance) {
+        if (instance.asAtrAnnotation().isAnnotated()) {
+            addAnnotationComponent(ngrid, instance, ctx);
         }
-
-        public void build(WicketBuildContext ctx, ViewMode viewMode, IWicketComponentMapper mapper) {
-            final BSContainer<?> parentCol = ctx.getContainer();
-            mainGrid = parentCol.newGrid().newRow();
-            mainGrid.setOutputMarkupId(true);
-
-            mainGrid.setCssClass("sannotation-form-row");
-            mainCtx = createMainColumn(ctx, mainGrid);
-            executeMainMapper(viewMode, mapper, mainCtx);
-        }
-
-        private void executeMainMapper(ViewMode viewMode, IWicketComponentMapper mapper, WicketBuildContext mainCtx) {
-            mapper.buildView(mainCtx.init(parent, viewMode));
-        }
-
-        private WicketBuildContext createMainColumn(WicketBuildContext ctx, BSRow superRow) {
-            BSCol supercol = superRow.newCol(0).setCssClass("sannotation-form-col");
-            final BSGrid formGrid = supercol.newGrid();
-            return ctx.createChild(formGrid, false, ctx.getModel());
+        if (instance instanceof SIComposite) {
+            addAnnotationsFor(ctx, ngrid, ((SIComposite) instance).getAllFields());
         }
     }
+
+    private void addAnnotationComponent(BSGrid ngrid, SInstance instance, WicketBuildContext ctx) {
+        Optional<Component> target = ctx.getAnnotationTargetFor(instance);
+        ngrid.newRow().appendTag("div", true, "",
+            (id) -> {
+                AnnotationComponent component = new AnnotationComponent(id, modelFor(instance), ctx);
+                if (target.isPresent()) {
+                    component.setReferencedComponent(target.get());
+                }
+                component.setMainGrid(mainGrid);
+                ctx.add(component);
+                return component;
+            });
+        ;
+    }
+
+    private SInstanceRootModel<SInstance> modelFor(SInstance instance) {
+        SInstanceRootModel<SInstance> model = new SInstanceRootModel<>();
+        model.setObject(instance);
+        return model;
+    }
+
+    private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, Collection<SInstance> children) {
+        for (SInstance field : children) {
+            addAnnotationsFor(ctx, ngrid, field);
+        }
+    }
+
 }

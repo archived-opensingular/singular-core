@@ -83,7 +83,7 @@ public class STypeEntidade extends STypePersistentComposite {
         celular = addField(CELULAR, STypeTelefoneNacional.class);
 
         tipoPessoa
-                .selectionOf("Fisica", "Juridica")
+                .selectionOf("Física", "Jurídica")
                 .withRadioView()
                 .asAtr()
                 .label("Tipo de Pessoa")
@@ -94,7 +94,7 @@ public class STypeEntidade extends STypePersistentComposite {
                 .asAtr()
                 .label("CNPJ")
                 .dependsOn(tipoPessoa)
-                .exists(i -> i.findNearestValue(tipoPessoa).orElse("").equals("Juridica"))
+                .exists(i -> i.findNearestValue(tipoPessoa).orElse("").equals("Jurídica"))
                 .asAtrBootstrap()
                 .colPreference(3);
 
@@ -102,7 +102,7 @@ public class STypeEntidade extends STypePersistentComposite {
                 .asAtr()
                 .label("CPF")
                 .dependsOn(tipoPessoa)
-                .exists(i -> i.findNearestValue(tipoPessoa).orElse("").equals("Fisica"))
+                .exists(i -> i.findNearestValue(tipoPessoa).orElse("").equals("Física"))
                 .asAtrBootstrap()
                 .colPreference(3);
 
@@ -115,7 +115,7 @@ public class STypeEntidade extends STypePersistentComposite {
 
         enderecoEletronico
                 .asAtr()
-                .label("Endereço Eletronico")
+                .label("Endereço Eletrônico")
                 .asAtrBootstrap()
                 .colPreference(4);
 
@@ -197,7 +197,7 @@ public class STypeEntidade extends STypePersistentComposite {
 
         endereco
                 .asAtr()
-                .label("Endereco")
+                .label("Endereço")
                 .asAtrBootstrap()
                 .colPreference(6);
 

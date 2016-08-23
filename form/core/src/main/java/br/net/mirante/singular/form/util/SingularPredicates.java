@@ -20,57 +20,57 @@ public class SingularPredicates {
         return i -> Arrays.asList(predicates).stream().anyMatch(p -> p.test(i));
     }
 
-    public static <T> Predicate<SInstance> typeValMatches(STypeSimple<? extends SISimple<T>, T> type, Predicate<T> predicate) {
+    public static <T> Predicate<SInstance> typeValueMatches(STypeSimple<? extends SISimple<T>, T> type, Predicate<T> predicate) {
         return si -> predicate.test(Value.of(si, type));
     }
 
-    public static Predicate<SInstance> typeValIsNotNull(STypeComposite<SIComposite> type) {
+    public static Predicate<SInstance> typeValueIsNotNull(STypeComposite<SIComposite> type) {
         return si -> Value.notNull(si, type);
     }
 
-    public static <T> Predicate<SInstance> typeValIsNotNull(STypeSimple<? extends SISimple<T>, T> type) {
+    public static <T> Predicate<SInstance> typeValueIsNotNull(STypeSimple<? extends SISimple<T>, T> type) {
         return si -> Value.notNull(si, type);
     }
 
-    public static Predicate<SInstance> typeValIsNull(STypeComposite<SIComposite> type) {
+    public static Predicate<SInstance> typeValueIsNull(STypeComposite<SIComposite> type) {
         return si -> !Value.notNull(si, type);
     }
 
-    public static <T> Predicate<SInstance> typeValIsNull(STypeSimple<? extends SISimple<T>, T> type) {
+    public static <T> Predicate<SInstance> typeValueIsNull(STypeSimple<? extends SISimple<T>, T> type) {
         return si -> !Value.notNull(si, type);
     }
 
-    public static <T> Predicate<SInstance> typeValIsNotIn(STypeSimple<? extends SISimple<T>, T> type, List<T> vals) {
+    public static <T> Predicate<SInstance> typeValueIsNotIn(STypeSimple<? extends SISimple<T>, T> type, List<T> vals) {
         return i -> vals.stream().filter(v -> v.equals(Value.of(i, type))).count() == 0;
     }
 
     @SafeVarargs
-    public static <T> Predicate<SInstance> typeValIsNotIn(STypeSimple<? extends SISimple<T>, T> type, T... vals) {
+    public static <T> Predicate<SInstance> typeValueIsNotIn(STypeSimple<? extends SISimple<T>, T> type, T... vals) {
         return i -> Arrays.stream(vals).filter(v -> v.equals(Value.of(i, type))).count() == 0;
     }
 
     @SafeVarargs
-    public static <T> Predicate<SInstance> typeValIsIn(STypeSimple<? extends SISimple<T>, T> type, T... vals) {
+    public static <T> Predicate<SInstance> typeValueIsIn(STypeSimple<? extends SISimple<T>, T> type, T... vals) {
         return i -> Arrays.stream(vals).filter(v -> v.equals(Value.of(i, type))).count() > 0;
     }
 
-    public static <T> Predicate<SInstance> typeValIsIn(STypeSimple<? extends SISimple<T>, T> type, List<T> vals) {
+    public static <T> Predicate<SInstance> typeValueIsIn(STypeSimple<? extends SISimple<T>, T> type, List<T> vals) {
         return i -> vals.stream().filter(v -> v.equals(Value.of(i, type))).count() > 0;
     }
 
-    public static <T> Predicate<SInstance> typeValIsEqualsTo(STypeSimple<? extends SISimple<T>, T> type, T val) {
+    public static <T> Predicate<SInstance> typeValueIsEqualsTo(STypeSimple<? extends SISimple<T>, T> type, T val) {
         return i -> val.equals(Value.of(i, type));
     }
 
-    public static <T> Predicate<SInstance> typeValIsNotEqualsTo(STypeSimple<? extends SISimple<T>, T> type, T val) {
+    public static <T> Predicate<SInstance> typeValueIsNotEqualsTo(STypeSimple<? extends SISimple<T>, T> type, T val) {
         return i -> !val.equals(Value.of(i, type));
     }
 
-    public static Predicate<SInstance> typeValIsTrue(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
+    public static Predicate<SInstance> typeValueIsTrue(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
         return i -> Boolean.TRUE.equals(Value.of(i, type));
     }
 
-    public static Predicate<SInstance> typeValIsFalse(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
+    public static Predicate<SInstance> typeValueIsFalse(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
         return i -> Boolean.FALSE.equals(Value.of(i, type));
     }
 

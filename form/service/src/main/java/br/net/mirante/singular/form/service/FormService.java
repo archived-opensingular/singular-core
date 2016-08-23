@@ -73,7 +73,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     @Override
     public SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId) {
-        final FormVersionEntity formVersionEntity   = loadFormVersionEntity(key, versionId);
+        final FormVersionEntity formVersionEntity   = loadFormVersionEntity(versionId);
         return internalLoadSInstance(key, refType, documentFactory, formVersionEntity);
     }
 
@@ -175,7 +175,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
-    public FormVersionEntity loadFormVersionEntity(FormKey key, Long versionId) {
+    public FormVersionEntity loadFormVersionEntity(Long versionId) {
         return formVersionDAO.find(versionId);
     }
 

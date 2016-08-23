@@ -38,7 +38,7 @@ public class STypeRequerente extends STypeEntidade {
         getField(CELULAR).asAtr().enabled(false);
 
         withInitListener(si -> {
-            si.setValue(STypeEntidade.TIPO_PESSOA, "Juridica");
+            si.setValue(STypeEntidade.TIPO_PESSOA, "Jurídica");
             si.setValue(STypeEntidade.CNPJ, "91.725.509/0001-57");
             si.setValue(STypeEntidade.NOME, "Cecília e Mirella Limpeza ME");
             si.setValue(STypeEntidade.ENDERECO_ELETRONICO, "representantes@ceciliamirella.com.br");
