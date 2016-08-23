@@ -75,9 +75,6 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
 
             if (renderAnnotations()) {
                 grid.newRow().add(new AnnotationComponent("annotation", model, ctx));
-                //                ctx.getRootContext().updateAnnotations(
-                //                    AnnotationComponent.appendAnnotationToggleButton(grid.newRow(), getInstance()),
-                //                    getInstance());
             }
         }
 
