@@ -7,7 +7,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-lib</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-support</artifactId>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- HIBERNATE -->
