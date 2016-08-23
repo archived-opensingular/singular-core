@@ -42,14 +42,14 @@ button {
         padding: 0;
         margin: 0; } }
 
-.annotation-toggle-container .theme-panel {
+.annotation-toggle-container .theme-panel, .annotation-toggle-container.open .theme-panel {
   padding: 10px;
   margin-top: 10px; }
 
-.annotation-toggle-container hr {
+.annotation-toggle-container hr, .annotation-toggle-container.open hr {
   margin: 10px 0; }
 
-.annotation-toggle-container .btn-info, .annotation-toggle-container .btn-danger, .annotation-toggle-container .btn-default {
+.annotation-toggle-container .btn-info, .annotation-toggle-container .btn-danger, .annotation-toggle-container .btn-default, .annotation-toggle-container.open .btn-info, .annotation-toggle-container.open .btn-danger, .annotation-toggle-container.open .btn-default {
   height: 30px;
   width: 30px;
   padding-top: 7px;
@@ -58,21 +58,21 @@ button {
   background-position: center;
   background-color: transparent; }
 
-.annotation-toggle-container .btn, .annotation-toggle-container .btn:hover, .annotation-toggle-container .btn:focus {
+.annotation-toggle-container .btn, .annotation-toggle-container .btn:hover, .annotation-toggle-container .btn:focus, .annotation-toggle-container.open .btn, .annotation-toggle-container.open .btn:hover, .annotation-toggle-container.open .btn:focus {
   background-color: #ffffff !important;
   border-color: #acb1c2;
   color: #acb1c2;
   position: relative; }
 
-.annotation-toggle-container .btn-danger, .annotation-toggle-container .btn-danger:focus {
+.annotation-toggle-container .btn-danger, .annotation-toggle-container .btn-danger:focus, .annotation-toggle-container.open .btn-danger, .annotation-toggle-container.open .btn-danger:focus {
   background-image: url("../img/rejected-comment.svg");
   border: 0; }
 
-.annotation-toggle-container .btn-info, .annotation-toggle-container .btn-info:focus {
+.annotation-toggle-container .btn-info, .annotation-toggle-container .btn-info:focus, .annotation-toggle-container.open .btn-info, .annotation-toggle-container.open .btn-info:focus {
   background-image: url("../img/accepted-comment.svg");
   color: #5AB879; }
 
-.annotation-toggle-container .btn-default, .annotation-toggle-container .btn-default:focus {
+.annotation-toggle-container .btn-default, .annotation-toggle-container .btn-default:focus, .annotation-toggle-container.open .btn-default, .annotation-toggle-container.open .btn-default:focus {
   background-image: url("../img/add-comment.svg"); }
 
 .annotation-title {

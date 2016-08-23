@@ -43,7 +43,6 @@ import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -113,7 +112,7 @@ public class AnnotationComponent extends Panel {
 
         add(createToggleButton("toggleButton", getReferencedModel()));
         add(new Label("titulo", $m.ofValue(getTitle(getReferencedModel()))));
-        add(new Label("comment_field", $m.get(() -> getTrimmedText())));
+        add(new Label("annotationText", $m.get(() -> getTrimmedText())));
         add(createApprovalLabel("approvalLabel", approvedModel));
         add(openModalButton = createOpenModalButton("open_modal", createEditModal("annotationModal")));
         add(createDeleteModalButton("deleteAnnotationModal"));
