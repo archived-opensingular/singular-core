@@ -2,10 +2,16 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.*;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.service.DominioPPSService;
 import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SPackage;
 
 public class SPackagePPSCommon extends SPackage {
+
+    public static DominioPPSService ppsService(SInstance ins) {
+        return ins.getDocument().lookupService(DominioPPSService.class);
+    }
 
     @Override
     protected void onLoadPackage(PackageBuilder pb) {

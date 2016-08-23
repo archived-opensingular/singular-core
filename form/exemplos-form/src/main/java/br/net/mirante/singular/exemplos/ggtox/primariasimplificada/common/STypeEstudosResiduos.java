@@ -1,8 +1,8 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 
 import br.net.mirante.singular.exemplos.SelectBuilder;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.domain.SubgrupoEntity;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.service.DominioPPSService;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.ResiduoValidator;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
@@ -15,6 +15,7 @@ import br.net.mirante.singular.form.view.SViewListByTable;
 
 import java.util.Optional;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon.ppsService;
 import static br.net.mirante.singular.form.util.SingularPredicates.*;
 
 
@@ -22,11 +23,6 @@ import static br.net.mirante.singular.form.util.SingularPredicates.*;
 public class STypeEstudosResiduos extends STypePersistentComposite {
 
     private EstudoResiduo estudoResiduo;
-
-    public static DominioPPSService ppsService(SInstance ins) {
-        return ins.getDocument().lookupService(DominioPPSService.class);
-    }
-
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -49,7 +45,6 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
         public static final String ESTUDO_PUBLICADO              = "Publicado pela ANVISA";
         public static final String ESTUDO_MATRIZ                 = "Conforme matriz";
         public static final String ESTUDO_NOVO                   = "Novo";
-        public static final String NOME_CULTURA_FIELD_NAME       = "nomeCultura";
         public static final String NOME_OUTRA_CULTURA_FIELD_NAME = "nomeOutraCultura";
 
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
@@ -58,15 +53,23 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
         public final  Amostra                                             amostra;
 
         public EstudoResiduo(STypeComposite<SIComposite> parentType) {
+
             root = parentType.addFieldListOfComposite("culturas", "cultura");
             rootType = root.getElementsType();
 
-            final STypeString                 nomeCultura         = rootType.addFieldString(NOME_CULTURA_FIELD_NAME);
-            final STypeString                 nomeOutraCultura    = rootType.addFieldString(NOME_OUTRA_CULTURA_FIELD_NAME);
-            final STypeComposite<SIComposite> emprego             = rootType.addFieldComposite("emprego");
-            final STypeLong                   codEmprego          = emprego.addField("codEmprego", STypeLong.class);
-            final STypeString                 nomeEmprego         = emprego.addField("nomeEmprego", STypeString.class);
-            final STypeBoolean                outraCultura        = rootType.addFieldBoolean("outraCultura");
+            final STypeComposite<SIComposite> cultura     = rootType.addFieldComposite("cultura");
+            final STypeLong                   codCultura  = cultura.addField("codCultura", STypeLong.class);
+            final STypeLong                   codSubgrupo = cultura.addField("codSubgrupo", STypeLong.class);
+            final STypeString                 nomeCultura = cultura.addField("nomeCultura", STypeString.class);
+
+            final STypeString nomeOutraCultura = rootType.addFieldString(NOME_OUTRA_CULTURA_FIELD_NAME);
+
+            final STypeComposite<SIComposite> emprego     = rootType.addFieldComposite("emprego");
+            final STypeLong                   codEmprego  = emprego.addField("codEmprego", STypeLong.class);
+            final STypeString                 nomeEmprego = emprego.addField("nomeEmprego", STypeString.class);
+
+            final STypeBoolean outraCultura = rootType.addFieldBoolean("outraCultura");
+
             final STypeBoolean                parteComestivel     = rootType.addFieldBoolean("parteComestivel");
             final STypeInteger                intervaloPretendido = rootType.addFieldInteger("intervaloPretendido");
             final STypeComposite<SIComposite> norma               = rootType.addFieldComposite("norma");
@@ -75,31 +78,61 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             final STypeString                 observacoes         = rootType.addFieldString("observacoes");
 
             tipoEstudo = rootType.addFieldString("tipoEstudo");
+
             final STypeString                 estudoPublicado = rootType.addFieldString("estudoPublicado");
             final STypeString                 numeroEstudo    = rootType.addFieldString("numeroEstudo");
             final STypeComposite<SIComposite> dosagemAmostra  = rootType.addFieldComposite("dosagemAmostra");
             final STypeInteger                idDosagem       = dosagemAmostra.addFieldInteger("idDosagem");
             final STypeString                 siglaDosagem    = dosagemAmostra.addFieldString("siglaDosagem");
             final STypeBoolean                adjuvante       = rootType.addFieldBoolean("adjuvante");
+
             amostra = new Amostra(rootType);
+
             final STypeAttachment estudoResiduo = rootType.addFieldAttachment("estudoResiduo");
 
             root
                     .withView(new SViewListByMasterDetail()
-                            .col("Cultura", si -> (String) Optional.ofNullable(Value.of(si, NOME_CULTURA_FIELD_NAME)).orElse(Value.of(si, NOME_OUTRA_CULTURA_FIELD_NAME)))
+                            .col("Cultura", si -> {
+                                if (si instanceof SIComposite) {
+                                    return Optional
+                                            .ofNullable(((SIComposite) si).getField("cultura"))
+                                            .map(sic -> ((SIComposite) sic).getField("nomeCultura"))
+                                            .map(SInstance::getValue)
+                                            .map(Object::toString)
+                                            .orElse(Value.of(si, NOME_OUTRA_CULTURA_FIELD_NAME));
+                                } else {
+                                    return null;
+                                }
+                            })
                             .col(emprego)
                             .col(tipoEstudo)
                             .largeSize()
                     );
 
-            nomeCultura
-                    .selectionOf(culturas())
-                    .asAtr().label("Nome da Cultura")
+            cultura
+                    .asAtrBootstrap()
+                    .colPreference(6)
+                    .asAtr()
+                    .label("Cultura")
                     .required()
                     .dependsOn(outraCultura, tipoEstudo)
                     .exists(allMatches(typeValueIsNotEqualsTo(outraCultura, Boolean.TRUE)));
 
+            cultura
+                    .selection()
+                    .id(codCultura)
+                    .display(nomeCultura)
+                    .simpleProvider((SSimpleProvider) builder -> {
+                        ppsService(builder.getCurrentInstance()).buscarCulturas()
+                                .forEach(culturaEntity -> builder.add()
+                                        .set(codCultura, culturaEntity.getCod())
+                                        .set(codSubgrupo, Optional.ofNullable(culturaEntity.getSubgrupo()).map(SubgrupoEntity::getCod).orElse(null))
+                                        .set(nomeCultura, culturaEntity.getNome()));
+                    });
+
             nomeOutraCultura
+                    .asAtrBootstrap()
+                    .colPreference(6)
                     .asAtr().label("Nome da Cultura")
                     .required()
                     .dependsOn(outraCultura)
@@ -115,16 +148,14 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .selection()
                     .id(codEmprego)
                     .display(nomeEmprego)
-                    .simpleProvider((SSimpleProvider) builder -> {
-                        ppsService(builder.getCurrentInstance())
-                                .buscarModalidadesDeEmprego()
-                                .forEach(empregoEntity -> {
-                                    builder
-                                            .add()
-                                            .set(codEmprego, empregoEntity.getCod())
-                                            .set(nomeEmprego, empregoEntity.getNome());
-                                });
-                    });
+                    .simpleProvider((SSimpleProvider) builder -> ppsService(builder.getCurrentInstance())
+                            .buscarModalidadesDeEmprego()
+                            .forEach(empregoEntity -> {
+                                builder
+                                        .add()
+                                        .set(codEmprego, empregoEntity.getCod())
+                                        .set(nomeEmprego, empregoEntity.getNome());
+                            }));
 
             outraCultura
                     .asAtr().label("Outra cultura")
@@ -153,13 +184,11 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .selection()
                     .id(idNorma)
                     .display(descricaoNorma)
-                    .simpleProvider(builder -> {
-                        builder.add().set(idNorma, 1).set(descricaoNorma, "RDC - 216 - 4 Estudos");
-                        builder.add().set(idNorma, 2).set(descricaoNorma, "3 Estudos (X e 2X)");
-                        builder.add().set(idNorma, 3).set(descricaoNorma, "2 Estudos (X e 2X)");
-                        builder.add().set(idNorma, 4).set(descricaoNorma, "Sem informações");
-                        builder.add().set(idNorma, 5).set(descricaoNorma, "Produto de ocorrência natural na planta");
-                    });
+                    .simpleProvider(builder -> ppsService(builder.getCurrentInstance())
+                            .buscarNormas()
+                            .forEach(normaEntity -> builder.add()
+                                    .set(idNorma, normaEntity.getCod())
+                                    .set(descricaoNorma, normaEntity.getNome())));
 
             observacoes
                     .asAtr()
@@ -206,8 +235,10 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .id(idDosagem)
                     .display(siglaDosagem)
                     .simpleProvider(builder -> {
-                        builder.add().set(idDosagem, 1).set(siglaDosagem, "g/hectare");
-                        builder.add().set(idDosagem, 2).set(siglaDosagem, "g/m3");
+                        ppsService(builder.getCurrentInstance()).buscarTipoDeDose()
+                                .forEach(doseEntity -> builder.add()
+                                        .set(idDosagem, doseEntity.getCod())
+                                        .set(siglaDosagem, doseEntity.getNome()));
                     });
 
             adjuvante

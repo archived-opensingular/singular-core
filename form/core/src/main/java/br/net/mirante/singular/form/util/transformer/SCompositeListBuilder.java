@@ -12,6 +12,7 @@ import br.net.mirante.singular.form.STypeComposite;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Classe utilitária para montar um MILista de MIComposto
@@ -63,12 +64,20 @@ public class SCompositeListBuilder {
         }
 
         public SCompositeValueSetter set(SType<?> tipo, Object value) {
-            instancia.setValue(tipo, value);
+            if (value != null) {
+                instancia.setValue(tipo, value);
+            } else {
+                Optional.ofNullable(instancia.getField(tipo)).ifPresent(SInstance::clearInstance);
+            }
             return this;
         }
 
         public SCompositeValueSetter set(String path, Object value) {
-            instancia.setValue(path, value);
+            if (value != null) {
+                instancia.setValue(path, value);
+            } else {
+                Optional.ofNullable(instancia.getField(path)).ifPresent(SInstance::clearInstance);
+            }
             return this;
         }
 
