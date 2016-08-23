@@ -5,20 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -28,20 +17,33 @@ import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import java.io.Serializable;
-
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import br.net.mirante.singular.commons.util.FormatUtil;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.component.BFModalWindow;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -49,158 +51,125 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
  * @author Fabricio Buzeto
  */
 public class AnnotationComponent extends Panel {
-    private final AbstractSInstanceModel<?> referenced;
-    private Component                       referencedComponent;
-    BSContainer<?>                          mainGrid;
-    private final WicketBuildContext        context;
-    private SInstanceValueModel<?>          textModel, approvedModel;
-    private SInstanceRootModel<?>           model;
-    private boolean                         keepOpened = false;
-    private ActionAjaxButton                openModalButton;
 
-    public AnnotationComponent(String id, AbstractSInstanceModel<?> referenced, WicketBuildContext context) {
+    private final WicketBuildContext                context;
+    private final ISInstanceAwareModel<SIComposite> referencedModel;
+    private final SInstanceValueModel<String>       textModel;
+    private final SInstanceValueModel<Boolean>      approvedModel;
+
+    private boolean                                 keepOpened = false;
+
+    private Component                               referencedComponent;
+    private BSContainer<?>                          mainGrid;
+    private ActionAjaxButton                        openModalButton;
+
+    public AnnotationComponent(String id, ISInstanceAwareModel<SIComposite> referenced, WicketBuildContext context) {
         super(id);
-        this.referenced = referenced;
+        this.referencedModel = referenced;
         this.context = context;
-        createModels(referenced);
+
+        final SInstanceRootModel<SIAnnotation> annotationModel = new SInstanceRootModel<>(
+            getAnnotation(referenced)
+                .annotation()
+                .setTargetId(referenced.getMInstancia().getId()));
+        setModel(annotationModel);
+
+        textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getModel(), "text"));
+        approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getModel(), "isApproved"));
     }
 
-    public AbstractSInstanceModel<?> referenced() {
-        return referenced;
+    @Override
+    public void detachModels() {
+        super.detachModels();
+        referencedModel.detach();
+        textModel.detach();
+        approvedModel.detach();
+    }
+
+    public AnnotationComponent setModel(SInstanceRootModel<SIAnnotation> model) {
+        super.setDefaultModel(model);
+        return this;
+    }
+
+    public ISInstanceAwareModel<SIComposite> getReferencedModel() {
+        return referencedModel;
     }
 
     public void setReferencedComponent(Component referencedComponent) {
         this.referencedComponent = referencedComponent;
     }
 
-    private void createModels(AbstractSInstanceModel<?> referenced) {
-        final SIAnnotation target = annotated(referenced).annotation();
-        target.setTargetId(referenced.getMInstancia().getId());
-        model = new SInstanceRootModel<>(target);
-        setDefaultModel(model);
-        createSubModels();
-    }
-
-    private void createSubModels() {
-        textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, "text"));
-        approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, "isApproved"));
+    @SuppressWarnings("unchecked")
+    public SInstanceRootModel<SIAnnotation> getModel() {
+        return (SInstanceRootModel<SIAnnotation>) getDefaultModel();
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
 
-        queue(new Label("target_label", $m.ofValue(title(referenced))));
-        queue(createCommentSnippet());
-        queue(createApprovalLabel(approvedModel));
-        queue(openModalButton = createOpenModalButton(createEditModal()));
-        queue(createDeleteModalButton());
+        add(createToggleButton("toggleButton", getReferencedModel()));
+        add(new Label("titulo", $m.ofValue(getTitle(getReferencedModel()))));
+        add(new Label("comment_field", $m.get(() -> getTrimmedText())));
+        add(createApprovalLabel("approvalLabel", approvedModel));
+        add(openModalButton = createOpenModalButton("open_modal", createEditModal("annotationModal")));
+        add(createDeleteModalButton("deleteAnnotationModal"));
     }
 
-    private Label createCommentSnippet() {
-        return new Label("comment_field", new Model<Serializable>() {
-            @Override
-            public Serializable getObject() {
-                if (textModel.getObject() == null) {
-                    return "";
-                }
-                String text = (String) textModel.getObject();
-                if (text.length() > 100) {
-                    return text.substring(0, 100) + " [...]";
-                }
-                return text;
-            }
-        });
+    private WebMarkupContainer createToggleButton(String id, IModel<SIComposite> model) {
+        WebMarkupContainer toggleButton = new WebMarkupContainer(id);
+        toggleButton.add($b.classAppender($m.get(() -> getToggleButtonCSS(model.getObject().asAtrAnnotation()))));
+        return toggleButton;
     }
 
-    protected static Label createApprovalLabel(final SInstanceValueModel<?> model) {
-        return new Label("approval_field", new Model<Serializable>() {
-            @Override
-            public Serializable getObject() {
-                if (Boolean.TRUE.equals(model.getObject())) {
-                    return "Aprovado";
-                } else if (Boolean.FALSE.equals(model.getObject())) {
-                    return "Rejeitado";
-                }
-                return "";
-            }
-        }) {
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                if (Boolean.TRUE.equals(model.getObject())) {
-                    this.add(WicketUtils.$b.attr("class", "list-group-item bg-blue bg-font-blue"));
-                } else if (Boolean.FALSE.equals(model.getObject())) {
-                    this.add(WicketUtils.$b.attr("class", "list-group-item bg-red bg-font-red"));
-                }
-            }
-        };
+    private String getTrimmedText() {
+        String text = defaultString(textModel.getObject());
+        return (text.length() > 100) ? text.substring(0, 94) + " [...]" : text;
     }
 
-    private BFModalWindow createEditModal() {
-        BFModalWindow annotationModal = new AnnotationModalWindow("annotationModal",
-            model, referenced, context, this);
+    private static Label createApprovalLabel(String id, final SInstanceValueModel<Boolean> model) {
+        IModel<String> labelTextModel = $m.get(() -> FormatUtil.booleanDescription(model.getObject(),
+            "Aprovado",
+            "Rejeitado"));
+        IModel<String> labelStyleModel = $m.get(() -> FormatUtil.booleanDescription(model.getObject(),
+            "annotation-status-approved",
+            "annotation-status-rejected"));
+        Label label = new Label(id, labelTextModel);
+        label.add($b.classAppender(labelStyleModel));
+        return label;
+    }
+
+    private BFModalWindow createEditModal(String id) {
+        BFModalWindow annotationModal = new AnnotationModalWindow(id, getModel(), referencedModel, context, this);
         context.getExternalContainer().appendTag("div", true, null, annotationModal);
         return annotationModal;
     }
 
-    private ActionAjaxButton createOpenModalButton(final BFModalWindow annotationModal) {
-        return new ActionAjaxButton("open_modal") {
-            @Override
-            protected void onInitialize() {
-                super.onInitialize();
-                Label open_icon = new Label("open_icon");
-                if (context.getRootContext().getAnnotationMode().editable()) {
-                    open_icon.add(new AttributeModifier("class", $m.ofValue("fa fa-pencil")));
-                } else {
-                    open_icon.add(new AttributeModifier("class", $m.ofValue("fa fa-expand")));
-                }
-                add(open_icon);
-            }
-
+    private ActionAjaxButton createOpenModalButton(String id, final BFModalWindow annotationModal) {
+        ActionAjaxButton button = new ActionAjaxButton(id) {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 keepOpened = true;
                 annotationModal.show(target);
             }
         };
+        button.add(new Label("open_icon")
+            .add($b.classAppender($m.get(() -> {
+                return (context.getRootContext().getAnnotationMode().editable())
+                    ? "fa-pencil"
+                    : "fa-expand";
+            }))));
+        return button;
     }
 
-    private ActionAjaxButton createDeleteModalButton() {
-        final BFModalWindow deleteModal = new BFModalWindow("deleteAnnotationModal") {
-            @Override
-            protected void onInitialize() {
-                super.onInitialize();
-                final BFModalWindow thiz = this;
-                thiz.setTitleText($m.ofValue("Você está prestes a remover este comentário."));
-                thiz.setBody(new Label("alert", $m.ofValue("Deseja realmente prosseguir e apagá-lo?")));
-
-                this.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Apagar"),
-                    new ActionAjaxButton("deleteBtn") {
-                        @Override
-                        protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                            ((SIAnnotation) model.getObject()).clear();
-                            target.add(AnnotationComponent.this.mainGrid);
-                            target.appendJavaScript(AnnotationComponent.this.generateUpdateJS());
-                            thiz.hide(target);
-                        }
-                    });
-                this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
-                    new ActionAjaxLink<Void>("cancelDeleteBtn") {
-                        @Override
-                        protected void onAction(AjaxRequestTarget target) {
-                            thiz.hide(target);
-                        }
-                    });
-            }
-        };
+    private ActionAjaxButton createDeleteModalButton(String modalId) {
+        final DeleteModal deleteModal = new DeleteModal(modalId);
         context.getExternalContainer().appendTag("div", true, null, deleteModal);
         return new ActionAjaxButton("trash_modal") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 deleteModal.show(target);
             }
-
             @Override
             public boolean isVisible() {
                 return context.getAnnotationMode().editable();
@@ -208,20 +177,20 @@ public class AnnotationComponent extends Panel {
         };
     }
 
-    protected static String title(AbstractSInstanceModel<?> referenced) {
-        if (StringUtils.isNoneBlank(annotated(referenced).label()))
-            return annotated(referenced).label();
+    protected static String getTitle(ISInstanceAwareModel<?> referenced) {
+        if (StringUtils.isNoneBlank(getAnnotation(referenced).label()))
+            return getAnnotation(referenced).label();
         String label = labelOf(referenced);
         if (StringUtils.isNoneBlank(label))
             return String.format("Comentários sobre %s", label);
         return "Comentários";
     }
 
-    private static AtrAnnotation annotated(AbstractSInstanceModel<?> referenced) {
+    private static AtrAnnotation getAnnotation(ISInstanceAwareModel<?> referenced) {
         return referenced.getMInstancia().asAtrAnnotation();
     }
 
-    private static String labelOf(AbstractSInstanceModel<?> target) {
+    private static String labelOf(ISInstanceAwareModel<?> target) {
         return target.getMInstancia().asAtr().getLabel();
     }
 
@@ -262,22 +231,7 @@ public class AnnotationComponent extends Panel {
         this.add(WicketUtils.$b.attrAppender("class", "portlet box sannotation-snipet-box", ""));
     }
 
-    public static BSContainer<?> appendAnnotationToggleButton(BSContainer<?> grid, SIComposite instance) {
-        BSContainer<?> toggleContainer = new BSContainer<>("_toggle_btn_");
-        toggleContainer.setInnerStyle("position:absolute;top:23px;right: 17px;");
-
-        AtrAnnotation annotatedInstance = instance.asAtrAnnotation();
-
-        toggleContainer.appendTag("a", true,
-            "href='javascript:;' style='padding-top: 7px; height: 27px; width: 27px;' class='btn btn-circle btn-icon-only " +
-                buttonColor(annotatedInstance) + "'",
-            createIcon(annotatedInstance));
-
-        grid.appendTag("div", true, "class='annotation-toggle-container'", toggleContainer);
-        return toggleContainer;
-    }
-
-    private static String buttonColor(AtrAnnotation annotatedInstance) {
+    private static String getToggleButtonCSS(AtrAnnotation annotatedInstance) {
         if (annotatedInstance.hasAnnotation()) {
             if (annotatedInstance.annotation().getApproved() != null &&
                 annotatedInstance.annotation().getApproved()) {
@@ -289,16 +243,6 @@ public class AnnotationComponent extends Panel {
         return "btn-default";
     }
 
-    private static BSContainer<?> createIcon(AtrAnnotation annotatedInstance) {
-        BSContainer<?> icon = new BSContainer<>("_toggle_icon_");
-        String iconClass = "class='fa fa-plus'";
-        if (annotatedInstance.hasAnnotation()) {
-            iconClass = "class='fa fa-comment-o'";
-        }
-        icon.appendTag("i", true, iconClass, new Label("_i_", $m.ofValue()));
-        return icon;
-    }
-
     public void setMainGrid(BSContainer<?> mainGrid) {
         this.mainGrid = mainGrid;
     }
@@ -306,122 +250,153 @@ public class AnnotationComponent extends Panel {
     void setKeepOpened(boolean keepOpened) {
         this.keepOpened = keepOpened;
     }
-}
 
-class AnnotationModalWindow extends BFModalWindow {
+    private final class DeleteModal extends BFModalWindow {
+        private DeleteModal(String id) {
+            super(id);
+        }
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            final BFModalWindow thiz = this;
+            thiz.setTitleText($m.ofValue("Você está prestes a remover este comentário."));
+            thiz.setBody(new Label("alert", $m.ofValue("Deseja realmente prosseguir e apagá-lo?")));
 
-    private SInstanceValueModel<?>       textModel;
-    private SInstanceValueModel<Boolean> approvedModel;
-    private WicketBuildContext           context;
-    private AnnotationComponent          parentComponent;
-    private AbstractSInstanceModel<?>    referenced;
-
-    public AnnotationModalWindow(String id,
-        SInstanceRootModel<?> model,
-        AbstractSInstanceModel<?> referenced,
-        WicketBuildContext context,
-        AnnotationComponent parentComponent) {
-        super(id);
-        setDefaultModel(model);
-        this.referenced = referenced;
-        this.context = context;
-        this.parentComponent = parentComponent;
-        setSize(BSModalBorder.Size.NORMAL);
-    }
-
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-        textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getDefaultModel(), "text"));
-        approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getDefaultModel(), "isApproved"));
-
-        setBody(createBody());
-
-        if (context.getAnnotationMode().editable()) {
-            this.addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"),
-                createOkButton(parentComponent));
+            this.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Apagar"),
+                new ActionAjaxButton("deleteBtn") {
+                    @Override
+                    protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                        ((SIAnnotation) AnnotationComponent.this.getModel().getObject()).clear();
+                        target.add(AnnotationComponent.this.mainGrid);
+                        target.appendJavaScript(AnnotationComponent.this.generateUpdateJS());
+                        thiz.hide(target);
+                    }
+                });
             this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
-                createCancelButton());
-        } else {
-            this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Fechar"),
-                createCancelButton());
-        }
-
-        this.setCloseIconCallback(target -> parentComponent.setKeepOpened(false));
-    }
-
-    private BSContainer<?> createBody() {
-        BSContainer<?> modalBody = new BSContainer<>("bogoMips");
-        createFields(modalBody);
-        return modalBody;
-    }
-
-    private void createFields(BSContainer<?> modalBody) {
-        if (context.getAnnotationMode().editable()) {
-            createCommentField(modalBody);
-            createApprovedField(modalBody);
-        } else {
-            MultiLineLabel modalText = new MultiLineLabel("modalText", textModel);
-            modalBody.appendTag("div", true, "class='sannotation-text-comment'", modalText);
-            modalBody.appendTag("div", true, "", AnnotationComponent.createApprovalLabel(approvedModel));
+                new ActionAjaxLink<Void>("cancelDeleteBtn") {
+                    @Override
+                    protected void onAction(AjaxRequestTarget target) {
+                        thiz.hide(target);
+                    }
+                });
         }
     }
 
-    private void createCommentField(BSContainer<?> modalBody) {
-        TextArea<?> modalText = new TextArea<>("modalText", textModel);
-        modalText.add(new Behavior() {
-            @Override
-            public void bind(Component component) {
-                super.bind(component);
-                component.add(
-                    AttributeModifier.replace("onkeydown",
-                        Model.of("window.Annotation.update_comment_box(event);")));
+    private static class AnnotationModalWindow extends BFModalWindow {
+
+        private SInstanceValueModel<?>       textModel;
+        private SInstanceValueModel<Boolean> approvedModel;
+        private WicketBuildContext           context;
+        private AnnotationComponent          parentComponent;
+        private ISInstanceAwareModel<?>      referenced;
+
+        public AnnotationModalWindow(String id,
+            SInstanceRootModel<?> model,
+            ISInstanceAwareModel<?> referenced,
+            WicketBuildContext context,
+            AnnotationComponent parentComponent) {
+            super(id);
+            setDefaultModel(model);
+            this.referenced = referenced;
+            this.context = context;
+            this.parentComponent = parentComponent;
+            setSize(BSModalBorder.Size.NORMAL);
+        }
+
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getDefaultModel(), "text"));
+            approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getDefaultModel(), "isApproved"));
+
+            setBody(createBody());
+
+            if (context.getAnnotationMode().editable()) {
+                this.addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"),
+                    createOkButton(parentComponent));
+                this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
+                    createCancelButton());
+            } else {
+                this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Fechar"),
+                    createCancelButton());
             }
-        });
-        modalBody.appendTag("textarea", true, "style='width: 100%;height: 60vh;' cols='15' ",
-            modalText);
-    }
 
-    private void createApprovedField(BSContainer<?> modalBody) {
+            this.setCloseIconCallback(target -> parentComponent.setKeepOpened(false));
+        }
 
-        String approved = getString("singular.annotation.approved");
+        private BSContainer<?> createBody() {
+            BSContainer<?> modalBody = new BSContainer<>("bogoMips");
+            createFields(modalBody);
+            return modalBody;
+        }
 
-        modalBody.appendTag("label", true, "class=\"control-label\"",
-            new Label("approvalLabel", $m.ofValue(approved)));
-
-        CheckBox modalApproval = new CheckBox("modalApproval", approvedModel);
-        modalBody.appendTag("input", true, "type='checkbox' class='make-switch' data-on-color='info' data-off-color='danger'", modalApproval);
-
-        modalApproval.add($b.attr("data-on-text", new ResourceModel("singular.annotation.yes")));
-        modalApproval.add($b.attr("data-off-text", new ResourceModel("singular.annotation.no")));
-
-    }
-
-    @Override
-    public void show(AjaxRequestTarget target) {
-        setTitleText($m.ofValue(AnnotationComponent.title(referenced)));
-
-        super.show(target);
-    }
-
-    private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
-        return new ActionAjaxButton("btn-ok") {
-            @Override
-            protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                target.add(parentComponent.mainGrid);
-                AnnotationModalWindow.this.hide(target);
-                target.appendJavaScript(parentComponent.generateUpdateJS());
+        private void createFields(BSContainer<?> modalBody) {
+            if (context.getAnnotationMode().editable()) {
+                createCommentField(modalBody);
+                createApprovedField(modalBody);
+            } else {
+                MultiLineLabel modalText = new MultiLineLabel("modalText", textModel);
+                modalBody.appendTag("div", true, "class='sannotation-text-comment'", modalText);
+                modalBody.appendTag("div", true, "", AnnotationComponent.createApprovalLabel("approval_field", approvedModel));
             }
-        };
-    }
+        }
 
-    private ActionAjaxLink<Void> createCancelButton() {
-        return new ActionAjaxLink<Void>("btn-cancelar") {
-            @Override
-            protected void onAction(AjaxRequestTarget target) {
-                parentComponent.setKeepOpened(false);
-                AnnotationModalWindow.this.hide(target);
-            }
-        };
+        private void createCommentField(BSContainer<?> modalBody) {
+            TextArea<?> modalText = new TextArea<>("modalText", textModel);
+            modalText.add(new Behavior() {
+                @Override
+                public void bind(Component component) {
+                    super.bind(component);
+                    component.add(
+                        AttributeModifier.replace("onkeydown",
+                            Model.of("window.Annotation.update_comment_box(event);")));
+                }
+            });
+            modalBody.appendTag("textarea", true, "style='width: 100%;height: 60vh;' cols='15' ",
+                modalText);
+        }
+
+        private void createApprovedField(BSContainer<?> modalBody) {
+
+            String approved = getString("singular.annotation.approved");
+
+            modalBody.appendTag("label", true, "class=\"control-label\"",
+                new Label("approvalLabel", $m.ofValue(approved)));
+
+            CheckBox modalApproval = new CheckBox("modalApproval", approvedModel);
+            modalBody.appendTag("input", true, "type='checkbox' class='make-switch' data-on-color='info' data-off-color='danger'", modalApproval);
+
+            modalApproval.add($b.attr("data-on-text", new ResourceModel("singular.annotation.yes")));
+            modalApproval.add($b.attr("data-off-text", new ResourceModel("singular.annotation.no")));
+
+        }
+
+        @Override
+        public void show(AjaxRequestTarget target) {
+            setTitleText($m.ofValue(AnnotationComponent.getTitle(referenced)));
+
+            super.show(target);
+        }
+
+        private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
+            return new ActionAjaxButton("btn-ok") {
+                @Override
+                protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                    target.add(parentComponent.mainGrid);
+                    AnnotationModalWindow.this.hide(target);
+                    target.appendJavaScript(parentComponent.generateUpdateJS());
+                }
+            };
+        }
+
+        private ActionAjaxLink<Void> createCancelButton() {
+            return new ActionAjaxLink<Void>("btn-cancelar") {
+                @Override
+                protected void onAction(AjaxRequestTarget target) {
+                    parentComponent.setKeepOpened(false);
+                    AnnotationModalWindow.this.hide(target);
+                }
+            };
+        }
     }
 }

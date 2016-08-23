@@ -1,16 +1,25 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-  <h5 class="annotation-title" wicket:id="target_label">Título</h5>
-  <div class="annotation-actions">
-    <a class="annotation-action-edit" wicket:id="open_modal">
-      <span wicket:id="open_icon" class="fa fa-pencil"></span>
-    </a>
-    <a class="annotation-action-remove" wicket:id="trash_modal" >
-      <i class="icon-trash"></i>
-    </a>
+  <div class="annotation-toggle-container btn-group open" style="position:absolute;top:23px;right: 17px;">
+    <a data-toggle="dropdown" data-hover="dropdown" class="btn dropdown-toggle btn-icon-only btn-info" wicket:id="toggleButton"></a>
+    <div class="dropdown-menu theme-panel pull-right dropdown-custom hold-on-click">
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <h5 class="annotation-title" wicket:id="titulo">Título</h5>
+          <div class="annotation-actions">
+            <a class="annotation-action-edit" wicket:id="open_modal">
+              <span class="fa fa-pencil" wicket:id="open_icon"></span>
+            </a>
+            <a class="annotation-action-remove" wicket:id="trash_modal" >
+              <i class="icon-trash"></i>
+            </a>
+          </div>
+          <p class="annotation-text" wicket:id="comment_field"></p>
+          <hr></hr>
+          <div class="annotation-status" wicket:id="approvalLabel"></div>
+        </div>
+      </div>
+    </div>
   </div>
-  <p class="annotation-text" wicket:id="comment_field"></p>
-  <hr></hr>
-  <div wicket:id="approval_field"></div>
 </wicket:panel>
 </html>

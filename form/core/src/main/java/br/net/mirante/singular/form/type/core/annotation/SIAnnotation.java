@@ -26,8 +26,9 @@ public class SIAnnotation extends SIComposite {
         return getValueInteger(STypeAnnotation.FIELD_TARGET_ID);
     }
 
-    public void setTargetId(Integer id) {
+    public SIAnnotation setTargetId(Integer id) {
         setValue(STypeAnnotation.FIELD_TARGET_ID, id);
+        return this;
     }
 
     public Boolean getApproved() {

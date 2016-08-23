@@ -9,10 +9,11 @@ import br.net.mirante.singular.form.RefService;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
 public class PageWithAttachment {
 
-    RefService<IAttachmentPersistenceHandler> persistanceRef;
+    RefService<IAttachmentPersistenceHandler<? extends IAttachmentRef>> persistanceRef;
 
     public void beforeRendering(SIComposite instance){
         /**
