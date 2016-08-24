@@ -36,7 +36,6 @@
             <version>${singular.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.wicketstuff</groupId>
             <artifactId>wicketstuff-restannotations</artifactId>
