@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.flow.core;
 
-import java.util.Date;
-import java.util.List;
-
 import br.net.mirante.singular.flow.schedule.IScheduleData;
 import br.net.mirante.singular.flow.schedule.IScheduledJob;
+
+import java.util.Date;
+import java.util.List;
 
 public class ExecuteWaitingTasksJob implements IScheduledJob {
 
@@ -32,9 +32,11 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
 
     @Override
     public Object run() {
+
         final SingularFlowConfigurationBean mbpmBean = Flow.getConfigBean();
         final StringBuilder log = new StringBuilder();
         final Date hoje = new Date();
+
         for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
             for (final MTaskWait task : definicaoProcessoMBPM.getFlowMap().getWaitTasks()) {
                 if (task.hasExecutionDateStrategy()) {
@@ -96,6 +98,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
 
             }
         }
+
         return log.toString();
     }
 

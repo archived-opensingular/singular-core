@@ -77,7 +77,8 @@ public enum Icone {
     HAND_UP             ("fa fa-hand-o-up"),
     DASHBOARD           ("fa fa-dashboard"),
     EXCLAMATION_TRIANGLE("fa fa-exclamation-triangle"),
-    UPLOAD              ("fa  fa-upload"),
+    UPLOAD("fa fa-upload"),
+    BARCODE("fa fa-barcode"),
     //@formatter:on
         ;
 
