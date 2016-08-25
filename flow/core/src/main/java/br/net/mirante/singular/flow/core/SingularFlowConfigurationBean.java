@@ -5,14 +5,6 @@
 
 package br.net.mirante.singular.flow.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.flow.core.defaults.NullViewLocator;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -27,6 +19,13 @@ import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.schedule.quartz.QuartzScheduleService;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public abstract class SingularFlowConfigurationBean {
 
@@ -59,9 +58,14 @@ public abstract class SingularFlowConfigurationBean {
                 getScheduleService().schedule(scheduledJob);
             }
         }
-        getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
+        configureWaitingTasksJobSchedule();
         init();
     }
+
+    protected void configureWaitingTasksJobSchedule() {
+        getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
+    }
+
 
     protected void init() {
 
