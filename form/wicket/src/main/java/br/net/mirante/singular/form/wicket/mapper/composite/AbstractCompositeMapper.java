@@ -63,7 +63,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         public void buildView() {
 
             if (renderAnnotations()) {
-                ctx.getContainer().appendTag("div", new AnnotationComponent("annotation", model, ctx));
+                ctx.getContainer().appendTag("div", new AnnotationComponent("annotation", ctx, model));
             }
 
             final BSGrid grid = createCompositeGrid(ctx);
