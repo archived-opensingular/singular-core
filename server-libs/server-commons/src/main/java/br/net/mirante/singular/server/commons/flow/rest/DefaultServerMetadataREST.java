@@ -62,9 +62,10 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         return groups;
     }
 
-    private List<MenuGroup> listMenuGroups() {
+    protected List<MenuGroup> listMenuGroups() {
         List<MenuGroup>                      groups        = new ArrayList<>();
         Map<String, List<ProcessDefinition>> definitionMap = new HashMap<>();
+
         Flow.getDefinitions().forEach(d -> {
             if (!definitionMap.containsKey(d.getCategory())) {
                 definitionMap.put(d.getCategory(), new ArrayList<>());
@@ -91,6 +92,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
 
             groups.add(menuGroup);
         });
+
         return groups;
     }
 
@@ -122,12 +124,9 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
                 .map(menuGroup -> new SingularPermission(menuGroup.getId(), null))
                 .collect(Collectors.toList());
 
+        //Agrupa permissoes do Form e do Flow
         permissions.addAll(menuPermissions);
-
-        // Coleta permissões de tipo
         permissions.addAll(permissionResolverService.listAllTypePermissions());
-
-        // Coleta permissões de processo
         permissions.addAll(permissionResolverService.listAllProcessesPermissions());
 
         // Limpa o internal id por questão de segurança

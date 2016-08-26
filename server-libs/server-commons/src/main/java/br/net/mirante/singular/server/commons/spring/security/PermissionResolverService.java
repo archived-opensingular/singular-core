@@ -71,10 +71,24 @@ public class PermissionResolverService {
         }
     }
 
-    public boolean hasPermission(Long id, String idUsuario, String action) {
+    public boolean hasFormPermission(Long id, String idUsuario, String action) {
         PetitionEntity petitionEntity = petitionService.find(id);
+        return hasFormPermission(petitionEntity, idUsuario, action);
+    }
+
+    public boolean hasFormPermission(PetitionEntity petitionEntity, String idUsuario, String action) {
         FormTypeEntity formType = petitionEntity.getMainForm().getFormType();
         String permissionNeeded = "ACTION_" + action + "_" + getAbbreviation(formType);
+        return hasPermission(idUsuario, permissionNeeded);
+    }
+
+    public boolean hasFlowPermission(Long id, String idUsuario, String action) {
+        PetitionEntity petitionEntity = petitionService.find(id);
+        return hasFlowPermission(petitionEntity, idUsuario, action);
+    }
+
+    public boolean hasFlowPermission(PetitionEntity petitionEntity, String idUsuario, String action) {
+        String permissionNeeded = "ACTION_" + action + "_" + petitionEntity.getProcessDefinitionEntity().getKey();
         return hasPermission(idUsuario, permissionNeeded);
     }
 

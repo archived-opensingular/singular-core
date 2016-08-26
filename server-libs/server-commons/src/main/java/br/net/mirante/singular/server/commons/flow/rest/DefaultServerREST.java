@@ -73,7 +73,7 @@ public class DefaultServerREST {
     @RequestMapping(value = PATH_BOX_ACTION + DELETE, method = RequestMethod.POST)
     public ActionResponse excluir(@RequestParam Long id, @RequestBody Action action) {
         try {
-            boolean hasPermission = permissionResolverService.hasPermission(id, action.getIdUsuario(), ACTION_DELETE);
+            boolean hasPermission = permissionResolverService.hasFormPermission(id, action.getIdUsuario(), ACTION_DELETE);
             if (hasPermission) {
                 petitionService.delete(id);
                 return new ActionResponse("Registro excluído com sucesso", true);
