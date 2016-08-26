@@ -6,23 +6,16 @@
 package br.net.mirante.singular.server.core.wicket.template;
 
 
-import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_LIST_MENU;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
-import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
-import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
-import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.core.wicket.concluida.ConcluidaPage;
 import br.net.mirante.singular.server.core.wicket.inicio.InicioPage;
@@ -68,13 +61,4 @@ public class MenuWorklist extends MenuAnalise {
         return menu;
     }
 
-    private List<MenuGroup> listMenus(ProcessGroupEntity processGroup) {
-        final String url = processGroup.getConnectionURL() + PATH_LIST_MENU;
-        try {
-            return Arrays.asList(new RestTemplate().getForObject(url, MenuGroup[].class));
-        } catch (Exception e) {
-            LOGGER.error("Erro ao acessar serviço: " + url, e);
-            return Collections.emptyList();
-        }
-    }
 }

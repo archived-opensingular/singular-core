@@ -231,6 +231,7 @@ public class Menu extends Panel {
                         .withProcessesAbbreviation(siglas)
                         .withTypesNames(tipos)
                         .withRascunho(itemBoxDTO.isShowDraft())
+                        .withEndedTasks(itemBoxDTO.getEndedTasks())
                         .withIdPessoa(getIdPessoa())
                         .withIdUsuarioLogado(getIdUsuarioLogado());
                 qtd = new RestTemplate().postForObject(url, filter, Long.class);
