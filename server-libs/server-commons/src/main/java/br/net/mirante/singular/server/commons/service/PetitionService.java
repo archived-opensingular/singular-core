@@ -517,4 +517,11 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         }
         return Optional.empty();
     }
+
+    public ProcessDefinitionEntity findEntityProcessDefinitionByClass(Class<? extends ProcessDefinition> clazz) {
+        return (ProcessDefinitionEntity) Optional
+                .ofNullable(Flow.getProcessDefinition(clazz))
+                .map(ProcessDefinition::getEntityProcessDefinition)
+                .orElseThrow(() -> new SingularFlowException("Não foi possivel recuperar a definição do processo"));
+    }
 }

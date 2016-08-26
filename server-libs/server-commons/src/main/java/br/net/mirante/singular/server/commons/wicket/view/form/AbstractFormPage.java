@@ -1,9 +1,7 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MTransition;
-import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
@@ -17,7 +15,6 @@ import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskDefinitionEntity;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
@@ -321,11 +318,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void configureLazyFlowIfNeeded(IModel<? extends SInstance> currentInstance, T petition, FormPageConfig cfg) {
         if (petition.getProcessDefinitionEntity() == null && cfg.isWithLazyProcessResolver()) {
-            cfg.getLazyFlowDefinitionResolver().resolve(cfg, (SIComposite) currentInstance.getObject())
-                    .map(Flow::getProcessDefinition)
-                    .map(ProcessDefinition::getEntityProcessDefinition)
-                    .ifPresent(processDefinitionEntity -> {
-                        petition.setProcessDefinitionEntity((ProcessDefinitionEntity) processDefinitionEntity);
+            cfg
+                    .getLazyFlowDefinitionResolver()
+                    .resolve(cfg, (SIComposite) currentInstance.getObject())
+                    .ifPresent(clazz -> {
+                        petition.setProcessDefinitionEntity(petitionService.findEntityProcessDefinitionByClass(clazz));
                     });
         }
     }
