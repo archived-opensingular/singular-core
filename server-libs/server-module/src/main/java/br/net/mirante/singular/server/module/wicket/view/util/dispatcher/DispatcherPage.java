@@ -202,7 +202,6 @@ public abstract class DispatcherPage extends WebPage {
         final StringValue action            = getParam(r, ACTION);
         final StringValue petitionId        = getParam(r, PETITION_ID);
         final StringValue formName          = getParam(r, SIGLA_FORM_NAME);
-        final StringValue forceViewMainForm = getParam(r, FORCE_VIEW_MAIN_FORM);
         final StringValue formVersionPK     = getParam(r, FORM_VERSION_KEY);
 
         if (action.isEmpty()) {
@@ -218,7 +217,6 @@ public abstract class DispatcherPage extends WebPage {
         final FormPageConfig cfg = buildConfig(r, pi, formAction, fn, fvk);
 
         if (cfg != null) {
-            cfg.setForceViewMainForm(forceViewMainForm.toBoolean(false));
             if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
                 throw new SingularServerException("Nenhum fluxo está configurado");
             }

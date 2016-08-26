@@ -17,8 +17,6 @@ public class Parameters {
 
     public static final String ITEM_PARAM_NAME = "item";
 
-    public final static String FORCE_VIEW_MAIN_FORM = "fvmf";
-
     public final static String FORM_VERSION_KEY = "fvk";
 
 }
