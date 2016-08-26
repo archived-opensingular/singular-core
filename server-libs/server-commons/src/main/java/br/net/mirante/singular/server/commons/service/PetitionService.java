@@ -280,21 +280,24 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     }
 
     public FormKey send(T peticao, SInstance instance, boolean mainForm) {
+
         final FormKey              key               = preparePetitionForTransition(peticao, instance, mainForm);
         final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
         final ProcessInstance      processInstance   = processDefinition.newInstance();
 
         savePetitionHistory(peticao.getCod(), key);
-
         processInstance.setDescription(peticao.getDescription());
-
         final ProcessInstanceEntity processEntity = processInstance.saveEntity();
-
         peticao.setProcessInstanceEntity(processEntity);
-
         processInstance.start();
+        onSend(peticao, processEntity);
+
         return key;
     }
+
+    protected void onSend(T peticao, ProcessInstanceEntity processEntity) {
+    }
+
 
     private void savePetitionHistory(Long petitionId, FormKey formKey) {
         PetitionEntity     petitionEntity = petitionDAO.find(petitionId);

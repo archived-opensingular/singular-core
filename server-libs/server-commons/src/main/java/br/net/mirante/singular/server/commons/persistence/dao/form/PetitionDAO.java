@@ -1,10 +1,13 @@
 package br.net.mirante.singular.server.commons.persistence.dao.form;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
+import br.net.mirante.singular.support.persistence.BaseDAO;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
@@ -13,13 +16,9 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 
-import br.net.mirante.singular.flow.core.TaskType;
-import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
-import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
-import br.net.mirante.singular.support.persistence.BaseDAO;
-import br.net.mirante.singular.support.persistence.enums.SimNao;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
@@ -77,6 +76,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
             hql.append(" , ta.beginDate as situationBeginDate ");
             hql.append(" , pie.beginDate as processBeginDate ");
             hql.append(" , currentDraftEntity.editionDate as editionDate ");
+            hql.append(" , pie.cod as processInstanceId ");
             appendCustomSelectClauses(hql);
         }
     }

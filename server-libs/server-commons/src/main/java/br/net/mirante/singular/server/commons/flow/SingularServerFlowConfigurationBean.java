@@ -8,12 +8,21 @@ import org.hibernate.SessionFactory;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import br.net.mirante.singular.commons.util.Loggable;
+import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
 import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
+import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 public class SingularServerFlowConfigurationBean extends HibernateSingularFlowConfigurationBean implements Loggable {
 
@@ -22,6 +31,9 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
 
     @Inject
     private SessionFactory sessionFactory;
+
+    @Inject
+    private PlatformTransactionManager transactionManager;
 
     @PostConstruct
     protected void postConstruct() {
@@ -55,5 +67,10 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
                 session.close();
             }
         }
+    }
+
+    @Override
+    protected void configureWaitingTasksJobSchedule() {
+        getScheduleService().schedule(new TransactionalScheduledJobProxy(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildMinutely(1)), transactionManager));
     }
 }

@@ -5,18 +5,24 @@
 
 package br.net.mirante.singular.server.p.core.wicket.box;
 
-import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import br.net.mirante.singular.commons.lambda.IBiFunction;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.server.commons.flow.rest.Action;
+import br.net.mirante.singular.server.commons.flow.rest.ActionResponse;
+import br.net.mirante.singular.server.commons.form.FormActions;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.service.dto.*;
+import br.net.mirante.singular.server.commons.util.Parameters;
+import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
+import br.net.mirante.singular.server.core.wicket.ModuleLink;
+import br.net.mirante.singular.server.core.wicket.historico.HistoricoPage;
+import br.net.mirante.singular.server.p.core.wicket.model.BoxItemModel;
+import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.IBSAction;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -33,30 +39,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
-import br.net.mirante.singular.commons.lambda.IBiFunction;
-import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.server.commons.flow.rest.Action;
-import br.net.mirante.singular.server.commons.flow.rest.ActionResponse;
-import br.net.mirante.singular.server.commons.form.FormActions;
-import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
-import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
-import br.net.mirante.singular.server.commons.service.dto.FormDTO;
-import br.net.mirante.singular.server.commons.service.dto.ItemAction;
-import br.net.mirante.singular.server.commons.service.dto.ItemActionConfirmation;
-import br.net.mirante.singular.server.commons.service.dto.ItemActionType;
-import br.net.mirante.singular.server.commons.service.dto.ItemBox;
-import br.net.mirante.singular.server.commons.service.dto.ProcessDTO;
-import br.net.mirante.singular.server.commons.util.Parameters;
-import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import br.net.mirante.singular.server.core.wicket.ModuleLink;
-import br.net.mirante.singular.server.core.wicket.historico.HistoricoPage;
-import br.net.mirante.singular.server.p.core.wicket.model.BoxItemModel;
-import br.net.mirante.singular.server.p.core.wicket.view.AbstractCaixaContent;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.IBSAction;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
+import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
@@ -119,15 +108,15 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
             if (itemAction.getType() == ItemActionType.POPUP) {
                 actionColumn.appendStaticAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), linkFunction(itemAction, getBaseUrl(), getLinkParams()), visibleFunction(itemAction),
-                    c -> c.styleClasses($m.ofValue("worklist-action-btn")));
+                        c -> c.styleClasses($m.ofValue("worklist-action-btn")));
             } else if (itemAction.getType() == ItemActionType.ENDPOINT) {
                 actionColumn.appendAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), dynamicLinkFunction(itemAction, getProcessGroup().getConnectionURL(), getLinkParams()), visibleFunction(itemAction),
-                    c -> c.styleClasses($m.ofValue("worklist-action-btn")));
+                        c -> c.styleClasses($m.ofValue("worklist-action-btn")));
             }
         }
 
-        actionColumn.appendStaticAction(getMessage("label.table.column.history"),
-                Icone.HISTORY, this::criarLinkHistorico);
+        actionColumn
+                .appendStaticAction(getMessage("label.table.column.history"), Icone.HISTORY, this::criarLinkHistorico, (x) -> true, c -> c.styleClasses($m.ofValue("worklist-action-btn")));
 
         builder.appendColumn(actionColumn);
     }
@@ -165,9 +154,13 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     private String mountStaticUrl(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItemModel) {
         final BoxItemAction action = boxItemModel.getActionByName(itemAction.getName());
-        return baseUrl
-                + action.getEndpoint()
-                + appendParameters(additionalParams);
+        if (action.getEndpoint().startsWith("http")) {
+            return action.getEndpoint();
+        } else {
+            return baseUrl
+                    + action.getEndpoint()
+                    + appendParameters(additionalParams);
+        }
     }
 
     private IBSAction<BoxItemModel> dynamicLinkFunction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
