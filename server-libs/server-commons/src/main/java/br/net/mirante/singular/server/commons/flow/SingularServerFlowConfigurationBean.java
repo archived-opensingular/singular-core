@@ -1,5 +1,12 @@
 package br.net.mirante.singular.server.commons.flow;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
@@ -7,12 +14,6 @@ import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 public class SingularServerFlowConfigurationBean extends HibernateSingularFlowConfigurationBean implements Loggable {
 
@@ -40,7 +41,7 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
         if ("true".equals(ConfigProperties.get(ConfigProperties.SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS))) {
             TransactionSynchronizationManager.bindResource(this.sessionFactory, sessionFactory.openSession());
             getLogger().info("INITIALIZING FLOW DEFINITIONS");
-            singularServerConfiguration.processDefinitionFormNameMap().keySet().stream().forEach(pdclass -> {
+            singularServerConfiguration.getProcessDefinitionFormNameMap().keySet().stream().forEach(pdclass -> {
                 try {
                     getLogger().info("INITIALIZING " + pdclass.getName() + "....");
                     pdclass.newInstance().getEntityProcessVersion();

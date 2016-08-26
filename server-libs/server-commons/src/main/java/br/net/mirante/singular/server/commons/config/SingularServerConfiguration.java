@@ -1,15 +1,18 @@
 package br.net.mirante.singular.server.commons.config;
 
 
-import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.form.SType;
-import org.springframework.web.context.ServletContextAware;
-
-import javax.servlet.ServletContext;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.servlet.ServletContext;
+
+import org.springframework.web.context.ServletContextAware;
+
+import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.form.SType;
 
 /**
  * Spring Bean para guardar parametros de configuração reutilizáveis
@@ -21,7 +24,7 @@ public class SingularServerConfiguration implements ServletContextAware {
     private IServerContext[] contexts;
     private String           springMVCServletMapping;
     private Map<String, Object> attrs = new HashMap<>();
-    private List<Class<? extends SType<?>>> formPackagesTypeMap;
+    private List<Class<? extends SType<?>>> formTypes;
     private String                          processGroupCod;
     private String                          definitionsBasePackage;
     private Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap = new HashMap<>(0);
@@ -47,8 +50,8 @@ public class SingularServerConfiguration implements ServletContextAware {
         return attrs.get(name);
     }
 
-    public List<Class<? extends SType<?>>> getFormPackagesTypeMap() {
-        return formPackagesTypeMap;
+    public List<Class<? extends SType<?>>> getFormTypes() {
+        return Collections.unmodifiableList(formTypes);
     }
 
     public String getProcessGroupCod() {
@@ -60,8 +63,8 @@ public class SingularServerConfiguration implements ServletContextAware {
     }
 
     public Map<Class<? extends
-            ProcessDefinition>, String> processDefinitionFormNameMap() {
-        return processDefinitionFormNameMap;
+            ProcessDefinition>, String> getProcessDefinitionFormNameMap() {
+        return Collections.unmodifiableMap(processDefinitionFormNameMap);
     }
 
     @Override
@@ -74,7 +77,7 @@ public class SingularServerConfiguration implements ServletContextAware {
         this.defaultPublicUrls = webInitializer.getDefaultPublicUrls();
         this.springMVCServletMapping = springHibernateInitializer.springMVCServletMapping();
         Optional.ofNullable(formInitializer)
-                .ifPresent(fi -> this.formPackagesTypeMap = fi.getTypes());
+                .ifPresent(fi -> this.formTypes = fi.getTypes());
         Optional.ofNullable(flowInitializer)
                 .ifPresent(fi -> this.processGroupCod = fi.processGroupCod());
         Optional.ofNullable(flowInitializer)

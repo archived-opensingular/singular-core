@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -52,7 +53,17 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     @RequestMapping(value = PATH_LIST_MENU, method = RequestMethod.GET)
     public List<MenuGroup> listMenu(@RequestParam(MENU_CONTEXT) String context, @RequestParam(USER) String user) {
 
-        List<MenuGroup> groups = new ArrayList<>();
+        List<MenuGroup> groups = listMenuGroups();
+
+        filterAccessRight(groups, user);
+
+        customizeMenu(groups, context, user);
+
+        return groups;
+    }
+
+    private List<MenuGroup> listMenuGroups() {
+        List<MenuGroup>                      groups        = new ArrayList<>();
         Map<String, List<ProcessDefinition>> definitionMap = new HashMap<>();
         Flow.getDefinitions().forEach(d -> {
             if (!definitionMap.containsKey(d.getCategory())) {
@@ -72,7 +83,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
                             menuGroup
                                     .getProcesses()
                                     .add(
-                                            new ProcessDTO(d.getKey(), d.getName(), singularServerConfiguration.processDefinitionFormNameMap().get(d.getClass()))
+                                            new ProcessDTO(d.getKey(), d.getName(), singularServerConfiguration.getProcessDefinitionFormNameMap().get(d.getClass()))
                                     )
             );
 
@@ -80,16 +91,11 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
 
             groups.add(menuGroup);
         });
-
-        filterAccessRight(groups, user);
-
-        customizeMenu(groups, context, user);
-
         return groups;
     }
 
     protected void addForms(MenuGroup menuGroup) {
-        for (Class<? extends SType<?>> formClass : singularServerConfiguration.getFormPackagesTypeMap()) {
+        for (Class<? extends SType<?>> formClass : singularServerConfiguration.getFormTypes()) {
             String name = SFormUtil.getTypeName(formClass);
             SType<?> sType = singularFormConfig.getTypeLoader().loadType(name).get();
             Class<? extends SType<?>> sTypeClass = (Class<? extends SType<?>>) sType.getClass();
@@ -110,8 +116,25 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     @RequestMapping(value = PATH_LIST_PERMISSIONS, method = RequestMethod.GET)
     public List<SingularPermission> listAllPermissions() {
         List<SingularPermission> permissions = new ArrayList<>();
-        permissions.add(new SingularPermission("singular", null));
-        permissions.add(new SingularPermission("singular2", null));
+
+        // Coleta permissões de caixa
+        List<SingularPermission> menuPermissions = listMenuGroups().stream()
+                .map(menuGroup -> new SingularPermission(menuGroup.getId(), null))
+                .collect(Collectors.toList());
+
+        permissions.addAll(menuPermissions);
+
+        // Coleta permissões de tipo
+        permissions.addAll(permissionResolverService.listAllTypePermissions());
+
+        // Coleta permissões de processo
+        permissions.addAll(permissionResolverService.listAllProcessesPermissions());
+
+        // Limpa o internal id por questão de segurança
+        for (SingularPermission permission : permissions) {
+            permission.setInternalId(null);
+        }
+
         return permissions;
     }
 }

@@ -1,18 +1,20 @@
 package br.net.mirante.singular.server.commons.form;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+
 import br.net.mirante.singular.form.SDictionary;
 import br.net.mirante.singular.form.SFormUtil;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.spring.SpringTypeLoader;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 public class SingularServerSpringTypeLoader extends SpringTypeLoader<String> {
 
@@ -26,7 +28,7 @@ public class SingularServerSpringTypeLoader extends SpringTypeLoader<String> {
 
     @PostConstruct
     private void init() {
-        singularServerConfiguration.getFormPackagesTypeMap().forEach(this::add);
+        singularServerConfiguration.getFormTypes().forEach(this::add);
     }
 
     private void add(Class<? extends SType<?>> type) {
