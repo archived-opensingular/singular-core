@@ -9,6 +9,7 @@ import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
+import br.net.mirante.singular.server.commons.flow.flow.renderer.remote.YFilesFlowRemoteRenderer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -39,7 +40,7 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
     @Override
     public IFlowRenderer getFlowRenderer() {
 //        return JGraphFlowRenderer.INSTANCE;
-        return YFilesFlowRenderer.getInstance();
+        return new YFilesFlowRemoteRenderer(null);
     }
 
     public void initializeFlowDefinitionsDatabase() {
