@@ -1,16 +1,22 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.common;
 
+import java.util.List;
+import java.util.function.Function;
+
+import org.apache.commons.lang3.tuple.Triple;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.exemplos.util.TripleConverter;
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewListByTable;
 import br.net.mirante.singular.form.view.SViewReadOnly;
-import org.apache.commons.lang3.tuple.Triple;
-
-import java.util.List;
-import java.util.function.Function;
 
 public class STypeSubstanciaPopulator {
 
@@ -60,7 +66,7 @@ public class STypeSubstanciaPopulator {
                     .asAtr()
                     .label("Substância")
                     .dependsOn(dependentType)
-                    .visible(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
+                    .exists(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
         }
 
         final String substanciaSimpleName = substanciaDescricao.getNameSimple();

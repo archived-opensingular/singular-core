@@ -1,16 +1,23 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco;
 
+import org.apache.commons.lang3.tuple.Triple;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.common.STypeSubstanciaPopulator;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeFormaFarmaceutica;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeLinhaProducao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.exemplos.util.TripleConverter;
-import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInfoType;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.STypeSimple;
+import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
-import org.apache.commons.lang3.tuple.Triple;
 
 @SInfoType(name = "STypeNotificacaoSimplificadaBaixoRisco", spackage = SPackageNotificacaoSimplificadaBaixoRisco.class)
 public class STypeNotificacaoSimplificadaBaixoRisco extends STypeComposite<SIComposite> {
@@ -40,7 +47,7 @@ public class STypeNotificacaoSimplificadaBaixoRisco extends STypeComposite<SICom
         {
             configuracaoLinhaProducao
                     .asAtr()
-                    .label("Descrição").required().dependsOn(linhaProducao).visible(i -> Value.notNull(i, linhaProducao.id))
+                    .label("Descrição").required().dependsOn(linhaProducao).exists(i -> Value.notNull(i, linhaProducao.id))
                     .asAtrBootstrap()
                     .colPreference(8);
             configuracaoLinhaProducao
