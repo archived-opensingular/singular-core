@@ -5,19 +5,18 @@
 
 package br.net.mirante.singular.flow.core;
 
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.reflections.Reflections;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.reflections.Reflections;
+
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class ProcessDefinitionCache {
 
@@ -35,16 +34,16 @@ public final class ProcessDefinitionCache {
 
     private static ProcessDefinitionCache cache;
 
-    private final String packageName;
+    private final String[] packagesNames;
     
     @SuppressWarnings("rawtypes")
-    private ProcessDefinitionCache(String packageName) {
-        this.packageName = packageName;
+    private ProcessDefinitionCache(String[] packagesNames) {
+        this.packagesNames = packagesNames;
         ImmutableList.Builder<ProcessDefinition<?>> cache = ImmutableList.builder();
         Map<String, ProcessDefinition<?>> cacheByKey = new HashMap<>();
         Map<Class<? extends ProcessInstance>, ProcessDefinition<?>> cacheByInstanceType = new HashMap<>();
 
-        Reflections reflections = new Reflections(packageName);
+        Reflections reflections = new Reflections(packagesNames);
 
         Set<Class<? extends ProcessDefinition>> subTypes = reflections.getSubTypesOf(ProcessDefinition.class);
 
@@ -64,11 +63,11 @@ public final class ProcessDefinitionCache {
         definitionsByKey = ImmutableMap.copyOf(cacheByKey);
     }
 
-    public static ProcessDefinitionCache get(String packageName) {
+    public static ProcessDefinitionCache get(String[] packagesNames) {
         if (cache == null) {
             synchronized (ProcessDefinitionCache.class) {
                 if (cache == null) {
-                    cache = new ProcessDefinitionCache(packageName);
+                    cache = new ProcessDefinitionCache(packagesNames);
                 }
             }
         }
@@ -96,7 +95,7 @@ public final class ProcessDefinitionCache {
     public ProcessDefinition<?> getDefinition(String key) {
         ProcessDefinition<?> processDefinition = definitionsByKey.get(key);
         if(processDefinition == null){
-            throw new SingularFlowException("O processo com chave '"+key+"' não foi encontrado no pacote: "+packageName);
+            throw new SingularFlowException("O processo com chave '" + key + "' não foi encontrado nos pacotes: " + packagesNames);
         }
         return processDefinition;
     }
