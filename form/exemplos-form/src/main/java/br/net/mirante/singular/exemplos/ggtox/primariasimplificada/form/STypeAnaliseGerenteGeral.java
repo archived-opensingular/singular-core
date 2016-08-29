@@ -6,8 +6,8 @@ import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeHTML;
 import br.net.mirante.singular.form.view.SViewByBlock;
 
-@SInfoType(name = "STypeAnaliseGerencial", spackage = SPackagePeticaoPrimariaSimplificada.class)
-public class STypeAnaliseGerencial extends STypePersistentComposite {
+@SInfoType(name = "STypeAnaliseGerenteGeral", spackage = SPackagePeticaoPrimariaSimplificada.class)
+public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
