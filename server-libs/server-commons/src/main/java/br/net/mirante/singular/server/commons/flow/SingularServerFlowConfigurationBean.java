@@ -1,17 +1,9 @@
 package br.net.mirante.singular.server.commons.flow;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
-import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
@@ -39,7 +31,7 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
     @PostConstruct
     protected void postConstruct() {
         this.setProcessGroupCod(singularServerConfiguration.getProcessGroupCod());
-        this.setDefinitionsBasePackage(singularServerConfiguration.getDefinitionsBasePackage());
+        this.setDefinitionsPackages(singularServerConfiguration.getDefinitionsPackages());
         Flow.setConf(this);
         initializeFlowDefinitionsDatabase();
     }

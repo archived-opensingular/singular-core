@@ -1,18 +1,12 @@
 package br.net.mirante.singular.server.commons.config;
 
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.servlet.ServletContext;
-
-import org.springframework.web.context.ServletContextAware;
-
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.SType;
+import org.springframework.web.context.ServletContextAware;
+
+import javax.servlet.ServletContext;
+import java.util.*;
 
 /**
  * Spring Bean para guardar parametros de configuração reutilizáveis
@@ -26,7 +20,7 @@ public class SingularServerConfiguration implements ServletContextAware {
     private Map<String, Object> attrs = new HashMap<>();
     private List<Class<? extends SType<?>>> formTypes;
     private String                          processGroupCod;
-    private String                          definitionsBasePackage;
+    private String[]                        definitionsPackages;
     private Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap = new HashMap<>(0);
     private String[] defaultPublicUrls;
 
@@ -58,8 +52,8 @@ public class SingularServerConfiguration implements ServletContextAware {
         return processGroupCod;
     }
 
-    public String getDefinitionsBasePackage() {
-        return definitionsBasePackage;
+    public String[] getDefinitionsPackages() {
+        return definitionsPackages;
     }
 
     public Map<Class<? extends
@@ -83,6 +77,6 @@ public class SingularServerConfiguration implements ServletContextAware {
         Optional.ofNullable(flowInitializer)
                 .ifPresent(fi -> this.processDefinitionFormNameMap = fi.processDefinitionFormNameMap());
         Optional.ofNullable(flowInitializer)
-                .ifPresent(fi -> this.definitionsBasePackage = fi.definitionsBasePackage());
+                .ifPresent(fi -> this.definitionsPackages = fi.definitionsBasePackage());
     }
 }
