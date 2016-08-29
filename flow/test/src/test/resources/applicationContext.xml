@@ -11,7 +11,7 @@
 
     <bean name="singularFlowConfigurationBean" class="br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean">
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="definitionsBasePackage" value="br.net.mirante.singular"/>
+        <property name="definitionsPackages" value="br.net.mirante.singular"/>
         <property name="userService" ref="testUserService"/>
         <property name="processGroupCod" value="SINGULARTEST"/>
     </bean>
