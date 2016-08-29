@@ -524,4 +524,8 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
                 .map(ProcessDefinition::getEntityProcessDefinition)
                 .orElseThrow(() -> new SingularFlowException("Não foi possivel recuperar a definição do processo"));
     }
+
+    public List<PetitionContentHistoryEntity> listPetitionContentHistoryByCodInstancePK(int instancePK) {
+        return petitionContentHistoryDAO.listPetitionContentHistoryByCodInstancePK(instancePK);
+    }
 }

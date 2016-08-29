@@ -1,32 +1,41 @@
 package br.net.mirante.singular.server.commons.wicket.historico;
 
-import java.util.Iterator;
-
-import javax.inject.Inject;
-
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-
-import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.persistence.service.ProcessRetrieveService;
+import br.net.mirante.singular.persistence.entity.Actor;
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.form.FormActions;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
+import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.util.Parameters;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
+import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.resource.Icone;
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
+
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.Optional;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public abstract class AbstractHistoricoContent extends Content {
 
     private static final long serialVersionUID = 8587873133590041152L;
 
     @Inject
-    private ProcessRetrieveService processRetrieveService;
+    private PetitionService petitionService;
 
-    private BSDataTable<IEntityTaskInstance, String> listTable;
-    private IEntityProcessInstance                   entityProcessInstance;
+    private int    instancePK;
+    private String processGroupPK;
 
     public AbstractHistoricoContent(String id) {
         super(id);
@@ -45,13 +54,9 @@ public abstract class AbstractHistoricoContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-
-        int instanceId = getPage().getPageParameters().get(Parameters.INSTANCE_ID).toInt();
-        entityProcessInstance = processRetrieveService.retrieveProcessInstanceByCod(instanceId);
-
-        listTable = setupDataTable();
-        queue(listTable);
-
+        instancePK = getPage().getPageParameters().get(Parameters.INSTANCE_ID).toInt();
+        processGroupPK = getPage().getPageParameters().get(Parameters.PROCESS_GROUP_PARAM_NAME).toString();
+        queue(setupDataTable());
         queue(getBtnCancelar());
     }
 
@@ -66,31 +71,66 @@ public abstract class AbstractHistoricoContent extends Content {
 
     protected abstract Class<? extends Page> getBackPage();
 
-    private BSDataTable<IEntityTaskInstance, String> setupDataTable() {
+    private BSDataTable<PetitionContentHistoryEntity, String> setupDataTable() {
         return new BSDataTableBuilder<>(createDataProvider())
-                .appendPropertyColumn(getMessage("label.table.column.task.name"),
-                        t -> t.getTask().getName())
-                .appendPropertyColumn(getMessage("label.table.column.begin.date"),
-                        IEntityTaskInstance::getBeginDate)
-                .appendPropertyColumn(getMessage("label.table.column.end.date"),
-                        IEntityTaskInstance::getEndDate)
-                .appendPropertyColumn(getMessage("label.table.column.allocated.user"),
-                        "allocatedUser.simpleName")
-                .build("tabela");
+                .appendPropertyColumn(
+                        getMessage("label.table.column.task.name"),
+                        p -> p.getTaskInstanceEntity().getTask().getName()
+                )
+                .appendPropertyColumn(
+                        getMessage("label.table.column.begin.date"),
+                        p -> p.getTaskInstanceEntity().getBeginDate()
+                )
+                .appendPropertyColumn(
+                        getMessage("label.table.column.end.date"),
+                        p -> p.getTaskInstanceEntity().getEndDate()
+                )
+                .appendPropertyColumn(
+                        getMessage("label.table.column.allocated.user"),
+                        p -> Optional.ofNullable(p.getActor()).map(Actor::getNome).orElse("")
+                )
+                .appendActionColumn(
+                        Model.of(""),
+                        column -> column.appendStaticAction(Model.of("Visualizar"), Icone.EYE, (model, id) -> {
+                            final String url = DispatcherPageUtil.baseURL(getBaseUrl())
+                                    .formAction(FormActions.FORM_VIEW.getId())
+                                    .formId(null)
+                                    .param(Parameters.FORM_VERSION_KEY, model.getFormVersionEntity().getCod())
+                                    .build();
+                            final WebMarkupContainer link = new WebMarkupContainer(id);
+                            link.add($b.attr("target", String.format("_%s", model.getCod())));
+                            link.add($b.attr("href", url));
+                            return link;
+                        })
+                ).build("tabela");
     }
 
-    private BaseDataProvider<IEntityTaskInstance, String> createDataProvider() {
-        return new BaseDataProvider<IEntityTaskInstance, String>() {
-
+    private BaseDataProvider<PetitionContentHistoryEntity, String> createDataProvider() {
+        return new BaseDataProvider<PetitionContentHistoryEntity, String>() {
             @Override
             public long size() {
-                return entityProcessInstance.getTasks().size();
+                return petitionService.listPetitionContentHistoryByCodInstancePK(instancePK).size();
             }
 
             @Override
-            public Iterator<? extends IEntityTaskInstance> iterator(int first, int count, String sortProperty, boolean ascending) {
-                return entityProcessInstance.getTasks().iterator();
+            public Iterator<? extends PetitionContentHistoryEntity> iterator(int first, int count, String sortProperty, boolean ascending) {
+                return petitionService.listPetitionContentHistoryByCodInstancePK(instancePK).iterator();
             }
         };
     }
+
+    protected String getBaseUrl() {
+        return getModuleContext() + SingularSession.get().getServerContext().getUrlPath();
+    }
+
+    public String getModuleContext() {
+        final String groupConnectionURL = petitionService.findByProcessGroupCod(processGroupPK).getConnectionURL();
+        try {
+            final String path = new URL(groupConnectionURL).getPath();
+            return path.substring(0, path.indexOf("/", 1));
+        } catch (Exception e) {
+            throw new SingularServerException(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
+        }
+    }
+
 }

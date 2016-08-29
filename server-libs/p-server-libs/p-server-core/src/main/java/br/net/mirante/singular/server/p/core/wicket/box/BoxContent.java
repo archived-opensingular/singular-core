@@ -125,6 +125,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         PageParameters pageParameters = new PageParameters();
         if (boxItemModel.getProcessInstanceId() != null) {
             pageParameters.add(Parameters.INSTANCE_ID, boxItemModel.getProcessInstanceId());
+            pageParameters.add(Parameters.PROCESS_GROUP_PARAM_NAME, getProcessGroup().getCod());
         }
 
         BookmarkablePageLink historiLink = new BookmarkablePageLink(id, HistoricoPage.class, pageParameters);
