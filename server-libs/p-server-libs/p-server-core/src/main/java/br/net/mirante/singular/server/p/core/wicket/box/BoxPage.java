@@ -8,11 +8,14 @@ package br.net.mirante.singular.server.p.core.wicket.box;
 import static br.net.mirante.singular.server.commons.util.Parameters.*;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
 
+import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.dto.ItemBox;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
@@ -29,10 +32,28 @@ public class BoxPage extends ServerTemplate {
     @Override
     protected Content getContent(String id) {
 
-        final String            processGroupCod   = getPageParameters().get(PROCESS_GROUP_PARAM_NAME).toString();
-        final String            menu              = getPageParameters().get(MENU_PARAM_NAME).toString();
-        final String            item              = getPageParameters().get(ITEM_PARAM_NAME).toString();
+        String                  processGroupCod   = getPageParameters().get(PROCESS_GROUP_PARAM_NAME).toString();
+        String                  menu              = getPageParameters().get(MENU_PARAM_NAME).toString();
+        String                  item              = getPageParameters().get(ITEM_PARAM_NAME).toString();
         final MenuSessionConfig menuSessionConfig = SingularSession.get().getMenuSessionConfig();
+
+        if (processGroupCod == null
+                && menu == null
+                && item == null) {
+
+            for (Iterator<Map.Entry<ProcessGroupEntity, List<MenuGroup>>> it = menuSessionConfig.getMap().entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<ProcessGroupEntity, List<MenuGroup>> entry =  it.next();
+                if (!entry.getValue().isEmpty()) {
+                    processGroupCod = entry.getKey().getCod();
+                    MenuGroup mg = entry.getValue().get(0);
+                    menu = mg.getLabel();
+                    item = mg.getItemBoxes().get(0).getName();
+                    break;
+                }
+            }
+
+        }
+
         final MenuGroup         menuGroup         = menuSessionConfig.getMenuPorLabel(menu);
         final ItemBox           itemBoxDTO        = menuGroup.getItemPorLabel(item);
 
