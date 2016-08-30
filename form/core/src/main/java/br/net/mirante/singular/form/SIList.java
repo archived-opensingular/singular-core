@@ -5,12 +5,16 @@
 
 package br.net.mirante.singular.form;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class SIList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
@@ -54,9 +58,10 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     @Override
     public void clearInstance() {
         if (values != null) {
-            int size = values.size();
-            for (int i = 0; i < size; i++) {
-                remove(0);
+            values.forEach(SInstance::internalOnRemove);
+            values.clear();
+            if (asAtr().getUpdateListener() != null) {
+                asAtr().getUpdateListener().accept(this);
             }
         }
     }

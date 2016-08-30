@@ -5,10 +5,10 @@ import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeHTML;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewByBlock;
 
-
-@SInfoType(name = "STypeParecer", spackage = SPackagePeticaoPrimariaSimplificada.class)
-public class STypeParecer extends STypePersistentComposite {
+@SInfoType(name = "STypeAnaliseGerente", spackage = SPackagePeticaoPrimariaSimplificada.class)
+public class STypeAnaliseGerente extends STypePersistentComposite {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -17,7 +17,15 @@ public class STypeParecer extends STypePersistentComposite {
         final STypeString resultadoAnalise = addField("resultadoAnalise", STypeString.class);
         final STypeHTML   parecer          = addField("parecer", STypeHTML.class);
 
-        parecer.asAtr()
+        parecer.withInitListener(sihtml -> {
+            if (sihtml.isEmptyOfData()) {
+                final ClassLoader loader = this.getClass().getClassLoader();
+                sihtml.fillFromInputStream(loader.getResourceAsStream("modelo/ModeloParecer.html"));
+            }
+        });
+
+        parecer
+                .asAtr()
                 .label("Parecer")
                 .required();
 
@@ -27,6 +35,10 @@ public class STypeParecer extends STypePersistentComposite {
 
         resultadoAnalise.selectionOf("Deferir", "Indeferir");
         resultadoAnalise.withRadioView();
+
+        withView(new SViewByBlock(), vbb -> {
+            vbb.newBlock("Análise Gerencial").add(resultadoAnalise).add(parecer);
+        });
     }
 
 }

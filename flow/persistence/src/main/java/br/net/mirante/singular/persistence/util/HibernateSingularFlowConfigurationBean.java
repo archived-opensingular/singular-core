@@ -5,11 +5,6 @@
 
 package br.net.mirante.singular.persistence.util;
 
-import javax.inject.Inject;
-
-import org.hibernate.SessionFactory;
-import org.springframework.util.Assert;
-
 import br.net.mirante.singular.flow.core.SingularFlowConfigurationBean;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
@@ -17,9 +12,15 @@ import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.service.DefaultHibernatePersistenceService;
 import br.net.mirante.singular.persistence.service.DefaultHibernateProcessDefinitionService;
+import org.hibernate.SessionFactory;
+import org.springframework.util.Assert;
+
+import javax.inject.Inject;
+import java.util.Arrays;
 
 public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigurationBean {
-    private String   definitionsBasePackage;
+
+    private String[] definitionsPackages;
 
     @Inject
     private IUserService userService;
@@ -27,27 +28,27 @@ public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigur
     @Inject
     private SessionFactory sessionFactory;
 
-    private SessionLocator sessionLocator = ()-> sessionFactory.getCurrentSession();
+    private SessionLocator sessionLocator = () -> sessionFactory.getCurrentSession();
 
     public HibernateSingularFlowConfigurationBean() {
         super(null);
     }
-    
+
     /**
      * @param processGroupCod - chave do sistema cadastrado no em <code>TB_GRUPO_PROCESSO</code>
      */
     protected HibernateSingularFlowConfigurationBean(String processGroupCod) {
         super(processGroupCod);
     }
-    
+
     @Override
-    protected String getDefinitionsBasePackage() {
-        return this.definitionsBasePackage;
+    protected String[] getDefinitionsPackages() {
+        return this.definitionsPackages;
     }
 
-    public void setDefinitionsBasePackage(String definitionsBasePackage) {
-        Assert.hasLength(definitionsBasePackage, "O pacote base onde estao as classe de definicao nao pode ser nulo ou vazio");
-        this.definitionsBasePackage = definitionsBasePackage;
+    public void setDefinitionsPackages(String[] definitionsPackages) {
+        Arrays.stream(definitionsPackages).forEach(dbp -> Assert.hasLength(dbp, "O pacote base onde estao as classe de definicao nao pode ser nulo ou vazio"));
+        this.definitionsPackages = definitionsPackages;
     }
 
     @Override

@@ -86,10 +86,10 @@ public abstract class SingularFlowConfigurationBean {
     // ------- Método de recuperação de definições --------------------
 
     protected ProcessDefinitionCache getDefinitionCache() {
-        return ProcessDefinitionCache.get(getDefinitionsBasePackage());
+        return ProcessDefinitionCache.get(getDefinitionsPackages());
     }
 
-    protected abstract String getDefinitionsBasePackage();
+    protected abstract String[] getDefinitionsPackages();
 
     public <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> processClass) {
         return ProcessDefinitionCache.getDefinition(processClass);
