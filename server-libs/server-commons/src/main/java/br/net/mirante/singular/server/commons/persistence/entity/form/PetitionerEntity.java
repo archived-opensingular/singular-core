@@ -10,11 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(schema = Constants.SCHEMA, name = "TB_PETICIONANTE")
@@ -35,7 +31,6 @@ public class PetitionerEntity extends BaseEntity<Long> {
     @Column(name = "ID_PESSOA")
     private String idPessoa;
 
-
     @Column(name = "NU_CPF_CNPJ")
     private String cpfCNPJ;
 
@@ -45,7 +40,6 @@ public class PetitionerEntity extends BaseEntity<Long> {
             @Parameter(name = "valueOfMethod", value = "valueOfEnum")})
     @Column(name = "TP_PESSOA", insertable = false, updatable = false)
     private PersonType personType;
-
 
     @Override
     public Long getCod() {

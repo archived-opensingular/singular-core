@@ -80,7 +80,6 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     @Inject
     private PetitionContentHistoryDAO petitionContentHistoryDAO;
 
-
     public T find(Long cod) {
         return petitionDAO.find(cod);
     }
@@ -279,7 +278,7 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         }
     }
 
-    public FormKey send(T peticao, SInstance instance, boolean mainForm) {
+    public FormKey send(T peticao, SInstance instance, boolean mainForm, String codResponsavel) {
 
         final FormKey              key               = preparePetitionForTransition(peticao, instance, mainForm);
         final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
@@ -290,14 +289,13 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         final ProcessInstanceEntity processEntity = processInstance.saveEntity();
         peticao.setProcessInstanceEntity(processEntity);
         processInstance.start();
-        onSend(peticao, processEntity);
+        onSend(peticao, instance, processEntity, codResponsavel);
 
         return key;
     }
 
-    protected void onSend(T peticao, ProcessInstanceEntity processEntity) {
+    protected void onSend(T peticao, SInstance instance, ProcessInstanceEntity processEntity, String codResponsavel) {
     }
-
 
     private void savePetitionHistory(Long petitionId, FormKey formKey) {
         PetitionEntity     petitionEntity = petitionDAO.find(petitionId);
