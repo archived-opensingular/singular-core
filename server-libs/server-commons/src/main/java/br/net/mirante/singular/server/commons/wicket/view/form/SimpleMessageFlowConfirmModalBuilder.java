@@ -2,15 +2,16 @@ package br.net.mirante.singular.server.commons.wicket.view.form;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
 
-public class SimpleMessageFlowConfirmModalBuilder extends AbstractFlowConfirmModalBuilder {
+public class SimpleMessageFlowConfirmModalBuilder<T extends PetitionEntity> extends AbstractFlowConfirmModalBuilder<T> {
 
-    public SimpleMessageFlowConfirmModalBuilder(AbstractFormPage formPage) {
+    public SimpleMessageFlowConfirmModalBuilder(AbstractFormPage<T> formPage) {
         super(formPage);
     }
 

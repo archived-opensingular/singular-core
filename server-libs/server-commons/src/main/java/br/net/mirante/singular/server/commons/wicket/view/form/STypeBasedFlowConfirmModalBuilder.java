@@ -8,12 +8,13 @@ import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
 
-public class STypeBasedFlowConfirmModalBuilder extends AbstractFlowConfirmModalBuilder {
+public class STypeBasedFlowConfirmModalBuilder<T extends PetitionEntity> extends AbstractFlowConfirmModalBuilder<T> {
 
     private final SFormConfig<String>           formConfig;
     private final RefType                       refType;
@@ -21,7 +22,7 @@ public class STypeBasedFlowConfirmModalBuilder extends AbstractFlowConfirmModalB
     private final IFormService                  formService;
     private       SInstanceRootModel<SInstance> instanceModel;
 
-    public STypeBasedFlowConfirmModalBuilder(AbstractFormPage formPage,
+    public STypeBasedFlowConfirmModalBuilder(AbstractFormPage<T> formPage,
                                              SFormConfig<String> formConfig,
                                              RefType refType,
                                              FormKey formKey,

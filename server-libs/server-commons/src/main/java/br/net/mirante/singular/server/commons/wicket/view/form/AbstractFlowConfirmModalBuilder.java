@@ -3,6 +3,7 @@ package br.net.mirante.singular.server.commons.wicket.view.form;
 
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -12,11 +13,11 @@ import org.apache.wicket.model.IModel;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 
-public abstract class AbstractFlowConfirmModalBuilder implements FlowConfirmModalBuilder {
+public abstract class AbstractFlowConfirmModalBuilder<T extends PetitionEntity> implements FlowConfirmModalBuilder<T> {
 
-    protected final AbstractFormPage formPage;
+    protected final AbstractFormPage<T> formPage;
 
-    public AbstractFlowConfirmModalBuilder(AbstractFormPage formPage) {
+    public AbstractFlowConfirmModalBuilder(AbstractFormPage<T> formPage) {
         this.formPage = formPage;
     }
 
@@ -27,12 +28,12 @@ public abstract class AbstractFlowConfirmModalBuilder implements FlowConfirmModa
      * @param m  -> modal
      * @return the new AjaxButton
      */
-    protected FlowConfirmButton newFlowConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder m) {
-        return new FlowConfirmButton(tn, "confirm-btn", im, ViewMode.EDIT.equals(vm), formPage, m);
+    protected FlowConfirmButton<T> newFlowConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder m) {
+        return new FlowConfirmButton<>(tn, "confirm-btn", im, ViewMode.EDIT.equals(vm), formPage, m);
     }
 
     protected void addDefaultConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder modal) {
-        final FlowConfirmButton confirmButton = newFlowConfirmButton(tn, im, vm, modal);
+        final FlowConfirmButton<T> confirmButton = newFlowConfirmButton(tn, im, vm, modal);
         confirmButton.add($b.on("click", (c) -> JQuery.$(modal).append(".modal('hide');")));
         modal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", confirmButton);
     }

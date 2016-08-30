@@ -50,19 +50,22 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
 
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
+
+    @Inject
+    protected PetitionService<T> petitionService;
+
+    @Inject
+    protected IFormService formService;
+
+    @Inject
+    @Named("formConfigWithDatabase")
+    protected SFormConfig<String> singularFormConfig;
+
     protected final Class<T>            petitionClass;
     protected final FormPageConfig      config;
     protected final IModel<T>           currentModel;
     protected final IModel<FormKey>     formModel;
-    @Inject
-    protected       PetitionService<T>  petitionService;
-    @Inject
-    protected       IFormService        formService;
-    @Inject
-    @Named("formConfigWithDatabase")
-    protected       SFormConfig<String> singularFormConfig;
-
-    protected AbstractFormContent content;
+    protected       AbstractFormContent content;
 
     public AbstractFormPage(Class<T> petitionClass, FormPageConfig config) {
         if (config == null) {
@@ -99,7 +102,8 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     private FormEntity getFormEntityDraftOrPetition(T petition) {
-        return Optional.ofNullable(petition.getCurrentDraftEntity())
+        return Optional
+                .ofNullable(petition.getCurrentDraftEntity())
                 .map(DraftEntity::getForm)
                 .filter(form -> petitionService.getFormType(form.getCod()).getAbbreviation().equals(getFormType(config)))
                 .orElse(getFormPetitionEntity(petition).map(FormPetitionEntity::getForm).orElse(null));
@@ -114,7 +118,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     private Optional<TaskDefinitionEntity> getCurrentTaskDefinition(T petition) {
-        ProcessInstanceEntity processInstanceEntity = petition.getProcessInstanceEntity();
+        final ProcessInstanceEntity processInstanceEntity = petition.getProcessInstanceEntity();
         if (processInstanceEntity != null) {
             return Optional.of(processInstanceEntity.getCurrentTask().getTask().getTaskDefinition());
         }
@@ -249,8 +253,8 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected void buildFlowTransitionButton(String buttonId, BSContainer<?> buttonContainer, BSContainer<?> modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
-        BSModalBorder modal = buildFlowConfirmationModal(buttonId, modalContainer, transitionName, instanceModel, viewMode);
-        buildFlowButton(buttonId, buttonContainer, transitionName, instanceModel, modal);
+        final BSModalBorder modal = buildFlowConfirmationModal(buttonId, modalContainer, transitionName, instanceModel, viewMode);
+        buildFlowButton(buttonId, buttonContainer, transitionName, modal);
     }
 
     public void atualizarContentWorklist(AjaxRequestTarget target) {
@@ -264,13 +268,13 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                         + "</div>\n");
         BSModalBorder enviarModal = new BSModalBorder("send-modal", getMessage("label.title.send"));
         enviarModal
-                .addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.close", new AjaxButton("cancel-btn") {
+                .addButton(BSModalBorder.ButtonStyle.DEFAULT, "label.button.close", new AjaxButton("cancel-btn") {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         enviarModal.hide(target);
                     }
                 })
-                .addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel) {
+                .addButton(BSModalBorder.ButtonStyle.PRIMARY, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel) {
                     protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                         AbstractFormPage.this.send(instanceModel);
                         atualizarContentWorklist(target);
@@ -288,6 +292,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                         target.add(form);
                         addToastrErrorMessage("message.send.error");
                     }
+
                 });
         tpModal.add(enviarModal);
         return enviarModal;
@@ -338,12 +343,21 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return true;
     }
 
-    protected boolean executeTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
+    protected void executeTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
         if (onBeforeExecuteTransition(ajaxRequestTarget, form, transitionName, currentInstance)) {
             formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject(), isMainForm()));
-            return true;
+            onAfterExecuteTransition(ajaxRequestTarget, transitionName);
         }
-        return false;
+    }
+
+    protected void onAfterExecuteTransition(AjaxRequestTarget ajaxRequestTarget, String transitionName) {
+        atualizarContentWorklist(ajaxRequestTarget);
+        addToastrSuccessMessageWorklist("message.action.success", transitionName);
+        closeBrowserWindow(ajaxRequestTarget);
+    }
+
+    protected void closeBrowserWindow(AjaxRequestTarget ajaxRequestTarget) {
+        ajaxRequestTarget.appendJavaScript("window.close();");
     }
 
     protected boolean hasProcess() {
@@ -362,12 +376,14 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return new ResourceModel("label.form.content.title");
     }
 
-    private void buildFlowButton(String buttonId, BSContainer<?> buttonContainer, String transitionName, IModel<? extends SInstance> instanceModel, BSModalBorder confirmarAcaoFlowModal) {
-        TemplatePanel tp = buttonContainer
-                .newTemplateTag(tt -> "<button  type='submit' class='btn' wicket:id='" + buttonId +
-                        "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n");
-        SingularButton singularButton = new SingularButton(buttonId, content.getFormInstance()) {
-
+    private void buildFlowButton(String buttonId,
+                                 BSContainer<?> buttonContainer,
+                                 String transitionName,
+                                 BSModalBorder confirmarAcaoFlowModal) {
+        final TemplatePanel tp = buttonContainer.newTemplateTag(tt ->
+                "<button  type='submit' class='btn' wicket:id='" + buttonId + "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n"
+        );
+        final SingularButton singularButton = new SingularButton(buttonId, content.getFormInstance()) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 confirmarAcaoFlowModal.show(target);
@@ -397,8 +413,8 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
      * @param tn -> the transition name
      * @return the FlowConfirmModalBuilder
      */
-    protected FlowConfirmModalBuilder resolveFlowConfirmModalBuilder(String tn) {
-        return new SimpleMessageFlowConfirmModalBuilder(this);
+    protected FlowConfirmModalBuilder<T> resolveFlowConfirmModalBuilder(String tn) {
+        return new SimpleMessageFlowConfirmModalBuilder<T>(this);
     }
 
     protected boolean isMainForm() {
@@ -436,4 +452,5 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
         return null;
     }
+
 }
