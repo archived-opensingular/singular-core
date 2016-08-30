@@ -5,10 +5,11 @@
 
 package br.net.mirante.singular.util.wicket.modal;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
-import java.io.Serializable;
-
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.util.wicket.ajax.AjaxErrorEventPayload;
+import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
+import br.net.mirante.singular.util.wicket.feedback.NotContainedFeedbackMessageFilter;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -25,6 +26,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.border.Border;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.ILabelProvider;
@@ -38,11 +40,9 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.util.wicket.ajax.AjaxErrorEventPayload;
-import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
-import br.net.mirante.singular.util.wicket.feedback.NotContainedFeedbackMessageFilter;
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import java.io.Serializable;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 @SuppressWarnings({ "serial" })
 public class BSModalBorder extends Border {
@@ -206,7 +206,7 @@ public class BSModalBorder extends Border {
         return addButton(style, model, button);
     }
 
-    public BSModalBorder addButton(ButtonStyle style, IModel<String> label, AjaxButton button) {
+    public BSModalBorder addButton(ButtonStyle style, IModel<String> label, Button button) {
         if (label != null) {
             button.setLabel(label);
         }
