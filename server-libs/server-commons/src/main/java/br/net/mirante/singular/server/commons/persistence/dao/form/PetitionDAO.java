@@ -102,7 +102,15 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         hql.append(" LEFT JOIN formDraftEntity.formType formDraftType  ");
         hql.append(" LEFT JOIN pie.tasks ta ");
         hql.append(" LEFT JOIN ta.task task ");
+        appendCustomFromClauses(hql);
     }
+
+    /**
+     * Append Custom From Clauses
+     */
+    protected void appendCustomFromClauses(StringBuilder hql) {
+    }
+
 
     private void buildWhereClause(StringBuilder hql,
                                   Map<String, Object> params,
