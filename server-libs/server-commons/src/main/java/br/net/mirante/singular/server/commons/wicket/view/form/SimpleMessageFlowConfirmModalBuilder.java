@@ -3,6 +3,8 @@ package br.net.mirante.singular.server.commons.wicket.view.form;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.wicket.builder.HTMLParameters;
+import br.net.mirante.singular.server.commons.wicket.builder.MarkupCreator;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -17,7 +19,7 @@ public class SimpleMessageFlowConfirmModalBuilder<T extends PetitionEntity> exte
 
     @Override
     public String getMarkup(String idSuffix) {
-        return "<div wicket:id='flow-modal" + idSuffix + "' class='portlet-body form'>\n" + "<div wicket:id='flow-msg'/>\n" + "</div>\n";
+        return MarkupCreator.div("flow-modal" + idSuffix, new HTMLParameters().styleClass("portlet-body form"), MarkupCreator.div("flow-msg"));
     }
 
     @Override

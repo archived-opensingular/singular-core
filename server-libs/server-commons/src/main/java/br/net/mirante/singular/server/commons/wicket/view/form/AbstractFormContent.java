@@ -21,6 +21,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -38,15 +39,15 @@ public abstract class AbstractFormContent extends Content {
 
     protected final BSContainer<?> modalContainer = new BSContainer<>("modals");
     protected final String typeName;
-    private final BSModalBorder closeModal = construirCloseModal();
-    protected IModel<String> msgFlowModel = new Model<>();
-    protected IModel<String> transitionNameModel = new Model<>();
-    protected ViewMode viewMode = ViewMode.EDIT;
-    protected AnnotationMode annotationMode = AnnotationMode.NONE;
+    private final BSModalBorder  closeModal          = construirCloseModal();
+    protected     IModel<String> msgFlowModel        = new Model<>();
+    protected     IModel<String> transitionNameModel = new Model<>();
+    protected     ViewMode       viewMode            = ViewMode.EDIT;
+    protected     AnnotationMode annotationMode      = AnnotationMode.NONE;
     protected SingularFormPanel<String> singularFormPanel;
     @Inject
     @Named("formConfigWithDatabase")
-    protected SFormConfig<String> singularFormConfig;
+    protected SFormConfig<String>       singularFormConfig;
 
     public AbstractFormContent(String idWicket, String type, ViewMode viewMode, AnnotationMode annotationMode) {
         super(idWicket, false, false);
@@ -74,8 +75,14 @@ public abstract class AbstractFormContent extends Content {
         form.add(buildValidateButton());
         form.add(buildCloseButton());
         form.add(closeModal);
+        form.add(buildExtraContent("extra-content"));
         return form;
     }
+
+    protected Component buildExtraContent(String id) {
+        return new WebMarkupContainer(id).setVisible(false);
+    }
+
 
     private IReadOnlyModel<SInstance> getInstanceModel() {
         return (IReadOnlyModel<SInstance>) () -> Optional
@@ -88,19 +95,19 @@ public abstract class AbstractFormContent extends Content {
     private Component buildFlowButtons() {
         BSContainer<?> buttonContainer = new BSContainer<>("custom-buttons");
         buttonContainer.setVisible(true);
-        
+
         configureCustomButtons(buttonContainer, modalContainer, viewMode, annotationMode, getFormInstance());
-        
+
         return buttonContainer;
     }
 
-    protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance){
-        
+    protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
+
     }
-    
+
     protected abstract SInstance createInstance(SDocumentFactory documentFactory, RefType refType);
 
-    protected void onBuildSingularFormPanel(SingularFormPanel singularFormPanel){
+    protected void onBuildSingularFormPanel(SingularFormPanel singularFormPanel) {
 
     }
 
@@ -114,8 +121,8 @@ public abstract class AbstractFormContent extends Content {
                 ProcessInstanceEntity processInstance = getProcessInstance();
                 SDocumentFactory extendedFactory = singularFormConfig.getDocumentFactory().extendAddingSetupStep(
                         document -> {
-                            document.bindLocalService("processService",AbstractFormContent.ProcessFormService.class,
-                                    RefService.of((AbstractFormContent.ProcessFormService)()->processInstance));
+                            document.bindLocalService("processService", AbstractFormContent.ProcessFormService.class,
+                                    RefService.of((AbstractFormContent.ProcessFormService) () -> processInstance));
                         });
                 return AbstractFormContent.this.createInstance(extendedFactory, refType);
             }
@@ -154,11 +161,11 @@ public abstract class AbstractFormContent extends Content {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
-                try{
+                try {
                     saveForm(getFormInstance());
                     addToastrSuccessMessage("message.success");
                     atualizarContentWorklist(target);
-                }catch (HibernateOptimisticLockingFailureException e){
+                } catch (HibernateOptimisticLockingFailureException e) {
                     addToastrErrorMessage("message.save.concurrent_error");
                 }
             }
@@ -184,7 +191,7 @@ public abstract class AbstractFormContent extends Content {
                 try {
                     save(target, instanceModel);
                     addToastrSuccessMessage("message.success");
-                }catch (HibernateOptimisticLockingFailureException e){
+                } catch (HibernateOptimisticLockingFailureException e) {
                     addToastrErrorMessage("message.save.concurrent_error");
                 }
             }
@@ -260,7 +267,7 @@ public abstract class AbstractFormContent extends Content {
     }
 
     protected Behavior visibleOnlyIfDraftInEditionBehaviour() {
-        return $b.visibleIf(()->!hasProcess() && viewMode.isEdition());
+        return $b.visibleIf(() -> !hasProcess() && viewMode.isEdition());
     }
 
     protected Behavior visibleOnlyInAnnotationBehaviour() {
@@ -270,7 +277,7 @@ public abstract class AbstractFormContent extends Content {
     protected IModel<? extends SInstance> getFormInstance() {
         return singularFormPanel.getRootInstance();
     }
-    
+
     protected abstract ProcessInstanceEntity getProcessInstance();
 
     protected abstract void saveForm(IModel<? extends SInstance> currentInstance);
@@ -284,7 +291,7 @@ public abstract class AbstractFormContent extends Content {
     public SingularFormPanel<String> getSingularFormPanel() {
         return singularFormPanel;
     }
-    
+
     @FunctionalInterface
     public interface ProcessFormService extends Serializable {
         ProcessInstanceEntity getProcessInstance();

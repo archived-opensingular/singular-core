@@ -9,10 +9,11 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.wicket.builder.HTMLParameters;
+import br.net.mirante.singular.server.commons.wicket.builder.MarkupCreator;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-
 
 public class STypeBasedFlowConfirmModalBuilder<T extends PetitionEntity> extends AbstractFlowConfirmModalBuilder<T> {
 
@@ -36,7 +37,7 @@ public class STypeBasedFlowConfirmModalBuilder<T extends PetitionEntity> extends
 
     @Override
     public String getMarkup(String idSuffix) {
-        return "<div wicket:id='flow-modal" + idSuffix + "' class='portlet-body form'>\n" + "<div wicket:id='singular-form-panel'/>\n" + "</div>\n";
+        return MarkupCreator.div("flow-modal" + idSuffix, new HTMLParameters().styleClass("portlet-body form"), MarkupCreator.div("singular-form-panel"));
     }
 
     @Override

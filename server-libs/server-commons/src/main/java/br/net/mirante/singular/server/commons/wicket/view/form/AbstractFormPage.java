@@ -31,6 +31,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
@@ -193,11 +194,19 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             @Override
             protected void onBuildSingularFormPanel(SingularFormPanel singularFormPanel) {
                 AbstractFormPage.this.onBuildSingularFormPanel(singularFormPanel);
+            }
 
+            @Override
+            protected Component buildExtraContent(String id) {
+                return Optional.ofNullable(AbstractFormPage.this.buildExtraContent(id)).orElse(super.buildExtraContent(id));
             }
         };
 
         return content;
+    }
+
+    protected Component buildExtraContent(String id) {
+        return null;
     }
 
     protected void onBuildSingularFormPanel(SingularFormPanel singularFormPanel) {
@@ -275,15 +284,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                     }
                 })
                 .addButton(BSModalBorder.ButtonStyle.PRIMARY, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel) {
+
                     protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                        AbstractFormPage.this.send(instanceModel);
-                        atualizarContentWorklist(target);
-                        if (getIdentifier() == null) {
-                            addToastrSuccessMessageWorklist("message.send.success", URL_PATH_ACOMPANHAMENTO);
-                        } else {
-                            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier(), URL_PATH_ACOMPANHAMENTO);
-                        }
-                        target.appendJavaScript("; window.close();");
+                        AbstractFormPage.this.send(instanceModel, target, enviarModal);
                     }
 
                     @Override
@@ -332,10 +335,21 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         }
     }
 
-    protected void send(IModel<? extends SInstance> currentInstance) {
+    protected void send(IModel<? extends SInstance> currentInstance, AjaxRequestTarget target, BSModalBorder enviarModal) {
         if (onBeforeSend(currentInstance)) {
             formModel.setObject(petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), isMainForm()));
+            onSended(target, enviarModal);
         }
+    }
+
+    protected void onSended(AjaxRequestTarget target, BSModalBorder enviarModal) {
+        atualizarContentWorklist(target);
+        if (getIdentifier() == null) {
+            addToastrSuccessMessageWorklist("message.send.success", URL_PATH_ACOMPANHAMENTO);
+        } else {
+            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier(), URL_PATH_ACOMPANHAMENTO);
+        }
+        target.appendJavaScript("; window.close();");
     }
 
     protected boolean onBeforeExecuteTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
@@ -346,11 +360,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected void executeTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
         if (onBeforeExecuteTransition(ajaxRequestTarget, form, transitionName, currentInstance)) {
             formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject(), isMainForm()));
-            onAfterExecuteTransition(ajaxRequestTarget, transitionName);
+            onTransitionExecuted(ajaxRequestTarget, transitionName);
         }
     }
 
-    protected void onAfterExecuteTransition(AjaxRequestTarget ajaxRequestTarget, String transitionName) {
+    protected void onTransitionExecuted(AjaxRequestTarget ajaxRequestTarget, String transitionName) {
         atualizarContentWorklist(ajaxRequestTarget);
         addToastrSuccessMessageWorklist("message.action.success", transitionName);
         closeBrowserWindow(ajaxRequestTarget);
