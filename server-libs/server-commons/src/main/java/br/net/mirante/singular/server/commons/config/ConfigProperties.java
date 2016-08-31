@@ -1,9 +1,9 @@
 package br.net.mirante.singular.server.commons.config;
 
 
-import java.util.Optional;
-
 import br.net.mirante.singular.commons.base.SingularProperties;
+
+import java.util.Optional;
 
 /**
  * Responsável por carregar as propriedades de configuração do
@@ -11,9 +11,9 @@ import br.net.mirante.singular.commons.base.SingularProperties;
  */
 public class ConfigProperties {
 
-    public static final  String     SINGULAR_SERVIDOR_ENDERECO    = "singular.servidor.endereco";
-    public static final  String     SINGULAR_DEV_MODE             = "singular.config.dev";
-    public static final  String     SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
+    public static final String SINGULAR_SERVIDOR_ENDERECO           = "singular.servidor.endereco";
+    public static final String SINGULAR_DEV_MODE                    = "singular.config.dev";
+    public static final String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
 
     /**
      * Permite acesso as propriedades configuradas para servidor de peticionamento como um todo:
@@ -38,6 +38,10 @@ public class ConfigProperties {
             return SingularProperties.get().getProperty(key);
         }
         return System.getProperty(key);
+    }
+
+    public static boolean isDevelopmentMode() {
+        return "true".equals(ConfigProperties.get(ConfigProperties.SINGULAR_DEV_MODE));
     }
 
 }

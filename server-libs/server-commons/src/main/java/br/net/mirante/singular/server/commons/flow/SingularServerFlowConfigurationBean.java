@@ -1,10 +1,9 @@
 package br.net.mirante.singular.server.commons.flow;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
-import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
+import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
@@ -63,7 +62,8 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
     }
 
     @Override
-    protected void configureWaitingTasksJobSchedule() {
-        getScheduleService().schedule(new TransactionalScheduledJobProxy(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildMinutely(1)), transactionManager));
+    protected IScheduleService getScheduleService() {
+        return new TransactionalQuartzScheduledService(transactionManager);
     }
+
 }
