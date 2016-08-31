@@ -38,6 +38,13 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
  */
 public class AnnotationComponent extends Panel {
 
+    static final String                             ID_ANNOTATION_TEXT = "annotationText";
+    static final String                             ID_APPROVAL_LABEL  = "approvalLabel";
+    static final String                             ID_EMPTY_BUTTON    = "emptyButton";
+    static final String                             ID_TOGGLE_BUTTON   = "toggleButton";
+    static final String                             ID_EDIT_BUTTON     = "editButton";
+    static final String                             ID_REMOVE_BUTTON   = "removeButton";
+
     private final WicketBuildContext                context;
     private final ISInstanceAwareModel<SIComposite> referencedModel;
     private final SInstanceValueModel<String>       textModel;
@@ -71,17 +78,17 @@ public class AnnotationComponent extends Panel {
             .appendTag("div", true, null, editAnnotationModal)
             .appendTag("div", true, null, removeAnnotationModal);
 
-        add(new NewAnnotationButton("emptyButton", editAnnotationModal, editable)
+        add(new NewAnnotationButton(ID_EMPTY_BUTTON, editAnnotationModal, editable)
             .add($b.visibleIf(() -> !hasAnnotationText())));
 
         add(new WebMarkupContainer("dropDownContainer")
-            .add(new WebMarkupContainer("toggleButton")
+            .add(new WebMarkupContainer(ID_TOGGLE_BUTTON)
                 .add($b.classAppender($m.get(() -> getToggleButtonCSS(getReferencedModel())))))
             .add(new Label("title", $m.ofValue(getTitle(getReferencedModel()))))
-            .add(new Label("annotationText", $m.get(() -> getTrimmedText())))
-            .add(new ApprovalStatusLabel("approvalLabel", approvedModel))
-            .add(new EditAnnotationButton("editButton", editAnnotationModal, editable))
-            .add(new RemoveAnnotationButton("removeButton", removeAnnotationModal).setVisible(editable))
+            .add(new Label(ID_ANNOTATION_TEXT, $m.get(() -> getTrimmedText())))
+            .add(new ApprovalStatusLabel(ID_APPROVAL_LABEL, approvedModel))
+            .add(new EditAnnotationButton(ID_EDIT_BUTTON, editAnnotationModal, editable))
+            .add(new RemoveAnnotationButton(ID_REMOVE_BUTTON, removeAnnotationModal).setVisible(editable))
             .add($b.visibleIf(() -> hasAnnotationText())));
     }
 
@@ -90,9 +97,9 @@ public class AnnotationComponent extends Panel {
         super.onConfigure();
         add(new AttributeAppender("class", "open") {
             @Override
-                public boolean isEnabled(Component component) {
-                    return super.isEnabled(component) && hasAnnotationText();
-                }
+            public boolean isEnabled(Component component) {
+                return super.isEnabled(component) && hasAnnotationText();
+            }
             @Override
             public boolean isTemporary(Component component) {
                 return true;
