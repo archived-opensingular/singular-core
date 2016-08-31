@@ -54,48 +54,47 @@ import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 @SuppressWarnings("serial")
 public class WicketBuildContext implements Serializable {
 
-    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
+    static final HintKey<HashMap<String, Integer>>                       COL_WIDTHS                                    = () -> new HashMap<>();
 
-    public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {
-    };
+    public static final MetaDataKey<WicketBuildContext>                  METADATA_KEY                                  = new MetaDataKey<WicketBuildContext>() {};
 
-    public static final HintKey<IModel<String>> TITLE_KEY                                     = () -> null;
-    public static final HintKey<Boolean>        RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
+    public static final HintKey<IModel<String>>                          TITLE_KEY                                     = () -> null;
+    public static final HintKey<Boolean>                                 RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
 
-    private final List<WicketBuildContext>          children = newArrayList();
-    private final HashMap<HintKey<?>, Serializable> hints    = new HashMap<>();
+    private final List<WicketBuildContext>                               children                                      = newArrayList();
+    private final HashMap<HintKey<?>, Serializable>                      hints                                         = new HashMap<>();
 
-    private final WicketBuildContext parent;
-    private final BSContainer<?>     container;
-    private final boolean            hintsInherited;
-    private final BSContainer<?>     externalContainer;
+    private final WicketBuildContext                                     parent;
+    private final BSContainer<?>                                         container;
+    private final boolean                                                hintsInherited;
+    private final BSContainer<?>                                         externalContainer;
 
-    private IModel<? extends SInstance> model;
-    private UIBuilderWicket             uiBuilderWicket;
-    private ViewMode                    viewMode;
+    private IModel<? extends SInstance>                                  model;
+    private UIBuilderWicket                                              uiBuilderWicket;
+    private ViewMode                                                     viewMode;
 
-    private AnnotationMode                        annotation              = AnnotationMode.NONE;
+    private AnnotationMode                                               annotation                                    = AnnotationMode.NONE;
 
-    private boolean showBreadcrumb;
-    private boolean                                                      nested           = false;
-    private boolean                                                      titleInBlock     = false;
-    private List<String>                                                 breadCrumbs      = newArrayList();
-    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
-    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus;
+    private boolean                                                      showBreadcrumb;
+    private boolean                                                      nested                                        = false;
+    private boolean                                                      titleInBlock                                  = false;
+    private List<String>                                                 breadCrumbs                                   = newArrayList();
+    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus                              = newLinkedList();
+    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus        selectedBreadCrumbStatus;
 
-    private IBSComponentFactory<Component> preFormPanelFactory;
+    private IBSComponentFactory<Component>                               preFormPanelFactory;
 
-    private SView view;
+    private SView                                                        view;
 
     public WicketBuildContext(BSCol container, BSContainer<?> externalContainer, IModel<? extends SInstance> model) {
         this(null, container, externalContainer, false, model);
     }
 
     protected WicketBuildContext(WicketBuildContext parent,
-                                 BSContainer<?> container,
-                                 BSContainer<?> externalContainer,
-                                 boolean hintsInherited,
-                                 IModel<? extends SInstance> model) {
+        BSContainer<?> container,
+        BSContainer<?> externalContainer,
+        boolean hintsInherited,
+        IModel<? extends SInstance> model) {
 
         this.parent = parent;
         if (parent != null) {
@@ -111,14 +110,15 @@ public class WicketBuildContext implements Serializable {
     }
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
-        return configureNestedContext(new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model));
+        return configureNestedContext(new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model)
+            .setAnnotationMode(getAnnotationMode()));
     }
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
         return configureNestedContext(new WicketBuildContext(this, childContainer, externalContainer, hintsInherited, model));
     }
 
-    private WicketBuildContext configureNestedContext(WicketBuildContext context){
+    private WicketBuildContext configureNestedContext(WicketBuildContext context) {
         context.setNested(nested);
         return context;
     }
@@ -149,9 +149,10 @@ public class WicketBuildContext implements Serializable {
         return annotation;
     }
 
-    public void setAnnotationMode(AnnotationMode mode) {
+    public WicketBuildContext setAnnotationMode(AnnotationMode mode) {
         Objects.requireNonNull(mode);
         annotation = mode;
+        return this;
     }
 
     /**
@@ -187,9 +188,9 @@ public class WicketBuildContext implements Serializable {
             // final SType<?> tipo = model.getMInstancia().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
             mapper.addAjaxUpdate(
-                    formComponent,
-                    ISInstanceAwareModel.getInstanceModel(model),
-                    new OnFieldUpdatedListener());
+                formComponent,
+                ISInstanceAwareModel.getInstanceModel(model),
+                new OnFieldUpdatedListener());
         }
         return formComponent;
     }
@@ -222,8 +223,8 @@ public class WicketBuildContext implements Serializable {
 
     public static Stream<WicketBuildContext> streamParentContexts(Component comp) {
         return findNearest(comp)
-                .map(ctx -> ctx.streamParentContexts())
-                .orElse(Stream.empty());
+            .map(ctx -> ctx.streamParentContexts())
+            .orElse(Stream.empty());
     }
 
     public Stream<WicketBuildContext> streamParentContexts() {
@@ -254,8 +255,8 @@ public class WicketBuildContext implements Serializable {
     protected static <T> String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof ISInstanceAwareModel<?>) {
-            SInstance    instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
-            List<String> labels    = new ArrayList<>();
+            SInstance instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
+            List<String> labels = new ArrayList<>();
             while (instancia != null) {
                 labels.add(instancia.asAtr().getLabel());
                 instancia = instancia.getParent();
@@ -315,8 +316,8 @@ public class WicketBuildContext implements Serializable {
     }
 
     private <C extends Component> C createFeedbackPanel(ISupplier<C> factory, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
-        C                          feedback = factory.get();
-        SValidationFeedbackHandler handler  = SValidationFeedbackHandler.bindTo(getContainer()).addInstanceModel(getModel());
+        C feedback = factory.get();
+        SValidationFeedbackHandler handler = SValidationFeedbackHandler.bindTo(getContainer()).addInstanceModel(getModel());
         if (listenerFunc != null) {
             ISValidationFeedbackHandlerListener listener = listenerFunc.apply(feedback);
             if (listener != null)

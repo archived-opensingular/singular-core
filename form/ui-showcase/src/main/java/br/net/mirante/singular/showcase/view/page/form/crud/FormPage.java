@@ -15,17 +15,18 @@ import org.wicketstuff.annotation.mount.MountPath;
 @MountPath("form/edit")
 @SuppressWarnings("serial")
 public class FormPage extends Template {
-    protected static final String TYPE_NAME = "type",
-            MODEL_ID                        = "id",
-            VIEW_MODE                       = "viewMode",
-            ANNOTATION                      = "annotation";
+
+    protected static final String TYPE_NAME  = "type";
+    protected static final String MODEL_ID   = "id";
+    protected static final String VIEW_MODE  = "viewMode";
+    protected static final String ANNOTATION = "annotation";
 
     @Override
     protected Content getContent(String id) {
-        StringValue type = getPageParameters().get(TYPE_NAME),
-                idExampleData = getPageParameters().get(MODEL_ID),
-                viewMode = getPageParameters().get(VIEW_MODE),
-                annotation = getPageParameters().get(ANNOTATION);
+        StringValue type = getPageParameters().get(TYPE_NAME);
+        StringValue idExampleData = getPageParameters().get(MODEL_ID);
+        StringValue viewMode = getPageParameters().get(VIEW_MODE);
+        StringValue annotation = getPageParameters().get(ANNOTATION);
 
         return new FormContent(id, type, idExampleData, viewMode, annotation);
     }

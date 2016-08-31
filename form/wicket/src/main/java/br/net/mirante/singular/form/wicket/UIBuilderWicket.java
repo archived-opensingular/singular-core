@@ -83,9 +83,6 @@ import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
 import br.net.mirante.singular.form.wicket.panel.BreadPanel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
@@ -110,18 +107,10 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
             BSRow row = ctx.getContainer().newGrid().newRow();
             row.newCol().appendTag("div", panel);
             child = ctx.createChild(row.newCol(), true, ctx.getModel());
-            child.setAnnotationMode(ctx.getAnnotationMode());
         }
 
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
-
-        if (ctx.getAnnotationMode().enabled()) {
-            ctx.init(this, viewMode);
-            new AnnotationBuilder(this).build(ctx, viewMode, mapper);
-        } else {
-            mapper.buildView(child.init(this, viewMode));
-        }
-
+        mapper.buildView(child.init(this, viewMode));
     }
 
     private IWicketComponentMapper resolveMapper(SInstance instancia) {
@@ -187,37 +176,4 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         //@formatter:on
     }
-}
-
-class AnnotationBuilder {
-    //private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class.getName());
-
-    private UIBuilderWicket    parent;
-    private WicketBuildContext mainCtx;
-    private BSRow              mainGrid;
-
-    AnnotationBuilder(UIBuilderWicket parent) {
-        this.parent = parent;
-    }
-
-    public void build(WicketBuildContext ctx, ViewMode viewMode, IWicketComponentMapper mapper) {
-        final BSContainer<?> parentCol = ctx.getContainer();
-        mainGrid = parentCol.newGrid().newRow();
-        mainGrid.setOutputMarkupId(true);
-
-        mainGrid.setCssClass("sannotation-form-row");
-        mainCtx = createMainColumn(ctx, mainGrid);
-        executeMainMapper(viewMode, mapper, mainCtx);
-    }
-
-    private void executeMainMapper(ViewMode viewMode, IWicketComponentMapper mapper, WicketBuildContext mainCtx) {
-        mapper.buildView(mainCtx.init(parent, viewMode));
-    }
-
-    private WicketBuildContext createMainColumn(WicketBuildContext ctx, BSRow superRow) {
-        BSCol supercol = superRow.newCol(0).setCssClass("sannotation-form-col");
-        final BSGrid formGrid = supercol.newGrid();
-        return ctx.createChild(formGrid, false, ctx.getModel());
-    }
-
 }
