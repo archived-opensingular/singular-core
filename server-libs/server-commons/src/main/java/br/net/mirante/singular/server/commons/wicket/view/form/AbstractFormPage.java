@@ -24,6 +24,7 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.FormPetiti
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
+import br.net.mirante.singular.server.commons.wicket.builder.MarkupCreator;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -46,6 +47,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
@@ -205,12 +207,19 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return content;
     }
 
-    protected Component buildExtraContent(String id) {
-        return null;
+    private Component buildExtraContent(String id) {
+        final TemplatePanel extraPanel     = new TemplatePanel(id, MarkupCreator.div("extraContainer"));
+        final BSContainer   extraContainer = new BSContainer("extraContainer");
+        extraPanel.add(extraContainer);
+        appendExtraContent(extraContainer);
+        extraPanel.add($b.visibleIf(() -> extraContainer.visitChildren((object, visit) -> visit.stop("found!")) != null));
+        return extraPanel;
+    }
+
+    protected void appendExtraContent(BSContainer extraContainer) {
     }
 
     protected void onBuildSingularFormPanel(SingularFormPanel singularFormPanel) {
-
     }
 
     protected abstract IModel<?> getContentSubtitleModel();
@@ -428,7 +437,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
      * @return the FlowConfirmModalBuilder
      */
     protected FlowConfirmModalBuilder<T> resolveFlowConfirmModalBuilder(String tn) {
-        return new SimpleMessageFlowConfirmModalBuilder<T>(this);
+        return new SimpleMessageFlowConfirmModalBuilder<>(this);
     }
 
     protected boolean isMainForm() {
