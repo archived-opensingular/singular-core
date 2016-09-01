@@ -52,18 +52,13 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
      */
     private ViewMode viewMode = ViewMode.EDIT;
 
-    /**
-     * Permite apresentar anotações em conjunto.
-     */
-    private AnnotationMode annotation = AnnotationMode.NONE;
-
     private RefSDocumentFactory documentFactoryRef;
 
     private transient SFormConfig<FORM_KEY> singularFormConfig;
 
     private final boolean nested;
 
-    private IBSComponentFactory preFormPanelFactory;
+    private IBSComponentFactory<Component> preFormPanelFactory;
 
     /**
      * Construtor do painel
@@ -153,7 +148,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     }
 
     public AnnotationMode getAnnotationMode() {
-        return annotation;
+        return AnnotationMode.NONE;
     }
 
     /**
@@ -215,7 +210,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
         return getRootInstance().getObject().asAtr().getSubtitle();
     }
 
-    public void setPreFormPanelFactory(IBSComponentFactory preFormPanelFactory) {
+    public void setPreFormPanelFactory(IBSComponentFactory<Component> preFormPanelFactory) {
         this.preFormPanelFactory = preFormPanelFactory;
     }
 }

@@ -39,6 +39,7 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
         addFieldInteger(FIELD_TARGET_ID);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Object> T convert(Object valor, Class<T> classeDestino) {
         return (T) valor;

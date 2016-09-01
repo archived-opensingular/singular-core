@@ -56,22 +56,22 @@ import br.net.mirante.singular.form.validation.IValidationError;
  */
 public class SDocument {
 
-    public static final String FILE_TEMPORARY_SERVICE   = "fileTemporary";
-    public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
+    public static final String                     FILE_TEMPORARY_SERVICE   = "fileTemporary";
+    public static final String                     FILE_PERSISTENCE_SERVICE = "filePersistence";
 
-    private SInstance root;
+    private SInstance                              root;
 
-    private int lastId = 0;
+    private int                                    lastId                   = 0;
 
-    private SInstanceListeners instanceListeners;
+    private SInstanceListeners                     instanceListeners;
 
-    private DefaultServiceRegistry registry = new DefaultServiceRegistry();
+    private DefaultServiceRegistry                 registry                 = new DefaultServiceRegistry();
 
-    private RefType rootRefType;
+    private RefType                                rootRefType;
 
-    private SDocumentFactory documentFactory;
+    private SDocumentFactory                       documentFactory;
 
-    private SIList annotations;
+    private SIList<SIAnnotation>                   annotations;
 
     private SetMultimap<Integer, IValidationError> validationErrors;
 
@@ -106,7 +106,7 @@ public class SDocument {
      * Registra a persistência temporária de anexos. A persistência temporária
      * guarda os anexos em quanto o documento não é saldo.
      */
-    public void setAttachmentPersistenceTemporaryHandler(RefService<IAttachmentPersistenceHandler> ref) {
+    public void setAttachmentPersistenceTemporaryHandler(RefService<IAttachmentPersistenceHandler<? extends IAttachmentRef>> ref) {
         bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
     }
 
@@ -115,12 +115,12 @@ public class SDocument {
      * anexos salvos anteriormente e no momento de salvar o anexos que estavam
      * na persitência temporária.
      */
-    public void setAttachmentPersistencePermanentHandler(RefService<IAttachmentPersistenceHandler> ref) {
+    public void setAttachmentPersistencePermanentHandler(RefService<IAttachmentPersistenceHandler<? extends IAttachmentRef>> ref) {
         bindLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
 
     }
 
-    public boolean isAttachmentPersistenceTemporaryHandlerSupported(){
+    public boolean isAttachmentPersistenceTemporaryHandlerSupported() {
         return lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class) != null;
     }
 
@@ -132,8 +132,9 @@ public class SDocument {
      * @return Nunca null. Retorna {@link InMemoryAttachmentPersitenceHandler}
      *         por default.
      */
-    public IAttachmentPersistenceHandler getAttachmentPersistenceTemporaryHandler() {
-        IAttachmentPersistenceHandler ref = lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+    @SuppressWarnings("unchecked")
+    public IAttachmentPersistenceHandler<? extends IAttachmentRef> getAttachmentPersistenceTemporaryHandler() {
+        IAttachmentPersistenceHandler<? extends IAttachmentRef> ref = lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
         if (ref == null) {
             ref = new InMemoryAttachmentPersitenceHandler();
             setAttachmentPersistenceTemporaryHandler(RefService.of(ref));
@@ -141,7 +142,7 @@ public class SDocument {
         return ref;
     }
 
-    public boolean isAttachmentPersistencePermanentHandlerSupported(){
+    public boolean isAttachmentPersistencePermanentHandlerSupported() {
         return lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class) != null;
     }
 
@@ -150,12 +151,13 @@ public class SDocument {
      * anteriormente e responsável por gravar os novos anexos, que estavam na
      * persistencia temporária, no momento de salvar o formulário.
      */
-    public IAttachmentPersistenceHandler getAttachmentPersistencePermanentHandler() {
-        IAttachmentPersistenceHandler h = lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
-//        if (h == null) {
-//            throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
-//                + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
-//        }
+    @SuppressWarnings("unchecked")
+    public IAttachmentPersistenceHandler<? extends IAttachmentRef> getAttachmentPersistencePermanentHandler() {
+        IAttachmentPersistenceHandler<? extends IAttachmentRef> h = lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+        //        if (h == null) {
+        //            throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
+        //                + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
+        //        }
         return h;
     }
 
@@ -306,8 +308,8 @@ public class SDocument {
     //  intercept the persist call and do this job before the model
     //  would be persisted.
     public void persistFiles() {
-        IAttachmentPersistenceHandler persistent = getAttachmentPersistencePermanentHandler();
-        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceTemporaryHandler();
+        IAttachmentPersistenceHandler<? extends IAttachmentRef> persistent = getAttachmentPersistencePermanentHandler();
+        IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary = getAttachmentPersistenceTemporaryHandler();
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
 
@@ -326,7 +328,7 @@ public class SDocument {
         this.rootRefType = rootRefType;
     }
 
-    public <T extends Enum & AnnotationClassifier> SIAnnotation annotation(Integer id, T classifier) {
+    public <T extends Enum<T> & AnnotationClassifier> SIAnnotation annotation(Integer id, T classifier) {
         if (annotations == null)
             return null;
         for (SIAnnotation a : (List<SIAnnotation>) annotations.getValues()) {
@@ -337,7 +339,7 @@ public class SDocument {
         return null;
     }
 
-    public <T extends Enum & AnnotationClassifier> List<SIAnnotation> annotationsAnyClassifier(Integer id) {
+    public <T extends Enum<T> & AnnotationClassifier> List<SIAnnotation> annotationsAnyClassifier(Integer id) {
         List<SIAnnotation> siAnnotationList = new ArrayList<SIAnnotation>();
         if (annotations == null)
             return null;
@@ -349,7 +351,7 @@ public class SDocument {
         return siAnnotationList;
     }
 
-    private void setAnnotations(SIList annotations) {
+    private void setAnnotations(SIList<SIAnnotation> annotations) {
         this.annotations = annotations;
     }
 
@@ -357,13 +359,14 @@ public class SDocument {
         return root.getDictionary();
     }
 
-    private SIList newAnnotationList() {
+    @SuppressWarnings("unchecked")
+    private SIList<SIAnnotation> newAnnotationList() {
         if (getRootRefType().isPresent()) {
             RefType refTypeAnnotation = getRootRefType().get().createSubReference(STypeAnnotationList.class);
             if (getDocumentFactoryRef() != null) {
-                return (SIList) getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
+                return (SIList<SIAnnotation>) getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
             }
-            return (SIList) SDocumentFactory.empty().createInstance(refTypeAnnotation);
+            return (SIList<SIAnnotation>) SDocumentFactory.empty().createInstance(refTypeAnnotation);
         }
         return dictionary().newInstance(STypeAnnotationList.class);
     }
@@ -414,66 +417,68 @@ public class SDocument {
             validationErrors = LinkedHashMultimap.create();
         return validationErrors;
     }
-}
 
-/**
- * Responsible for moving files from temporary state to persistent.
- *
- * @author Fabricio Buzeto
- *
- */
-class AttachmentPersistenceHelper {
+    /**
+     * Responsible for moving files from temporary state to persistent.
+     *
+     * @author Fabricio Buzeto
+     *
+     */
+    private static class AttachmentPersistenceHelper {
 
-    private IAttachmentPersistenceHandler temporary, persistent;
+        private IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary, persistent;
 
-    public AttachmentPersistenceHelper(IAttachmentPersistenceHandler temporary,
-        IAttachmentPersistenceHandler persistent) {
-        this.temporary = Objects.requireNonNull(temporary);
-        this.persistent = Objects.requireNonNull(persistent);
-    }
+        public AttachmentPersistenceHelper(
+            IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary,
+            IAttachmentPersistenceHandler<? extends IAttachmentRef> persistent) {
 
-    public void doPersistence(SInstance element) {
-        if (element instanceof SIAttachment) {
-            handleAttachment((SIAttachment) element);
-        } else if (element instanceof ICompositeInstance) {
-            visitChildrenIfAny((ICompositeInstance) element);
+            this.temporary = Objects.requireNonNull(temporary);
+            this.persistent = Objects.requireNonNull(persistent);
         }
-    }
 
-    private void handleAttachment(SIAttachment attachment) {
-        moveFromTemporaryToPersistentIfNeeded(attachment);
-    }
-
-    private void moveFromTemporaryToPersistentIfNeeded(SIAttachment attachment) {
-        if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
-            IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
-            if (fileRef != null) {
-                IAttachmentRef newRef = persistent.copy(fileRef);
-                deleteOldFiles(attachment, fileRef);
-                updateFileId(attachment, newRef);
+        public void doPersistence(SInstance element) {
+            if (element instanceof SIAttachment) {
+                handleAttachment((SIAttachment) element);
+            } else if (element instanceof ICompositeInstance) {
+                visitChildrenIfAny((ICompositeInstance) element);
             }
         }
-    }
 
-    private void deleteOldFiles(SIAttachment attachment, IAttachmentRef fileRef) {
-        temporary.deleteAttachment(fileRef.getId());
-        persistent.deleteAttachment(attachment.getOriginalFileId());
-    }
-
-    private void updateFileId(SIAttachment attachment, IAttachmentRef newRef) {
-        attachment.setFileId(newRef.getId());
-        attachment.setOriginalFileId(newRef.getId());
-    }
-
-    private void visitChildrenIfAny(ICompositeInstance composite) {
-        if (!composite.getAllChildren().isEmpty()) {
-            visitAllChildren(composite);
+        private void handleAttachment(SIAttachment attachment) {
+            moveFromTemporaryToPersistentIfNeeded(attachment);
         }
-    }
 
-    private void visitAllChildren(ICompositeInstance composite) {
-        for (SInstance child : composite.getAllChildren()) {
-            doPersistence(child);
+        private void moveFromTemporaryToPersistentIfNeeded(SIAttachment attachment) {
+            if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
+                IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
+                if (fileRef != null) {
+                    IAttachmentRef newRef = persistent.copy(fileRef);
+                    deleteOldFiles(attachment, fileRef);
+                    updateFileId(attachment, newRef);
+                }
+            }
+        }
+
+        private void deleteOldFiles(SIAttachment attachment, IAttachmentRef fileRef) {
+            temporary.deleteAttachment(fileRef.getId());
+            persistent.deleteAttachment(attachment.getOriginalFileId());
+        }
+
+        private void updateFileId(SIAttachment attachment, IAttachmentRef newRef) {
+            attachment.setFileId(newRef.getId());
+            attachment.setOriginalFileId(newRef.getId());
+        }
+
+        private void visitChildrenIfAny(ICompositeInstance composite) {
+            if (!composite.getAllChildren().isEmpty()) {
+                visitAllChildren(composite);
+            }
+        }
+
+        private void visitAllChildren(ICompositeInstance composite) {
+            for (SInstance child : composite.getAllChildren()) {
+                doPersistence(child);
+            }
         }
     }
 }

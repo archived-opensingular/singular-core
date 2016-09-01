@@ -25,22 +25,22 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHandler {
 
-    private Map<String, IAttachmentRef> attachments = new HashMap<>();
+    private Map<String, FileSystemAttachmentRef> attachments = new HashMap<>();
 
     public InMemoryAttachmentPersitenceHandler() {
         super(StringUtils.isEmpty(System.getProperty("java.io.tmpdir")) ? "./tmp" : System.getProperty("java.io.tmpdir"));
     }
 
     @Override
-    public IAttachmentRef copy(IAttachmentRef toBeCopied) {
-        IAttachmentRef ref = super.copy(toBeCopied);
+    public FileSystemAttachmentRef copy(IAttachmentRef toBeCopied) {
+        FileSystemAttachmentRef ref = super.copy(toBeCopied);
         attachments.put(ref.getId(), ref);
         return ref;
     }
 
     @Override
-    public IAttachmentRef addAttachment(File file, long length) {
-        IAttachmentRef ref = super.addAttachment(file, length);
+    public FileSystemAttachmentRef addAttachment(File file, long length) {
+        FileSystemAttachmentRef ref = super.addAttachment(file, length);
         attachments.put(ref.getId(), ref);
         return ref;
     }
@@ -57,7 +57,7 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
     }
 
     @Override
-    public Collection<? extends IAttachmentRef> getAttachments() {
+    public Collection<FileSystemAttachmentRef> getAttachments() {
         return Collections.unmodifiableCollection(attachments.values());
     }
 

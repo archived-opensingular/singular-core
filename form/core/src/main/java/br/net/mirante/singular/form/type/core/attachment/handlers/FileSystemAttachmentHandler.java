@@ -42,7 +42,7 @@ import java.util.UUID;
  * @author Fabricio Buzeto
  */
 @SuppressWarnings("serial")
-public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandler {
+public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandler<FileSystemAttachmentRef> {
 
     protected static final String INFO_SUFFIX = ".INFO";
 
@@ -73,7 +73,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public IAttachmentRef addAttachment(File file, long length) {
+    public FileSystemAttachmentRef addAttachment(File file, long length) {
         try {
             return addAttachment(new FileInputStream(file), length);
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         }
     }
 
-    private IAttachmentRef addAttachment(InputStream origin, long originLength) throws IOException {
+    private FileSystemAttachmentRef addAttachment(InputStream origin, long originLength) throws IOException {
         String id = UUID.randomUUID().toString();
         File temp = findFileFromId(id);
         try (OutputStream fos = IOUtil.newBuffredOutputStream(temp);
@@ -95,7 +95,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public IAttachmentRef copy(IAttachmentRef toBeCopied) {
+    public FileSystemAttachmentRef copy(IAttachmentRef toBeCopied) {
         try {
             return addAttachment(toBeCopied.newInputStream(), toBeCopied.getSize());
         } catch (Exception e) {
@@ -104,8 +104,8 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public Collection<? extends IAttachmentRef> getAttachments() {
-        LinkedList<IAttachmentRef> result = new LinkedList<>();
+    public Collection<FileSystemAttachmentRef> getAttachments() {
+        LinkedList<FileSystemAttachmentRef> result = new LinkedList<>();
         File[] files = folder.listFiles();
         if (files == null) {
             return result;

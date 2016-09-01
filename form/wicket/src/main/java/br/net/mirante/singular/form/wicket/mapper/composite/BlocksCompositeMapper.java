@@ -67,7 +67,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 appendBlock(grid, block, portlet);
             }
 
-            for (SType<?> f : type.getFields()) {
+            for (SType<?> f : getInstanceType().getFields()) {
                 if (!addedTypes.contains(f.getNameSimple())) {
                     remainingTypes.add(f.getNameSimple());
                 }
@@ -91,7 +91,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             grid.appendTag("div", portlet);
 
             for (String typeName : block.getTypes()) {
-                row = buildBlockAndGetCurrentRow(type.getField(typeName), newGrid, row);
+                row = buildBlockAndGetCurrentRow(getInstanceType().getField(typeName), newGrid, row);
             }
 
         }

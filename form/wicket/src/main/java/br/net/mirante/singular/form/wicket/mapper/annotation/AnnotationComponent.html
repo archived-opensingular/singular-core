@@ -1,33 +1,26 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-    <div class="portlet-title">
-        <div class="caption">
-            <i class="fa fa-comment-o"></i>
-            <span class="caption-subject font-dark bold uppercase" style="font-size: x-small;">
-                <wicket:container wicket:id="target_label" />
-            </span>
-        </div>
-        <div class="actions">
-            <a class="btn btn-circle btn-icon-only btn-default small-ann-button"
-               style="padding: 5px; width: 27px; height: 27px;" wicket:id="open_modal">
-                <span wicket:id="open_icon" class="fa fa-pencil"></span>
+  <a data-toggle="dropdown" class="btn dropdown-toggle btn-icon-only btn-default" style="z-index: 1;" wicket:id="emptyButton"></a>
+  <wicket:container wicket:id="dropDownContainer">
+    <a data-toggle="dropdown" class="btn dropdown-toggle btn-icon-only" style="z-index: 1;" wicket:id="toggleButton"></a>
+    <div class="dropdown-menu theme-panel pull-right dropdown-custom hold-on-click">
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <h5 class="annotation-title" wicket:id="title">Título</h5>
+          <div class="annotation-actions">
+            <a class="annotation-action-edit" wicket:id="editButton">
+              <span class="fa fa-pencil" wicket:id="editIcon"></span>
             </a>
-            <a class="btn btn-circle btn-icon-only btn-default small-ann-button"
-               style="padding: 5px; width: 27px; height: 27px;" wicket:id="trash_modal" >
-                <i class="icon-trash"></i>
+            <a class="annotation-action-remove" wicket:id="removeButton" >
+              <i class="icon-trash"></i>
             </a>
+          </div>
+          <p class="annotation-text" wicket:id="annotationText"></p>
+          <hr></hr>
+          <div class="annotation-status" wicket:id="approvalLabel"></div>
         </div>
+      </div>
     </div>
-    <div class="portlet-body" style="height: auto;">
-
-            <div class="col-md-12 col-sm-12">
-                <div class="can-have-error form-group form-group-sm">
-                    <label wicket:id="comment_field" />
-                </div>
-            </div>
-            <div class="col-md-12 col-sm-12">
-                <label wicket:id="approval_field" />
-            </div>
-    </div>
+  </wicket:container>
 </wicket:panel>
 </html>

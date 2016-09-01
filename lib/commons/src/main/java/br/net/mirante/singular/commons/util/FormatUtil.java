@@ -63,4 +63,13 @@ public final class FormatUtil {
         }
         return time;
     }
+    
+    public static String booleanDescription(Boolean value, String trueDescription, String falseDescription) {
+        return booleanDescription(value, trueDescription, falseDescription, "");
+    }
+    public static String booleanDescription(Boolean value, String trueDescription, String falseDescription, String nullDescription) {
+        if (value == null)
+            return nullDescription;
+        return (value.booleanValue()) ? trueDescription : falseDescription;
+    }
 }

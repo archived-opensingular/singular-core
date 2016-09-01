@@ -5,6 +5,16 @@
 
 package br.net.mirante.singular.form.wicket.mapper.composite;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import java.util.HashMap;
+import java.util.Optional;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
@@ -17,21 +27,14 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
+import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.*;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-
-import java.util.HashMap;
-import java.util.Optional;
-
-import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 
 public abstract class AbstractCompositeMapper implements IWicketComponentMapper {
 
@@ -47,46 +50,45 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
 
     static abstract class AbstractCompositeViewBuilder implements ICompositeViewBuilder {
 
-        protected WicketBuildContext                          ctx;
-        protected AbstractSInstanceModel<? extends SInstance> model;
-        protected SIComposite                                 instance;
-        protected STypeComposite<SIComposite>                 type;
+        protected WicketBuildContext                ctx;
+        protected ISInstanceAwareModel<SIComposite> model;
 
         @SuppressWarnings("unchecked")
         AbstractCompositeViewBuilder(WicketBuildContext ctx) {
             this.ctx = ctx;
-            this.model = (AbstractSInstanceModel<? extends SInstance>) this.ctx.getModel();
-            this.instance = ctx.getCurrentInstance();
-            this.type = (STypeComposite<SIComposite>) instance.getType();
+            this.model = (ISInstanceAwareModel<SIComposite>) this.ctx.getModel();
         }
-
 
         @Override
         public void buildView() {
-            //            container.newTagWithFactory("ul", true, "class='page-breadcrumb breadcrumb'", (id) -> buildBreadCrumbBar(id, Arrays.asList("Bread", "Crumb")));
+
+            if (renderAnnotations()) {
+                ctx.getContainer().appendTag("div", new AnnotationComponent("annotation", ctx, model));
+            }
 
             final BSGrid grid = createCompositeGrid(ctx);
 
             if (!findFeedbackAwareParent().isPresent()) {
-                final BSContainer<?>       rootContainer   = ctx.getContainer();
+                final BSContainer<?> rootContainer = ctx.getContainer();
                 SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(rootContainer);
                 feedbackHandler.findNestedErrorsMaxLevel();
                 grid.appendTag("div", ctx.createFeedbackPanel("feedback").setShowBox(true));
             }
 
             buildFields(ctx, grid);
+        }
 
-            if (renderAnnotations()) {
-                ctx.getRootContext().updateAnnotations(
-                        appendAnnotationToggleButton(grid.newRow(), instance),
-                        instance);
-            }
+        private SIComposite getInstance() {
+            return ctx.getCurrentInstance();
+        }
+        protected STypeComposite<?> getInstanceType() {
+            return getInstance().getType();
         }
 
         protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row, final SInstanceFieldModel<SInstance> mCampo) {
 
-            final SInstance iCampo   = mCampo.getObject();
-            final ViewMode  viewMode = ctx.getViewMode();
+            final SInstance iCampo = mCampo.getObject();
+            final ViewMode viewMode = ctx.getViewMode();
 
             final BSCol col = row.newCol();
             configureColspan(ctx, iCampo, col);
@@ -117,12 +119,12 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         }
 
         protected int getPrefColspan(WicketBuildContext ctx, final SInstance iCampo) {
-            final SType<?>                 tCampo        = iCampo.getType();
+            final SType<?> tCampo = iCampo.getType();
             final HashMap<String, Integer> hintColWidths = ctx.getHint(COL_WIDTHS);
 
             return (hintColWidths.containsKey(tCampo.getName()))
-                    ? hintColWidths.get(tCampo.getName())
-                    : iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
+                ? hintColWidths.get(tCampo.getName())
+                : iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
         }
 
         protected SInstanceFieldModel<SInstance> fieldModel(SType<?> tCampo) {
@@ -130,7 +132,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
-            IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtr().getLabel()));
+            IModel<String> label = $m.ofValue(trimToEmpty(getInstance().asAtr().getLabel()));
             if (isNotBlank(label.getObject())) {
                 BSCol column = grid.newColInRow();
                 column.appendTag("h5", new Label("_title", label));
@@ -150,13 +152,13 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
 
         private boolean renderAnnotations() {
             return ctx.getRootContext().getAnnotationMode().enabled() &&
-                    instance.asAtrAnnotation().isAnnotated();
+                getInstance().asAtrAnnotation().isAnnotated();
         }
 
         protected BSGrid createCompositeGrid(WicketBuildContext ctx) {
 
             final BSContainer<?> parentCol = ctx.getContainer();
-            final BSGrid         grid      = parentCol.newGrid();
+            final BSGrid grid = parentCol.newGrid();
 
             addLabelIfNeeded(ctx, grid);
 
@@ -169,8 +171,8 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
             BSRow row = grid.newRow();
 
-            final WicketBuildContext             rootContext = ctx.getRootContext();
-            final IBSComponentFactory<Component> factory     = rootContext.getPreFormPanelFactory();
+            final WicketBuildContext rootContext = ctx.getRootContext();
+            final IBSComponentFactory<Component> factory = rootContext.getPreFormPanelFactory();
 
             if (factory != null) {
                 grid.newComponent(factory);
@@ -180,7 +182,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
 
             int rowColTotal = 0;
 
-            for (SType<?> tCampo : type.getFields()) {
+            for (SType<?> tCampo : getInstanceType().getFields()) {
                 final Boolean newRow = tCampo.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
                 if (newRow != null && newRow) {
                     row = grid.newRow();
@@ -197,7 +199,6 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
                 buildField(ctx.getUiBuilderWicket(), row, instanceModel);
             }
         }
-
 
     }
 

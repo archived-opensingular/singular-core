@@ -6,17 +6,14 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-import static com.google.common.collect.Lists.*;
 import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.apache.commons.lang3.StringUtils.*;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -34,6 +31,7 @@ import br.net.mirante.singular.form.view.SViewTab;
 import br.net.mirante.singular.form.wicket.ISValidationFeedbackHandlerListener;
 import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.form.wicket.panel.BSPanelGrid;
 
@@ -59,13 +57,6 @@ public class TabMapper extends DefaultCompositeMapper {
                 renderTab(tab.getSubtree(), this, ctx);
             }
 
-            @Override
-            public Collection<Component> toUpdadeOnTab() {
-                if (ctx.getRootContext().getAnnotationMode().enabled()) {
-                    return newArrayList(ctx.updateOnRefresh());
-                }
-                return newArrayList();
-            }
             @Override
             protected void onTabCreated(BSTab tab, Component tabComponent) {
                 super.onTabCreated(tab, tabComponent);
