@@ -22,6 +22,13 @@ public class STypeAnaliseGerente extends STypePersistentComposite {
         final STypeHTML   parecer          = addField(PARECER, STypeHTML.class);
         final STypeHTML   oficio           = addField(OFICIO, STypeHTML.class);
 
+        resultadoAnalise.asAtr()
+                .label("Resultado da Análise")
+                .required();
+
+        resultadoAnalise.selectionOf("Deferir", "Indeferir");
+        resultadoAnalise.withRadioView();
+
         parecer.withInitListener(sihtml -> {
             if (sihtml.isEmptyOfData()) {
                 final ClassLoader loader = this.getClass().getClassLoader();
@@ -46,12 +53,6 @@ public class STypeAnaliseGerente extends STypePersistentComposite {
                 .label("Ofício")
                 .required();
 
-        resultadoAnalise.asAtr()
-                .label("Resultado da Análise")
-                .required();
-
-        resultadoAnalise.selectionOf("Deferir", "Indeferir");
-        resultadoAnalise.withRadioView();
 
         withView(new SViewByBlock(), vbb -> {
             vbb.newBlock("Análise Gerencial")
