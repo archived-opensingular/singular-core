@@ -10,16 +10,17 @@ import br.net.mirante.singular.form.type.core.STypeString;
 @SInfoType(name = "STypeParecer", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypeParecer extends STypePersistentComposite {
 
+    private final String RESULTADO_ANALISE = "resultadoAnalise";
+    private final String PARECER           = "parecer";
+    private final String OFICIO            = "oficio";
+
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        final STypeString resultadoAnalise = addField("resultadoAnalise", STypeString.class);
-        final STypeHTML   parecer          = addField("parecer", STypeHTML.class);
-
-        parecer.asAtr()
-                .label("Parecer")
-                .required();
+        final STypeString resultadoAnalise = addField(RESULTADO_ANALISE, STypeString.class);
+        final STypeHTML   parecer          = addField(PARECER, STypeHTML.class);
+        final STypeHTML   oficio           = addField(OFICIO, STypeHTML.class);
 
         resultadoAnalise.asAtr()
                 .label("Resultado da Análise")
@@ -27,6 +28,14 @@ public class STypeParecer extends STypePersistentComposite {
 
         resultadoAnalise.selectionOf("Deferir", "Indeferir");
         resultadoAnalise.withRadioView();
+
+        parecer.asAtr()
+                .label("Parecer")
+                .required();
+
+        oficio.asAtr()
+                .label("Ofício")
+                .required();
     }
 
 }
