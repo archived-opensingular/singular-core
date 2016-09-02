@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeSimple;
 
 import java.lang.reflect.Constructor;
+import java.util.Optional;
 
 /**
  * @author Daniel C. Bordin
@@ -20,7 +21,10 @@ public class STypeFormKey extends STypeSimple<SISimple<FormKey>, FormKey> {
 
     @Override
     protected String toStringPersistence(FormKey originalValue) {
-        return originalValue.getClass().getName() + SEPARATOR + originalValue.toStringPersistence();
+        if (originalValue == null){
+            return null;
+        }
+        return originalValue .getClass().getName() + SEPARATOR + originalValue.toStringPersistence();
     }
 
     @Override
