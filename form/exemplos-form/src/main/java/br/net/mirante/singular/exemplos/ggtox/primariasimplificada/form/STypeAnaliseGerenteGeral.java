@@ -35,13 +35,11 @@ public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
             }
         });
 
-        oficio
-                .asAtr()
-                .label("Ofício")
-                .required();
+        oficio.asAtr().required();
 
         withView(new SViewByBlock(), vbb -> {
             vbb.newBlock("Parecer").add(parecer);
+            vbb.newBlock("Ofício").add(oficio);
         });
     }
 

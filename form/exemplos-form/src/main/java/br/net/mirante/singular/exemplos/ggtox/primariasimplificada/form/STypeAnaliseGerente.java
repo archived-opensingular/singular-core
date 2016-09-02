@@ -54,7 +54,10 @@ public class STypeAnaliseGerente extends STypePersistentComposite {
         resultadoAnalise.withRadioView();
 
         withView(new SViewByBlock(), vbb -> {
-            vbb.newBlock("Análise Gerencial").add(resultadoAnalise).add(parecer);
+            vbb.newBlock("Análise Gerencial")
+                    .add(resultadoAnalise)
+                    .add(parecer)
+                    .add(oficio);
         });
     }
 
