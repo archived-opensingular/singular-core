@@ -1,7 +1,15 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.*;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeAnexosPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeDadosGeraisPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeEstudosResiduos;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeInformacoesProcesso;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeIngredienteAtivoPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoFormuladoPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoTecnicoPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeRepresentanteLegal;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeRequerente;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.listeners.IngredienteAtivoUpdateListener;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.AtivoAmostraValidator;
 import br.net.mirante.singular.form.SIComposite;
@@ -24,7 +32,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static br.net.mirante.singular.form.util.SingularPredicates.*;
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX.*;
+import static br.net.mirante.singular.form.util.SingularPredicates.allMatches;
+import static br.net.mirante.singular.form.util.SingularPredicates.anyMatches;
+import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsEqualsTo;
+import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsFalse;
+import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsIn;
+import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsNotEqualsTo;
+import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsNotIn;
+import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsNotNull;
+import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsNull;
+import static br.net.mirante.singular.form.util.SingularPredicates.typeValueMatches;
 
 @SInfoType(name = "STypePeticaoPrimariaSimplificada", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
@@ -62,13 +80,13 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                     Stream.of(TipoPeticaoPrimariaGGTOX.values()).forEach(tp -> builder.add().set(idTipoPeticao, tp.getId()).set(descricaoTipoPeticao, tp.getDescricao()));
                 });
 
-        final List<Integer> apenasNivel1              = Arrays.asList(7, 8);
-        final List<Integer> numeroProcessoIgualMatriz = Arrays.asList(7, 8);
-        final List<Integer> naoPossuiProdutoFormulado = Arrays.asList(7, 8);
-        final List<Integer> produtoTecnicoOpcional    = Arrays.asList(1, 3, 4);
-        final List<Integer> naoTemRotuloBula          = Arrays.asList(2, 7, 8);
-        final List<Integer> produtoTecnicoMultiplo    = Arrays.asList(5, 6);
-        final List<Integer> precisaEstudoResiduos     = Arrays.asList(1, 4, 5, 6);
+        final List<Integer> apenasNivel1              = Arrays.asList(PT.getId(), PTE.getId());
+        final List<Integer> numeroProcessoIgualMatriz = Arrays.asList(PT.getId(), PTE.getId());
+        final List<Integer> naoPossuiProdutoFormulado = Arrays.asList(PT.getId(), PTE.getId(), PRE_MISTURA.getId());
+        final List<Integer> produtoTecnicoOpcional    = Arrays.asList(BIOLOGICO.getId(), PRESERVATIVO_MADEIRA.getId(), NAO_AGRICOLA.getId());
+        final List<Integer> naoTemRotuloBula          = Arrays.asList(PRE_MISTURA.getId(), PT.getId(), PTE.getId());
+        final List<Integer> produtoTecnicoMultiplo    = Arrays.asList(PF.getId(), PFE.getId());
+        final List<Integer> precisaEstudoResiduos     = Arrays.asList(PF.getId(), PFE.getId());
 
         tipoPeticao
                 .withUpdateListener(si -> {
