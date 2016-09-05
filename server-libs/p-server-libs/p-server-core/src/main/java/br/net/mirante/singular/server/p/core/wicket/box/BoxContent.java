@@ -218,14 +218,14 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         final ItemActionConfirmation confirmation      = itemAction.getConfirmation();
         BSModalBorder                confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
         confirmationModal.addOrReplace(new Label("message", $m.ofValue(confirmation.getConfirmationMessage())));
-        confirmationModal.addButton(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 currentModel = null;
                 confirmationModal.hide(target);
             }
         });
-        confirmationModal.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue(confirmation.getConfirmationButtonLabel()), new AjaxButton("delete-btn", confirmationForm) {
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.ofValue(confirmation.getConfirmationButtonLabel()), new AjaxButton("delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 executeDynamicAction(itemAction, baseUrl, additionalParams, currentModel.getObject(), target);

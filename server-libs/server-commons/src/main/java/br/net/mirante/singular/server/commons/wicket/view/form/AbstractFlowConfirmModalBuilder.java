@@ -35,12 +35,12 @@ public abstract class AbstractFlowConfirmModalBuilder<T extends PetitionEntity> 
     protected void addDefaultConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder modal) {
         final FlowConfirmButton<T> confirmButton = newFlowConfirmButton(tn, im, vm, modal);
         confirmButton.add($b.on("click", (c) -> JQuery.$(modal).append(".modal('hide');")));
-        modal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", confirmButton);
+        modal.addButton(BSModalBorder.ButtonStyle.CONFIRM, "label.button.confirm", confirmButton);
     }
 
     protected void addDefaultCancelButton(final BSModalBorder modal) {
         modal.addButton(
-                BSModalBorder.ButtonStyle.EMPTY,
+                BSModalBorder.ButtonStyle.CANCEl,
                 "label.button.cancel",
                 new AjaxButton("cancel-btn") {
                     @Override

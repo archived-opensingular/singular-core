@@ -1,34 +1,5 @@
 package br.net.mirante.singular.server.p.core.wicket.view;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-
-import java.io.Serializable;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
@@ -48,6 +19,28 @@ import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.metronic.menu.DropdownMenu;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 /**
  * Classe base para construição de caixas do servidor de petições
@@ -189,14 +182,14 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
     protected BSModalBorder construirModalDeleteBorder(IConsumer<T> action) {
         BSModalBorder confirmationModal = new BSModalBorder("confirmationModal", getMessage("label.title.delete.draft"));
         confirmationModal.addToBorder(new Label("message", getMessage("label.delete.message")));
-        confirmationModal.addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.cancel", new AjaxButton("cancel-delete-btn", confirmationForm) {
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEl, "label.button.cancel", new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 currentModel = null;
                 confirmationModal.hide(target);
             }
         });
-        confirmationModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.delete", new AjaxButton("delete-btn", confirmationForm) {
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.CONFIRM, "label.button.delete", new AjaxButton("delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 action.accept(currentModel.getObject());
