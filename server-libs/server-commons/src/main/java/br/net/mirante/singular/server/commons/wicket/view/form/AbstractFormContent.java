@@ -225,13 +225,13 @@ public abstract class AbstractFormContent extends Content {
 
     protected BSModalBorder construirCloseModal() {
         BSModalBorder closeModal = new BSModalBorder("close-modal", getMessage("label.title.close.draft"));
-        closeModal.addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.cancel", new AjaxButton("cancel-close-btn") {
+        closeModal.addButton(BSModalBorder.ButtonStyle.CANCEl, "label.button.cancel", new AjaxButton("cancel-close-btn") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 closeModal.hide(target);
             }
         });
-        closeModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new AjaxButton("close-btn") {
+        closeModal.addButton(BSModalBorder.ButtonStyle.CONFIRM, "label.button.confirm", new AjaxButton("close-btn") {
             @Override
             protected String getOnClickScript() {
                 return " Singular.atualizarContentWorklist();"
