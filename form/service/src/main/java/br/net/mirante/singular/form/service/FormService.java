@@ -209,7 +209,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         return mapClassifierXml;
     }
 
-    private String extractContent(SInstance instance) {
+    public String extractContent(SInstance instance) {
         if (instance == null) {
             return null;
         }
