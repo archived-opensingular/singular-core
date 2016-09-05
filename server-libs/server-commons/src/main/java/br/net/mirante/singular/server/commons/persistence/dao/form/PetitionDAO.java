@@ -62,7 +62,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         return query.list();
     }
 
-    private void buildSelectClause(StringBuilder hql, boolean count) {
+    private void buildSelectClause(StringBuilder hql, boolean count, QuickFilter filter) {
         if (count) {
             hql.append("SELECT count(p) ");
         } else {
@@ -77,17 +77,17 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
             hql.append(" , pie.beginDate as processBeginDate ");
             hql.append(" , currentDraftEntity.editionDate as editionDate ");
             hql.append(" , pie.cod as processInstanceId ");
-            appendCustomSelectClauses(hql);
+            appendCustomSelectClauses(hql, filter);
         }
     }
 
     /**
      * Append Custom Select Clauses
      */
-    protected void appendCustomSelectClauses(StringBuilder hql) {
+    protected void appendCustomSelectClauses(StringBuilder hql, QuickFilter filter) {
     }
 
-    private void buildFromClause(StringBuilder hql) {
+    private void buildFromClause(StringBuilder hql, QuickFilter filtro) {
         hql.append(" FROM ").append(tipo.getName()).append(" p ");
         hql.append(" LEFT JOIN p.processInstanceEntity pie ");
         hql.append(" LEFT JOIN p.currentDraftEntity currentDraftEntity ");
@@ -102,13 +102,13 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         hql.append(" LEFT JOIN formDraftEntity.formType formDraftType  ");
         hql.append(" LEFT JOIN pie.tasks ta ");
         hql.append(" LEFT JOIN ta.task task ");
-        appendCustomFromClauses(hql);
+        appendCustomFromClauses(hql, filtro);
     }
 
     /**
      * Append Custom From Clauses
      */
-    protected void appendCustomFromClauses(StringBuilder hql) {
+    protected void appendCustomFromClauses(StringBuilder hql, QuickFilter filtro) {
     }
 
 
@@ -127,7 +127,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
             params.put("idPessoa", filtro.getIdPessoa());
         }
 
-        if (siglasProcesso != null && !siglasProcesso.isEmpty()) {
+        if (!filtro.isRascunho() && siglasProcesso != null && !siglasProcesso.isEmpty()) {
             hql.append(" AND ( processDefinitionEntity.key  in (:siglasProcesso) ");
             params.put("siglasProcesso", siglasProcesso);
             if (formNames != null && !formNames.isEmpty()) {
@@ -190,8 +190,8 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         final StringBuilder       hql    = new StringBuilder("");
         final Map<String, Object> params = new HashMap<>();
 
-        buildSelectClause(hql, count);
-        buildFromClause(hql);
+        buildSelectClause(hql, count, filtro);
+        buildFromClause(hql, filtro);
         buildWhereClause(hql, params, filtro, siglasProcesso, formNames);
 
         final Query query = getSession().createQuery(hql.toString());
