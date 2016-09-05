@@ -354,9 +354,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected void onSended(AjaxRequestTarget target, BSModalBorder enviarModal) {
         atualizarContentWorklist(target);
         if (getIdentifier() == null) {
-            addToastrSuccessMessageWorklist("message.send.success", URL_PATH_ACOMPANHAMENTO);
+            addToastrSuccessMessageWorklist("message.send.success", getUrlPathAcompanhamento());
         } else {
-            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier(), URL_PATH_ACOMPANHAMENTO);
+            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier(), getUrlPathAcompanhamento());
         }
         target.appendJavaScript("; window.close();");
     }
@@ -474,6 +474,10 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         }
 
         return null;
+    }
+
+    public String getUrlPathAcompanhamento() {
+        return URL_PATH_ACOMPANHAMENTO;
     }
 
 }
