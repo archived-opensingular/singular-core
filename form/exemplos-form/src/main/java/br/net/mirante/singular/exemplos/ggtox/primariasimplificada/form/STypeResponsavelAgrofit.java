@@ -23,7 +23,7 @@ public class STypeResponsavelAgrofit extends STypePersistentComposite {
             }
         });
 
-        declaracaoAnexoAgrofit.asAtr().label("Declaro que os arquivos de parecer e oficio foram anexados ao Agrofit.");
+        declaracaoAnexoAgrofit.asAtr().label("Declaro que os arquivos de parecer e ofício foram anexados ao Agrofit.");
 
         withView(new SViewByBlock(), block -> {
             block.newBlock("Responsável Agrofit").add(declaracaoAnexoAgrofit);
