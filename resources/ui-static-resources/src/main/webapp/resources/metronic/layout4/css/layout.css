@@ -1683,6 +1683,14 @@ Theme Panel
 .portlet-body .panel-body, .portlet-body .panel-footer {
   padding: 10px 0 0; }
 
+.cancel-btn {
+    background-color: #EDEFF3;
+}
+
+.confirm-btn {
+    background-color: #40BAA7;
+}
+
 .upload-fileinput {
   width: 0.1px;
   height: 0.1px;
@@ -2055,8 +2063,8 @@ Theme Panel
   background-color: #eaeef2;
   color: #acb1c2;
   vertical-align: middle;
-  border: 1px dashed currentColor;
-  margin: -10px -10px -5px; }
+    border: 1px dashed currentColor;
+}
   .list-table-empty .list-table-empty-message {
     text-align: center;
     line-height: 8px;
@@ -2136,6 +2144,20 @@ Theme Panel
   .worklist-action-btn:hover {
     color: gray;
     text-decoration: none; }
+
+.has-error .singular-validation-feedback-compact-panel > span {
+    white-space: normal !important;
+}
+
+.has-error input {
+    padding-right: 5px !important;
+    background: none !important;
+}
+
+.fileinput-filename {
+    position: absolute;
+    margin-left: 5px;
+}
 
 /* Page Portlet Fullscreen */
 .page-portlet-fullscreen .page-quick-sidebar-wrapper,

@@ -56,7 +56,8 @@ public class BSModalBorder extends Border {
         LINK("btn-link"),
         DANGER("btn-danger"),
         BLUE("blue"),
-        CANCEl("cancel-btn");
+        CANCEl("cancel-btn"),
+        CONFIRM("confirm-btn");
 
         private String cssClass;
 
