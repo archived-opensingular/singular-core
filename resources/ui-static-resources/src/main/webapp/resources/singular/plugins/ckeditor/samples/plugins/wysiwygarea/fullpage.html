@@ -9,8 +9,8 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
         <meta charset="utf-8">
         <title>Full Page Editing &mdash; CKEditor Sample</title>
         <script src="../../../ckeditor.js"></script>
-        <script src="../../sample.js"></script>
-        <link rel="stylesheet" href="../../sample.css">
+        <script src="../../../samples/sample.js"></script>
+        <link rel="stylesheet" href="../../../samples/sample.css">
         <meta name="ckeditor-sample-required-plugins" content="sourcearea">
         <meta name="ckeditor-sample-name" content="Full page support">
         <meta name="ckeditor-sample-group" content="Plugins">
@@ -18,7 +18,7 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 
     <body>
         <h1 class="samples">
-            <a href="../../index.html">CKEditor Samples</a> &raquo; Full Page Editing </h1>
+            <a href="../../../samples/index.html">CKEditor Samples</a> &raquo; Full Page Editing </h1>
         <div class="description">
             <p> This sample shows how to configure CKEditor to edit entire HTML pages, from the <code>&lt;html&gt;</code> tag to the <code>&lt;/html&gt;</code> tag. </p>
             <p> The CKEditor instance below is inserted with a JavaScript call using the following code: </p> <pre class="samples">
@@ -31,7 +31,7 @@ CKEDITOR.replace( '<em>textarea_id</em>', {
             <p> The <code><em>allowedContent</em></code> in the code above is set to <code>true</code> to disable content filtering. Setting this option is not obligatory, but in full page mode there is a strong chance that one may want be able to freely
                 enter any HTML content in source mode without any limitations. </p>
         </div>
-        <form action="../../sample_posteddata.php" method="post">
+        <form action="../../../samples/sample_posteddata.php" method="post">
             <label for="editor1"> CKEditor output the entire page including content outside of <code>&lt;body&gt;</code> element, so content like meta and title can be changed: </label>
             <textarea cols="80" id="editor1" name="editor1" rows="10"> &lt;h1&gt;&lt;img align=&quot;right&quot; alt=&quot;Saturn V carrying Apollo 11&quot; src=&quot;../../../samples/assets/sample.jpg&quot;/&gt; Apollo 11&lt;/h1&gt; &lt;p&gt;&lt;b&gt;Apollo 11&lt;/b&gt; was the spaceflight that landed the first
                 humans, Americans &lt;a href=&quot;http://en.wikipedia.org/wiki/Neil_Armstrong&quot; title=&quot;Neil Armstrong&quot;&gt;Neil Armstrong&lt;/a&gt; and &lt;a href=&quot;http://en.wikipedia.org/wiki/Buzz_Aldrin&quot; title=&quot;Buzz Aldrin&quot;&gt;Buzz
