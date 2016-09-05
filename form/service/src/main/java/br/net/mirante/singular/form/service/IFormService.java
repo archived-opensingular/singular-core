@@ -28,4 +28,6 @@ public interface IFormService extends BasicFormPersistence<SInstance>, BasicAnno
 
     FormVersionEntity loadFormVersionEntity(Long versionId);
 
+    String extractContent(SInstance instance);
+
 }

@@ -5,18 +5,6 @@
 
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-import static org.apache.commons.lang3.BooleanUtils.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Panel;
-
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
@@ -30,6 +18,19 @@ import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.Panel;
+
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -207,7 +208,7 @@ public class AnnotationComponent extends Panel {
             super.onInitialize();
             this.setTitleText($m.ofValue("Você está prestes a remover este comentário."))
                 .setBody(new Label("alert", $m.ofValue("Deseja realmente prosseguir e apagá-lo?")))
-                .addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Apagar"),
+                    .addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.ofValue("Apagar"),
                     new ActionAjaxButton("deleteBtn") {
                         @Override
                         protected void onAction(AjaxRequestTarget target, Form<?> form) {
@@ -216,7 +217,7 @@ public class AnnotationComponent extends Panel {
                             RemoveAnnotationModal.this.hide(target);
                         }
                     })
-                .addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
+                    .addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"),
                     new ActionAjaxLink<Void>("cancelDeleteBtn") {
                         @Override
                         protected void onAction(AjaxRequestTarget target) {
