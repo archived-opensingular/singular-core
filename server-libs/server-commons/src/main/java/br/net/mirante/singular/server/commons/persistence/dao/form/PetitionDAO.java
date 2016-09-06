@@ -150,7 +150,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
                 hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("pie.beginDate", "filter"));
             }
             hql.append(" OR p.id like :filter ) ");
-            params.put("cleanFilter", "%" + filtro.getFilter().replaceAll("/", "").replaceAll("\\.", "").replaceAll("\\-", "").replaceAll(":", "") + "%");
+//            params.put("cleanFilter", "%" + filtro.getFilter().replaceAll("/", "").replaceAll("\\.", "").replaceAll("\\-", "").replaceAll(":", "") + "%");
             params.put("filter", "%" + filtro.getFilter() + "%");
         }
 
