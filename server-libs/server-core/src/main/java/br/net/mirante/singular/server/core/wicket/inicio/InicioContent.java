@@ -46,29 +46,31 @@ public class InicioContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> 
     @Override
     protected BSDataTable<TaskInstanceDTO, String> setupDataTable() {
         return new BSDataTableBuilder<>(createDataProvider())
-                .appendPropertyColumn(getMessage("label.table.column.in.date"),
-                        "processBeginDate", TaskInstanceDTO::getProcessBeginDate)
-//                .appendPropertyColumn(getMessage("label.table.column.number"),
-//                        "id", TaskInstanceDTO::getNumeroProcesso)
-//                .appendPropertyColumn(getMessage("label.table.column.requester"),
-//                        "requester", TaskInstanceDTO::getSolicitante)
-                .appendPropertyColumn(getMessage("label.table.column.description"),
-                        "description", TaskInstanceDTO::getDescricao)
-                .appendPropertyColumn(getMessage("label.table.column.situation.date"),
-                        "situationBeginDate", TaskInstanceDTO::getSituationBeginDate)
-                .appendColumn(new MetronicStatusColumn<>(getMessage("label.table.column.state"),
-                        "state", TaskInstanceDTO::getTaskName,
-                        this::badgeMapper))
-                .appendPropertyColumn(getMessage("label.table.column.alocado"),
-                        "user", TaskInstanceDTO::getNomeUsuarioAlocado)
-                .appendColumn(buildActionColumn())
-                .setRowsPerPage(getRowsperPage())
-                .build("tabela");
+            .appendPropertyColumn(getMessage("label.table.column.in.date"),
+                "processBeginDate", TaskInstanceDTO::getProcessBeginDate)
+            //                .appendPropertyColumn(getMessage("label.table.column.number"),
+            //                        "id", TaskInstanceDTO::getNumeroProcesso)
+            //                .appendPropertyColumn(getMessage("label.table.column.requester"),
+            //                        "requester", TaskInstanceDTO::getSolicitante)
+            .appendPropertyColumn(getMessage("label.table.column.description"),
+                "description", TaskInstanceDTO::getDescricao)
+            .appendPropertyColumn(getMessage("label.table.column.situation.date"),
+                "situationBeginDate", TaskInstanceDTO::getSituationBeginDate)
+            .appendColumn(new MetronicStatusColumn<>(getMessage("label.table.column.state"),
+                "state", TaskInstanceDTO::getTaskName,
+                this::badgeMapper))
+            .appendPropertyColumn(getMessage("label.table.column.alocado"),
+                "user", TaskInstanceDTO::getNomeUsuarioAlocado)
+            .appendColumn(buildActionColumn())
+            .setRowsPerPage(getRowsperPage())
+            .build("tabela");
     }
 
-    protected WebMarkupContainer criarLinkAnalise(TaskInstanceDTO peticao, String id) {
-        WebMarkupContainer link = criarLink(peticao, id, FormActions.FORM_FILL);
-        link.add($b.visibleIf((IReadOnlyModel<Boolean>) () -> !isAlocadoParaUsuarioLogado(peticao) && peticao.isPossuiPermissao()));
+    protected WebMarkupContainer criarLinkAnalise(IModel<TaskInstanceDTO> peticaoModel, String id) {
+        WebMarkupContainer link = criarLink(id, peticaoModel, FormActions.FORM_FILL);
+        link.add($b.visibleIf(
+            (IReadOnlyModel<Boolean>) () -> !isAlocadoParaUsuarioLogado(peticaoModel.getObject())
+                && peticaoModel.getObject().isPossuiPermissao()));
         return link;
     }
 
@@ -115,19 +117,19 @@ public class InicioContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> 
                 for (FormDTO form : getForms()) {
                     if (getForms().size() > 1) {
                         String processUrl = DispatcherPageUtil
-                                .baseURL(getBaseUrl(moduleContext))
-                                .formAction(FormActions.FORM_FILL.getId())
-                                .formId(null)
-                                .param(Parameters.SIGLA_FORM_NAME, form.getName())
-                                .build();
+                            .baseURL(getBaseUrl(moduleContext))
+                            .formAction(FormActions.FORM_FILL.getId())
+                            .formId(null)
+                            .param(Parameters.SIGLA_FORM_NAME, form.getName())
+                            .build();
                         dropdownMenu.adicionarMenu(id -> new ModuleLink(id, WicketUtils.$m.ofValue(form.getName()), processUrl));
                     } else {
                         String url = DispatcherPageUtil
-                                .baseURL(getBaseUrl(moduleContext))
-                                .formAction(FormActions.FORM_FILL.getId())
-                                .formId(null)
-                                .param(Parameters.SIGLA_FORM_NAME, form.getName())
-                                .build();
+                            .baseURL(getBaseUrl(moduleContext))
+                            .formAction(FormActions.FORM_FILL.getId())
+                            .formId(null)
+                            .param(Parameters.SIGLA_FORM_NAME, form.getName())
+                            .build();
                         adicionarBotaoGlobal(id -> new ModuleLink(id, getMessage("label.button.insert"), url));
                     }
                 }

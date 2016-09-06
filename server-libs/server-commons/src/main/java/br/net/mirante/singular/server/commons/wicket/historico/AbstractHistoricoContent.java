@@ -32,7 +32,7 @@ public abstract class AbstractHistoricoContent extends Content {
     private static final long serialVersionUID = 8587873133590041152L;
 
     @Inject
-    private PetitionService petitionService;
+    private PetitionService<?> petitionService;
 
     private int    instancePK;
     private String processGroupPK;
@@ -60,8 +60,8 @@ public abstract class AbstractHistoricoContent extends Content {
         queue(getBtnCancelar());
     }
 
-    protected Link getBtnCancelar() {
-        return new Link("btnCancelar") {
+    protected Link<?> getBtnCancelar() {
+        return new Link<Void>("btnCancelar") {
             @Override
             public void onClick() {
                 setResponsePage(getBackPage());
@@ -91,14 +91,14 @@ public abstract class AbstractHistoricoContent extends Content {
                 )
                 .appendActionColumn(
                         Model.of(""),
-                        column -> column.appendStaticAction(Model.of("Visualizar"), Icone.EYE, (model, id) -> {
+                        column -> column.appendStaticAction(Model.of("Visualizar"), Icone.EYE, (id, model) -> {
                             final String url = DispatcherPageUtil.baseURL(getBaseUrl())
                                     .formAction(FormActions.FORM_VIEW.getId())
                                     .formId(null)
-                                    .param(Parameters.FORM_VERSION_KEY, model.getFormVersionEntity().getCod())
+                                    .param(Parameters.FORM_VERSION_KEY, model.getObject().getFormVersionEntity().getCod())
                                     .build();
                             final WebMarkupContainer link = new WebMarkupContainer(id);
-                            link.add($b.attr("target", String.format("_%s", model.getCod())));
+                            link.add($b.attr("target", String.format("_%s", model.getObject().getCod())));
                             link.add($b.attr("href", url));
                             return link;
                         })

@@ -49,7 +49,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(BoxContent.class);
+    static final Logger             LOGGER = LoggerFactory.getLogger(BoxContent.class);
 
     private Pair<String, SortOrder> sortProperty;
     private ItemBox                 itemBoxDTO;
@@ -76,12 +76,12 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         if (isShowNew() && getMenu() != null) {
             for (FormDTO form : getForms()) {
                 String url = DispatcherPageUtil
-                        .baseURL(getBaseUrl())
-                        .formAction(FormActions.FORM_FILL.getId())
-                        .formId(null)
-                        .param(Parameters.SIGLA_FORM_NAME, form.getName())
-                        .params(getLinkParams())
-                        .build();
+                    .baseURL(getBaseUrl())
+                    .formAction(FormActions.FORM_FILL.getId())
+                    .formId(null)
+                    .param(Parameters.SIGLA_FORM_NAME, form.getName())
+                    .params(getLinkParams())
+                    .build();
 
                 if (getForms().size() > 1) {
                     dropdownMenu.adicionarMenu(id -> new ModuleLink(id, $m.ofValue(form.getDescription()), url));
@@ -107,60 +107,74 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         for (ItemAction itemAction : itemBoxDTO.getActions().values()) {
 
             if (itemAction.getType() == ItemActionType.POPUP) {
-                actionColumn.appendStaticAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), linkFunction(itemAction, getBaseUrl(), getLinkParams()), visibleFunction(itemAction),
-                        c -> c.styleClasses($m.ofValue("worklist-action-btn")));
+                actionColumn.appendStaticAction(
+                    $m.ofValue(itemAction.getLabel()),
+                    itemAction.getIcon(),
+                    linkFunction(itemAction, getBaseUrl(), getLinkParams()),
+                    visibleFunction(itemAction),
+                    c -> c.styleClasses($m.ofValue("worklist-action-btn")));
             } else if (itemAction.getType() == ItemActionType.ENDPOINT) {
-                actionColumn.appendAction($m.ofValue(itemAction.getLabel()), itemAction.getIcon(), dynamicLinkFunction(itemAction, getProcessGroup().getConnectionURL(), getLinkParams()), visibleFunction(itemAction),
-                        c -> c.styleClasses($m.ofValue("worklist-action-btn")));
+                actionColumn.appendAction(
+                    $m.ofValue(itemAction.getLabel()),
+                    itemAction.getIcon(),
+                    dynamicLinkFunction(itemAction, getProcessGroup().getConnectionURL(), getLinkParams()),
+                    visibleFunction(itemAction),
+                    c -> c.styleClasses($m.ofValue("worklist-action-btn")));
             }
         }
 
         actionColumn
-                .appendStaticAction(getMessage("label.table.column.history"), Icone.HISTORY, this::criarLinkHistorico, (x) -> true, c -> c.styleClasses($m.ofValue("worklist-action-btn")));
+            .appendStaticAction(
+                getMessage("label.table.column.history"),
+                Icone.HISTORY,
+                this::criarLinkHistorico,
+                (x) -> true,
+                c -> c.styleClasses($m.ofValue("worklist-action-btn")));
 
         builder.appendColumn(actionColumn);
     }
 
-    private MarkupContainer criarLinkHistorico(BoxItemModel boxItemModel, String id) {
+    private MarkupContainer criarLinkHistorico(String id, IModel<BoxItemModel> boxItemModel) {
+        BoxItemModel boxItem = boxItemModel.getObject();
         PageParameters pageParameters = new PageParameters();
-        if (boxItemModel.getProcessInstanceId() != null) {
-            pageParameters.add(Parameters.INSTANCE_ID, boxItemModel.getProcessInstanceId());
+        if (boxItem.getProcessInstanceId() != null) {
+            pageParameters.add(Parameters.INSTANCE_ID, boxItem.getProcessInstanceId());
             pageParameters.add(Parameters.PROCESS_GROUP_PARAM_NAME, getProcessGroup().getCod());
         }
 
-        BookmarkablePageLink historiLink = new BookmarkablePageLink(id, HistoricoPage.class, pageParameters);
-        historiLink.setVisible(boxItemModel.getProcessBeginDate() != null);
+        BookmarkablePageLink<?> historiLink = new BookmarkablePageLink<>(id, HistoricoPage.class, pageParameters);
+        historiLink.setVisible(boxItem.getProcessBeginDate() != null);
         return historiLink;
     }
 
     @Override
-    protected WebMarkupContainer criarLinkEdicao(BoxItemModel peticao, String id) {
-        if (peticao.getProcessBeginDate() == null) {
-            return criarLink(peticao, id, FormActions.FORM_FILL);
+    protected WebMarkupContainer criarLinkEdicao(String id, IModel<BoxItemModel> peticao) {
+        if (peticao.getObject().getProcessBeginDate() == null) {
+            return criarLink(id, peticao, FormActions.FORM_FILL);
         } else {
-            return criarLink(peticao, id, FormActions.FORM_FILL_WITH_ANALYSIS);
+            return criarLink(id, peticao, FormActions.FORM_FILL_WITH_ANALYSIS);
         }
     }
 
-    public IBiFunction<BoxItemModel, String, MarkupContainer> linkFunction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
-        return (boxItemModel, id) -> {
+    public IBiFunction<String, IModel<BoxItemModel>, MarkupContainer> linkFunction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
+        return (id, boxItemModel) -> {
             String url = mountStaticUrl(itemAction, baseUrl, additionalParams, boxItemModel);
 
             WebMarkupContainer link = new WebMarkupContainer(id);
-            link.add($b.attr("target", String.format("_%s", boxItemModel.getCod())));
+            link.add($b.attr("target", String.format("_%s", boxItemModel.getObject().getCod())));
             link.add($b.attr("href", url));
             return link;
         };
     }
 
-    private String mountStaticUrl(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItemModel) {
-        final BoxItemAction action = boxItemModel.getActionByName(itemAction.getName());
+    private String mountStaticUrl(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, IModel<BoxItemModel> boxItemModel) {
+        final BoxItemAction action = boxItemModel.getObject().getActionByName(itemAction.getName());
         if (action.getEndpoint().startsWith("http")) {
             return action.getEndpoint();
         } else {
             return baseUrl
-                    + action.getEndpoint()
-                    + appendParameters(additionalParams);
+                + action.getEndpoint()
+                + appendParameters(additionalParams);
         }
     }
 
@@ -181,8 +195,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         final BoxItemAction boxAction = boxItem.getActionByName(itemAction.getName());
 
         String url = baseUrl
-                + boxAction.getEndpoint()
-                + appendParameters(additionalParams);
+            + boxAction.getEndpoint()
+            + appendParameters(additionalParams);
 
         try {
             callModule(url, buildCallObject(boxAction, boxItem));
@@ -215,8 +229,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     }
 
     protected BSModalBorder construirModalConfirmationBorder(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
-        final ItemActionConfirmation confirmation      = itemAction.getConfirmation();
-        BSModalBorder                confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
+        final ItemActionConfirmation confirmation = itemAction.getConfirmation();
+        BSModalBorder confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
         confirmationModal.addOrReplace(new Label("message", $m.ofValue(confirmation.getConfirmationMessage())));
         confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
@@ -247,11 +261,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         return paramsValue;
     }
 
-    private String appendParameter(String key, Object value) {
-        return "&" + key + "=" + value;
-    }
-
-    private IFunction<IModel, Boolean> visibleFunction(ItemAction itemAction) {
+    private IFunction<IModel<BoxItemModel>, Boolean> visibleFunction(ItemAction itemAction) {
         return (model) -> {
             BoxItemModel boxItemModel = (BoxItemModel) model.getObject();
             return boxItemModel.hasAction(itemAction);
@@ -272,11 +282,11 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     protected QuickFilter montarFiltroBasico() {
         BoxPage boxPage = getBoxPage();
         return boxPage.createFilter()
-                .withFilter(getFiltroRapidoModelObject())
-                .withProcessesAbbreviation(getProcessesNames())
-                .withTypesNames(getFormNames())
-                .withRascunho(isWithRascunho())
-                .withEndedTasks(itemBoxDTO.getEndedTasks());
+            .withFilter(getFiltroRapidoModelObject())
+            .withProcessesAbbreviation(getProcessesNames())
+            .withTypesNames(getFormNames())
+            .withRascunho(isWithRascunho())
+            .withEndedTasks(itemBoxDTO.getEndedTasks());
     }
 
     private BoxPage getBoxPage() {
@@ -288,9 +298,9 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
             return Collections.emptyList();
         } else {
             return getProcesses()
-                    .stream()
-                    .map(ProcessDTO::getAbbreviation)
-                    .collect(Collectors.toList());
+                .stream()
+                .map(ProcessDTO::getAbbreviation)
+                .collect(Collectors.toList());
         }
     }
 
@@ -299,37 +309,38 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
             return Collections.emptyList();
         } else {
             return getForms()
-                    .stream()
-                    .map(FormDTO::getName)
-                    .collect(Collectors.toList());
+                .stream()
+                .map(FormDTO::getName)
+                .collect(Collectors.toList());
         }
     }
 
     @Override
     protected List<BoxItemModel> quickSearch(QuickFilter filter, List<String> siglasProcesso, List<String> formNames) {
         final String connectionURL = getProcessGroup().getConnectionURL();
-        final String url           = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
+        final String url = connectionURL + PATH_BOX_SEARCH + getSearchEndpoint();
         try {
             return (List<BoxItemModel>) Arrays
-                    .asList(new RestTemplate().postForObject(url, filter, Map[].class))
-                    .stream()
-                    .map(BoxItemModel::new)
-                    .collect(Collectors.toList());
+                .asList(new RestTemplate().postForObject(url, filter, Map[].class))
+                .stream()
+                .map(BoxItemModel::new)
+                .collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error("Erro ao acessar serviço: " + url, e);
             return Collections.emptyList();
         }
     }
 
-    protected WebMarkupContainer criarLink(BoxItemModel item, String id, FormActions formActions) {
-
+    @Override
+    protected WebMarkupContainer criarLink(String id, IModel<BoxItemModel> itemModel, FormActions formActions) {
+        BoxItemModel item = itemModel.getObject();
         String href = DispatcherPageUtil
-                .baseURL(getBaseUrl())
-                .formAction(formActions.getId())
-                .formId(item.getCod())
-                .param(SIGLA_FORM_NAME, item.get("type"))
-                .params(getCriarLinkParameters(item))
-                .build();
+            .baseURL(getBaseUrl())
+            .formAction(formActions.getId())
+            .formId(item.getCod())
+            .param(SIGLA_FORM_NAME, item.get("type"))
+            .params(getCriarLinkParameters(item))
+            .build();
 
         WebMarkupContainer link = new WebMarkupContainer(id);
         link.add($b.attr("target", String.format("_%s", item.getCod())));
@@ -351,7 +362,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     @Override
     protected long countQuickSearch(QuickFilter filter, List<String> processesNames, List<String> formNames) {
         final String connectionURL = getProcessGroup().getConnectionURL();
-        final String url           = connectionURL + PATH_BOX_SEARCH + getCountEndpoint();
+        final String url = connectionURL + PATH_BOX_SEARCH + getCountEndpoint();
         try {
             return new RestTemplate().postForObject(url, filter, Long.class);
         } catch (Exception e) {

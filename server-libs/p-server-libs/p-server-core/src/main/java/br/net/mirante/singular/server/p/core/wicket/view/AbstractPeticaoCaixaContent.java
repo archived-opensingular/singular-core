@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
@@ -28,14 +29,15 @@ public abstract class AbstractPeticaoCaixaContent<T extends PeticaoDTO> extends 
     private static final long serialVersionUID = -3611649597709058163L;
 
     @Inject
-    private PetitionService petitionService;
+    private PetitionService<?> petitionService;
 
     public AbstractPeticaoCaixaContent(String id, String processGroupCod, String menu) {
         super(id, processGroupCod, menu);
     }
 
     @Override
-    protected WebMarkupContainer criarLink(T peticao, String id, FormActions formActions) {
+    protected WebMarkupContainer criarLink(String id, IModel<T> peticaoModel, FormActions formActions) {
+        T peticao = peticaoModel.getObject();
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl())
                 .formAction(formActions.getId())

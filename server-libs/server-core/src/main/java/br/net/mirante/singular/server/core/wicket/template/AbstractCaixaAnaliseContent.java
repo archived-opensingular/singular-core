@@ -81,7 +81,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
     private List<FormDTO> forms;
 
     @Inject
-    protected PetitionService petitionService;
+    protected PetitionService<?> petitionService;
 
     protected abstract BSDataTable<T, String> setupDataTable();
 
@@ -104,7 +104,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new Form(ID_FORM) {
+        add(new Form<Void>(ID_FORM) {
             @Override
             protected void onSubmit() {
                 super.onSubmit();
@@ -166,17 +166,18 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
                         .orElse(null));
     }
 
-    protected WebMarkupContainer criarLinkVisualizar(T peticao, String id) {
-        return criarLink(peticao, id, FormActions.FORM_ANALYSIS_VIEW);
+    protected WebMarkupContainer criarLinkVisualizar(String id, IModel<T> peticao) {
+        return criarLink(id, peticao, FormActions.FORM_ANALYSIS_VIEW);
     }
 
-    protected WebMarkupContainer criarLinkAnalise(T peticao, String id) {
-        WebMarkupContainer link = criarLink(peticao, id, FormActions.FORM_ANALYSIS);
-        link.add($b.visibleIf((IReadOnlyModel<Boolean>) () -> !isAlocadoParaUsuarioLogado(peticao) && peticao.isPossuiPermissao()));
+    protected WebMarkupContainer criarLinkAnalise(String id, IModel<T> peticao) {
+        WebMarkupContainer link = criarLink(id, peticao, FormActions.FORM_ANALYSIS);
+        link.add($b.visibleIf((IReadOnlyModel<Boolean>) () -> !isAlocadoParaUsuarioLogado(peticao.getObject()) && peticao.getObject().isPossuiPermissao()));
         return link;
     }
 
-    protected WebMarkupContainer criarLink(final T peticao, final String id, FormActions formActions) {
+    protected WebMarkupContainer criarLink(String id, IModel<T> peticaoModel, FormActions formActions) {
+        T peticao = peticaoModel.getObject();
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl(peticao.getProcessGroupContext()) + DispatcherPageUtil.DISPATCHER_PAGE_PATH)
                 .formAction(formActions.getId())
@@ -211,11 +212,11 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         target.add(listTable);
     }
 
-    protected WebMarkupContainer criarLinkHistorico(T peticao, String id) {
+    protected WebMarkupContainer criarLinkHistorico(String id, IModel<T> peticao) {
         PageParameters pageParameters = new PageParameters();
-        pageParameters.add(Parameters.INSTANCE_ID, peticao.getProcessInstanceId());
+        pageParameters.add(Parameters.INSTANCE_ID, peticao.getObject().getProcessInstanceId());
 
-        return new BookmarkablePageLink(id, getHistoricoPage(), pageParameters);
+        return new BookmarkablePageLink<>(id, getHistoricoPage(), pageParameters);
     }
 
     protected MetronicStatusColumn.BagdeType badgeMapper(IModel<Object> cellModel, IModel<T> rowModel) {

@@ -5,11 +5,11 @@ import org.apache.wicket.model.IModel;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
-public class ModuleLink extends Link {
+public class ModuleLink extends Link<Object> {
 
     private String url;
 
-    public ModuleLink(String id, IModel model, String url) {
+    public ModuleLink(String id, IModel<?> model, String url) {
         super(id);
         setBody(model);
         this.url = url;

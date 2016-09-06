@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
@@ -28,7 +29,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 
     @Inject
-    protected PetitionService peticaoService;
+    protected PetitionService<PetitionEntity> peticaoService;
 
     public EntradaContent(String id, String processGroupCod, String siglaProcesso) {
         super(id, processGroupCod, siglaProcesso);
@@ -86,15 +87,15 @@ public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
     private void appendCumprirExigenciaAction(BSActionColumn<PeticaoDTO, String> actionColumn) {
         actionColumn
                 .appendStaticAction(getMessage("label.table.column.requirement"),
-                        Icone.PENCIL, (pet, id) -> criarLink(pet, id, ViewMode.EDIT, AnnotationMode.READ_ONLY));
+                        Icone.PENCIL, (id, pet) -> criarLink(id, pet, ViewMode.EDIT, AnnotationMode.READ_ONLY));
     }
 
-    private WebMarkupContainer criarLink(PeticaoDTO peticao, String id, ViewMode vm, AnnotationMode annotationMode) {
+    private WebMarkupContainer criarLink(String id, IModel<PeticaoDTO> peticaoModel, ViewMode vm, AnnotationMode annotationMode) {
         String href = DispatcherPageUtil.
                 baseURL(getBaseUrl())
                 .formAction(FormActions.FORM_FILL_WITH_ANALYSIS.getId())
-                .formId(peticao.getCodPeticao())
-                .param(SIGLA_FORM_NAME, peticao.getType())
+                .formId(peticaoModel.getObject().getCodPeticao())
+                .param(SIGLA_FORM_NAME, peticaoModel.getObject().getType())
                 .build();
         WebMarkupContainer link = new WebMarkupContainer(id);
         link.add($b.attr("target", "_blank"));

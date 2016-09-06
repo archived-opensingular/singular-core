@@ -163,19 +163,19 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
         return builder.setRowsPerPage(getRowsPerPage()).build("tabela");
     }
 
-    protected WebMarkupContainer criarLinkEdicao(T peticao, String id) {
-        return criarLink(peticao, id, FormActions.FORM_FILL);
+    protected WebMarkupContainer criarLinkEdicao(String id, IModel<T> peticao) {
+        return criarLink(id, peticao, FormActions.FORM_FILL);
     }
 
-    protected WebMarkupContainer criarLinkExigencia(T peticao, String id) {
-        return criarLink(peticao, id, FormActions.FORM_FILL);
+    protected WebMarkupContainer criarLinkExigencia(String id, IModel<T> peticao) {
+        return criarLink(id, peticao, FormActions.FORM_FILL);
     }
 
-    protected WebMarkupContainer criarLinkVisualizacao(T peticao, String id) {
-        return criarLink(peticao, id, FormActions.FORM_VIEW);
+    protected WebMarkupContainer criarLinkVisualizacao(String id, IModel<T> peticao) {
+        return criarLink(id, peticao, FormActions.FORM_VIEW);
     }
 
-    protected abstract WebMarkupContainer criarLink(T peticao, String id, FormActions formActions);
+    protected abstract WebMarkupContainer criarLink(String id, IModel<T> peticao, FormActions formActions);
 
     protected abstract Map<String, String> getCriarLinkParameters(T peticao);
 
