@@ -5,6 +5,8 @@
 
 package br.net.mirante.singular.form.type.core.annotation;
 
+import static org.apache.commons.lang3.StringUtils.*;
+
 import br.net.mirante.singular.form.SIComposite;
 
 /**
@@ -66,5 +68,9 @@ public class SIAnnotation extends SIComposite {
     public void clear() {
         setText(null);
         setApproved(null);
+    }
+
+    public boolean isClear() {
+        return (getApproved() == null) && isBlank(getText());
     }
 }
