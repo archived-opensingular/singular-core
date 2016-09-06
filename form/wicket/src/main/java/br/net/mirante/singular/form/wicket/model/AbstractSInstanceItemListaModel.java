@@ -29,7 +29,6 @@ public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
     protected abstract int index();
 
     @Override
-    @SuppressWarnings("unchecked")
     public I getObject() {
         SIList<I> iLista = getRootTarget();
         if (iLista == null || getIndex() >= iLista.size())

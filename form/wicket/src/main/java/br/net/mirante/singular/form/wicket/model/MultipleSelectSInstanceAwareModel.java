@@ -22,7 +22,7 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
         this.model = model;
         this.selects = new ArrayList<>();
         if (model.getObject() instanceof SIList) {
-            final SIList list = (SIList) model.getObject();
+            final SIList<?> list = (SIList<?>) model.getObject();
             for (int i = 0; i < list.size(); i += 1) {
                 selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i)));
             }
@@ -43,8 +43,8 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
 
     @Override
     public void setObject(List<Serializable> objects) {
-        if (model.getObject() instanceof SIList) {
-            final SIList list = (SIList) model.getObject();
+        if (model.getObject() instanceof SIList<?>) {
+            final SIList<?> list = (SIList<?>) model.getObject();
             list.clearInstance();
             selects.clear();
             for (int i = 0; i <= objects.size(); i += 1) {

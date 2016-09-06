@@ -25,7 +25,7 @@ public class SelectSInstanceAwareModel extends AbstractSInstanceAwareModel<Seria
 
     public SInstance getProviderMInstancia() {
         if (model instanceof SInstanceListItemModel) {
-            return ((SInstanceListItemModel) model).getRootTarget();
+            return ((SInstanceListItemModel<?>) model).getRootTarget();
         } else {
             return model.getObject();
         }
