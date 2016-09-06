@@ -134,11 +134,11 @@ public class AtrAnnotation extends STranslatorForAttribute {
     /**
      * @return Current annotation if this instance, if none is present one is created.
      */
-    public <T extends Enum & AnnotationClassifier> SIAnnotation annotation() {
+    public <T extends Enum<T> & AnnotationClassifier> SIAnnotation annotation() {
         return annotation(DefaultAnnotationClassifier.DEFAULT_ANNOTATION);
     }
 
-    public <T extends Enum & AnnotationClassifier> SIAnnotation annotation(T classifier) {
+    public <T extends Enum<T> & AnnotationClassifier> SIAnnotation annotation(T classifier) {
         createAttributeIfNeeded(classifier);
         return target().getDocument().annotation(target().getId(), classifier);
     }
@@ -159,13 +159,13 @@ public class AtrAnnotation extends STranslatorForAttribute {
         return truth;
     }
 
-    private <T extends Enum & AnnotationClassifier> void createAttributeIfNeeded(T classifier) {
+    private <T extends Enum<T> & AnnotationClassifier> void createAttributeIfNeeded(T classifier) {
         if (target().getDocument().annotation(target().getId(), classifier) == null) {
             newAnnotation(classifier);
         }
     }
 
-    private <T extends Enum & AnnotationClassifier> SIAnnotation newAnnotation(T classifier) {
+    private <T extends Enum<T> & AnnotationClassifier> SIAnnotation newAnnotation(T classifier) {
         isValidClassifier(classifier);
         SIAnnotation a = target().getDocument().newAnnotation();
         a.setTargetId(target().getId());
@@ -173,7 +173,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
         return a;
     }
 
-    private <T extends Enum & AnnotationClassifier> void isValidClassifier(T classifier) {
+    private <T extends Enum<T> & AnnotationClassifier> void isValidClassifier(T classifier) {
         List<String> classifiers = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
         if (classifiers == null || !classifiers.contains(classifier.name())) {
             if (!DefaultAnnotationClassifier.DEFAULT_ANNOTATION.equals(classifier)) {
@@ -191,7 +191,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @return All annotations on this instance and its children.
      */
     public List<SIAnnotation> allAnnotations() {
-        SIList sList = persistentAnnotations();
+        SIList<SIAnnotation> sList = persistentAnnotations();
         if (sList == null) return newArrayList();
         return sList.getValues();
     }
@@ -204,7 +204,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      *
      * @param annotations to be loaded into the instance.
      */
-    public void loadAnnotations(SIList annotations) {
+    public void loadAnnotations(SIList<SIAnnotation> annotations) {
         Iterator<SIAnnotation> it = annotations.iterator();
         while (it.hasNext()) {
             SIAnnotation annotation = it.next();
@@ -215,7 +215,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
     /**
      * @return A ready to persist object containing all annotations from this instance and its children.
      */
-    public SIList persistentAnnotationsClassified(String classifier) {
+    public SIList<SIAnnotation> persistentAnnotationsClassified(String classifier) {
         return persistentAnnotationsClassified().get(classifier);
     }
 
@@ -255,17 +255,17 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @param annotationList
      * @return
      */
-    private SIList newAnnotationListFromExisting(SIList<SIAnnotation> annotationList) {
+    private SIList<SIAnnotation> newAnnotationListFromExisting(SIList<SIAnnotation> annotationList) {
         RefType refTypeAnnotation = annotationList.getDocument().getRootRefType().get().createSubReference(STypeAnnotationList.class);
         if (annotationList.getDocument().getDocumentFactoryRef() != null) {
-            return (SIList) annotationList.getDocument().getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
+            return (SIList<SIAnnotation>) annotationList.getDocument().getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
         }
-        return (SIList) SDocumentFactory.empty().createInstance(refTypeAnnotation);
+        return (SIList<SIAnnotation>) SDocumentFactory.empty().createInstance(refTypeAnnotation);
     }
 
 
-    private SIList newAnnotationList() {
-        return (SIList) annotationListType().newInstance();
+    private SIList<SIAnnotation> newAnnotationList() {
+        return (SIList<SIAnnotation>) annotationListType().newInstance();
     }
 
     private STypeAnnotationList annotationListType() {

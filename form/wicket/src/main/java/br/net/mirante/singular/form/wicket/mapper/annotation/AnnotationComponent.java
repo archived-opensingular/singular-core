@@ -5,19 +5,10 @@
 
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+import static org.apache.commons.lang3.BooleanUtils.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -26,11 +17,19 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation.DefaultAnnotationClassifier;
+import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.component.BFModalWindow;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.SIAnnotationModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -56,10 +55,7 @@ public class AnnotationComponent extends Panel {
         this.context = context;
         this.referencedModel = referenced;
 
-        SInstance referencedInstance = referenced.getMInstancia();
-        SIAnnotation annotationInstance = referencedInstance.asAtrAnnotation().annotation()
-            .setTargetId(referencedInstance.getId());
-        setAnnotationModel(new SInstanceRootModel<>(annotationInstance));
+        setAnnotationModel(new SIAnnotationModel<>(referenced, DefaultAnnotationClassifier.DEFAULT_ANNOTATION));
 
         textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getAnnotationModel(), "text"));
         approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getAnnotationModel(), "isApproved"));
@@ -118,21 +114,19 @@ public class AnnotationComponent extends Panel {
 
     private boolean hasAnnotationText() {
         final SIAnnotation annotation = getAnnotationModel().getObject();
-        return (annotation != null) && (isNotBlank(annotation.getText()));
+        return (annotation != null) && !annotation.isClear();
     }
 
-    public AnnotationComponent setAnnotationModel(SInstanceRootModel<SIAnnotation> model) {
+    public SIAnnotationModel<?> getAnnotationModel() {
+        return (SIAnnotationModel<?>) getDefaultModel();
+    }
+    public AnnotationComponent setAnnotationModel(SIAnnotationModel<?> model) {
         super.setDefaultModel(model);
         return this;
     }
 
     public ISInstanceAwareModel<SIComposite> getReferencedModel() {
         return referencedModel;
-    }
-
-    @SuppressWarnings("unchecked")
-    public SInstanceRootModel<SIAnnotation> getAnnotationModel() {
-        return (SInstanceRootModel<SIAnnotation>) getDefaultModel();
     }
 
     private String getTrimmedText() {
@@ -208,7 +202,7 @@ public class AnnotationComponent extends Panel {
             super.onInitialize();
             this.setTitleText($m.ofValue("Você está prestes a remover este comentário."))
                 .setBody(new Label("alert", $m.ofValue("Deseja realmente prosseguir e apagá-lo?")))
-                    .addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.ofValue("Apagar"),
+                .addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.ofValue("Apagar"),
                     new ActionAjaxButton("deleteBtn") {
                         @Override
                         protected void onAction(AjaxRequestTarget target, Form<?> form) {
@@ -217,7 +211,7 @@ public class AnnotationComponent extends Panel {
                             RemoveAnnotationModal.this.hide(target);
                         }
                     })
-                    .addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"),
+                .addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"),
                     new ActionAjaxLink<Void>("cancelDeleteBtn") {
                         @Override
                         protected void onAction(AjaxRequestTarget target) {
