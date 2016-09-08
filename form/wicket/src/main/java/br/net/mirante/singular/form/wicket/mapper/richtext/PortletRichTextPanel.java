@@ -48,16 +48,19 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        final PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js");
-        final Map<String, String> params              = new HashMap<>();
+        try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js")) {
+            final Map<String, String> params = new HashMap<>();
 
-        params.put("label", (String) label.getDefaultModel().getObject());
-        params.put("htmlContainer", htmlContent.getMarkupId());
-        params.put("hiddenInput", hiddenInput.getMarkupId());
-        params.put("html", HTML_NEW_TAB);
+            params.put("label", (String) label.getDefaultModel().getObject());
+            params.put("htmlContainer", htmlContent.getMarkupId());
+            params.put("hiddenInput", hiddenInput.getMarkupId());
+            params.put("html", HTML_NEW_TAB);
 
-        packageTextTemplate.interpolate(params);
-        response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), "PortletRichTextPanel"));
+            packageTextTemplate.interpolate(params);
+            response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), "PortletRichTextPanel"));
+        } catch (IOException e) {
+            getLogger().error(e.getMessage(), e);
+        }
     }
 
     public PortletRichTextPanel(String id, WicketBuildContext ctx) {
