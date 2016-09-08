@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeHTML;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewByPortletRichText;
 
 
 @SInfoType(name = "STypeParecer", spackage = SPackagePeticaoPrimariaSimplificada.class)
@@ -28,6 +29,9 @@ public class STypeParecer extends STypePersistentComposite {
 
         resultadoAnalise.selectionOf("Deferir", "Indeferir");
         resultadoAnalise.withRadioView();
+
+        parecer.setView(SViewByPortletRichText::new);
+        oficio.setView(SViewByPortletRichText::new);
 
         parecer.asAtr()
                 .label("Parecer")
