@@ -1,4 +1,4 @@
-(function (label, htmlContainer, hiddenInput) {
+(function (label, htmlContainer, hiddenInput, html) {
 
     var newWindow;
 
@@ -8,21 +8,10 @@
         }
         newWindow = window.open("", label);
         appendFunctions(newWindow);
-        var html = '<html style="width: 100%; height: 100%;background-color: #e8e9f0;">'
-            + '<head>'
-            + '<title>' + label + '</title>'
-            + '<script type="application/javascript" src="/singular-static/resources/singular/plugins/ckeditor/ckeditor.js"></script>'
-            + '<script type="text/javascript" src="/singular-static/resources/metronic/global/plugins/jquery.min.js"></script>'
-            + '<style type="text/css">.cke_button__saveandclose_label{display : inline !important;}</style> '
-            + '</head>'
-            + '<body style="width: 210mm;margin-top: 10px; margin-right: auto; margin-left: auto;">'
-            + '<textarea id="ck-text-area"></textarea> '
-            + '<script type="text/javascript">$(document).ready(function(){createCKEditor();});</script>'
-            + '</body>'
-            + '</html>';
         newWindow.document.open();
         newWindow.document.write(html);
         newWindow.document.close();
+        newWindow.document.title = label;
     };
 
     function appendFunctions(nw) {
@@ -33,7 +22,6 @@
                 skin: 'office2013',
                 language: 'pt-br',
                 width: '210mm',
-                height: '80%',
                 savePlugin: {
                     onSave: function (data) {
                         $('#' + htmlContainer).html(data);
@@ -64,10 +52,10 @@
                 ],
                 on: {
                     'instanceReady': function (evt) {
-
+                        nw.$('.cke_contents').height(nw.$('html').height() - nw.$('.cke_contents').offset().top - nw.$('.cke_bottom').height() - 20);
                     }
                 }
             });
         };
     }
-})('${label}', '${htmlContainer}', '${hiddenInput}');
+})('${label}', '${htmlContainer}', '${hiddenInput}', '${html}');

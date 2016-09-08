@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+<head>
+    <title></title>
+    <link rel="stylesheet" href="/singular-static/resources/metronic/global/plugins/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/singular-static/resources/metronic/layout4/css/layout.css"/>
+    <link rel="stylesheet" href="/singular-static/resources/metronic/layout4/css/themes/default.css"/>
+    <link rel="stylesheet" href="/singular-static/resources/metronic/global/css/components-md.css"/>
+    <style type="text/css">
+        .cke_button__saveandclose_label {
+            display: inline !important;
+        }
+    </style>
+</head>
+<body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md">
+
+<div>
+    <div class="page-header navbar navbar-fixed-top">
+        <div class="page-header-inner">
+            <div class="page-logo">
+                <a href="/singular">
+                    <div class="logo-default"></div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="page-container" style="width: 210mm; margin-right: auto; margin-left: auto">
+    <textarea id="ck-text-area"></textarea>
+</div>
+
+<script type="text/javascript" src="/singular-static/resources/metronic/global/plugins/jquery.min.js"></script>
+<script type="text/javascript" src="/singular-static/resources/singular/plugins/ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        createCKEditor();
+    });
+</script>
+</body>
+</html>
