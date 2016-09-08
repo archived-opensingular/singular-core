@@ -50,14 +50,16 @@ public class BSModalBorder extends Border {
     private static final String BUTTON_LABEL = "label";
 
     public enum ButtonStyle {
-        EMPTY(""),
-        DEFAULT("btn-default"),
-        PRIMARY("btn-primary"),
-        LINK("btn-link"),
-        DANGER("btn-danger"),
-        BLUE("blue"),
-        CANCEl("cancel-btn"),
-        CONFIRM("confirm-btn");
+        //@formatter:off
+        EMPTY   (""), 
+        DEFAULT ("btn-default"), 
+        PRIMARY ("btn-primary"),
+        LINK    ("btn-link"),
+        DANGER  ("btn-danger"),
+        BLUE    ("blue"),
+        CANCEl  ("cancel-btn"),
+        CONFIRM ("confirm-btn");
+        //@formatter:on
 
         private String cssClass;
 
@@ -87,17 +89,17 @@ public class BSModalBorder extends Border {
         }
     }
 
-    private static final String DIALOG        = "dialog";
-    private static final String CLOSE_ICON    = "closeIcon";
-    private static final String COMPRESS_ICON = "compressIcon";
-    private static final String EXPAND_ICON   = "expandIcon";
-    private static final String TITLE         = "title";
-    private static final String HEADER        = "header";
-    private static final String BODY          = "body";
-    private static final String FOOTER        = "footer";
+    private static final String DIALOG           = "dialog";
+    private static final String CLOSE_ICON       = "closeIcon";
+    private static final String COMPRESS_ICON    = "compressIcon";
+    private static final String EXPAND_ICON      = "expandIcon";
+    private static final String TITLE            = "title";
+    private static final String HEADER           = "header";
+    private static final String BODY             = "body";
+    private static final String FOOTER           = "footer";
 
-    private Size    size        = Size.NORMAL;
-    private boolean dismissible = false;
+    private Size                size             = Size.NORMAL;
+    private boolean             dismissible      = false;
 
     private final RepeatingView buttonsContainer = new RepeatingView("buttons");
     protected BSFeedbackPanel   feedbackGeral    = newFeedbackPanel("feedbackGeral", this, newIFeedbackMessageFilter());
@@ -378,13 +380,20 @@ public class BSModalBorder extends Border {
     }
 
     public String getShowJavaScriptCallback() {
-        StringBuilder sb = JQuery.$(this);
-        return sb
+        StringBuilder sb = JQuery.$(this)
             .append(".modal({")
             .append("keyboard:").append(isDismissible())
             .append(",backdrop:").append(isDismissible() ? "true" : "'static'")
-            .append("})")
-            .toString();
+            .append("})");
+        sb.append(""
+            + "\n.on('shown.bs.modal',function(evt) {"
+            + "\n $(this).find('.modal-body')"
+            + "\n  .find('input:not([type=hidden]),select,textarea,button,object,a')"
+            + "\n  .filter(':visible')"
+            + "\n  .first()"
+            + "\n  .each(function(){ this.focus(); });"
+            + "\n})");
+        return sb.toString();
     }
 
     public CharSequence getHideJavaScriptCallback() {
