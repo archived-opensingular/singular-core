@@ -29,6 +29,7 @@ public class SPackagePeticaoPrimariaSimplificada extends SPackage {
         pb.createType(STypeAnaliseGerente.class);
         pb.createType(STypeAnaliseGerenteGeral.class);
         pb.createType(STypeResponsavelAgrofit.class);
+        pb.createType(STypeJustificativaDevolucao.class);
     }
 
 }
