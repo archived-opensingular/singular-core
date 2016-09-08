@@ -21,6 +21,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -99,6 +100,9 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     protected void onConfigure() {
         super.onConfigure();
         WicketFormProcessing.onFormPrepare(this, getRootInstance(), false);
+        if (nested) {
+            container.add(new AttributeAppender("style", "padding:0px;"));
+        }
     }
 
     /**
