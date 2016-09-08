@@ -2,14 +2,15 @@ package br.net.mirante.singular.form.wicket.mapper.richtext;
 
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.io.IOUtil;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
+import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -32,32 +33,30 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         HTML_NEW_TAB = Optional.ofNullable(PortletRichTextPanel.class.getResourceAsStream("PortletRichTextNewTab.html"))
                 .map(in -> {
                     try {
-                        final StringBuilder builder = new StringBuilder();
-                        IOUtil.readLines(in).forEach(line -> builder.append(line.trim().replaceAll("\\r?\\n", "")));
-                        return builder.toString();
+                        return JavaScriptUtils.javaScriptEscape(IOUtils.toString(in, "UTF-8"));
                     } catch (IOException e) {
                         throw new SingularFormException("Não foi possivel extrair o conteudo html", e);
                     }
                 }).orElse(StringUtils.EMPTY);
     }
 
-    private HiddenField        hiddenInput;
-    private WebMarkupContainer htmlContent;
-    private Label              label;
+    private HiddenField hiddenInput;
+    private Label       htmlContent;
+    private Label       label;
+    private String      hash;
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js")) {
             final Map<String, String> params = new HashMap<>();
-
             params.put("label", (String) label.getDefaultModel().getObject());
             params.put("htmlContainer", htmlContent.getMarkupId());
             params.put("hiddenInput", hiddenInput.getMarkupId());
+            params.put("hash", hash);
             params.put("html", HTML_NEW_TAB);
-
             packageTextTemplate.interpolate(params);
-            response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), "PortletRichTextPanel"));
+            response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), hash));
         } catch (IOException e) {
             getLogger().error(e.getMessage(), e);
         }
@@ -65,6 +64,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
     public PortletRichTextPanel(String id, WicketBuildContext ctx) {
         super(id);
+        hash = String.valueOf(ctx.getCurrentInstance().getPathFull().hashCode());
         build(ctx);
         addBehaviours();
     }
@@ -75,8 +75,15 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
     private void build(WicketBuildContext ctx) {
         add(label = new Label("label", Model.of(Optional.ofNullable(ctx.getCurrentInstance().asAtr().getLabel()).orElse(EMPTY))));
-        add(htmlContent = new WebMarkupContainer("htmlContent"));
+        add(htmlContent = new Label("htmlContent", new SInstanceValueModel<>(ctx.getModel())));
         add(hiddenInput = new HiddenField<>("hiddenInput", new SInstanceValueModel<>(ctx.getModel())));
+        add(new Button("button") {
+            @Override
+            protected String getOnClickScript() {
+                return "openNewTabWithCKEditor" + hash + "();";
+            }
+        });
+        htmlContent.setEscapeModelStrings(false);
     }
 
 }

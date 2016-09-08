@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeHTML;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewByBlock;
+import br.net.mirante.singular.form.view.SViewByPortletRichText;
 
 @SInfoType(name = "STypeAnaliseGerenteGeral", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
@@ -24,6 +25,9 @@ public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
         final STypeString resultadoAnalise = addField(PATH_RESULTADO_ANALISE, STypeString.class);
         final STypeHTML   parecer          = addField(PATH_PARECER, STypeHTML.class);
         final STypeHTML   oficio           = addField(PATH_OFICIO, STypeHTML.class);
+
+        parecer.setView(SViewByPortletRichText::new);
+        oficio.setView(SViewByPortletRichText::new);
 
         resultadoAnalise.asAtr()
                 .label("Resultado da Análise")

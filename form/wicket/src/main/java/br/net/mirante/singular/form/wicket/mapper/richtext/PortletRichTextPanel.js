@@ -2,7 +2,7 @@
 
     var newWindow;
 
-    window.openNewTabWithCKEditor = function () {
+    window['openNewTabWithCKEditor${hash}'] = function () {
         if (typeof newWindow != "undefined") {
             newWindow.close();
         }
