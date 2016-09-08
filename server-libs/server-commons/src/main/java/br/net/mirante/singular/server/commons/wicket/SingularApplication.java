@@ -23,13 +23,11 @@ import br.net.mirante.singular.server.commons.wicket.listener.SingularServerCont
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 
 public abstract class SingularApplication extends AuthenticatedWebApplication
-        implements ApplicationContextAware {
+    implements ApplicationContextAware {
 
     public static final String BASE_FOLDER = "/tmp/fileUploader";
 
-    private Class<? extends WebPage> homePageClass;
-
-    private ApplicationContext ctx;
+    private ApplicationContext applicationContext;
 
     public static SingularApplication get() {
         return (SingularApplication) WebApplication.get();
@@ -52,22 +50,21 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(true);
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
-        getComponentInitializationListeners().add(c -> {
-            if (!c.getRenderBodyOnly()) {
-                c.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
-            }
+        getComponentOnConfigureListeners().add(component -> {
+            boolean outputId = !component.getRenderBodyOnly();
+            component.setOutputMarkupId(outputId).setOutputMarkupPlaceholderTag(outputId);
         });
 
-        if (ctx != null) {
-            getComponentInstantiationListeners().add(new SpringComponentInjector(this, ctx, true));
+        if (applicationContext != null) {
+            getComponentInstantiationListeners().add(new SpringComponentInjector(this, applicationContext, true));
         } else {
             getComponentInstantiationListeners().add(new SpringComponentInjector(this));
-            ctx = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+            applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         }
 
         new AnnotatedMountScanner().scanPackage("br.net.mirante").mount(this);
 
-        for (String packageName : getPackagesToScan()){
+        for (String packageName : getPackagesToScan()) {
             new AnnotatedMountScanner().scanPackage(packageName).mount(this);
         }
 
@@ -85,6 +82,7 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Class<? extends WebPage> getSignInPageClass() {
         return (Class<? extends WebPage>) getHomePage();
     }
@@ -99,12 +97,12 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
     }
 
     public ApplicationContext getApplicationContext() {
-        return ctx;
+        return applicationContext;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
-        this.ctx = ctx;
+        this.applicationContext = ctx;
     }
 
     /**
@@ -113,4 +111,3 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
     protected abstract String[] getPackagesToScan();
 
 }
-
