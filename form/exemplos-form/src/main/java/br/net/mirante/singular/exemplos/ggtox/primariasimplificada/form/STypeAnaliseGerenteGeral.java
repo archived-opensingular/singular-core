@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeHTML;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.util.SingularPredicates;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.view.SViewByPortletRichText;
 
@@ -13,7 +14,7 @@ public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
 
 
     public final static String PATH_RESULTADO_ANALISE = "resultadoAnalise";
-    public final static String PATH_PARECER           = "parecer";
+    public final static String PATH_DESPACHO          = "despacho";
     public final static String PATH_OFICIO            = "oficio";
     public final static String DEFERIR                = "Deferir";
     public final static String INDEFERIR              = "Indeferir";
@@ -23,10 +24,9 @@ public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
         super.onLoadType(tb);
 
         final STypeString resultadoAnalise = addField(PATH_RESULTADO_ANALISE, STypeString.class);
-        final STypeHTML   parecer          = addField(PATH_PARECER, STypeHTML.class);
+        final STypeHTML   despacho         = addField(PATH_DESPACHO, STypeHTML.class);
         final STypeHTML   oficio           = addField(PATH_OFICIO, STypeHTML.class);
 
-        parecer.setView(SViewByPortletRichText::new);
         oficio.setView(SViewByPortletRichText::new);
 
         resultadoAnalise.asAtr()
@@ -36,17 +36,14 @@ public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
         resultadoAnalise.selectionOf(DEFERIR, INDEFERIR);
         resultadoAnalise.withRadioView();
 
-        parecer.withInitListener(sihtml -> {
-            if (sihtml.isEmptyOfData()) {
-                final ClassLoader loader = this.getClass().getClassLoader();
-                sihtml.fillFromInputStream(loader.getResourceAsStream("modelo/ModeloParecer.html"));
-            }
-        });
+        resultadoAnalise.withRadioView();
 
-        parecer
-                .asAtr()
-                .label("Parecer")
+        despacho.asAtr()
+                .label("Despacho")
                 .required();
+
+        despacho.asAtr()
+                .visible(SingularPredicates.typeValueIsEqualsTo(resultadoAnalise, INDEFERIR));
 
         oficio.withInitListener(sihtml -> {
             if (sihtml.isEmptyOfData()) {
@@ -60,11 +57,10 @@ public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
                 .label("Ofício")
                 .required();
 
-
         withView(new SViewByBlock(), vbb -> {
             vbb.newBlock("Análise Gerencial")
                     .add(resultadoAnalise)
-                    .add(parecer)
+                    .add(despacho)
                     .add(oficio);
         });
 

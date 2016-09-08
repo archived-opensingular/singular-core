@@ -17,6 +17,7 @@ public class STypePublicacao extends STypePersistentComposite {
 
         final STypeDate    dataDOU   = addField("dataDOU", STypeDate.class);
         final STypeInteger numeroDOU = addField("numeroDOU", STypeInteger.class);
+        final STypeDate    dataRE    = addField("dataRE", STypeDate.class);
         final STypeString  numeroRE  = addField("numeroRE", STypeString.class);
 
         dataDOU
@@ -25,11 +26,19 @@ public class STypePublicacao extends STypePersistentComposite {
                 .asAtr()
                 .label("Data do DOU")
                 .required();
+
         numeroDOU
                 .asAtrBootstrap()
                 .colPreference(3)
                 .asAtr()
                 .label("Número do DOU")
+                .required();
+
+        dataRE
+                .asAtrBootstrap()
+                .colPreference(3)
+                .asAtr()
+                .label("Data do RE")
                 .required();
 
         numeroRE
@@ -39,11 +48,11 @@ public class STypePublicacao extends STypePersistentComposite {
                 .label("Número RE")
                 .required();
 
-
         withView(new SViewByBlock(), viewByBlocks -> {
             viewByBlocks.newBlock("Dados da publicação")
                     .add(dataDOU)
                     .add(numeroDOU)
+                    .add(dataRE)
                     .add(numeroRE);
         });
     }
