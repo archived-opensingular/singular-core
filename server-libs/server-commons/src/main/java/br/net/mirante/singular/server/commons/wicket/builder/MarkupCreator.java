@@ -13,6 +13,34 @@ public class MarkupCreator {
         return p(wicketID, null);
     }
 
+    public static String hr(String wicketID) {
+        return hr(wicketID, null);
+    }
+
+    public static String span(String wicketID) {
+        return span(wicketID, null);
+    }
+
+    public static String h5(String wicketID) {
+        return h5(wicketID, null);
+    }
+
+    public static String h5(String wicketID, HTMLParameters parameters, String... nesteds) {
+        return newTag("h5", wicketID, parameters, nesteds);
+    }
+
+    public static String hr(String wicketID, HTMLParameters parameters, String... nesteds) {
+        return newTag("hr", wicketID, parameters, nesteds);
+    }
+
+    public static String button(String wicketID, HTMLParameters parameters, String... nesteds) {
+        return newTag("button", wicketID, parameters, nesteds);
+    }
+
+    public static String span(String wicketID, HTMLParameters parameters, String... nesteds) {
+        return newTag("span", wicketID, parameters, nesteds);
+    }
+
     public static String div(String wicketID, HTMLParameters parameters, String... nesteds) {
         return newTag("div", wicketID, parameters, nesteds);
     }
