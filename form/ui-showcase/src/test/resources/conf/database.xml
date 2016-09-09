@@ -33,7 +33,7 @@
             <props>
                 <!-- Esse dialect do sql server foi colocado para testar se o script é compatível com sql server  -->
                 <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
-                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.show_sql">false</prop>
                 <prop key="hibernate.format_sql">true</prop>
                 <prop key="hibernate.hbm2ddl.auto">create</prop>
             </props>
