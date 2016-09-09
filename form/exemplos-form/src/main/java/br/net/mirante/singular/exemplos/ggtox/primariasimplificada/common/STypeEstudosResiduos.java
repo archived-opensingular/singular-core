@@ -46,6 +46,9 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
         public static final String ESTUDO_MATRIZ                 = "Conforme matriz";
         public static final String ESTUDO_NOVO                   = "Novo";
         public static final String NOME_OUTRA_CULTURA_FIELD_NAME = "nomeOutraCultura";
+        public static final String CULTURAS_PATH                 = "culturas";
+        public static final String TIPO_ESTUDO_PATH              = "tipoEstudo";
+
 
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
         private final STypeComposite<SIComposite>                         rootType;
@@ -54,7 +57,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
         public EstudoResiduo(STypeComposite<SIComposite> parentType) {
 
-            root = parentType.addFieldListOfComposite("culturas", "cultura");
+            root = parentType.addFieldListOfComposite(CULTURAS_PATH, "cultura");
             rootType = root.getElementsType();
 
             final STypeComposite<SIComposite> cultura     = rootType.addFieldComposite("cultura");
@@ -77,7 +80,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             final STypeString                 descricaoNorma      = norma.addFieldString("descricaoNorma");
             final STypeString                 observacoes         = rootType.addFieldString("observacoes");
 
-            tipoEstudo = rootType.addFieldString("tipoEstudo");
+            tipoEstudo = rootType.addFieldString(TIPO_ESTUDO_PATH);
 
             final STypeString                 estudoPublicado = rootType.addFieldString("estudoPublicado");
             final STypeString                 numeroEstudo    = rootType.addFieldString("numeroEstudo");
