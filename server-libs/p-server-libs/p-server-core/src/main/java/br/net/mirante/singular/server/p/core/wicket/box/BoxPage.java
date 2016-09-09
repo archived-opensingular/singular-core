@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import br.net.mirante.singular.server.commons.wicket.error.AccessDeniedContent;
+import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
@@ -55,21 +57,22 @@ public class BoxPage extends ServerTemplate {
         }
 
         final MenuGroup         menuGroup         = menuSessionConfig.getMenuPorLabel(menu);
-        final ItemBox           itemBoxDTO        = menuGroup.getItemPorLabel(item);
 
-        /**
-         * itemBoxDTO pode ser nulo quando nenhum item está selecionado.
-         */
-        if (itemBoxDTO != null) {
-            return new BoxContent(id, processGroupCod, menuGroup.getLabel(), itemBoxDTO);
-        } else {
+        if (menuGroup != null) {
+            final ItemBox itemBoxDTO = menuGroup.getItemPorLabel(item);
             /**
-             * Fallback
+             * itemBoxDTO pode ser nulo quando nenhum item está selecionado.
              */
-            LOGGER.warn("Não existe correspondencia para o label " + String.valueOf(item));
-            return new EmptyBoxContent(id);
+            if (itemBoxDTO != null) {
+                return new BoxContent(id, processGroupCod, menuGroup.getLabel(), itemBoxDTO);
+            }
         }
 
+        /**
+         * Fallback
+         */
+        LOGGER.warn("Não existe correspondencia para o label " + String.valueOf(item));
+        return new AccessDeniedContent(id);
     }
 
     protected Map<String, String> createLinkParams() {
