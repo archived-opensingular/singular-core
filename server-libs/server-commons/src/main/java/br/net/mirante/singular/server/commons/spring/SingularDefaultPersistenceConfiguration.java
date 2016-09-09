@@ -129,7 +129,7 @@ public class SingularDefaultPersistenceConfiguration {
         hibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
         hibernateProperties.put("hibernate.connection.isolation", "2");
         hibernateProperties.put("hibernate.jdbc.batch_size", "30");
-        hibernateProperties.put("hibernate.show_sql", "true");
+        hibernateProperties.put("hibernate.show_sql", "false");
         hibernateProperties.put("hibernate.format_sql", "true");
         hibernateProperties.put("hibernate.cache.use_second_level_cache", "false");
         hibernateProperties.put("hibernate.jdbc.use_get_generated_keys", "true");
