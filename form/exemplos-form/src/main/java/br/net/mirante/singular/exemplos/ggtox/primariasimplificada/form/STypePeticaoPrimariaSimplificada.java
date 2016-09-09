@@ -1,15 +1,7 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeAnexosPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeDadosGeraisPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeEstudosResiduos;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeInformacoesProcesso;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeIngredienteAtivoPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoFormuladoPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoTecnicoPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeRepresentanteLegal;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeRequerente;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.*;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.listeners.IngredienteAtivoUpdateListener;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.AtivoAmostraValidator;
 import br.net.mirante.singular.form.SIComposite;
@@ -33,19 +25,13 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX.*;
-import static br.net.mirante.singular.form.util.SingularPredicates.allMatches;
-import static br.net.mirante.singular.form.util.SingularPredicates.anyMatches;
-import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsEqualsTo;
-import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsFalse;
-import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsIn;
-import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsNotEqualsTo;
-import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsNotIn;
-import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsNotNull;
-import static br.net.mirante.singular.form.util.SingularPredicates.typeValueIsNull;
-import static br.net.mirante.singular.form.util.SingularPredicates.typeValueMatches;
+import static br.net.mirante.singular.form.util.SingularPredicates.*;
 
 @SInfoType(name = "STypePeticaoPrimariaSimplificada", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
+
+    public final static String ESTUDOS_RESIDUOS_PATH = "estudosResiduos";
+    public final static String NIVEL_PATH            = "nivel";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -61,14 +47,14 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
         final STypeComposite<SIComposite>                      tipoPeticao             = this.addFieldComposite("tipoPeticao");
         final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger("id");
         final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString("nome");
-        final STypeString                                      nivel                   = this.addFieldString("nivel");
+        final STypeString                                      nivel                   = this.addFieldString(NIVEL_PATH);
         final STypeDadosGeraisPeticaoPrimariaSimplificada      dadosGerais             = this.addField("dadosGerais", STypeDadosGeraisPeticaoPrimariaSimplificada.class);
         final STypeRequerente                                  requerente              = this.addField("requerente", STypeRequerente.class);
         final STypeRepresentanteLegal                          representanteLegal      = this.addField("representanteLegal", STypeRepresentanteLegal.class);
         final STypeIngredienteAtivoPeticaoPrimariaSimplificada ingredienteAtivoPeticao = this.addField("ingredienteAtivoPeticao", STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
         final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnicoPeticao   = this.addField("produtoTecnicoPeticao", STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
         final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado        = this.addField("produtoFormulado", STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
-        final STypeEstudosResiduos                             estudosResiduos         = this.addField("estudosResiduos", STypeEstudosResiduos.class);
+        final STypeEstudosResiduos                             estudosResiduos         = this.addField(ESTUDOS_RESIDUOS_PATH, STypeEstudosResiduos.class);
         final STypeInformacoesProcesso                         informacoesProcesso     = this.addField("informacoesProcesso", STypeInformacoesProcesso.class);
         final STypeAnexosPeticaoPrimariaSimplificada           anexos                  = this.addField("anexos", STypeAnexosPeticaoPrimariaSimplificada.class);
 
