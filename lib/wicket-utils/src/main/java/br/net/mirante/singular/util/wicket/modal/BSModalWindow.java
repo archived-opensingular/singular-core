@@ -91,6 +91,10 @@ public class BSModalWindow extends Panel {
     public BSModalBorder getModalBorder() {
         return modalBorder;
     }
+    
+    protected final WebMarkupContainer getBodyContainer() {
+        return bodyContainer;
+    }
 
     public Form<?> getForm() {
         return (Form<?>) form;

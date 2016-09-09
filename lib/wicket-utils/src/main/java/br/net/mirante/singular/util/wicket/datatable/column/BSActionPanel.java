@@ -5,9 +5,7 @@
 
 package br.net.mirante.singular.util.wicket.datatable.column;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import static org.apache.commons.lang3.StringUtils.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import java.io.Serializable;
 
@@ -28,8 +26,6 @@ import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.resource.IconeView;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BSActionPanel<T> extends Panel {
 
@@ -39,82 +35,84 @@ public class BSActionPanel<T> extends Panel {
 
     private final RepeatingView actions  = new RepeatingView("actions");
 
-    public BSActionPanel(String id) {
-        super(id);
+    public BSActionPanel(String id, IModel<T> rowModel) {
+        super(id, rowModel);
         add(actions);
     }
 
-    public BSActionPanel<T> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, MarkupContainer link) {
-        return appendAction(new ActionConfig<>().labelModel(labelModel).iconeModel(iconeModel)
-            .stripeModel(null).link(link).styleClasses($m.ofValue("black")).withText(true));
+    public BSActionPanel<T> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory) {
+        return appendAction(new ActionConfig<T>().labelModel(labelModel).iconeModel(iconeModel)
+            .stripeModel(null)
+            .linkFactory(linkFactory)
+            .styleClasses($m.ofValue("black")).withText(true));
     }
 
-    public BSActionPanel<T> appendAction(ActionConfig<?> actionConfig) {
+    public BSActionPanel<T> appendAction(ActionConfig<T> actionConfig) {
+
+        MarkupContainer link = actionConfig.linkFactory.apply(LINK_ID, getModel());
 
         actions.add(new WebMarkupContainer(actions.newChildId())
-            .add(actionConfig.link.add($b.attrAppender("class", actionConfig.styleClasses, " "))));
+            .add(link.add($b.attrAppender("class", actionConfig.styleClasses, " "))));
 
         if (actionConfig.stripeModel != null) {
-            actionConfig.link.add($b.attrAppender("class", actionConfig.stripeModel, " "));
+            link.add($b.attrAppender("class", actionConfig.stripeModel, " "));
         }
 
-        if (actionConfig.link.get(ICONE_ID) == null) {
-            actionConfig.link.add(new IconeView(ICONE_ID, actionConfig.iconeModel, actionConfig.iconeStyle, actionConfig.iconeClass));
+        if (link.get(ICONE_ID) == null) {
+            link.add(new IconeView(ICONE_ID, actionConfig.iconeModel, actionConfig.iconeStyle, actionConfig.iconeClass));
         }
 
         if (actionConfig.labelModel != null) {
             if (actionConfig.withText) {
-                actionConfig.link.add(new Label(LABEL_ID, actionConfig.labelModel));
+                link.add(new Label(LABEL_ID, actionConfig.labelModel));
             } else {
-                actionConfig.link.add($b.attr("title", actionConfig.labelModel));
-                actionConfig.link.add(new WebMarkupContainer(LABEL_ID));
+                link.add($b.attr("title", actionConfig.labelModel));
+                link.add(new WebMarkupContainer(LABEL_ID));
             }
         }
 
-        actionConfig.link.add($b.attr("data-toggle", "tooltip"));
-        actionConfig.link.add($b.attr("data-placement", "bottom"));
+        link.add($b.attr("data-toggle", "tooltip"));
+        link.add($b.attr("data-placement", "bottom"));
 
-        if (actionConfig.title != null) {
-            actionConfig.link.add($b.attr("title", actionConfig.title));
+        if (actionConfig.titleFunction != null) {
+            link.add($b.attr("title", actionConfig.titleFunction.apply(getModel())));
         } else {
-            actionConfig.link.add($b.attr("title", actionConfig.labelModel));
+            link.add($b.attr("title", actionConfig.labelModel));
         }
 
         return this;
     }
 
-    public BSActionPanel<T> appendAction(ActionConfig<T> actionConfig, IFunction<String, MarkupContainer> linkFactory) {
-        return appendAction(actionConfig.link(linkFactory.apply(LINK_ID)));
+    public BSActionPanel<T> appendAction(ActionConfig<T> actionConfig, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory) {
+        return appendAction(actionConfig.linkFactory(linkFactory));
     }
 
-    public BSActionPanel<T> appendAction(ActionConfig<T> actionConfig, IBiFunction<T, String, MarkupContainer> linkFactory, IModel<T> model) {
-        return appendAction(actionConfig.link(linkFactory.apply(model.getObject(), LINK_ID)));
-    }
-
-    public BSActionPanel<T> appendAction(ActionConfig<T> config, IBSAction<T> action, IModel<T> model) {
+    public BSActionPanel<T> appendAction(ActionConfig<T> config, IBSAction<T> action) {
         if (config.linkFactory == null) {
-            return appendAction(config, childId -> new ActionAjaxLink<T>(childId, model) {
+            return appendAction(config, (String childId, IModel<T> rowModel) -> new ActionAjaxLink<T>(childId, rowModel) {
                 @Override
-                public void onAction(AjaxRequestTarget target) {
-                    action.execute(target, this.getModel(), this);
+                public void onInitialize() {
+                    super.onInitialize();
+                    this.add($b.attrAppender("style", config.style, " "));
                 }
-
-                @Override
-                protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
-                    super.updateAjaxAttributes(attributes);
-                    action.updateAjaxAttributes(attributes);
-                }
-
                 @Override
                 protected void onConfigure() {
                     super.onConfigure();
                     this.setVisible(action.isVisible(this.getModel()));
                     this.setEnabled(action.isEnabled(this.getModel()));
-                    add($b.attrAppender("style", config.style, " "));
+                }
+                @Override
+                public void onAction(AjaxRequestTarget target) {
+                    action.execute(target, this.getModel(), this);
+                }
+                @Override
+                protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                    super.updateAjaxAttributes(attributes);
+                    action.updateAjaxAttributes(attributes);
                 }
             });
         } else {
-            return appendAction(config, config.linkFactory, model);
+            return appendAction(config, config.linkFactory);
         }
     }
 
@@ -129,20 +127,29 @@ public class BSActionPanel<T> extends Panel {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public IModel<T> getModel() {
+        return (IModel<T>) getDefaultModel();
+    }
+
+    @SuppressWarnings("unchecked")
+    public T getModelObject() {
+        return (T) getDefaultModelObject();
+    }
+
     public static class ActionConfig<T> implements Serializable {
 
-        protected IModel<?>                               labelModel   = $m.ofValue("");
-        protected IModel<Icone>                           iconeModel;
-        protected IModel<String>                          iconeStyle;
-        protected IModel<String>                          iconeClass;
-        protected IModel<String>                          stripeModel;
-        protected MarkupContainer                         link;
-        protected IModel<String>                          styleClasses = $m.ofValue("btn default btn-xs black");
-        protected IModel<String>                          style;
-        protected IModel<String>                          title;
-        protected boolean                                 withText     = false;
-        protected IBiFunction<T, String, MarkupContainer> linkFactory;
-        protected IFunction<IModel, Boolean>              visibleFor   = m -> Boolean.TRUE;
+        protected IModel<?>                                       labelModel   = $m.ofValue("");
+        protected IModel<Icone>                                   iconeModel;
+        protected IModel<String>                                  iconeStyle;
+        protected IModel<String>                                  iconeClass;
+        protected IModel<String>                                  stripeModel;
+        protected IModel<String>                                  styleClasses = $m.ofValue("btn default btn-xs black");
+        protected IModel<String>                                  style;
+        protected IFunction<IModel<T>, String>                    titleFunction;
+        protected boolean                                         withText     = false;
+        protected IBiFunction<String, IModel<T>, MarkupContainer> linkFactory;
+        protected IFunction<IModel<T>, Boolean>                   visibleFor   = m -> Boolean.TRUE;
 
         public ActionConfig<T> labelModel(IModel<?> labelModel) {
             this.labelModel = labelModel;
@@ -169,11 +176,6 @@ public class BSActionPanel<T> extends Panel {
             return this;
         }
 
-        public ActionConfig<T> link(MarkupContainer link) {
-            this.link = link;
-            return this;
-        }
-
         public ActionConfig<T> styleClasses(IModel<String> buttonModel) {
             this.styleClasses = buttonModel;
             return this;
@@ -189,17 +191,17 @@ public class BSActionPanel<T> extends Panel {
             return this;
         }
 
-        public ActionConfig<T> linkFactory(IBiFunction<T, String, MarkupContainer> linkFactory) {
+        public ActionConfig<T> linkFactory(IBiFunction<String, IModel<T>, MarkupContainer> linkFactory) {
             this.linkFactory = linkFactory;
             return this;
         }
 
-        public ActionConfig<T> title(IModel<String> title) {
-            this.title = title;
+        public ActionConfig<T> titleFunction(IFunction<IModel<T>, String> titleFunction) {
+            this.titleFunction = titleFunction;
             return this;
         }
 
-        public ActionConfig<T> visibleFor(IFunction<IModel, Boolean> visibleFor) {
+        public ActionConfig<T> visibleFor(IFunction<IModel<T>, Boolean> visibleFor) {
             this.visibleFor = visibleFor;
             return this;
         }

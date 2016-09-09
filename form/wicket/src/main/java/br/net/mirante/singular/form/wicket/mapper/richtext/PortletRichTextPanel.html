@@ -1,0 +1,23 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:panel>
+    <div class="portlet light" style="box-shadow: none;border: 1px solid #9fa491;border-radius: 3px">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="icon-docs"></i>
+                <span class="caption-subject bold uppercase"> <span wicket:id="label"></span></span>
+            </div>
+            <div class="actions">
+                <button type="button" wicket:id="button" class="btn btn-default">
+                    <i class="fa fa-pencil"></i> Editar
+                </button>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <div style="overflow: auto; width: auto; max-height: 200px;">
+                <label wicket:id="htmlContent"></label>
+            </div>
+        </div>
+        <input type="hidden" wicket:id="hiddenInput">
+    </div>
+</wicket:panel>
+</html>

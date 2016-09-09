@@ -238,11 +238,11 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         });
     }
 
-    private ActionConfig buildRemoveActionConfig() {
+    private ActionConfig<SInstance> buildRemoveActionConfig() {
         return new ActionConfig<SInstance>()
             .styleClasses(Model.of("list-detail-remove"))
             .iconeModel(Model.of(Icone.REMOVE))
-            .title(Model.of("Remover"));
+            .titleFunction(rowModel -> "Remover");
     }
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
@@ -253,23 +253,26 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         };
     }
 
-    private ActionConfig buildViewOrEditActionConfig(ViewMode viewMode, SViewListByMasterDetail view) {
+    private ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, SViewListByMasterDetail view) {
         final Icone openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL : Icone.EYE;
-        return new ActionConfig<>()
+        return new ActionConfig<SInstance>()
             .iconeModel(Model.of(openModalIcon))
             .styleClasses(Model.of("list-detail-edit"))
-            .title(viewMode.isEdition() && view.isEditEnabled() ? Model.of("Editar") : Model.of("Visualizar"));
+            .titleFunction(rowModel -> viewMode.isEdition() && view.isEditEnabled() ? "Editar" : "Visualizar");
     }
 
     private IBSAction<SInstance> buildViewOrEditAction(MasterDetailModal modal, WicketBuildContext ctx) {
         return (target, rowModel) -> modal.showExisting(target, rowModel, ctx);
     }
 
-    private ActionConfig buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
-        return new ActionConfig<>()
+    private ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
+        Integer count = IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size()).getObject();
+        if (count > 0)
+            System.out.println(count);
+        return new ActionConfig<SInstance>()
             .iconeModel(IReadOnlyModel.of(() -> Icone.EXCLAMATION_TRIANGLE))
             .styleClasses(Model.of("red"))
-            .title(IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size() + " erro(s) encontrado(s)"))
+            .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
             .style($m.ofValue(MapperCommons.BUTTON_STYLE));
     }
 

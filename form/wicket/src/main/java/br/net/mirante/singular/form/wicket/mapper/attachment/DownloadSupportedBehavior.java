@@ -142,6 +142,15 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
             @Override
             protected ResourceResponse newResourceResponse(Attributes attributes) {
                 IAttachmentRef fileRef = findAttachmentRef(id);
+                if (fileRef == null) {
+                    return new ResourceResponse()
+                        .setStatusCode(HttpServletResponse.SC_NOT_FOUND)
+                        .setWriteCallback(new WriteCallback() {
+                            @Override
+                            public void writeData(Attributes attributes) throws IOException {
+                            }
+                        });
+                }
                 ResourceResponse resourceResponse = new ResourceResponse();
                 resourceResponse.setFileName(filename);
                 resourceResponse.setContentType(resolveContentType(filename));

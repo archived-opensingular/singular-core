@@ -30,7 +30,7 @@ import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 
 public class ShowcaseApplication extends AuthenticatedWebApplication
-        implements ApplicationContextAware {
+    implements ApplicationContextAware {
 
     public static final String BASE_FOLDER = "/tmp/fileUploader";
 
@@ -61,11 +61,9 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(false);
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
-
-
-        getComponentInitializationListeners().add(c -> {
-            if (!c.getRenderBodyOnly())
-                c.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
+        getComponentOnConfigureListeners().add(component -> {
+            boolean outputId = !component.getRenderBodyOnly();
+            component.setOutputMarkupId(outputId).setOutputMarkupPlaceholderTag(outputId);
         });
 
         if (ctx != null) {

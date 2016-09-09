@@ -21,10 +21,12 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.resource.JQueryPluginResourceReference;
@@ -40,7 +42,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     /**
      * Container onde os componentes serão adicionados
      */
-    private BSGrid container = new BSGrid("generated");
+    private BSGrid                              container = new BSGrid("generated");
 
     /**
      * Instancia root do pacote
@@ -50,15 +52,15 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     /**
      * ViewMode, por padrão é de edição
      */
-    private ViewMode viewMode = ViewMode.EDIT;
+    private ViewMode                            viewMode  = ViewMode.EDIT;
 
-    private RefSDocumentFactory documentFactoryRef;
+    private RefSDocumentFactory                 documentFactoryRef;
 
-    private transient SFormConfig<FORM_KEY> singularFormConfig;
+    private transient SFormConfig<FORM_KEY>     singularFormConfig;
 
-    private final boolean nested;
+    private final boolean                       nested;
 
-    private IBSComponentFactory<Component> preFormPanelFactory;
+    private IBSComponentFactory<Component>      preFormPanelFactory;
 
     /**
      * Construtor do painel
@@ -99,6 +101,9 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     protected void onConfigure() {
         super.onConfigure();
         WicketFormProcessing.onFormPrepare(this, getRootInstance(), false);
+        if (nested) {
+            container.add(new AttributeAppender("style", "padding:0px;"));
+        }
     }
 
     /**
@@ -134,6 +139,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(new JQueryPluginResourceReference(SingularFormPanel.class, "SingularFormPanel.js")));
+        response.render(OnDomReadyHeaderItem.forScript("SingularFormPanel.initFocus('" + this.getMarkupId() + "');"));
     }
 
     /**
