@@ -11,6 +11,7 @@ import br.net.mirante.singular.server.commons.flow.SingularServerTaskPageStrateg
 import br.net.mirante.singular.server.commons.flow.SingularWebRef;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.error.AccessDeniedPage;
@@ -57,6 +58,9 @@ public abstract class DispatcherPage extends WebPage {
 
     @Inject
     private PetitionService<?> petitionService;
+
+    @Inject
+    private PermissionResolverService permissionResolverService;
 
     @Inject
     @Named("formConfigWithDatabase")
@@ -146,7 +150,7 @@ public abstract class DispatcherPage extends WebPage {
 
         String permissionsNeeded = config.getFormAction().toString() + "_" + typeSimpleName.toUpperCase();
 
-        return userDetails.getPermissionsSingular().contains(permissionsNeeded);
+        return permissionResolverService.hasPermission(userDetails.getUsername(), permissionsNeeded);
     }
 
     private SType<?> loadType(FormPageConfig cfg) {

@@ -5,17 +5,7 @@
 
 package br.net.mirante.singular.server.commons.spring.security;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.SFormUtil;
@@ -27,25 +17,41 @@ import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.service.dto.FormDTO;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 
-public class PermissionResolverService {
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-    @Inject
-    @Named("peticionamentoUserDetailService")
-    private SingularUserDetailsService peticionamentoUserDetailService;
+/**
+ * Classe responsável por resolver as permissões do usuário em permissões do singular
+ * e verificar se o usuário possui o acesso.
+ *
+ * @author Delfino Filho
+ */
+public class PermissionResolverService implements Loggable {
 
     @Inject
     protected PetitionService<PetitionEntity> petitionService;
-
+    @Inject
+    @Named("peticionamentoUserDetailService")
+    private   SingularUserDetailsService      peticionamentoUserDetailService;
     @Inject
     @Named("formConfigWithDatabase")
-    private Optional<SFormConfig<String>> singularFormConfig;
+    private   Optional<SFormConfig<String>>   singularFormConfig;
 
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
-    
+
     public void filterBoxWithPermissions(List<MenuGroup> groupDTOs, String user) {
         List<String> permissions = searchPermissionsSingular(user);
 
@@ -53,20 +59,44 @@ public class PermissionResolverService {
             MenuGroup menuGroup = it.next();
             String permissionNeeded = menuGroup.getId().toUpperCase();
             if (!permissions.contains(permissionNeeded)) {
+                getLogger().debug(String.format(" Usuário logado %s não possui a permissão %s ", user, permissionNeeded));
                 it.remove();
             } else {
-                filterForms(menuGroup, permissions);
+                filterForms(menuGroup, permissions, user);
             }
 
         }
     }
 
-    private void filterForms(MenuGroup menuGroup, List<String> permissions) {
+    protected void filterForms(MenuGroup menuGroup, List<String> permissions, String user) {
         for (Iterator<FormDTO> it = menuGroup.getForms().iterator(); it.hasNext(); ) {
             FormDTO form = it.next();
             String permissionNeeded = FormActions.FORM_FILL + "_" + form.getAbbreviation().toUpperCase();
             if (!permissions.contains(permissionNeeded)) {
+                getLogger().debug(String.format(" Usuário logado %s não possui a permissão %s ", user, permissionNeeded));
                 it.remove();
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void filterActions(List<Map<String, Object>> result, String idUsuarioLogado) {
+        List<String> permissions = searchPermissionsSingular(idUsuarioLogado);
+        for (Map<String, Object> resultItem : result) {
+            List<BoxItemAction> actions = (List<BoxItemAction>) resultItem.get("actions");
+            for (Iterator<BoxItemAction> it = actions.iterator(); it.hasNext(); ) {
+                BoxItemAction action = it.next();
+                String permissionsNeeded;
+                String typeAbbreviation = getAbbreviation((String) resultItem.get("type"));
+                if (action.getFormAction() != null) {
+                    permissionsNeeded = action.getFormAction().toString() + "_" + typeAbbreviation;
+                } else {
+                    permissionsNeeded = "ACTION_" + action.getName().toUpperCase() + "_" + typeAbbreviation;
+                }
+                if (!permissions.contains(permissionsNeeded)) {
+                    getLogger().debug(String.format(" Usuário logado %s não possui a permissão %s ", idUsuarioLogado, permissionsNeeded));
+                    it.remove();
+                }
             }
         }
     }
@@ -77,8 +107,8 @@ public class PermissionResolverService {
     }
 
     public boolean hasFormPermission(PetitionEntity petitionEntity, String idUsuario, String action) {
-        FormTypeEntity formType = petitionEntity.getMainForm().getFormType();
-        String permissionNeeded = "ACTION_" + action + "_" + getAbbreviation(formType);
+        FormTypeEntity formType         = petitionEntity.getMainForm().getFormType();
+        String         permissionNeeded = "ACTION_" + action + "_" + getAbbreviation(formType);
         return hasPermission(idUsuario, permissionNeeded);
     }
 
@@ -94,7 +124,11 @@ public class PermissionResolverService {
 
     public boolean hasPermission(String idUsuario, String permissionNeeded) {
         List<String> permissions = searchPermissionsSingular(idUsuario);
-        return permissions.contains(permissionNeeded.toUpperCase());
+        if (!permissions.contains(permissionNeeded.toUpperCase())) {
+            getLogger().debug(String.format(" Usuário logado %s não possui a permissão %s ", idUsuario, permissionNeeded));
+            return false;
+        }
+        return true;
     }
 
     public List<SingularPermission> searchPermissions(String idUsuario) {

@@ -5,17 +5,16 @@
 
 package br.net.mirante.singular.server.commons.flow.rest;
 
-import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_DELETE;
-
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.spring.SpringServiceRegistry;
+import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
+import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
+import br.net.mirante.singular.server.commons.util.PetitionUtil;
+import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,17 +23,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.spring.SpringServiceRegistry;
-import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
-import br.net.mirante.singular.server.commons.service.PetitionService;
-import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
-import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
-import br.net.mirante.singular.server.commons.util.PetitionUtil;
-import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
+import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_DELETE;
 
 /**
  * Essa interface deve ser protegida de forma que apenas o próprio servidor possa
@@ -45,18 +41,14 @@ import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 @RestController
 public class DefaultServerREST {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(DefaultServerREST.class);
-
-    public static final String PATH_BOX_ACTION = "/box/action";
-    public static final String DELETE          = "/delete";
-    public static final String EXECUTE         = "/execute";
-
+    public static final String PATH_BOX_ACTION  = "/box/action";
+    public static final String DELETE           = "/delete";
+    public static final String EXECUTE          = "/execute";
     public static final String SEARCH_PETITIONS = "/searchPetitions";
     public static final String COUNT_PETITIONS  = "/countPetitions";
-
-    public static final String SEARCH_TASKS = "/searchTasks";
-    public static final String COUNT_TASKS  = "/countTasks";
-
+    public static final String SEARCH_TASKS     = "/searchTasks";
+    public static final String COUNT_TASKS      = "/countTasks";
+    static final        Logger LOGGER           = LoggerFactory.getLogger(DefaultServerREST.class);
     @Inject
     protected PetitionService<PetitionEntity> petitionService;
 
@@ -112,34 +104,10 @@ public class DefaultServerREST {
     }
 
 
-    @SuppressWarnings("unchecked")
-    protected void filterActions(List<Map<String, Object>> result, String idUsuarioLogado) {
-
-        List<String> permissions = permissionResolverService.searchPermissionsSingular(idUsuarioLogado);
-
-        for (Map<String, Object> resultItem : result) {
-            List<BoxItemAction> actions = (List<BoxItemAction>) resultItem.get("actions");
-
-            for (Iterator<BoxItemAction> it = actions.iterator(); it.hasNext(); ) {
-                BoxItemAction action = it.next();
-                String permissionsNeeded;
-                String typeAbbreviation = permissionResolverService.getAbbreviation((String) resultItem.get("type"));
-                if (action.getFormAction() != null) {
-                    permissionsNeeded = action.getFormAction().toString() + "_" + typeAbbreviation;
-                } else {
-                    permissionsNeeded = "ACTION_" + action.getName().toUpperCase() + "_" + typeAbbreviation;
-                }
-                if (!permissions.contains(permissionsNeeded)) {
-                    it.remove();
-                }
-            }
-        }
-    }
-
     @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_PETITIONS, method = RequestMethod.POST)
     public List<Map<String, Object>> searchPetitions(@RequestBody QuickFilter filter) {
         List<Map<String, Object>> result = petitionService.quickSearchMap(filter);
-        filterActions(result, filter.getIdUsuarioLogado());
+        permissionResolverService.filterActions(result, filter.getIdUsuarioLogado());
         return result;
     }
 
