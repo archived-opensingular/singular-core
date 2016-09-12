@@ -158,7 +158,7 @@ public abstract class DispatcherPage extends WebPage {
     private String loadTypeNameFormFormVersionPK(FormPageConfig cfg) {
         return Optional
                 .ofNullable(cfg.getFormVersionPK())
-                .map(petitionService::getFormTypeFromVersion)
+                .map(petitionService::findFormTypeFromVersion)
                 .map(FormTypeEntity::getAbbreviation)
                 .orElseThrow(() -> new SingularServerException("Não possivel idenfiticar o tipo"));
     }
