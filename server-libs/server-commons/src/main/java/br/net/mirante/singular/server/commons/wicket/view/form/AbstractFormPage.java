@@ -108,7 +108,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return Optional
                 .ofNullable(petition.getCurrentDraftEntity())
                 .map(DraftEntity::getForm)
-                .filter(form -> petitionService.getFormType(form.getCod()).getAbbreviation().equals(getFormType(config)))
+                .filter(form -> petitionService.findFormType(form.getCod()).getAbbreviation().equals(getFormType(config)))
                 .orElse(getFormPetitionEntity(petition).map(FormPetitionEntity::getForm).orElse(null));
     }
 
