@@ -41,7 +41,7 @@ public class WkHtmlToPdfRestClient implements Loggable {
     }
 
     private String retrieveWSBaseURL() {
-        return System.getProperty("singular.ws.wkhtmltopdf.url", "http://localhost:8080/wkhtmltopdf-ws");
+        return System.getProperty("singular.ws.wkhtmltopdf.url", "http://10.0.0.142/wkhtmltopdf-ws");
     }
 
     private RestTemplate createRestTemplate() {
