@@ -3,11 +3,11 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package br.net.mirante.singular.server.commons.flow.flow.renderer.remote;
+package br.net.mirante.singular.server.commons.flow.renderer.remote;
 
-import br.net.mirante.singular.server.commons.flow.flow.renderer.remote.dto.Task;
-import br.net.mirante.singular.server.commons.flow.flow.renderer.remote.dto.Transition;
-import br.net.mirante.singular.server.commons.flow.flow.renderer.remote.dto.TransitionTask;
+import br.net.mirante.singular.server.commons.flow.renderer.remote.dto.Task;
+import br.net.mirante.singular.server.commons.flow.renderer.remote.dto.Transition;
+import br.net.mirante.singular.server.commons.flow.renderer.remote.dto.TransitionTask;
 import br.net.mirante.singular.flow.core.EventType;
 import br.net.mirante.singular.flow.core.ITaskPredicate;
 import br.net.mirante.singular.flow.core.MTask;
@@ -34,7 +34,7 @@ public class YFilesFlowRemoteRenderer implements IFlowRenderer {
 
     @Override
     public byte[] generateImage(ProcessDefinition<?> definicao) {
-        br.net.mirante.singular.server.commons.flow.flow.renderer.remote.dto.ProcessDefinition pd = new br.net.mirante.singular.server.commons.flow.flow.renderer.remote.dto.ProcessDefinition();
+        br.net.mirante.singular.server.commons.flow.renderer.remote.dto.ProcessDefinition pd = new br.net.mirante.singular.server.commons.flow.renderer.remote.dto.ProcessDefinition();
         pd.setTasks(new ArrayList<>());
         for (MTask<?> task : definicao.getFlowMap().getAllTasks()) {
             pd.getTasks().add(from(task, definicao.getFlowMap().getStartTask()));

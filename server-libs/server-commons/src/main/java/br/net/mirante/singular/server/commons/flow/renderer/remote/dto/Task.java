@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.commons.flow.flow.renderer.remote.dto;
+package br.net.mirante.singular.server.commons.flow.renderer.remote.dto;
 
 import java.util.List;
 

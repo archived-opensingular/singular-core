@@ -7,7 +7,7 @@ import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
-import br.net.mirante.singular.server.commons.flow.flow.renderer.remote.YFilesFlowRemoteRenderer;
+import br.net.mirante.singular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.PlatformTransactionManager;
