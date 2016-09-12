@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.server.commons.flow.rest;
 
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_RELOCATE;
+import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_RELOCATE;
 
 import javax.xml.ws.WebServiceException;
 
@@ -21,15 +21,15 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEn
 public class AtribuirController extends IController implements Loggable {
 
     @Override
-    public ActionResponse execute(PetitionEntity petition, Action action) {
+    public ActionResponse execute(PetitionEntity petition, ActionRequest actionRequest) {
         try {
             ProcessInstance processInstance = Flow.getProcessInstance(petition.getProcessInstanceEntity());
-            MUser user = Flow.getConfigBean().getUserService().saveUserIfNeeded(action.getIdUsuario());
+            MUser user = Flow.getConfigBean().getUserService().saveUserIfNeeded(actionRequest.getIdUsuario());
             if (user == null) {
                 throw new WebServiceException("Usuário não encontrado");
             }
 
-            processInstance.getCurrentTask().relocateTask(user, user, false, "", action.getLastVersion());
+            processInstance.getCurrentTask().relocateTask(user, user, false, "", actionRequest.getLastVersion());
             return new ActionResponse("Tarefa atribuída com sucesso.", true);
         } catch (Exception e) {
             String resultMessage = "Erro ao atribuir tarefa.";
@@ -40,7 +40,7 @@ public class AtribuirController extends IController implements Loggable {
 
     @Override
     public String getActionName() {
-        return ACTION_RELOCATE;
+        return ACTION_RELOCATE.getName();
     }
 
 

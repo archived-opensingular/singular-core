@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.ACTION_DELETE;
+import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_DELETE;
 
 /**
  * Essa interface deve ser protegida de forma que apenas o próprio servidor possa
@@ -63,9 +63,9 @@ public class DefaultServerREST {
     protected SFormConfig<String> singularFormConfig;
 
     @RequestMapping(value = PATH_BOX_ACTION + DELETE, method = RequestMethod.POST)
-    public ActionResponse excluir(@RequestParam Long id, @RequestBody Action action) {
+    public ActionResponse excluir(@RequestParam Long id, @RequestBody ActionRequest actionRequest) {
         try {
-            boolean hasPermission = permissionResolverService.hasFormPermission(id, action.getIdUsuario(), ACTION_DELETE);
+            boolean hasPermission = permissionResolverService.hasFormPermission(id, actionRequest.getIdUsuario(), ACTION_DELETE.getName());
             if (hasPermission) {
                 petitionService.delete(id);
                 return new ActionResponse("Registro excluído com sucesso", true);
@@ -81,25 +81,25 @@ public class DefaultServerREST {
     }
 
     @RequestMapping(value = PATH_BOX_ACTION + EXECUTE, method = RequestMethod.POST)
-    public ActionResponse execute(@RequestParam Long id, @RequestBody Action action) {
+    public ActionResponse execute(@RequestParam Long id, @RequestBody ActionRequest actionRequest) {
         try {
             final PetitionEntity petition = petitionService.find(id);
             final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(petition);
 
-            IController controller = getActionController(processDefinition, action);
-            return controller.run(petition, action);
+            IController controller = getActionController(processDefinition, actionRequest);
+            return controller.run(petition, actionRequest);
         } catch (Exception e) {
-            final String msg = String.format("Erro ao executar a ação %s para o id %d.", action.getName(), id);
+            final String msg = String.format("Erro ao executar a ação %s para o id %d.", actionRequest.getName(), id);
             LOGGER.error(msg, e);
             return new ActionResponse(msg, false);
         }
 
     }
 
-    private IController getActionController(ProcessDefinition<?> processDefinition, Action action) {
+    private IController getActionController(ProcessDefinition<?> processDefinition, ActionRequest actionRequest) {
         final ActionConfig actionConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
 
-        Class<? extends IController> controllerClass = actionConfig.getAction(action.getName());
+        Class<? extends IController> controllerClass = actionConfig.getAction(actionRequest.getName());
         return springServiceRegistry.lookupService(controllerClass);
     }
 

@@ -15,25 +15,25 @@ public abstract class IController {
     @Inject
     private PermissionResolverService     permissionResolverService;
 
-    public ActionResponse run(PetitionEntity petition, Action action) {
-        if (hasPermission(petition, action)) {
-            return execute(petition, action);
+    public ActionResponse run(PetitionEntity petition, ActionRequest actionRequest) {
+        if (hasPermission(petition, actionRequest)) {
+            return execute(petition, actionRequest);
         } else {
             return new ActionResponse("Você não tem permissão para executar esta ação.", false);
         }
     }
 
-    private boolean hasPermission(PetitionEntity petition, Action action) {
+    private boolean hasPermission(PetitionEntity petition, ActionRequest actionRequest) {
         if (getType() == Type.PROCESS) {
-            return permissionResolverService.hasFlowPermission(petition, action.getIdUsuario(), getActionName());
+            return permissionResolverService.hasFlowPermission(petition, actionRequest.getIdUsuario(), getActionName());
         } else {
-            return permissionResolverService.hasFormPermission(petition, action.getIdUsuario(), getActionName());
+            return permissionResolverService.hasFormPermission(petition, actionRequest.getIdUsuario(), getActionName());
         }
     }
 
     public abstract String getActionName();
 
-    protected abstract ActionResponse execute(PetitionEntity petition, Action action);
+    protected abstract ActionResponse execute(PetitionEntity petition, ActionRequest actionRequest);
 
     protected Type getType() {
         return Type.PROCESS;

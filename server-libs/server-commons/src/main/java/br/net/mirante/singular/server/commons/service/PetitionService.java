@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.server.commons.util.ServerActionConstants.*;
+import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.*;
 
 @Transactional
 public class PetitionService<T extends PetitionEntity> implements Loggable {
@@ -126,10 +126,10 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     private void checkItemActions(Map<String, Object> item) {
         List<BoxItemAction> actions = new ArrayList<>();
-        actions.add(createPopupBoxItemAction(item, FormActions.FORM_FILL, ACTION_EDIT));
-        actions.add(createPopupBoxItemAction(item, FormActions.FORM_VIEW, ACTION_VIEW));
+        actions.add(createPopupBoxItemAction(item, FormActions.FORM_FILL, ACTION_EDIT.getName()));
+        actions.add(createPopupBoxItemAction(item, FormActions.FORM_VIEW, ACTION_VIEW.getName()));
         actions.add(createDeleteAction(item));
-        actions.add(BoxItemAction.newExecuteInstante(item.get("codPeticao"), ACTION_RELOCATE));
+        actions.add(BoxItemAction.newExecuteInstante(item.get("codPeticao"), ACTION_RELOCATE.getName()));
 
         appendItemActions(item, actions);
 
@@ -152,7 +152,7 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         String endpointUrl = PATH_BOX_ACTION + DELETE + "?id=" + item.get("codPeticao");
 
         final BoxItemAction boxItemAction = new BoxItemAction();
-        boxItemAction.setName(ACTION_DELETE);
+        boxItemAction.setName(ACTION_DELETE.getName());
         boxItemAction.setEndpoint(endpointUrl);
         return boxItemAction;
     }
@@ -402,14 +402,14 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     protected void checkTaskActions(TaskInstanceDTO task, QuickFilter filter) {
         List<BoxItemAction> actions = new ArrayList<>();
         if (task.getCodUsuarioAlocado() == null) {
-            actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE));
+            actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE.getName()));
         }
 
         if (filter.getIdUsuarioLogado().equalsIgnoreCase(task.getCodUsuarioAlocado())) {
-            actions.add(createPopupBoxItemAction(task.getCodPeticao(), task.getType(), FormActions.FORM_ANALYSIS, ACTION_ANALYSE));
+            actions.add(createPopupBoxItemAction(task.getCodPeticao(), task.getType(), FormActions.FORM_ANALYSIS, ACTION_ANALYSE.getName()));
         }
 
-        actions.add(createPopupBoxItemAction(task.getCodPeticao(), task.getType(), FormActions.FORM_VIEW, ACTION_VIEW));
+        actions.add(createPopupBoxItemAction(task.getCodPeticao(), task.getType(), FormActions.FORM_VIEW, ACTION_VIEW.getName()));
 
         appendTaskActions(task, actions);
 

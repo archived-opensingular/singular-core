@@ -14,6 +14,7 @@ import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
+import br.net.mirante.singular.server.commons.flow.rest.ActionDefinition;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
@@ -201,12 +202,12 @@ public class PermissionResolverService implements Loggable {
             return Collections.emptyList();
         }
 
-        List<String> actions = new ArrayList<>();
+        List<ActionDefinition> actions = new ArrayList<>();
         actions.addAll(actionConfig.getDefaultActions());
         actions.addAll(actionConfig.getCustomActions().keySet());
 
         return actions.stream()
-                .map(n -> buildPermission(n, processDefinition.getKey()))
+                .map(n -> buildPermission(n.getName(), processDefinition.getKey()))
                 .collect(Collectors.toList());
     }
 

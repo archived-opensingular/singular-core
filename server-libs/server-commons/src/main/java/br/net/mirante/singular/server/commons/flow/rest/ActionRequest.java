@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.server.commons.flow.rest;
 
-public class Action {
+public class ActionRequest {
 
     private String name;
     private String idUsuario;

@@ -7,7 +7,7 @@ package br.net.mirante.singular.server.p.core.wicket.box;
 
 import br.net.mirante.singular.commons.lambda.IBiFunction;
 import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.server.commons.flow.rest.Action;
+import br.net.mirante.singular.server.commons.flow.rest.ActionRequest;
 import br.net.mirante.singular.server.commons.flow.rest.ActionResponse;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
@@ -218,14 +218,14 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     }
 
     private Object buildCallObject(BoxItemAction boxAction, BoxItemModel boxItem) {
-        Action action = new Action();
-        action.setIdUsuario(getBoxPage().getIdUsuario());
+        ActionRequest actionRequest = new ActionRequest();
+        actionRequest.setIdUsuario(getBoxPage().getIdUsuario());
         if (boxAction.isUseExecute()) {
-            action.setName(boxAction.getName());
-            action.setLastVersion(boxItem.getVersionStamp());
+            actionRequest.setName(boxAction.getName());
+            actionRequest.setLastVersion(boxItem.getVersionStamp());
         }
 
-        return action;
+        return actionRequest;
     }
 
     protected BSModalBorder construirModalConfirmationBorder(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {

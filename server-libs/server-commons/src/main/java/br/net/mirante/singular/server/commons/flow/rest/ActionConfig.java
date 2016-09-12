@@ -11,26 +11,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.property.MetaDataRef;
-import br.net.mirante.singular.server.commons.util.ServerActionConstants;
+import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_RELOCATE;
 
 /**
  * Classe responsável por guardar a configuração de ações
  * disponível para o módulo
  */
-public class ActionConfig {
+public class ActionConfig implements Loggable{
 
     public static final MetaDataRef<ActionConfig> KEY = new MetaDataRef<>(ActionConfig.class.getName(), ActionConfig.class);
 
-    private static final Map<String, Class<? extends IController>> MAP_DEFAULT_ACTIONS;
+    private static final Map<ActionDefinition, Class<? extends IController>> MAP_DEFAULT_ACTIONS;
 
-    private List<String> defaultActions;
+    private List<ActionDefinition> defaultActions;
 
-    private Map<String, Class<? extends IController>> customActions;
+    private Map<ActionDefinition, Class<? extends IController>> customActions;
 
     static {
         MAP_DEFAULT_ACTIONS = new HashMap<>();
-        MAP_DEFAULT_ACTIONS.put(ServerActionConstants.ACTION_RELOCATE, AtribuirController.class);
+        MAP_DEFAULT_ACTIONS.put(ACTION_RELOCATE, AtribuirController.class);
     }
 
     public ActionConfig() {
@@ -38,20 +39,20 @@ public class ActionConfig {
         customActions = new HashMap<>();
     }
 
-    public Map<String, Class<? extends IController>> getCustomActions() {
+    public Map<ActionDefinition, Class<? extends IController>> getCustomActions() {
         return Collections.unmodifiableMap(customActions);
     }
 
-    public ActionConfig addAction(String name, Class<? extends IController> controllerClass) {
-        customActions.put(name, controllerClass);
+    public ActionConfig addAction(ActionDefinition definition, Class<? extends IController> controllerClass) {
+        customActions.put(definition, controllerClass);
         return this;
     }
 
-    public List<String> getDefaultActions() {
+    public List<ActionDefinition> getDefaultActions() {
         return Collections.unmodifiableList(defaultActions);
     }
 
-    public ActionConfig addDefaultAction(String action) {
+    public ActionConfig addDefaultAction(ActionDefinition action) {
         defaultActions.add(action);
         return this;
     }
@@ -67,7 +68,10 @@ public class ActionConfig {
     }
 
     public boolean containsAction(String name) {
-        return customActions.containsKey(name)
-                || defaultActions.contains(name);
+        boolean contains =  customActions.keySet().stream().anyMatch( actionDefinition -> actionDefinition.getName().equals(name)) || defaultActions.stream().anyMatch( actionDefinition -> actionDefinition.getName().equals(name));
+        if (!contains){
+            getLogger().debug(String.format("Action '%s' foi removido pois não está definida para esse fluxo.", name));
+        }
+        return contains;
     }
 }
