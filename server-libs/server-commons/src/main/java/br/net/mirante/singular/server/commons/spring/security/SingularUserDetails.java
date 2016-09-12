@@ -19,6 +19,8 @@ public interface SingularUserDetails extends UserDetails {
         return context.equals(getServerContext());
     }
 
+    public Object getUserPermissionKey();
+
     public IServerContext getServerContext();
 
     public String getDisplayName();

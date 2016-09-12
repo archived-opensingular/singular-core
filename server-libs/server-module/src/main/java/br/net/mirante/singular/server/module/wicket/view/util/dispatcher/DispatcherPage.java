@@ -11,6 +11,7 @@ import br.net.mirante.singular.server.commons.flow.SingularServerTaskPageStrateg
 import br.net.mirante.singular.server.commons.flow.SingularWebRef;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.spring.security.AuthorizationService;
 import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetails;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
@@ -60,7 +61,7 @@ public abstract class DispatcherPage extends WebPage {
     private PetitionService<?> petitionService;
 
     @Inject
-    private PermissionResolverService permissionResolverService;
+    private AuthorizationService authorizationService;
 
     @Inject
     @Named("formConfigWithDatabase")
@@ -133,7 +134,7 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     protected void dispatch(FormPageConfig config) {
-        if (config != null && !hasAccess(config)) {
+        if (config != null && !hasAccess(buildPermissionKey(config), config)) {
             redirectForbidden();
         } else if (config != null) {
             dispatchForDestination(config, retrieveDestination(config));
@@ -142,16 +143,28 @@ public abstract class DispatcherPage extends WebPage {
         }
     }
 
-    protected boolean hasAccess(FormPageConfig config) {
+    /**
+     *
+     * @param config
+     * @return
+     * @deprecated
+     * de alguma forma essa permission key deveria estar sendo construida na authorization service
+     *
+     */
+    @Deprecated
+    protected String buildPermissionKey(FormPageConfig config) {
         SingularUserDetails       userDetails    = SingularSession.get().getUserDetails();
         SType<?>                  sType          = loadType(config);
         Class<? extends SType<?>> sTypeClass     = (Class<? extends SType<?>>) sType.getClass();
         String                    typeSimpleName = SFormUtil.getTypeSimpleName(sTypeClass);
-
-        String permissionsNeeded = config.getFormAction().toString() + "_" + typeSimpleName.toUpperCase();
-
-        return permissionResolverService.hasPermission(userDetails.getUsername(), permissionsNeeded);
+        return config.getFormAction().toString() + "_" + typeSimpleName.toUpperCase();
     }
+
+    protected boolean hasAccess(String permissionsNeeded, FormPageConfig config) {
+        SingularUserDetails       userDetails    = SingularSession.get().getUserDetails();
+        return authorizationService.hasPermission((java.lang.String) userDetails.getUserPermissionKey(), permissionsNeeded);
+    }
+
 
     private SType<?> loadType(FormPageConfig cfg) {
         return singularFormConfig.getTypeLoader().loadTypeOrException(

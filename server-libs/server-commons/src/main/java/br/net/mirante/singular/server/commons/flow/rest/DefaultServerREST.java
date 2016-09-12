@@ -12,6 +12,7 @@ import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.spring.security.AuthorizationService;
 import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
@@ -56,6 +57,9 @@ public class DefaultServerREST {
     protected PermissionResolverService permissionResolverService;
 
     @Inject
+    protected AuthorizationService authorizationService;
+
+    @Inject
     protected SpringServiceRegistry springServiceRegistry;
 
     @Inject
@@ -65,7 +69,7 @@ public class DefaultServerREST {
     @RequestMapping(value = PATH_BOX_ACTION + DELETE, method = RequestMethod.POST)
     public ActionResponse excluir(@RequestParam Long id, @RequestBody ActionRequest actionRequest) {
         try {
-            boolean hasPermission = permissionResolverService.hasFormPermission(id, actionRequest.getIdUsuario(), ACTION_DELETE.getName());
+            boolean hasPermission = authorizationService.hasFormPermission(id, actionRequest.getIdUsuario(), ACTION_DELETE.getName());
             if (hasPermission) {
                 petitionService.delete(id);
                 return new ActionResponse("Registro excluído com sucesso", true);
@@ -107,7 +111,7 @@ public class DefaultServerREST {
     @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_PETITIONS, method = RequestMethod.POST)
     public List<Map<String, Object>> searchPetitions(@RequestBody QuickFilter filter) {
         List<Map<String, Object>> result = petitionService.quickSearchMap(filter);
-        permissionResolverService.filterActions(result, filter.getIdUsuarioLogado());
+        authorizationService.filterActions(result, filter.getIdUsuarioLogado());
         return result;
     }
 

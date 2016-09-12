@@ -1,5 +1,6 @@
 package br.net.mirante.singular.server.commons.spring;
 
+import br.net.mirante.singular.server.commons.spring.security.AuthorizationService;
 import org.springframework.context.annotation.Bean;
 
 import br.net.mirante.singular.flow.core.service.IUserService;
@@ -130,5 +131,11 @@ public class SingularDefaultBeanFactory {
     public PermissionResolverService getPermissionResolverService() {
         return new PermissionResolverService();
     }
+
+    @Bean
+    public AuthorizationService getAuthorizationService() {
+        return new AuthorizationService();
+    }
+
 
 }

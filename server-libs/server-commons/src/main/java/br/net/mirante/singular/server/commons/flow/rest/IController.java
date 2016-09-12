@@ -8,12 +8,13 @@ package br.net.mirante.singular.server.commons.flow.rest;
 import javax.inject.Inject;
 
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.spring.security.AuthorizationService;
 import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
 
 public abstract class IController {
 
     @Inject
-    private PermissionResolverService     permissionResolverService;
+    private AuthorizationService authorizationService;
 
     public ActionResponse run(PetitionEntity petition, ActionRequest actionRequest) {
         if (hasPermission(petition, actionRequest)) {
@@ -25,9 +26,9 @@ public abstract class IController {
 
     private boolean hasPermission(PetitionEntity petition, ActionRequest actionRequest) {
         if (getType() == Type.PROCESS) {
-            return permissionResolverService.hasFlowPermission(petition, actionRequest.getIdUsuario(), getActionName());
+            return authorizationService.hasFlowPermission(petition, actionRequest.getIdUsuario(), getActionName());
         } else {
-            return permissionResolverService.hasFormPermission(petition, actionRequest.getIdUsuario(), getActionName());
+            return authorizationService.hasFormPermission(petition, actionRequest.getIdUsuario(), getActionName());
         }
     }
 

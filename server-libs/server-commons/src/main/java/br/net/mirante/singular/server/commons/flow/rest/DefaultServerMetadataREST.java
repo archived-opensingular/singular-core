@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.server.commons.spring.security.AuthorizationService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,6 +42,9 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
 
     @Inject
     protected SingularServerConfiguration singularServerConfiguration;
+
+    @Inject
+    protected AuthorizationService authorizationService;
 
     @Inject
     protected PermissionResolverService permissionResolverService;
@@ -107,7 +111,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     }
 
     protected void filterAccessRight(List<MenuGroup> groupDTOs, String user) {
-        permissionResolverService.filterBoxWithPermissions(groupDTOs, user);
+        authorizationService.filterBoxWithPermissions(groupDTOs, user);
     }
 
     protected void customizeMenu(List<MenuGroup> groupDTOs, String menuContext, String user) {
