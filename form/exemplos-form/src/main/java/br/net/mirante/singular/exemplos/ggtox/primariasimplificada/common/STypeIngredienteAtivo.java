@@ -63,12 +63,14 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
         nomeQuimicoInternacional
                 .asAtr()
                 .label("Nome químico na grafia internacional (IUPAC)")
+                .maxLength(1000)
                 .asAtrBootstrap()
                 .colPreference(6);
 
         nomeQuimico
                 .asAtr()
                 .label("Nome químico em português (IUPAC)")
+                .maxLength(1000)
                 .asAtrBootstrap()
                 .colPreference(6);
 
@@ -93,12 +95,14 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
         numeroCAS
                 .asAtr()
                 .label("Nº no chemical abstract service registry (CAS)")
+                .maxLength(15)
                 .asAtrBootstrap()
                 .colPreference(4);
 
         grupoQuimico
                 .asAtr()
                 .label("Grupo químico em português (Usar letras maiúsculas)")
+                .maxLength(30)
                 .asAtrBootstrap()
                 .colPreference(4);
 
@@ -111,6 +115,7 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
 
         nomeSinonimia
                 .asAtr()
+                .maxLength(50)
                 .label("Nome");
 
         formulasBrutasEstruturais

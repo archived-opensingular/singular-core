@@ -63,10 +63,10 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersi
                 .label("Formuladores");
         formuladores
                 .withView(new SViewListByMasterDetail()
-                        .col(formuladores.getElementsType().cnpj)
+                        .col(formuladores.getElementsType().tipoEntidade)
                         .col(formuladores.getElementsType().nome)
-                        .col(formuladores.getElementsType().cidade)
-                        .col(formuladores.getElementsType().estado)
+                        .col(formuladores.getElementsType().enderecoEletronico)
+                        .col(formuladores.getElementsType().telefone)
                 );
         formuladores
                 .withMiniumSizeOf(1);
