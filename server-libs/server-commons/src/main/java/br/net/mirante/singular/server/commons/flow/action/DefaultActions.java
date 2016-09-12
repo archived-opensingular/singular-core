@@ -6,7 +6,6 @@
 package br.net.mirante.singular.server.commons.flow.action;
 
 import br.net.mirante.singular.server.commons.flow.rest.ActionDefinition;
-import br.net.mirante.singular.server.commons.flow.rest.ActionDefinition;
 import br.net.mirante.singular.server.commons.service.dto.ItemAction;
 import br.net.mirante.singular.server.commons.service.dto.ItemActionConfirmation;
 import br.net.mirante.singular.server.commons.service.dto.ItemActionType;

@@ -102,7 +102,6 @@ public class DefaultServerREST {
 
     private IController getActionController(ProcessDefinition<?> processDefinition, ActionRequest actionRequest) {
         final ActionConfig actionConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
-
         Class<? extends IController> controllerClass = actionConfig.getAction(actionRequest.getName());
         return springServiceRegistry.lookupService(controllerClass);
     }

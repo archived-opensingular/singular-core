@@ -101,7 +101,7 @@ public class AuthorizationService implements Loggable {
     }
 
     @SuppressWarnings("unchecked")
-    public void filterActions(List<Map<String, Object>> result, String idUsuarioLogado) {
+    public void     filterActions(List<Map<String, Object>> result, String idUsuarioLogado) {
         List<String> permissions = searchPermissionsSingular(idUsuarioLogado);
         for (Map<String, Object> resultItem : result) {
             List<BoxItemAction> actions = (List<BoxItemAction>) resultItem.get("actions");
