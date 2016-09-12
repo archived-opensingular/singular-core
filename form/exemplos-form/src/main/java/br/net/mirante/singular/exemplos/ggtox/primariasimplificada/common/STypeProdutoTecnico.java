@@ -60,10 +60,10 @@ public class STypeProdutoTecnico extends STypePersistentComposite {
         fabricantes.withMiniumSizeOf(1);
         fabricantes.asAtr().label("Fabricantes");
         fabricantes.withView(new SViewListByMasterDetail()
-                .col(fabricantes.getElementsType().cnpj)
+                .col(fabricantes.getElementsType().tipoEntidade)
                 .col(fabricantes.getElementsType().nome)
-                .col(fabricantes.getElementsType().cidade)
-                .col(fabricantes.getElementsType().estado)
+                .col(fabricantes.getElementsType().enderecoEletronico)
+                .col(fabricantes.getElementsType().telefone)
         );
 
         fabricante = addField("fabricante", STypeFabricanteConformeMatriz.class);

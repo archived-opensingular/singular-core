@@ -20,6 +20,11 @@ public class SingularPredicates {
         return i -> Arrays.asList(predicates).stream().anyMatch(p -> p.test(i));
     }
 
+    @SafeVarargs
+    public static Predicate<SInstance> noneMatches(Predicate<SInstance>... predicates) {
+        return i -> Arrays.asList(predicates).stream().noneMatch(p -> p.test(i));
+    }
+
     public static <T> Predicate<SInstance> typeValueMatches(STypeSimple<? extends SISimple<T>, T> type, Predicate<T> predicate) {
         return si -> predicate.test(Value.of(si, type));
     }

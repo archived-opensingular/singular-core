@@ -17,18 +17,10 @@ public class STypeFormulador extends STypeEntidade {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        tipoPessoa
-                .asAtr()
-                .exists(false);
+        withInitListener(si -> si.findNearest(tipoPessoa).ifPresent(x -> x.setValue("Jurídica")));
+        withUpdateListener(si -> si.findNearest(tipoPessoa).ifPresent(x -> x.setValue("Jurídica")));
 
-        withInitListener(si -> si.findNearest(tipoPessoa)
-                .get()
-                .setValue("Jurídica")
-        );
-
-        cnpj
-                .asAtr()
-                .exists(si -> true);
+        tipoPessoa.asAtr().visible((x) -> false);
 
         laudoLaboratorial = addField("laudoLaboratorial", STypeAttachment.class);
 

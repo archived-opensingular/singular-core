@@ -36,8 +36,8 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
         estudoResiduo.
                 amostra
                 .root
-                .asAtr().dependsOn(estudoResiduo.tipoEstudo)
-                .exists(typeValueIsEqualsTo(estudoResiduo.tipoEstudo, EstudoResiduo.ESTUDO_NOVO));
+                .asAtr().dependsOn(estudoResiduo.origemEstudo)
+                .exists(typeValueIsEqualsTo(estudoResiduo.origemEstudo, EstudoResiduo.ESTUDO_NOVO));
     }
 
     public class EstudoResiduo {
@@ -47,12 +47,12 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
         public static final String ESTUDO_NOVO                   = "Novo";
         public static final String NOME_OUTRA_CULTURA_FIELD_NAME = "nomeOutraCultura";
         public static final String CULTURAS_PATH                 = "culturas";
-        public static final String TIPO_ESTUDO_PATH              = "tipoEstudo";
+        public static final String ORIGEM_ESTUDO_PATH            = "origemEstudo";
 
 
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
         private final STypeComposite<SIComposite>                         rootType;
-        final         STypeString                                         tipoEstudo;
+        final         STypeString                                         origemEstudo;
         public final  Amostra                                             amostra;
 
         public EstudoResiduo(STypeComposite<SIComposite> parentType) {
@@ -80,14 +80,14 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             final STypeString                 descricaoNorma      = norma.addFieldString("descricaoNorma");
             final STypeString                 observacoes         = rootType.addFieldString("observacoes");
 
-            tipoEstudo = rootType.addFieldString(TIPO_ESTUDO_PATH);
+            origemEstudo = rootType.addFieldString(ORIGEM_ESTUDO_PATH);
 
-            final STypeString                 estudoPublicado = rootType.addFieldString("estudoPublicado");
-            final STypeString                 numeroEstudo    = rootType.addFieldString("numeroEstudo");
-            final STypeComposite<SIComposite> dosagemAmostra  = rootType.addFieldComposite("dosagemAmostra");
-            final STypeInteger                idDosagem       = dosagemAmostra.addFieldInteger("idDosagem");
-            final STypeString                 siglaDosagem    = dosagemAmostra.addFieldString("siglaDosagem");
-            final STypeBoolean                adjuvante       = rootType.addFieldBoolean("adjuvante");
+            final STypeString                 estudoPublicado       = rootType.addFieldString("estudoPublicado");
+            final STypeString                 numeroEstudo          = rootType.addFieldString("numeroEstudo");
+            final STypeComposite<SIComposite> unidadeMediadaDosagem = rootType.addFieldComposite("unidadeMediadaDosagem");
+            final STypeInteger                idDosagem             = unidadeMediadaDosagem.addFieldInteger("idDosagem");
+            final STypeString                 siglaDosagem          = unidadeMediadaDosagem.addFieldString("siglaDosagem");
+            final STypeBoolean                adjuvante             = rootType.addFieldBoolean("adjuvante");
 
             amostra = new Amostra(rootType);
 
@@ -108,7 +108,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                                 }
                             })
                             .col(emprego)
-                            .col(tipoEstudo)
+                            .col(origemEstudo)
                             .largeSize()
                     );
 
@@ -118,7 +118,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .asAtr()
                     .label("Cultura")
                     .required()
-                    .dependsOn(outraCultura, tipoEstudo)
+                    .dependsOn(outraCultura, origemEstudo)
                     .exists(allMatches(typeValueIsNotEqualsTo(outraCultura, Boolean.TRUE)));
 
             cultura
@@ -195,6 +195,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
             observacoes
                     .asAtr()
+                    .maxLength(1000)
                     .label("Observações")
                     .asAtrBootstrap()
                     .colPreference(12);
@@ -203,37 +204,39 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .withTextAreaView();
 
 
-            tipoEstudo
+            origemEstudo
                     .withRadioView()
                     .selectionOf(ESTUDO_MATRIZ, ESTUDO_PUBLICADO, ESTUDO_NOVO)
                     .asAtr()
-                    .label("Estudo")
+                    .label("Origem do Estudo")
                     .asAtrBootstrap()
                     .newRow();
 
             estudoPublicado
-                    .asAtr().label("Código do Estudo Publicado pela ANVISA")
-                    .dependsOn(tipoEstudo)
-                    .exists(typeValueIsEqualsTo(tipoEstudo, ESTUDO_PUBLICADO))
+                    .asAtr()
+                    .maxLength(20)
+                    .label("Código do Estudo Publicado pela ANVISA")
+                    .dependsOn(origemEstudo)
+                    .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_PUBLICADO))
                     .asAtrBootstrap().newRow();
 
 
             numeroEstudo
                     .asAtr().label("Número do Estudo")
-                    .dependsOn(tipoEstudo)
-                    .exists(typeValueIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
+                    .dependsOn(origemEstudo)
+                    .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_NOVO))
                     .asAtrBootstrap()
                     .colPreference(4);
 
-            dosagemAmostra
+            unidadeMediadaDosagem
                     .asAtr()
-                    .dependsOn(tipoEstudo)
-                    .exists(typeValueIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
-                    .label("Dosagem das Amostras")
+                    .dependsOn(origemEstudo)
+                    .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_NOVO))
+                    .label("Unidade de medida da dosagem")
                     .asAtrBootstrap()
                     .colPreference(4);
 
-            dosagemAmostra
+            unidadeMediadaDosagem
                     .selection()
                     .id(idDosagem)
                     .display(siglaDosagem)
@@ -254,16 +257,16 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             adjuvante
                     .asAtr().label("Adjuvante")
                     .required()
-                    .dependsOn(tipoEstudo)
-                    .exists(typeValueIsEqualsTo(tipoEstudo, ESTUDO_NOVO))
+                    .dependsOn(origemEstudo)
+                    .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_NOVO))
                     .asAtrBootstrap()
                     .colPreference(4);
 
 
             estudoResiduo
                     .asAtr().label("Estudo de Resíduo")
-                    .dependsOn(tipoEstudo)
-                    .exists(typeValueIsEqualsTo(tipoEstudo, ESTUDO_NOVO));
+                    .dependsOn(origemEstudo)
+                    .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_NOVO));
         }
 
     }
