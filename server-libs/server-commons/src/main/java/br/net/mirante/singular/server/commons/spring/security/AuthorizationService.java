@@ -9,6 +9,7 @@ import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SFormUtil;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 import br.net.mirante.singular.server.commons.form.FormActions;
@@ -120,7 +121,11 @@ public class AuthorizationService implements Loggable {
     }
 
     public boolean hasFormPermission(PetitionEntity petitionEntity, String idUsuario, String action) {
-        FormTypeEntity formType         = petitionEntity.getMainForm().getFormType();
+        FormEntity formEntity = petitionEntity.getMainForm();
+        if (formEntity == null){
+            formEntity = petitionEntity.getCurrentDraftEntity().getForm();
+        }
+        FormTypeEntity formType         = formEntity.getFormType();
         String         permissionNeeded = "ACTION_" + action + "_" + getAbbreviation(formType);
         return hasPermission(idUsuario, permissionNeeded);
     }
