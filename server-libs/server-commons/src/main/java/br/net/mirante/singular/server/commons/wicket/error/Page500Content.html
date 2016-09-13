@@ -1,47 +1,25 @@
-<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:extend>
     <style type="text/css">
-        .error-panel {
-            background-color: white;
-            padding: 2em;
+        .page-header-fixed .page-container {
+            margin-top: 5px;
         }
-
-        .error-disclaimer-title {
-            text-align: center;
-        }
-
-        .error-disclaimer-text {
-            font-size: 1.2em;
-        }
-
-        .error-code-container {
-            font-size: 2em;
-            text-align: center;
-        }
-
-        .error-code {
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
     </style>
     <div class="error-panel">
+        <div class="error-container">
+            <span class="error-image"></span>
 
-        <h1 class="error-disclaimer-title">Você encontrou um erro</h1>
-
-        <p class="error-disclaimer-text">
-            Algo que não esperávamos ocorreu enquanto você estava utilizando o sistema.
-        </p>
-        <p class="error-disclaimer-text">
-            Pedimos desculpas por isso e vamos descobrir como corrigir.
-        </p>
-        <p class="error-disclaimer-text">
-            Você pode nos ajudar, informando o código abaixo que vai nos auxiliar a encontrar a origem do problema.
-        </p>
-        <p class="error-code-container">
-            Código de Erro: <span wicket:id="codigo-erro" class="error-code"/>
-        </p>
-
+            <h1 class="error-title">Desculpe</h1>
+            <p class="error-code">
+                Código: <span class="error-code"><span wicket:id="codigo-erro"></span> </span>
+            </p>
+            <p class="error-text">
+                Encontramos um erro em nosso servidor, mas vamos trabalhar para que isso não ocorra novamente
+            </p>
+            <a class="btn" href="/singular">
+                Ok. Retomar as atividades
+            </a>
+        </div>
     </div>
 </wicket:extend>
 </html>

@@ -1,8 +1,10 @@
 package br.net.mirante.singular.server.commons.wicket.view.template;
 
-import static br.net.mirante.singular.server.commons.wicket.view.template.Menu.MENU_CACHE;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.commons.util.Loggable;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
+import br.net.mirante.singular.server.commons.wicket.view.SingularToastrHelper;
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -13,17 +15,17 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.server.commons.wicket.SingularSession;
-import br.net.mirante.singular.server.commons.wicket.view.SingularToastrHelper;
-import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
+import static br.net.mirante.singular.server.commons.wicket.view.template.Menu.MENU_CACHE;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public abstract class Content extends Panel implements Loggable {
 
     private boolean withBreadcrumb;
     private boolean withInfoLink;
     private RepeatingView toolbar;
+
+    protected WebMarkupContainer pageHead   = new WebMarkupContainer("pageHead");
+    protected WebMarkupContainer breadcrumb = new WebMarkupContainer("breadcrumb");
 
     public Content(String id) {
         this(id, false, false);
@@ -42,17 +44,20 @@ public abstract class Content extends Panel implements Loggable {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new Label("contentTitle", getContentTitleModel()));
-        add(new Label("contentSubtitle", getContentSubtitleModel()));
-        WebMarkupContainer breadcrumb = new WebMarkupContainer("breadcrumb");
+        add(pageHead);
+
+        pageHead.add(new Label("contentTitle", getContentTitleModel()));
+        pageHead.add(new Label("contentSubtitle", getContentSubtitleModel()));
+        pageHead.add(toolbar = new RepeatingView("toolbarItems"));
+
         add(breadcrumb);
-        breadcrumb.add(new WebMarkupContainer("breadcrumbDashboard").add(
-                $b.attr("href", "null null")));
+
+        breadcrumb.add(new WebMarkupContainer("breadcrumbDashboard").add($b.attr("href", "null null")));
         breadcrumb.add(getBreadcrumbLinks("_BreadcrumbLinks"));
+
         if (!withBreadcrumb) {
             breadcrumb.add(new AttributeAppender("class", "hide", " "));
         }
-        add(toolbar = new RepeatingView("toolbarItems"));
 
     }
 

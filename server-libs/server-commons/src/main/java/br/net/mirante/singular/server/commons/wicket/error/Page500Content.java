@@ -1,7 +1,6 @@
 package br.net.mirante.singular.server.commons.wicket.error;
 
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
-import org.apache.log4j.lf5.LogLevel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -10,17 +9,16 @@ import org.joda.time.DateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.lang.String.*;
+import static java.lang.String.format;
 
-/**
- * Created by nuk on 01/07/16.
- */
-public class Page500Content extends Content{
+
+public class Page500Content extends Content {
+
     private final static Logger LOGGER = Logger.getLogger("GENERAL_LOGGER");
 
     private final Exception exception;
 
-    public Page500Content(String id, Exception exception){
+    public Page500Content(String id, Exception exception) {
         super(id);
         this.exception = exception;
     }
@@ -29,8 +27,11 @@ public class Page500Content extends Content{
     protected void onInitialize() {
         super.onInitialize();
         String errorCode = errorCode();
-        LOGGER.log(Level.WARNING, errorCode, this.exception);
-        queue(new Label("codigo-erro",Model.of(errorCode)));
+        if (exception != null) {
+            LOGGER.log(Level.WARNING, errorCode, this.exception);
+        }
+        queue(new Label("codigo-erro", Model.of(errorCode)));
+        pageHead.setVisible(false);
     }
 
     @Override
