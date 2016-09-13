@@ -16,6 +16,8 @@ import br.net.mirante.singular.form.view.SViewListByTable;
 import java.util.Optional;
 
 import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon.ppsService;
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.OBRIGATORIO;
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.QUANTIDADE_MINIMA;
 import static br.net.mirante.singular.form.util.SingularPredicates.*;
 
 
@@ -117,7 +119,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .colPreference(6)
                     .asAtr()
                     .label("Cultura")
-                    .required()
+                    .required(OBRIGATORIO)
                     .dependsOn(outraCultura, origemEstudo)
                     .exists(allMatches(typeValueIsNotEqualsTo(outraCultura, Boolean.TRUE)));
 
@@ -136,8 +138,9 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             nomeOutraCultura
                     .asAtrBootstrap()
                     .colPreference(6)
-                    .asAtr().label("Nome da Cultura")
-                    .required()
+                    .asAtr()
+                    .label("Nome da Cultura")
+                    .required(OBRIGATORIO)
                     .dependsOn(outraCultura)
                     .exists(typeValueIsTrue(outraCultura));
 
@@ -145,6 +148,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .asAtrBootstrap()
                     .colPreference(6)
                     .asAtr()
+                    .required(OBRIGATORIO)
                     .label("Emprego");
 
             emprego
@@ -161,7 +165,8 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                             }));
 
             outraCultura
-                    .asAtr().label("Outra cultura")
+                    .asAtr()
+                    .label("Outra cultura")
                     .asAtrBootstrap()
                     .colPreference(6);
 
@@ -173,12 +178,14 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
             intervaloPretendido
                     .asAtr()
+                    .required(OBRIGATORIO)
                     .label("Intervalo de Segurança Pretendido (em dias)")
                     .asAtrBootstrap()
                     .colPreference(6);
 
             norma
                     .asAtr()
+                    .required(OBRIGATORIO)
                     .label("Norma")
                     .asAtrBootstrap()
                     .colPreference(4);
@@ -208,12 +215,14 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .withRadioView()
                     .selectionOf(ESTUDO_MATRIZ, ESTUDO_PUBLICADO, ESTUDO_NOVO)
                     .asAtr()
+                    .required(OBRIGATORIO)
                     .label("Origem do Estudo")
                     .asAtrBootstrap()
                     .newRow();
 
             estudoPublicado
                     .asAtr()
+                    .required(OBRIGATORIO)
                     .maxLength(20)
                     .label("Código do Estudo Publicado pela ANVISA")
                     .dependsOn(origemEstudo)
@@ -222,7 +231,9 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
 
             numeroEstudo
-                    .asAtr().label("Número do Estudo")
+                    .asAtr()
+                    .label("Número do Estudo")
+                    .required(OBRIGATORIO)
                     .dependsOn(origemEstudo)
                     .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_NOVO))
                     .asAtrBootstrap()
@@ -230,6 +241,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
             unidadeMediadaDosagem
                     .asAtr()
+                    .required(OBRIGATORIO)
                     .dependsOn(origemEstudo)
                     .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_NOVO))
                     .label("Unidade de medida da dosagem")
@@ -255,8 +267,9 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .simpleConverter();
 
             adjuvante
-                    .asAtr().label("Adjuvante")
-                    .required()
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("Adjuvante")
                     .dependsOn(origemEstudo)
                     .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_NOVO))
                     .asAtrBootstrap()
@@ -264,7 +277,9 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
 
             estudoResiduo
-                    .asAtr().label("Estudo de Resíduo")
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("Estudo de Resíduo")
                     .dependsOn(origemEstudo)
                     .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_NOVO));
         }
@@ -316,7 +331,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             id
                     .asAtr()
                     .label("ID da Amostra")
-                    .required()
+                    .required(OBRIGATORIO)
                     .asAtrBootstrap()
                     .colPreference(4);
 
@@ -326,36 +341,41 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .colPreference(4)
                     .asAtr()
                     .label("Dose")
-                    .required();
+                    .required(OBRIGATORIO);
 
             aplicacoes
                     .asAtrBootstrap()
                     .colPreference(4)
                     .asAtr()
                     .label("Número de Aplicações")
-                    .required();
+                    .required(OBRIGATORIO);
 
 
             dat
                     .asAtr()
+                    .required(OBRIGATORIO)
                     .label("DAT")
                     .asAtrBootstrap()
                     .colPreference(4);
 
 
             loq
-                    .asAtr().label("LoQ (mg/KG)")
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("LoQ (mg/KG)")
                     .fractionalMaxLength(4);
 
             residuo
                     .addInstanceValidator(new ResiduoValidator(loq))
-                    .asAtr().label("Resíduo")
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("Resíduo (mg/KG)")
                     .fractionalMaxLength(4);
 
 
             ativoAmostra
                     .asAtr()
-                    .required()
+                    .required(OBRIGATORIO)
                     .label("Ingrediente Ativo da Amostra (informados na seção de ativos)")
                     .asAtrBootstrap()
                     .colPreference(6);
@@ -363,8 +383,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
             estado
                     .asAtr()
-                    .required()
-                    .asAtr()
+                    .required(OBRIGATORIO)
                     .label("Estado")
                     .asAtrBootstrap()
                     .colPreference(3)
@@ -378,10 +397,10 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
             cidade
                     .asAtr()
-                    .required(inst -> Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
+                    .required(inst -> OBRIGATORIO && Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
                     .asAtr()
                     .label("Cidade")
-                    .enabled(inst -> Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
+                    .enabled(inst -> OBRIGATORIO && Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
                     .dependsOn(estado)
                     .asAtrBootstrap()
                     .colPreference(3);
@@ -393,21 +412,26 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .simpleProvider(i -> SelectBuilder.buildMunicipiosFiltrado((String) Value.of(i, (STypeSimple) estado.getField(siglaUF.getNameSimple()))));
 
             tempoMaior30Dias
-                    .asAtr().label("Tempo Entre Análise e Colheita Maior que 30 Dias")
+                    .asAtr()
+                    .label("Tempo Entre Análise e Colheita Maior que 30 Dias")
                     .asAtrBootstrap().colPreference(6)
                     .newRow();
 
             estudoEstabilidade
-                    .asAtr().label("Estudo de Estabilidade")
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("Estudo de Estabilidade")
                     .dependsOn(tempoMaior30Dias)
                     .exists(typeValueIsTrue(tempoMaior30Dias));
 
             metabolito
                     .withRadioView()
-                    .asAtr().label("Metabólito")
-                    .required();
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("Metabólito");
 
             metabolitos
+                    .withMiniumSizeOf(QUANTIDADE_MINIMA)
                     .withView(SViewListByTable::new)
                     .asAtr()
                     .label("Metabólitos")
@@ -415,15 +439,21 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .exists(typeValueIsTrue(metabolito));
 
             descricaoMetabolito
-                    .asAtr().label("Descrição");
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("Descrição");
 
             loqMetabolito
-                    .asAtr().label("LoQ (mg/KG)")
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("LoQ (mg/KG)")
                     .fractionalMaxLength(4);
 
             residuoMetabolito
                     .addInstanceValidator(new ResiduoValidator(loqMetabolito))
-                    .asAtr().label("Resíduo")
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("Resíduo (mg/KG)")
                     .fractionalMaxLength(4);
         }
     }

@@ -30,6 +30,9 @@ import static br.net.mirante.singular.form.util.SingularPredicates.*;
 @SInfoType(name = "STypePeticaoPrimariaSimplificada", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
 
+    public final static boolean OBRIGATORIO       = false;
+    public final static int     QUANTIDADE_MINIMA = 0;
+
     public final static String ESTUDOS_RESIDUOS_PATH = "estudosResiduos";
     public final static String NIVEL_PATH            = "nivel";
 
@@ -85,6 +88,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .asAtrBootstrap()
                 .colPreference(6)
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label(" Tipo de Petição ");
 
 
@@ -110,7 +114,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 })
                 .asAtr()
                 .enabled(typeValueIsNotIn(idTipoPeticao, apenasNivel1))
-                .required()
+                .required(OBRIGATORIO)
                 .label("Petição primária simplificada de nível");
 
         dadosGerais

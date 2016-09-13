@@ -15,6 +15,8 @@ import java.util.function.Function;
 import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX.BIOLOGICO;
 import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX.PRESERVATIVO_MADEIRA;
 import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon.ppsService;
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.OBRIGATORIO;
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.QUANTIDADE_MINIMA;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersistentComposite {
@@ -98,7 +100,7 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersi
 
         outraSiglaTipoFormulacao
                 .asAtr()
-                .required()
+                .required(OBRIGATORIO)
                 .dependsOn(tipoFormulacao)
                 .visible(SingularPredicates.typeValueIsEqualsTo(nomeTipoFormulacao, "Outra"))
                 .label("Sigla");
@@ -109,7 +111,7 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersi
 
         outroNomeTipoFormulacao
                 .asAtr()
-                .required()
+                .required(OBRIGATORIO)
                 .dependsOn(tipoFormulacao)
                 .visible(SingularPredicates.typeValueIsEqualsTo(nomeTipoFormulacao, "Outra"))
                 .label("Nome");
@@ -131,7 +133,7 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersi
                         .col(formuladores.getElementsType().telefone)
                 );
         formuladores
-                .withMiniumSizeOf(1);
+                .withMiniumSizeOf(QUANTIDADE_MINIMA);
 
 
         formulador = addField("formulador", STypeFormuladorConformeMatriz.class);

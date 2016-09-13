@@ -12,6 +12,9 @@ import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewListByForm;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.OBRIGATORIO;
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.QUANTIDADE_MINIMA;
+
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeProdutoTecnico extends STypePersistentComposite {
 
@@ -38,14 +41,14 @@ public class STypeProdutoTecnico extends STypePersistentComposite {
         nomeProdutoTecnico
                 .asAtr()
                 .label("Nome do Produto Técnico")
-                .required()
+                .required(OBRIGATORIO)
                 .asAtrBootstrap()
                 .colPreference(6);
 
         numeroProcessoProdutoTecnico
                 .asAtr()
                 .label("Número Processo do Produto Técnico")
-                .required()
+                .required(OBRIGATORIO)
                 .maxLength(17)
                 .asAtrBootstrap()
                 .colPreference(6);
@@ -57,7 +60,7 @@ public class STypeProdutoTecnico extends STypePersistentComposite {
 
         fabricantes = addFieldListOf("fabricantes", STypeFabricante.class);
         fabricantes.withView(SViewListByForm::new);
-        fabricantes.withMiniumSizeOf(1);
+        fabricantes.withMiniumSizeOf(QUANTIDADE_MINIMA);
         fabricantes.asAtr().label("Fabricantes");
         fabricantes.withView(new SViewListByMasterDetail()
                 .col(fabricantes.getElementsType().tipoEntidade)

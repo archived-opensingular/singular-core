@@ -9,6 +9,8 @@ import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.QUANTIDADE_MINIMA;
+
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeIngredienteAtivoPeticaoPrimariaSimplificada extends STypePersistentComposite {
 
@@ -30,6 +32,9 @@ public class STypeIngredienteAtivoPeticaoPrimariaSimplificada extends STypePersi
                 .col(ingredientesAtivos.getElementsType().numeroCAS, "CAS")
                 .col(ingredientesAtivos.getElementsType().nomeQuimico, "Nome químico"));
 
+
+        ingredientesAtivos.asAtr().label("Ingredientes Ativos");
+        ingredientesAtivos.withMiniumSizeOf(QUANTIDADE_MINIMA);
 
     }
 
