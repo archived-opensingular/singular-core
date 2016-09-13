@@ -8,6 +8,8 @@ import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.OBRIGATORIO;
+
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypePersistentComposite {
 
@@ -35,7 +37,7 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypePersistent
 
         numeroProcessoPeticaoMatriz
                 .asAtr()
-                .required()
+                .required(OBRIGATORIO)
                 .label("Número do processo da petição matriz")
                 .maxLength(17)
                 //TODO vincius help para dizer que o número do processo é anvisa
@@ -44,7 +46,7 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypePersistent
 
         declaracaoVinculoPeticaoMatriz
                 .asAtr()
-                .required()
+                .required(OBRIGATORIO)
                 .label("Declaracao de Vinculo a Petição Matriz")
                 .asAtrBootstrap()
                 .colPreference(12);
@@ -52,7 +54,7 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypePersistent
         justificativa
                 .withTextAreaView()
                 .asAtr()
-                .required()
+                .required(OBRIGATORIO)
                 .label("Justificativa da solicitação")
                 .maxLength(500)
                 .asAtrBootstrap()

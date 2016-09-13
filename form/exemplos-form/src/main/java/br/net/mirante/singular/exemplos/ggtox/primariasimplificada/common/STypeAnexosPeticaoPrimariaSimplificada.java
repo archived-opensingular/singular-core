@@ -7,6 +7,8 @@ import br.net.mirante.singular.form.STypeAttachmentList;
 import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.OBRIGATORIO;
+
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeAnexosPeticaoPrimariaSimplificada extends STypePersistentComposite {
 
@@ -30,12 +32,14 @@ public class STypeAnexosPeticaoPrimariaSimplificada extends STypePersistentCompo
 
         informacoesSobreCulturaIndicacao
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Informações Sobre Cultura e Indicação")
                 .asAtrBootstrap()
                 .colPreference(12);
 
         pareceresTecnicosAvaliacoesDasEmpresas
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Parecer Técnico de Avaliação da Empresa (PATE)")
                 .asAtrBootstrap()
                 .colPreference(12);

@@ -15,6 +15,9 @@ import br.net.mirante.singular.form.view.SViewListByTable;
 
 import java.util.UUID;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.OBRIGATORIO;
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.QUANTIDADE_MINIMA;
+
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeIngredienteAtivo extends STypePersistentComposite {
 
@@ -58,11 +61,13 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
 
         idAtivo
                 .asAtr()
+                .required(OBRIGATORIO)
                 .visible(false);
 
         nomeQuimicoInternacional
                 .withTextAreaView()
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Nome químico na grafia internacional (IUPAC)")
                 .maxLength(1000)
                 .asAtrBootstrap()
@@ -71,6 +76,7 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
         nomeQuimico
                 .withTextAreaView()
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Nome químico em português (IUPAC)")
                 .maxLength(1000)
                 .asAtrBootstrap()
@@ -78,24 +84,28 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
 
         nomeComum
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Nome comum (ISO, ANSI, BSI)")
                 .asAtrBootstrap()
                 .colPreference(6);
 
         nomeComumPortugues
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Nome comum em português")
                 .asAtrBootstrap()
                 .colPreference(6);
 
         entidadeAprovadora
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Entidade aprovadora do nome em português")
                 .asAtrBootstrap()
                 .colPreference(4);
 
         numeroCAS
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Nº no chemical abstract service registry (CAS)")
                 .maxLength(15)
                 .asAtrBootstrap()
@@ -103,6 +113,7 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
 
         grupoQuimico
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Grupo químico em português (Usar letras maiúsculas)")
                 .maxLength(30)
                 .asAtrBootstrap()
@@ -114,11 +125,17 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
         sinonimias
                 .withView(SViewListByTable::new);
 
+        sinonimias
+                .withMiniumSizeOf(QUANTIDADE_MINIMA);
 
         nomeSinonimia
                 .asAtr()
+                .required(OBRIGATORIO)
                 .maxLength(50)
                 .label("Nome");
+
+        formulasBrutasEstruturais
+                .withMiniumSizeOf(QUANTIDADE_MINIMA);
 
         formulasBrutasEstruturais
                 .asAtr()

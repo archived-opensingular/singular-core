@@ -15,6 +15,7 @@ import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.type.util.STypeEMail;
 import br.net.mirante.singular.form.util.transformer.Value;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.OBRIGATORIO;
 import static br.net.mirante.singular.form.util.SingularPredicates.*;
 
 @SInfoType(spackage = SPackagePPSCommon.class)
@@ -95,6 +96,7 @@ public class STypeEntidade extends STypePersistentComposite {
                 .selectionOf("Nacional", "Internacional")
                 .withRadioView()
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Tipo de Entidade")
                 .asAtrBootstrap()
                 .colPreference(12);
@@ -103,12 +105,14 @@ public class STypeEntidade extends STypePersistentComposite {
                 .selectionOf("Física", "Jurídica")
                 .withRadioView()
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Tipo de Pessoa")
                 .asAtrBootstrap()
                 .colPreference(3);
 
         cnpj
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("CNPJ")
                 .dependsOn(tipoPessoa, tipoEntidade)
                 .exists(allMatches(typeValueIsEqualsTo(tipoPessoa, "Jurídica"), typeValueIsEqualsTo(tipoEntidade, "Nacional")))
@@ -117,6 +121,7 @@ public class STypeEntidade extends STypePersistentComposite {
 
         cpf
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("CPF")
                 .dependsOn(tipoPessoa, tipoEntidade)
                 .exists(allMatches(typeValueIsEqualsTo(tipoPessoa, "Física"), typeValueIsEqualsTo(tipoEntidade, "Nacional")))
@@ -125,6 +130,7 @@ public class STypeEntidade extends STypePersistentComposite {
 
         comum(nome)
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Nome")
                 .asAtrBootstrap()
                 .newRow()
@@ -132,31 +138,35 @@ public class STypeEntidade extends STypePersistentComposite {
 
         comum(enderecoEletronico)
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Endereço Eletrônico")
                 .asAtrBootstrap()
                 .colPreference(4);
 
         internacional(zipcode)
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Zipcode")
                 .asAtrBootstrap()
                 .colPreference(3);
 
         internacional(pais)
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Pais")
                 .asAtrBootstrap()
                 .colPreference(3);
 
         nacional(cep)
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("CEP")
                 .asAtrBootstrap()
                 .colPreference(3);
 
         nacional(estado)
                 .asAtr()
-                .required()
+                .required(OBRIGATORIO)
                 .displayString("${nome}")
                 .label("Estado")
                 .asAtrBootstrap()
@@ -184,10 +194,10 @@ public class STypeEntidade extends STypePersistentComposite {
 
         nacional(cidade)
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Cidade")
                 .asAtrBootstrap()
                 .colPreference(3);
-
 
         cidade
                 .asAtr()
@@ -217,18 +227,21 @@ public class STypeEntidade extends STypePersistentComposite {
 
         nacional(bairro)
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Bairro")
                 .asAtrBootstrap()
                 .colPreference(3);
 
         nacional(endereco)
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Endereço")
                 .asAtrBootstrap()
                 .colPreference(6);
 
         comum(telefone)
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Telefone")
                 .asAtrBootstrap()
                 .colPreference(2);

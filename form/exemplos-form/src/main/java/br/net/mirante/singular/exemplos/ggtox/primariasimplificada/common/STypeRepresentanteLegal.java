@@ -6,6 +6,8 @@ import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.OBRIGATORIO;
+
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeRepresentanteLegal extends STypeEntidade {
 
@@ -36,7 +38,7 @@ public class STypeRepresentanteLegal extends STypeEntidade {
 
         comprovante
                 .asAtr()
-                .required()
+                .required(OBRIGATORIO)
                 .label("Comprovante de representação");
 
         this
