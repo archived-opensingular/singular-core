@@ -6,6 +6,7 @@ import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackage
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.provider.SSimpleProvider;
+import br.net.mirante.singular.form.type.basic.AtrBasic;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
@@ -201,10 +202,10 @@ public class STypeEntidade extends STypePersistentComposite {
 
         cidade
                 .asAtr()
-                .required(inst -> Value.notNull(inst, (STypeSimple) estado.getField(sigla.getNameSimple())))
+                .required(inst -> OBRIGATORIO && Value.notNull(inst, (STypeSimple) estado.getField(sigla.getNameSimple())))
                 .displayString("${nome}")
                 .label("Cidade")
-                .enabled(inst -> inst.findNearest(estado).get().asAtr().isEnabled()
+                .enabled(inst -> inst.findNearest(estado).map(SAttributeEnabled::asAtr).map(AtrBasic::isEnabled).orElse(false)
                         && Value.notNull(inst, (STypeSimple) estado.getField(sigla.getNameSimple())))
                 .dependsOn(estado)
                 .asAtrBootstrap()
