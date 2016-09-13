@@ -6,15 +6,11 @@
 package br.net.mirante.singular.server.commons.spring.security;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.flow.core.Flow;
-import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.SFormUtil;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
-import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
-import br.net.mirante.singular.server.commons.flow.rest.ActionDefinition;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
@@ -26,14 +22,10 @@ import org.apache.commons.collections.CollectionUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Classe responsável por resolver as permissões do usuário em permissões do singular
@@ -50,11 +42,11 @@ public class AuthorizationService implements Loggable {
 
     @Inject
     @Named("peticionamentoUserDetailService")
-    private   SingularUserDetailsService      peticionamentoUserDetailService;
+    private SingularUserDetailsService peticionamentoUserDetailService;
 
     @Inject
     @Named("formConfigWithDatabase")
-    private   Optional<SFormConfig<String>>   singularFormConfig;
+    private Optional<SFormConfig<String>> singularFormConfig;
 
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
@@ -76,8 +68,8 @@ public class AuthorizationService implements Loggable {
     }
 
     private List<String> searchPermissionsSingular(String userPermissionKey) {
-        if (SingularSession.exists()){
-            SingularUserDetails       userDetails    = SingularSession.get().getUserDetails();
+        if (SingularSession.exists()) {
+            SingularUserDetails userDetails = SingularSession.get().getUserDetails();
             if (userPermissionKey.equals(userDetails.getUserPermissionKey())) {
                 if (CollectionUtils.isEmpty(userDetails.getPermissions())) {
                     userDetails.addPermissions(peticionamentoUserDetailService.searchPermissions((String) userDetails.getUserPermissionKey()));
@@ -101,7 +93,7 @@ public class AuthorizationService implements Loggable {
     }
 
     @SuppressWarnings("unchecked")
-    public void     filterActions(List<Map<String, Object>> result, String idUsuarioLogado) {
+    public void filterActions(List<Map<String, Object>> result, String idUsuarioLogado) {
         List<String> permissions = searchPermissionsSingular(idUsuarioLogado);
         for (Map<String, Object> resultItem : result) {
             List<BoxItemAction> actions = (List<BoxItemAction>) resultItem.get("actions");

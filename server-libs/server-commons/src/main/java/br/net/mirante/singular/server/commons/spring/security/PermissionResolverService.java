@@ -33,6 +33,7 @@ public class PermissionResolverService implements Loggable {
 
     @Inject
     protected PetitionService<PetitionEntity> petitionService;
+
     @Inject
     @Named("peticionamentoUserDetailService")
     private   SingularUserDetailsService      peticionamentoUserDetailService;
