@@ -9,7 +9,7 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
-import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeLong;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.view.SViewListByTable;
 
@@ -27,7 +27,7 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
     public STypeString                                         nomeComum;
     public STypeString                                         nomeComumPortugues;
     public STypeString                                         entidadeAprovadora;
-    public STypeInteger                                        numeroCAS;
+    public STypeLong                                           numeroCAS;
     public STypeString                                         grupoQuimico;
     public STypeComposite<SIComposite>                         sinonimia;
     public STypeList<STypeComposite<SIComposite>, SIComposite> sinonimias;
@@ -48,7 +48,7 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
         nomeComum = addFieldString("nomeComum");
         nomeComumPortugues = addFieldString(FIELD_NAME_NOME_COMUM_PTBR);
         entidadeAprovadora = addFieldString("entidadeAprovadora");
-        numeroCAS = addFieldInteger("numeroCAS");
+        numeroCAS = addField("numeroCAS", STypeLong.class);
         grupoQuimico = addFieldString("grupoQuimico");
         sinonimias = addFieldListOfComposite("sinonimias", "sinonimia");
         sinonimia = sinonimias.getElementsType();
@@ -61,6 +61,7 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
                 .visible(false);
 
         nomeQuimicoInternacional
+                .withTextAreaView()
                 .asAtr()
                 .label("Nome químico na grafia internacional (IUPAC)")
                 .maxLength(1000)
@@ -68,6 +69,7 @@ public class STypeIngredienteAtivo extends STypePersistentComposite {
                 .colPreference(6);
 
         nomeQuimico
+                .withTextAreaView()
                 .asAtr()
                 .label("Nome químico em português (IUPAC)")
                 .maxLength(1000)
