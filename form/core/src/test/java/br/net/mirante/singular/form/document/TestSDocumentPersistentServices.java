@@ -78,7 +78,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(tempRef = attachmentRef("abacate", content));
 
-        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
+        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt"))
             .thenReturn(persistentRef = attachmentRef("abacate", content));
 
         when(persistentHandler.copy(tempRef))
@@ -100,7 +100,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(tempRef = attachmentRef("abacate", content));
 
-        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
+        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt"))
             .thenReturn(persistentRef = attachmentRef("avocado", content));
 
         when(persistentHandler.copy(tempRef))
@@ -123,7 +123,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(tempRef = attachmentRef("abacate", content));
 
-        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
+        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt"))
             .thenReturn(persistentRef = attachmentRef("abacate", content));
 
         when(persistentHandler.copy(tempRef))
@@ -145,7 +145,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         IAttachmentRef persistentRef;
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(tempRef = attachmentRef("abacate", content));
-        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length))
+        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt"))
             .thenReturn(persistentRef = attachmentRef("abacate", content));
         when(persistentHandler.copy(tempRef))
                 .thenReturn(persistentRef);
@@ -185,12 +185,17 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
                 return content.length;
             }
 
-            public String getHasSHA1() {
+            public String getHashSHA1() {
                 return hash;
             }
 
             public InputStream newInputStream() {
                 return new ByteArrayInputStream(content);
+            }
+            
+            @Override
+            public String getName() {
+                return hash;
             }
         };
     }

@@ -8,7 +8,9 @@ package br.net.mirante.singular.form.persistence.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Blob;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -16,21 +18,28 @@ import javax.transaction.Transactional;
 import org.hibernate.Hibernate;
 
 import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.form.persistence.dao.FileDao;
-import br.net.mirante.singular.form.persistence.entity.AbstractAttachmentEntity;
+import br.net.mirante.singular.form.persistence.dao.AttachmentContentDao;
+import br.net.mirante.singular.form.persistence.dao.AttachmentDao;
+import br.net.mirante.singular.form.persistence.dto.AttachmentRef;
+import br.net.mirante.singular.form.persistence.entity.AttachmentContentEntitty;
+import br.net.mirante.singular.form.persistence.entity.AttachmentEntity;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
-public class AttachmentPersistenceService<T extends AbstractAttachmentEntity> implements IAttachmentPersistenceHandler<T> {
+public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {
 
     @Inject
-    private FileDao<T> fileDao;
+    private AttachmentDao<T, C> fileDao;
+
+    @Inject
+    private AttachmentContentDao<C> attachmentContentDao;
 
     @Override
     @Transactional
-    public T addAttachment(File file, long length) {
-        try {
-            return fileDao.insert(new FileInputStream(file), length);
+    public AttachmentRef addAttachment(File file, long length, String name) {
+        try (FileInputStream fs = new FileInputStream(file)){
+            T attachment = fileDao.insert(fs, length, name);
+            return new AttachmentRef(attachment);
         } catch (IOException e) {
             throw new SingularException(e);
         }
@@ -38,32 +47,38 @@ public class AttachmentPersistenceService<T extends AbstractAttachmentEntity> im
 
     @Override
     @Transactional
-    public T copy(IAttachmentRef toBeCopied) {
-        try {
-            return fileDao.insert(toBeCopied.newInputStream(), toBeCopied.getSize());
-        } catch (IOException e) {
-            throw new SingularException(e);
-        }
+    public AttachmentRef copy(IAttachmentRef toBeCopied) {
+        T file = fileDao.insert(toBeCopied.newInputStream(), toBeCopied.getSize(), toBeCopied.getName());
+        return new AttachmentRef(file);
     }
 
     @Override
     @Transactional
-    public List<T> getAttachments() {
-        return fileDao.list();
+    public List<AttachmentRef> getAttachments() {
+        return fileDao.list().stream().map(AttachmentRef::new).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public IAttachmentRef getAttachment(String fileId) {
-        IAttachmentRef ref = fileDao.find(fileId);
+        AttachmentEntity ref = fileDao.find(Long.valueOf(fileId));
         Hibernate.initialize(ref);
-        return ref;
+        return new AttachmentRef(ref);
     }
 
     @Override
     @Transactional
-    public void deleteAttachment(String hashId) {
-        fileDao.delete(hashId);
+    public void deleteAttachment(String id) {
+        fileDao.delete(Long.valueOf(id));
+    }
+
+    @Transactional
+    public Blob loadAttachmentContent(Long codContent) {
+        C content = attachmentContentDao.find(codContent);
+        if(content == null){
+            throw new SingularException("Attachment Content not found id="+codContent);
+        }
+        return content.getContent();
     }
 
 
