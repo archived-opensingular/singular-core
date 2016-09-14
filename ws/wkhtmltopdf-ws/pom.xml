@@ -4,6 +4,10 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <build>
+        <finalName>wkhtmltopdf-ws</finalName>
+    </build>
+
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>ws</artifactId>

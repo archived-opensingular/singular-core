@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
 
 /**
  * Classe utilitária para a manipulação de PDF's no Windows.
@@ -46,7 +45,7 @@ public class PDFUtilWin extends PDFUtil {
         File tempLock   = File.createTempFile("SINGULAR-", UUID.randomUUID().toString());
         File tempFolder = new File(tempLock.getParentFile(), tempLock.getName().concat("-DIR"));
         if (!tempFolder.mkdir()) {
-            logger.log(Level.SEVERE, "convertHTML2PDF: temp folder not found");
+            getLogger().error("convertHTML2PDF: temp folder not found");
             return null;
         }
         File pdfFile = new File(tempFolder, "temp.pdf");
@@ -62,12 +61,12 @@ public class PDFUtilWin extends PDFUtil {
     @Override
     public File splitPDF(File pdf) throws IOException, InterruptedException {
         if (wkhtml2pdfHome == null) {
-            logger.log(Level.SEVERE, "splitPDF: 'singular.wkhtml2pdf.home' not set");
+            getLogger().error("splitPDF: 'singular.wkhtml2pdf.home' not set");
             return null;
         }
 
         if (pdf == null || !pdf.exists()) {
-            logger.log(Level.SEVERE, "splitPDF: PDF file not found");
+            getLogger().error("splitPDF: PDF file not found");
             return null;
         }
 
@@ -84,7 +83,7 @@ public class PDFUtilWin extends PDFUtil {
         commandAndArgs.add(pdf.getAbsolutePath());
         commandAndArgs.add(pdfFile.getAbsolutePath());
 
-        logger.info(commandAndArgs.toString());
+        getLogger().info(commandAndArgs.toString());
         ProcessBuilder pb      = new ProcessBuilder(commandAndArgs);
         Process        process = pb.start();
 
@@ -105,7 +104,7 @@ public class PDFUtilWin extends PDFUtil {
     /**
      * Converte o código HTML em um arquivo PDF com o cabeçalho e rodapé especificados.
      *
-     * @param html             o código HTML.
+     * @param unsafeHtml       o código HTML.
      * @param header           o código HTML do cabeçalho.
      * @param footer           o código HTML do rodapé.
      * @param additionalConfig configurações adicionais.
@@ -114,17 +113,18 @@ public class PDFUtilWin extends PDFUtil {
      * @throws InterruptedException Caso ocorra um problema de sincronismo.
      */
     @Override
-    public File convertHTML2PDF(String html, String header, String footer, List<String> additionalConfig)
+    public File convertHTML2PDF(String unsafeHtml, String header, String footer, List<String> additionalConfig)
             throws IOException, InterruptedException {
+        final String html = safeWrapHtml(unsafeHtml);
         if (wkhtml2pdfHome == null) {
-            logger.log(Level.SEVERE, "convertHTML2PDF: 'singular.wkhtml2pdf.home' not set");
+            getLogger().error("convertHTML2PDF: 'singular.wkhtml2pdf.home' not set");
             return null;
         }
 
         File tempLock   = File.createTempFile("SINGULAR-", UUID.randomUUID().toString());
         File tempFolder = new File(tempLock.getParentFile(), tempLock.getName().concat("-DIR"));
         if (!tempFolder.mkdir()) {
-            logger.log(Level.SEVERE, "convertHTML2PDF: temp folder not found");
+            getLogger().error("convertHTML2PDF: temp folder not found");
             return null;
         }
 
@@ -136,7 +136,7 @@ public class PDFUtilWin extends PDFUtil {
         File jarFile  = new File(tempFolder, "temp.jar");
 
         if (htmlFile.exists() && !htmlFile.delete()) {
-            logger.log(Level.SEVERE, "convertHTML2PDF: HTML file not found");
+            getLogger().error("convertHTML2PDF: HTML file not found");
             return null;
         }
 
@@ -230,26 +230,26 @@ public class PDFUtilWin extends PDFUtil {
     @Override
     public File convertHTML2PNG(String html, List<String> additionalConfig) throws IOException, InterruptedException {
         if (wkhtml2pdfHome == null) {
-            logger.log(Level.SEVERE, "convertHTML2PDF: 'singular.wkhtml2pdf.home' not set");
+            getLogger().error("convertHTML2PDF: 'singular.wkhtml2pdf.home' not set");
             return null;
         }
 
         File tempLock   = File.createTempFile("SINGULAR-", UUID.randomUUID().toString());
         File tempFolder = new File(tempLock.getParentFile(), tempLock.getName().concat("-DIR"));
         if (!tempFolder.mkdir()) {
-            logger.log(Level.SEVERE, "convertHTML2PNG: temp folder not found");
+            getLogger().error("convertHTML2PNG: temp folder not found");
             return null;
         }
 
         File libFolder = new File(wkhtml2pdfHome);
-        File exeFile   = new File(libFolder, "html2png.exe");
+        File exeFile   = new File(libFolder, "bin" + File.separator + "wkhtmltoimage.exe");
 
         File htmlFile = new File(tempFolder, "temp.html");
         File pngFile  = new File(tempFolder, "temp.png");
         File jarFile  = new File(tempFolder, "temp.jar");
 
         if (htmlFile.exists() && !htmlFile.delete()) {
-            logger.log(Level.SEVERE, "convertHTML2PNG: HTML file not found");
+            getLogger().error("convertHTML2PNG: HTML file not found");
             return null;
         }
 
@@ -332,20 +332,20 @@ public class PDFUtilWin extends PDFUtil {
                 String line = reader.readLine();
                 while (line != null) {
                     if (error) {
-                        logger.log(Level.SEVERE, line);
+                        getLogger().error(line);
                     } else {
-                        logger.info(line);
+                        getLogger().info(line);
                     }
                     line = reader.readLine();
                 }
             } catch (IOException e) {
-                logger.log(Level.SEVERE, e.getMessage(), e);
+                getLogger().error(e.getMessage(), e);
             } finally {
                 if (reader != null) {
                     try {
                         reader.close();
                     } catch (IOException e) {
-                        logger.log(Level.SEVERE, e.getMessage(), e);
+                        getLogger().error(e.getMessage(), e);
                     }
                 }
             }

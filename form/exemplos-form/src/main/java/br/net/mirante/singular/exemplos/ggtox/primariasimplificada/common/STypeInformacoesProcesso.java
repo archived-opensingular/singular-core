@@ -9,6 +9,8 @@ import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.OBRIGATORIO;
+
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeInformacoesProcesso extends STypePersistentComposite {
 
@@ -33,6 +35,7 @@ public class STypeInformacoesProcesso extends STypePersistentComposite {
 
         marcaComercial
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Marca Comercial")
                 .asAtrBootstrap()
                 .colPreference(12);
@@ -40,12 +43,14 @@ public class STypeInformacoesProcesso extends STypePersistentComposite {
         modeloRotulo
                 .asAtr()
                 .label("Modelo de Rótulo")
+                .required(OBRIGATORIO)
                 .asAtrBootstrap()
                 .colPreference(12);
 
         modeloBula
                 .asAtr()
                 .label("Modelo de Bula")
+                .required(OBRIGATORIO)
                 .asAtrBootstrap()
                 .colPreference(12);
 

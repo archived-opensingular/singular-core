@@ -1,15 +1,16 @@
 package br.net.mirante.singular.commons.pdf;
 
+import br.net.mirante.singular.commons.util.Loggable;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Classe utilitária para a manipulação de PDF's.
  */
 @SuppressWarnings("UnusedDeclaration")
-public abstract class PDFUtil {
+public abstract class PDFUtil implements Loggable {
 
     /**
      * A constante BEGIN_COMMAND.
@@ -51,11 +52,6 @@ public abstract class PDFUtil {
      * por este utilitário de manipulação de PDF's.
      */
     protected static String wkhtml2pdfHome = System.getProperty("singular.wkhtml2pdf.home", "native");
-
-    /**
-     * A constante logger.
-     */
-    protected final Logger logger = Logger.getLogger(PDFUtil.class.getName());
 
     /**
      * O tamanho da página. O valor padrão é {@link PageSize#PAGE_A4}.
@@ -348,4 +344,19 @@ public abstract class PDFUtil {
             return value;
         }
     }
+
+    protected String safeWrapHtml(String html) {
+        String  wraped   = html;
+        boolean needHTML = !html.startsWith("<html>");
+        boolean needBody = needHTML && !html.startsWith("<body>");
+        if (needBody) {
+            wraped = "<body>" + wraped + "<body>";
+        }
+        if (needHTML) {
+            wraped = "<html>" + wraped + "</html>";
+        }
+        return wraped;
+    }
+
+
 }

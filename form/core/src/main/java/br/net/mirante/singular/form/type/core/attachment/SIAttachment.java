@@ -118,7 +118,7 @@ public class SIAttachment extends SIComposite {
         return ref == null ? null : ref.newInputStream();
     }
 
-    private String getContentType() {
+    public String getContentType() {
         try {
             return new Tika().detect(newInputStream());
         } catch (IOException e) {

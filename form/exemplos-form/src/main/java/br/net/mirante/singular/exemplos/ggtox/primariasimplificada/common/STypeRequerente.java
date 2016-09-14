@@ -7,6 +7,8 @@ import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
 
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada.OBRIGATORIO;
+
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeRequerente extends STypeEntidade {
 
@@ -23,6 +25,7 @@ public class STypeRequerente extends STypeEntidade {
         asAtr()
                 .label("Requerente");
 
+        tipoEntidade.asAtr().visible(false);
         getField(TIPO_PESSOA).asAtr().enabled(false);
         getField(CNPJ).asAtr().enabled(false);
         getField(CPF).asAtr().enabled(false);
@@ -38,6 +41,8 @@ public class STypeRequerente extends STypeEntidade {
         getField(CELULAR).asAtr().enabled(false);
 
         withInitListener(si -> {
+
+            si.setValue(STypeEntidade.TIPO_ENTIDADE, "Nacional");
             si.setValue(STypeEntidade.TIPO_PESSOA, "Jurídica");
             si.setValue(STypeEntidade.CNPJ, "91.725.509/0001-57");
             si.setValue(STypeEntidade.NOME, "Cecília e Mirella Limpeza ME");
@@ -64,6 +69,7 @@ public class STypeRequerente extends STypeEntidade {
 
         comprovanteRegistroEstado
                 .asAtr()
+                .required(OBRIGATORIO)
                 .label("Comprovante de registro em orgão competente nessa modalidade do estado, Distrito Federal ou município")
                 .asAtrBootstrap()
                 .colPreference(12);
