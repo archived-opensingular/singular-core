@@ -1,34 +1,55 @@
 package br.net.mirante.singular.form.persistence.entity;
 
-import br.net.mirante.singular.support.persistence.entity.BaseEntity;
-import br.net.mirante.singular.support.persistence.util.Constants;
-
-import javax.persistence.*;
 import java.sql.Blob;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.GenericGenerator;
+
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
+
 @Entity
+@GenericGenerator(name = AttachmentContentEntitty.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_CONTEUDO_ARQUIVO", schema = Constants.SCHEMA)
-public class AttachmentContentEntitty extends BaseEntity<String> {
+public class AttachmentContentEntitty extends BaseEntity<Long> {
+
+    public static final String PK_GENERATOR_NAME = "GENERATED_CO_CONTEUDO_ARQUIVO";
 
     @Id
-    @Column(name = "TX_SHA1")
+    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @Column(name = "CO_CONTEUDO_ARQUIVO")
+    private Long cod;
+
+    @Column(name = "TX_SHA1", nullable = false)
     private String hashSha1;
 
     @Column(name = "NU_BYTES")
     private long size;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "DT_INCLUSAO")
+    @Column(name = "DT_INCLUSAO", nullable = false)
     private Date inclusionDate;
 
     @Lob
-    @Column(name = "BL_CONTEUDO")
+    @Column(name = "BL_CONTEUDO", nullable = false)
     private Blob content;
 
-    @Override
-    public String getCod() {
-        return getHashSha1();
+    public Long getCod() {
+        return cod;
+    }
+
+    public void setCod(Long cod) {
+        this.cod = cod;
     }
 
     public String getHashSha1() {
@@ -62,4 +83,5 @@ public class AttachmentContentEntitty extends BaseEntity<String> {
     public void setContent(Blob content) {
         this.content = content;
     }
+
 }

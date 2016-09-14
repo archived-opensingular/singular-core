@@ -5,15 +5,6 @@
 
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
-import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.io.HashUtil;
-import br.net.mirante.singular.form.io.IOUtil;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import com.google.common.base.Throwables;
-import org.apache.commons.io.IOUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,6 +15,16 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+
+import org.apache.commons.io.IOUtils;
+
+import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.commons.base.SingularUtil;
+import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.io.HashUtil;
+import br.net.mirante.singular.form.io.IOUtil;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
 /**
  * This handler persists uploaded files in the filesystem. You mus inform which
@@ -73,15 +74,15 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public FileSystemAttachmentRef addAttachment(File file, long length) {
-        try {
-            return addAttachment(new FileInputStream(file), length);
+    public FileSystemAttachmentRef addAttachment(File file, long length, String name) {
+        try (FileInputStream fis = new FileInputStream(file)){
+            return addAttachment(fis, length, name);
         } catch (Exception e) {
             throw new SingularFormException("Erro lendo origem de dados", e);
         }
     }
 
-    private FileSystemAttachmentRef addAttachment(InputStream origin, long originLength) throws IOException {
+    private FileSystemAttachmentRef addAttachment(InputStream origin, long originLength, String name) {
         String id = UUID.randomUUID().toString();
         File temp = findFileFromId(id);
         try (OutputStream fos = IOUtil.newBuffredOutputStream(temp);
@@ -89,15 +90,17 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
              OutputStream infoFOS = IOUtil.newBuffredOutputStream(infoFileFromId(id))) {
             IOUtils.copy(inHash, fos);
             String sha1 = HashUtil.bytesToBase16(inHash.getMessageDigest().digest());
-            IOUtil.writeLines(infoFOS, sha1, String.valueOf(originLength));
-            return newRef(id, sha1, temp.getAbsolutePath(), originLength);
+            IOUtil.writeLines(infoFOS, sha1, String.valueOf(originLength), name);
+            return newRef(id, sha1, temp.getAbsolutePath(), originLength, name);
+        } catch (Exception e) {
+            throw new SingularException(e);
         }
     }
 
     @Override
     public FileSystemAttachmentRef copy(IAttachmentRef toBeCopied) {
-        try {
-            return addAttachment(toBeCopied.newInputStream(), toBeCopied.getSize());
+        try (InputStream is = toBeCopied.newInputStream()){
+            return addAttachment(is, toBeCopied.getSize(), toBeCopied.getName());
         } catch (Exception e) {
             throw new SingularException(e);
         }
@@ -112,11 +115,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         }
         for (File f : files) {
             if (f.isFile() && f.exists() && !f.getName().endsWith(INFO_SUFFIX)) {
-                try {
-                    result.add(toRef(f));
-                } catch (Exception e) {
-                    throw Throwables.propagate(e);
-                }
+                result.add(toRef(f));
             }
         }
         return result;
@@ -124,13 +123,11 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
 
     @Override
     public IAttachmentRef getAttachment(String fileId) {
-        try {
+        if(fileId != null){
             File file = findFileFromId(fileId);
             if (file.exists()) {
                 return toRef(file);
             }
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
         }
         return null;
     }
@@ -143,13 +140,17 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         return new File(folder, fileId + INFO_SUFFIX);
     }
 
-    private FileSystemAttachmentRef toRef(File file) throws Exception {
-        List<String> lines = IOUtil.readLines(new File(file.getAbsolutePath() + INFO_SUFFIX));
-        return newRef(file.getName(), lines.get(0), file.getAbsolutePath(), Long.valueOf(lines.get(1)));
+    private FileSystemAttachmentRef toRef(File file) {
+        try {
+            List<String> lines = IOUtil.readLines(new File(file.getAbsolutePath() + INFO_SUFFIX));
+            return newRef(file.getName(), lines.get(0), file.getAbsolutePath(), Long.valueOf(lines.get(1)), lines.get(2));
+        } catch (Exception e) {
+            throw SingularUtil.propagate(e);
+        }
     }
 
-    private FileSystemAttachmentRef newRef(String id, String hash, String filePath, long length) {
-        return new FileSystemAttachmentRef(id, hash, filePath, length);
+    private FileSystemAttachmentRef newRef(String id, String hash, String filePath, long length, String name) {
+        return new FileSystemAttachmentRef(id, hash, filePath, length, name);
     }
 
     @Override

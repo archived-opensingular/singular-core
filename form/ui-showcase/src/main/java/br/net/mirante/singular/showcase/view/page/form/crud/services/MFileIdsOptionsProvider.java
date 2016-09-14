@@ -9,9 +9,9 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
-import br.net.mirante.singular.form.persistence.entity.AbstractAttachmentEntity;
 import br.net.mirante.singular.form.provider.SSimpleProvider;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.util.transformer.SCompositeListBuilder;
 
 @SuppressWarnings("serial")
@@ -19,14 +19,14 @@ import br.net.mirante.singular.form.util.transformer.SCompositeListBuilder;
 public class MFileIdsOptionsProvider implements SSimpleProvider {
 
     @Inject
-    private IAttachmentPersistenceHandler<AbstractAttachmentEntity> filePersistence;
+    private IAttachmentPersistenceHandler<IAttachmentRef> filePersistence;
 
     @Override
     public void fill(SCompositeListBuilder builder) {
         filePersistence.getAttachments().forEach(file -> {
             builder.add()
                     .set("id", file.getId())
-                    .set("hashSha1", file.getHashSha1());
+                    .set("hashSha1", file.getHashSHA1());
         });
     }
 

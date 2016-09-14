@@ -1,12 +1,13 @@
 package br.net.mirante.singular.form.type.core.attachment;
 
-import br.net.mirante.singular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
-import com.google.common.base.Throwables;
+import java.io.File;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
+import br.net.mirante.singular.commons.base.SingularUtil;
+import br.net.mirante.singular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
 
 public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHandlerBase {
 
@@ -26,7 +27,7 @@ public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHan
         try {
             createFolders();
         } catch (Exception e) {
-            Throwables.propagate(e);
+            SingularUtil.propagate(e);
         }
         return new FileSystemAttachmentHandler(tmpFolder);
     }
