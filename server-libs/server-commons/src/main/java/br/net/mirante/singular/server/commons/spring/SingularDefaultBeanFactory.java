@@ -5,7 +5,8 @@ import org.springframework.context.annotation.Bean;
 
 import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.persistence.dao.FileDao;
+import br.net.mirante.singular.form.persistence.dao.AttachmentContentDao;
+import br.net.mirante.singular.form.persistence.dao.AttachmentDao;
 import br.net.mirante.singular.form.persistence.dao.FormAnnotationDAO;
 import br.net.mirante.singular.form.persistence.dao.FormAnnotationVersionDAO;
 import br.net.mirante.singular.form.persistence.dao.FormDAO;
@@ -23,7 +24,6 @@ import br.net.mirante.singular.server.commons.persistence.dao.form.FormPetitionD
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionContentHistoryDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionerDAO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
@@ -83,8 +83,13 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public FileDao fileDao() {
-        return new FileDao();
+    public AttachmentDao fileDao() {
+        return new AttachmentDao();
+    }
+
+    @Bean
+    public AttachmentContentDao fileContentDao() {
+        return new AttachmentContentDao();
     }
 
     @Bean
