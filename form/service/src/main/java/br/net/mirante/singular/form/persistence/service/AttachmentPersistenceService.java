@@ -29,7 +29,7 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {
 
     @Inject
-    private AttachmentDao<T, C> fileDao;
+    private AttachmentDao<T, C> attachmentDao;
 
     @Inject
     private AttachmentContentDao<C> attachmentContentDao;
@@ -38,7 +38,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     @Transactional
     public AttachmentRef addAttachment(File file, long length, String name) {
         try (FileInputStream fs = new FileInputStream(file)){
-            T attachment = fileDao.insert(fs, length, name);
+            T attachment = attachmentDao.insert(fs, length, name);
             return new AttachmentRef(attachment);
         } catch (IOException e) {
             throw new SingularException(e);
@@ -48,20 +48,20 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     @Override
     @Transactional
     public AttachmentRef copy(IAttachmentRef toBeCopied) {
-        T file = fileDao.insert(toBeCopied.newInputStream(), toBeCopied.getSize(), toBeCopied.getName());
+        T file = attachmentDao.insert(toBeCopied.newInputStream(), toBeCopied.getSize(), toBeCopied.getName());
         return new AttachmentRef(file);
     }
 
     @Override
     @Transactional
     public List<AttachmentRef> getAttachments() {
-        return fileDao.list().stream().map(AttachmentRef::new).collect(Collectors.toList());
+        return attachmentDao.list().stream().map(AttachmentRef::new).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public IAttachmentRef getAttachment(String fileId) {
-        AttachmentEntity ref = fileDao.find(Long.valueOf(fileId));
+        AttachmentEntity ref = attachmentDao.find(Long.valueOf(fileId));
         Hibernate.initialize(ref);
         return new AttachmentRef(ref);
     }
@@ -69,7 +69,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     @Override
     @Transactional
     public void deleteAttachment(String id) {
-        fileDao.delete(Long.valueOf(id));
+        attachmentDao.delete(Long.valueOf(id));
     }
 
     @Transactional
