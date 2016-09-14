@@ -82,7 +82,7 @@ public class AttachmentRef implements IAttachmentRef{
                 
                 Blob content = persistenceHandler.loadAttachmentContent(codContent);
 
-                file = File.createTempFile(name, hashSha1);
+                file = File.createTempFile(name, hashSha1 + "."+id);
                 file.deleteOnExit();
                 
                 try (InputStream in = content.getBinaryStream();
