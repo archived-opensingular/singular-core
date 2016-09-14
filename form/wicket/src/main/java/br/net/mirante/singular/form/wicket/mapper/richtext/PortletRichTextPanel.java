@@ -64,7 +64,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
     public PortletRichTextPanel(String id, WicketBuildContext ctx) {
         super(id);
-        hash = String.valueOf(ctx.getCurrentInstance().getPathFull().hashCode());
+        hash = String.valueOf(Math.abs(ctx.getCurrentInstance().getPathFull().hashCode()));
         build(ctx);
         addBehaviours();
     }
