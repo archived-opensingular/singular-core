@@ -53,7 +53,7 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersi
 
         tipoFormulacao
                 .asAtr()
-                .required(ins -> Optional
+                .required(ins -> OBRIGATORIO && Optional
                         .ofNullable(SInstances.getRootInstance(ins))
                         .map(x -> x.getField("tipoPeticao"))
                         .map(safeCast(SIComposite.class))

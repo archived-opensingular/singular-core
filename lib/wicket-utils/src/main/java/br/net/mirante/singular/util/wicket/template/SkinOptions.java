@@ -5,35 +5,37 @@
 
 package br.net.mirante.singular.util.wicket.template;
 
-import javax.servlet.http.Cookie;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
+import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.commons.util.Loggable;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.markup.head.CssUrlReferenceHeaderItem;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
 
-import br.net.mirante.singular.commons.base.SingularException;
+import javax.servlet.http.Cookie;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class stores the options of css skins for the showcase
  *
  * @author Fabricio Buzeto
  */
-public class SkinOptions implements Serializable {
+public class SkinOptions implements Serializable, Loggable {
 
-    private Skin current = null;
-    private List<Skin> skins = new ArrayList<>();
+    private Skin       current = null;
+    private List<Skin> skins   = new ArrayList<>();
 
     public static class Skin implements Serializable {
 
-        private final String name;
+        private final String                    name;
         private final CssUrlReferenceHeaderItem ref;
-        private final Boolean defaultSkin;
+        private final Boolean                   defaultSkin;
 
         private Skin(String name, Boolean defaultSkin, CssUrlReferenceHeaderItem ref) {
             this.name = name;
@@ -81,7 +83,11 @@ public class SkinOptions implements Serializable {
             final JSONObject json = new JSONObject();
             json.put("name", selection.getName());
             json.put("url", selection.getRef().getUrl());
-            cookie.setValue(json.toString());
+            try {
+                cookie.setValue(URLEncoder.encode(json.toString(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                getLogger().error(e.getMessage(), e);
+            }
         }
         response().addCookie(cookie);
         current = selection;
@@ -93,7 +99,14 @@ public class SkinOptions implements Serializable {
             if (cookie != null) {
                 return options()
                         .stream()
-                        .filter(s -> s.getName().equals(new JSONObject(cookie.getValue()).get("name")))
+                        .filter(s -> {
+                            try {
+                                return s.getName().equals(new JSONObject(URLDecoder.decode(cookie.getValue(), "UTF-8")).get("name"));
+                            } catch (UnsupportedEncodingException e) {
+                                getLogger().error(e.getMessage(), e);
+                                return false;
+                            }
+                        })
                         .findFirst()
                         .orElse(getDefaultSkin());
             }

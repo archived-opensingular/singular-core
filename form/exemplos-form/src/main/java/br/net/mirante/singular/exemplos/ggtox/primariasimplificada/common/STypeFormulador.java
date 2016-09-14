@@ -24,16 +24,15 @@ public class STypeFormulador extends STypeEntidade {
 
         laudoLaboratorial = addField("laudoLaboratorial", STypeAttachment.class);
 
-        laudoLaboratorial
+        internacional(laudoLaboratorial)
                 .asAtr()
                 .label("Laudo laboratorial")
                 .asAtrBootstrap()
                 .colPreference(12);
 
-
         comprovanteRegistroEstado = addField("comprovanteRegistroEstado", STypeAttachment.class);
 
-        comprovanteRegistroEstado
+        nacional(comprovanteRegistroEstado)
                 .asAtr()
                 .label("Comprovante de registro em orgão competente nessa modalidade do estado, Distrito Federal ou município")
                 .asAtrBootstrap()
