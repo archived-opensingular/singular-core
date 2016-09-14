@@ -6,14 +6,14 @@
 package br.net.mirante.singular.form.type.core.attachment;
 
 import java.io.InputStream;
+import java.io.Serializable;
 
 /**
- * Referência para um arquivo binário persistido, contudo não identifica nome
- * original, data ou tamanho do arquivo.
+ * Referência para um arquivo binário persistido, contudo não identifica a data ou tamanho do arquivo.
  *
  * @author Daniel C. Bordin
  */
-public interface IAttachmentRef {
+public interface IAttachmentRef extends Serializable{
 
     /**
      * <p>
@@ -50,7 +50,7 @@ public interface IAttachmentRef {
     long getSize();
     
     /**
-     * Retorna o nome do arquivo.
+     * Retorna o nome original do arquivo.
      */
     String getName();
 }
