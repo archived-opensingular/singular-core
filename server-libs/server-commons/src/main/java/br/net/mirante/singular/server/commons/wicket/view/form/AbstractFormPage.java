@@ -408,12 +408,16 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         );
         final SingularButton singularButton = new SingularButton(buttonId, content.getFormInstance()) {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                confirmarAcaoFlowModal.show(target);
+            protected void onSubmit(AjaxRequestTarget ajaxRequestTarget, Form<?> form) {
+                showConfirmModal(transitionName, confirmarAcaoFlowModal, ajaxRequestTarget);
             }
         };
         singularButton.add(new Label("flowButtonLabel", transitionName).setRenderBodyOnly(true));
         tp.add(singularButton);
+    }
+
+    protected void showConfirmModal(String transitionName, BSModalBorder modal, AjaxRequestTarget ajaxRequestTarget) {
+        modal.show(ajaxRequestTarget);
     }
 
     /**
