@@ -5,10 +5,6 @@
 
 package br.net.mirante.singular.form.type.core.attachment;
 
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -30,20 +26,20 @@ public interface IAttachmentRef {
      * situações de restrição de implementação.
      * </p>
      */
-    public String getId();
+    String getId();
 
 
     /**
      * Retorna String de 40 digitos com o SHA1 do conteudo do arquivo.
      */
-    public String getHasSHA1();
+    String getHashSHA1();
 
     /**
      * Retorna o conteúdo do arquivo em um novo inputStream.
      * Cada chamada a esse método deve retornar um novo inputStream
      *
      */
-    public InputStream newInputStream();
+    InputStream newInputStream();
 
     /**
      * Retorna o tamanho do arquivo se a informação estiver disponível ou -1
@@ -51,5 +47,10 @@ public interface IAttachmentRef {
      * se a referencia for produzida por uma operação de inserção
      * (addContent()).
      */
-    public long getSize();
+    long getSize();
+    
+    /**
+     * Retorna o nome do arquivo.
+     */
+    String getName();
 }

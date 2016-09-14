@@ -21,7 +21,10 @@ public class AttachmentEntity extends BaseEntity<Long> {
     private Long cod;
 
     @Column(name = "NO_ARQUIVO")
-    private String nome;
+    private String name;
+
+    @Column(name = "CO_CONTEUDO_ARQUIVO")
+    private Long codContent;
 
     @Column(name = "TX_SHA1")
     private String hashSha1;
@@ -42,12 +45,12 @@ public class AttachmentEntity extends BaseEntity<Long> {
         this.cod = cod;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String nome) {
+        this.name = nome;
     }
 
     public String getHashSha1() {
@@ -73,4 +76,13 @@ public class AttachmentEntity extends BaseEntity<Long> {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
+
+    public Long getCodContent() {
+        return codContent;
+    }
+
+    public void setCodContent(Long codContent) {
+        this.codContent = codContent;
+    }
+    
 }

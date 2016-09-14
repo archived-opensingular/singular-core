@@ -25,12 +25,12 @@ public class SIAttachment extends SIComposite {
         if (f == null){
             throw new SingularFormException("O arquivo não pode ser nulo.");
         }
-        setContent(name, getAttachmentService().addContent(getFileId(), f, length));
+        setContent(name, getAttachmentService().addContent(getFileId(), f, length, name));
     }
 
     private void setContent(String name, IAttachmentRef ref) {
         setFileId(ref.getId());
-        setFileHashSHA1(ref.getHasSHA1());
+        setFileHashSHA1(ref.getHashSHA1());
         setFileSize(ref.getSize());
         setFileName(name);
     }

@@ -39,8 +39,8 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
     }
 
     @Override
-    public FileSystemAttachmentRef addAttachment(File file, long length) {
-        FileSystemAttachmentRef ref = super.addAttachment(file, length);
+    public FileSystemAttachmentRef addAttachment(File file, long length, String name) {
+        FileSystemAttachmentRef ref = super.addAttachment(file, length, name);
         attachments.put(ref.getId(), ref);
         return ref;
     }
