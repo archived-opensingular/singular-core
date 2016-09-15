@@ -19,7 +19,7 @@ import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
 
 /**
- * Listener que é executado quando um dependsOn é executado
+ * Listener que atualiza valores de itens de um mestre-detalhe.
  */
 @CaseItem(componentName = "Listeners", subCaseName = "Master/detail", group = Group.INTERACTION)
 public class CaseUpdateListenerMasterDetailPackage extends SPackage {
@@ -38,15 +38,8 @@ public class CaseUpdateListenerMasterDetailPackage extends SPackage {
         STypeMonetary salario = funcionario.addFieldMonetary("salario");
 
         {
-            salario
-                .withUpdateListener(iSalario -> iSalario.findNearest(salarioMaximo)
-                    .ifPresent(iSalarioMaximo -> {
-                        BigDecimal vs = iSalario.getValue();
-                        BigDecimal vsm = iSalarioMaximo.getValue();
-                        if ((vs != null) && (vsm != null) && (vs.compareTo(vsm) > 0))
-                            iSalario.setValue(iSalarioMaximo.getValue());
-                    }))
-                .asAtr().label("Teto salarial");
+            salarioMaximo.asAtr().label("Teto salarial");
+
             funcionarios
                 .withView(new SViewListByMasterDetail()
                     .col(nome)
@@ -56,6 +49,13 @@ public class CaseUpdateListenerMasterDetailPackage extends SPackage {
                 .asAtr().label("Nome")
                 .asAtrBootstrap().colPreference(8);
             salario
+                .withUpdateListener(iSalario -> iSalario.findNearest(salarioMaximo)
+                    .ifPresent(iSalarioMaximo -> {
+                        BigDecimal vs = iSalario.getValue();
+                        BigDecimal vsm = iSalarioMaximo.getValue();
+                        if ((vs != null) && (vsm != null) && (vs.compareTo(vsm) > 0))
+                            iSalario.setValue(iSalarioMaximo.getValue());
+                    }))
                 .asAtr().label("Salário")
                 .dependsOn(salarioMaximo);
         }
