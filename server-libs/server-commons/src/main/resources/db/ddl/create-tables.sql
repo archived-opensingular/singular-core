@@ -348,7 +348,6 @@ CREATE TABLE DBSINGULAR.TB_HISTORICO_CONTEUDO_PETICAO (
    CO_PETICAO           BIGINT                  NOT NULL,
    DT_HISTORICO         SMALLDATETIME        NOT NULL,
    CO_AUTOR             BIGINT                  NULL,
-   CO_VERSAO_FORMULARIO BIGINT                  NULL,
    CO_INSTANCIA_TAREFA  BIGINT                  NULL,
    CO_PETICIONANTE      BIGINT                  NULL,
    CONSTRAINT PK_TB_HISTORICO_CONTEUDO_PETIC PRIMARY KEY (CO_HISTORICO)
@@ -388,3 +387,13 @@ CREATE TABLE DBSINGULAR.TB_FORMULARIO_PETICAO
    CONSTRAINT PK_TB_FORMULARIO_PETICAO PRIMARY KEY (CO_FORMULARIO_PETICAO)
 );
 
+
+/*==============================================================*/
+/* Table: RL_VERSAO_FORMULARIO_HISTORICO                        */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_HISTORICO_VERSAO_FORMULARIO
+(
+   CO_HISTORICO         INTEGER              NOT NULL,
+   CO_VERSAO_FORMULARIO INTEGER              NOT NULL,
+   ST_FORM_PRINCIPAL    CHAR                 NOT NULL
+);

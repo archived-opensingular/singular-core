@@ -28,10 +28,7 @@ import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceD
 import br.net.mirante.singular.server.commons.persistence.dao.form.*;
 import br.net.mirante.singular.server.commons.persistence.dto.PeticaoDTO;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
-import br.net.mirante.singular.server.commons.persistence.entity.form.DraftEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.FormPetitionEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
-import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.persistence.entity.form.*;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
@@ -46,12 +43,13 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.*;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.*;
 
 @Transactional
 public class PetitionService<T extends PetitionEntity> implements Loggable {
@@ -298,23 +296,56 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     }
 
     private void savePetitionHistory(Long petitionId, FormKey formKey) {
-        PetitionEntity     petitionEntity = petitionDAO.find(petitionId);
-        TaskInstanceEntity taskInstance   = findCurrentTaskByPetitionId(petitionId);
-        FormEntity         formEntity     = formPersistenceService.loadFormEntity(formKey);
+
+        final PetitionEntity     petitionEntity = petitionDAO.find(petitionId);
+        final TaskInstanceEntity taskInstance   = findCurrentTaskByPetitionId(petitionId);
+        final FormEntity         formEntity     = formPersistenceService.loadFormEntity(formKey);
+
         getLogger().info("Atualizando histórico da petição.");
-        PetitionContentHistoryEntity contentHistoryEntity = new PetitionContentHistoryEntity();
+
+        final PetitionContentHistoryEntity contentHistoryEntity = new PetitionContentHistoryEntity();
+
         contentHistoryEntity.setPetitionEntity(petitionEntity);
-        contentHistoryEntity.setFormVersionEntity(formEntity.getCurrentFormVersionEntity());
+
         if (taskInstance != null) {
             contentHistoryEntity.setActor(taskInstance.getAllocatedUser());
             contentHistoryEntity.setTaskInstanceEntity(taskInstance);
         }
+
         if (CollectionUtils.isNotEmpty(formEntity.getCurrentFormVersionEntity().getFormAnnotations())) {
             contentHistoryEntity.setFormAnnotationsVersions(formEntity.getCurrentFormVersionEntity().getFormAnnotations().stream().map(FormAnnotationEntity::getAnnotationCurrentVersion).collect(Collectors.toList()));
         }
+
         contentHistoryEntity.setPetitionerEntity(petitionEntity.getPetitioner());
         contentHistoryEntity.setHistoryDate(new Date());
+
         petitionContentHistoryDAO.saveOrUpdate(contentHistoryEntity);
+
+        contentHistoryEntity.setFormVersionHistoryEntities(
+                petitionEntity
+                        .getFormPetitionEntities()
+                        .stream()
+                        .filter(isMainFormOrIsForCurrentTaskDefinition(petitionEntity))
+                        .map(f -> {
+                            final FormVersionHistoryEntity formVersionHistoryEntity = new FormVersionHistoryEntity();
+                            formVersionHistoryEntity.setMainForm(f.getMainForm());
+                            formVersionHistoryEntity.setCodFormVersion(f.getForm().getCurrentFormVersionEntity().getCod());
+                            formVersionHistoryEntity.setCodPetitionContentHistory(contentHistoryEntity.getCod());
+                            return formVersionHistoryEntity;
+                        })
+                        .collect(Collectors.toList())
+        );
+
+
+    }
+
+    private Predicate<FormPetitionEntity> isMainFormOrIsForCurrentTaskDefinition(PetitionEntity petitionEntity) {
+        return f -> Optional.ofNullable(f.getMainForm()).map(SimNao.SIM::equals).orElse(false) || Optional.ofNullable(petitionEntity.getProcessInstanceEntity())
+                .map(ProcessInstanceEntity::getCurrentTask)
+                .map(TaskInstanceEntity::getTask)
+                .map(TaskVersionEntity::getTaskDefinition)
+                .map(f.getTaskDefinitionEntity()::equals)
+                .orElse(false);
     }
 
     private FormKey consolidateDraft(T petition, SInstance draftInstance, boolean mainForm) {
