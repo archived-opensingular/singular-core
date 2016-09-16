@@ -35,7 +35,7 @@ public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {
     }
 
     @Override
-    public String getHasSHA1() {
+    public String getHashSHA1() {
         return hashSHA1Hex;
     }
 
@@ -51,5 +51,10 @@ public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {
     @Override
     public long getSize() {
         return size;
+    }
+    
+    @Override
+    public String getName() {
+        return tempFile.getName();
     }
 }

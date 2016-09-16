@@ -16,7 +16,7 @@ import java.util.Map;
 public class SimpleDAO implements Loggable, Serializable {
 
     @Inject
-    protected transient SessionFactory sessionFactory;
+    protected SessionFactory sessionFactory;
 
     protected Session getSession() {
         return sessionFactory.getCurrentSession();

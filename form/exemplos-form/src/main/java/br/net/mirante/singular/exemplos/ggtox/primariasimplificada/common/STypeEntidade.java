@@ -233,7 +233,7 @@ public class STypeEntidade extends STypePersistentComposite {
                 .asAtrBootstrap()
                 .colPreference(3);
 
-        nacional(endereco)
+        comum(endereco)
                 .asAtr()
                 .required(OBRIGATORIO)
                 .label("Endereço")

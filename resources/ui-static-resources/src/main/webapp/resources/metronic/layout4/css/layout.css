@@ -1684,12 +1684,10 @@ Theme Panel
   padding: 10px 0 0; }
 
 .cancel-btn {
-    background-color: #EDEFF3;
-}
+  background-color: #EDEFF3; }
 
 .confirm-btn {
-    background-color: #40BAA7;
-}
+  background-color: #40BAA7; }
 
 .upload-fileinput {
   width: 0.1px;
@@ -2063,8 +2061,7 @@ Theme Panel
   background-color: #eaeef2;
   color: #acb1c2;
   vertical-align: middle;
-    border: 1px dashed currentColor;
-}
+  border: 1px dashed currentColor; }
   .list-table-empty .list-table-empty-message {
     text-align: center;
     line-height: 8px;
@@ -2146,56 +2143,45 @@ Theme Panel
     text-decoration: none; }
 
 .has-error .singular-validation-feedback-compact-panel > span {
-    white-space: normal !important;
-}
+  white-space: normal !important; }
 
 .has-error input {
-    padding-right: 5px !important;
-    background: none !important;
-}
+  padding-right: 5px !important;
+  background: none !important; }
 
 .fileinput-filename {
-    position: absolute;
-    margin-left: 5px;
-}
+  position: absolute;
+  margin-left: 5px; }
+
+.fileinput.focus .form-control {
+  border-color: #40BAA7; }
 
 .error-container {
-    max-width: 500px;
-    padding-bottom: 25px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.error-container .error-image {
+  max-width: 500px;
+  padding-bottom: 25px;
+  margin: 0 auto;
+  text-align: center; }
+  .error-container .error-image {
     background: url("/singular-static/resources/singular/img/errorserver.svg") no-repeat 100%;
     display: block;
     height: 270px;
-    margin-bottom: 0px 0px 20px 0px;
-}
-
-.error-container .error-title {
+    margin-bottom: 0px 0px 20px 0px; }
+  .error-container .error-title {
     margin: 0px 0px 20px 0px;
     font-size: 4.8rem;
-    color: #40BAA7;
-}
-
-.error-container .error-code {
+    color: #40BAA7; }
+  .error-container .error-code {
     margin: 0px 0px 10px 0px;
     font-size: 2.4rem !important;
     text-transform: uppercase;
-    color: #bfbfbf;
-}
-
-.error-container .error-code span.error-code {
-    color: gray;
-}
-
-.error-container .error-text {
+    color: #bfbfbf; }
+    .error-container .error-code span.error-code {
+      color: gray; }
+  .error-container .error-text {
     margin: 0px 0px 25px 0px;
     padding: 0px 30px;
     font-size: 1.4rem;
-    color: gray;
-}
+    color: gray; }
 
 /* Page Portlet Fullscreen */
 .page-portlet-fullscreen .page-quick-sidebar-wrapper,

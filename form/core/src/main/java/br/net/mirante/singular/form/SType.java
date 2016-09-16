@@ -554,7 +554,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return sum;
     }
 
-    public final void addDependentType(SType<?> type) {
+    public final SType<I> addDependentType(SType<?> type) {
         if (! isDependentType(type)) {
             if (type.hasDirectOrInderectDependentType(this)) {
                 throw new SingularFormException(
@@ -566,6 +566,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             }
             dependentTypes.add(type);
         }
+        return this;
     }
 
     private boolean hasDirectOrInderectDependentType(SType<?> type) {

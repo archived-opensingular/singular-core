@@ -291,7 +291,9 @@ public class WicketFormProcessing implements Loggable {
         if (target.isPresent() && component != null) {
             component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, true);
             target.get()
-                    .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
+                .add(WicketFormUtils.resolveRefreshingComponent(
+                    ObjectUtils.defaultIfNull(
+                        WicketFormUtils.getCellContainer(component), component)));
         }
     }
 

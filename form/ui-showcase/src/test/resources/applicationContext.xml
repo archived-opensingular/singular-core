@@ -39,7 +39,8 @@
 	</bean>
 
     <bean id="filePersistence" class="br.net.mirante.singular.form.persistence.service.AttachmentPersistenceService" />
-    <bean id="fileDao" class="br.net.mirante.singular.form.persistence.dao.FileDao" />
+    <bean id="attachmentDao" class="br.net.mirante.singular.form.persistence.dao.AttachmentDao" />
+    <bean id="attachmentContentDao" class="br.net.mirante.singular.form.persistence.dao.AttachmentContentDao" />
     <bean id="studioCollectionPersistenceFactory" class="br.net.mirante.singular.studio.persistence.StudioCollectionPersistenceFactory" />
     <bean id="collectionGallery" class="br.net.mirante.singular.studio.core.CollectionGallery" />
 

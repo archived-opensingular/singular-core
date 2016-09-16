@@ -1,10 +1,14 @@
 package br.net.mirante.singular.form.wicket.mapper.richtext;
 
-import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
-import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
+import static br.net.mirante.singular.util.wicket.jquery.JQuery.$;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -16,14 +20,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.template.PackageTextTemplate;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import static br.net.mirante.singular.util.wicket.jquery.JQuery.$;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import br.net.mirante.singular.commons.util.Loggable;
+import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
+import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
 
 public class PortletRichTextPanel extends Panel implements Loggable {
 
@@ -64,7 +65,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
     public PortletRichTextPanel(String id, WicketBuildContext ctx) {
         super(id);
-        hash = String.valueOf(Math.abs(ctx.getCurrentInstance().getPathFull().hashCode()));
+        hash = String.valueOf(Math.sqrt(Math.pow(ctx.getCurrentInstance().getPathFull().hashCode(), 2)));
         build(ctx);
         addBehaviours();
     }

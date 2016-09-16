@@ -19,6 +19,7 @@
             nw.document.getElementById('ck-text-area').value = $('#' + htmlContainer).html();
             nw.CKEDITOR.replace("ck-text-area", {
                 extraPlugins: 'saveAndClose',
+                allowedContent: true,
                 skin: 'office2013',
                 language: 'pt-br',
                 width: '210mm',
