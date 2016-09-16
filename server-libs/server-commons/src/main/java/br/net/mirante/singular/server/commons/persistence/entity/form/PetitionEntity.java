@@ -7,25 +7,10 @@ import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import br.net.mirante.singular.support.persistence.enums.SimNao;
 import br.net.mirante.singular.support.persistence.util.Constants;
 import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
-import org.apache.commons.collections.set.UnmodifiableSortedSet;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
+import javax.persistence.*;
 import java.util.Optional;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -127,7 +112,7 @@ public class PetitionEntity extends BaseEntity<Long> {
                 .orElse(new TreeSet<>())
                 .stream()
                 .filter(f -> SimNao.SIM.equals(f.getMainForm()))
-                .map(f -> f.getForm())
+                .map(FormPetitionEntity::getForm)
                 .findFirst()
                 .orElse(null);
     }

@@ -55,28 +55,28 @@ import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_
 public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     @Inject
-    private PetitionDAO<T> petitionDAO;
+    protected PetitionDAO<T> petitionDAO;
 
     @Inject
-    private GrupoProcessoDAO grupoProcessoDAO;
+    protected GrupoProcessoDAO grupoProcessoDAO;
 
     @Inject
-    private IFormService formPersistenceService;
+    protected IFormService formPersistenceService;
 
     @Inject
-    private TaskInstanceDAO taskInstanceDAO;
+    protected TaskInstanceDAO taskInstanceDAO;
 
     @Inject
-    private DraftDAO draftDAO;
+    protected DraftDAO draftDAO;
 
     @Inject
-    private PetitionerDAO petitionerDAO;
+    protected PetitionerDAO petitionerDAO;
 
     @Inject
-    private FormPetitionDAO formPetitionDAO;
+    protected FormPetitionDAO formPetitionDAO;
 
     @Inject
-    private PetitionContentHistoryDAO petitionContentHistoryDAO;
+    protected PetitionContentHistoryDAO petitionContentHistoryDAO;
 
     public T find(Long cod) {
         return petitionDAO.find(cod);
@@ -325,6 +325,7 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
                 petitionEntity
                         .getFormPetitionEntities()
                         .stream()
+                        .map(f -> formPetitionDAO.find(f.getCod()))
                         .filter(isMainFormOrIsForCurrentTaskDefinition(petitionEntity))
                         .map(f -> {
                             final FormVersionHistoryEntity formVersionHistoryEntity = new FormVersionHistoryEntity();
@@ -340,12 +341,21 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     }
 
     private Predicate<FormPetitionEntity> isMainFormOrIsForCurrentTaskDefinition(PetitionEntity petitionEntity) {
-        return f -> Optional.ofNullable(f.getMainForm()).map(SimNao.SIM::equals).orElse(false) || Optional.ofNullable(petitionEntity.getProcessInstanceEntity())
-                .map(ProcessInstanceEntity::getCurrentTask)
-                .map(TaskInstanceEntity::getTask)
-                .map(TaskVersionEntity::getTaskDefinition)
-                .map(f.getTaskDefinitionEntity()::equals)
-                .orElse(false);
+        return f ->
+                Optional.ofNullable(f)
+                        .map(FormPetitionEntity::getMainForm).map(SimNao.SIM::equals).orElse(false)
+                        ||
+                        Optional.ofNullable(petitionEntity)
+                                .map(PetitionEntity::getProcessInstanceEntity)
+                                .map(ProcessInstanceEntity::getCurrentTask)
+                                .map(TaskInstanceEntity::getTask)
+                                .map(TaskVersionEntity::getTaskDefinition)
+                                .map(definition -> Optional.ofNullable(f)
+                                        .map(FormPetitionEntity::getTaskDefinitionEntity)
+                                        .map(definition::equals)
+                                        .orElse(false)
+                                )
+                                .orElse(false);
     }
 
     private FormKey consolidateDraft(T petition, SInstance draftInstance, boolean mainForm) {
@@ -411,8 +421,11 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public FormKey saveAndExecuteTransition(String transitionName, T peticao, SInstance instance, boolean mainForm) {
+    public FormKey saveAndExecuteTransition(String transitionName, T peticao, SInstance instance, boolean mainForm, BiConsumer<T, String> onTransition) {
         try {
+            if (onTransition != null) {
+                onTransition.accept(peticao, transitionName);
+            }
             final FormKey key = preparePetitionForTransition(peticao, instance, mainForm);
             savePetitionHistory(peticao.getCod(), key);
             final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(peticao).getClass();
