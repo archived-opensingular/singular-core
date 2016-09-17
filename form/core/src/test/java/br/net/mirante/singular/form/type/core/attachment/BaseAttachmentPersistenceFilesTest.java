@@ -62,7 +62,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     private void assertReference(IAttachmentRef ref) throws IOException {
         assertEquals(hash, ref.getHashSHA1());
         assertEquals(content.length, ref.getSize());
-        assertTrue(Arrays.equals(content, ByteStreams.toByteArray(ref.newInputStream())));
+        assertTrue(Arrays.equals(content, ByteStreams.toByteArray(ref.getInputStream())));
     }
 
     
@@ -76,10 +76,10 @@ abstract public class BaseAttachmentPersistenceFilesTest {
         assertEquals(returned.getHashSHA1(), original.getHashSHA1());
         assertEquals(returned.getId(), original.getId());
         assertEquals(returned.getSize(), original.getSize());
-        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.newInputStream()),
-                ByteStreams.toByteArray(original.newInputStream())));
-        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.newInputStream()),
-                ByteStreams.toByteArray(original.newInputStream())));
+        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.getInputStream()),
+                ByteStreams.toByteArray(original.getInputStream())));
+        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.getInputStream()),
+                ByteStreams.toByteArray(original.getInputStream())));
     }
 
 }

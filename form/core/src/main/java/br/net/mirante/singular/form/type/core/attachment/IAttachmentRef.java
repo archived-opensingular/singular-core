@@ -5,15 +5,23 @@
 
 package br.net.mirante.singular.form.type.core.attachment;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+
+import javax.activation.DataSource;
+
+import org.apache.tika.Tika;
+
+import br.net.mirante.singular.form.SingularFormException;
 
 /**
  * Referência para um arquivo binário persistido, contudo não identifica a data ou tamanho do arquivo.
  *
  * @author Daniel C. Bordin
  */
-public interface IAttachmentRef extends Serializable{
+public interface IAttachmentRef extends Serializable, DataSource{
 
     /**
      * <p>
@@ -33,14 +41,7 @@ public interface IAttachmentRef extends Serializable{
      * Retorna String de 40 digitos com o SHA1 do conteudo do arquivo.
      */
     String getHashSHA1();
-
-    /**
-     * Retorna o conteúdo do arquivo em um novo inputStream.
-     * Cada chamada a esse método deve retornar um novo inputStream
-     *
-     */
-    InputStream newInputStream();
-
+    
     /**
      * Retorna o tamanho do arquivo se a informação estiver disponível ou -1
      * se não for possível informar. No entanto, deve sempre retornar o tamanho
@@ -48,9 +49,17 @@ public interface IAttachmentRef extends Serializable{
      * (addContent()).
      */
     long getSize();
+
+    @Override
+    default String getContentType() {
+        try (InputStream is = getInputStream()){
+            return new Tika().detect(is);
+        } catch (IOException e) {
+            throw new SingularFormException("Não foi possivel detectar o content type.");
+        }
+    }
     
-    /**
-     * Retorna o nome original do arquivo.
-     */
-    String getName();
+    default OutputStream getOutputStream() throws java.io.IOException {
+        throw new UnsupportedOperationException();
+    }
 }

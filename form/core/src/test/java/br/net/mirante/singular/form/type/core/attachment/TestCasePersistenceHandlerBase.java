@@ -1,11 +1,12 @@
 package br.net.mirante.singular.form.type.core.attachment;
 
-import br.net.mirante.singular.form.SingularFormException;
-import com.google.common.io.ByteStreams;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import static br.net.mirante.singular.form.type.core.attachment.AttachmentTestUtil.writeBytesToTempFile;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,13 +17,14 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static br.net.mirante.singular.form.type.core.attachment.AttachmentTestUtil.writeBytesToTempFile;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import com.google.common.io.ByteStreams;
+
+import br.net.mirante.singular.form.SingularFormException;
 
 public abstract class TestCasePersistenceHandlerBase {
 
@@ -37,7 +39,7 @@ public abstract class TestCasePersistenceHandlerBase {
         assertEquals(hashEsperado, ref.getHashSHA1());
         assertEquals(hashEsperado, ref.getId());
         assertEquals(sizeEsperado, handler.getAttachments().size());
-        assertTrue(Arrays.equals(conteudoEsperado, ByteStreams.toByteArray(ref.newInputStream())));
+        assertTrue(Arrays.equals(conteudoEsperado, ByteStreams.toByteArray(ref.getInputStream())));
     }
 
     protected final IAttachmentPersistenceHandler getHandler() {
@@ -68,7 +70,7 @@ public abstract class TestCasePersistenceHandlerBase {
         for (int i = 0; i < conteudos.length; i++) {
             IAttachmentRef ref = handler2.getAttachment(refs[i].getId());
             assertThat(ref).isNotNull();
-            assertThat(ByteStreams.toByteArray(ref.newInputStream())).isEqualTo(conteudos[i]);
+            assertThat(ByteStreams.toByteArray(ref.getInputStream())).isEqualTo(conteudos[i]);
             assertThat(ref.getHashSHA1()).isEqualTo(hashs[i]);
         }
     }
