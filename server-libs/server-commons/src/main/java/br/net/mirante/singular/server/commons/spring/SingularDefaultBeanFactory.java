@@ -83,12 +83,12 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public AttachmentDao fileDao() {
+    public AttachmentDao attachmentDao() {
         return new AttachmentDao();
     }
 
     @Bean
-    public AttachmentContentDao fileContentDao() {
+    public AttachmentContentDao attachmentContentDao() {
         return new AttachmentContentDao();
     }
 
