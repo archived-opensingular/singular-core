@@ -1,7 +1,6 @@
 package br.net.mirante.singular.server.commons.persistence.entity.form;
 
 import br.net.mirante.singular.form.persistence.entity.FormAnnotationVersionEntity;
-import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.support.persistence.entity.BaseEntity;
@@ -33,10 +32,6 @@ public class PetitionContentHistoryEntity extends BaseEntity<Long> {
     @Column(name = "DT_HISTORICO")
     private Date historyDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_FORMULARIO")
-    private FormVersionEntity formVersionEntity;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "RL_HIST_CONT_PET_VER_ANOTACAO", schema = Constants.SCHEMA,
             joinColumns = @JoinColumn(name = "CO_HISTORICO"),
@@ -54,6 +49,9 @@ public class PetitionContentHistoryEntity extends BaseEntity<Long> {
     @ManyToOne
     @JoinColumn(name = "CO_PETICIONANTE")
     private PetitionerEntity petitionerEntity;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "petitionContentHistory")
+    private List<FormVersionHistoryEntity> formVersionHistoryEntities;
 
     @Override
     public Long getCod() {
@@ -78,14 +76,6 @@ public class PetitionContentHistoryEntity extends BaseEntity<Long> {
 
     public void setHistoryDate(Date historyDate) {
         this.historyDate = historyDate;
-    }
-
-    public FormVersionEntity getFormVersionEntity() {
-        return formVersionEntity;
-    }
-
-    public void setFormVersionEntity(FormVersionEntity formVersionEntity) {
-        this.formVersionEntity = formVersionEntity;
     }
 
     public List<FormAnnotationVersionEntity> getFormAnnotationsVersions() {
@@ -119,4 +109,13 @@ public class PetitionContentHistoryEntity extends BaseEntity<Long> {
     public void setPetitionerEntity(PetitionerEntity petitionerEntity) {
         this.petitionerEntity = petitionerEntity;
     }
+
+    public List<FormVersionHistoryEntity> getFormVersionHistoryEntities() {
+        return formVersionHistoryEntities;
+    }
+
+    public void setFormVersionHistoryEntities(List<FormVersionHistoryEntity> formVersionHistoryEntities) {
+        this.formVersionHistoryEntities = formVersionHistoryEntities;
+    }
+
 }

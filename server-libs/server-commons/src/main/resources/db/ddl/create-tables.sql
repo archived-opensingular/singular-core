@@ -348,7 +348,6 @@ CREATE TABLE DBSINGULAR.TB_HISTORICO_CONTEUDO_PETICAO (
    CO_PETICAO           BIGINT                  NOT NULL,
    DT_HISTORICO         SMALLDATETIME        NOT NULL,
    CO_AUTOR             BIGINT                  NULL,
-   CO_VERSAO_FORMULARIO BIGINT                  NULL,
    CO_INSTANCIA_TAREFA  BIGINT                  NULL,
    CO_PETICIONANTE      BIGINT                  NULL,
    CONSTRAINT PK_TB_HISTORICO_CONTEUDO_PETIC PRIMARY KEY (CO_HISTORICO)
@@ -391,7 +390,7 @@ CREATE TABLE DBSINGULAR.TB_FORMULARIO_PETICAO
 /*==============================================================*/
 /* Table: TB_EMAIL                                              */
 /*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_EMAIL 
+CREATE TABLE DBSINGULAR.TB_EMAIL
 (
    CO_EMAIL             INTEGER              NOT NULL,
    TX_RESPONDER_PARA    VARCHAR(200),
@@ -401,10 +400,10 @@ CREATE TABLE DBSINGULAR.TB_EMAIL
    CONSTRAINT PK_EMAIL PRIMARY KEY (CO_EMAIL)
 );
 
-/*==============================================================*/
+*==============================================================*/
 /* Table: TB_EMAIL_ARQUIVO                                      */
 /*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_EMAIL_ARQUIVO 
+CREATE TABLE DBSINGULAR.TB_EMAIL_ARQUIVO
 (
    CO_EMAIL             INTEGER              NOT NULL,
    CO_ARQUIVO           INTEGER              NOT NULL,
@@ -414,7 +413,7 @@ CREATE TABLE DBSINGULAR.TB_EMAIL_ARQUIVO
 /*==============================================================*/
 /* Table: TB_DESTINATARIO_EMAIL                                 */
 /*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_DESTINATARIO_EMAIL 
+CREATE TABLE DBSINGULAR.TB_DESTINATARIO_EMAIL
 (
    CO_DESTINATARIO_EMAIL INTEGER              NOT NULL,
    CO_EMAIL             INTEGER              NOT NULL,
@@ -423,4 +422,14 @@ CREATE TABLE DBSINGULAR.TB_DESTINATARIO_EMAIL
       CONSTRAINT CKC_TP_ENVIO_TB_DESTI CHECK (TP_ENVIO IN ('To','Cc','Bcc')),
    DT_ENVIO             DATE,
    CONSTRAINT PK_DESTINATARIO_EMAIL PRIMARY KEY (CO_DESTINATARIO_EMAIL)
+);
+
+/*==============================================================*/
+/* Table: RL_VERSAO_FORMULARIO_HISTORICO                        */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_HISTORICO_VERSAO_FORMULARIO
+(
+   CO_HISTORICO         INTEGER              NOT NULL,
+   CO_VERSAO_FORMULARIO INTEGER              NOT NULL,
+   ST_FORM_PRINCIPAL    CHAR                 NOT NULL
 );

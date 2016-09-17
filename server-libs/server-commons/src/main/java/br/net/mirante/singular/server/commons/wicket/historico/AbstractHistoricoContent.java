@@ -3,12 +3,14 @@ package br.net.mirante.singular.server.commons.wicket.historico;
 import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.form.FormActions;
+import br.net.mirante.singular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.util.Parameters;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -95,7 +97,15 @@ public abstract class AbstractHistoricoContent extends Content {
                             final String url = DispatcherPageUtil.baseURL(getBaseUrl())
                                     .formAction(FormActions.FORM_VIEW.getId())
                                     .formId(null)
-                                    .param(Parameters.FORM_VERSION_KEY, model.getObject().getFormVersionEntity().getCod())
+                                    .param(Parameters.FORM_VERSION_KEY, model
+                                            .getObject()
+                                            .getFormVersionHistoryEntities()
+                                            .stream()
+                                            .filter(f -> SimNao.SIM.equals(f.getMainForm()))
+                                            .findFirst()
+                                            .map(FormVersionHistoryEntity::getCod)
+                                            .orElse(null)
+                                    )
                                     .build();
                             final WebMarkupContainer link = new WebMarkupContainer(id);
                             link.add($b.attr("target", String.format("_%s", model.getObject().getCod())));

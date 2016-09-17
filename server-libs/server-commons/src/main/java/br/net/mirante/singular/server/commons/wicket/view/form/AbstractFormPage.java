@@ -368,9 +368,13 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void executeTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
         if (onBeforeExecuteTransition(ajaxRequestTarget, form, transitionName, currentInstance)) {
-            formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject(), isMainForm()));
+            formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject(), isMainForm(), this::onTransition));
             onTransitionExecuted(ajaxRequestTarget, transitionName);
         }
+    }
+
+    protected void onTransition(PetitionEntity pe, String transitionName) {
+
     }
 
     protected void onTransitionExecuted(AjaxRequestTarget ajaxRequestTarget, String transitionName) {
