@@ -80,7 +80,7 @@ public abstract class WicketFormUtils {
     }
     public static Component resolveRefreshingComponent(Component component) {
         Component comp = component;
-        while (!comp.getParent().isVisibleInHierarchy())
+        while ((comp != null) && (comp.getParent() != null) && (!comp.getParent().isVisibleInHierarchy()))
             comp = comp.getParent();
         return comp;
     }
