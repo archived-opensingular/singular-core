@@ -11,14 +11,18 @@ import br.net.mirante.singular.form.view.SViewByBlock;
 @SInfoType(name = "STypePublicacao", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypePublicacao extends STypePersistentComposite {
 
+    public static final String DATA_DOU = "dataDOU";
+    public static final String NUMERO_RE = "numeroRE";
+    public static final String DATA_RE = "dataRE";
+
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        final STypeDate    dataDOU   = addField("dataDOU", STypeDate.class);
+        final STypeDate    dataDOU   = addField(DATA_DOU, STypeDate.class);
         final STypeInteger numeroDOU = addField("numeroDOU", STypeInteger.class);
-        final STypeDate    dataRE    = addField("dataRE", STypeDate.class);
-        final STypeString  numeroRE  = addField("numeroRE", STypeString.class);
+        final STypeDate    dataRE    = addField(DATA_RE, STypeDate.class);
+        final STypeString  numeroRE  = addField(NUMERO_RE, STypeString.class);
 
         dataDOU
                 .asAtrBootstrap()
