@@ -85,6 +85,8 @@
                         progress + '%' );
                 }
             })
+	            .on('focus', function() { $(this).closest('.fileinput')   .addClass('focus'); })
+	            .on('blur' , function() { $(this).closest('.fileinput').removeClass('focus'); })
             	.prop('disabled', !$.support.fileInput)
                 .parent().addClass($.support.fileInput ? undefined : 'disabled');
             

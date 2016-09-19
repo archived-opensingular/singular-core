@@ -20,6 +20,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     
     protected byte[] content;
     protected String hash;
+    protected String fileName = "teste.txt";
 
     public BaseAttachmentPersistenceFilesTest(byte[] content, String hash) {
         this.content = content;
@@ -55,30 +56,30 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     }
 
     @Test public void createReferenceWithProperDataUsingStream() throws Exception {    
-        assertReference(persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length));
+        assertReference(persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length, fileName));
     }
 
     private void assertReference(IAttachmentRef ref) throws IOException {
-        assertEquals(hash, ref.getHasSHA1());
+        assertEquals(hash, ref.getHashSHA1());
         assertEquals(content.length, ref.getSize());
-        assertTrue(Arrays.equals(content, ByteStreams.toByteArray(ref.newInputStream())));
+        assertTrue(Arrays.equals(content, ByteStreams.toByteArray(ref.getInputStream())));
     }
 
     
     @Test public void recoverReferenceWithSameDataUsingStream() throws Exception {    
-        IAttachmentRef original = persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length);
+        IAttachmentRef original = persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length, fileName);
         IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
         assertReference(original, returned);
     }
 
     private void assertReference(IAttachmentRef original, IAttachmentRef returned) throws IOException {
-        assertEquals(returned.getHasSHA1(), original.getHasSHA1());
+        assertEquals(returned.getHashSHA1(), original.getHashSHA1());
         assertEquals(returned.getId(), original.getId());
         assertEquals(returned.getSize(), original.getSize());
-        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.newInputStream()),
-                ByteStreams.toByteArray(original.newInputStream())));
-        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.newInputStream()),
-                ByteStreams.toByteArray(original.newInputStream())));
+        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.getInputStream()),
+                ByteStreams.toByteArray(original.getInputStream())));
+        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.getInputStream()),
+                ByteStreams.toByteArray(original.getInputStream())));
     }
 
 }

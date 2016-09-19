@@ -50,6 +50,7 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.AbstractListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.MapperCommons;
 import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceListItemModel;
 import br.net.mirante.singular.form.wicket.model.STypeModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -57,6 +58,7 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
+import br.net.mirante.singular.util.wicket.datatable.column.BSPropertyColumn;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.model.IMappingModel;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
@@ -319,21 +321,45 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
      * property column isolado em outro método para isolar o escopo de
      * serialização do lambda do appendPropertyColumn
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
                                         IModel<String> labelModel, IModel<SType<?>> mTipoModel,
                                         IFunction<SInstance, String> displayValueFunction) {
-        builder.appendPropertyColumn(labelModel, o -> {
-            SIComposite composto = (SIComposite) o;
+        IFunction<SIComposite, SInstance> toInstance = composto ->{
             SType<?> mtipo = mTipoModel.getObject();
             if (mtipo == null) {
-                //                TODO (LL) - confirmar
-                //                Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Não foi especificado o valor da coluna para " + o);
-                //                return null;
-                return displayValueFunction.apply(composto);
+                // TODO (LL) - confirmar
+                // Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Não foi especificado o valor da coluna para " + o);
+                // return null;
+                return composto;
             }
-            SInstance instancia = composto.findDescendant(mtipo).orElse(null);
-            return displayValueFunction.apply(instancia);
+            return (SInstance) composto.findDescendant(mtipo).orElse(null);
+        };
+        IFunction<SInstance, Object> propertyFunction = o -> displayValueFunction.apply(toInstance.apply((SIComposite) o));
+        builder.appendColumn(new BSPropertyColumn(labelModel, propertyFunction) {
+            @Override
+            public IModel getDataModel(IModel rowModel) {
+                return new ISInstanceAwareModel<Object>() {
+                    @Override
+                    public Object getObject() {
+                        return propertyFunction.apply((SInstance) rowModel.getObject());
+                    }
+                    @Override
+                    public void setObject(Object object) {
+                        throw new UnsupportedOperationException();
+                    }
+                    @Override
+                    public void detach() {
+                        rowModel.detach();
+                    }
+                    @Override
+                    public SInstance getMInstancia() {
+                        return toInstance.apply((SIComposite) rowModel.getObject());
+                    }
+                };
+            }
         });
+//        builder.appendPropertyColumn(labelModel, propertyFunction);
     }
 
     private AjaxLink<String> newAddAjaxLink(final MasterDetailModal modal, final WicketBuildContext ctx) {

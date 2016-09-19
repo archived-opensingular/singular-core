@@ -8,7 +8,10 @@ package br.net.mirante.singular.form.persistence.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -16,55 +19,73 @@ import javax.transaction.Transactional;
 import org.hibernate.Hibernate;
 
 import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.form.persistence.dao.FileDao;
-import br.net.mirante.singular.form.persistence.entity.AbstractAttachmentEntity;
+import br.net.mirante.singular.commons.base.SingularUtil;
+import br.net.mirante.singular.form.persistence.dao.AttachmentContentDao;
+import br.net.mirante.singular.form.persistence.dao.AttachmentDao;
+import br.net.mirante.singular.form.persistence.dto.AttachmentRef;
+import br.net.mirante.singular.form.persistence.entity.AttachmentContentEntitty;
+import br.net.mirante.singular.form.persistence.entity.AttachmentEntity;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
-public class AttachmentPersistenceService<T extends AbstractAttachmentEntity> implements IAttachmentPersistenceHandler<T> {
+@Transactional
+public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {
 
     @Inject
-    private FileDao<T> fileDao;
+    private AttachmentDao<T, C> attachmentDao;
+
+    @Inject
+    private AttachmentContentDao<C> attachmentContentDao;
 
     @Override
-    @Transactional
-    public T addAttachment(File file, long length) {
-        try {
-            return fileDao.insert(new FileInputStream(file), length);
+    public AttachmentRef addAttachment(File file, long length, String name) {
+        try (FileInputStream fs = new FileInputStream(file)){
+            T attachment = attachmentDao.insert(fs, length, name);
+            return new AttachmentRef(attachment);
         } catch (IOException e) {
             throw new SingularException(e);
         }
     }
 
     @Override
-    @Transactional
-    public T copy(IAttachmentRef toBeCopied) {
-        try {
-            return fileDao.insert(toBeCopied.newInputStream(), toBeCopied.getSize());
+    public AttachmentRef copy(IAttachmentRef toBeCopied) {
+        try(InputStream is = toBeCopied.getInputStream()){
+            T file = attachmentDao.insert(is, toBeCopied.getSize(), toBeCopied.getName());
+            return new AttachmentRef(file);
         } catch (IOException e) {
-            throw new SingularException(e);
+            throw SingularUtil.propagate(e);
         }
     }
 
     @Override
-    @Transactional
-    public List<T> getAttachments() {
-        return fileDao.list();
+    public List<AttachmentRef> getAttachments() {
+        return attachmentDao.list().stream().map(AttachmentRef::new).collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public IAttachmentRef getAttachment(String fileId) {
-        IAttachmentRef ref = fileDao.find(fileId);
+        AttachmentEntity ref = attachmentDao.find(Long.valueOf(fileId));
         Hibernate.initialize(ref);
-        return ref;
+        return new AttachmentRef(ref);
     }
 
     @Override
-    @Transactional
-    public void deleteAttachment(String hashId) {
-        fileDao.delete(hashId);
+    public void deleteAttachment(String id) {
+        attachmentDao.delete(Long.valueOf(id));
     }
 
+    public T getAttachmentEntity(IAttachmentRef ref){
+        T entity = attachmentDao.find(Long.valueOf(ref.getId()));
+        Hibernate.initialize(entity);
+        return entity;
+    }
+    
+    public Blob loadAttachmentContent(Long codContent) {
+        C content = attachmentContentDao.find(codContent);
+        if(content == null){
+            throw new SingularException("Attachment Content not found id="+codContent);
+        }
+        return content.getContent();
+    }
 
 }

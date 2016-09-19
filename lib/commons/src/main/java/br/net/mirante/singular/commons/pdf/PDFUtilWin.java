@@ -113,9 +113,11 @@ public class PDFUtilWin extends PDFUtil {
      * @throws InterruptedException Caso ocorra um problema de sincronismo.
      */
     @Override
-    public File convertHTML2PDF(String unsafeHtml, String header, String footer, List<String> additionalConfig)
+    public File convertHTML2PDF(String rawHtml, String rawHeader, String rawFooter, List<String> additionalConfig)
             throws IOException, InterruptedException {
-        final String html = safeWrapHtml(unsafeHtml);
+        final String html   = safeWrapHtml(rawHtml);
+        final String header = safeWrapHtml(rawHeader);
+        final String footer = safeWrapHtml(rawFooter);
         if (wkhtml2pdfHome == null) {
             getLogger().error("convertHTML2PDF: 'singular.wkhtml2pdf.home' not set");
             return null;

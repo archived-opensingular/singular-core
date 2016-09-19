@@ -455,13 +455,17 @@ public class SDocument {
                     IAttachmentRef newRef = persistent.copy(fileRef);
                     deleteOldFiles(attachment, fileRef);
                     updateFileId(attachment, newRef);
+                } else if(attachment.getOriginalFileId() != null){
+                    persistent.deleteAttachment(attachment.getOriginalFileId());
                 }
             }
         }
 
         private void deleteOldFiles(SIAttachment attachment, IAttachmentRef fileRef) {
             temporary.deleteAttachment(fileRef.getId());
-            persistent.deleteAttachment(attachment.getOriginalFileId());
+            if(attachment.getOriginalFileId() != null){
+                persistent.deleteAttachment(attachment.getOriginalFileId());
+            }
         }
 
         private void updateFileId(SIAttachment attachment, IAttachmentRef newRef) {
