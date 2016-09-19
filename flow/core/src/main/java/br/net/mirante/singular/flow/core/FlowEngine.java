@@ -37,6 +37,7 @@ class FlowEngine {
     private static <P extends ProcessInstance> TaskInstance updateState(P instancia, TaskInstance tarefaOrigem, MTransition transicaoOrigem,
         MTask<?> taskDestino, VarInstanceMap<?> paramIn) {
         boolean primeiroLoop = true;
+        final String nomeTransicao = transicaoOrigem != null ? transicaoOrigem.getName() : null;
         while (true) {
             Date agora = new Date();
             final TaskInstance instanciaTarefa = instancia.updateState(tarefaOrigem, transicaoOrigem, taskDestino, agora);
@@ -86,7 +87,6 @@ class FlowEngine {
             } finally {
                 instancia.setExecutionContext(null);
             }
-            final String nomeTransicao = execucaoTask.getTransition();
             transicaoOrigem = searchTransition(instanciaTarefa, nomeTransicao);
             taskDestino = transicaoOrigem.getDestination();
             tarefaOrigem = instanciaTarefa;
