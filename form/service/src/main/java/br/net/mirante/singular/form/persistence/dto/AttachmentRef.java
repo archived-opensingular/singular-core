@@ -10,11 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
-import java.sql.SQLException;
 
 import org.apache.commons.io.IOUtils;
 
-import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.io.CompressionUtil;
 import br.net.mirante.singular.form.io.IOUtil;
@@ -73,7 +72,7 @@ public class AttachmentRef implements IAttachmentRef{
     
     @SuppressWarnings("unchecked")
     @Override
-    public InputStream newInputStream() {
+    public InputStream getInputStream() throws IOException {
         try {
             if (file == null || !file.exists()) {
                 
@@ -91,12 +90,12 @@ public class AttachmentRef implements IAttachmentRef{
                 }
             }
             return CompressionUtil.inflateToInputStream(new FileInputStream(file));
-        } catch (IOException | SQLException e) {
+        } catch (Exception e) {
             if(file != null){
                 file.delete();
                 file = null;
             }
-            throw new SingularException(e);
+            throw SingularUtil.propagate(e);
         }
     }
     
@@ -118,4 +117,5 @@ public class AttachmentRef implements IAttachmentRef{
         }
         return true;
     }
+
 }

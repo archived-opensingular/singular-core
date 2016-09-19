@@ -66,14 +66,14 @@ class FlowEngine {
                     }
                 }
                 
-                final ExecutionContext execucaoTask = new ExecutionContext(instancia, tarefaOrigem, paramIn);
+                final ExecutionContext execucaoTask = new ExecutionContext(instancia, tarefaOrigem, paramIn, transicaoOrigem);
                 if (transicaoOrigem != null) {
                     validarParametrosInput(instancia, transicaoOrigem, paramIn);
                 }
                 instanciaTarefa.getFlowTask().notifyTaskStart(instanciaTarefa, execucaoTask);
                 return instanciaTarefa;
             }
-            final ExecutionContext execucaoTask = new ExecutionContext(instancia, tarefaOrigem, paramIn);
+            final ExecutionContext execucaoTask = new ExecutionContext(instancia, tarefaOrigem, paramIn, transicaoOrigem);
             instanciaTarefa.getFlowTask().notifyTaskStart(instanciaTarefa, execucaoTask);
 
             instancia.setExecutionContext(execucaoTask);

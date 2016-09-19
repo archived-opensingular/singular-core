@@ -4,8 +4,9 @@
  */
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.apache.wicket.markup.head.JavaScriptHeaderItem.*;
+import static org.apache.commons.lang3.StringUtils.lowerCase;
+import static org.apache.commons.lang3.StringUtils.substringAfterLast;
+import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +37,7 @@ import org.apache.wicket.util.string.StringValue;
 
 import com.google.common.collect.ImmutableMap;
 
-import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
@@ -50,7 +51,7 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
  *
  * @author vinicius
  */
-public class DownloadSupportedBehavior extends Behavior implements IResourceListener {
+public class DownloadSupportedBehavior extends Behavior implements IResourceListener, Loggable {
     private static final String         DEFAULT_CONTENT_TYPE = "application/octet-stream";
     private static final String         DOWNLOAD_PATH        = "/download";
     private Component                   component;
@@ -143,34 +144,34 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
             protected ResourceResponse newResourceResponse(Attributes attributes) {
                 IAttachmentRef fileRef = findAttachmentRef(id);
                 if (fileRef == null) {
-                    return new ResourceResponse()
-                        .setStatusCode(HttpServletResponse.SC_NOT_FOUND)
-                        .setWriteCallback(new WriteCallback() {
-                            @Override
-                            public void writeData(Attributes attributes) throws IOException {
-                            }
-                        });
+                    return new ResourceResponse().setStatusCode(HttpServletResponse.SC_NOT_FOUND);
                 }
                 ResourceResponse resourceResponse = new ResourceResponse();
-                resourceResponse.setFileName(filename);
-                resourceResponse.setContentType(resolveContentType(filename));
                 if (fileRef.getSize() > 0) {
                     resourceResponse.setContentLength(fileRef.getSize());
                 }
-                resourceResponse.setWriteCallback(new WriteCallback() {
-                    @Override
-                    public void writeData(Attributes attributes) throws IOException {
-                        try (
-                            InputStream inputStream = fileRef.newInputStream();) {
-                            IOUtils.copy(inputStream, attributes.getResponse().getOutputStream());
-                            /*Desregistrando recurso compartilhado*/
-                            WebApplication.get().unmount(url);
-                            WebApplication.get().getSharedResources().remove(ref.getKey());
-                        } catch (Exception e) {
-                            throw new SingularException(e);
+                resourceResponse.setFileName(filename);
+                try {
+                    resourceResponse.setContentType(fileRef.getContentType());
+                    resourceResponse.setWriteCallback(new WriteCallback() {
+                        @Override
+                        public void writeData(Attributes attributes) throws IOException {
+                            try (InputStream inputStream = fileRef.getInputStream()) {
+                                IOUtils.copy(inputStream, attributes.getResponse().getOutputStream());
+                                /*Desregistrando recurso compartilhado*/
+                                WebApplication.get().unmount(url);
+                                WebApplication.get().getSharedResources().remove(ref.getKey());
+                            } catch (Exception e) {
+                                getLogger().error("Erro ao recuperar arquivo.", e);
+                                ((WebResponse)attributes.getResponse()).setStatus(HttpServletResponse.SC_NOT_FOUND);
+                                resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
+                            }
                         }
-                    }
-                });
+                    });
+                } catch (Exception e) {
+                    getLogger().error("Erro ao recuperar arquivo.", e);
+                    resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
+                }
                 return resourceResponse;
             }
         };

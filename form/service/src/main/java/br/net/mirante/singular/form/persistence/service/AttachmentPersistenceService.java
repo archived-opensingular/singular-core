@@ -8,6 +8,7 @@ package br.net.mirante.singular.form.persistence.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Blob;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ import javax.transaction.Transactional;
 import org.hibernate.Hibernate;
 
 import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.form.persistence.dao.AttachmentContentDao;
 import br.net.mirante.singular.form.persistence.dao.AttachmentDao;
 import br.net.mirante.singular.form.persistence.dto.AttachmentRef;
@@ -26,6 +28,7 @@ import br.net.mirante.singular.form.persistence.entity.AttachmentEntity;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
+@Transactional
 public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {
 
     @Inject
@@ -35,7 +38,6 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     private AttachmentContentDao<C> attachmentContentDao;
 
     @Override
-    @Transactional
     public AttachmentRef addAttachment(File file, long length, String name) {
         try (FileInputStream fs = new FileInputStream(file)){
             T attachment = attachmentDao.insert(fs, length, name);
@@ -46,20 +48,21 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     }
 
     @Override
-    @Transactional
     public AttachmentRef copy(IAttachmentRef toBeCopied) {
-        T file = attachmentDao.insert(toBeCopied.newInputStream(), toBeCopied.getSize(), toBeCopied.getName());
-        return new AttachmentRef(file);
+        try(InputStream is = toBeCopied.getInputStream()){
+            T file = attachmentDao.insert(is, toBeCopied.getSize(), toBeCopied.getName());
+            return new AttachmentRef(file);
+        } catch (IOException e) {
+            throw SingularUtil.propagate(e);
+        }
     }
 
     @Override
-    @Transactional
     public List<AttachmentRef> getAttachments() {
         return attachmentDao.list().stream().map(AttachmentRef::new).collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public IAttachmentRef getAttachment(String fileId) {
         AttachmentEntity ref = attachmentDao.find(Long.valueOf(fileId));
         Hibernate.initialize(ref);
@@ -67,12 +70,16 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     }
 
     @Override
-    @Transactional
     public void deleteAttachment(String id) {
         attachmentDao.delete(Long.valueOf(id));
     }
 
-    @Transactional
+    public T getAttachmentEntity(IAttachmentRef ref){
+        T entity = attachmentDao.find(Long.valueOf(ref.getId()));
+        Hibernate.initialize(entity);
+        return entity;
+    }
+    
     public Blob loadAttachmentContent(Long codContent) {
         C content = attachmentContentDao.find(codContent);
         if(content == null){
@@ -80,6 +87,5 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
         }
         return content.getContent();
     }
-
 
 }

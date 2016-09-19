@@ -99,7 +99,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
 
     @Override
     public FileSystemAttachmentRef copy(IAttachmentRef toBeCopied) {
-        try (InputStream is = toBeCopied.newInputStream()){
+        try (InputStream is = toBeCopied.getInputStream()){
             return addAttachment(is, toBeCopied.getSize(), toBeCopied.getName());
         } catch (Exception e) {
             throw new SingularException(e);

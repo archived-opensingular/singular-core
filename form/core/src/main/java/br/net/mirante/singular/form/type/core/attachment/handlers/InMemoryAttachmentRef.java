@@ -5,14 +5,13 @@
 
 package br.net.mirante.singular.form.type.core.attachment.handlers;
 
-import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 
 @SuppressWarnings("serial")
 public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {
@@ -40,14 +39,10 @@ public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {
     }
 
     @Override
-    public InputStream newInputStream() {
-        try {
-            return new FileInputStream(tempFile);
-        } catch (FileNotFoundException e) {
-            throw new SingularException(e);
-        }
+    public InputStream getInputStream() throws IOException {
+        return new FileInputStream(tempFile);
     }
-
+    
     @Override
     public long getSize() {
         return size;

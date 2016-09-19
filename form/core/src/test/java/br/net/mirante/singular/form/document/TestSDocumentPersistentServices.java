@@ -1,5 +1,22 @@
 package br.net.mirante.singular.form.document;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.mockito.Matchers;
+
 import br.net.mirante.singular.form.PackageBuilder;
 import br.net.mirante.singular.form.RefService;
 import br.net.mirante.singular.form.SIComposite;
@@ -10,21 +27,6 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceH
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.mockito.Matchers;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class TestSDocumentPersistentServices extends TestCaseForm {
@@ -189,13 +191,23 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
                 return hash;
             }
 
-            public InputStream newInputStream() {
+            public InputStream getInputStream() throws IOException {
                 return new ByteArrayInputStream(content);
             }
             
             @Override
             public String getName() {
                 return hash;
+            }
+
+            @Override
+            public String getContentType() {
+                return IAttachmentRef.super.getContentType();
+            }
+
+            @Override
+            public OutputStream getOutputStream() throws IOException {
+                return IAttachmentRef.super.getOutputStream();
             }
         };
     }

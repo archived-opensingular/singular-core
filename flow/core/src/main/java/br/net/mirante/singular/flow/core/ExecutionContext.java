@@ -18,9 +18,14 @@ public class ExecutionContext {
     private String transition;
 
     public ExecutionContext(ProcessInstance processInstance, TaskInstance taskInstance, VarInstanceMap<?> input) {
+        this(processInstance, taskInstance, input, null);
+    }
+
+    public ExecutionContext(ProcessInstance processInstance, TaskInstance taskInstance, VarInstanceMap<?> input, MTransition transition) {
         this.processInstance = processInstance;
         this.taskInstance = taskInstance;
         this.input = input == null ? VarInstanceMap.empty() : input;
+        this.transition = transition != null ? transition.getName() : null;
     }
 
     public ExecutionContext(TaskInstance taskInstance, VarInstanceMap<?> input) {
