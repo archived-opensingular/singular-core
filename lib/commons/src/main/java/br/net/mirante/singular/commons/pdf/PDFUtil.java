@@ -353,7 +353,7 @@ public abstract class PDFUtil implements Loggable {
             wraped = "<body>" + wraped + "<body>";
         }
         if (needHTML) {
-            wraped = "<html>" + wraped + "</html>";
+            wraped = "<!DOCTYPE HTML><html>" + wraped + "</html>";
         }
         return wraped;
     }

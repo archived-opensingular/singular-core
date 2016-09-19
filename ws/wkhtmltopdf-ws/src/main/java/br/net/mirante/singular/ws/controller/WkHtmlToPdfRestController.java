@@ -2,6 +2,7 @@ package br.net.mirante.singular.ws.controller;
 
 import br.net.mirante.singular.commons.pdf.PDFUtil;
 import br.net.mirante.singular.commons.util.Loggable;
+import br.net.mirante.singular.ws.dto.WKHtmlToPdfDTO;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,10 @@ public class WkHtmlToPdfRestController implements Loggable {
 
     @ResponseBody
     @RequestMapping(value = CONVERT_HTML_TO_PDF_PATH, method = RequestMethod.POST, produces = "application/pdf")
-    public ResponseEntity<InputStreamResource> convertHtmlToPdf(@RequestBody String html) {
+    public ResponseEntity<InputStreamResource> convertHtmlToPdf(@RequestBody WKHtmlToPdfDTO dto) {
         final File file;
         try {
-            file = PDFUtil.getInstance().convertHTML2PDF(html);
+            file = PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter());
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .contentLength(file.length())
