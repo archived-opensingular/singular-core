@@ -58,14 +58,21 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     @Override
     public void clearInstance() {
         if (values != null) {
-            values.forEach(SInstance::internalOnRemove);
-            values.clear();
+            values.forEach(SInstance::clearInstance);
+            //TODO - Deveria notificar os listeners de quem depende dele, e não dele próprio.
             if (asAtr().getUpdateListener() != null) {
                 asAtr().getUpdateListener().accept(this);
             }
         }
     }
-
+    
+    public void removeChildren() {
+        if (values != null) {
+            values.forEach(SInstance::internalOnRemove);
+            values.clear();
+        }
+    }
+    
     @Override
     public final <T> T getValue(String fieldPath, Class<T> resultClass) {
         return getValue(new PathReader(fieldPath), resultClass);
@@ -260,6 +267,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
      */
     private E internalRemove(E e){
         e.internalOnRemove();
+        //TODO - Deveria notificar os listeners de quem depende dele, e não dele próprio.
         if (asAtr().getUpdateListener() != null) {
             asAtr().getUpdateListener().accept(this);
         }
