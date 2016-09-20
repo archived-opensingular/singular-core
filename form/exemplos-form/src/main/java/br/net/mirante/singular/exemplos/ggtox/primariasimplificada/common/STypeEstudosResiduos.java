@@ -3,6 +3,7 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 import br.net.mirante.singular.exemplos.SelectBuilder;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.domain.SubgrupoEntity;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.listeners.IngredienteAtivoUpdateListener;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.ResiduoValidator;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
@@ -379,6 +380,13 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .label("Ingrediente Ativo da Amostra (informados na seção de ativos)")
                     .asAtrBootstrap()
                     .colPreference(6);
+
+            ativoAmostra
+                    .asAtr()
+                    .dependsOn(rootType.getDictionary().getType(STypeIngredienteAtivoPeticaoPrimariaSimplificada.class).getField(STypeIngredienteAtivoPeticaoPrimariaSimplificada.FIELD_NAME_LIST_ATIVOS));
+
+            ativoAmostra
+                    .withUpdateListener(new IngredienteAtivoUpdateListener<>());
 
 
             estado
