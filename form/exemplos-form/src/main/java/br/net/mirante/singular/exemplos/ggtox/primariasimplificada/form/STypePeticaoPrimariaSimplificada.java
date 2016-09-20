@@ -35,6 +35,10 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
 
     public final static String ESTUDOS_RESIDUOS_PATH = "estudosResiduos";
     public final static String NIVEL_PATH            = "nivel";
+    public final static String TIPO_PETICAO          = "tipoPeticao";
+    public final static String ID_TIPO_PETICAO       = "id";
+    public final static String NOME_TIPO_PETICAO     = "nome";
+    public static final String REQUERENTE            = "requerente";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -48,11 +52,11 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
         this.addInstanceValidator(new AtivoAmostraValidator());
 
         final STypeComposite<SIComposite>                      tipoPeticao             = this.addFieldComposite("tipoPeticao");
-        final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger("id");
-        final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString("nome");
+        final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger(ID_TIPO_PETICAO);
+        final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString(NOME_TIPO_PETICAO);
         final STypeString                                      nivel                   = this.addFieldString(NIVEL_PATH);
         final STypeDadosGeraisPeticaoPrimariaSimplificada      dadosGerais             = this.addField("dadosGerais", STypeDadosGeraisPeticaoPrimariaSimplificada.class);
-        final STypeRequerente                                  requerente              = this.addField("requerente", STypeRequerente.class);
+        final STypeRequerente                                  requerente              = this.addField(REQUERENTE, STypeRequerente.class);
         final STypeRepresentanteLegal                          representanteLegal      = this.addField("representanteLegal", STypeRepresentanteLegal.class);
         final STypeIngredienteAtivoPeticaoPrimariaSimplificada ingredienteAtivoPeticao = this.addField("ingredienteAtivoPeticao", STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
         final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnicoPeticao   = this.addField("produtoTecnicoPeticao", STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);

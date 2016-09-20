@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -23,11 +23,11 @@ public class TestViewResolver {
         T simpleType = pb.createType(name, type);
         simpleType.typelessSelection()
                 .selfIdAndDisplay()
-                .simpleProvider(ins -> (List<V>) repeate(valueProvider, size));
+                .simpleProvider(ins -> repeate(valueProvider, size));
         return pb.createListTypeOf("list" + name, simpleType);
     }
 
-    private static <T> Collection<T> repeate(Function<Integer, T> valueSupplier, int size) {
+    private static <T> List<T> repeate(Function<Integer, T> valueSupplier, int size) {
         ArrayList<T> l = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             l.add(valueSupplier.apply(i));
