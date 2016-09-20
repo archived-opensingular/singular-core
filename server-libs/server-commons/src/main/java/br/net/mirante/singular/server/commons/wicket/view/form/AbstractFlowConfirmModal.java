@@ -13,11 +13,11 @@ import org.apache.wicket.model.IModel;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 
-public abstract class AbstractFlowConfirmModalBuilder<T extends PetitionEntity> implements FlowConfirmModalBuilder<T> {
+public abstract class AbstractFlowConfirmModal<T extends PetitionEntity> implements FlowConfirmModal<T> {
 
     protected final AbstractFormPage<T> formPage;
 
-    public AbstractFlowConfirmModalBuilder(AbstractFormPage<T> formPage) {
+    public AbstractFlowConfirmModal(AbstractFormPage<T> formPage) {
         this.formPage = formPage;
     }
 

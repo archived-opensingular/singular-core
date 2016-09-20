@@ -433,19 +433,19 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
      * @return
      */
     private BSModalBorder buildFlowConfirmationModal(String idSuffix, BSContainer<?> mc, String tn, IModel<? extends SInstance> im, ViewMode vm) {
-        final FlowConfirmModalBuilder flowConfirmModalBuilder = resolveFlowConfirmModalBuilder(tn);
-        final TemplatePanel           modalTemplatePanel      = mc.newTemplateTag(t -> flowConfirmModalBuilder.getMarkup(idSuffix));
-        final BSModalBorder           modal                   = flowConfirmModalBuilder.build(idSuffix, tn, im, vm);
+        final FlowConfirmModal flowConfirmModal   = resolveFlowConfirmModalBuilder(tn);
+        final TemplatePanel    modalTemplatePanel = mc.newTemplateTag(t -> flowConfirmModal.getMarkup(idSuffix));
+        final BSModalBorder    modal              = flowConfirmModal.init(idSuffix, tn, im, vm);
         modalTemplatePanel.add(modal);
         return modal;
     }
 
     /**
      * @param tn -> the transition name
-     * @return the FlowConfirmModalBuilder
+     * @return the FlowConfirmModal
      */
-    protected FlowConfirmModalBuilder<T> resolveFlowConfirmModalBuilder(String tn) {
-        return new SimpleMessageFlowConfirmModalBuilder<>(this);
+    protected FlowConfirmModal<T> resolveFlowConfirmModalBuilder(String tn) {
+        return new SimpleMessageFlowConfirmModal<>(this);
     }
 
     protected boolean isMainForm() {

@@ -11,9 +11,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
 
-public class SimpleMessageFlowConfirmModalBuilder<T extends PetitionEntity> extends AbstractFlowConfirmModalBuilder<T> {
+public class SimpleMessageFlowConfirmModal<T extends PetitionEntity> extends AbstractFlowConfirmModal<T> {
 
-    public SimpleMessageFlowConfirmModalBuilder(AbstractFormPage<T> formPage) {
+    public SimpleMessageFlowConfirmModal(AbstractFormPage<T> formPage) {
         super(formPage);
     }
 
@@ -22,8 +22,7 @@ public class SimpleMessageFlowConfirmModalBuilder<T extends PetitionEntity> exte
         return MarkupCreator.div("flow-modal" + idSuffix, new HTMLParameters().styleClass("portlet-body form"), MarkupCreator.div("flow-msg"));
     }
 
-    @Override
-    public BSModalBorder build(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm) {
+    public BSModalBorder init(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm) {
         final BSModalBorder modal = new BSModalBorder("flow-modal" + idSuffix, new StringResourceModel("label.button.confirm", formPage, null));
         addDefaultCancelButton(modal);
         addDefaultConfirmButton(tn, im, vm, modal);

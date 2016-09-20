@@ -1,5 +1,7 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
+import br.net.mirante.singular.commons.lambda.IBiConsumer;
+import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
@@ -15,24 +17,28 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
-public class STypeBasedFlowConfirmModalBuilder<T extends PetitionEntity> extends AbstractFlowConfirmModalBuilder<T> {
+public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends AbstractFlowConfirmModal<T> {
 
-    private final SFormConfig<String>           formConfig;
-    private final RefType                       refType;
-    private final FormKey                       formKey;
-    private final IFormService                  formService;
-    private       SInstanceRootModel<SInstance> instanceModel;
+    private final SFormConfig<String>              formConfig;
+    private final RefType                          refType;
+    private final FormKey                          formKey;
+    private final IFormService                     formService;
+    private final IBiConsumer<SIComposite, String> onCreateInstance;
+    private       SInstanceRootModel<SInstance>    instanceModel;
+    private       String                           transitionName;
 
-    public STypeBasedFlowConfirmModalBuilder(AbstractFormPage<T> formPage,
-                                             SFormConfig<String> formConfig,
-                                             RefType refType,
-                                             FormKey formKey,
-                                             IFormService formService) {
+    public STypeBasedFlowConfirmModal(AbstractFormPage<T> formPage,
+                                      SFormConfig<String> formConfig,
+                                      RefType refType,
+                                      FormKey formKey,
+                                      IFormService formService,
+                                      IBiConsumer<SIComposite, String> onCreateInstance) {
         super(formPage);
         this.formConfig = formConfig;
         this.refType = refType;
         this.formKey = formKey;
         this.formService = formService;
+        this.onCreateInstance = onCreateInstance;
     }
 
     @Override
@@ -41,7 +47,8 @@ public class STypeBasedFlowConfirmModalBuilder<T extends PetitionEntity> extends
     }
 
     @Override
-    public BSModalBorder build(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm) {
+    public BSModalBorder init(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm) {
+        this.transitionName = tn;
         final BSModalBorder modal = new BSModalBorder("flow-modal" + idSuffix, new StringResourceModel("label.button.confirm", formPage, null));
         addDefaultCancelButton(modal);
         addDefaultConfirmButton(tn, im, vm, modal);
@@ -60,7 +67,9 @@ public class STypeBasedFlowConfirmModalBuilder<T extends PetitionEntity> extends
                     } else {
                         instanceModel.setObject(singularFormConfig.getDocumentFactory().createInstance(refType));
                     }
-                    return instanceModel.getObject();
+                }
+                if (onCreateInstance != null) {
+                    onCreateInstance.accept((SIComposite) instanceModel.getObject(), transitionName);
                 }
                 return instanceModel.getObject();
             }
@@ -70,4 +79,5 @@ public class STypeBasedFlowConfirmModalBuilder<T extends PetitionEntity> extends
     public SInstanceRootModel<SInstance> getInstanceModel() {
         return instanceModel;
     }
+
 }
