@@ -3,11 +3,13 @@ package br.net.mirante.singular.form.wicket.model;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
 import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -24,7 +26,7 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
         if (model.getObject() instanceof SIList) {
             final SIList<?> list = (SIList<?>) model.getObject();
             for (int i = 0; i < list.size(); i += 1) {
-                selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i)));
+                selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i), getCustomSelectConverterResolver()));
             }
         } else {
             throw new SingularFormException("Este model somente deve ser utilizado para tipo lista");
@@ -51,11 +53,15 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
                 final Serializable o = objects.get(i);
                 final SInstance newElement = list.addNew();
                 model.getObject().asAtrProvider().getConverter().fillInstance(newElement, o);
-                selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i)));
+                selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i), getCustomSelectConverterResolver()));
             }
         } else {
             throw new SingularFormException("Este model somente deve ser utilizado para tipo lista");
         }
+    }
+
+    public SelectSInstanceAwareModel.SelectConverterResolver getCustomSelectConverterResolver(){
+        return si -> Optional.ofNullable(si.getParent().asAtrProvider().getConverter());
     }
 
 }
