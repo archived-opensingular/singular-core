@@ -346,6 +346,9 @@ public abstract class PDFUtil implements Loggable {
     }
 
     protected String safeWrapHtml(String html) {
+        if (html == null) {
+            return null;
+        }
         String  wraped   = html;
         boolean needHTML = !html.startsWith("<html>");
         boolean needBody = needHTML && !html.startsWith("<body>");
