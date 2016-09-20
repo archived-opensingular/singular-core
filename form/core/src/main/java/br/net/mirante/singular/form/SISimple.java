@@ -5,12 +5,13 @@
 
 package br.net.mirante.singular.form;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import br.net.mirante.singular.form.calculation.CalculationContext;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 
-public class SISimple<TIPO_NATIVO> extends SInstance {
+public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
 
     private TIPO_NATIVO value;
 
