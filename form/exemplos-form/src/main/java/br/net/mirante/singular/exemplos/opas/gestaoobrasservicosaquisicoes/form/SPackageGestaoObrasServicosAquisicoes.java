@@ -32,7 +32,9 @@ public class SPackageGestaoObrasServicosAquisicoes extends SPackage {
 //        pb.createType(STypePDIProjetoPedagogico.class);
 //        pb.createType(STypePDIDocumentos.class);
 //        pb.createType(STypeMantenedora.class);
+        pb.createType(STypeAldeia.class);
         pb.createType(STypeChecklist.class);
+        pb.createType(STypeProcesso.class);
         pb.createType(STypeGestaoObras.class);
     }
 }

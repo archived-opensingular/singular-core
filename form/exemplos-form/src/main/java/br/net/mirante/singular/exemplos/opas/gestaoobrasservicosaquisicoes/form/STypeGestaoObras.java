@@ -22,9 +22,10 @@ public class STypeGestaoObras extends STypeComposite<SIComposite>{
         
         SViewTab tabbed = this.setView(SViewTab::new);
         tabbed.addTab(addField("checklist", STypeChecklist.class), "Checklist");
+        tabbed.addTab(addField("processo", STypeProcesso.class), "Processo");
         
         // configuração do tamanho da coluna de navegação das abas
-        tabbed.navColPreference(2).navColMd(3).navColSm(3).navColXs(4);
+        tabbed.navColPreference(1).navColMd(2).navColSm(2).navColXs(3);
         
     }
 }
