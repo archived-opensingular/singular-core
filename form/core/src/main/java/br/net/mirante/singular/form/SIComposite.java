@@ -5,12 +5,16 @@
 
 package br.net.mirante.singular.form;
 
-import br.net.mirante.singular.form.STypeComposite.FieldMapOfRecordType;
-import br.net.mirante.singular.form.util.transformer.Value;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import br.net.mirante.singular.form.STypeComposite.FieldMapOfRecordType;
+import br.net.mirante.singular.form.util.transformer.Value;
 
 public class SIComposite extends SInstance implements ICompositeInstance {
 

@@ -5,23 +5,23 @@
 
 package br.net.mirante.singular.form;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.Converter;
+
 import br.net.mirante.singular.form.builder.selection.SelectionBuilder;
-import br.net.mirante.singular.form.provider.SimpleProvider;
 import br.net.mirante.singular.form.type.core.AtrFormula;
 import br.net.mirante.singular.form.type.core.SPackageCore;
 import br.net.mirante.singular.form.view.SView;
 import br.net.mirante.singular.form.view.SViewAutoComplete;
 import br.net.mirante.singular.form.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.view.SViewSelectionBySelect;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.Converter;
-
-import java.io.Serializable;
-import java.util.Arrays;
 
 @SuppressWarnings("rawtypes")
 @SInfoType(name = "STypeSimple", spackage = SPackageCore.class)
-public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
+public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> extends SType<I> {
 
     private final Class<VALUE> valueClass;
 
@@ -90,6 +90,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
         throw new RuntimeException("Não implementado");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Object> T convert(Object value, Class<T> resultClass) {
         if (value == null) {
@@ -103,6 +104,9 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
                 return resultClass.cast(toStringPersistence(valueClass.cast(value)));
             }
             return resultClass.cast(value.toString());
+        } else if (Enum.class.isAssignableFrom(resultClass)) {
+            Class<? extends Enum> enumClass = resultClass.asSubclass(Enum.class);
+            return (T) Enum.valueOf(enumClass, value.toString());
         } else {
             Converter converter = ConvertUtils.lookup(value.getClass(), resultClass);
             if (converter != null) {
@@ -179,6 +183,10 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE> extends SType<I> {
     public <T extends Serializable> SelectionBuilder<T, I, I> selectionOf(Class<T> clazz, SView view) {
         this.setView(() -> view);
         return new SelectionBuilder<>(this);
+    }
+    
+    public SelectionBuilder<VALUE, I, I> selection() {
+        return selectionOf(valueClass, new SViewSelectionBySelect());
     }
 
     public <T extends Serializable> SelectionBuilder<T, I, I> selectionOf(Class<T> clazz) {

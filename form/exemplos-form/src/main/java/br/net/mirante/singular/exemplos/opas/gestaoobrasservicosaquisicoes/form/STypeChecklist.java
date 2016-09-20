@@ -4,9 +4,7 @@
  */
 package br.net.mirante.singular.exemplos.opas.gestaoobrasservicosaquisicoes.form;
 
-import java.util.Arrays;
-import java.util.List;
-
+import br.net.mirante.singular.exemplos.opas.gestaoobrasservicosaquisicoes.enums.AcaoGestaoObras;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
@@ -24,8 +22,8 @@ public class STypeChecklist extends STypeComposite<SIComposite> {
         super.onLoadType(tb);
 
         final STypeString acao = this.addFieldString("acao", true);
-        acao.selectionOf("Edificações", "Saneamento")
-            .asAtr().label("Ação").asAtrBootstrap().colPreference(12);
+        acao.selectionOfEnum(AcaoGestaoObras.class)
+            .asAtr().label("Ação").asAtrBootstrap().colPreference(3);
         
         final STypeList<STypeComposite<SIComposite>, SIComposite> itens = this.addFieldListOfComposite("itens", "item");
         itens.asAtr()
@@ -42,7 +40,7 @@ public class STypeChecklist extends STypeComposite<SIComposite> {
         final STypeString descrItem = item.addFieldString("descricao");
         descrItem.asAtr().label("Descrição").enabled(false);
         item.addFieldString("avaliacao", true)
-            .selectionOf("Sim", "Parcial", "Não", "Não se aplica")
+            .selectionOf("Sim", "Não", "Parcial", "Não se aplica")
             .withRadioView()
             .asAtr().label("Checklist")
             .asAtrBootstrap().colPreference(3);
@@ -51,30 +49,19 @@ public class STypeChecklist extends STypeComposite<SIComposite> {
             SIString acaoInstance = itensInstance.findNearest(acao).get();
             itensInstance.removeChildren();
 //            itensInstance.clearInstance();
-            if(acaoInstance.getValue() != null){
-                if(acaoInstance.getValue().equals("Edificações")){
-                    getItensEdificacoes().stream().forEach(item_ -> itensInstance.addNew().setValue(descrItem, item_));
-                } else if(acaoInstance.getValue().equals("Saneamento")){
-                    getItensSaneamento().stream().forEach(item_ -> itensInstance.addNew().setValue(descrItem, item_));
-                }
+            AcaoGestaoObras acaoSelecionada = acaoInstance.getValue(AcaoGestaoObras.class);
+            if(acaoSelecionada != null){
+                acaoSelecionada.getChecklistItens().stream().forEach(item_ -> itensInstance.addNew().setValue(descrItem, item_));
             }
         });
         
         this.addFieldBoolean("confirmacao", true)
             .addInstanceValidator(confirmacao -> {
                 if(!confirmacao.getInstance().getValue()){
-                    confirmacao.error("Selecione: Todos os dados informados estão corredos");
+                    confirmacao.error("Selecione: Todos os dados informados estão corretos");
                 }
             })
             .asAtrBootstrap().colPreference(12)
-            .asAtr().label("Todos os dados informados estão corredos");
-    }
-
-    private List<String> getItensEdificacoes(){
-        return Arrays.asList("Projeto", "Plano de Execução", "Planta Baixa");
-    }
-
-    private List<String> getItensSaneamento(){
-        return Arrays.asList("Projeto de Sistema de Abastecimento de Água ", "Projeto de Estação de Tratamento de Água");
+            .asAtr().label("Todos os dados informados estão corretos");
     }
 }

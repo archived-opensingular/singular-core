@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.Serializable;
 import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -377,7 +378,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         testInicialEDefault(STypeBoolean.class, true, false);
     }
 
-    private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V>  void testInicialEDefault(Class<T> tipo, Object valorInicial, Object valorIfNull) {
+    private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V extends Serializable>  void testInicialEDefault(Class<T> tipo, Object valorInicial, Object valorIfNull) {
         assertTrue(!valorInicial.equals(valorIfNull));
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");

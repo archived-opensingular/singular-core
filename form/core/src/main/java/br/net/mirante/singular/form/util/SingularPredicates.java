@@ -4,6 +4,7 @@ package br.net.mirante.singular.form.util;
 import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.util.transformer.Value;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -25,7 +26,7 @@ public class SingularPredicates {
         return i -> Arrays.asList(predicates).stream().noneMatch(p -> p.test(i));
     }
 
-    public static <T> Predicate<SInstance> typeValueMatches(STypeSimple<? extends SISimple<T>, T> type, Predicate<T> predicate) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueMatches(STypeSimple<? extends SISimple<T>, T> type, Predicate<T> predicate) {
         return si -> predicate.test(Value.of(si, type));
     }
 
@@ -33,7 +34,7 @@ public class SingularPredicates {
         return si -> Value.notNull(si, type);
     }
 
-    public static <T> Predicate<SInstance> typeValueIsNotNull(STypeSimple<? extends SISimple<T>, T> type) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueIsNotNull(STypeSimple<? extends SISimple<T>, T> type) {
         return si -> Value.notNull(si, type);
     }
 
@@ -41,33 +42,33 @@ public class SingularPredicates {
         return si -> !Value.notNull(si, type);
     }
 
-    public static <T> Predicate<SInstance> typeValueIsNull(STypeSimple<? extends SISimple<T>, T> type) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueIsNull(STypeSimple<? extends SISimple<T>, T> type) {
         return si -> !Value.notNull(si, type);
     }
 
-    public static <T> Predicate<SInstance> typeValueIsNotIn(STypeSimple<? extends SISimple<T>, T> type, List<T> vals) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueIsNotIn(STypeSimple<? extends SISimple<T>, T> type, List<T> vals) {
         return i -> vals.stream().filter(v -> v.equals(Value.of(i, type))).count() == 0;
     }
 
     @SafeVarargs
-    public static <T> Predicate<SInstance> typeValueIsNotIn(STypeSimple<? extends SISimple<T>, T> type, T... vals) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueIsNotIn(STypeSimple<? extends SISimple<T>, T> type, T... vals) {
         return i -> Arrays.stream(vals).filter(v -> v.equals(Value.of(i, type))).count() == 0;
     }
 
     @SafeVarargs
-    public static <T> Predicate<SInstance> typeValueIsIn(STypeSimple<? extends SISimple<T>, T> type, T... vals) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueIsIn(STypeSimple<? extends SISimple<T>, T> type, T... vals) {
         return i -> Arrays.stream(vals).filter(v -> v.equals(Value.of(i, type))).count() > 0;
     }
 
-    public static <T> Predicate<SInstance> typeValueIsIn(STypeSimple<? extends SISimple<T>, T> type, List<T> vals) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueIsIn(STypeSimple<? extends SISimple<T>, T> type, List<T> vals) {
         return i -> vals.stream().filter(v -> v.equals(Value.of(i, type))).count() > 0;
     }
 
-    public static <T> Predicate<SInstance> typeValueIsEqualsTo(STypeSimple<? extends SISimple<T>, T> type, T val) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueIsEqualsTo(STypeSimple<? extends SISimple<T>, T> type, T val) {
         return i -> val.equals(Value.of(i, type));
     }
 
-    public static <T> Predicate<SInstance> typeValueIsNotEqualsTo(STypeSimple<? extends SISimple<T>, T> type, T val) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueIsNotEqualsTo(STypeSimple<? extends SISimple<T>, T> type, T val) {
         return i -> !val.equals(Value.of(i, type));
     }
 

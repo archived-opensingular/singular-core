@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.core.*;
 import org.junit.Test;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -17,7 +18,7 @@ public class TestViewResolver {
     private static final String textoTeste = "stringzonamuitolocabemgrandeparaevitarproblemascomarrayoutofboundsnessestestesunitariosaqui";
 
     @SuppressWarnings({"unchecked"})
-    private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V> STypeList<T, X> createSimpleList(
+    private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V extends Serializable> STypeList<T, X> createSimpleList(
             PackageBuilder pb, String name, Class<T> type, int size, Function<Integer, Object> valueProvider) {
         T simpleType = pb.createType(name, type);
         simpleType.typelessSelection()

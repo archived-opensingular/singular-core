@@ -48,7 +48,7 @@ public class Value {
      * @return false se o valor do tipo simples for nulo ou se o tipo não for
      * encontrado a partir da instancia current informada
      */
-    public static <T> boolean notNull(SInstance current, STypeSimple<? extends SISimple<T>, T> tipo) {
+    public static <T extends Serializable> boolean notNull(SInstance current, STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.of(current, tipo) != null;
     }
 
@@ -122,7 +122,7 @@ public class Value {
      * @param path
      * @return
      */
-    public static <T> T of(SInstance instanciaComposta, String path) {
+    public static <T extends Serializable> T of(SInstance instanciaComposta, String path) {
         if (instanciaComposta instanceof SIComposite) {
             SInstance campo = ((SIComposite) instanciaComposta).getField(path);
             if (campo instanceof SISimple) {
@@ -153,7 +153,7 @@ public class Value {
      * @param <T>
      * @return
      */
-    public static <T> T of(SInstance instancia, STypeSimple<? extends SISimple<T>, T> tipo) {
+    public static <T extends Serializable> T of(SInstance instancia, STypeSimple<? extends SISimple<T>, T> tipo) {
         if (instancia != null && tipo != null) {
             SISimple targetInstance = (SISimple) getInstance(instancia, tipo);
             if (targetInstance != null) {
@@ -245,11 +245,11 @@ public class Value {
         }
     }
 
-    public <T> T of(STypeSimple<? extends SISimple<T>, T> tipo) {
+    public <T extends Serializable> T of(STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.of(instancia, tipo);
     }
 
-    public <T> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
+    public <T extends Serializable> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.notNull(instancia, tipo);
     }
 
