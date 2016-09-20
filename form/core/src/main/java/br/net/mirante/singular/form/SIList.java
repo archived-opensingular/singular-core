@@ -63,7 +63,12 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             invokeUpdateListeners();
         }
     }
-
+    
+    @Override
+    public void removeChildren() {
+        clearInstance();
+    }
+    
     @Override
     public final <T> T getValue(String fieldPath, Class<T> resultClass) {
         return getValue(new PathReader(fieldPath), resultClass);
@@ -258,17 +263,10 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
      */
     private E internalRemove(E e){
         e.internalOnRemove();
-        invokeUpdateListeners();
-        return e;
-    }
-
-    private void invokeUpdateListeners(){
-        for (SType type : this.getType().getDependentTypes()){
-            SInstance dependentInstance = (SInstance) this.findNearest(type).orElse(null);
-            if (dependentInstance != null && dependentInstance.asAtr().getUpdateListener() != null){
-                dependentInstance.asAtr().getUpdateListener().accept(this);
-            }
+        if (asAtr().getUpdateListener() != null) {
+            asAtr().getUpdateListener().accept(this);
         }
+        return e;
     }
 
     public Object getValueAt(int index) {
