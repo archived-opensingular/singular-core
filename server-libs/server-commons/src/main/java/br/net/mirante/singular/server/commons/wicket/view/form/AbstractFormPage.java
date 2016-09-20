@@ -250,9 +250,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         }
     }
 
-    protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance) {
+    protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance, boolean mainForm) {
         T petition = currentModel.getObject();
-        if (currentInstance.getObject() instanceof SIComposite) {
+        if (currentInstance.getObject() instanceof SIComposite && mainForm) {
             petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
         }
         return petition;
@@ -316,7 +316,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void saveForm(IModel<? extends SInstance> currentInstance, String transitionName) {
         onBeforeSave(currentInstance);
-        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), true, isMainForm(), t -> onSave(t, transitionName)));
+        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance, isMainForm()), currentInstance.getObject(), true, isMainForm(), t -> onSave(t, transitionName)));
     }
 
     protected void onSave(T petition, String transitionName) {
@@ -346,7 +346,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void send(IModel<? extends SInstance> currentInstance, AjaxRequestTarget target, BSModalBorder enviarModal) {
         if (onBeforeSend(currentInstance)) {
-            formModel.setObject(petitionService.send(getUpdatedPetitionFromInstance(currentInstance), currentInstance.getObject(), isMainForm(), SingularSession.get().getUsername()));
+            formModel.setObject(petitionService.send(getUpdatedPetitionFromInstance(currentInstance, isMainForm()), currentInstance.getObject(), isMainForm(), SingularSession.get().getUsername()));
             onSended(target, enviarModal);
         }
     }
