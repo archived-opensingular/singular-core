@@ -14,18 +14,18 @@ import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.base.Preconditions;
+
+import br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeCredenciamentoEscolaGoverno;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.STypeNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado.STypeNotificacaoSimplificadaDinamizado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.STypeNotificacaoSimplificadaGasMedicinal;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.habilitacao.STypeHabilitacaoEmpresa;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal.STypeNotificacaoSimplificadaFitoterapico;
-import br.net.mirante.singular.showcase.view.page.form.examples.*;
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.Preconditions;
-
-import br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeCredenciamentoEscolaGoverno;
+import br.net.mirante.singular.exemplos.opas.gestaoobrasservicosaquisicoes.form.STypeGestaoObras;
 import br.net.mirante.singular.form.SDictionary;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.SPackage;
@@ -37,6 +37,8 @@ import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.showcase.component.ShowCaseType;
+import br.net.mirante.singular.showcase.view.page.form.examples.STypeCurriculo;
+import br.net.mirante.singular.showcase.view.page.form.examples.STypeExample;
 
 
 public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
@@ -57,6 +59,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(STypeHabilitacaoEmpresa.class, ShowCaseType.FORM);
         add(STypePeticaoPrimariaSimplificada.class, ShowCaseType.FORM);
         add(STypeCredenciamentoEscolaGoverno.class, ShowCaseType.FORM);
+        add(STypeGestaoObras.class, ShowCaseType.FORM);
 
     }
 
