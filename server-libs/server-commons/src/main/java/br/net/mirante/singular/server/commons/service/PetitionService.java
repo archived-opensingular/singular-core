@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.commons.service;
 
 
+import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.*;
 import br.net.mirante.singular.form.SIComposite;
@@ -20,7 +21,8 @@ import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.persistence.entity.*;
-import br.net.mirante.singular.server.commons.exception.SingularServerException;
+import br.net.mirante.singular.server.commons.exception.*;
+import br.net.mirante.singular.server.commons.exception.PetitionConcurrentModificationException;
 import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
@@ -430,10 +432,19 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
             savePetitionHistory(peticao.getCod(), key);
             final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(peticao).getClass();
             final ProcessInstance                    pi    = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
+            checkTaskIsEqual(peticao.getProcessInstanceEntity(), pi);
             pi.executeTransition(transitionName);
             return key;
+        } catch (SingularException e) {
+            throw e;
         } catch (Exception e) {
             throw new SingularServerException(e.getMessage(), e);
+        }
+    }
+
+    private void checkTaskIsEqual(ProcessInstanceEntity processInstanceEntity, ProcessInstance piAtual) {
+        if (!processInstanceEntity.getCurrentTask().getTask().getAbbreviation().equalsIgnoreCase(piAtual.getCurrentTask().getAbbreviation())) {
+            throw new PetitionConcurrentModificationException("A instância está em uma tarefa diferente da esperada.");
         }
     }
 
