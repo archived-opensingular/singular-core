@@ -126,10 +126,6 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .asAtr()
                 .label("Ingrediente Ativo");
 
-        ingredienteAtivoPeticao
-                .ingredientesAtivos
-                .withUpdateListener(new IngredienteAtivoUpdateListener<>());
-
         produtoTecnicoPeticao
                 .asAtr()
                 .dependsOn(nivel, tipoPeticao)
@@ -242,7 +238,6 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .asAtr()
                 .dependsOn(tipoPeticao)
                 .exists(typeValueIsIn(idTipoPeticao, precisaEstudoResiduos));
-
 
         informacoesProcesso
                 .asAtr()
