@@ -21,8 +21,8 @@ import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.persistence.entity.*;
-import br.net.mirante.singular.server.commons.exception.*;
 import br.net.mirante.singular.server.commons.exception.PetitionConcurrentModificationException;
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
@@ -456,7 +456,8 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     protected void checkTaskActions(TaskInstanceDTO task, QuickFilter filter) {
         List<BoxItemAction> actions = new ArrayList<>();
-        if (task.getCodUsuarioAlocado() == null) {
+        if (task.getCodUsuarioAlocado() == null
+                && task.getTaskType() == TaskType.People) {
             actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE.getName()));
         }
 
