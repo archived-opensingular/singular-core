@@ -5,13 +5,16 @@
 
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static org.apache.commons.lang3.BooleanUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -29,6 +32,7 @@ import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 
 /**
@@ -61,7 +65,7 @@ public class AnnotationComponent extends Panel {
         approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getAnnotationModel(), "isApproved"));
 
         add($b.classAppender("annotation-toggle-container btn-group"));
-        add($b.attr("style", "position:absolute; top:-10px; right:17px;"));
+        add($b.attr("style", "position:absolute; top:0px; right:17px;"));
     }
 
     @Override
@@ -166,6 +170,16 @@ public class AnnotationComponent extends Panel {
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             annotationModal.show(target);
         }
+        @Override
+        public void renderHead(IHeaderResponse response) {
+            super.renderHead(response);
+            response.render(OnDomReadyHeaderItem.forScript(JQuery.$(this)
+                + ".each(function(){"
+                + "var $this = $(this);"
+                + "$this.css('z-index',$this.parent().css('z-index')+1);"
+                + "});"
+                + ""));
+        }
     }
 
     private final class EditAnnotationButton extends ActionAjaxButton {
@@ -200,7 +214,8 @@ public class AnnotationComponent extends Panel {
         @Override
         protected void onInitialize() {
             super.onInitialize();
-            this.setTitleText($m.ofValue("Você está prestes a remover este comentário."))
+            this
+                .setTitleText($m.ofValue("Você está prestes a remover este comentário."))
                 .setBody(new Label("alert", $m.ofValue("Deseja realmente prosseguir e apagá-lo?")))
                 .addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.ofValue("Apagar"),
                     new ActionAjaxButton("deleteBtn") {
@@ -209,6 +224,8 @@ public class AnnotationComponent extends Panel {
                             ((SIAnnotation) AnnotationComponent.this.getAnnotationModel().getObject()).clear();
                             target.add(AnnotationComponent.this);
                             RemoveAnnotationModal.this.hide(target);
+                            target.appendJavaScript(JQuery.$(AnnotationComponent.this)
+                                + ".find('a:visible:first').each(function(){this.focus();});");
                         }
                     })
                 .addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"),
@@ -216,6 +233,8 @@ public class AnnotationComponent extends Panel {
                         @Override
                         protected void onAction(AjaxRequestTarget target) {
                             RemoveAnnotationModal.this.hide(target);
+                            target.appendJavaScript(JQuery.$(AnnotationComponent.this)
+                                + ".find('a:visible:first').each(function(){this.focus();});");
                         }
                     });
         }

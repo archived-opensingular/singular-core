@@ -24,14 +24,14 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder.Size;
 public class BSModalWindow extends Panel {
 
     private static final String BODY_CONTAINER_ID = "_b";
-    private static final String MODAL_ID = "_m";
-    private static final String FORM_ID = "_f";
+    private static final String MODAL_ID          = "_m";
+    private static final String FORM_ID           = "_f";
 
-    private final BSModalBorder modalBorder = newModalBorder(MODAL_ID);
+    private final BSModalBorder modalBorder       = newModalBorder(MODAL_ID);
 
-    private final TemplatePanel bodyContainer = new TemplatePanel(BODY_CONTAINER_ID, p -> "<div wicket:id='" + p.iterator().next().getId() + "'></div>");
-    private MarkupContainer form;
-    private boolean resetOnBodySwitch = true;
+    private final TemplatePanel bodyContainer     = new TemplatePanel(BODY_CONTAINER_ID, p -> "<div wicket:id='" + p.iterator().next().getId() + "'></div>");
+    private MarkupContainer     form;
+    private boolean             resetOnBodySwitch = true;
 
     public BSModalWindow(String id, IModel<?> model) {
         this(id, model, true);
@@ -60,7 +60,7 @@ public class BSModalWindow extends Panel {
         super(id);
         doInit(wrapBodyWithForm);
     }
-
+    
     protected BSModalBorder newModalBorder(String id) {
         return new BSModalBorder(id);
     }
@@ -91,7 +91,7 @@ public class BSModalWindow extends Panel {
     public BSModalBorder getModalBorder() {
         return modalBorder;
     }
-    
+
     protected final WebMarkupContainer getBodyContainer() {
         return bodyContainer;
     }
@@ -111,7 +111,7 @@ public class BSModalWindow extends Panel {
         getModalBorder().removeButtons();
         return this;
     }
-    
+
     public BSModalWindow setTitleText(IModel<String> titleModel) {
         getModalBorder().setTitleText(titleModel);
         return this;

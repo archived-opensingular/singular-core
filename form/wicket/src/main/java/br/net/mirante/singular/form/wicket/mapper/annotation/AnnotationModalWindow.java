@@ -17,6 +17,7 @@ import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 
 class AnnotationModalWindow extends BFModalWindow {
@@ -76,6 +77,8 @@ class AnnotationModalWindow extends BFModalWindow {
         @Override
         protected void onAction(AjaxRequestTarget target) {
             AnnotationModalWindow.this.hide(target);
+            target.appendJavaScript(JQuery.$(annotationComponent)
+                + ".find('a:visible:first').each(function(){this.focus();});");
         }
     }
     class OkButton extends ActionAjaxButton {
@@ -88,6 +91,8 @@ class AnnotationModalWindow extends BFModalWindow {
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             target.add(parentComponent);
             AnnotationModalWindow.this.hide(target);
+            target.appendJavaScript(JQuery.$(annotationComponent)
+                + ".find('a:visible:first').each(function(){this.focus();});");
         }
     }
 
