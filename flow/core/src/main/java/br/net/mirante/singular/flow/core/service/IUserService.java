@@ -51,4 +51,10 @@ public interface IUserService {
         return null;
     }
 
+    MUser findByCod(Integer cod);
+
+    public default Integer getUserCodIfAvailable() {
+        MUser mUser = getUserIfAvailable();
+        return mUser != null ? mUser.getCod() : null;
+    }
 }
