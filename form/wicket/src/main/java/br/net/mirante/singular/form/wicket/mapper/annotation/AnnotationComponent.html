@@ -1,19 +1,15 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-  <a data-toggle="dropdown" class="btn dropdown-toggle btn-icon-only btn-default" style="z-index: 1;" wicket:id="emptyButton"></a>
+  <a href="#" data-toggle="dropdown" class="btn dropdown-toggle btn-icon-only btn-default" wicket:id="emptyButton"></a>
   <wicket:container wicket:id="dropDownContainer">
-    <a data-toggle="dropdown" class="btn dropdown-toggle btn-icon-only" style="z-index: 1;" wicket:id="toggleButton"></a>
+    <a href="javascript:;" data-toggle="dropdown" class="btn dropdown-toggle btn-icon-only" wicket:id="toggleButton"></a>
     <div class="dropdown-menu theme-panel pull-right dropdown-custom hold-on-click">
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
           <h5 class="annotation-title" wicket:id="title">Título</h5>
           <div class="annotation-actions">
-            <a class="annotation-action-edit" wicket:id="editButton">
-              <span class="fa fa-pencil" wicket:id="editIcon"></span>
-            </a>
-            <a class="annotation-action-remove" wicket:id="removeButton" >
-              <i class="icon-trash"></i>
-            </a>
+            <a class="annotation-action-edit" wicket:id="editButton" href="javascript:;"><span class="fa fa-pencil" wicket:id="editIcon"></span></a>
+            <a class="annotation-action-remove" wicket:id="removeButton" href="javascript:;"><i class="icon-trash"></i></a>
           </div>
           <p class="annotation-text" wicket:id="annotationText"></p>
           <hr></hr>

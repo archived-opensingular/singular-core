@@ -115,7 +115,8 @@ public class WicketBuildContext implements Serializable {
     }
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
-        return configureNestedContext(new WicketBuildContext(this, childContainer, externalContainer, hintsInherited, model));
+        return configureNestedContext(new WicketBuildContext(this, childContainer, externalContainer, hintsInherited, model)
+            .setAnnotationMode(getAnnotationMode()));
     }
 
     private WicketBuildContext configureNestedContext(WicketBuildContext context) {
