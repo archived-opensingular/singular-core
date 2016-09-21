@@ -4,6 +4,7 @@
  */
 package br.net.mirante.singular.exemplos.opas.gestaoobrasservicosaquisicoes.form;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -15,20 +16,26 @@ import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.internal.xml.ConversorToolkit;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 
 @SInfoType(spackage = SPackageGestaoObrasServicosAquisicoes.class)
 public class STypeProcesso extends STypeComposite<SIComposite> {
 
+    private static final String FIELD_OBRAS_PROCESSO = "obrasProcesso";
+
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         addDadosProcesso();
+        addObrasProcesso();
         
         setView(SViewByBlock::new)
-            .newBlock("Dados do Processo").add("dadosProcesso");
+            .newBlock("Dados do Processo").add("dadosProcesso")
+            .newBlock("Obras do Processo").add(FIELD_OBRAS_PROCESSO);
     }
 
     private void addDadosProcesso(){
@@ -80,8 +87,55 @@ public class STypeProcesso extends STypeComposite<SIComposite> {
             .asAtrBootstrap().colPreference(4);
         
         final STypeList<STypeAldeia, SIComposite> aldeias = dadosProcesso.addFieldListOf("aldeias", STypeAldeia.class);
-        aldeias.getElementsType().mockSelection();
+        aldeias.getElementsType().mockSelection().asAtr().label("Aldeia");
         aldeias.withView(SViewListByMasterDetail::new)
             .asAtr().itemLabel("Aldeia");
+//        
+//        final Map<String, Integer> mapaQtdFamilias = new HashMap<>(4);
+//        mapaQtdFamilias.put("Baniuas", 1035);
+//        mapaQtdFamilias.put("Guaranis", 13789);
+//        mapaQtdFamilias.put("Uapixanas", 1273);
+//        mapaQtdFamilias.put("Caiapós", 2357);
+//        
+//        final Map<String, Integer> mapaPopulacao = new HashMap<>(4);
+//        mapaPopulacao.put("Baniuas", 5141);
+//        mapaPopulacao.put("Guaranis", 34350);
+//        mapaPopulacao.put("Uapixanas", 6589);
+//        mapaPopulacao.put("Caiapós", 7096);
+//        final STypeString aldeia = aldeias.withMiniumSizeOf(1).getElementsType().addFieldString(STypeAldeia.FIELD_NOME, true);
+//        aldeia.asAtr().label("Aldeia");
+//        aldeia.selection()
+//            .selfIdAndDisplay()
+//            .simpleProviderOf("Baniuas", "Guaranis", "Uapixanas", "Caiapós");
+//        aldeias.getElementsType().addFieldInteger(STypeAldeia.FIELD_QTD_FAMILIAS, true)
+//            .withUpdateListener(instance -> {
+//                instance.setValue(instance.findNearestValue(aldeia).map(mapaQtdFamilias::get).orElse(null));
+//            })
+//            .asAtr().dependsOn(aldeia).label("Nº Famílias").enabled(false);
+//        aldeias.getElementsType().addFieldInteger(STypeAldeia.FIELD_POPULACAO, true)
+//            .withUpdateListener(instance -> {
+//                instance.setValue(instance.findNearestValue(aldeia).map(mapaPopulacao::get).orElse(null));
+//            })
+//            .asAtr().dependsOn(aldeia).label("População").enabled(false);
+    }
+    
+    public void addObrasProcesso(){
+        final STypeList<STypeObra, SIComposite> obrasProcesso = this.addFieldListOf(FIELD_OBRAS_PROCESSO, STypeObra.class);
+        obrasProcesso.asAtr().itemLabel("Obra");
+        obrasProcesso.withView(new SViewListByMasterDetail(), 
+            view -> view.col("Valor Empenhado", instancia -> {
+                final BigDecimal valorEmpenhado = ((SIComposite)instancia).getFieldList(STypeObra.FIELD_VALORES_EMPENHADOS, SIComposite.class)
+                    .stream().map(instanciaComposta -> (BigDecimal) Value.of(instanciaComposta, STypeValorEmpenhadoObra.FIELD_VALOR_EMPENHADO))
+                    .filter(valor -> valor != null)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                
+                return ConversorToolkit.printNumber(valorEmpenhado, 2);
+            }),
+            view -> view.col(getFieldObrasProcesso().getElementsType().getFieldNumContrato()));
+    }
+    
+    @SuppressWarnings("unchecked")
+    public STypeList<STypeObra, SIComposite> getFieldObrasProcesso(){
+        return (STypeList<STypeObra, SIComposite>) getField(FIELD_OBRAS_PROCESSO);
     }
 }

@@ -14,9 +14,9 @@ import br.net.mirante.singular.form.type.core.STypeString;
 @SInfoType(spackage = SPackageGestaoObrasServicosAquisicoes.class)
 public class STypeAldeia extends STypeComposite<SIComposite>{
 
-    private static final String FIELD_POPULACAO = "populacao";
-    private static final String FIELD_QTD_FAMILIAS = "qtdFamilias";
-    private static final String FIELD_NOME = "nome";
+    public static final String FIELD_POPULACAO = "populacao";
+    public static final String FIELD_QTD_FAMILIAS = "qtdFamilias";
+    public static final String FIELD_NOME = "nome";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
