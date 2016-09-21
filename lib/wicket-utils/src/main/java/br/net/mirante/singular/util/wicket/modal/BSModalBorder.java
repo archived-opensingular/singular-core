@@ -387,7 +387,7 @@ public class BSModalBorder extends Border {
             .append("})");
         sb.append(""
             + "\n.on('shown.bs.modal',function(evt) {"
-            + "\n $(this).find('.modal-body')"
+            + "\n $(this).find('.modal-body, .modal-footer')"
             + "\n  .find('input:not([type=hidden]),select,textarea,button,object,a')"
             + "\n  .filter(':visible')"
             + "\n  .first()"

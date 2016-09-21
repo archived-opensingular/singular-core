@@ -6,11 +6,13 @@
 package br.net.mirante.singular.showcase.component.form.custom.comment;
 
 import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
+import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
 import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
+import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
@@ -19,8 +21,7 @@ import br.net.mirante.singular.showcase.component.Resource;
 /**
  * Anotações e comentários associados a elementos de um form
  */
-@CaseItem(componentName = "Annotation", group = Group.CUSTOM, annotation = AnnotationMode.EDIT,
-resources = @Resource(PageWithAnnotation.class))
+@CaseItem(componentName = "Annotation", group = Group.CUSTOM, annotation = AnnotationMode.EDIT, resources = @Resource(PageWithAnnotation.class))
 public class CaseAnnotationPackage extends SPackage {
 
     public STypeComposite<?> pedido, cliente, endereco, request, id;
@@ -34,7 +35,6 @@ public class CaseAnnotationPackage extends SPackage {
     protected void onLoadPackage(PackageBuilder pb) {
         pedido = pb.createCompositeType("testForm");
         pedido.asAtr().label("Pedido");
-
 
         id = pedido.addFieldComposite("id");
         id.asAtr().label("Identificador");
@@ -57,8 +57,15 @@ public class CaseAnnotationPackage extends SPackage {
 
         request = pedido.addFieldComposite("request");
         request.asAtr().label("Pedido");
-        request.addFieldString("itens").asAtr().label("Itens");
-        request.addFieldString("obs").asAtr().label("Observações");
+        STypeList<STypeComposite<SIComposite>, SIComposite> itens = request.addFieldListOfComposite("itens", "item");
+        itens.asAtr().label("Itens");
+
+        STypeComposite<SIComposite> item = itens.getElementsType();
+        item.addFieldString("descricao").asAtr().label("Descrição");
+        item.addFieldString("obs").asAtr().label("Observações");
+        item.asAtrAnnotation().setAnnotated();
+
+        itens.setView(() -> new SViewListByMasterDetail());
 
         //@destacar
         request.asAtrAnnotation().setAnnotated().label("Observações Finais"); //Permite definir seu pŕoprio rótulo
