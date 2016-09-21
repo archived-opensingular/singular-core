@@ -26,6 +26,9 @@ public class ParecerTecnicoDTO implements Serializable {
     private String siglaTipoFormulacao;
     private String nomeTipoFormulacao;
 
+    private boolean produtoTecnicoOuPreMistura;
+    private boolean naoAgricolaOuPreservativoDeMadeira;
+
     private List<String>              produtosTecnicos;
     private List<String>              numerosProcessoProdutosTecnicos;
     private List<String>              ingredientesAtivos;
@@ -245,6 +248,24 @@ public class ParecerTecnicoDTO implements Serializable {
 
     public ParecerTecnicoDTO setNumerosProcessoProdutosTecnicos(List<String> numerosProcessoProdutosTecnicos) {
         this.numerosProcessoProdutosTecnicos = numerosProcessoProdutosTecnicos;
+        return this;
+    }
+
+    public boolean isProdutoTecnicoOuPreMistura() {
+        return produtoTecnicoOuPreMistura;
+    }
+
+    public boolean isNaoAgricolaOuPreservativoDeMadeira() {
+        return naoAgricolaOuPreservativoDeMadeira;
+    }
+
+    public ParecerTecnicoDTO setNaoAgricolaOuPreservativoDeMadeira(boolean naoAgricolaOuPreservativoDeMadeira) {
+        this.naoAgricolaOuPreservativoDeMadeira = naoAgricolaOuPreservativoDeMadeira;
+        return this;
+    }
+
+    public ParecerTecnicoDTO setProdutoTecnicoOuPreMistura(boolean produtoTecnicoOuPreMistura) {
+        this.produtoTecnicoOuPreMistura = produtoTecnicoOuPreMistura;
         return this;
     }
 }
