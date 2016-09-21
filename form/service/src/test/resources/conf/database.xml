@@ -47,7 +47,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">
+    <jdbc:initialize-database data-source="dataSource" ignore-failures="NONE">
         <jdbc:script location="classpath:/db/ddl/create-tables-form.sql" />
         <jdbc:script location="classpath:/db/ddl/create-constraints-form.sql" />
         <jdbc:script location="classpath:/db/ddl/create-oracle.sql" />
