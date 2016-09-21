@@ -5,25 +5,16 @@
 
 package br.net.mirante.singular.form.util.transformer;
 
+import br.net.mirante.singular.form.*;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SISimple;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.STypeSimple;
-import br.net.mirante.singular.form.SingularFormException;
 
 /**
  * Essa classe utilitaria realiza uma serie de operacoes sobre os valores guardados pelos MTIpos
@@ -130,6 +121,14 @@ public class Value {
             } else if (campo instanceof SIList) {
                 return (T) ofList((SIList) campo);
             }
+        }
+        return null;
+    }
+
+    public static String stringValueOf(SInstance instanciaComposta, String path) {
+        Serializable s = of(instanciaComposta, path);
+        if (s != null) {
+            return String.valueOf(s);
         }
         return null;
     }

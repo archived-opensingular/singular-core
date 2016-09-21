@@ -22,6 +22,10 @@ import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.S
 public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersistentComposite {
 
 
+    public static final String NOME_TIPO_FORMULACAO  = "nomeTipoFormulacao";
+    public static final String SIGLA_TIPO_FORMULACAO = "siglaTipoFormulacao";
+    public static final String TIPO_FORMULACAO       = "tipoFormulacao";
+
     public STypeFormuladorConformeMatriz           formulador;
     public STypeList<STypeFormulador, SIComposite> formuladores;
     public STypeComposite<SIComposite>             tipoFormulacao;
@@ -41,11 +45,11 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersi
                 .asAtr()
                 .label("Produto Formulado");
 
-        tipoFormulacao = addFieldComposite("tipoFormulacao");
+        tipoFormulacao = addFieldComposite(TIPO_FORMULACAO);
 
         STypeInteger idTipoFormulacao        = tipoFormulacao.addFieldInteger("idTipoFormulacao");
-        STypeString  siglaTipoFormulacao     = tipoFormulacao.addFieldString("siglaTipoFormulacao");
-        STypeString  nomeTipoFormulacao      = tipoFormulacao.addFieldString("nomeTipoFormulacao");
+        STypeString  siglaTipoFormulacao     = tipoFormulacao.addFieldString(SIGLA_TIPO_FORMULACAO);
+        STypeString  nomeTipoFormulacao      = tipoFormulacao.addFieldString(NOME_TIPO_FORMULACAO);
         STypeString  descricaoTipoFormulacao = tipoFormulacao.addFieldString("descricaoTipoFormulacao");
 
         outraSiglaTipoFormulacao = addFieldString("outraSiglaTipoFormulacao");
