@@ -90,7 +90,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return instance;
     }
 
-    @SuppressWarnings("unchecked")
     public E addElement(E e) {
         E instance = e;
         instance.setDocument(getDocument());
@@ -401,7 +400,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public E remove(E e) {
         return (E) remove(values.indexOf(e));
     }

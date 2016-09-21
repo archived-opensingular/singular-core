@@ -16,26 +16,26 @@ import br.net.mirante.singular.form.view.SViewListByTable;
 @SInfoType(spackage = SPackageGestaoObrasServicosAquisicoes.class)
 public class STypeObra extends STypeComposite<SIComposite>{
 
-    private static final String FIELD_NUM_CONTRATO = "numContrato";
-    private static final String FIELD_VALORES_EMPENHADOS = "valoresEmpenhados";
+    public static final String FIELD_NUM_CONTRATO = "numContrato";
+    public static final String FIELD_VALORES_EMPENHADOS = "valoresEmpenhados";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         
         addFieldString(FIELD_NUM_CONTRATO, true)
-            .asAtr().label("Nº Contrato").asAtrBootstrap().colPreference(3);
-        addFieldInteger("descricaoObra", true)
-            .asAtr().label("Descrição da Obra").asAtrBootstrap().colPreference(5);
+            .asAtr().label("Nº Contrato").asAtrBootstrap().colPreference(4);
+        addFieldString("descricaoObra", true)
+            .asAtr().label("Descrição da Obra").asAtrBootstrap().colPreference(8);
         addFieldDate("dataInicio", true)
-            .asAtr().label("Início").asAtrBootstrap().colPreference(2);
+            .asAtr().label("Início").asAtrBootstrap().colPreference(3);
         addFieldDate("dataFim", true)
-            .asAtr().label("Fim").asAtrBootstrap().colPreference(2);
+            .asAtr().label("Fim").asAtrBootstrap().colPreference(3);
         
         addValoresEmpenhados();
         
         setView(SViewByBlock::new)
-            .newBlock().add("numContrato", "descricaoObra", "dataInicio", "dataFim")
+            .newBlock("Dados da Obra").add("numContrato", "descricaoObra", "dataInicio", "dataFim")
             .newBlock("Valor Empenhado").add(FIELD_VALORES_EMPENHADOS);
     }
 

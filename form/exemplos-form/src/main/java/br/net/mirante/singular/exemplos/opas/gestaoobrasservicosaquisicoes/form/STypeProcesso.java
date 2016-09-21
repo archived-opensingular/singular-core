@@ -6,8 +6,6 @@ package br.net.mirante.singular.exemplos.opas.gestaoobrasservicosaquisicoes.form
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeEstado;
@@ -23,7 +21,6 @@ import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.view.SViewListByTable;
 
 @SInfoType(spackage = SPackageGestaoObrasServicosAquisicoes.class)
 public class STypeProcesso extends STypeComposite<SIComposite> {
@@ -89,36 +86,37 @@ public class STypeProcesso extends STypeComposite<SIComposite> {
             .asAtr().label("Fonte de Recurso")
             .asAtrBootstrap().colPreference(4);
         
-        final Map<String, Integer> mapaQtdFamilias = new HashMap<>(4);
-        mapaQtdFamilias.put("Baniuas", 1035);
-        mapaQtdFamilias.put("Guaranis", 13789);
-        mapaQtdFamilias.put("Uapixanas", 1273);
-        mapaQtdFamilias.put("Caiapós", 2357);
-
-        final Map<String, Integer> mapaPopulacao = new HashMap<>(4);
-        mapaPopulacao.put("Baniuas", 5141);
-        mapaPopulacao.put("Guaranis", 34350);
-        mapaPopulacao.put("Uapixanas", 6589);
-        mapaPopulacao.put("Caiapós", 7096);
-        
-        final STypeList<STypeComposite<SIComposite>, SIComposite> aldeias = dadosProcesso.addFieldListOfComposite("aldeias","aldeia");
-        final STypeString aldeia = aldeias.withMiniumSizeOf(1).getElementsType().addFieldString(STypeAldeia.FIELD_NOME, true);
-        aldeia.asAtr().label("Aldeia");
-        aldeia.selection()
-            .selfIdAndDisplay()
-            .simpleProviderOf("Baniuas", "Guaranis", "Uapixanas", "Caiapós");
-        aldeias.getElementsType().addFieldInteger(STypeAldeia.FIELD_QTD_FAMILIAS, true)
-            .withUpdateListener(instance -> {
-                instance.setValue(instance.findNearestValue(aldeia).map(mapaQtdFamilias::get).orElse(null));
-            })
-            .asAtr().dependsOn(aldeia).label("Nº Famílias").enabled(false);
-        aldeias.getElementsType().addFieldInteger(STypeAldeia.FIELD_POPULACAO, true)
-            .withUpdateListener(instance -> {
-                instance.setValue(instance.findNearestValue(aldeia).map(mapaPopulacao::get).orElse(null));
-            })
-            .asAtr().dependsOn(aldeia).label("População").enabled(false);
-        aldeias.withView(SViewListByTable::new)
+        final STypeList<STypeAldeia, SIComposite> aldeias = dadosProcesso.addFieldListOf("aldeias", STypeAldeia.class);
+        aldeias.getElementsType().mockSelection().asAtr().label("Aldeia");
+        aldeias.withView(SViewListByMasterDetail::new)
             .asAtr().itemLabel("Aldeia");
+//        
+//        final Map<String, Integer> mapaQtdFamilias = new HashMap<>(4);
+//        mapaQtdFamilias.put("Baniuas", 1035);
+//        mapaQtdFamilias.put("Guaranis", 13789);
+//        mapaQtdFamilias.put("Uapixanas", 1273);
+//        mapaQtdFamilias.put("Caiapós", 2357);
+//        
+//        final Map<String, Integer> mapaPopulacao = new HashMap<>(4);
+//        mapaPopulacao.put("Baniuas", 5141);
+//        mapaPopulacao.put("Guaranis", 34350);
+//        mapaPopulacao.put("Uapixanas", 6589);
+//        mapaPopulacao.put("Caiapós", 7096);
+//        final STypeString aldeia = aldeias.withMiniumSizeOf(1).getElementsType().addFieldString(STypeAldeia.FIELD_NOME, true);
+//        aldeia.asAtr().label("Aldeia");
+//        aldeia.selection()
+//            .selfIdAndDisplay()
+//            .simpleProviderOf("Baniuas", "Guaranis", "Uapixanas", "Caiapós");
+//        aldeias.getElementsType().addFieldInteger(STypeAldeia.FIELD_QTD_FAMILIAS, true)
+//            .withUpdateListener(instance -> {
+//                instance.setValue(instance.findNearestValue(aldeia).map(mapaQtdFamilias::get).orElse(null));
+//            })
+//            .asAtr().dependsOn(aldeia).label("Nº Famílias").enabled(false);
+//        aldeias.getElementsType().addFieldInteger(STypeAldeia.FIELD_POPULACAO, true)
+//            .withUpdateListener(instance -> {
+//                instance.setValue(instance.findNearestValue(aldeia).map(mapaPopulacao::get).orElse(null));
+//            })
+//            .asAtr().dependsOn(aldeia).label("População").enabled(false);
     }
     
     public void addObrasProcesso(){
@@ -126,8 +124,8 @@ public class STypeProcesso extends STypeComposite<SIComposite> {
         obrasProcesso.asAtr().itemLabel("Obra");
         obrasProcesso.withView(new SViewListByMasterDetail(), 
             view -> view.col("Valor Empenhado", instancia -> {
-                final BigDecimal valorEmpenhado = instancia.findNearest(getFieldObrasProcesso().getElementsType().getFieldValoresEmpenhados()).get()
-                    .getValues().stream().map(instanciaComposta -> (BigDecimal) Value.of(instanciaComposta, STypeValorEmpenhadoObra.FIELD_VALOR_EMPENHADO))
+                final BigDecimal valorEmpenhado = ((SIComposite)instancia).getFieldList(STypeObra.FIELD_VALORES_EMPENHADOS, SIComposite.class)
+                    .stream().map(instanciaComposta -> (BigDecimal) Value.of(instanciaComposta, STypeValorEmpenhadoObra.FIELD_VALOR_EMPENHADO))
                     .filter(valor -> valor != null)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
                 
