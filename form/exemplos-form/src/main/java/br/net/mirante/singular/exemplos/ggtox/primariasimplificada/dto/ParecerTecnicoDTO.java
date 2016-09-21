@@ -20,7 +20,6 @@ public class ParecerTecnicoDTO implements Serializable {
     private String cnpjEmpresa;
     private String dataEncaminhamento;
     private String dataInicioAvaliacao;
-    private String dataFimAvaliacao;
     private String nomeProduto;
     private String dataGeracao;
     private String nomeTecnico;
@@ -176,14 +175,6 @@ public class ParecerTecnicoDTO implements Serializable {
         return this;
     }
 
-    public String getDataFimAvaliacao() {
-        return dataFimAvaliacao;
-    }
-
-    public ParecerTecnicoDTO setDataFimAvaliacao(String dataFimAvaliacao) {
-        this.dataFimAvaliacao = dataFimAvaliacao;
-        return this;
-    }
 
     public String getNomeProduto() {
         return nomeProduto;
