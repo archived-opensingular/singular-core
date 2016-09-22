@@ -34,6 +34,7 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
                                       IFormService formService,
                                       IBiConsumer<SIComposite, String> onCreateInstance) {
         super(formPage);
+
         this.formConfig = formConfig;
         this.refType = refType;
         this.formKey = formKey;
