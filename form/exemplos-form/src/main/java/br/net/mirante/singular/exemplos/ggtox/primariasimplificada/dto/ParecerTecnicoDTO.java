@@ -29,11 +29,11 @@ public class ParecerTecnicoDTO implements Serializable {
     private boolean produtoTecnicoOuPreMistura;
     private boolean naoAgricolaOuPreservativoDeMadeira;
 
-    private List<String>              produtosTecnicos;
     private List<String>              numerosProcessoProdutosTecnicos;
     private List<String>              ingredientesAtivos;
     private List<ExigenciaTecnicaDTO> exigencias;
     private List<FormuladorDTO>       formuladores;
+    private List<ProdutoTecnicoDTO>   produtosTecnicos;
 
     public String getNumero() {
         return numero;
@@ -149,15 +149,6 @@ public class ParecerTecnicoDTO implements Serializable {
 
     public ParecerTecnicoDTO setCnpjEmpresa(String cnpjEmpresa) {
         this.cnpjEmpresa = cnpjEmpresa;
-        return this;
-    }
-
-    public List<String> getProdutosTecnicos() {
-        return produtosTecnicos;
-    }
-
-    public ParecerTecnicoDTO setProdutosTecnicos(List<String> produtosTecnicos) {
-        this.produtosTecnicos = produtosTecnicos;
         return this;
     }
 
@@ -278,4 +269,14 @@ public class ParecerTecnicoDTO implements Serializable {
         this.formuladores = formuladores;
         return this;
     }
+
+    public List<ProdutoTecnicoDTO> getProdutosTecnicos() {
+        return produtosTecnicos;
+    }
+
+    public ParecerTecnicoDTO setProdutosTecnicos(List<ProdutoTecnicoDTO> produtosTecnicos) {
+        this.produtosTecnicos = produtosTecnicos;
+        return this;
+    }
+
 }
