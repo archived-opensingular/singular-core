@@ -105,7 +105,7 @@ public class SingularStudioFormPanel extends SingularStudioPanel {
 
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                repository().insertOrUpdate(instanceModel.getObject());
+                repository().insertOrUpdate(instanceModel.getObject(), null);
                 showList(target);
             }
 
