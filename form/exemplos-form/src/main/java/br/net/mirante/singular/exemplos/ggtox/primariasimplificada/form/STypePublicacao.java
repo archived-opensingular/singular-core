@@ -14,13 +14,14 @@ public class STypePublicacao extends STypePersistentComposite {
     public static final String DATA_DOU = "dataDOU";
     public static final String NUMERO_RE = "numeroRE";
     public static final String DATA_RE = "dataRE";
+    public static final String NUMERO_DOU = "numeroDOU";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
         final STypeDate    dataDOU   = addField(DATA_DOU, STypeDate.class);
-        final STypeInteger numeroDOU = addField("numeroDOU", STypeInteger.class);
+        final STypeInteger numeroDOU = addField(NUMERO_DOU, STypeInteger.class);
         final STypeDate    dataRE    = addField(DATA_RE, STypeDate.class);
         final STypeString  numeroRE  = addField(NUMERO_RE, STypeString.class);
 
