@@ -40,6 +40,7 @@ public class STypeBasedFlowConfirmModalBuilder<T extends PetitionEntity> extends
         return MarkupCreator.div("flow-modal" + idSuffix, new HTMLParameters().styleClass("portlet-body form"), MarkupCreator.div("singular-form-panel"));
     }
 
+
     @Override
     public BSModalBorder build(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm) {
         final BSModalBorder modal = new BSModalBorder("flow-modal" + idSuffix, new StringResourceModel("label.button.confirm", formPage, null));
