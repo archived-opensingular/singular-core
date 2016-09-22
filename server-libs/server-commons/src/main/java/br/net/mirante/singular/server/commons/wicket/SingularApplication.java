@@ -2,6 +2,7 @@ package br.net.mirante.singular.server.commons.wicket;
 
 import java.util.Locale;
 
+import br.net.mirante.singular.commons.base.SingularProperties;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
@@ -89,7 +90,7 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {
-        if ("false".equals(System.getProperty("singular.development"))) {
+        if (SingularProperties.get().isFalse(SingularProperties.SINGULAR_DEV_MODE)) {
             return RuntimeConfigurationType.DEPLOYMENT;
         } else {
             return RuntimeConfigurationType.DEVELOPMENT;

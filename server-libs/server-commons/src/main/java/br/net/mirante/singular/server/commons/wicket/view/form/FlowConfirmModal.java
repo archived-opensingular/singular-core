@@ -9,10 +9,10 @@ import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
 
-public interface FlowConfirmModalBuilder<T extends PetitionEntity> extends Serializable {
+public interface FlowConfirmModal<T extends PetitionEntity> extends Serializable {
 
     String getMarkup(String idSuffix);
 
-    BSModalBorder build(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm);
+    BSModalBorder init(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm);
 
 }

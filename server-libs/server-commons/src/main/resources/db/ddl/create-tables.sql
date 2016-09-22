@@ -400,7 +400,7 @@ CREATE TABLE DBSINGULAR.TB_EMAIL
    CONSTRAINT PK_EMAIL PRIMARY KEY (CO_EMAIL)
 );
 
-*==============================================================*/
+/*==============================================================*/
 /* Table: TB_EMAIL_ARQUIVO                                      */
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_EMAIL_ARQUIVO
