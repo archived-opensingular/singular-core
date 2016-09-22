@@ -4,10 +4,11 @@ import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.core.*;
 import org.junit.Test;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -17,16 +18,16 @@ public class TestViewResolver {
     private static final String textoTeste = "stringzonamuitolocabemgrandeparaevitarproblemascomarrayoutofboundsnessestestesunitariosaqui";
 
     @SuppressWarnings({"unchecked"})
-    private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V> STypeList<T, X> createSimpleList(
+    private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V extends Serializable> STypeList<T, X> createSimpleList(
             PackageBuilder pb, String name, Class<T> type, int size, Function<Integer, Object> valueProvider) {
         T simpleType = pb.createType(name, type);
         simpleType.typelessSelection()
                 .selfIdAndDisplay()
-                .simpleProvider(ins -> (List<V>) repeate(valueProvider, size));
+                .simpleProvider(ins -> repeate(valueProvider, size));
         return pb.createListTypeOf("list" + name, simpleType);
     }
 
-    private static <T> Collection<T> repeate(Function<Integer, T> valueSupplier, int size) {
+    private static <T> List<T> repeate(Function<Integer, T> valueSupplier, int size) {
         ArrayList<T> l = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             l.add(valueSupplier.apply(i));

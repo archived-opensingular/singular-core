@@ -8,25 +8,26 @@ import br.net.mirante.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.util.SingularPredicates;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.view.SViewByPortletRichText;
+import br.net.mirante.singular.form.view.SViewTextArea;
 
 @SInfoType(name = "STypeAnaliseGerente", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypeAnaliseGerente extends STypePersistentComposite {
 
-    private final String RESULTADO_ANALISE = "resultadoAnalise";
-    private final String DESPACHO          = "despacho";
-    private final String OFICIO            = "oficio";
-    private final String APROVAR           = "Aprovar";
-    private final String REPROVAR          = "Reprovar";
+    public static final String RESULTADO_ANALISE = "resultadoAnalise";
+    public static final String DESPACHO          = "despacho";
+    public static final String OFICIO            = "oficio";
+    public static final String APROVAR           = "Aprovar";
+    public static final String REPROVAR          = "Reprovar";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
         final STypeString resultadoAnalise = addField(RESULTADO_ANALISE, STypeString.class);
-        final STypeHTML   despacho         = addField(DESPACHO, STypeHTML.class);
+        final STypeString despacho         = addField(DESPACHO, STypeString.class);
         final STypeHTML   oficio           = addField(OFICIO, STypeHTML.class);
 
-        despacho.setView(SViewByPortletRichText::new);
+        despacho.setView(SViewTextArea::new);
         oficio.setView(SViewByPortletRichText::new);
 
         resultadoAnalise.asAtr()

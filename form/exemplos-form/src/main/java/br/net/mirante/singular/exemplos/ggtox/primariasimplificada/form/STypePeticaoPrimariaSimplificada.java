@@ -2,7 +2,6 @@ package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.*;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.listeners.IngredienteAtivoUpdateListener;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.AtivoAmostraValidator;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
@@ -36,6 +35,13 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
     public final static String ESTUDOS_RESIDUOS_PATH     = "estudosResiduos";
     public final static String NIVEL_PATH                = "nivel";
     public static final String INFORMACOES_PROCESSO_PATH = "informacoesProcesso";
+    public final static String TIPO_PETICAO              = "tipoPeticao";
+    public final static String ID_TIPO_PETICAO           = "id";
+    public final static String NOME_TIPO_PETICAO         = "nome";
+    public static final String REQUERENTE                = "requerente";
+    public static final String INGREDIENTE_ATIVO_PETICAO = "ingredienteAtivoPeticao";
+    public static final String PRODUTO_FORMULADO         = "produtoFormulado";
+    public static final String PRODUTO_TECNICO_PETICAO   = "produtoTecnicoPeticao";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -48,16 +54,16 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
 
         this.addInstanceValidator(new AtivoAmostraValidator());
 
-        final STypeComposite<SIComposite>                      tipoPeticao             = this.addFieldComposite("tipoPeticao");
-        final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger("id");
-        final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString("nome");
+        final STypeComposite<SIComposite>                      tipoPeticao             = this.addFieldComposite(TIPO_PETICAO);
+        final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger(ID_TIPO_PETICAO);
+        final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString(NOME_TIPO_PETICAO);
         final STypeString                                      nivel                   = this.addFieldString(NIVEL_PATH);
         final STypeDadosGeraisPeticaoPrimariaSimplificada      dadosGerais             = this.addField("dadosGerais", STypeDadosGeraisPeticaoPrimariaSimplificada.class);
-        final STypeRequerente                                  requerente              = this.addField("requerente", STypeRequerente.class);
+        final STypeRequerente                                  requerente              = this.addField(REQUERENTE, STypeRequerente.class);
         final STypeRepresentanteLegal                          representanteLegal      = this.addField("representanteLegal", STypeRepresentanteLegal.class);
-        final STypeIngredienteAtivoPeticaoPrimariaSimplificada ingredienteAtivoPeticao = this.addField("ingredienteAtivoPeticao", STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
-        final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnicoPeticao   = this.addField("produtoTecnicoPeticao", STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
-        final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado        = this.addField("produtoFormulado", STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
+        final STypeIngredienteAtivoPeticaoPrimariaSimplificada ingredienteAtivoPeticao = this.addField(INGREDIENTE_ATIVO_PETICAO, STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
+        final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnicoPeticao   = this.addField(PRODUTO_TECNICO_PETICAO, STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
+        final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado        = this.addField(PRODUTO_FORMULADO, STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
         final STypeEstudosResiduos                             estudosResiduos         = this.addField(ESTUDOS_RESIDUOS_PATH, STypeEstudosResiduos.class);
         final STypeInformacoesProcesso                         informacoesProcesso     = this.addField(INFORMACOES_PROCESSO_PATH, STypeInformacoesProcesso.class);
         final STypeAnexosPeticaoPrimariaSimplificada           anexos                  = this.addField("anexos", STypeAnexosPeticaoPrimariaSimplificada.class);
@@ -126,10 +132,6 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
         ingredienteAtivoPeticao
                 .asAtr()
                 .label("Ingrediente Ativo");
-
-        ingredienteAtivoPeticao
-                .ingredientesAtivos
-                .withUpdateListener(new IngredienteAtivoUpdateListener<>());
 
         produtoTecnicoPeticao
                 .asAtr()
@@ -243,7 +245,6 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .asAtr()
                 .dependsOn(tipoPeticao)
                 .exists(typeValueIsIn(idTipoPeticao, precisaEstudoResiduos));
-
 
         informacoesProcesso
                 .asAtr()

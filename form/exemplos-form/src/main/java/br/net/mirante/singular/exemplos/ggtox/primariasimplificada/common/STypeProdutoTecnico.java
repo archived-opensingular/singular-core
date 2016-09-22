@@ -18,6 +18,9 @@ import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.S
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeProdutoTecnico extends STypePersistentComposite {
 
+    public static final String NOME_PRODUTO_TECNICO            = "nomeProdutoTecnico";
+    public static final String NUMERO_PROCESSO_PRODUTO_TECNICO = "numeroProcessoProdutoTecnico";
+
     public STypeList<STypeFabricante, SIComposite> fabricantes;
     public STypeFabricanteConformeMatriz           fabricante;
     public STypeString                             nomeProdutoTecnico;
@@ -31,8 +34,8 @@ public class STypeProdutoTecnico extends STypePersistentComposite {
         super.onLoadType(builder);
 
 
-        numeroProcessoProdutoTecnico = addField("numeroProcessoProdutoTecnico", STypeAnvisaNumeroProcesso.class);
-        nomeProdutoTecnico = addField("nomeProdutoTecnico", STypeString.class);
+        numeroProcessoProdutoTecnico = addField(NUMERO_PROCESSO_PRODUTO_TECNICO, STypeAnvisaNumeroProcesso.class);
+        nomeProdutoTecnico = addField(NOME_PRODUTO_TECNICO, STypeString.class);
         finalidadeConformeMatriz = addFieldBoolean("finalidadeConformeMatriz");
         classeConformeMatriz = addFieldBoolean("classeConformeMatriz");
         modoAcaoConformeMatriz = addFieldBoolean("modoAcaoConformeMatriz");

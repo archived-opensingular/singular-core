@@ -22,7 +22,7 @@
                 allowedContent: true,
                 skin: 'office2013',
                 language: 'pt-br',
-                width: '210mm',
+                width: '215mm',
                 savePlugin: {
                     onSave: function (data) {
                         $('#' + htmlContainer).html(data);

@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeHTML;
 import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.util.SingularPredicates;
 import br.net.mirante.singular.form.view.SViewByPortletRichText;
 
 
@@ -35,10 +36,14 @@ public class STypeParecer extends STypePersistentComposite {
         oficio.setView(SViewByPortletRichText::new);
 
         parecer.asAtr()
+                .dependsOn(resultadoAnalise)
+                .visible(SingularPredicates.typeValueIsNotNull(resultadoAnalise))
                 .label("Parecer")
                 .required();
 
         oficio.asAtr()
+                .dependsOn(resultadoAnalise)
+                .visible(SingularPredicates.typeValueIsNotNull(resultadoAnalise))
                 .label("Ofício")
                 .required();
     }

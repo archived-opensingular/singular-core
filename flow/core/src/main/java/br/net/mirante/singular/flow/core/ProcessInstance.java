@@ -5,33 +5,19 @@
 
 package br.net.mirante.singular.flow.core;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityCategory;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
-import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
-import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
+import br.net.mirante.singular.flow.core.entity.*;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.variable.ValidationResult;
 import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
 import br.net.mirante.singular.flow.core.view.Lnk;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -549,7 +535,7 @@ public class ProcessInstance implements Serializable {
                 tarefaOrigem.endLastAllocation();
                 String transitionName = null;
                 if (transicaoOrigem != null) {
-                    transitionName = transicaoOrigem.getName();
+                    transitionName = transicaoOrigem.getAbbreviation();
                 }
                 getPersistenceService().completeTask(tarefaOrigem.getEntityTaskInstance(), transitionName, Flow.getUserIfAvailable());
             }

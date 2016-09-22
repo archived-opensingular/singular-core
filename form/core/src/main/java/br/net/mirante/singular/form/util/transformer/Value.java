@@ -5,25 +5,16 @@
 
 package br.net.mirante.singular.form.util.transformer;
 
+import br.net.mirante.singular.form.*;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SISimple;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.STypeSimple;
-import br.net.mirante.singular.form.SingularFormException;
 
 /**
  * Essa classe utilitaria realiza uma serie de operacoes sobre os valores guardados pelos MTIpos
@@ -48,7 +39,7 @@ public class Value {
      * @return false se o valor do tipo simples for nulo ou se o tipo não for
      * encontrado a partir da instancia current informada
      */
-    public static <T> boolean notNull(SInstance current, STypeSimple<? extends SISimple<T>, T> tipo) {
+    public static <T extends Serializable> boolean notNull(SInstance current, STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.of(current, tipo) != null;
     }
 
@@ -122,7 +113,7 @@ public class Value {
      * @param path
      * @return
      */
-    public static <T> T of(SInstance instanciaComposta, String path) {
+    public static <T extends Serializable> T of(SInstance instanciaComposta, String path) {
         if (instanciaComposta instanceof SIComposite) {
             SInstance campo = ((SIComposite) instanciaComposta).getField(path);
             if (campo instanceof SISimple) {
@@ -130,6 +121,14 @@ public class Value {
             } else if (campo instanceof SIList) {
                 return (T) ofList((SIList) campo);
             }
+        }
+        return null;
+    }
+
+    public static String stringValueOf(SInstance instanciaComposta, String path) {
+        Serializable s = of(instanciaComposta, path);
+        if (s != null) {
+            return String.valueOf(s);
         }
         return null;
     }
@@ -153,7 +152,7 @@ public class Value {
      * @param <T>
      * @return
      */
-    public static <T> T of(SInstance instancia, STypeSimple<? extends SISimple<T>, T> tipo) {
+    public static <T extends Serializable> T of(SInstance instancia, STypeSimple<? extends SISimple<T>, T> tipo) {
         if (instancia != null && tipo != null) {
             SISimple targetInstance = (SISimple) getInstance(instancia, tipo);
             if (targetInstance != null) {
@@ -245,11 +244,11 @@ public class Value {
         }
     }
 
-    public <T> T of(STypeSimple<? extends SISimple<T>, T> tipo) {
+    public <T extends Serializable> T of(STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.of(instancia, tipo);
     }
 
-    public <T> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
+    public <T extends Serializable> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.notNull(instancia, tipo);
     }
 

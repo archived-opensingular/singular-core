@@ -1,12 +1,15 @@
 package br.net.mirante.singular.form.wicket.model;
 
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
 import br.net.mirante.singular.form.converter.SimpleSInstanceConverter;
 import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 public class SelectSInstanceAwareModel extends AbstractSInstanceAwareModel<Serializable> {
 
@@ -14,8 +17,16 @@ public class SelectSInstanceAwareModel extends AbstractSInstanceAwareModel<Seria
 
     private final IModel<? extends SInstance> model;
 
+    private final SelectConverterResolver resolver;
+
     public SelectSInstanceAwareModel(IModel<? extends SInstance> model) {
         this.model = model;
+        this.resolver = sInstance -> Optional.ofNullable(sInstance.asAtrProvider().getConverter());
+    }
+
+    public SelectSInstanceAwareModel(IModel<? extends SInstance> model, SelectConverterResolver resolver) {
+        this.model = model;
+        this.resolver = resolver;
     }
 
     @Override
@@ -23,23 +34,15 @@ public class SelectSInstanceAwareModel extends AbstractSInstanceAwareModel<Seria
         return model.getObject();
     }
 
-    public SInstance getProviderMInstancia() {
-        if (model instanceof SInstanceListItemModel) {
-            return ((SInstanceListItemModel<?>) model).getRootTarget();
-        } else {
-            return model.getObject();
-        }
-    }
-
     @Override
     public Serializable getObject() {
         if (model.getObject().isEmptyOfData()) {
             return null;
         }
-        if (getProviderMInstancia().asAtrProvider().getConverter() != null) {
-            return getProviderMInstancia().asAtrProvider().getConverter().toObject(model.getObject());
+        if (resolver.apply(getMInstancia()).isPresent()) {
+            return resolver.apply(getMInstancia()).get().toObject(model.getObject());
         } else {
-            if (getProviderMInstancia() instanceof SIComposite) {
+            if (getMInstancia() instanceof SIComposite) {
                 throw new SingularFormException("Nenhum converter foi informado para o tipo " + getMInstancia().getName());
             } else {
                 return new SimpleSInstanceConverter<>().toObject(getMInstancia());
@@ -52,15 +55,27 @@ public class SelectSInstanceAwareModel extends AbstractSInstanceAwareModel<Seria
         if (object == null) {
             getMInstancia().clearInstance();
         } else {
-            if (getProviderMInstancia().asAtrProvider().getConverter() != null) {
-                getProviderMInstancia().asAtrProvider().getConverter().fillInstance(getMInstancia(), object);
+            if (resolver.apply(getMInstancia()).isPresent()) {
+                resolver.apply(getMInstancia()).get().fillInstance(getMInstancia(), object);
             } else {
-                if (getProviderMInstancia() instanceof SIComposite) {
+                if (getMInstancia() instanceof SIComposite) {
                     throw new SingularFormException("Nenhum converter foi informado para o tipo " + getMInstancia().getName());
                 } else {
                     new SimpleSInstanceConverter<>().fillInstance(getMInstancia(), object);
                 }
             }
         }
+    }
+
+    /**
+     * interface utilizada para determinar como o converter será encontrado a partir da miinstancia alvo
+     * da atualização do modelo.
+     * <p>
+     * Esse resolver é configurado por padrão, mas pode ser sobrescrito caso seja necessário
+     * encontrar o converter de uma maneira diferente.
+     */
+    @FunctionalInterface
+    public static interface SelectConverterResolver extends IFunction<SInstance, Optional<SInstanceConverter>> {
+        public Optional<SInstanceConverter> apply(SInstance instance);
     }
 }

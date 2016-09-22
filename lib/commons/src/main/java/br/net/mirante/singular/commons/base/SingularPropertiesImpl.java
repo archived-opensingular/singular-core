@@ -1,6 +1,11 @@
 package br.net.mirante.singular.commons.base;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import br.net.mirante.singular.commons.lambda.IConsumerEx;
+import br.net.mirante.singular.commons.util.PropertiesUtils;
+import org.apache.commons.io.input.NullInputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,30 +19,42 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
 
-import org.apache.commons.io.input.NullInputStream;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import br.net.mirante.singular.commons.lambda.IConsumerEx;
-import br.net.mirante.singular.commons.util.PropertiesUtils;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public enum SingularPropertiesImpl implements SingularProperties {
     INSTANCE;
 
-    private static final Logger   LOGGER                            = LoggerFactory.getLogger(SingularProperties.class);
-    private static final String   DEFAULT_PROPERTIES_FILENAME       = "singular-defaults.properties";
-
-    private volatile Properties   properties;
-    private Supplier<Properties>  singularDefaultPropertiesSupplier = this::getSingularDefaultProperties;
-
-    private static final String[] PROPERTIES_FILES_NAME             = { "singular-form-service.properties", "singular.properties" };
+    private static final Logger LOGGER                      = LoggerFactory.getLogger(SingularProperties.class);
+    private static final String DEFAULT_PROPERTIES_FILENAME = "singular-defaults.properties";
+    private static final String[] PROPERTIES_FILES_NAME = {"singular-form-service.properties", "singular.properties"};
+    private volatile Properties properties;
+    private Supplier<Properties> singularDefaultPropertiesSupplier = this::getSingularDefaultProperties;
 
     public static SingularPropertiesImpl get() {
         return INSTANCE;
+    }
+
+    private static File findConfDir() {
+        String path = System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
+        if (path != null) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("   Encontrado a propriedade singular.server.home={}", path);
+            }
+            File confDir = new File(path, "conf");
+            if (confDir.exists()) {
+                if (!confDir.isDirectory() && LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("   Era esperado que \"[singular.server.home]\\conf\" fosse um diretório");
+                }
+                return confDir;
+            } else if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("      Não exite o diretório {}", confDir);
+            }
+        }
+        return null;
     }
 
     /**
@@ -62,7 +79,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
      */
     @Override
     public boolean containsKey(String key) {
-        return getProperties().containsKey(key);
+        return getProperties().containsKey(key) || System.getProperties().containsKey(key);
     }
 
     /**
@@ -70,8 +87,24 @@ public enum SingularPropertiesImpl implements SingularProperties {
      */
     @Override
     public String getProperty(String key) {
-        return getProperties().getProperty(key);
+        //se contém a chave ainda que esta seja com valor nulo
+        if (getProperties().containsKey(key)) {
+            return getProperties().getProperty(key);
+        } else {
+            return System.getProperties().getProperty(key);
+        }
     }
+
+    @Override
+    public boolean isTrue(String key) {
+        return "true".equals(Optional.ofNullable(getProperty(key)).map(String::toLowerCase).orElse(null));
+    }
+
+    @Override
+    public boolean isFalse(String key) {
+        return "false".equals(Optional.ofNullable(getProperty(key)).map(String::toLowerCase).orElse(null));
+    }
+
     public String setProperty(String key, String value) {
         return (String) getProperties().setProperty(key, value);
     }
@@ -114,6 +147,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
 
     /**
      * Adiciona as propriedades default que já não foram carregadas dos arquivos em PROPERTIES_FILES_NAME.
+     *
      * @param resolvedProperties
      */
     private void appendDefaultProperties(Properties resolvedProperties) {
@@ -128,8 +162,8 @@ public enum SingularPropertiesImpl implements SingularProperties {
     public Properties getSingularDefaultProperties() {
         Properties defaults = new Properties();
         try (
-            InputStream input = defaultIfNull(SingularProperties.class.getResourceAsStream(DEFAULT_PROPERTIES_FILENAME), new NullInputStream(0));
-            Reader reader = new InputStreamReader(input, "utf-8")) {
+                InputStream input = defaultIfNull(SingularProperties.class.getResourceAsStream(DEFAULT_PROPERTIES_FILENAME), new NullInputStream(0));
+                Reader reader = new InputStreamReader(input, "utf-8")) {
             defaults.load(reader);
         } catch (IOException ex) {
             throw new IllegalStateException("");
@@ -150,33 +184,14 @@ public enum SingularPropertiesImpl implements SingularProperties {
         for (Map.Entry<Object, Object> entry : props.entrySet()) {
             if (newProperties.containsKey(entry.getKey())) {
                 throw new SingularException("O arquivo de propriedade '" + propertiesName +
-                    "' no classpath define novamente a propriedade '" + entry.getKey() +
-                    "' definida anteriormente em outro arquivo de propriedade no class path.").add("url",
+                        "' no classpath define novamente a propriedade '" + entry.getKey() +
+                        "' definida anteriormente em outro arquivo de propriedade no class path.").add("url",
                         propertiesUrl);
             } else {
                 newProperties.setProperty((String) entry.getKey(), (String) entry.getValue());
             }
         }
         return newProperties;
-    }
-
-    private static File findConfDir() {
-        String path = System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
-        if (path != null) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("   Encontrado a propriedade singular.server.home={}", path);
-            }
-            File confDir = new File(path, "conf");
-            if (confDir.exists()) {
-                if (!confDir.isDirectory() && LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("   Era esperado que \"[singular.server.home]\\conf\" fosse um diretório");
-                }
-                return confDir;
-            } else if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("      Não exite o diretório {}", confDir);
-            }
-        }
-        return null;
     }
 
     private URL findProperties(String name) {
@@ -195,7 +210,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
                 selected = u;
             } else if (!selected.toURI().equals(u.toURI())) {
                 throw new SingularException(
-                    "Foram encontrados dois arquivos com mesmo nome '" + name + "' no class path").add("arquivo 1",
+                        "Foram encontrados dois arquivos com mesmo nome '" + name + "' no class path").add("arquivo 1",
                         selected).add("arquivo 2", u);
             }
         }
@@ -245,16 +260,11 @@ public enum SingularPropertiesImpl implements SingularProperties {
 
     public static class Tester {
         private final Properties props;
+
         public Tester(Properties props) {
             this.props = props;
         }
-        public String getProperty(String key) {
-            return props.getProperty(key);
-        }
-        public String setProperty(String key, String value) {
-            return (String) props.setProperty(key, value);
-        }
-        
+
         public static <EX extends Exception> void runInSandbox(IConsumerEx<SingularPropertiesImpl, EX> callable) throws EX {
             Object state = saveState();
             try {
@@ -263,18 +273,29 @@ public enum SingularPropertiesImpl implements SingularProperties {
                 restoreState(state);
             }
         }
+
         protected static void restoreState(Object stateObject) {
-            State state = (State) stateObject;
+            State  state      = (State) stateObject;
             String serverHome = state.systemBackup.get(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
             SingularPropertiesImpl.get().setSingularServerHome(serverHome);
             SingularPropertiesImpl.INSTANCE.properties = state.propertiesBackup;
         }
+
         public static Object saveState() {
             State state = new State();
             PropertiesUtils.copyTo(SingularPropertiesImpl.INSTANCE.properties, state.propertiesBackup);
             state.systemBackup.put(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME, System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME));
             return state;
         }
+
+        public String getProperty(String key) {
+            return props.getProperty(key);
+        }
+
+        public String setProperty(String key, String value) {
+            return (String) props.setProperty(key, value);
+        }
+
         private static class State implements Serializable {
             final Properties          propertiesBackup = new Properties();
             final Map<String, String> systemBackup     = new HashMap<>();

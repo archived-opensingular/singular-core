@@ -52,7 +52,7 @@
     </bean>
 
 
-    <jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">
+    <jdbc:initialize-database data-source="dataSource" ignore-failures="NONE">
         <jdbc:script location="classpath:/db/ddl/create-tables.sql"/>
         <jdbc:script location="classpath:/db/ddl/create-tables-ator.sql"/>
         <jdbc:script location="classpath:/db/ddl/create-constraints.sql"/>
