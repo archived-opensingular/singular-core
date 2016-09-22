@@ -1,5 +1,26 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.form.SIComposite;
@@ -30,25 +51,6 @@ import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.flow.RedirectToUrlException;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
 
