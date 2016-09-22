@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import br.net.mirante.singular.flow.core.MUser;
@@ -20,6 +21,9 @@ public class DefaultUserDetailService implements SingularUserDetailsService {
     @Inject
     private ActorDAO actorDAO;
 
+    @Inject
+    private SingularServerConfiguration singularServerConfiguration;
+
     @Override
     public SingularUserDetails loadUserByUsername(String username, IServerContext context) throws UsernameNotFoundException {
         MUser user = actorDAO.buscarPorCodUsuario(username);
@@ -29,7 +33,7 @@ public class DefaultUserDetailService implements SingularUserDetailsService {
 
     @Override
     public IServerContext[] getContexts() {
-        return ServerContext.values();
+        return singularServerConfiguration.getContexts();
     }
 
     @Override
