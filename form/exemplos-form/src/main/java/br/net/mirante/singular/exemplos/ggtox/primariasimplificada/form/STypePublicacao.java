@@ -1,5 +1,6 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
+import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
 import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
@@ -21,7 +22,7 @@ public class STypePublicacao extends STypePersistentComposite {
         super.onLoadType(tb);
 
         final STypeDate    dataDOU   = addField(DATA_DOU, STypeDate.class);
-        final STypeInteger numeroDOU = addField(NUMERO_DOU, STypeInteger.class);
+        final STypeString  numeroDOU = addField(NUMERO_DOU, STypeString.class);
         final STypeDate    dataRE    = addField(DATA_RE, STypeDate.class);
         final STypeString  numeroRE  = addField(NUMERO_RE, STypeString.class);
 
@@ -36,6 +37,7 @@ public class STypePublicacao extends STypePersistentComposite {
                 .asAtrBootstrap()
                 .colPreference(3)
                 .asAtr()
+                .maxLength(6)
                 .label("Número do DOU")
                 .required();
 
@@ -50,6 +52,7 @@ public class STypePublicacao extends STypePersistentComposite {
                 .asAtrBootstrap()
                 .colPreference(3)
                 .asAtr()
+                .maxLength(10)
                 .label("Número RE")
                 .required();
 
