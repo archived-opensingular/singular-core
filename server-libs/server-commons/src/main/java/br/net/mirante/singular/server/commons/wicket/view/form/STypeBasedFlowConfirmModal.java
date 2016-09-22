@@ -47,6 +47,7 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
         return MarkupCreator.div("flow-modal" + idSuffix, new HTMLParameters().styleClass("portlet-body form"), MarkupCreator.div("singular-form-panel"));
     }
 
+
     @Override
     public BSModalBorder init(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm) {
         this.transitionName = tn;

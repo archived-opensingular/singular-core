@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.commons.spring.security.config.cas;
 
 
+import br.net.mirante.singular.commons.base.SingularProperties;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.spring.security.AbstractSingularSpringSecurityAdapter;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
@@ -8,7 +9,9 @@ import br.net.mirante.singular.server.commons.spring.security.config.SingularLog
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
@@ -30,6 +33,14 @@ public abstract class SingularCASSpringSecurityConfig extends AbstractSingularSp
     @Bean
     public SingularLogoutHandler singularLogoutHandler() {
         return new SingularCASLogoutHandler(getCASLogoutURL());
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        if (SingularProperties.get().isTrue(SingularProperties.SINGULAR_DEV_MODE)){
+            web.debug(true);
+        }
+        super.configure(web);
     }
 
     @Override
