@@ -33,6 +33,7 @@ public class ParecerTecnicoDTO implements Serializable {
     private List<String>              numerosProcessoProdutosTecnicos;
     private List<String>              ingredientesAtivos;
     private List<ExigenciaTecnicaDTO> exigencias;
+    private List<FormuladorDTO>       formuladores;
 
     public String getNumero() {
         return numero;
@@ -266,6 +267,15 @@ public class ParecerTecnicoDTO implements Serializable {
 
     public ParecerTecnicoDTO setProdutoTecnicoOuPreMistura(boolean produtoTecnicoOuPreMistura) {
         this.produtoTecnicoOuPreMistura = produtoTecnicoOuPreMistura;
+        return this;
+    }
+
+    public List<FormuladorDTO> getFormuladores() {
+        return formuladores;
+    }
+
+    public ParecerTecnicoDTO setFormuladores(List<FormuladorDTO> formuladores) {
+        this.formuladores = formuladores;
         return this;
     }
 }
