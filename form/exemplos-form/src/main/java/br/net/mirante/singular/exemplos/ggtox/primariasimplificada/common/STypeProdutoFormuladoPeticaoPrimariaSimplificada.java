@@ -25,6 +25,7 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersi
     public static final String NOME_TIPO_FORMULACAO  = "nomeTipoFormulacao";
     public static final String SIGLA_TIPO_FORMULACAO = "siglaTipoFormulacao";
     public static final String TIPO_FORMULACAO       = "tipoFormulacao";
+    public static final String FORMULADORES          = "formuladores";
 
     public STypeFormuladorConformeMatriz           formulador;
     public STypeList<STypeFormulador, SIComposite> formuladores;
@@ -124,7 +125,7 @@ public class STypeProdutoFormuladoPeticaoPrimariaSimplificada extends STypePersi
                 .asAtrBootstrap()
                 .colPreference(3);
 
-        formuladores = addFieldListOf("formuladores", STypeFormulador.class);
+        formuladores = addFieldListOf(FORMULADORES, STypeFormulador.class);
 
         formuladores
                 .asAtr()
