@@ -67,8 +67,10 @@ public class SViewByBlock extends AbstractSViewByBlock {
             return add(type.getNameSimple());
         }
 
-        public BlockBuilder add(String typeName) {
-            block.getTypes().add(typeName);
+        public BlockBuilder add(String...typeNames) {
+            for (String typeName : typeNames) {
+                block.getTypes().add(typeName);
+            }
             return this;
         }
 

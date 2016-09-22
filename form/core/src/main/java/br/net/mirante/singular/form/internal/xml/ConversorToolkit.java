@@ -5,8 +5,10 @@
 
 package br.net.mirante.singular.form.internal.xml;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -309,6 +311,15 @@ public final class ConversorToolkit {
         return getTimeFormat().format(data);
     }
 
+    public static String printNumber(BigDecimal bigDecimal, Integer casasDecimais) {
+        DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(LOCALE);
+        nf.setParseBigDecimal(true);
+        nf.setGroupingUsed(true);
+        nf.setMinimumFractionDigits(casasDecimais);
+        nf.setMaximumFractionDigits(casasDecimais);
+        return nf.format(bigDecimal);
+    }
+    
     public static String printNumber(Double valor) {
         if (valor == null) {
             return null;

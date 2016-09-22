@@ -5,11 +5,9 @@
 package br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -21,6 +19,7 @@ import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.STypeList;
 import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.internal.xml.ConversorToolkit;
 import br.net.mirante.singular.form.type.core.STypeInteger;
 import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
 import br.net.mirante.singular.form.util.transformer.Value;
@@ -227,7 +226,8 @@ public class STypePDI extends STypeComposite<SIComposite>{
                     .filter(Objects::nonNull)
                     .reduce(total, BigDecimal::subtract);
             }
-            return formatDecimal(total, 2);
+            
+            return ConversorToolkit.printNumber(total, 2);
         };
     }
     
@@ -241,17 +241,8 @@ public class STypePDI extends STypeComposite<SIComposite>{
                     .filter(Objects::nonNull)
                     .reduce(total, BigDecimal::add);
             }
-            return formatDecimal(total, 2);
+            return ConversorToolkit.printNumber(total, 2);
         };
-    }
-    
-    private static String formatDecimal(BigDecimal bigDecimal, Integer casasDecimais) {
-        DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(new Locale("pt", "BR"));
-        nf.setParseBigDecimal(true);
-        nf.setGroupingUsed(true);
-        nf.setMinimumFractionDigits(casasDecimais);
-        nf.setMaximumFractionDigits(casasDecimais);
-        return nf.format(bigDecimal);
     }
     
     private void addOutros() {

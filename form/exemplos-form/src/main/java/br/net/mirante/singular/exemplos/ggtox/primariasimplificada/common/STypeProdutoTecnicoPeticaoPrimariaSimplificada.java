@@ -14,6 +14,7 @@ import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeProdutoTecnicoPeticaoPrimariaSimplificada extends STypePersistentComposite {
 
+    public static final String PRODUTOS_TECNICOS = "produtosTecnicos";
     public STypeList<STypeProdutoTecnico, SIComposite> produtosTecnicos;
 
     public STypeBoolean produtoTecnicoNaoSeAplica;
@@ -34,7 +35,7 @@ public class STypeProdutoTecnicoPeticaoPrimariaSimplificada extends STypePersist
                 .asAtr()
                 .label("Produto técnico não se aplica");
 
-        produtosTecnicos = addFieldListOf("produtosTecnicos", STypeProdutoTecnico.class);
+        produtosTecnicos = addFieldListOf(PRODUTOS_TECNICOS, STypeProdutoTecnico.class);
 
         produtosTecnicos
                 .asAtr()
