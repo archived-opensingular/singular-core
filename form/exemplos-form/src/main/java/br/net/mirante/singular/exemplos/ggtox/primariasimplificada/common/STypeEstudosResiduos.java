@@ -51,7 +51,9 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
         public static final String NOME_OUTRA_CULTURA_FIELD_NAME = "nomeOutraCultura";
         public static final String CULTURAS_PATH                 = "culturas";
         public static final String ORIGEM_ESTUDO_PATH            = "origemEstudo";
-
+        public static final String CULTURA                       = "cultura";
+        public static final String NOME_CULTURA                  = "nomeCultura";
+        public static final String OUTRA_CULTURA                 = "outraCultura";
 
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
         private final STypeComposite<SIComposite>                         rootType;
@@ -60,13 +62,13 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
         public EstudoResiduo(STypeComposite<SIComposite> parentType) {
 
-            root = parentType.addFieldListOfComposite(CULTURAS_PATH, "cultura");
+            root = parentType.addFieldListOfComposite(CULTURAS_PATH, CULTURA);
             rootType = root.getElementsType();
 
-            final STypeComposite<SIComposite> cultura     = rootType.addFieldComposite("cultura");
+            final STypeComposite<SIComposite> cultura     = rootType.addFieldComposite(CULTURA);
             final STypeLong                   codCultura  = cultura.addField("codCultura", STypeLong.class);
             final STypeLong                   codSubgrupo = cultura.addField("codSubgrupo", STypeLong.class);
-            final STypeString                 nomeCultura = cultura.addField("nomeCultura", STypeString.class);
+            final STypeString                 nomeCultura = cultura.addField(NOME_CULTURA, STypeString.class);
 
             final STypeString nomeOutraCultura = rootType.addFieldString(NOME_OUTRA_CULTURA_FIELD_NAME);
 
@@ -74,7 +76,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             final STypeLong                   codEmprego  = emprego.addField("codEmprego", STypeLong.class);
             final STypeString                 nomeEmprego = emprego.addField("nomeEmprego", STypeString.class);
 
-            final STypeBoolean outraCultura = rootType.addFieldBoolean("outraCultura");
+            final STypeBoolean outraCultura = rootType.addFieldBoolean(OUTRA_CULTURA);
 
             final STypeBoolean                parteComestivel     = rootType.addFieldBoolean("parteComestivel");
             final STypeInteger                intervaloPretendido = rootType.addFieldInteger("intervaloPretendido");

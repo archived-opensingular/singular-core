@@ -34,6 +34,7 @@ public class ParecerTecnicoDTO implements Serializable {
     private List<ExigenciaTecnicaDTO> exigencias;
     private List<FormuladorDTO>       formuladores;
     private List<ProdutoTecnicoDTO>   produtosTecnicos;
+    private List<CulturaDTO>          culturas;
 
     public String getNumero() {
         return numero;
@@ -279,4 +280,12 @@ public class ParecerTecnicoDTO implements Serializable {
         return this;
     }
 
+    public List<CulturaDTO> getCulturas() {
+        return culturas;
+    }
+
+    public ParecerTecnicoDTO setCulturas(List<CulturaDTO> culturas) {
+        this.culturas = culturas;
+        return this;
+    }
 }
