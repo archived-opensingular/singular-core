@@ -39,10 +39,9 @@ public class STypeAnaliseGerente extends STypePersistentComposite {
 
         despacho.asAtr()
                 .label("Despacho")
+                .maxLength(5000)
+                .visible(SingularPredicates.typeValueIsEqualsTo(resultadoAnalise, REPROVAR))
                 .required();
-
-        despacho.asAtr()
-                .visible(SingularPredicates.typeValueIsEqualsTo(resultadoAnalise, REPROVAR));
 
         oficio.withInitListener(sihtml -> {
             if (sihtml.isEmptyOfData()) {

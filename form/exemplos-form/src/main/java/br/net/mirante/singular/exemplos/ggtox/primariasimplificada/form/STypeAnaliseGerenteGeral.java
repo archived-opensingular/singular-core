@@ -40,12 +40,12 @@ public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
 
         resultadoAnalise.withRadioView();
 
-        despacho.asAtr()
-                .label("Despacho")
-                .required();
 
         despacho.asAtr()
-                .visible(SingularPredicates.typeValueIsEqualsTo(resultadoAnalise, INDEFERIR));
+                .label("Despacho")
+                .maxLength(5000)
+                .visible(SingularPredicates.typeValueIsEqualsTo(resultadoAnalise, INDEFERIR))
+                .required();
 
         oficio.withInitListener(sihtml -> {
             if (sihtml.isEmptyOfData()) {
