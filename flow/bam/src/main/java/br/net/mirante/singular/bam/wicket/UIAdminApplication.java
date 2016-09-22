@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.bam.wicket;
 
+import br.net.mirante.singular.commons.base.SingularProperties;
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import br.net.mirante.singular.bam.wicket.view.page.dashboard.DashboardPage;
 import org.apache.wicket.RuntimeConfigurationType;
@@ -70,7 +71,7 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {
-        if ("false".equals(System.getProperty("singular.development"))) {
+        if (SingularProperties.get().isFalse(SingularProperties.SINGULAR_DEV_MODE)) {
             return RuntimeConfigurationType.DEPLOYMENT;
         } else {
             return RuntimeConfigurationType.DEVELOPMENT;

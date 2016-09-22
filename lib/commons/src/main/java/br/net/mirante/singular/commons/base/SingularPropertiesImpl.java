@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
 
@@ -72,6 +73,17 @@ public enum SingularPropertiesImpl implements SingularProperties {
     public String getProperty(String key) {
         return getProperties().getProperty(key);
     }
+
+    @Override
+    public boolean isTrue(String key){
+        return "true".equals(Optional.ofNullable(getProperty(key)).map(String::toLowerCase).orElse(null));
+    }
+
+    @Override
+    public boolean isFalse(String key){
+        return "false".equals(Optional.ofNullable(getProperty(key)).map(String::toLowerCase).orElse(null));
+    }
+
     public String setProperty(String key, String value) {
         return (String) getProperties().setProperty(key, value);
     }
