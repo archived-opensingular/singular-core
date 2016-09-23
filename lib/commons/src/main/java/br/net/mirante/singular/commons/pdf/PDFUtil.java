@@ -263,8 +263,8 @@ public abstract class PDFUtil implements Loggable {
      * @param commandArgs o vetor com os argumentos.
      */
     protected void addDefaultHeaderCommandArgs(List<String> commandArgs) {
-        commandArgs.add("--margin-top");
-        commandArgs.add("26mm");
+//        commandArgs.add("--margin-top");
+//        commandArgs.add("26mm");
         commandArgs.add("--header-spacing");
         commandArgs.add("5");
     }
@@ -275,8 +275,8 @@ public abstract class PDFUtil implements Loggable {
      * @param commandArgs o vetor com os argumentos.
      */
     protected void addDefaultFooterCommandArgs(List<String> commandArgs) {
-        commandArgs.add("--margin-bottom");
-        commandArgs.add("15mm");
+//        commandArgs.add("--margin-bottom");
+//        commandArgs.add("15mm");
         commandArgs.add("--footer-spacing");
         commandArgs.add("5");
     }
@@ -346,8 +346,8 @@ public abstract class PDFUtil implements Loggable {
     }
 
     protected String safeWrapHtml(String html) {
-        if (html == null) {
-            return null;
+        if (html == null || html.startsWith(("<!DOCTYPE"))) {
+            return html;
         }
         String  wraped   = html;
         boolean needHTML = !html.startsWith("<html>");
