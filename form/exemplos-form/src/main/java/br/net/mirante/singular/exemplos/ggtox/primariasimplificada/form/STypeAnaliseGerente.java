@@ -43,13 +43,6 @@ public class STypeAnaliseGerente extends STypePersistentComposite {
                 .visible(SingularPredicates.typeValueIsEqualsTo(resultadoAnalise, REPROVAR))
                 .required();
 
-        oficio.withInitListener(sihtml -> {
-            if (sihtml.isEmptyOfData()) {
-                final ClassLoader loader = this.getClass().getClassLoader();
-                sihtml.fillFromInputStream(loader.getResourceAsStream("modelo/ModeloParecer.html"));
-            }
-        });
-
         oficio.asAtr()
                 .label("Ofício")
                 .required();
