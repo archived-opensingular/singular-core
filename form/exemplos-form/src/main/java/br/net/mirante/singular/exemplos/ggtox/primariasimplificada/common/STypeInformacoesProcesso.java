@@ -14,6 +14,8 @@ import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.S
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeInformacoesProcesso extends STypePersistentComposite {
 
+    public static final String MARCA_COMERCIAL_PATH = "marcaComercial";
+
     public STypeString marcaComercial;
     public STypeAttachment modeloRotulo;
     public STypeAttachment modeloBula;
@@ -28,13 +30,14 @@ public class STypeInformacoesProcesso extends STypePersistentComposite {
                 .asAtr()
                 .label("Informações do Processo");
 
-        marcaComercial = addFieldString("marcaComercial");
+        marcaComercial = addFieldString(MARCA_COMERCIAL_PATH);
         modeloRotulo = addFieldAttachment("modeloRotulo");
         modeloBula = addFieldAttachment("modeloBula");
         embalagens = addFieldListOfAttachment("embalagens", "embalagem");
 
         marcaComercial
                 .asAtr()
+                .maxLength(180)
                 .required(OBRIGATORIO)
                 .label("Marca Comercial")
                 .asAtrBootstrap()

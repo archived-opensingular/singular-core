@@ -33,7 +33,7 @@ public class FormAnnotationVersionTest extends FormServiceTest {
 
     private FormKey insert() {
         SIComposite pessoa = formWithAnnotations();
-        FormKey pessoaKey = formService.insert(pessoa);
+        FormKey pessoaKey = formService.insert(pessoa, 1);
         SIComposite pessoaLoaded = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory);
         Assert.assertEquals(pessoa, pessoaLoaded);
         Assert.assertEquals(true, pessoaLoaded.asAtrAnnotation().hasAnyRefusal());
@@ -68,7 +68,7 @@ public class FormAnnotationVersionTest extends FormServiceTest {
     public void checkKeepAnnotations() {
         FormKey pessoaKey = insert();
         SIComposite firstVersion = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory);
-        FormKey newPessoaKey = formService.newVersion(firstVersion);
+        FormKey newPessoaKey = formService.newVersion(firstVersion, 1);
         SIComposite secondVersion = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory);
 
         Assert.assertEquals(true, secondVersion.asAtrAnnotation().hasAnyRefusal());

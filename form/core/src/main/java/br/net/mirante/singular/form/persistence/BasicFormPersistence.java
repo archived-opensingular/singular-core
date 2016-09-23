@@ -32,7 +32,7 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      *
      * @return Nunca Null
      */
-    public FormKey insert(INSTANCE instance);
+    public FormKey insert(INSTANCE instance, Integer inclusionActor);
 
     /**
      * Apaga a instância correspondente a chave informada.
@@ -45,13 +45,13 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      * @param instance A mesma deverá conter o atributo FormKey, para tanto deverá ter sido recuperada pela própria
      *                 persitência.
      */
-    public void update(INSTANCE instance);
+    public void update(INSTANCE instance, Integer inclusionActor);
 
     /**
      * Atualiza ou insere a instância de acordo se a mesma ja tiver ou não um FormKey associado (como atributo da instância).
      * @return Chave da instância criada ou atualizada.
      */
-    public FormKey insertOrUpdate(INSTANCE instance);
+    public FormKey insertOrUpdate(INSTANCE instance, Integer inclusionActor);
 
 
     /**
@@ -68,8 +68,8 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      * @param instance
      * @return
      */
-    public default FormKey newVersion(INSTANCE instance){
-        return newVersion(instance, true);
+    public default FormKey newVersion(INSTANCE instance, Integer inclusionActor){
+        return newVersion(instance, inclusionActor, true);
     }
 
     /**
@@ -78,5 +78,5 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      * @param instance
      * @return
      */
-    public FormKey newVersion(INSTANCE instance, boolean keepAnnotations);
+    public FormKey newVersion(INSTANCE instance, Integer inclusionActor, boolean keepAnnotations);
 }

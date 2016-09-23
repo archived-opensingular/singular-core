@@ -1,7 +1,25 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX.*;
+import static br.net.mirante.singular.form.util.SingularPredicates.*;
+
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.*;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeAnexosPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeDadosGeraisPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeEstudosResiduos;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeInformacoesProcesso;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeIngredienteAtivoPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoFormuladoPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoTecnicoPeticaoPrimariaSimplificada;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeRepresentanteLegal;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeRequerente;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.AtivoAmostraValidator;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
@@ -16,15 +34,6 @@ import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.view.SViewSelectionByRadio;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX.*;
-import static br.net.mirante.singular.form.util.SingularPredicates.*;
 
 @SInfoType(name = "STypePeticaoPrimariaSimplificada", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
@@ -34,6 +43,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
 
     public final static String ESTUDOS_RESIDUOS_PATH     = "estudosResiduos";
     public final static String NIVEL_PATH                = "nivel";
+    public static final String INFORMACOES_PROCESSO_PATH = "informacoesProcesso";
     public final static String TIPO_PETICAO              = "tipoPeticao";
     public final static String ID_TIPO_PETICAO           = "id";
     public final static String NOME_TIPO_PETICAO         = "nome";
@@ -64,7 +74,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
         final STypeProdutoTecnicoPeticaoPrimariaSimplificada   produtoTecnicoPeticao   = this.addField(PRODUTO_TECNICO_PETICAO, STypeProdutoTecnicoPeticaoPrimariaSimplificada.class);
         final STypeProdutoFormuladoPeticaoPrimariaSimplificada produtoFormulado        = this.addField(PRODUTO_FORMULADO, STypeProdutoFormuladoPeticaoPrimariaSimplificada.class);
         final STypeEstudosResiduos                             estudosResiduos         = this.addField(ESTUDOS_RESIDUOS_PATH, STypeEstudosResiduos.class);
-        final STypeInformacoesProcesso                         informacoesProcesso     = this.addField("informacoesProcesso", STypeInformacoesProcesso.class);
+        final STypeInformacoesProcesso                         informacoesProcesso     = this.addField(INFORMACOES_PROCESSO_PATH, STypeInformacoesProcesso.class);
         final STypeAnexosPeticaoPrimariaSimplificada           anexos                  = this.addField("anexos", STypeAnexosPeticaoPrimariaSimplificada.class);
 
         tipoPeticao

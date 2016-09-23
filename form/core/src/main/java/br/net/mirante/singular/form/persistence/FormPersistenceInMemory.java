@@ -24,7 +24,7 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     }
 
     @Override
-    protected void updateInternal(FormKeyInt key, INSTANCE instance) {
+    protected void updateInternal(FormKeyInt key, INSTANCE instance, Integer inclusionActor) {
         if (!collection.containsKey(key)) {
             throw addInfo(new SingularFormPersistenceException("Não existe uma isntância com a chave informada")).add(
                     "key", key);
@@ -38,7 +38,7 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     }
 
     @Override
-    protected FormKeyInt insertInternal(INSTANCE instance) {
+    protected FormKeyInt insertInternal(INSTANCE instance, Integer inclusionActor) {
         FormKeyInt key = new FormKeyInt(++id);
         collection.put(key, instance);
         return key;
@@ -65,7 +65,7 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     }
 
     @Override
-    public FormKey newVersion(INSTANCE instance, boolean keepAnnotations) {
+    public FormKey newVersion(INSTANCE instance, Integer inclusionActor, boolean keepAnnotations) {
         //TODO: FORM_ANNOTATION_VERSION
         return null;
     }
