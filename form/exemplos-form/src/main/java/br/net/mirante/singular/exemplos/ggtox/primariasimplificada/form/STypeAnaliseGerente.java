@@ -18,6 +18,8 @@ public class STypeAnaliseGerente extends STypePersistentComposite {
     public static final String OFICIO            = "oficio";
     public static final String APROVAR           = "Aprovar";
     public static final String REPROVAR          = "Reprovar";
+    public static final String NOME              = "nome";
+    public static final String AREA              = "area";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -26,6 +28,8 @@ public class STypeAnaliseGerente extends STypePersistentComposite {
         final STypeString resultadoAnalise = addField(RESULTADO_ANALISE, STypeString.class);
         final STypeString despacho         = addField(DESPACHO, STypeString.class);
         final STypeHTML   oficio           = addField(OFICIO, STypeHTML.class);
+        final STypeString nome             = addField(NOME, STypeString.class);
+        final STypeString area             = addField(AREA, STypeString.class);
 
         despacho.setView(SViewTextArea::new);
         oficio.setView(SViewByPortletRichText::new);
@@ -43,15 +47,34 @@ public class STypeAnaliseGerente extends STypePersistentComposite {
                 .visible(SingularPredicates.typeValueIsEqualsTo(resultadoAnalise, REPROVAR))
                 .required();
 
+
         oficio.asAtr()
                 .label("Ofício")
                 .required();
+
+        nome.asAtr()
+                .label("Nome")
+                .required()
+                .maxLength(150)
+                .asAtrBootstrap()
+                .colPreference(3);
+
+        area.withInitialValue("GPREQ/GGTOX");
+        area.asAtr()
+                .label("Área")
+                .required()
+                .maxLength(100)
+                .asAtrBootstrap()
+                .colPreference(3);
 
         withView(new SViewByBlock(), vbb -> {
             vbb.newBlock("Análise Gerencial")
                     .add(resultadoAnalise)
                     .add(despacho)
-                    .add(oficio);
+                    .add(oficio)
+                    .newBlock("Dados para assinatura")
+                    .add(nome)
+                    .add(area);
         });
     }
 

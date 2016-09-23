@@ -19,6 +19,8 @@ public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
     public final static String PATH_OFICIO            = "oficio";
     public final static String DEFERIR                = "Deferir";
     public final static String INDEFERIR              = "Indeferir";
+    public static final String NOME                   = "nome";
+    public static final String AREA                   = "area";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -27,6 +29,8 @@ public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
         final STypeString resultadoAnalise = addField(PATH_RESULTADO_ANALISE, STypeString.class);
         final STypeString despacho         = addField(PATH_DESPACHO, STypeString.class);
         final STypeHTML   oficio           = addField(PATH_OFICIO, STypeHTML.class);
+        final STypeString nome             = addField(NOME, STypeString.class);
+        final STypeString area             = addField(AREA, STypeString.class);
 
         despacho.setView(SViewTextArea::new);
         oficio.setView(SViewByPortletRichText::new);
@@ -52,11 +56,29 @@ public class STypeAnaliseGerenteGeral extends STypePersistentComposite {
                 .label("Ofício")
                 .required();
 
+        nome.asAtr()
+                .label("Nome")
+                .required()
+                .maxLength(150)
+                .asAtrBootstrap()
+                .colPreference(3);
+
+        area.withInitialValue("GGTOX/DIARE");
+        area.asAtr()
+                .label("Área")
+                .required()
+                .maxLength(100)
+                .asAtrBootstrap()
+                .colPreference(3);
+
         withView(new SViewByBlock(), vbb -> {
             vbb.newBlock("Análise Gerencial")
                     .add(resultadoAnalise)
                     .add(despacho)
-                    .add(oficio);
+                    .add(oficio)
+                    .newBlock("Dados para assinatura")
+                    .add(nome)
+                    .add(area);
         });
 
     }
