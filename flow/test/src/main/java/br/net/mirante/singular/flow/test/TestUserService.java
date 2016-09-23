@@ -37,4 +37,9 @@ public class TestUserService implements IUserService {
     public MUser saveUserIfNeeded(String codUsuario) {
         return (MUser)testDAO.getSomeUser(Integer.parseInt(codUsuario));
     }
+
+    @Override
+    public MUser findByCod(Integer cod) {
+        return (MUser)testDAO.getSomeUser(1);
+    }
 }

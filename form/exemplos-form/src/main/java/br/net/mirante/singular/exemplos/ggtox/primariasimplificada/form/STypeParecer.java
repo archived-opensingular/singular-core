@@ -5,13 +5,13 @@ import br.net.mirante.singular.form.TypeBuilder;
 import br.net.mirante.singular.form.persistence.STypePersistentComposite;
 import br.net.mirante.singular.form.type.core.STypeHTML;
 import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.util.SingularPredicates;
 import br.net.mirante.singular.form.view.SViewByPortletRichText;
 
 
 @SInfoType(name = "STypeParecer", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypeParecer extends STypePersistentComposite {
 
+    public static final String DEFERIR           = "Deferir";
     public static final String RESULTADO_ANALISE = "resultadoAnalise";
     public static final String PARECER           = "parecer";
     public static final String OFICIO            = "oficio";
@@ -28,21 +28,17 @@ public class STypeParecer extends STypePersistentComposite {
                 .label("Resultado da Análise")
                 .required();
 
-        resultadoAnalise.selectionOf("Deferir", "Indeferir");
+        resultadoAnalise.selectionOf(DEFERIR, "Indeferir");
         resultadoAnalise.withRadioView();
 
         parecer.setView(SViewByPortletRichText::new);
         oficio.setView(SViewByPortletRichText::new);
 
         parecer.asAtr()
-                .dependsOn(resultadoAnalise)
-                .visible(SingularPredicates.typeValueIsNotNull(resultadoAnalise))
                 .label("Parecer")
                 .required();
 
         oficio.asAtr()
-                .dependsOn(resultadoAnalise)
-                .visible(SingularPredicates.typeValueIsNotNull(resultadoAnalise))
                 .label("Ofício")
                 .required();
     }

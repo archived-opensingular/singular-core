@@ -48,13 +48,13 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
-    public FormKey insert(SInstance instance) {
-        return super.insert(instance);
+    public FormKey insert(SInstance instance, Integer inclusionActor) {
+        return super.insert(instance, inclusionActor);
     }
 
     @Override
-    public FormKey insertOrUpdate(SInstance instance) {
-        return super.insertOrUpdate(instance);
+    public FormKey insertOrUpdate(SInstance instance, Integer inclusionActor) {
+        return super.insertOrUpdate(instance, inclusionActor);
     }
 
     private SInstance internalLoadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, FormVersionEntity formVersionEntity){
@@ -78,9 +78,9 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
-    protected FormKeyLong insertInternal(SInstance instance) {
+    protected FormKeyLong insertInternal(SInstance instance, Integer inclusionActor) {
         final FormEntity entity = saveNewFormEntity(instance);
-        saveOrUpdateFormVersion(instance, entity, new FormVersionEntity(), KEEP_ANNOTATIONS);
+        saveOrUpdateFormVersion(instance, entity, new FormVersionEntity(), inclusionActor, KEEP_ANNOTATIONS);
         return new FormKeyLong(entity.getCod());
     }
 
@@ -102,9 +102,10 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         return formTypeEntity;
     }
 
-    private void saveOrUpdateFormVersion(final SInstance instance, final FormEntity entity, final FormVersionEntity formVersionEntity, boolean keepAnnotations) {
+    private void saveOrUpdateFormVersion(final SInstance instance, final FormEntity entity, final FormVersionEntity formVersionEntity, Integer inclusionActor, boolean keepAnnotations) {
         formVersionEntity.setFormEntity(entity);
         formVersionEntity.setXml(extractContent(instance));
+        formVersionEntity.setInclusionActor(inclusionActor);
         formVersionDAO.saveOrUpdate(formVersionEntity);
         entity.setCurrentFormVersionEntity(formVersionEntity);
         if (keepAnnotations) {
@@ -180,12 +181,12 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
-    protected void updateInternal(FormKeyLong key, SInstance instance) {
-        updateInternal(loadFormEntity(key), instance);
+    protected void updateInternal(FormKeyLong key, SInstance instance, Integer inclusionActor) {
+        updateInternal(loadFormEntity(key), instance, inclusionActor);
     }
 
-    protected void updateInternal(FormEntity entity, SInstance instance) {
-        saveOrUpdateFormVersion(instance, entity, entity.getCurrentFormVersionEntity(), KEEP_ANNOTATIONS);
+    protected void updateInternal(FormEntity entity, SInstance instance, Integer inclusionActor) {
+        saveOrUpdateFormVersion(instance, entity, entity.getCurrentFormVersionEntity(), inclusionActor, KEEP_ANNOTATIONS);
         formDAO.saveOrUpdate(entity);
     }
 
@@ -223,15 +224,15 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
-    public FormKey newVersion(SInstance instance) {
-        return super.newVersion(instance);
+    public FormKey newVersion(SInstance instance, Integer inclusionActor) {
+        return super.newVersion(instance, inclusionActor);
     }
 
     @Override
-    public FormKey newVersion(SInstance instance, boolean keepAnnotations) {
+    public FormKey newVersion(SInstance instance, Integer inclusionActor, boolean keepAnnotations) {
         FormKey    formKey    = readKeyAttribute(instance, null);
         FormEntity formEntity = loadFormEntity(formKey);
-        saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity(), keepAnnotations);
+        saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity(), inclusionActor, keepAnnotations);
         return formKey;
     }
 

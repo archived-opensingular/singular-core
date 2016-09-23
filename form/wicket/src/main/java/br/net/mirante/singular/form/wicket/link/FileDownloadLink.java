@@ -9,6 +9,7 @@ import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.file.Files;
 import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.time.Duration;
 
 import java.io.File;
 
@@ -37,6 +38,7 @@ public class FileDownloadLink extends Link<File> {
                     }
                 }
                         .setFileName(fileName)
+                        .setCacheDuration(Duration.NONE)
                         .setContentDisposition(contentDisposition));
     }
 

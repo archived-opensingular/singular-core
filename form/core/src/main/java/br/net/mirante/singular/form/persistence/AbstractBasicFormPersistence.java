@@ -88,42 +88,42 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
     }
 
     @Override
-    public void update(INSTANCE instance) {
+    public void update(INSTANCE instance, Integer inclusionActor) {
         KEY key = readKeyAttribute(instance, " a instância tivesse o atributo FormKey preenchido");
-        updateInternal(key, instance);
+        updateInternal(key, instance, inclusionActor);
     }
 
     @Override
-    public FormKey insertOrUpdate(INSTANCE instance) {
+    public FormKey insertOrUpdate(INSTANCE instance, Integer inclusionActor) {
         KEY key = readKeyAttribute(instance, null);
         if (key == null) {
-            key = insertImpl(instance);
+            key = insertImpl(instance, inclusionActor);
         } else {
-            updateInternal(key, instance);
+            updateInternal(key, instance, inclusionActor);
         }
         return key;
     }
 
     @Override
-    public FormKey insert(INSTANCE instance) {
+    public FormKey insert(INSTANCE instance, Integer inclusionActor) {
         if (instance == null) {
             throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null")).add(this);
         }
-        return insertImpl(instance);
+        return insertImpl(instance, inclusionActor);
     }
 
-    private KEY insertImpl(INSTANCE instance) {
-        KEY key = insertInternal(instance);
+    private KEY insertImpl(INSTANCE instance, Integer inclusionActor) {
+        KEY key = insertInternal(instance, inclusionActor);
         checkKey(key, instance, " o insert interno gerasse uma FormKey, mas retornou null");
         instance.setAttributeValue(ATR_FORM_KEY, key);
         return key;
     }
 
-    protected abstract void updateInternal(KEY key, INSTANCE instance);
+    protected abstract void updateInternal(KEY key, INSTANCE instance, Integer inclusionActor);
 
     protected abstract void deleteInternal(KEY key);
 
-    protected abstract KEY insertInternal(INSTANCE instance);
+    protected abstract KEY insertInternal(INSTANCE instance, Integer inclusionActor);
 
     //-------------------------------------------------
     // Métodos de apoio

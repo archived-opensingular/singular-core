@@ -27,7 +27,7 @@ public class FormVersionTest extends FormServiceTest {
 
     private FormKey insert() {
         SIComposite pessoa = formWithoutAnnotations();
-        FormKey pessoaKey = formService.insert(pessoa);
+        FormKey pessoaKey = formService.insert(pessoa, 1);
         SIComposite pessoaLoaded = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory);
         Assert.assertEquals(pessoa, pessoaLoaded);
         return pessoaKey;
@@ -60,10 +60,10 @@ public class FormVersionTest extends FormServiceTest {
     public void checkVersionChanged() {
         FormKey pessoaKey = insert();
         SIComposite firstVersion = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory);
-        FormKey newPessoaKey = formService.newVersion(firstVersion);
+        FormKey newPessoaKey = formService.newVersion(firstVersion, 1);
         SIComposite secondVersion = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory);
         secondVersion.setValue(idade, IDADE_22);
-        newPessoaKey = formService.insertOrUpdate(secondVersion);
+        newPessoaKey = formService.insertOrUpdate(secondVersion, 1);
 
         //verificando
         FormEntity fe = formService.loadFormEntity(pessoaKey);
