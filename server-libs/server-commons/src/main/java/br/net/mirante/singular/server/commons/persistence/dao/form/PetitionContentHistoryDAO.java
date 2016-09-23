@@ -31,7 +31,7 @@ public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEnt
                 " inner join fv.formEntity fe  " +
                 " inner join fe.formType ft  " +
                 " where ft.abbreviation = :typeName and p.petitionEntity.cod = :cod " +
-                " order by p.cod desc ")
+                " order by p.historyDate desc ")
                 .setParameter("typeName", typeName)
                 .setParameter("cod", cod)
                 .setMaxResults(1)
