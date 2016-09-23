@@ -77,6 +77,7 @@ class FlowEngine {
             instanciaTarefa.getFlowTask().notifyTaskStart(instanciaTarefa, execucaoTask);
 
             instancia.setExecutionContext(execucaoTask);
+            execucaoTask.setTransition(null);
             try {
                 if (transicaoOrigem != null) {
                     validarParametrosInput(instancia, transicaoOrigem, paramIn);
@@ -86,7 +87,8 @@ class FlowEngine {
             } finally {
                 instancia.setExecutionContext(null);
             }
-            transicaoOrigem = searchTransition(instanciaTarefa, null);
+            String nomeTransicao = execucaoTask.getTransition();
+            transicaoOrigem = searchTransition(instanciaTarefa, nomeTransicao);
             taskDestino = transicaoOrigem.getDestination();
             tarefaOrigem = instanciaTarefa;
         }
