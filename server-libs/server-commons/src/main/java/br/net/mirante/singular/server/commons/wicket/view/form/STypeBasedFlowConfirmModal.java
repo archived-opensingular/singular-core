@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.event.SInstanceEventType;
 import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -26,6 +27,7 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     private final IBiConsumer<SIComposite, String> onCreateInstance;
     private       SInstanceRootModel<SInstance>    instanceModel;
     private       String                           transitionName;
+    private       boolean                          dirty;
 
     public STypeBasedFlowConfirmModal(AbstractFormPage<T> formPage,
                                       SFormConfig<String> formConfig,
@@ -40,6 +42,7 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
         this.formKey = formKey;
         this.formService = formService;
         this.onCreateInstance = onCreateInstance;
+        this.dirty = false;
     }
 
     @Override
@@ -73,13 +76,26 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
                 if (onCreateInstance != null) {
                     onCreateInstance.accept((SIComposite) instanceModel.getObject(), transitionName);
                 }
+                appendDirtyListener(instanceModel.getObject());
                 return instanceModel.getObject();
             }
         };
+    }
+
+    private void appendDirtyListener(SInstance instance) {
+        instance.getDocument().getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, evt -> dirty = true);
     }
 
     public SInstanceRootModel<SInstance> getInstanceModel() {
         return instanceModel;
     }
 
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public STypeBasedFlowConfirmModal setDirty(boolean dirty) {
+        this.dirty = dirty;
+        return this;
+    }
 }
