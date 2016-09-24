@@ -53,4 +53,10 @@ public class SingularDefaultUserService implements IUserService {
     public MUser saveUserIfNeeded(String codUsuario) {
         return actorDAO.saveUserIfNeeded(codUsuario);
     }
+
+    @Override
+    @Transactional
+    public MUser findByCod(Integer cod) {
+        return actorDAO.get(cod);
+    }
 }

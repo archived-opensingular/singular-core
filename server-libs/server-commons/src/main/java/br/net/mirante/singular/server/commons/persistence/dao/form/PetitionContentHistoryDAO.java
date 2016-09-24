@@ -1,6 +1,7 @@
 package br.net.mirante.singular.server.commons.persistence.dao.form;
 
 
+import br.net.mirante.singular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.hibernate.Criteria;
@@ -23,4 +24,17 @@ public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEnt
         return criteria.list();
     }
 
+    public FormVersionHistoryEntity findLastestByPetitionCodAndType(String typeName, Long cod) {
+        return (FormVersionHistoryEntity) getSession().createQuery(" select fvhe from PetitionContentHistoryEntity p " +
+                " inner join p.formVersionHistoryEntities  fvhe " +
+                " inner join fvhe.formVersion fv  " +
+                " inner join fv.formEntity fe  " +
+                " inner join fe.formType ft  " +
+                " where ft.abbreviation = :typeName and p.petitionEntity.cod = :cod " +
+                " order by p.historyDate desc ")
+                .setParameter("typeName", typeName)
+                .setParameter("cod", cod)
+                .setMaxResults(1)
+                .uniqueResult();
+    }
 }

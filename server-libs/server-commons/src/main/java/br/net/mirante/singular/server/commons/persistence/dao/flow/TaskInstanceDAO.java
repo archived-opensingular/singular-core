@@ -138,7 +138,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         }
         if (sortProperty == null) {
             sortProperty = "processBeginDate";
-            ascending = false;
+            ascending = true;
         }
         return " order by " + getSortPropertyToAliases().get(sortProperty) + (ascending ? " ASC " : " DESC ");
     }

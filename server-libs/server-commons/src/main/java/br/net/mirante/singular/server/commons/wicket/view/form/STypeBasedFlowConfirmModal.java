@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.event.SInstanceEventType;
 import br.net.mirante.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -14,7 +15,11 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEn
 import br.net.mirante.singular.server.commons.wicket.builder.HTMLParameters;
 import br.net.mirante.singular.server.commons.wicket.builder.MarkupCreator;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 
 public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends AbstractFlowConfirmModal<T> {
@@ -26,13 +31,15 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     private final IBiConsumer<SIComposite, String> onCreateInstance;
     private       SInstanceRootModel<SInstance>    instanceModel;
     private       String                           transitionName;
+    private       boolean                          dirty;
+    private       boolean                          validatePageForm;
 
     public STypeBasedFlowConfirmModal(AbstractFormPage<T> formPage,
                                       SFormConfig<String> formConfig,
                                       RefType refType,
                                       FormKey formKey,
                                       IFormService formService,
-                                      IBiConsumer<SIComposite, String> onCreateInstance) {
+                                      IBiConsumer<SIComposite, String> onCreateInstance, boolean validatePageForm) {
         super(formPage);
 
         this.formConfig = formConfig;
@@ -40,6 +47,8 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
         this.formKey = formKey;
         this.formService = formService;
         this.onCreateInstance = onCreateInstance;
+        this.dirty = false;
+        this.validatePageForm = validatePageForm;
     }
 
     @Override
@@ -52,10 +61,28 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     public BSModalBorder init(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm) {
         this.transitionName = tn;
         final BSModalBorder modal = new BSModalBorder("flow-modal" + idSuffix, new StringResourceModel("label.button.confirm", formPage, null));
-        addDefaultCancelButton(modal);
+        addCloseButton(modal);
         addDefaultConfirmButton(tn, im, vm, modal);
         modal.add(buildSingularFormPanel());
         return modal;
+    }
+
+    @Override
+    protected FlowConfirmButton<T> newFlowConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder m) {
+        return new FlowConfirmButton<>(tn, "confirm-btn", im, validatePageForm && ViewMode.EDIT.equals(vm), formPage, m);
+    }
+
+    private void addCloseButton(BSModalBorder modal) {
+        modal.addButton(
+                BSModalBorder.ButtonStyle.CANCEl,
+                Model.of("Fechar"),
+                new AjaxButton("cancel-btn") {
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        modal.hide(target);
+                    }
+                }
+        );
     }
 
     private SingularFormPanel<String> buildSingularFormPanel() {
@@ -73,13 +100,26 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
                 if (onCreateInstance != null) {
                     onCreateInstance.accept((SIComposite) instanceModel.getObject(), transitionName);
                 }
+                appendDirtyListener(instanceModel.getObject());
                 return instanceModel.getObject();
             }
         };
+    }
+
+    private void appendDirtyListener(SInstance instance) {
+        instance.getDocument().getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, evt -> dirty = true);
     }
 
     public SInstanceRootModel<SInstance> getInstanceModel() {
         return instanceModel;
     }
 
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public STypeBasedFlowConfirmModal setDirty(boolean dirty) {
+        this.dirty = dirty;
+        return this;
+    }
 }

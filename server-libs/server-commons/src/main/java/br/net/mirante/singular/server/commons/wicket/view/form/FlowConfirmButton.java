@@ -3,11 +3,13 @@ package br.net.mirante.singular.server.commons.wicket.view.form;
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
+import br.net.mirante.singular.server.commons.exception.PetitionConcurrentModificationException;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 
 public class FlowConfirmButton<T extends PetitionEntity> extends SingularSaveButton implements Loggable {
 
@@ -31,7 +33,8 @@ public class FlowConfirmButton<T extends PetitionEntity> extends SingularSaveBut
     protected void onValidationSuccess(AjaxRequestTarget ajaxRequestTarget, Form<?> form, IModel<? extends SInstance> model) {
         try {
             formPage.executeTransition(ajaxRequestTarget, form, transitionName, model);
-        } catch (Exception e) {
+        } catch (HibernateOptimisticLockingFailureException
+                | PetitionConcurrentModificationException e) {
             getLogger().error("Erro ao salvar o XML", e);
             formPage.addToastrErrorMessage("message.save.concurrent_error");
         }

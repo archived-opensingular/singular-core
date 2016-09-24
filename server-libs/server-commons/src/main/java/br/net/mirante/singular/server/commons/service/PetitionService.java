@@ -1,8 +1,10 @@
 package br.net.mirante.singular.server.commons.service;
 
 
+import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.*;
+import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SIList;
 import br.net.mirante.singular.form.SInstance;
@@ -20,6 +22,7 @@ import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.persistence.entity.*;
+import br.net.mirante.singular.server.commons.exception.PetitionConcurrentModificationException;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
 import br.net.mirante.singular.server.commons.form.FormActions;
@@ -32,6 +35,7 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.*;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
+import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.support.persistence.enums.SimNao;
@@ -77,6 +81,9 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     @Inject
     protected PetitionContentHistoryDAO petitionContentHistoryDAO;
+
+    @Inject
+    private IUserService userService;
 
     public T find(Long cod) {
         return petitionDAO.find(cod);
@@ -188,15 +195,16 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
         final FormKey key;
 
+        Integer codActor = userService.getUserCodIfAvailable();
         if (peticao.getCurrentDraftEntity() != null
                 && findFormType(peticao.getCurrentDraftEntity().getForm().getCod()).getAbbreviation().equals(instance.getType().getName())) {
-            key = formPersistenceService.insertOrUpdate(instance);
+            key = formPersistenceService.insertOrUpdate(instance, codActor);
             saveOrUpdateDraft(key, peticao.getCurrentDraftEntity());
         } else if (createNewDraftIfDoesntExists) {
-            key = formPersistenceService.insert(instance);
+            key = formPersistenceService.insert(instance, codActor);
             peticao.setCurrentDraftEntity(saveOrUpdateDraft(key, createNewDraftWithoutSave()));
         } else {
-            key = formPersistenceService.insertOrUpdate(instance);
+            key = formPersistenceService.insertOrUpdate(instance, codActor);
             loadAndSetFormEntityFromKey(key, formSetterByName(mainForm, instance.getType().getName(), peticao));
         }
 
@@ -377,14 +385,15 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
             optionalOfForm = findFormPetitionEntityByTypeNameAndTask(petition.getCod(), typeName, getCurrentTaskDefinition(petition).map(TaskDefinitionEntity::getCod).orElse(null));
         }
 
+        Integer codActor = userService.getUserCodIfAvailable();
         if (optionalOfForm.isPresent()) {
             petitionFormKey = formPersistenceService.keyFromObject(optionalOfForm.get().getForm().getCod());
             final SInstance petitionFormInstance = formPersistenceService.loadSInstance(petitionFormKey, refType, documentFactory);
             copyValuesAndAnnotations(draftInstance, petitionFormInstance);
-            petitionFormKey = formPersistenceService.newVersion(petitionFormInstance);
+            petitionFormKey = formPersistenceService.newVersion(petitionFormInstance, codActor);
             loadAndSetFormEntityFromKey(petitionFormKey, formSetterByName(mainForm, typeName, petition));
         } else {
-            petitionFormKey = formPersistenceService.insert(draftInstance);
+            petitionFormKey = formPersistenceService.insert(draftInstance, codActor);
             loadAndSetFormEntityFromKey(petitionFormKey, formSetterByName(mainForm, typeName, petition));
         }
 
@@ -430,10 +439,19 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
             savePetitionHistory(peticao.getCod(), key);
             final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(peticao).getClass();
             final ProcessInstance                    pi    = Flow.getProcessInstance(clazz, peticao.getProcessInstanceEntity().getCod());
+            checkTaskIsEqual(peticao.getProcessInstanceEntity(), pi);
             pi.executeTransition(transitionName);
             return key;
+        } catch (SingularException e) {
+            throw e;
         } catch (Exception e) {
             throw new SingularServerException(e.getMessage(), e);
+        }
+    }
+
+    private void checkTaskIsEqual(ProcessInstanceEntity processInstanceEntity, ProcessInstance piAtual) {
+        if (!processInstanceEntity.getCurrentTask().getTask().getAbbreviation().equalsIgnoreCase(piAtual.getCurrentTask().getAbbreviation())) {
+            throw new PetitionConcurrentModificationException("A instância está em uma tarefa diferente da esperada.");
         }
     }
 
@@ -445,7 +463,8 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     protected void checkTaskActions(TaskInstanceDTO task, QuickFilter filter) {
         List<BoxItemAction> actions = new ArrayList<>();
-        if (task.getCodUsuarioAlocado() == null) {
+        if (task.getCodUsuarioAlocado() == null
+                && task.getTaskType() == TaskType.People) {
             actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE.getName()));
         }
 
@@ -550,6 +569,10 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     public Optional<FormPetitionEntity> findFormPetitionEntityByTypeNameAndTask(Long petitionPK, String typeName, Integer taskDefinitionEntityPK) {
         return Optional.ofNullable(formPetitionDAO.findFormPetitionEntityByTypeNameAndTask(petitionPK, typeName, taskDefinitionEntityPK));
+    }
+
+    public Optional<FormPetitionEntity> findLastFormPetitionEntityByTypeName(Long petitionPK, String typeName) {
+        return Optional.ofNullable(formPetitionDAO.findLastFormPetitionEntityByTypeName(petitionPK, typeName));
     }
 
     private Optional<TaskDefinitionEntity> getCurrentTaskDefinition(T petition) {
