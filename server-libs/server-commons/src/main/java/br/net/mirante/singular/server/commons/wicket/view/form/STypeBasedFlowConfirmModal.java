@@ -15,7 +15,11 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEn
 import br.net.mirante.singular.server.commons.wicket.builder.HTMLParameters;
 import br.net.mirante.singular.server.commons.wicket.builder.MarkupCreator;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 
 public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends AbstractFlowConfirmModal<T> {
@@ -55,10 +59,23 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     public BSModalBorder init(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm) {
         this.transitionName = tn;
         final BSModalBorder modal = new BSModalBorder("flow-modal" + idSuffix, new StringResourceModel("label.button.confirm", formPage, null));
-        addDefaultCancelButton(modal);
+        addCloseButton(modal);
         addDefaultConfirmButton(tn, im, vm, modal);
         modal.add(buildSingularFormPanel());
         return modal;
+    }
+
+    private void addCloseButton(BSModalBorder modal) {
+        modal.addButton(
+                BSModalBorder.ButtonStyle.CANCEl,
+                Model.of("Fechar"),
+                new AjaxButton("cancel-btn") {
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        modal.hide(target);
+                    }
+                }
+        );
     }
 
     private SingularFormPanel<String> buildSingularFormPanel() {
