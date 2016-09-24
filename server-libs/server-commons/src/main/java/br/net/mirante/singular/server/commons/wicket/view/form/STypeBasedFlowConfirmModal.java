@@ -32,13 +32,14 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     private       SInstanceRootModel<SInstance>    instanceModel;
     private       String                           transitionName;
     private       boolean                          dirty;
+    private       boolean                          validatePageForm;
 
     public STypeBasedFlowConfirmModal(AbstractFormPage<T> formPage,
                                       SFormConfig<String> formConfig,
                                       RefType refType,
                                       FormKey formKey,
                                       IFormService formService,
-                                      IBiConsumer<SIComposite, String> onCreateInstance) {
+                                      IBiConsumer<SIComposite, String> onCreateInstance, boolean validatePageForm) {
         super(formPage);
 
         this.formConfig = formConfig;
@@ -47,6 +48,7 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
         this.formService = formService;
         this.onCreateInstance = onCreateInstance;
         this.dirty = false;
+        this.validatePageForm = validatePageForm;
     }
 
     @Override
@@ -63,6 +65,11 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
         addDefaultConfirmButton(tn, im, vm, modal);
         modal.add(buildSingularFormPanel());
         return modal;
+    }
+
+    @Override
+    protected FlowConfirmButton<T> newFlowConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder m) {
+        return new FlowConfirmButton<>(tn, "confirm-btn", im, validatePageForm && ViewMode.EDIT.equals(vm), formPage, m);
     }
 
     private void addCloseButton(BSModalBorder modal) {
