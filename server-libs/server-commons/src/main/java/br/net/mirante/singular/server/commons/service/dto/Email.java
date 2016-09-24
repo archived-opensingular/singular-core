@@ -27,6 +27,7 @@ import br.net.mirante.singular.form.io.HashUtil;
 import br.net.mirante.singular.form.io.IOUtil;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.type.core.attachment.handlers.FileSystemAttachmentRef;
+import br.net.mirante.singular.server.commons.persistence.entity.email.EmailAddresseeEntity;
 import br.net.mirante.singular.server.commons.persistence.entity.enums.AddresseType;
 
 public class Email {
@@ -43,6 +44,9 @@ public class Email {
     
     private Date creationDate;
     
+    public Email() {
+    }
+
     public Email withSubject(String subject) {
         this.subject = subject;
         return this;
@@ -71,15 +75,6 @@ public class Email {
     public Email addAttachments(Collection<IAttachmentRef> attachmentRefs){
         for (IAttachmentRef attachmentRef : attachmentRefs) {
             attachments.add(attachmentRef);
-        }
-        return this;
-    }
-    
-    public Email addReplyTo(String...addresses){
-        for (String address : addresses) {
-            if(StringUtils.isNotBlank(address)){
-                replyTo.add(address);
-            }
         }
         return this;
     }
@@ -132,6 +127,17 @@ public class Email {
         return replyTo;
     }
 
+    public Email addReplyTo(String...addresses){
+        for (String address : addresses) {
+            if(StringUtils.isNotBlank(address)){
+                for (String address_ : address.split(";")) {
+                    replyTo.add(address_);
+                }
+            }
+        }
+        return this;
+    }
+    
     public String getReplyToJoining() {
         return replyTo.stream().collect(Collectors.joining(";"));
     }
@@ -153,15 +159,23 @@ public class Email {
     
     public static class Addressee {
         private final Long cod;
-        private final Email Email;
+        private final Email email;
         private final AddresseType type;
         private final String address;
         private Date sentDate;
         
-        Addressee(Long cod, Email Email, AddresseType addresseType, String address, Date sentDate) {
+        public Addressee(Email email, EmailAddresseeEntity addresseeEntity) {
+            this.cod = addresseeEntity.getCod();
+            this.email = email;
+            this.type = addresseeEntity.getAddresseType();
+            this.address = addresseeEntity.getAddress();
+            this.sentDate = addresseeEntity.getSentDate();
+            email.recipients.put(type, this);
+        }
+        Addressee(Long cod, Email email, AddresseType addresseType, String address, Date sentDate) {
             super();
             this.cod = cod;
-            this.Email = Email;
+            this.email = email;
             this.type = addresseType;
             this.address = address;
             this.sentDate = sentDate;
@@ -170,7 +184,7 @@ public class Email {
             return cod;
         }
         public Email getEmail() {
-            return Email;
+            return email;
         }
         public AddresseType getType() {
             return type;

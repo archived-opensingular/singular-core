@@ -1,9 +1,11 @@
 package br.net.mirante.singular.server.commons.spring;
 
-import br.net.mirante.singular.server.commons.spring.security.AuthorizationService;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 
+import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
 import br.net.mirante.singular.flow.core.service.IUserService;
+import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.persistence.dao.AttachmentContentDao;
 import br.net.mirante.singular.form.persistence.dao.AttachmentDao;
@@ -16,6 +18,9 @@ import br.net.mirante.singular.form.persistence.service.AttachmentPersistenceSer
 import br.net.mirante.singular.form.service.FormService;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
+import br.net.mirante.singular.server.commons.persistence.dao.EmailAddresseeDao;
+import br.net.mirante.singular.server.commons.persistence.dao.EmailDao;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
@@ -25,11 +30,16 @@ import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionConte
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.form.PetitionerDAO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
+import br.net.mirante.singular.server.commons.schedule.TransactionalQuartzScheduledService;
+import br.net.mirante.singular.server.commons.service.EmailPersistenceService;
+import br.net.mirante.singular.server.commons.service.IEmailService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
+import br.net.mirante.singular.server.commons.spring.security.AuthorizationService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
 import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
 import br.net.mirante.singular.server.commons.spring.security.SingularUserDetailsService;
 
+@SuppressWarnings("rawtypes")
 public class SingularDefaultBeanFactory {
 
     @Bean(name = "peticionamentoUserDetailService")
@@ -59,7 +69,7 @@ public class SingularDefaultBeanFactory {
 
     @Bean
     public <T extends PetitionEntity> PetitionService<T> worklistPetitionServiceFactory() {
-        return new PetitionService<T>();
+        return new PetitionService<>();
     }
 
     @Bean
@@ -142,5 +152,29 @@ public class SingularDefaultBeanFactory {
         return new AuthorizationService();
     }
 
+    @Bean
+    public EmailDao<?> emailDao(){
+        return new EmailDao<>();
+    }
+    
+    @Bean
+    public EmailAddresseeDao<?> emailAddresseeDao(){
+        return new EmailAddresseeDao<>();
+    }
 
+    @Bean
+    @DependsOn(SDocument.FILE_PERSISTENCE_SERVICE)
+    public IEmailService<?> emailService(){
+        return new EmailPersistenceService();
+    }
+
+    @Bean
+    public IScheduleService scheduleService(){
+        return new TransactionalQuartzScheduledService();
+    }
+    
+    @Bean
+    public IFlowRenderer flowRenderer(){
+        return new YFilesFlowRemoteRenderer(null);
+    }
 }

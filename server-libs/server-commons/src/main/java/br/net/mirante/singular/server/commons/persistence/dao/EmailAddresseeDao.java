@@ -4,7 +4,14 @@
  */
 package br.net.mirante.singular.server.commons.persistence.dao;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
 import br.net.mirante.singular.server.commons.persistence.entity.email.EmailAddresseeEntity;
 import br.net.mirante.singular.support.persistence.BaseDAO;
@@ -21,4 +28,19 @@ public class EmailAddresseeDao<T extends EmailAddresseeEntity> extends BaseDAO<T
         super(tipo);
     }
 
+    public int countPending() {
+        Criteria c = getSession().createCriteria(tipo);
+        c.add(Restrictions.isNull("sentDate"));
+        c.setProjection(Projections.rowCount());
+        return ((Number) c.uniqueResult()).intValue();
+    }
+    
+    public List<T> listPending(int firstResult, int maxResults){
+        Criteria c = getSession().createCriteria(tipo);
+        c.add(Restrictions.isNull("sentDate"));
+        c.addOrder(Order.asc("cod"));
+        c.setFirstResult(firstResult);
+        c.setMaxResults(maxResults);
+        return c.list();
+    }
 }

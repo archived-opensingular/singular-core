@@ -1,13 +1,14 @@
 package br.net.mirante.singular.server.commons.config;
 
+import java.util.Optional;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import java.util.Optional;
 
 public interface SingularInitializer extends WebApplicationInitializer {
 
@@ -57,7 +58,7 @@ public interface SingularInitializer extends WebApplicationInitializer {
         logger.info(String.format(SINGULAR, " Initializing FormConfiguration "));
         FormInitializer formInitializer = formConfiguration();
         if (formInitializer != null) {
-            formConfiguration().init(ctx, applicationContext);
+            formInitializer.init(ctx, applicationContext);
         } else {
             logger.info(String.format(SINGULAR, " Null formInitializer, skipping Singular Form configuration"));
         }
@@ -65,11 +66,18 @@ public interface SingularInitializer extends WebApplicationInitializer {
         logger.info(String.format(SINGULAR, " Initializing FlowConfiguration "));
         FlowInitializer flowInitializer = flowConfiguration();
         if (flowInitializer != null) {
-            flowConfiguration().init(ctx, applicationContext);
+            flowInitializer.init(ctx, applicationContext);
         } else {
             logger.info(String.format(SINGULAR, " Null flowInitializer, skipping Singular Flow configuration"));
         }
 
+        logger.info(String.format(SINGULAR, " Initializing SchedulerConfiguration "));
+        SchedulerInitializer schedulerInitializer = schedulerConfiguration();
+        if (schedulerInitializer != null) {
+            schedulerInitializer.init(ctx, applicationContext);
+        } else {
+            logger.info(String.format(SINGULAR, " Null SchedulerInitializer, skipping Singular Scheduler configuration"));
+        }
 
         if (applicationContext != null){
             applicationContext.register(SingularServerConfiguration.class);
@@ -89,6 +97,8 @@ public interface SingularInitializer extends WebApplicationInitializer {
     public FormInitializer formConfiguration();
 
     public FlowInitializer flowConfiguration();
+
+    public SchedulerInitializer schedulerConfiguration();
 
     public SpringSecurityInitializer springSecurityConfiguration();
 

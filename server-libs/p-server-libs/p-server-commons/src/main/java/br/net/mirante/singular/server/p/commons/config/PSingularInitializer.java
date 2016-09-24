@@ -12,6 +12,8 @@ public interface PSingularInitializer extends SingularInitializer {
 
     public PFlowInitializer flowConfiguration();
 
+    public PSchedulerInitializer schedulerConfiguration();
+    
     public PSpringSecurityInitializer springSecurityConfiguration();
 
 }
