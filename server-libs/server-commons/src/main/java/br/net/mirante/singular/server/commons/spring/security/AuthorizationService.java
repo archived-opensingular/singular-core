@@ -136,7 +136,7 @@ public class AuthorizationService implements Loggable {
     }
 
     public boolean hasFlowPermission(PetitionEntity petitionEntity, String idUsuario, String action) {
-        String permissionNeeded = "ACTION_" + action + "_" + petitionEntity.getProcessDefinitionEntity().getKey();
+        String permissionNeeded = "ACTION_" + action + "_" + petitionEntity.getProcessDefinitionEntity().getKey() + "_" + petitionEntity.getProcessInstanceEntity().getCurrentTask().getTask().getAbbreviation() ;
         return hasPermission(idUsuario, permissionNeeded);
     }
 
