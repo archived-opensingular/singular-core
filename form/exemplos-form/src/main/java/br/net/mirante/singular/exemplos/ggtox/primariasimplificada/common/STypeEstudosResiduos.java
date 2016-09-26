@@ -56,6 +56,8 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
         public static final String CULTURA                       = "cultura";
         public static final String NOME_CULTURA                  = "nomeCultura";
         public static final String OUTRA_CULTURA                 = "outraCultura";
+        public static final String APLICACOES                    = "aplicacoes";
+        public static final String INTERVALO_PRETENDIDO          = "intervaloPretendido";
 
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
         private final STypeComposite<SIComposite>                         rootType;
@@ -81,11 +83,11 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             final STypeBoolean outraCultura = rootType.addFieldBoolean(OUTRA_CULTURA);
 
             final STypeBoolean                parteComestivel     = rootType.addFieldBoolean("parteComestivel");
-            final STypeInteger                intervaloPretendido = rootType.addFieldInteger("intervaloPretendido");
+            final STypeInteger                intervaloPretendido = rootType.addFieldInteger(INTERVALO_PRETENDIDO);
             final STypeComposite<SIComposite> norma               = rootType.addFieldComposite("norma");
             final STypeInteger                idNorma             = norma.addFieldInteger("idNorma");
             final STypeString                 descricaoNorma      = norma.addFieldString("descricaoNorma");
-            final STypeInteger                aplicacoes          = rootType.addFieldInteger("aplicacoes");
+            final STypeInteger                aplicacoes          = rootType.addFieldInteger(APLICACOES);
             final STypeString                 observacoes         = rootType.addFieldString("observacoes");
 
             origemEstudo = rootType.addFieldString(ORIGEM_ESTUDO_PATH);
