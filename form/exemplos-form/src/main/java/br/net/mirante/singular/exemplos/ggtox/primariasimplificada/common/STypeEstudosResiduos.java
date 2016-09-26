@@ -85,6 +85,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             final STypeComposite<SIComposite> norma               = rootType.addFieldComposite("norma");
             final STypeInteger                idNorma             = norma.addFieldInteger("idNorma");
             final STypeString                 descricaoNorma      = norma.addFieldString("descricaoNorma");
+            final STypeInteger                aplicacoes          = rootType.addFieldInteger("aplicacoes");
             final STypeString                 observacoes         = rootType.addFieldString("observacoes");
 
             origemEstudo = rootType.addFieldString(ORIGEM_ESTUDO_PATH);
@@ -97,7 +98,6 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             final STypeBoolean                adjuvante             = rootType.addFieldBoolean("adjuvante");
 
             ensaio = new Ensaio(rootType);
-//            estudo = null;
 
             final STypeAttachment estudoResiduo = rootType.addFieldAttachment("estudoResiduo");
 
@@ -194,7 +194,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .required(OBRIGATORIO)
                     .label("Norma")
                     .asAtrBootstrap()
-                    .colPreference(4);
+                    .colPreference(3);
 
             norma
                     .selection()
@@ -205,6 +205,13 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                             .forEach(normaEntity -> builder.add()
                                     .set(idNorma, normaEntity.getCod())
                                     .set(descricaoNorma, normaEntity.getNome())));
+
+            aplicacoes
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("Nº de Aplicações")
+                    .asAtrBootstrap()
+                    .colPreference(3);
 
             observacoes
                     .asAtr()
@@ -234,7 +241,6 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .dependsOn(origemEstudo)
                     .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_PUBLICADO))
                     .asAtrBootstrap().newRow();
-
 
             numeroEstudo
                     .asAtr()
@@ -384,12 +390,11 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             root = parentType.addFieldListOfComposite("amostras", "amostra");
             rootType = root.getElementsType();
 
-            final STypeString  id         = rootType.addFieldString("id");
-            final STypeDecimal dose       = rootType.addFieldDecimal("dose");
-            final STypeInteger aplicacoes = rootType.addFieldInteger("aplicacoes");
-            final STypeInteger dat        = rootType.addFieldInteger("dat");
-            final STypeDecimal loq        = rootType.addFieldDecimal("loq");
-            final STypeDecimal residuo    = rootType.addFieldDecimal("residuo");
+            final STypeString  id      = rootType.addFieldString("id");
+            final STypeDecimal dose    = rootType.addFieldDecimal("dose");
+            final STypeInteger dat     = rootType.addFieldInteger("dat");
+            final STypeDecimal loq     = rootType.addFieldDecimal("loq");
+            final STypeDecimal residuo = rootType.addFieldDecimal("residuo");
 
             ativoAmostra = rootType.addField("ativos", STypeAtivoAmostra.class);
 
@@ -405,7 +410,6 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .withView(new SViewListByMasterDetail()
                             .col(id, "Id")
                             .col(dose, "Dose")
-                            .col(aplicacoes, "Aplicações")
                             .col(ativoAmostra.nomeComumPortugues, "Ingrediente Ativo")
                             .col(residuo, "Residuo")
                             .col(dat, "DAT")
@@ -425,14 +429,6 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .asAtr()
                     .label("Dose")
                     .required(OBRIGATORIO);
-
-            aplicacoes
-                    .asAtrBootstrap()
-                    .colPreference(4)
-                    .asAtr()
-                    .label("Número de Aplicações")
-                    .required(OBRIGATORIO);
-
 
             dat
                     .asAtr()
