@@ -5,8 +5,6 @@
 
 package br.net.mirante.singular.commons.base;
 
-import java.util.Optional;
-
 /**
  * Carrega os arquivos de propriedades do singular e dá fácil acesso ao mesmos, mediante um singleton {@link
  * SingularProperties#get()}. <p>Primeiro lê do arquivos de propriedades e depois tentar ler do diretório de

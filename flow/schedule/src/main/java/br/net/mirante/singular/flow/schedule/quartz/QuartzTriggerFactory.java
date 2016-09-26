@@ -23,11 +23,6 @@ import br.net.mirante.singular.flow.schedule.ScheduledJob;
 public class QuartzTriggerFactory {
 
     /**
-     * O identificador do job.
-     * @see br.net.mirante.singular.flow.schedule.IScheduledJob#getId()
-     */
-    private String id;
-    /**
      * O {@link Supplier} do job a ser criado.
      * @see br.net.mirante.singular.flow.schedule.IScheduledJob#run()
      */
@@ -103,8 +98,8 @@ public class QuartzTriggerFactory {
      * @return está fábrica.
      * @see br.net.mirante.singular.flow.schedule.IScheduledJob#getId()
      */
-    public QuartzTriggerFactory withIdentity(String id) {
-        this.id = id;
+    public QuartzTriggerFactory withIdentity(String name) {
+        jobBuilder.withIdentity(name);
         return this;
     }
 
@@ -148,7 +143,7 @@ public class QuartzTriggerFactory {
      * @return os detalhes do job com as informações extras adicionadas.
      */
     private JobDetail configureJob(JobDetail jobDetail, IScheduleData scheduleData) {
-        jobDetail.getJobDataMap().put(QuartzJobFactory.JOB_KEY, new ScheduledJob(id, scheduleData, job));
+        jobDetail.getJobDataMap().put(QuartzJobFactory.JOB_KEY, new ScheduledJob(jobDetail.getKey().getName(), scheduleData, job));
         return jobDetail;
     }
 }
