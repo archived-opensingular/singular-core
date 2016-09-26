@@ -52,8 +52,6 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
 //                .label("Petição primária Simplificada")
                 .displayString("Petição de ${tipoPeticao.nome}, nível ${nivel}");
 
-        this.addInstanceValidator(new AtivoAmostraValidator());
-
         final STypeComposite<SIComposite>                      tipoPeticao             = this.addFieldComposite(TIPO_PETICAO);
         final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger(ID_TIPO_PETICAO);
         final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString(NOME_TIPO_PETICAO);
@@ -254,6 +252,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .exists(typeValueIsNotEqualsTo(nivel, "I"));
 
         estudosResiduos
+                .addInstanceValidator(new AtivoAmostraValidator())
                 .asAtr()
                 .dependsOn(tipoPeticao)
                 .exists(typeValueIsIn(idTipoPeticao, precisaEstudoResiduos));
