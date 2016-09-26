@@ -43,14 +43,14 @@ public class STypeProdutoTecnico extends STypePersistentComposite {
 
         nomeProdutoTecnico
                 .asAtr()
-                .label("Nome do Produto Técnico")
+                .label("Nome do Produto Técnico Matriz")
                 .required(OBRIGATORIO)
                 .asAtrBootstrap()
                 .colPreference(6);
 
         numeroProcessoProdutoTecnico
                 .asAtr()
-                .label("Número Processo do Produto Técnico")
+                .label("Número Processo do Produto Técnico Matriz")
                 .required(OBRIGATORIO)
                 .maxLength(17)
                 .asAtrBootstrap()
@@ -60,6 +60,12 @@ public class STypeProdutoTecnico extends STypePersistentComposite {
                 .addInstanceValidator(si -> {
                     //TODO Deve validar o numero do processo
                 });
+
+        fabricante = addField("fabricante", STypeFabricanteConformeMatriz.class);
+        fabricante
+                .asAtrBootstrap()
+                .colPreference(12)
+                .newRow();
 
         fabricantes = addFieldListOf("fabricantes", STypeFabricante.class);
         fabricantes.withView(SViewListByForm::new);
@@ -71,12 +77,6 @@ public class STypeProdutoTecnico extends STypePersistentComposite {
                 .col(fabricantes.getElementsType().enderecoEletronico)
                 .col(fabricantes.getElementsType().telefone)
         );
-
-        fabricante = addField("fabricante", STypeFabricanteConformeMatriz.class);
-        fabricante
-                .asAtrBootstrap()
-                .colPreference(12)
-                .newRow();
 
         finalidadeConformeMatriz
                 .asAtr()

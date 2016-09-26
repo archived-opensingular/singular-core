@@ -33,11 +33,5 @@ public class STypeFabricante extends STypeEntidade {
                 .asAtrBootstrap()
                 .colPreference(12);
 
-        internacional(laudoLaboratorial)
-                .asAtr()
-                .required(OBRIGATORIO)
-                .label("Laudo laboratorial")
-                .asAtrBootstrap()
-                .colPreference(12);
     }
 }
