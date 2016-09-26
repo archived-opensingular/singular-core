@@ -24,7 +24,7 @@ public class STypeFormulador extends STypeEntidade {
 
         laudoLaboratorial = addField("laudoLaboratorial", STypeAttachment.class);
 
-        internacional(laudoLaboratorial)
+        comum(laudoLaboratorial)
                 .asAtr()
                 .label("Laudo laboratorial")
                 .asAtrBootstrap()

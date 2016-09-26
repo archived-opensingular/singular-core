@@ -12,7 +12,6 @@ import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.S
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeAnexosPeticaoPrimariaSimplificada extends STypePersistentComposite {
 
-    public STypeAttachmentList informacoesSobreCulturaIndicacao;
     public STypeAttachmentList pareceresTecnicosAvaliacoesDasEmpresas;
 
     @Override
@@ -27,15 +26,7 @@ public class STypeAnexosPeticaoPrimariaSimplificada extends STypePersistentCompo
                 .asAtr()
                 .label("Anexos");
 
-        informacoesSobreCulturaIndicacao = addFieldListOfAttachment("informacoesSobreCulturaIndicacao", "informacaoSobreCulturaIndicacao");
         pareceresTecnicosAvaliacoesDasEmpresas = addFieldListOfAttachment("pareceresTecnicosAvaliacoesDasEmpresas", "parecerTecnicoAvaliacaoDaEmpresa");
-
-        informacoesSobreCulturaIndicacao
-                .asAtr()
-                .required(OBRIGATORIO)
-                .label("Informações Sobre Cultura e Indicação")
-                .asAtrBootstrap()
-                .colPreference(12);
 
         pareceresTecnicosAvaliacoesDasEmpresas
                 .asAtr()
@@ -43,7 +34,6 @@ public class STypeAnexosPeticaoPrimariaSimplificada extends STypePersistentCompo
                 .label("Parecer Técnico de Avaliação da Empresa (PATE)")
                 .asAtrBootstrap()
                 .colPreference(12);
-
-
     }
+
 }
