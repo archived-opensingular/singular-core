@@ -18,7 +18,7 @@ public class STypeFormuladorConformeMatriz extends STypeBoolean {
 
         addInstanceValidator(validator -> {
             if (!(validator.getInstance().getValue() != null && validator.getInstance().getValue())) {
-                validator.error("É obrigatório declarar que o(s) fabricante(s) está(ão) conforme a matriz.");
+                validator.error("É obrigatório declarar que o(s) formulador(es) está(ão) conforme a matriz.");
             }
         });
 
