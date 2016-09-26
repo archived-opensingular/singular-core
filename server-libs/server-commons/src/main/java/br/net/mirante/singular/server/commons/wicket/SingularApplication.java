@@ -29,6 +29,7 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
     public static final String BASE_FOLDER = "/tmp/fileUploader";
 
     private ApplicationContext applicationContext;
+    public static ApplicationContext applicationContext2;
 
     public static SingularApplication get() {
         return (SingularApplication) WebApplication.get();
@@ -104,6 +105,7 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
     @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         this.applicationContext = ctx;
+        applicationContext2 = ctx;
     }
 
     /**
