@@ -1,6 +1,8 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common;
 
 import br.net.mirante.singular.exemplos.SelectBuilder;
+import br.net.mirante.singular.exemplos.SelectBuilder.CidadeDTO;
+import br.net.mirante.singular.exemplos.SelectBuilder.EstadoDTO;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.domain.SubgrupoEntity;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.SPackagePPSCommon;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.listeners.IngredienteAtivoUpdateListener;
@@ -36,8 +38,8 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
         estudoResiduo = new EstudoResiduo(this);
 
-        estudoResiduo.
-                amostra
+        estudoResiduo
+                .ensaio
                 .root
                 .asAtr().dependsOn(estudoResiduo.origemEstudo)
                 .exists(typeValueIsEqualsTo(estudoResiduo.origemEstudo, EstudoResiduo.ESTUDO_NOVO));
@@ -54,11 +56,13 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
         public static final String CULTURA                       = "cultura";
         public static final String NOME_CULTURA                  = "nomeCultura";
         public static final String OUTRA_CULTURA                 = "outraCultura";
+        public static final String APLICACOES                    = "aplicacoes";
+        public static final String INTERVALO_PRETENDIDO          = "intervaloPretendido";
 
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
         private final STypeComposite<SIComposite>                         rootType;
         final         STypeString                                         origemEstudo;
-        public final  Amostra                                             amostra;
+        public final  Ensaio                                              ensaio;
 
         public EstudoResiduo(STypeComposite<SIComposite> parentType) {
 
@@ -79,10 +83,11 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             final STypeBoolean outraCultura = rootType.addFieldBoolean(OUTRA_CULTURA);
 
             final STypeBoolean                parteComestivel     = rootType.addFieldBoolean("parteComestivel");
-            final STypeInteger                intervaloPretendido = rootType.addFieldInteger("intervaloPretendido");
+            final STypeInteger                intervaloPretendido = rootType.addFieldInteger(INTERVALO_PRETENDIDO);
             final STypeComposite<SIComposite> norma               = rootType.addFieldComposite("norma");
             final STypeInteger                idNorma             = norma.addFieldInteger("idNorma");
             final STypeString                 descricaoNorma      = norma.addFieldString("descricaoNorma");
+            final STypeInteger                aplicacoes          = rootType.addFieldInteger(APLICACOES);
             final STypeString                 observacoes         = rootType.addFieldString("observacoes");
 
             origemEstudo = rootType.addFieldString(ORIGEM_ESTUDO_PATH);
@@ -94,7 +99,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
             final STypeString                 siglaDosagem          = unidadeMediadaDosagem.addFieldString("siglaDosagem");
             final STypeBoolean                adjuvante             = rootType.addFieldBoolean("adjuvante");
 
-            amostra = new Amostra(rootType);
+            ensaio = new Ensaio(rootType);
 
             final STypeAttachment estudoResiduo = rootType.addFieldAttachment("estudoResiduo");
 
@@ -191,7 +196,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .required(OBRIGATORIO)
                     .label("Norma")
                     .asAtrBootstrap()
-                    .colPreference(4);
+                    .colPreference(3);
 
             norma
                     .selection()
@@ -202,6 +207,13 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                             .forEach(normaEntity -> builder.add()
                                     .set(idNorma, normaEntity.getCod())
                                     .set(descricaoNorma, normaEntity.getNome())));
+
+            aplicacoes
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("Nº de Aplicações")
+                    .asAtrBootstrap()
+                    .colPreference(3);
 
             observacoes
                     .asAtr()
@@ -231,7 +243,6 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .dependsOn(origemEstudo)
                     .exists(typeValueIsEqualsTo(origemEstudo, ESTUDO_PUBLICADO))
                     .asAtrBootstrap().newRow();
-
 
             numeroEstudo
                     .asAtr()
@@ -289,6 +300,87 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
     }
 
+    public class Ensaio {
+
+        public final STypeList<STypeComposite<SIComposite>, SIComposite> root;
+        public final STypeComposite<SIComposite>                         rootType;
+        public       STypeString                                         codigoEnsaio;
+        public       STypeComposite<SIComposite>                         estado;
+        public       STypeString                                         nomeEstado;
+        public       STypeString                                         siglaEstado;
+        public       STypeComposite<SIComposite>                         cidade;
+        public       STypeInteger                                        idCidade;
+        public       STypeString                                         nomeCidade;
+        public       Amostra                                             amostra;
+
+        public Ensaio(STypeComposite<SIComposite> parent) {
+            this.root = parent.addFieldListOfComposite("ensaios", "ensaio");
+            this.rootType = root.getElementsType();
+            create();
+            configure();
+        }
+
+        private void create() {
+            codigoEnsaio = rootType.addField("codigoEnsaio", STypeString.class);
+            estado = rootType.addFieldComposite("estado");
+            nomeEstado = estado.addFieldString("nome");
+            siglaEstado = estado.addFieldString("sigla");
+            cidade = rootType.addFieldComposite("cidade");
+            idCidade = cidade.addFieldInteger("id");
+            nomeCidade = cidade.addFieldString("nome");
+        }
+
+        private void configure() {
+
+            codigoEnsaio
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("ID do Ensaio")
+                    .asAtrBootstrap()
+                    .colPreference(3);
+
+            estado
+                    .asAtr()
+                    .required(OBRIGATORIO)
+                    .label("Estado")
+                    .asAtrBootstrap()
+                    .colPreference(3);
+
+            estado.selectionOf(EstadoDTO.class)
+                    .id(EstadoDTO::getSigla)
+                    .display("${nome} - ${sigla}")
+                    .autoConverterOf(EstadoDTO.class)
+                    .simpleProvider(ins -> SelectBuilder.buildEstados());
+
+            cidade
+                    .asAtr()
+                    .required(inst -> OBRIGATORIO)
+                    .label("Cidade")
+                    .enabled(inst -> Value.notNull(inst, siglaEstado))
+                    .dependsOn(estado)
+                    .asAtrBootstrap()
+                    .colPreference(3);
+
+            cidade.selectionOf(CidadeDTO.class)
+                    .id(CidadeDTO::getId)
+                    .display(CidadeDTO::getNome)
+                    .autoConverterOf(CidadeDTO.class)
+                    .simpleProvider(i -> SelectBuilder.buildMunicipiosFiltrado((String) Value.of(i, (STypeSimple) estado.getField(siglaEstado.getNameSimple()))));
+
+            amostra = new Amostra(rootType);
+
+            root
+                    .withView(new SViewListByMasterDetail()
+                            .col(codigoEnsaio, "ID")
+                            .col(estado, "Estado")
+                            .col(cidade, "Cidade")
+                    )
+                    .asAtr().label("Ensaio");
+
+        }
+    }
+
+
     public class Amostra {
 
         private final STypeList<STypeComposite<SIComposite>, SIComposite> root;
@@ -296,22 +388,18 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
         public final  STypeAtivoAmostra                                   ativoAmostra;
 
         public Amostra(STypeComposite<SIComposite> parentType) {
+
             root = parentType.addFieldListOfComposite("amostras", "amostra");
             rootType = root.getElementsType();
-            final STypeString  id         = rootType.addFieldString("id");
-            final STypeDecimal dose       = rootType.addFieldDecimal("dose");
-            final STypeInteger aplicacoes = rootType.addFieldInteger("aplicacoes");
-            final STypeInteger dat        = rootType.addFieldInteger("dat");
-            final STypeDecimal loq        = rootType.addFieldDecimal("loq");
-            final STypeDecimal residuo    = rootType.addFieldDecimal("residuo");
+
+            final STypeString  id      = rootType.addFieldString("id");
+            final STypeDecimal dose    = rootType.addFieldDecimal("dose");
+            final STypeInteger dat     = rootType.addFieldInteger("dat");
+            final STypeDecimal loq     = rootType.addFieldDecimal("loq");
+            final STypeDecimal residuo = rootType.addFieldDecimal("residuo");
+
             ativoAmostra = rootType.addField("ativos", STypeAtivoAmostra.class);
-            final STypeComposite<?> estado  = rootType.addFieldComposite("estado");
-            final STypeString       siglaUF = estado.addFieldString("sigla");
-            estado.addFieldString("nome");
-            final STypeComposite<?> cidade = rootType.addFieldComposite("cidade");
-            cidade.addFieldInteger("id");
-            cidade.addFieldString("nome");
-            final STypeString                                         uf                  = cidade.addFieldString("UF");
+
             final STypeBoolean                                        tempoMaior30Dias    = rootType.addFieldBoolean("tempoMaior30Dias");
             final STypeAttachment                                     estudoEstabilidade  = rootType.addFieldAttachment("estudoEstabilidade");
             final STypeBoolean                                        metabolito          = rootType.addFieldBoolean("metabolito");
@@ -324,7 +412,6 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .withView(new SViewListByMasterDetail()
                             .col(id, "Id")
                             .col(dose, "Dose")
-                            .col(aplicacoes, "Aplicações")
                             .col(ativoAmostra.nomeComumPortugues, "Ingrediente Ativo")
                             .col(residuo, "Residuo")
                             .col(dat, "DAT")
@@ -338,7 +425,6 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .asAtrBootstrap()
                     .colPreference(4);
 
-
             dose
                     .asAtrBootstrap()
                     .colPreference(4)
@@ -346,21 +432,12 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .label("Dose")
                     .required(OBRIGATORIO);
 
-            aplicacoes
-                    .asAtrBootstrap()
-                    .colPreference(4)
-                    .asAtr()
-                    .label("Número de Aplicações")
-                    .required(OBRIGATORIO);
-
-
             dat
                     .asAtr()
                     .required(OBRIGATORIO)
                     .label("DAT")
                     .asAtrBootstrap()
                     .colPreference(4);
-
 
             loq
                     .asAtr()
@@ -375,7 +452,6 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .label("Resíduo (mg/KG)")
                     .fractionalMaxLength(4);
 
-
             ativoAmostra
                     .asAtr()
                     .required(OBRIGATORIO)
@@ -389,37 +465,6 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
 
             ativoAmostra
                     .withUpdateListener(new IngredienteAtivoUpdateListener<>());
-
-
-            estado
-                    .asAtr()
-                    .required(OBRIGATORIO)
-                    .label("Estado")
-                    .asAtrBootstrap()
-                    .colPreference(3)
-                    .newRow();
-
-            estado.selectionOf(SelectBuilder.EstadoDTO.class)
-                    .id(SelectBuilder.EstadoDTO::getSigla)
-                    .display("${nome} - ${sigla}")
-                    .autoConverterOf(SelectBuilder.EstadoDTO.class)
-                    .simpleProvider(ins -> SelectBuilder.buildEstados());
-
-            cidade
-                    .asAtr()
-                    .required(inst -> OBRIGATORIO && Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
-                    .asAtr()
-                    .label("Cidade")
-                    .enabled(inst -> OBRIGATORIO && Value.notNull(inst, (STypeSimple) estado.getField(siglaUF)))
-                    .dependsOn(estado)
-                    .asAtrBootstrap()
-                    .colPreference(3);
-
-            cidade.selectionOf(SelectBuilder.CidadeDTO.class)
-                    .id(SelectBuilder.CidadeDTO::getId)
-                    .display(SelectBuilder.CidadeDTO::getNome)
-                    .autoConverterOf(SelectBuilder.CidadeDTO.class)
-                    .simpleProvider(i -> SelectBuilder.buildMunicipiosFiltrado((String) Value.of(i, (STypeSimple) estado.getField(siglaUF.getNameSimple()))));
 
             tempoMaior30Dias
                     .asAtr()
@@ -466,54 +511,7 @@ public class STypeEstudosResiduos extends STypePersistentComposite {
                     .label("Resíduo (mg/KG)")
                     .fractionalMaxLength(4);
         }
+
     }
 
-    private String[] culturas() {
-        return new String[]{
-                "Algodão herbáceo",
-                "Amendoim",
-                "Arroz",
-                "Aveia",
-                "Centeio",
-                "Cevada",
-                "Feijão",
-                "Girassol",
-                "Mamona",
-                "Milho",
-                "Soja",
-                "Sorgo",
-                "Trigo",
-                "Triticale",
-                "Abacaxi",
-                "Alho",
-                "Banana",
-                "Cacau",
-                "Café arábica",
-                "Café canephora",
-                "Cana-de-açúcar",
-                "Castanha-de-caju",
-                "Cebola",
-                "Coco-da-baía",
-                "Fumo",
-                "Guaraná",
-                "Juta",
-                "Laranja",
-                "Maçã",
-                "Malva",
-                "Mandioca",
-                "Pimenta-do-reino",
-                "Sisal ou agave",
-                "Tomate",
-                "Uva"
-        };
-    }
-
-    private String[] empregos() {
-        return new String[]{
-                "Caule",
-                "Foliar",
-                "Solo",
-                "Tronco"
-        };
-    }
 }
