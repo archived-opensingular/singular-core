@@ -13,6 +13,7 @@ import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.S
 @SInfoType(spackage = SPackagePPSCommon.class)
 public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypePersistentComposite {
 
+    public static final String NUMERO_PROCESSO_PETICAO_MATRIZ = "numeroProcessoPeticaoMatriz";
     public STypeAnvisaNumeroProcesso numeroProcessoPeticaoMatriz;
     public STypeAttachment           declaracaoVinculoPeticaoMatriz;
     public STypeString               justificativa;
@@ -22,7 +23,7 @@ public class STypeDadosGeraisPeticaoPrimariaSimplificada extends STypePersistent
     protected void onLoadType(TypeBuilder builder) {
         super.onLoadType(builder);
 
-        numeroProcessoPeticaoMatriz = addField("numeroProcessoPeticaoMatriz", STypeAnvisaNumeroProcesso.class);
+        numeroProcessoPeticaoMatriz = addField(NUMERO_PROCESSO_PETICAO_MATRIZ, STypeAnvisaNumeroProcesso.class);
         declaracaoVinculoPeticaoMatriz = addField("declaracaoVinculoPeticaoMatriz", STypeAttachment.class);
         justificativa = addFieldString("justificativa");
         anexoJustificativa = addField("anexoJustificativa", STypeAttachment.class);

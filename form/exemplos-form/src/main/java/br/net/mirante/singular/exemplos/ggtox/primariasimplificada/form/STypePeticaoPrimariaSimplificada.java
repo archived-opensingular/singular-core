@@ -42,6 +42,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
     public static final String INGREDIENTE_ATIVO_PETICAO = "ingredienteAtivoPeticao";
     public static final String PRODUTO_FORMULADO         = "produtoFormulado";
     public static final String PRODUTO_TECNICO_PETICAO   = "produtoTecnicoPeticao";
+    public static final String DADOS_GERAIS              = "dadosGerais";
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -56,7 +57,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
         final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger(ID_TIPO_PETICAO);
         final STypeString                                      descricaoTipoPeticao    = tipoPeticao.addFieldString(NOME_TIPO_PETICAO);
         final STypeString                                      nivel                   = this.addFieldString(NIVEL_PATH);
-        final STypeDadosGeraisPeticaoPrimariaSimplificada      dadosGerais             = this.addField("dadosGerais", STypeDadosGeraisPeticaoPrimariaSimplificada.class);
+        final STypeDadosGeraisPeticaoPrimariaSimplificada      dadosGerais             = this.addField(DADOS_GERAIS, STypeDadosGeraisPeticaoPrimariaSimplificada.class);
         final STypeRequerente                                  requerente              = this.addField(REQUERENTE, STypeRequerente.class);
         final STypeRepresentanteLegal                          representanteLegal      = this.addField("representanteLegal", STypeRepresentanteLegal.class);
         final STypeIngredienteAtivoPeticaoPrimariaSimplificada ingredienteAtivoPeticao = this.addField(INGREDIENTE_ATIVO_PETICAO, STypeIngredienteAtivoPeticaoPrimariaSimplificada.class);
