@@ -5,7 +5,6 @@
 
 package br.net.mirante.singular.form.wicket.util;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SInstances;
@@ -152,6 +151,14 @@ public class WicketFormProcessing implements Loggable {
                 .ifPresent(it -> it.updateValidationMessages(target));
     }
 
+    private static void evaluateUpdateListeners(SInstance i) {
+        Optional.ofNullable(i.asAtr().getUpdateListener()).ifPresent(x -> x.accept(i));
+        SInstances
+                .streamDescendants(SInstances.getRootInstance(i), true)
+                .filter(x -> Optional.ofNullable(x.asAtr().dependsOn()).map(y -> y.get().contains(i.getType())).orElse(false))
+                .forEach(WicketFormProcessing::evaluateUpdateListeners);
+    }
+
     public static void onFieldProcess(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstanceModel) {
 
         if (fieldInstanceModel == null || fieldInstanceModel.getObject() == null) {
@@ -159,6 +166,8 @@ public class WicketFormProcessing implements Loggable {
         }
 
         final SInstance fieldInstance = fieldInstanceModel.getObject();
+
+        evaluateUpdateListeners(fieldInstance);
 
         ISInstanceListener.EventCollector eventCollector = new ISInstanceListener.EventCollector();
         updateAttributes(fieldInstance, eventCollector);
@@ -230,13 +239,7 @@ public class WicketFormProcessing implements Loggable {
                         visit.dontGoDeeper();
                     } else {
                         if (shouldRefreshPredicate.test(ins)) {
-                            //SInstance inst = model.getMInstancia();
-                            //inst.clearInstance();
                             refreshComponentOrCellContainer(target, c);
-                            final IConsumer<SInstance> updateListener = ins.asAtr().getUpdateListener();
-                            if (updateListener != null) {
-                                updateListener.accept(ins);
-                            }
                         }
                     }
                 });
@@ -291,9 +294,9 @@ public class WicketFormProcessing implements Loggable {
         if (target.isPresent() && component != null) {
             component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, true);
             target.get()
-                .add(WicketFormUtils.resolveRefreshingComponent(
-                    ObjectUtils.defaultIfNull(
-                        WicketFormUtils.getCellContainer(component), component)));
+                    .add(WicketFormUtils.resolveRefreshingComponent(
+                            ObjectUtils.defaultIfNull(
+                                    WicketFormUtils.getCellContainer(component), component)));
         }
     }
 

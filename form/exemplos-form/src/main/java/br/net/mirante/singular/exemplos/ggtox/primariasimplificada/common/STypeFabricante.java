@@ -12,7 +12,6 @@ import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.S
 public class STypeFabricante extends STypeEntidade {
 
     public STypeAttachment comprovanteRegistroEstado;
-    public STypeAttachment laudoLaboratorial;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -24,7 +23,6 @@ public class STypeFabricante extends STypeEntidade {
         tipoPessoa.asAtr().visible((x) -> false);
 
         comprovanteRegistroEstado = addField("comprovanteRegistroEstado", STypeAttachment.class);
-        laudoLaboratorial = addField("laudoLaboratorial", STypeAttachment.class);
 
         nacional(comprovanteRegistroEstado)
                 .asAtr()
