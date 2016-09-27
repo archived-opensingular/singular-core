@@ -41,7 +41,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     public AttachmentRef addAttachment(File file, long length, String name) {
         try (FileInputStream fs = new FileInputStream(file)){
             T attachment = attachmentDao.insert(fs, length, name);
-            return new AttachmentRef(attachment);
+            return createRef(attachment);
         } catch (IOException e) {
             throw new SingularException(e);
         }
@@ -51,7 +51,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     public AttachmentRef copy(IAttachmentRef toBeCopied) {
         try(InputStream is = toBeCopied.getInputStream()){
             T file = attachmentDao.insert(is, toBeCopied.getSize(), toBeCopied.getName());
-            return new AttachmentRef(file);
+            return createRef(file);
         } catch (IOException e) {
             throw SingularUtil.propagate(e);
         }
@@ -59,7 +59,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
 
     @Override
     public List<AttachmentRef> getAttachments() {
-        return attachmentDao.list().stream().map(AttachmentRef::new).collect(Collectors.toList());
+        return attachmentDao.list().stream().map(this::createRef).collect(Collectors.toList());
     }
 
     @Override
@@ -74,6 +74,10 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
         attachmentDao.delete(Long.valueOf(id));
     }
 
+    public AttachmentRef createRef(T attachmentEntity){
+        return new AttachmentRef(attachmentEntity);
+    }
+    
     public T getAttachmentEntity(IAttachmentRef ref){
         T entity = attachmentDao.find(Long.valueOf(ref.getId()));
         Hibernate.initialize(entity);
