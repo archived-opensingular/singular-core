@@ -151,11 +151,23 @@ public class WicketFormProcessing implements Loggable {
                 .ifPresent(it -> it.updateValidationMessages(target));
     }
 
+    /**
+     * Executa o update listener dos tipos depentens da instancia informada, sendo chamada recursivamente para os tipos
+     * que foram atualizados.
+     * <p>
+     * Motivação: Tendo um tipo composto com tres tipos filhos (a,b e c),
+     * onde "b" é dependente de "a" e "c" é dependente de "b", "b" possui update listener que modifica o seu valor,
+     * e "c" será visivel se o valor de "b" não for nulo.  Ao atualizar "a" é necessario executar o listener dos seus
+     * tipos dependentes("b") e também dos tipos dependentes do seu dependente("c") para que a avaliação de visibilidade
+     * seja avaliada corretamente.
+     *
+     * @param i instancia a ser avaliada
+     * @see <a href="https://www.pivotaltracker.com/story/show/131103577">[#131103577]</a>
+     */
     private static void evaluateUpdateListeners(SInstance i) {
         Optional.ofNullable(i.asAtr().getUpdateListener()).ifPresent(x -> x.accept(i));
-        SInstances
-                .streamDescendants(SInstances.getRootInstance(i), true)
-                .filter(x -> Optional.ofNullable(x.asAtr().dependsOn()).map(y -> y.get().contains(i.getType())).orElse(false))
+        SInstances.streamDescendants(SInstances.getRootInstance(i), true)
+                .filter(a -> i.getType().getDependentTypes().contains(a.getType()))
                 .forEach(WicketFormProcessing::evaluateUpdateListeners);
     }
 
