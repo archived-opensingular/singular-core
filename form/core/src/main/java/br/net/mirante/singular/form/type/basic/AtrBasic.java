@@ -5,16 +5,6 @@
 
 package br.net.mirante.singular.form.type.basic;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
-import org.apache.commons.lang3.ObjectUtils;
-
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.SAttributeEnabled;
 import br.net.mirante.singular.form.SInstance;
@@ -23,6 +13,11 @@ import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.internal.freemarker.FormFreemarkerUtil;
+import org.apache.commons.lang3.ObjectUtils;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class AtrBasic extends STranslatorForAttribute {
 
@@ -108,6 +103,10 @@ public class AtrBasic extends STranslatorForAttribute {
             return union;
         });
         return this;
+    }
+
+    public Supplier<Collection<SType<?>>> dependsOn() {
+        return ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
     }
 
     public AtrBasic dependsOn(SType<?>... tipos) {
