@@ -1,25 +1,7 @@
 package br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
-
-import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX.*;
-import static br.net.mirante.singular.form.util.SingularPredicates.*;
-
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeAnexosPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeDadosGeraisPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeEstudosResiduos;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeInformacoesProcesso;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeIngredienteAtivoPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoFormuladoPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeProdutoTecnicoPeticaoPrimariaSimplificada;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeRepresentanteLegal;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.STypeRequerente;
+import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.common.*;
 import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.validators.AtivoAmostraValidator;
 import br.net.mirante.singular.form.SIComposite;
 import br.net.mirante.singular.form.SInfoType;
@@ -34,6 +16,15 @@ import br.net.mirante.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.view.SViewSelectionByRadio;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static br.net.mirante.singular.exemplos.ggtox.primariasimplificada.TipoPeticaoPrimariaGGTOX.*;
+import static br.net.mirante.singular.form.util.SingularPredicates.*;
 
 @SInfoType(name = "STypePeticaoPrimariaSimplificada", spackage = SPackagePeticaoPrimariaSimplificada.class)
 public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
@@ -60,8 +51,6 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .asAtr()
 //                .label("Petição primária Simplificada")
                 .displayString("Petição de ${tipoPeticao.nome}, nível ${nivel}");
-
-        this.addInstanceValidator(new AtivoAmostraValidator());
 
         final STypeComposite<SIComposite>                      tipoPeticao             = this.addFieldComposite(TIPO_PETICAO);
         final STypeInteger                                     idTipoPeticao           = tipoPeticao.addFieldInteger(ID_TIPO_PETICAO);
@@ -90,8 +79,11 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
         final List<Integer> naoPossuiProdutoFormulado = Arrays.asList(PT.getId(), PTE.getId(), PRE_MISTURA.getId());
         final List<Integer> produtoTecnicoOpcional    = Arrays.asList(BIOLOGICO.getId(), PRESERVATIVO_MADEIRA.getId(), NAO_AGRICOLA.getId());
         final List<Integer> naoTemRotuloBula          = Arrays.asList(PRE_MISTURA.getId(), PT.getId(), PTE.getId());
+        final List<Integer> naoPossuiEmbalagem        = Arrays.asList(PRE_MISTURA.getId(), PT.getId(), PTE.getId());
         final List<Integer> produtoTecnicoMultiplo    = Arrays.asList(PF.getId(), PFE.getId());
         final List<Integer> precisaEstudoResiduos     = Arrays.asList(PF.getId(), PFE.getId());
+        final List<Integer> possuiFabricante          = Arrays.asList(PRE_MISTURA.getId(), PT.getId(), PTE.getId());
+
 
         tipoPeticao
                 .withUpdateListener(si -> {
@@ -145,13 +137,14 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
         produtoTecnicoPeticao
                 .asAtr()
                 .dependsOn(nivel, tipoPeticao)
-                .exists(typeValueMatches(nivel, StringUtils::isNotEmpty));
+                .exists(typeValueIsNotNull(nivel));
 
         produtoTecnicoPeticao
                 .produtoTecnicoNaoSeAplica
                 .asAtr()
                 .dependsOn(tipoPeticao)
                 .exists(typeValueIsIn(idTipoPeticao, produtoTecnicoOpcional));
+
         produtoTecnicoPeticao
                 .produtosTecnicos
                 .asAtr()
@@ -223,15 +216,23 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .fabricante
                 .asAtr()
                 .dependsOn(nivel)
-                .exists(typeValueIsIn(nivel, "I", "II"));
+                .exists(allMatches(
+                        typeValueIsIn(idTipoPeticao, possuiFabricante)
+                ));
 
         produtoTecnicoPeticao
                 .produtosTecnicos
                 .getElementsType()
                 .fabricantes
                 .asAtr()
-                .dependsOn(nivel)
-                .exists(typeValueIsNotIn(nivel, "I", "II"));
+                .dependsOn(nivel, produtoTecnicoPeticao.produtosTecnicos.getElementsType().fabricante)
+                .exists(allMatches(
+                        typeValueIsIn(idTipoPeticao, possuiFabricante),
+                        anyMatches(
+                                typeValueIsFalse(produtoTecnicoPeticao.produtosTecnicos.getElementsType().fabricante),
+                                typeValueIsNull(produtoTecnicoPeticao.produtosTecnicos.getElementsType().fabricante)
+                        )
+                ));
 
         produtoFormulado
                 .asAtr()
@@ -251,6 +252,7 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .exists(typeValueIsNotEqualsTo(nivel, "I"));
 
         estudosResiduos
+                .addInstanceValidator(new AtivoAmostraValidator())
                 .asAtr()
                 .dependsOn(tipoPeticao)
                 .exists(typeValueIsIn(idTipoPeticao, precisaEstudoResiduos));
@@ -277,6 +279,12 @@ public class STypePeticaoPrimariaSimplificada extends STypePersistentComposite {
                 .asAtr()
                 .dependsOn(nivel)
                 .exists(typeValueIsEqualsTo(nivel, "IV"));
+
+        informacoesProcesso
+                .embalagens
+                .asAtr()
+                .dependsOn(tipoPeticao)
+                .exists(typeValueIsNotIn(idTipoPeticao, naoPossuiEmbalagem));
 
         this.withView(new SViewByBlock(), blocks -> {
             blocks
