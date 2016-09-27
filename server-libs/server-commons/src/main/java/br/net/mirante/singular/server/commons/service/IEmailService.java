@@ -6,10 +6,16 @@ package br.net.mirante.singular.server.commons.service;
 
 import br.net.mirante.singular.server.commons.service.dto.Email;
 
+/**
+ * Serviço de envio de e-mail
+ * 
+ * @author lucas.lopes
+ */
 public interface IEmailService<X extends Email> {
 
     boolean send(X email);
     
+    @SuppressWarnings("unchecked")
     default X createEmail(String subject) {
         return (X) new Email().withSubject(subject);
     }

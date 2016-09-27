@@ -1,4 +1,4 @@
-package br.net.mirante.singular.server.commons.flow;
+package br.net.mirante.singular.server.commons.schedule;
 
 import br.net.mirante.singular.flow.schedule.IScheduleData;
 import br.net.mirante.singular.flow.schedule.IScheduledJob;
