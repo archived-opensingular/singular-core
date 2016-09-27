@@ -35,7 +35,6 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.*;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
-import br.net.mirante.singular.server.commons.wicket.SingularSession;
 import br.net.mirante.singular.server.commons.wicket.view.form.FormPageConfig;
 import br.net.mirante.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import br.net.mirante.singular.support.persistence.enums.SimNao;
@@ -125,8 +124,13 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     public List<Map<String, Object>> quickSearchMap(QuickFilter filter) {
         final List<Map<String, Object>> list = petitionDAO.quickSearchMap(filter, filter.getProcessesAbbreviation(), filter.getTypesNames());
+        parseResultsPetition(list);
         list.forEach(this::checkItemActions);
         return list;
+    }
+
+    protected void parseResultsPetition(List<Map<String, Object>> results) {
+
     }
 
     private void checkItemActions(Map<String, Object> item) {
@@ -457,8 +461,13 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     public List<TaskInstanceDTO> listTasks(QuickFilter filter, List<Serializable> permissions) {
         List<TaskInstanceDTO> tasks = taskInstanceDAO.findTasks(filter, permissions);
+        parseResultsTask(tasks);
         tasks.forEach(t -> checkTaskActions(t, filter));
         return tasks;
+    }
+
+    protected void parseResultsTask(List<TaskInstanceDTO> tasks) {
+
     }
 
     protected void checkTaskActions(TaskInstanceDTO task, QuickFilter filter) {
