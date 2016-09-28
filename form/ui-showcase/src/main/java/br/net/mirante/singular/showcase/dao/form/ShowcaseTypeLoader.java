@@ -5,21 +5,7 @@
 
 package br.net.mirante.singular.showcase.dao.form;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.Preconditions;
-
 import br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeCredenciamentoEscolaGoverno;
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.form.STypePeticaoPrimariaSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco.STypeNotificacaoSimplificadaBaixoRisco;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado.STypeNotificacaoSimplificadaDinamizado;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.STypeNotificacaoSimplificadaGasMedicinal;
@@ -39,6 +25,16 @@ import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.showcase.component.ShowCaseType;
 import br.net.mirante.singular.showcase.view.page.form.examples.STypeCurriculo;
 import br.net.mirante.singular.showcase.view.page.form.examples.STypeExample;
+import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 
 public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
@@ -57,7 +53,6 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         add(STypeNotificacaoSimplificadaFitoterapico.class, ShowCaseType.FORM);
         add(STypeNotificacaoSimplificadaBaixoRisco.class, ShowCaseType.FORM);
         add(STypeHabilitacaoEmpresa.class, ShowCaseType.FORM);
-        add(STypePeticaoPrimariaSimplificada.class, ShowCaseType.FORM);
         add(STypeCredenciamentoEscolaGoverno.class, ShowCaseType.FORM);
         add(STypeGestaoObras.class, ShowCaseType.FORM);
 
