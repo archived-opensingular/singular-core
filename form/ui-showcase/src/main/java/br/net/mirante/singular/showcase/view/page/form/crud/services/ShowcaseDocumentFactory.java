@@ -5,7 +5,6 @@
 
 package br.net.mirante.singular.showcase.view.page.form.crud.services;
 
-import br.net.mirante.singular.exemplos.ggtox.primariasimplificada.spring.PeticaoPrimariaSimplificadaSpringConfiguration;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
@@ -26,11 +25,9 @@ import static br.net.mirante.singular.form.type.core.attachment.handlers.FileSys
 public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
 
     private final static SpringServiceRegistry NOTIFICACAO_SIMPLIFICADA_SPRING_CONFIG;
-    private final static SpringServiceRegistry PETICAO_PRIMARIA_SIMPIFICADA_SPRING_CONFIG;
 
     static {
         NOTIFICACAO_SIMPLIFICADA_SPRING_CONFIG = new SpringServiceRegistry(new AnnotationConfigApplicationContext(NotificaoSimplificadaSpringConfiguration.class));
-        PETICAO_PRIMARIA_SIMPIFICADA_SPRING_CONFIG = new SpringServiceRegistry(new AnnotationConfigApplicationContext(PeticaoPrimariaSimplificadaSpringConfiguration.class));
     }
 
     @Override
@@ -44,7 +41,6 @@ public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
         document.setAttachmentPersistencePermanentHandler(
                 of(getServiceRegistry().lookupService(IAttachmentPersistenceHandler.class)));
         document.addServiceRegistry(NOTIFICACAO_SIMPLIFICADA_SPRING_CONFIG);
-        document.addServiceRegistry(PETICAO_PRIMARIA_SIMPIFICADA_SPRING_CONFIG);
     }
 
 

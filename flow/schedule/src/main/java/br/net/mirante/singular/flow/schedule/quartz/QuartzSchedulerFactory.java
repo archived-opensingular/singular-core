@@ -11,6 +11,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
@@ -465,5 +466,14 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
     public void addTrigger(Trigger trigger) throws SchedulerException {
         addJobToScheduler((JobDetail) trigger.getJobDataMap().get(JOB_DETAIL_KEY));
         addTriggerToScheduler(trigger);
+    }
+    /**
+     * Trigger the identified {@link org.quartz.JobDetail} (execute it now).
+     * 
+     * @param jobKey
+     * @throws SchedulerException
+     */
+    public void triggerJob(JobKey jobKey) throws SchedulerException{
+        getScheduler().triggerJob(jobKey);
     }
 }

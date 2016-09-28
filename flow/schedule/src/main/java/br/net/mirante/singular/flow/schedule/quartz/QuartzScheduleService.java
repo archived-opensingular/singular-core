@@ -8,6 +8,9 @@ package br.net.mirante.singular.flow.schedule.quartz;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
+
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.flow.schedule.IScheduleService;
@@ -76,6 +79,15 @@ public class QuartzScheduleService implements IScheduleService {
                             .forJob(scheduledJob::run)
                             .withScheduleData(scheduledJob.getScheduleData()).build());
         } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
+    }
+    
+    @Override
+    public void trigger(IScheduledJob scheduledJob) {
+        try {
+            quartzSchedulerFactory.triggerJob(new JobKey(scheduledJob.getId()));
+        } catch (SchedulerException e) {
             throw Throwables.propagate(e);
         }
     }
