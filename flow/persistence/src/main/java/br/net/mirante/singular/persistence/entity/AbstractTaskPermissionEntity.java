@@ -45,8 +45,8 @@ public abstract class AbstractTaskPermissionEntity<TASK_DEF extends IEntityTaskD
     @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
     private TASK_DEF taskDefinition;
 
-    @Column(name = "NO_PERFIL", length = 200, nullable = false)
-    private String permissionName;
+    @Column(name = "CO_PERMISSAO", length = 500, nullable = false)
+    private String permission;
 
     @Override
     public Integer getCod() {
@@ -66,11 +66,11 @@ public abstract class AbstractTaskPermissionEntity<TASK_DEF extends IEntityTaskD
         this.taskDefinition = taskDefinition;
     }
 
-    public String getPermissionName() {
-        return permissionName;
+    public String getPermission() {
+        return permission;
     }
 
-    public void setPermissionName(String permissionName) {
-        this.permissionName = permissionName;
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 }

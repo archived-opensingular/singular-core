@@ -9,6 +9,6 @@ public interface IEntityTaskPermission extends IEntityByCod<Integer> {
 
     IEntityTaskDefinition getTaskDefinition();
 
-    String getPermissionName();
+    String getPermission();
 
 }
