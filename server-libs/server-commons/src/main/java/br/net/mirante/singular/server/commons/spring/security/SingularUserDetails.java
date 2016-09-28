@@ -27,18 +27,6 @@ public interface SingularUserDetails extends UserDetails {
 
     public List<SingularPermission> getPermissions();
 
-    public default List<String> getPermissionsSingular() {
-        return getPermissions().stream()
-                .map(SingularPermission::getSingularId)
-                .collect(Collectors.toList());
-    }
-
-    public default List<Serializable> getPermissionsInternal() {
-        return getPermissions().stream()
-                .map(SingularPermission::getInternalId)
-                .collect(Collectors.toList());
-    }
-
     @Override
     public default Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.EMPTY_LIST;

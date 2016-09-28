@@ -37,7 +37,7 @@ public class SingularSession extends AuthenticatedWebSession {
     @Override
     public Roles getRoles() {
         if (getUserDetails() != null) {
-            return new Roles(getUserDetails().getPermissionsSingular().toArray(new String[0]));
+            return new Roles(getUserDetails().getPermissions().stream().map( sp -> sp.getSingularId()).collect(Collectors.toList()).toArray(new String[0]));
         }
         return new Roles();
     }

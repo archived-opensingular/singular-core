@@ -1,20 +1,19 @@
 package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.hibernate.Query;
-
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
+import br.net.mirante.singular.server.commons.spring.security.SingularPermission;
 import br.net.mirante.singular.server.commons.util.JPAQueryUtil;
 import br.net.mirante.singular.support.persistence.BaseDAO;
+import org.hibernate.Query;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
 
@@ -42,20 +41,20 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
     public List<? extends TaskInstanceDTO> findTasks(int first, int count, String sortProperty, boolean ascending,
-                                                     String siglaFluxo, List<Serializable> permissions, String filtroRapido,
+                                                     String siglaFluxo, List<SingularPermission> permissions, String filtroRapido,
                                                      boolean concluidas) {
         return buildQuery(sortProperty, ascending, Collections.singletonList(siglaFluxo), permissions, filtroRapido, concluidas, false)
                 .setMaxResults(count).setFirstResult(first).list();
     }
 
-    public List<TaskInstanceDTO> findTasks(QuickFilter filter, List<Serializable> permissions) {
+    public List<TaskInstanceDTO> findTasks(QuickFilter filter, List<SingularPermission> permissions) {
         return buildQuery(filter.getSortProperty(), filter.isAscending(), filter.getProcessesAbbreviation(), permissions, filter.getFilter(), filter.getEndedTasks(), false)
                 .setMaxResults(filter.getCount())
                 .setFirstResult(filter.getFirst())
                 .list();
     }
 
-    protected Query buildQuery(String sortProperty, boolean ascending, List<String> processTypes, List<Serializable> permissions,
+    protected Query buildQuery(String sortProperty, boolean ascending, List<String> processTypes, List<SingularPermission> permissions,
                                String filtroRapido, Boolean concluidas, boolean count) {
         String selectClause =
                 count ?
@@ -144,7 +143,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
 
-    public Long countTasks(List<String> processTypes, List<Serializable> permissions, String filtroRapido, Boolean concluidas) {
+    public Long countTasks(List<String> processTypes, List<SingularPermission> permissions, String filtroRapido, Boolean concluidas) {
         return ((Number) buildQuery(null, true, processTypes, permissions, filtroRapido, concluidas, true).uniqueResult()).longValue();
     }
 
@@ -162,7 +161,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                 .append("   and (ti.endDate is null OR task.type = :tipoEnd)  ");
 
         final Query query = getSession().createQuery(sb.toString());
-        query.setParameter("petitionId",  petitionId);
+        query.setParameter("petitionId", petitionId);
         query.setParameter("tipoEnd", TaskType.End);
         return query.list();
     }

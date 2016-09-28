@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.server.commons.spring.security.SingularPermission;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -231,8 +232,8 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         }
     }
     
-    protected List<Serializable> getUserRoleIds() {
-        return SingularSession.get().getUserDetails().getPermissionsInternal();
+    protected List<SingularPermission> getUserRoleIds() {
+        return SingularSession.get().getUserDetails().getPermissions();
     }
 
     @Override
