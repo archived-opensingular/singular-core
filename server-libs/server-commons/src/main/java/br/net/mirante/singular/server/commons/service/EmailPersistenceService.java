@@ -5,9 +5,12 @@
 package br.net.mirante.singular.server.commons.service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.Transactional;
 
 import br.net.mirante.singular.form.document.SDocument;
 import br.net.mirante.singular.form.persistence.entity.AttachmentContentEntitty;
@@ -21,7 +24,7 @@ import br.net.mirante.singular.server.commons.persistence.entity.email.EmailEnti
 import br.net.mirante.singular.server.commons.service.dto.Email;
 import br.net.mirante.singular.server.commons.service.dto.Email.Addressee;
 
-//TODO Lucas - Finalizar
+@Transactional(Transactional.TxType.MANDATORY)
 public class EmailPersistenceService implements IEmailService<Email>{
 
     @Inject
@@ -58,4 +61,32 @@ public class EmailPersistenceService implements IEmailService<Email>{
         return true;
     }
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void markAsSent(Addressee addressee){
+        EmailAddresseeEntity entity = emailAddresseeDao.find(addressee.getCod());
+        entity.setSentDate(new Date());
+        emailAddresseeDao.saveOrUpdate(entity);
+        
+        addressee.setSentDate(entity.getSentDate());
+    }
+    
+    public int countPendingRecipients() {
+        return emailAddresseeDao.countPending();
+    }
+    
+    public List<Addressee> listPendingRecipients(int firstResult, int maxResults) {
+        return emailAddresseeDao.listPending(firstResult, maxResults).stream().map(addressee -> {
+            Email email = new Email();
+            email.withSubject(addressee.getEmail().getSubject());
+            email.withContent(addressee.getEmail().getContent());
+            email.addReplyTo(addressee.getEmail().getReplyTo());
+            email.setCreationDate(addressee.getEmail().getCreationDate());
+            
+            for (AttachmentEntity attachmentEntity : addressee.getEmail().getAttachments()) {
+                email.addAttachments(persistenceHandler.createRef(attachmentEntity));
+            }
+            
+            return new Addressee(email, addressee);
+        }).collect(Collectors.toList());
+    }
 }

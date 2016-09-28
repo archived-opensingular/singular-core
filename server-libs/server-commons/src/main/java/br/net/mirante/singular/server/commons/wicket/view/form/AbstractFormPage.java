@@ -1,26 +1,5 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.flow.RedirectToUrlException;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.form.SIComposite;
@@ -51,6 +30,25 @@ import br.net.mirante.singular.server.commons.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
 
@@ -318,7 +316,10 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void saveForm(IModel<? extends SInstance> currentInstance, String transitionName) {
         onBeforeSave(currentInstance);
-        formModel.setObject(petitionService.saveOrUpdate(getUpdatedPetitionFromInstance(currentInstance, isMainForm()), currentInstance.getObject(), true, isMainForm(), t -> onSave(t, transitionName)));
+        formModel.setObject(petitionService.saveOrUpdate(
+                getUpdatedPetitionFromInstance(currentInstance, isMainForm()),
+                currentInstance.getObject(), true, isMainForm(), t -> onSave(t, transitionName)
+        ));
     }
 
     protected void onSave(T petition, String transitionName) {
@@ -435,7 +436,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
      * @return
      */
     private BSModalBorder buildFlowConfirmationModal(String idSuffix, BSContainer<?> mc, String tn, IModel<? extends SInstance> im, ViewMode vm) {
-        final FlowConfirmModal flowConfirmModal   = resolveFlowConfirmModalBuilder(tn);
+        final FlowConfirmModal flowConfirmModal   = resolveFlowConfirmModal(tn);
         final TemplatePanel    modalTemplatePanel = mc.newTemplateTag(t -> flowConfirmModal.getMarkup(idSuffix));
         final BSModalBorder    modal              = flowConfirmModal.init(idSuffix, tn, im, vm);
         modalTemplatePanel.add(modal);
@@ -446,7 +447,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
      * @param tn -> the transition name
      * @return the FlowConfirmModal
      */
-    protected FlowConfirmModal<T> resolveFlowConfirmModalBuilder(String tn) {
+    protected FlowConfirmModal<T> resolveFlowConfirmModal(String tn) {
         return new SimpleMessageFlowConfirmModal<>(this);
     }
 

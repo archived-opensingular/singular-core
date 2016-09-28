@@ -1,5 +1,12 @@
 package br.net.mirante.singular.server.commons.flow;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
@@ -25,6 +32,12 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
     @Inject
     protected PlatformTransactionManager transactionManager;
 
+    @Inject
+    private IScheduleService scheduleService;
+
+    @Inject
+    private IFlowRenderer flowRenderer;
+
     @PostConstruct
     protected void postConstruct() {
         this.setProcessGroupCod(singularServerConfiguration.getProcessGroupCod());
@@ -35,8 +48,12 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
 
     @Override
     public IFlowRenderer getFlowRenderer() {
-//        return JGraphFlowRenderer.INSTANCE;
-        return new YFilesFlowRemoteRenderer(null);
+        return flowRenderer;
+    }
+    
+    @Override
+    protected IScheduleService getScheduleService() {
+        return scheduleService;
     }
 
     @Transactional

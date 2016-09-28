@@ -155,8 +155,13 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     public List<Map<String, Object>> quickSearchMap(QuickFilter filter) {
         final List<Map<String, Object>> list = petitionDAO.quickSearchMap(filter, filter.getProcessesAbbreviation(), filter.getTypesNames());
+        parseResultsPetition(list);
         list.forEach(this::checkItemActions);
         return list;
+    }
+
+    protected void parseResultsPetition(List<Map<String, Object>> results) {
+
     }
 
     private void checkItemActions(Map<String, Object> item) {
@@ -487,8 +492,13 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
 
     public List<TaskInstanceDTO> listTasks(QuickFilter filter, List<SingularPermission> permissions) {
         List<TaskInstanceDTO> tasks = taskInstanceDAO.findTasks(filter, permissions);
+        parseResultsTask(tasks);
         tasks.forEach(t -> checkTaskActions(t, filter));
         return tasks;
+    }
+
+    protected void parseResultsTask(List<TaskInstanceDTO> tasks) {
+
     }
 
     protected void checkTaskActions(TaskInstanceDTO task, QuickFilter filter) {

@@ -58,7 +58,7 @@ public class ActionConfig implements Loggable {
     }
 
     public Class<? extends IController> getAction(String name) {
-        Class<? extends IController> controllerClass = customActions.get(name);
+        Class<? extends IController> controllerClass = getCustomAction(name);
 
         if (controllerClass == null) {
             controllerClass = MAP_DEFAULT_ACTIONS
@@ -71,6 +71,16 @@ public class ActionConfig implements Loggable {
         }
 
         return controllerClass;
+    }
+
+    private Class<? extends IController> getCustomAction(String name) {
+        for (Map.Entry<ActionDefinition, Class<? extends IController>> entry : customActions.entrySet()) {
+            if (entry.getKey().getName().equals(name)) {
+                return entry.getValue();
+            }
+        }
+
+        return null;
     }
 
     public boolean containsAction(String name) {
