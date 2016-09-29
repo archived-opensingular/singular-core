@@ -74,9 +74,4 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
         }
     }
 
-    @Override
-    protected IScheduleService getScheduleService() {
-        return new TransactionalQuartzScheduledService(transactionManager);
-    }
-
 }
