@@ -1,11 +1,6 @@
 package br.net.mirante.singular.server.module.wicket.view.util.dispatcher;
 
-import br.net.mirante.singular.flow.core.Flow;
-import br.net.mirante.singular.flow.core.ITaskPageStrategy;
-import br.net.mirante.singular.flow.core.MTask;
-import br.net.mirante.singular.flow.core.MTaskUserExecutable;
-import br.net.mirante.singular.flow.core.TaskInstance;
-import br.net.mirante.singular.form.SFormUtil;
+import br.net.mirante.singular.flow.core.*;
 import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
@@ -49,10 +44,7 @@ import javax.inject.Named;
 import java.lang.reflect.Constructor;
 import java.util.Optional;
 
-import static br.net.mirante.singular.server.commons.util.Parameters.ACTION;
-import static br.net.mirante.singular.server.commons.util.Parameters.FORM_VERSION_KEY;
-import static br.net.mirante.singular.server.commons.util.Parameters.PETITION_ID;
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static br.net.mirante.singular.server.commons.util.Parameters.*;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -63,11 +55,14 @@ public abstract class DispatcherPage extends WebPage {
     protected static final Logger logger = LoggerFactory.getLogger(DispatcherPage.class);
 
     private final WebMarkupContainer bodyContainer = new WebMarkupContainer("body");
+
     @Inject
     @Named("formConfigWithDatabase")
     protected SFormConfig<String> singularFormConfig;
+
     @Inject
     private PetitionService<?> petitionService;
+
     @Inject
     private AuthorizationService authorizationService;
 
@@ -158,14 +153,11 @@ public abstract class DispatcherPage extends WebPage {
 
 
     private SType<?> loadType(FormPageConfig cfg) {
-        return singularFormConfig.getTypeLoader().loadTypeOrException(
-                Optional.ofNullable(cfg.getFormType()).orElseGet(() -> loadTypeNameFormFormVersionPK(cfg))
-        );
+        return singularFormConfig.getTypeLoader().loadTypeOrException(cfg.getFormType());
     }
 
-    private String loadTypeNameFormFormVersionPK(FormPageConfig cfg) {
-        return Optional
-                .ofNullable(cfg.getFormVersionPK())
+    private String loadTypeNameFormFormVersionPK(Long formVersionPK) {
+        return Optional.of(formVersionPK)
                 .map(petitionService::findFormTypeFromVersion)
                 .map(FormTypeEntity::getAbbreviation)
                 .orElseThrow(() -> new SingularServerException("Não possivel idenfiticar o tipo"));
@@ -209,8 +201,8 @@ public abstract class DispatcherPage extends WebPage {
 
         final StringValue action        = getParam(r, ACTION);
         final StringValue petitionId    = getParam(r, PETITION_ID);
-        final StringValue formName      = getParam(r, SIGLA_FORM_NAME);
         final StringValue formVersionPK = getParam(r, FORM_VERSION_KEY);
+        final StringValue formName      = getParam(r, SIGLA_FORM_NAME);
 
         if (action.isEmpty()) {
             throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + "/singular");
@@ -219,8 +211,15 @@ public abstract class DispatcherPage extends WebPage {
         final FormActions formAction = resolveFormAction(action);
 
         final String pi  = petitionId.toString("");
-        final String fn  = formName.toString();
         final Long   fvk = formVersionPK.isEmpty() ? null : formVersionPK.toLong();
+
+        String fn = null;
+
+        if (!formName.isEmpty()) {
+            fn = formName.toString();
+        } else if (fvk != null) {
+            fn = loadTypeNameFormFormVersionPK(fvk);
+        }
 
         final FormPageConfig cfg = buildConfig(r, pi, formAction, fn, fvk);
 
