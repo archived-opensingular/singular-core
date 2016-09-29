@@ -12,9 +12,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Essa classe utilitaria realiza uma serie de operacoes sobre os valores guardados pelos MTIpos
@@ -113,9 +115,9 @@ public class Value {
      * @param path
      * @return
      */
-    public static <T extends Serializable> T of(SInstance instanciaComposta, String path) {
+    public static <T extends Serializable> T of(SInstance instanciaComposta, String...path) {
         if (instanciaComposta instanceof SIComposite) {
-            SInstance campo = ((SIComposite) instanciaComposta).getField(path);
+            SInstance campo = ((SIComposite) instanciaComposta).getField(Arrays.stream(path).collect(Collectors.joining(".")));
             if (campo instanceof SISimple) {
                 return Value.of((SISimple<T>) campo);
             } else if (campo instanceof SIList) {
