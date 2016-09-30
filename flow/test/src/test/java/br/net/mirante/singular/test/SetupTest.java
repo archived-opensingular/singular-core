@@ -2,6 +2,7 @@ package br.net.mirante.singular.test;
 
 import static org.junit.Assert.assertEquals;
 
+import br.net.mirante.singular.persistence.entity.TaskPermissionEntity;
 import org.junit.Test;
 
 import br.net.mirante.singular.flow.core.TaskType;
@@ -19,7 +20,6 @@ import br.net.mirante.singular.persistence.entity.TaskDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.TaskHistoricTypeEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
-import br.net.mirante.singular.persistence.entity.TaskRight;
 import br.net.mirante.singular.persistence.entity.TaskTransitionVersionEntity;
 import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
@@ -54,7 +54,7 @@ public abstract class SetupTest extends TestSupport {
         listaAllFor(TaskHistoricTypeEntity.class);
         listaAllFor(TaskInstanceEntity.class);
         listaAllFor(TaskInstanceHistoryEntity.class);
-        listaAllFor(TaskRight.class);
+        listaAllFor(TaskPermissionEntity.class);
         listaAllFor(TaskTransitionVersionEntity.class);
         listaAllFor(VariableInstanceEntity.class);
         listaAllFor(VariableTypeInstance.class);

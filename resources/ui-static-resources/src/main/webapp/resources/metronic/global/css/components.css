@@ -916,8 +916,6 @@ h6.block {
 a {
   text-shadow: none;
   color: #337ab7; }
-  a:hover {
-    color: #23527c; }
   a:focus, a:hover, a:active {
     outline: 0; }
 

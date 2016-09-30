@@ -5,11 +5,8 @@
 
 package br.net.mirante.singular.util.wicket.template;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import br.net.mirante.singular.util.wicket.application.SkinnableApplication;
+import com.google.common.collect.ImmutableList;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -21,10 +18,14 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import com.google.common.collect.ImmutableList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class SingularTemplate extends WebPage {
 
@@ -85,9 +86,12 @@ public abstract class SingularTemplate extends WebPage {
     }
 
     protected void initSkins() {
-        skinOptions.addDefaulSkin("Default", CssHeaderItem.forUrl("/singular-static/resources/metronic/layout4/css/themes/default.css"));
-        skinOptions.addSkin("Anvisa", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/anvisa.css"));
-        skinOptions.addSkin("Montreal", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/montreal.css"));
+        final WebApplication wa = WebApplication.get();
+        if (wa instanceof SkinnableApplication) {
+            ((SkinnableApplication) wa).initSkins(skinOptions);
+        } else {
+            skinOptions.addDefaulSkin("Default", CssHeaderItem.forUrl("/singular-static/resources/metronic/layout4/css/themes/default.css"));
+        }
     }
 
 

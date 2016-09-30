@@ -78,13 +78,16 @@ body {
     .page-header.navbar .top-menu .navbar-nav > li.dropdown-tasks .dropdown-menu .dropdown-menu-list .progress {
       background-color: #dfe2e9; }
     .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-toggle > .username {
-      color: #40BAA7; }
+        color: #7A7A7A;
+    }
     .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-toggle > i {
-      color: #40BAA7; }
+        color: #7A7A7A;
+    }
     .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-menu {
       width: 195px; }
     .page-header.navbar .top-menu .navbar-nav > li.dropdown-language > .dropdown-toggle > .langname {
-      color: #40BAA7; }
+        color: #7A7A7A;
+    }
     .page-header.navbar .top-menu .navbar-nav > li.dropdown-dark .dropdown-menu {
       background: white;
       border: 0; }
