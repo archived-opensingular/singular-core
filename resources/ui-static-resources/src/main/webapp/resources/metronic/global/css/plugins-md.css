@@ -1108,19 +1108,29 @@ table.dataTable thead .sorting_desc_disabled {
     display: none; }
 
 table.dataTable thead .sorting {
-  background: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a    width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">\a<path d="M7,13.5l5,5l5-5H7z" style="fill:rgba(220, 220, 220, 1); fill-rule:nonzero;"/>\a<path d="M7,10.5l5-5l5,5H7z" style="fill:rgba(220, 220, 220, 1); fill-rule:nonzero;"/>\a</svg>') no-repeat center right; }
+    background: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a    width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">\a<path d="M7,13.5l5,5l5-5H7z" style="fill:rgba(220, 220, 220, 1); fill-rule:nonzero;"/>\a<path d="M7,10.5l5-5l5,5H7z" style="fill:rgba(220, 220, 220, 1); fill-rule:nonzero;"/>\a</svg>') no-repeat center left;
+    padding-left: 20px;
+}
 
 table.dataTable thead .sorting_asc {
-  background: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a    width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">\a<path d="M7,10.5l5-5l5,5H7z" style="fill:rgba(64, 186, 167, 0.99); fill-rule:nonzero;"/>\a</svg>') no-repeat center right; }
+    background: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a    width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">\a<path d="M7,10.5l5-5l5,5H7z" style="fill:rgba(122, 122, 122, 0.99); fill-rule:nonzero;"/>\a</svg>') no-repeat center left;
+    padding-left: 20px;
+}
 
 table.dataTable thead .sorting_desc {
-  background: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a    width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">\a<path d="M7,13.5l5,5l5-5H7z" style="fill:rgba(64, 186, 167, 0.99); fill-rule:nonzero;"/>\a</svg>') no-repeat center right; }
+    background: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a    width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">\a<path d="M7,13.5l5,5l5-5H7z" style="fill:rgba(122, 122, 122, 0.99); fill-rule:nonzero;"/>\a</svg>') no-repeat center left;
+    padding-left: 20px;
+}
 
 table.dataTable thead .sorting_asc_disabled {
-  background: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a    width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">\a<path d="M7,10.5l5-5l5,5H7z" style="fill:rgba(220, 220, 220, 1); fill-rule:nonzero;"/>\a</svg>') no-repeat center right; }
+    background: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a    width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">\a<path d="M7,10.5l5-5l5,5H7z" style="fill:rgba(220, 220, 220, 1); fill-rule:nonzero;"/>\a</svg>') no-repeat center left;
+    padding-left: 20px;
+}
 
 table.dataTable thead .sorting_desc_disabled {
-  background: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a    width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">\a<path d="M7,13.5l5,5l5-5H7z" style="fill:rgba(220, 220, 220, 1); fill-rule:nonzero;"/>\a</svg>') no-repeat center right; }
+    background: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a    width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">\a<path d="M7,13.5l5,5l5-5H7z" style="fill:rgba(220, 220, 220, 1); fill-rule:nonzero;"/>\a</svg>') no-repeat center left;
+    padding-left: 20px;
+}
 
 table.dataTable th:active {
   outline: none; }

@@ -3,8 +3,6 @@ body {
 
 a {
   color: #508450; }
-  a:hover {
-    color: #519951; }
 
 .page-header.navbar .page-logo .logo-default {
   background-image: url("/singular-static/resources/singular/img/logo-anvisa.png");
@@ -37,7 +35,9 @@ a {
 
 .form-actions .send-btn, .btn {
   background-color: #508450;
-  border: 1px solid transparent; }
+    border: 1px solid transparent;
+    color: #FFFFFF;
+}
 
 .btn-add {
   background-color: transparent;
@@ -92,3 +92,36 @@ a {
 
 .page-footer {
   background-color: #f9f9f9; }
+
+.label-success {
+    background-color: #508450;
+}
+
+.btn-default:hover {
+    color: #000000;
+}
+
+.portlet.light .portlet-title .actions .btn-default {
+    color: #FFFFFF;
+}
+
+.portlet.light .portlet-title .actions .btn-default:hover {
+    color: #000000;
+}
+
+.list-table-empty {
+    background-color: #f2f2f2;
+}
+
+.page-content .form-actions .send-btn {
+    background-color: #508450;
+    border-color: #508450;
+}
+
+.upload-list-item .list-item-icon .list-item-uploaded {
+    color: #508450;
+}
+
+.upload-list-item .list-item-action .list-action-uploading .fill, .upload-list-item .list-item-action .list-action-uploading .bar {
+    border: #508450;
+}
