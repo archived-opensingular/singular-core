@@ -111,9 +111,7 @@ public class DefaultServerREST {
 
     @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_PETITIONS, method = RequestMethod.POST)
     public List<Map<String, Object>> searchPetitions(@RequestBody QuickFilter filter) {
-        List<Map<String, Object>> result = petitionService.quickSearchMap(filter);
-        authorizationService.filterActions(result, filter.getIdUsuarioLogado());
-        return result;
+        return petitionService.quickSearchMap(filter);
     }
 
     @RequestMapping(value = PATH_BOX_SEARCH + COUNT_PETITIONS, method = RequestMethod.POST)

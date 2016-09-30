@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -69,25 +68,31 @@ public class AuthorizationService implements Loggable {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void filterActions(List<Map<String, Object>> result, String idUsuario) {
+    public void filterActions(String formType, Long petitionId, List<BoxItemAction> actions, String idUsuario) {
         List<SingularPermission> permissions = searchPermissions(idUsuario);
-        for (Map<String, Object> resultItem : result) {
-            List<BoxItemAction> actions = (List<BoxItemAction>) resultItem.get("actions");
-            for (Iterator<BoxItemAction> it = actions.iterator(); it.hasNext(); ) {
-                BoxItemAction action = it.next();
-                String permissionsNeeded;
-                String typeAbbreviation = getFormSimpleName((String) resultItem.get("type"));
-                if (action.getFormAction() != null) {
-                    permissionsNeeded = buildPermissionKey(null, typeAbbreviation, action.getFormAction().name());
-                } else {
-                    permissionsNeeded = buildPermissionKey(null, typeAbbreviation, action.getName());
-                }
-                if (!hasPermission(idUsuario, permissionsNeeded, permissions)) {
-                    it.remove();
-                }
+        filterActions(formType, petitionId, actions, idUsuario, permissions);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void filterActions(String formType, Long petitionId, List<BoxItemAction> actions, String idUsuario, List<SingularPermission> permissions) {
+        PetitionEntity petitionEntity = null;
+        if (petitionId != null) {
+            petitionEntity = petitionService.find(petitionId);
+        }
+        for (Iterator<BoxItemAction> it = actions.iterator(); it.hasNext(); ) {
+            BoxItemAction action = it.next();
+            String permissionsNeeded;
+            String typeAbbreviation = getFormSimpleName(formType);
+            if (action.getFormAction() != null) {
+                permissionsNeeded = buildPermissionKey(petitionEntity, typeAbbreviation, action.getFormAction().name());
+            } else {
+                permissionsNeeded = buildPermissionKey(petitionEntity, typeAbbreviation, action.getName());
+            }
+            if (!hasPermission(idUsuario, permissionsNeeded, permissions)) {
+                it.remove();
             }
         }
+
     }
 
     public boolean hasPermission(Long petitionId, String formType, String idUsuario, String action) {
