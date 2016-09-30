@@ -21,10 +21,13 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import br.net.mirante.singular.commons.base.SingularProperties;
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.service.dto.Email;
 import br.net.mirante.singular.server.commons.service.dto.Email.Addressee;
 
 public class EmailSender extends JavaMailSenderImpl implements Loggable {
+
+    private static final String EMAIL_DEVELOPMENT = "mirante.teste@gmail.com";
 
     private String from;
 
@@ -75,7 +78,11 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
                 msg.setSentDate(Optional.ofNullable(e.getCreationDate()).orElseGet(Date::new));
                 msg.setFrom(new InternetAddress(Optional.ofNullable(from).orElseGet(this::getUsername)));
                 // destinatários
-                msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(addressee.getAddress()));
+                if (ConfigProperties.isDevelopmentMode()) {
+                    msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(EMAIL_DEVELOPMENT));
+                } else {
+                    msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(addressee.getAddress()));
+                }
                 
                 // Cria o "contêiner" das várias partes do e-mail
                 final Multipart content = new MimeMultipart("related");

@@ -17,6 +17,8 @@ import br.net.mirante.singular.form.persistence.entity.AttachmentContentEntitty;
 import br.net.mirante.singular.form.persistence.entity.AttachmentEntity;
 import br.net.mirante.singular.form.persistence.service.AttachmentPersistenceService;
 import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.validation.SingularEmailValidator;
+import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.persistence.dao.EmailAddresseeDao;
 import br.net.mirante.singular.server.commons.persistence.dao.EmailDao;
 import br.net.mirante.singular.server.commons.persistence.entity.email.EmailAddresseeEntity;
@@ -39,6 +41,9 @@ public class EmailPersistenceService implements IEmailService<Email>{
     @Override
     public boolean send(Email email) {
         EmailEntity emailEntity = new EmailEntity();
+        if (!validateRecipients(email.getAllRecipients())) {
+            throw new SingularServerException("O destinatário de e-mail é inválido.");
+        }
         emailEntity.setSubject(email.getSubject());
         emailEntity.setContent(email.getContent());
         emailEntity.setReplyTo(email.getReplyToJoining());
@@ -57,6 +62,15 @@ public class EmailPersistenceService implements IEmailService<Email>{
             addresseeEntity.setEmail(emailEntity);
             
             emailAddresseeDao.save(addresseeEntity);
+        }
+        return true;
+    }
+
+    private boolean validateRecipients(List<Addressee> recipients) {
+        for (Addressee addressee : recipients) {
+            if (!SingularEmailValidator.getInstance(false).isValid(addressee.getAddress())) {
+                return false;
+            }
         }
         return true;
     }

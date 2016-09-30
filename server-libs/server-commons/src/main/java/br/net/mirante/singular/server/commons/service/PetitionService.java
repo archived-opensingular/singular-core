@@ -344,6 +344,8 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
                             formVersionHistoryEntity.setMainForm(f.getMainForm());
                             formVersionHistoryEntity.setCodFormVersion(f.getForm().getCurrentFormVersionEntity().getCod());
                             formVersionHistoryEntity.setCodPetitionContentHistory(contentHistoryEntity.getCod());
+                            formVersionHistoryEntity.setFormVersion(f.getForm().getCurrentFormVersionEntity());
+                            formVersionHistoryEntity.setPetitionContentHistory(contentHistoryEntity);
                             return formVersionHistoryEntity;
                         })
                         .collect(Collectors.toList())

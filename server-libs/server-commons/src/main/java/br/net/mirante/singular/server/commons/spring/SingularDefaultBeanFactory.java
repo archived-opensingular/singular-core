@@ -21,6 +21,7 @@ import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceH
 import br.net.mirante.singular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
 import br.net.mirante.singular.server.commons.persistence.dao.EmailAddresseeDao;
 import br.net.mirante.singular.server.commons.persistence.dao.EmailDao;
+import br.net.mirante.singular.server.commons.persistence.dao.ParameterDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.ActorDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.GrupoProcessoDAO;
 import br.net.mirante.singular.server.commons.persistence.dao.flow.TaskInstanceDAO;
@@ -33,6 +34,7 @@ import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEn
 import br.net.mirante.singular.server.commons.schedule.TransactionalQuartzScheduledService;
 import br.net.mirante.singular.server.commons.service.EmailPersistenceService;
 import br.net.mirante.singular.server.commons.service.IEmailService;
+import br.net.mirante.singular.server.commons.service.ParameterService;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.AuthorizationService;
 import br.net.mirante.singular.server.commons.spring.security.DefaultUserDetailService;
@@ -176,5 +178,15 @@ public class SingularDefaultBeanFactory {
     @Bean
     public IFlowRenderer flowRenderer(){
         return new YFilesFlowRemoteRenderer(null);
+    }
+
+    @Bean
+    public ParameterDAO parameterDAO() {
+        return new ParameterDAO();
+    }
+
+    @Bean
+    public ParameterService parameterService() {
+        return new ParameterService();
     }
 }
