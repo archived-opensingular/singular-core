@@ -11,7 +11,10 @@ import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
-import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
+import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
+import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
+import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
+import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.server.commons.form.FormActions;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.service.PetitionService;
@@ -19,13 +22,14 @@ import br.net.mirante.singular.server.commons.service.dto.BoxItemAction;
 import br.net.mirante.singular.server.commons.service.dto.FormDTO;
 import br.net.mirante.singular.server.commons.service.dto.MenuGroup;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
+import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -49,112 +53,146 @@ public class AuthorizationService implements Loggable {
     @Named("formConfigWithDatabase")
     private Optional<SFormConfig<String>> singularFormConfig;
 
-    @Inject
-    private SingularServerConfiguration singularServerConfiguration;
-
-    public void filterBoxWithPermissions(List<MenuGroup> groupDTOs, String user) {
-        List<String> permissions = searchPermissionsSingular(user);
+    public void filterBoxWithPermissions(List<MenuGroup> groupDTOs, String idUsuario) {
+        List<SingularPermission> permissions = searchPermissions(idUsuario);
 
         for (Iterator<MenuGroup> it = groupDTOs.iterator(); it.hasNext(); ) {
             MenuGroup menuGroup = it.next();
             String permissionNeeded = menuGroup.getId().toUpperCase();
-            if (!permissions.contains(permissionNeeded)) {
-                getLogger().debug(String.format(" Usuário logado %s não possui a permissão %s ", user, permissionNeeded));
+            if (!hasPermission(idUsuario, permissionNeeded, permissions)) {
                 it.remove();
             } else {
-                filterForms(menuGroup, permissions, user);
+                filterForms(menuGroup, permissions, idUsuario);
             }
 
         }
     }
 
-    private List<String> searchPermissionsSingular(String userPermissionKey) {
+    public void filterActions(String formType, Long petitionId, List<BoxItemAction> actions, String idUsuario) {
+        List<SingularPermission> permissions = searchPermissions(idUsuario);
+        filterActions(formType, petitionId, actions, idUsuario, permissions);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void filterActions(String formType, Long petitionId, List<BoxItemAction> actions, String idUsuario, List<SingularPermission> permissions) {
+        PetitionEntity petitionEntity = null;
+        if (petitionId != null) {
+            petitionEntity = petitionService.find(petitionId);
+        }
+        for (Iterator<BoxItemAction> it = actions.iterator(); it.hasNext(); ) {
+            BoxItemAction action = it.next();
+            String permissionsNeeded;
+            String typeAbbreviation = getFormSimpleName(formType);
+            if (action.getFormAction() != null) {
+                permissionsNeeded = buildPermissionKey(petitionEntity, typeAbbreviation, action.getFormAction().name());
+            } else {
+                permissionsNeeded = buildPermissionKey(petitionEntity, typeAbbreviation, action.getName());
+            }
+            if (!hasPermission(idUsuario, permissionsNeeded, permissions)) {
+                it.remove();
+            }
+        }
+
+    }
+
+    public boolean hasPermission(Long petitionId, String formType, String idUsuario, String action) {
+        PetitionEntity petitionEntity = petitionService.find(petitionId);
+        return hasPermission(petitionEntity, formType, idUsuario, action);
+    }
+
+    public boolean hasPermission(PetitionEntity petitionEntity, String formType, String idUsuario, String action) {
+        String formSimpleName = getFormSimpleName(formType);
+        if (petitionEntity != null) {
+            FormEntity formEntity = petitionEntity.getMainForm();
+            if (formEntity == null) {
+                formEntity = petitionEntity.getCurrentDraftEntity().getForm();
+            }
+            formSimpleName = getFormSimpleName(formEntity.getFormType());
+        }
+        return hasPermission(idUsuario, buildPermissionKey(petitionEntity, formSimpleName, action));
+    }
+
+
+    protected List<SingularPermission> searchPermissions(String userPermissionKey) {
         if (SingularSession.exists()) {
             SingularUserDetails userDetails = SingularSession.get().getUserDetails();
             if (userPermissionKey.equals(userDetails.getUserPermissionKey())) {
                 if (CollectionUtils.isEmpty(userDetails.getPermissions())) {
                     userDetails.addPermissions(peticionamentoUserDetailService.searchPermissions((String) userDetails.getUserPermissionKey()));
                 }
-                return userDetails.getPermissionsSingular();
+                return userDetails.getPermissions();
             }
         }
-        return permissionResolverService.searchPermissionsSingular(userPermissionKey);
+        return permissionResolverService.searchPermissions(userPermissionKey);
     }
 
 
-    protected void filterForms(MenuGroup menuGroup, List<String> permissions, String user) {
+    protected void filterForms(MenuGroup menuGroup, List<SingularPermission> permissions, String idUsuario) {
         for (Iterator<FormDTO> it = menuGroup.getForms().iterator(); it.hasNext(); ) {
             FormDTO form = it.next();
-            String permissionNeeded = FormActions.FORM_FILL + "_" + form.getAbbreviation().toUpperCase();
-            if (!permissions.contains(permissionNeeded)) {
-                getLogger().debug(String.format(" Usuário logado %s não possui a permissão %s ", user, permissionNeeded));
+            String permissionNeeded = buildPermissionKey(null, form.getAbbreviation(), FormActions.FORM_FILL.name());
+            if (!hasPermission(idUsuario, permissionNeeded, permissions)) {
                 it.remove();
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void filterActions(List<Map<String, Object>> result, String idUsuarioLogado) {
-        List<String> permissions = searchPermissionsSingular(idUsuarioLogado);
-        for (Map<String, Object> resultItem : result) {
-            List<BoxItemAction> actions = (List<BoxItemAction>) resultItem.get("actions");
-            for (Iterator<BoxItemAction> it = actions.iterator(); it.hasNext(); ) {
-                BoxItemAction action = it.next();
-                String permissionsNeeded;
-                String typeAbbreviation = getAbbreviation((String) resultItem.get("type"));
-                if (action.getFormAction() != null) {
-                    permissionsNeeded = action.getFormAction().toString() + "_" + typeAbbreviation;
-                } else {
-                    permissionsNeeded = "ACTION_" + action.getName().toUpperCase() + "_" + typeAbbreviation;
-                }
-                if (!permissions.contains(permissionsNeeded)) {
-                    getLogger().debug(String.format(" Usuário logado %s não possui a permissão %s ", idUsuarioLogado, permissionsNeeded));
-                    it.remove();
-                }
-            }
+
+    protected String buildPermissionKey(PetitionEntity petitionEntity, String formSimpleName, String action) {
+        String permission = Joiner.on("_")
+                .skipNulls()
+                .join(
+                        Optional.ofNullable(action)
+                                .map(String::toUpperCase)
+                                .orElse(null),
+                        Optional.ofNullable(formSimpleName)
+                                .map(String::toUpperCase)
+                                .orElse(null),
+                        Optional.ofNullable(petitionEntity)
+                                .map(PetitionEntity::getProcessDefinitionEntity)
+                                .map(ProcessDefinitionEntity::getKey)
+                                .orElse(null),
+                        Optional.ofNullable(petitionEntity)
+                                .map(PetitionEntity::getProcessInstanceEntity)
+                                .map(ProcessInstanceEntity::getCurrentTask)
+                                .map(TaskInstanceEntity::getTask)
+                                .map(TaskVersionEntity::getAbbreviation)
+                                .orElse(null)
+                )
+                .toUpperCase();
+        if (getLogger().isTraceEnabled()) {
+            getLogger().debug(String.format("Nome de permissão computada %s", permission));
         }
+        return permission;
     }
 
-    public boolean hasFormPermission(Long id, String idUsuario, String action) {
-        PetitionEntity petitionEntity = petitionService.find(id);
-        return hasFormPermission(petitionEntity, idUsuario, action);
+
+    protected boolean hasPermission(String idUsuario, String permissionNeeded) {
+        List<SingularPermission> permissions = searchPermissions(idUsuario);
+        return hasPermission(idUsuario, permissionNeeded, permissions);
     }
 
-    public boolean hasFormPermission(PetitionEntity petitionEntity, String idUsuario, String action) {
-        FormEntity formEntity = petitionEntity.getMainForm();
-        if (formEntity == null){
-            formEntity = petitionEntity.getCurrentDraftEntity().getForm();
-        }
-        FormTypeEntity formType         = formEntity.getFormType();
-        String         permissionNeeded = "ACTION_" + action + "_" + getAbbreviation(formType);
-        return hasPermission(idUsuario, permissionNeeded);
-    }
 
-    public boolean hasFlowPermission(Long id, String idUsuario, String action) {
-        PetitionEntity petitionEntity = petitionService.find(id);
-        return hasFlowPermission(petitionEntity, idUsuario, action);
-    }
-
-    public boolean hasFlowPermission(PetitionEntity petitionEntity, String idUsuario, String action) {
-        String permissionNeeded = "ACTION_" + action + "_" + petitionEntity.getProcessDefinitionEntity().getKey();
-        return hasPermission(idUsuario, permissionNeeded);
-    }
-
-    public boolean hasPermission(String idUsuario, String permissionNeeded) {
-        List<String> permissions = searchPermissionsSingular(idUsuario);
-        if (!permissions.contains(permissionNeeded.toUpperCase())) {
+    protected boolean hasPermission(String idUsuario, String permissionNeeded, List<SingularPermission> permissions) {
+        if (!permissions.stream().filter(ps -> ps.getSingularId().equals(permissionNeeded)).findFirst().isPresent()) {
             getLogger().debug(String.format(" Usuário logado %s não possui a permissão %s ", idUsuario, permissionNeeded));
             return false;
         }
         return true;
     }
 
-    public String getAbbreviation(FormTypeEntity formType) {
+    protected String getFormSimpleName(FormTypeEntity formType) {
+        if (formType == null) {
+            return null;
+        }
         String formTypeName = formType.getAbbreviation();
-        return getAbbreviation(formTypeName);
+        return getFormSimpleName(formTypeName);
     }
 
-    public String getAbbreviation(String formTypeName) {
+    protected String getFormSimpleName(String formTypeName) {
+        if (StringUtils.isBlank(formTypeName)) {
+            return null;
+        }
         SType<?> sType = singularFormConfig.get().getTypeLoader().loadType(formTypeName).get();
         return SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) sType.getClass()).toUpperCase();
     }

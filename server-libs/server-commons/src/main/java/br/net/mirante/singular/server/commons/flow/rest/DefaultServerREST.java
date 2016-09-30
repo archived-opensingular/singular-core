@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.server.commons.flow.rest;
 
+import br.net.mirante.singular.commons.base.SingularProperties;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.spring.SpringServiceRegistry;
@@ -14,6 +15,7 @@ import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
 import br.net.mirante.singular.server.commons.service.PetitionService;
 import br.net.mirante.singular.server.commons.spring.security.AuthorizationService;
 import br.net.mirante.singular.server.commons.spring.security.PermissionResolverService;
+import br.net.mirante.singular.server.commons.spring.security.SingularPermission;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 import org.slf4j.Logger;
@@ -69,7 +71,7 @@ public class DefaultServerREST {
     @RequestMapping(value = PATH_BOX_ACTION + DELETE, method = RequestMethod.POST)
     public ActionResponse excluir(@RequestParam Long id, @RequestBody ActionRequest actionRequest) {
         try {
-            boolean hasPermission = authorizationService.hasFormPermission(id, actionRequest.getIdUsuario(), ACTION_DELETE.getName());
+            boolean hasPermission = authorizationService.hasPermission(id, null, actionRequest.getIdUsuario(), ACTION_DELETE.getName());
             if (hasPermission) {
                 petitionService.delete(id);
                 return new ActionResponse("Registro excluído com sucesso", true);
@@ -109,9 +111,7 @@ public class DefaultServerREST {
 
     @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_PETITIONS, method = RequestMethod.POST)
     public List<Map<String, Object>> searchPetitions(@RequestBody QuickFilter filter) {
-        List<Map<String, Object>> result = petitionService.quickSearchMap(filter);
-        authorizationService.filterActions(result, filter.getIdUsuarioLogado());
-        return result;
+        return petitionService.quickSearchMap(filter);
     }
 
     @RequestMapping(value = PATH_BOX_SEARCH + COUNT_PETITIONS, method = RequestMethod.POST)
@@ -121,13 +121,13 @@ public class DefaultServerREST {
 
     @RequestMapping(value = PATH_BOX_SEARCH + SEARCH_TASKS, method = RequestMethod.POST)
     public List<TaskInstanceDTO> searchTasks(@RequestBody QuickFilter filter) {
-        List<Serializable> permissions = permissionResolverService.searchPermissionsInternal(filter.getIdUsuarioLogado());
+        List<SingularPermission> permissions = permissionResolverService.searchPermissions(filter.getIdUsuarioLogado());
         return petitionService.listTasks(filter, permissions);
     }
 
     @RequestMapping(value = PATH_BOX_SEARCH + COUNT_TASKS, method = RequestMethod.POST)
     public Long countTasks(@RequestBody QuickFilter filter) {
-        List<Serializable> permissions = permissionResolverService.searchPermissionsInternal(filter.getIdUsuarioLogado());
+        List<SingularPermission> permissions = permissionResolverService.searchPermissions(filter.getIdUsuarioLogado());
         return petitionService.countTasks(filter, permissions);
     }
 

@@ -1,8 +1,9 @@
 package br.net.mirante.singular.server.commons.wicket;
 
-import java.util.Locale;
-
 import br.net.mirante.singular.commons.base.SingularProperties;
+import br.net.mirante.singular.server.commons.wicket.listener.SingularServerContextListener;
+import br.net.mirante.singular.util.wicket.application.SkinnableApplication;
+import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
@@ -20,11 +21,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
-import br.net.mirante.singular.server.commons.wicket.listener.SingularServerContextListener;
-import br.net.mirante.singular.util.wicket.page.error.Error403Page;
+import java.util.Locale;
 
 public abstract class SingularApplication extends AuthenticatedWebApplication
-    implements ApplicationContextAware {
+        implements ApplicationContextAware, SkinnableApplication {
 
     public static final String BASE_FOLDER = "/tmp/fileUploader";
 

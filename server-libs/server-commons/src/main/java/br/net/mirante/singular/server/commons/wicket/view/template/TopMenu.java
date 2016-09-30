@@ -1,9 +1,9 @@
 package br.net.mirante.singular.server.commons.wicket.view.template;
 
-import java.util.Optional;
-
 import br.net.mirante.singular.server.commons.spring.security.SecurityUtil;
 import br.net.mirante.singular.server.commons.wicket.SingularSession;
+import br.net.mirante.singular.util.wicket.template.SkinOptions;
+import br.net.mirante.singular.util.wicket.template.SkinOptions.Skin;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.StatelessLink;
@@ -11,14 +11,14 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 
-import br.net.mirante.singular.util.wicket.template.SkinOptions;
-import br.net.mirante.singular.util.wicket.template.SkinOptions.Skin;
+import java.util.Optional;
+
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class TopMenu extends Panel {
 
-    private boolean withSideBar;
+    private   boolean     withSideBar;
     protected SkinOptions option;
 
     public TopMenu(String id, boolean withSideBar, SkinOptions option) {
@@ -37,8 +37,8 @@ public class TopMenu extends Panel {
         queue(new WebMarkupContainer("sideBarToggle").setVisible(withSideBar));
         queue(new Label("nome", $m.ofValue(SingularSession.get().getName())));
 
-        WebMarkupContainer avatar = new WebMarkupContainer("codrh");
-        Optional<String> avatarSrc = Optional.ofNullable(null);
+        WebMarkupContainer avatar    = new WebMarkupContainer("codrh");
+        Optional<String>   avatarSrc = Optional.ofNullable(null);
         avatarSrc.ifPresent(src -> avatar.add($b.attr("src", src)));
         queue(avatar);
 
@@ -56,6 +56,12 @@ public class TopMenu extends Panel {
                 final Skin skin = (Skin) item.getModel().getObject();
                 item.add(buildSelectSkinLink(skin));
                 item.queue(new Label("label", skin.getName()));
+            }
+
+            @Override
+            protected void onInitialize() {
+                this.setVisible(option.options().size() > 1);
+                super.onInitialize();
             }
         };
     }

@@ -46,18 +46,6 @@ public class PermissionResolverService implements Loggable {
         return peticionamentoUserDetailService.searchPermissions(idUsuario);
     }
 
-    public List<String> searchPermissionsSingular(String idUsuario) {
-        return peticionamentoUserDetailService.searchPermissions(idUsuario)
-                .stream().map(SingularPermission::getSingularId)
-                .collect(Collectors.toList());
-    }
-
-    public List<Serializable> searchPermissionsInternal(String idUsuario) {
-        return peticionamentoUserDetailService.searchPermissions(idUsuario)
-                .stream().map(SingularPermission::getInternalId)
-                .collect(Collectors.toList());
-    }
-
     public List<? extends SingularPermission> listAllTypePermissions() {
         List<SingularPermission> permissions = new ArrayList<>();
 

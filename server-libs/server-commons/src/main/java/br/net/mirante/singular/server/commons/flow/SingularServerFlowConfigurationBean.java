@@ -14,14 +14,23 @@ import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
+import br.net.mirante.singular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 public class SingularServerFlowConfigurationBean extends HibernateSingularFlowConfigurationBean implements Loggable {
 
     @Inject
-    private SingularServerConfiguration singularServerConfiguration;
-
+    protected SingularServerConfiguration singularServerConfiguration;
     @Inject
-    private SessionFactory sessionFactory;
+    protected PlatformTransactionManager transactionManager;
 
     @Inject
     private IScheduleService scheduleService;
@@ -47,23 +56,21 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
         return scheduleService;
     }
 
+    @Transactional
     public void initializeFlowDefinitionsDatabase() {
         if ("true".equals(ConfigProperties.get(ConfigProperties.SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS))) {
-            TransactionSynchronizationManager.bindResource(this.sessionFactory, sessionFactory.openSession());
-            getLogger().info("INITIALIZING FLOW DEFINITIONS");
-            singularServerConfiguration.getProcessDefinitionFormNameMap().keySet().stream().forEach(pdclass -> {
-                try {
-                    getLogger().info("INITIALIZING " + pdclass.getName() + "....");
-                    pdclass.newInstance().getEntityProcessVersion();
-                } catch (InstantiationException | IllegalAccessException e) {
-                    getLogger().error(e.getMessage(), e);
-                }
+            new TransactionTemplate(transactionManager).execute(status -> {
+                getLogger().info("INITIALIZING FLOW DEFINITIONS");
+                getDefinitions().stream().forEach(d -> {
+                    try {
+                        getLogger().info("INITIALIZING " + d.getName() + "....");
+                        d.getEntityProcessVersion();
+                    } catch (Exception e) {
+                        getLogger().error(e.getMessage(), e);
+                    }
+                });
+                return null;
             });
-            Session session = (Session) TransactionSynchronizationManager.unbindResource(this.sessionFactory);
-            if (session.isOpen()) {
-                session.flush();
-                session.close();
-            }
         }
     }
 
