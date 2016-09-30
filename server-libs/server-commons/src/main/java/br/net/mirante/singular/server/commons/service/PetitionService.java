@@ -162,7 +162,7 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         parseResultsPetition(list);
         list.forEach(this::checkItemActions);
         for (Map<String, Object> map : list) {
-            authorizationService.filterActions((String) map.get("type"), null, (List<BoxItemAction>) map.get("actions"), filter.getIdUsuarioLogado());
+            authorizationService.filterActions((String) map.get("type"), (Long) map.get("codPeticao"), (List<BoxItemAction>) map.get("actions"), filter.getIdUsuarioLogado());
         }
         return list;
     }
