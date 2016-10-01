@@ -8,7 +8,6 @@ package br.net.mirante.singular.util.wicket.template;
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.commons.util.Loggable;
 import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.markup.head.CssUrlReferenceHeaderItem;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
@@ -34,13 +33,11 @@ public class SkinOptions implements Serializable, Loggable {
     public static class Skin implements Serializable {
 
         private final String                    name;
-        private final CssUrlReferenceHeaderItem ref;
         private final Boolean                   defaultSkin;
 
-        private Skin(String name, Boolean defaultSkin, CssUrlReferenceHeaderItem ref) {
+        private Skin(String name, Boolean defaultSkin) {
             this.name = name;
             this.defaultSkin = defaultSkin;
-            this.ref = ref;
         }
 
         public String name() {
@@ -54,22 +51,14 @@ public class SkinOptions implements Serializable, Loggable {
         public String getName() {
             return name;
         }
-
-        public CssUrlReferenceHeaderItem getRef() {
-            return ref;
-        }
-
-        public Boolean getDefaultSkin() {
-            return defaultSkin;
-        }
     }
 
-    public void addSkin(String name, CssUrlReferenceHeaderItem ref) {
-        skins.add(new Skin(name, false, ref));
+    public void addSkin(String name) {
+        skins.add(new Skin(name, false));
     }
 
-    public void addDefaulSkin(String name, CssUrlReferenceHeaderItem ref) {
-        skins.add(new Skin(name, true, ref));
+    public void addDefaulSkin(String name) {
+        skins.add(new Skin(name, true));
     }
 
     public List<Skin> options() {
@@ -82,7 +71,6 @@ public class SkinOptions implements Serializable, Loggable {
         if (selection != null) {
             final JSONObject json = new JSONObject();
             json.put("name", selection.getName());
-            json.put("url", selection.getRef().getUrl());
             try {
                 cookie.setValue(URLEncoder.encode(json.toString(), "UTF-8"));
             } catch (UnsupportedEncodingException e) {
