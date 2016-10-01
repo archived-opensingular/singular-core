@@ -1,12 +1,9 @@
 package br.net.mirante.singular.server.commons.wicket.view.template;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import br.net.mirante.singular.server.commons.wicket.view.SingularToastrHelper;
+import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -22,10 +19,12 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import br.net.mirante.singular.server.commons.wicket.view.SingularToastrHelper;
-import br.net.mirante.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
-import br.net.mirante.singular.util.wicket.template.SingularTemplate;
-import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public abstract class Template extends SingularTemplate {
 
@@ -108,7 +107,7 @@ public abstract class Template extends SingularTemplate {
     }
 
     private void addQuickSidebar(IHeaderResponse response) {
-        response.render(JavaScriptReferenceHeaderItem.forUrl("/singular-static/resources/metronic/layout4/scripts/quick-sidebar.js"));
+        response.render(JavaScriptReferenceHeaderItem.forUrl("/singular-static/resources/" + getCurrentSkinFolder() + "/layout4/scripts/quick-sidebar.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
                 .append("    QuickSidebar.init(); // init quick sidebar\n")
