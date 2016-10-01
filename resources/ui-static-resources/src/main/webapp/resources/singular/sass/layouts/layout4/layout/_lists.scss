@@ -1,0 +1,17 @@
+.list-form-heading {
+  margin: 1px 0 5px 0;
+}
+
+.list-group-item-fields {
+  @include clearfix;
+  float: left;
+  padding: 0 15px 10px 15px;
+  width: calc(100% - 1em);
+}
+
+.list-group-item-actions {
+  @include clearfix;
+  float: right;
+  width: 1em;
+  padding: 0 5px;
+}

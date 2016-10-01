@@ -1,0 +1,147 @@
+@import "../../../overrides_theme_01";
+
+.list-detail-input {
+  .table {
+    color: #a4a4a4;
+
+    tr {
+      &:hover {
+        color: #4a4a4a;
+      }
+    }
+
+    td {
+      border-bottom: 1px solid #dfdfdf;
+    }
+
+    thead tr th {
+      border-bottom: 1px solid #dfdfdf;
+      font-size: 12px;
+      vertical-align: middle;
+      color: rgba(74, 74, 74, 0.7);
+      background-color: #fff;
+    }
+
+    .singular-form-table-row.has-errors {
+      background-color: rgba(226, 70, 89, 0.08);
+      &:hover {
+        background-color: rgba(253, 240, 242, 1);
+      }
+    }
+
+  }
+
+  .table-hover > tbody > tr > td:hover, .table-hover > tbody > tr > th:hover, .table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
+    background: $table-hover-color;
+    .has-errors:hover {
+      background-color: rgba(253, 240, 242, 1);
+    }
+  }
+
+  .table-striped {
+    > tbody > tr:nth-of-type(odd) {
+      background-color: $table-striped-bg-color;
+    }
+  }
+
+  .headers {
+    color: $color-grey-03;
+    text-transform: uppercase;
+    background-color: $color-grey-01;
+  }
+
+  .list-table-heading {
+    // padding: 0 20px;
+  }
+
+}
+
+.list-detail-body {
+  margin-bottom: 15px;
+}
+
+.list-detail-remove {
+
+  color: #a4a4a4;
+
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
+  vertical-align: middle;
+
+  margin-right: 5px;
+
+  &:hover, &:focus {
+    color: $brand-danger;
+    text-decoration: none;
+  }
+  
+}
+
+.list-detail-edit {
+  color: #a4a4a4;
+
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
+  vertical-align: middle;
+
+  margin-right: 5px;
+
+  &:hover, &:focus {
+    color: $brand-info;
+    text-decoration: none;
+  }
+}
+
+.list-detail-warning {
+  color: $brand-danger;
+
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
+  vertical-align: middle;
+
+  &:hover, &:focus {
+    color: $brand-danger;
+    text-decoration: none;
+  }
+}
+
+.list-detail-empty {
+  color: rgba(74, 74, 74, 0.7);
+  background-color: $bg-color;
+  .list-detail-empty-message {
+      text-align:center;
+      line-height:48px;
+      height:48px;
+      font-size:14px;
+      margin: 0;
+    }
+	
+	td {
+	 
+		div {
+			text-align: center;
+		}
+		
+	}
+	
+	
+}
+
+.singular-container .list-detail-input {
+  margin-left: 0;
+  margin-right: 0;
+
+  .list-detail-footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.list-detail-footer {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom:10px;
+}

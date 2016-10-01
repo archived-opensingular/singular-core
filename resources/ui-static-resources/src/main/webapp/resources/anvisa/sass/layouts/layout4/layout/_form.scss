@@ -1,0 +1,224 @@
+@import '../../../_overrides_theme_01';
+
+@mixin btn-with-icon($image-url) {
+  &::before {
+    position: relative;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 15px;
+    margin-right: 10px;
+    width: 15px;
+    height: 15px;
+    display: block;
+    float: left;
+    background-image: url($image-url);
+  }
+}
+
+.singular-form-required{
+  position: relative;
+
+  &::before {
+    display: none;
+  }
+
+  &::after {
+
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    width: 4px;
+    height: 4px;
+    display: inline-block;
+    background-color: $brand-danger;
+    border-radius: 50%;
+    margin-left: 6px;
+
+  }
+}
+
+.singular-remove-btn {
+  cursor: pointer;
+}
+
+.singular-form-table-row {
+  .form-group {
+    margin-bottom: 0px;
+  }
+}
+
+.tt-input {
+  &[readonly] {
+    background-color: #fff;
+  }
+}
+
+.twitter-typeahead {
+  .fa.fa-chevron-down {
+    z-index: 1;
+    color: $color-primary;
+  }
+}
+
+.tt-clear-icon {
+  z-index: 3;
+  color: $color-text;
+}
+
+.control-label {
+  color: $label-color;
+}
+
+.checkbox {
+  color: $label-color;
+}
+
+.has-error {
+  input {
+    background: url('data:image/svg+xml;utf8,#{($svg-alert)}') no-repeat calc(100% - 10px) 50%;
+    background-size: 18px 18px;
+    z-index: 3;
+  }
+
+  .fa.fa-chevron-down {
+    display: none;
+  }
+
+  .control-label {
+    color: $label-color;
+  }
+}
+
+.feedbackPanelERROR {
+  font-size: 12px;
+}
+
+.btn-noclose {
+  float: right;
+  margin-left: 20px;
+}
+
+.composite-box-grid > div {
+  margin: 0 0 8px 0;
+  background-color: #fff;
+  border-radius: 3px;
+  border: 1px solid $input-border;
+}
+
+.form-control:focus {
+  border-color: $input-focus-color;
+}
+
+.page-content {
+
+  .form-actions {
+    @include clearfix;
+    margin: 0 0;
+    padding: 15px 20px 20px 20px;
+    background-color: #fff;
+  }
+
+  .form-actions .btn {
+
+    border-radius: 4px;
+    position: relative;
+    background-color: white;
+    border-color: $color-background-button;
+    color: $color-button;
+    margin-left: 20px;
+    float: right;
+    height: 32px;
+    font-size: 12px;
+    padding: 8px 20px 7px 20px;
+
+  }
+
+
+
+  .form-actions {
+    box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.03);
+
+    .cancel-btn {
+      background-color: $color-background-cancel-button;
+      margin-left: 0;
+      float: left;
+    }
+
+    .validate-btn {
+      @include btn-with-icon('data:image/svg+xml;utf8,#{($svg-validate)}');
+    }
+
+    .save-btn {
+      @include btn-with-icon('data:image/svg+xml;utf8,#{($svg-save)}');
+    }
+
+    .send-btn {
+      @include btn-with-icon('data:image/svg+xml;utf8,#{($svg-send)}');
+
+      background-color: $color-primary;
+      border-color: $color-primary;
+      color: white;
+    }
+  }
+  
+
+}
+
+.modal-footer {
+  color: #65697C;
+
+  .btn.cancel-btn {
+    background-color: $color-background-cancel-button;
+    color: currentColor;
+    border-color: #D5D9E3;
+  }
+}
+
+.btn-add {
+  background-color: transparent;
+  border-color: $color-primary;
+  color: $color-primary;
+  &:hover, &:focus {
+    background-color: $color-primary;
+    color: #fff;
+  }
+}
+
+.btn.btn-danger {
+  position: relative;
+
+  i {
+    position: relative;
+    top: -2px;
+  }
+}
+
+.panel-heading {
+  color: $label-color;
+}
+
+.btn:focus {
+  transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 0 8px rgba(0,0,0,.18),0 8px 16px rgba(0,0,0,.36);
+}
+
+.form-body .singular-container {
+  margin-bottom: 0;
+}
+
+.portlet-body {
+  .panel {
+    margin-bottom: 0;
+  }
+  .panel-body, .panel-footer {
+    padding: 10px 0 0;
+  }
+}
+
+.cancel-btn {
+  background-color: $color-background-cancel-button;
+}
+
+.confirm-btn {
+  background-color: $color-primary;
+}

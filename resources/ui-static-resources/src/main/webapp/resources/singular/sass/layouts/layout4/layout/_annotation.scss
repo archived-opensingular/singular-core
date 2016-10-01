@@ -1,0 +1,78 @@
+.annotation-toggle-container, .annotation-toggle-container.open {
+  .theme-panel {
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+  hr {
+    margin: 10px 0;
+  }
+
+  .btn-info, .btn-danger, .btn-default {
+    height: 30px;
+    width: 30px;
+    padding-top: 7px;
+    border: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+  }
+
+  .btn, .btn:hover, .btn:focus {
+    background-color: #ffffff !important;
+    border-color: $color-grey-03;
+    color: $color-grey-03;
+    position: relative;
+  }
+
+  .btn-danger,  .btn-danger:focus{
+    background-image: url("../img/rejected-comment.svg");
+    border: 0;
+  }
+
+  .btn-info , .btn-info:focus{
+    background-image: url("../img/accepted-comment.svg");
+    color: $color-success-green;
+  }
+
+  .btn-default , .btn-default:focus{
+    background-image: url("../img/add-comment.svg");
+  }
+}
+
+.annotation-title {
+  display: inline;
+  font-weight: 600;
+}
+
+.annotation-actions {
+  float: right;
+  margin-right: 10px;
+}
+
+.annotation-action-edit, .annotation-action-remove {
+  color: $color-grey-03;
+  margin-left: 10px;
+}
+
+.annotation-action-remove:hover {
+  color: $brand-danger;
+}
+
+.annotation-text {
+  font-size: 12px;
+  margin: 10px 0;
+}
+
+.annotation-status {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.annotation-status-rejected {
+  color: $brand-danger;
+}
+
+.annotation-status-approved {
+  color: $color-success-green;
+}

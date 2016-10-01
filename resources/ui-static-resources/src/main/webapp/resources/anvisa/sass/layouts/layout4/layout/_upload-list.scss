@@ -1,0 +1,324 @@
+@import "../../../overrides_theme_01";
+
+.upload-fileinput {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.upload-fileinput:focus + label {
+  text-decoration: underline;
+}
+
+.upload-list {
+  color: currentColor;
+  ul {
+    list-style: none;
+    width: 100%;
+    display: block;
+    padding: 0 0;
+    margin: 0;
+    @include clearfix;
+  }
+}
+
+.upload-list-item {
+  @include clearfix;
+  line-height: 30px;
+  display: block;
+  padding: 10px 0;
+  margin-bottom: 10px;
+  float: left;
+
+  width: calc((100%/3) - 10px);
+  margin-right: 15px;
+
+  &:nth-child(3n) {
+    margin-right: 0;
+  }
+
+
+  .list-item-icon {
+    font-size: 26px;
+    display: inline;
+    width: 30px;
+    margin-left: 15px;
+    float: left;
+
+    .list-item-uploading {
+      color: $input-color-placeholder;
+    }
+    .list-item-uploaded {
+      color: $color-primary;
+    }
+  }
+
+  .list-item-content {
+    height: 30px;
+    float: left;
+    width: calc(100% - 83px);
+    margin-left: 10px;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+    color: $input-color-placeholder;
+    a {
+      color: $input-color;
+    }
+  }
+
+  .list-item-progress {
+    background-color: #e9ebf4;
+    height: 10px;
+    width: 60%;
+    float: left;
+    margin: 10px 2%;
+    border-radius: 15px;
+    .progress-bar {
+      background-color: $color-primary;
+      border-radius: 15px;
+    }
+  }
+
+  .list-item-action {
+    float: right;
+    font-size: 14px;
+    width: 28px;
+
+
+    .list-action-uploading {
+      position: relative;
+      width: 1em;
+      height: 1em;
+      border-radius: 50%;
+      float: left;
+      right: 15px;
+      background-color: $color-grey-03;
+      font-size: 30px;
+
+      &::after {
+        position: absolute;
+        top: 0.172em;
+        left: 0.172em;
+        display: block;
+        content: " ";
+        border-radius: 50%;
+        background-color: #ffffff;
+        width: 0.65em;
+        height: 0.65em;
+        -webkit-transition-property: all;
+        -moz-transition-property: all;
+        -o-transition-property: all;
+        transition-property: all;
+        -webkit-transition-duration: 0.2s;
+        -moz-transition-duration: 0.2s;
+        -o-transition-duration: 0.2s;
+        transition-duration: 0.2s;
+        -webkit-transition-timing-function: ease-in;
+        -moz-transition-timing-function: ease-in;
+        -o-transition-timing-function: ease-in;
+        transition-timing-function: ease-in;
+      }
+
+      &*,
+      &*:before,
+      &*:after {
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+      }
+
+      .slice {
+        position: absolute;
+        width: 1em;
+        height: 1em;
+        clip: rect(0em, 1em, 1em, 0.5em);
+      }
+
+      .slice-50 {
+        clip: rect(auto, auto, auto, auto);
+      }
+
+      .fill-50 {
+        position: absolute;
+        border: 0.08em solid $color-primary;
+        width: 0.84em;
+        height: 0.84em;
+        clip: rect(0em, 0.5em, 1em, 0em);
+        border-radius: 50%;
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+
+
+      .fill-50, .bar-50:after {
+        -webkit-transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        transform: rotate(180deg);
+      }
+
+      .fill, .bar {
+        position: absolute;
+        border: 0.172em solid $color-primary;
+        width: 1em;
+        height: 1em;
+        clip: rect(0em, 0.5em, 1em, 0em);
+        border-radius: 50%;
+      }
+
+      .bar {
+        transition: 0.5s;
+      }
+
+    }
+
+
+
+    .list-action-remove {
+      margin-right: 10px;
+      color: $input-color-placeholder;
+      &:hover {
+        color: darken($input-color-placeholder, 20%);
+      }
+    }
+  }
+}
+
+.upload-single .upload-single-choose {
+  &:hover {
+    background-color: darken($color-primary, 10%);
+  }
+}
+
+.upload-single .upload-single-remove {
+  background-color: $brand-danger;
+  display: none;
+  &:hover {
+    background-color: darken($brand-danger, 10%);
+    z-index: unset;
+  }
+}
+
+.upload-single-progress {
+  display: none;
+  position: relative;
+  height: 18px;
+  width: calc(100% - 14px);
+  top: -100%;
+  left: 14px;
+  background-color: #e9ebf4;
+  border-radius: 15px;
+  .progress-bar {
+    background-color: $color-primary;
+  }
+}
+
+.upload-single.upload-single-uploaded {
+  .upload-single-choose {
+    display: none;
+  }
+
+  .upload-single-remove {
+    display: block;
+  }
+}
+
+.upload-single.upload-single-uploading {
+  .upload-single-choose {
+    display: none;
+  }
+
+  .upload-single-remove, .upload-single-progress {
+    display: block;
+  }
+}
+
+.upload-panel {
+  margin-bottom: 45px;
+}
+
+.upload-panel-heading {
+  margin: 1px 0 15px 0;
+}
+
+
+.upload-panel-body {
+  margin-bottom: 15px;
+  .list-detail-empty {
+    background-color: $bg-color;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    position: relative;
+
+    p {
+      color: $color-primary;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.upload-list-add {
+  float: left;
+  width: 51px;
+  height: 51px;
+  background-color: $color-grey-01;
+  color: $color-grey-03;
+
+  label {
+    font-size: 20px;
+    text-align: center;
+    padding: 12px;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+}
+
+.upload-list-container  {
+  ul {
+    li{
+      border: 1px solid $color-grey-03;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+  }
+}
+
+@media(max-width: 980px) {
+  .upload-list-item {
+    width: calc(50% - 10px);
+    margin-right: 15px;
+
+    &:nth-child(3n) {
+      margin-right: 15px;
+    }
+
+    &:nth-child(2n) {
+      margin-right: 0px;
+    }
+  }
+}
+
+@media(max-width: 750px) {
+  .upload-list-item {
+    width: 100%;
+    margin-right: 15px;
+
+    &:nth-child(3n) {
+      margin-right: 15px;
+    }
+
+    &:nth-child(2n) {
+      margin-right: 15px;
+    }
+  }
+}

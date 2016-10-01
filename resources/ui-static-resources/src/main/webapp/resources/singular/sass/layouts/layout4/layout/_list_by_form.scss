@@ -1,0 +1,37 @@
+.list-by-form {
+  .list-group-item {
+    margin-bottom: 15px;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: 1px solid $color-grey-03;
+    color: $color-gray-default;
+
+    i {
+      cursor: pointer;
+    }
+
+    .list-item-header {
+      @include clearfix;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid $color-grey-03;
+      color: $color-gray-default;
+    }
+
+    .list-item-body {
+      background-color: $color-grey-01;
+      padding-top: 20px;
+    }
+  }
+
+  .has-error input {
+    background-color: #fff;
+  }
+}
+
+.list-by-form-empty-state {
+  padding: 15px;
+  background: $bg-color;
+  color: rgba(74, 74, 74, 0.7);
+  text-align: center;
+}
