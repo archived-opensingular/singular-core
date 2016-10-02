@@ -172,13 +172,26 @@ public class AuthorizationService implements Loggable {
         return hasPermission(idUsuario, permissionNeeded, permissions);
     }
 
+    private String removeTask(SingularPermission singularPermission) {
+        int idx = singularPermission.getSingularId().lastIndexOf("_");
+        if (idx > -1) {
+            return singularPermission.getSingularId().substring(0, idx);
+        }
+        return singularPermission.getSingularId();
+    }
+
 
     protected boolean hasPermission(String idUsuario, String permissionNeeded, List<SingularPermission> permissions) {
         if (!permissions.stream().filter(ps -> ps.getSingularId().equals(permissionNeeded)).findFirst().isPresent()) {
-            getLogger().debug(String.format(" Usuário logado %s não possui a permissão %s ", idUsuario, permissionNeeded));
-            return false;
+            return true;
         }
-        return true;
+
+        if (!permissions.stream().map(this::removeTask).filter(p -> p.equals(permissionNeeded)).findFirst().isPresent()) {
+            return true;
+        }
+
+        getLogger().info(String.format(" Usuário logado %s não possui a permissão %s ", idUsuario, permissionNeeded));
+        return false;
     }
 
     protected String getFormSimpleName(FormTypeEntity formType) {

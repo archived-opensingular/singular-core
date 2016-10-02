@@ -77,11 +77,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_ANALYSE;
-import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_DELETE;
-import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_EDIT;
-import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_RELOCATE;
-import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_VIEW;
+import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.*;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.DELETE;
 import static br.net.mirante.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
 import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
@@ -518,6 +514,10 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         if (task.getCodUsuarioAlocado() == null
                 && task.getTaskType() == TaskType.People) {
             actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE.getName()));
+        }
+
+        if (task.getTaskType() == TaskType.People) {
+            actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE_TO_OTHER.getName()));
         }
 
         if (filter.getIdUsuarioLogado().equalsIgnoreCase(task.getCodUsuarioAlocado())) {
