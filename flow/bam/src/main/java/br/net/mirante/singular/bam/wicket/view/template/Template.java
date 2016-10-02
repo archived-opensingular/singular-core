@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.bam.wicket.view.template;
 
+import br.net.mirante.singular.bam.wicket.UIAdminSession;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -17,7 +18,6 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import br.net.mirante.singular.bam.wicket.UIAdminSession;
 
 //@AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
 public abstract class Template extends WebPage {
@@ -74,7 +74,7 @@ public abstract class Template extends WebPage {
     }
 
     private void addQuickSidebar(IHeaderResponse response) {
-        response.render(JavaScriptReferenceHeaderItem.forUrl("/singular-static/resources/metronic/layout4/scripts/quick-sidebar.js"));
+        response.render(JavaScriptReferenceHeaderItem.forUrl("/singular-static/resources/singular/layout4/scripts/quick-sidebar.js" ));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
                 .append("    QuickSidebar.init(); // init quick sidebar\n")
