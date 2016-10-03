@@ -132,8 +132,7 @@ body.page-md {
 .page-header.navbar .search-form .input-group .input-group-btn .btn.submit > i {
     color: #737a99; }
 .page-header.navbar .menu-toggler {
-    background-image: url(../../singular/layout4/img/sidebar-toggle-light.png);
-}
+    background-image: url(../../metronic/layout4/img/sidebar-toggle-light.png); }
 .page-header.navbar .page-actions .btn-group .btn-sm.btn-transparent {
     background: none;
     border: 1px solid #50566f;

@@ -44,9 +44,9 @@
 }
 
 .default-cursor {
-    cursor: default !important;
+	cursor:default  !important;
 }
 
 .cke_panel {
-    z-index: 20001 !important;
+	z-index: 20001 !important;
 }
