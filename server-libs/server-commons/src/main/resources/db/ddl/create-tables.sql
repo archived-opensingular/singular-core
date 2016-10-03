@@ -441,3 +441,15 @@ CREATE TABLE DBSINGULAR.TB_HISTORICO_VERSAO_FORMULARIO
    CO_VERSAO_FORMULARIO INTEGER              NOT NULL,
    ST_FORM_PRINCIPAL    CHAR                 NOT NULL
 );
+
+/*==============================================================*/
+/* Table: TB_PARAMETRO                                          */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_PARAMETRO
+(
+   CO_PARAMETRO         INTEGER              NOT NULL,
+   CO_GRUPO_PROCESSO    VARCHAR2(30),
+   NO_PARAMETRO         VARCHAR2(100)        NOT NULL,
+   VL_PARAMETRO         VARCHAR2(1000)       NOT NULL,
+   CONSTRAINT PK_PARAMETRO PRIMARY KEY (CO_PARAMETRO)
+);

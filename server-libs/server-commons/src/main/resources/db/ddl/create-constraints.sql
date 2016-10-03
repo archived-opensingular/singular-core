@@ -167,7 +167,11 @@ ALTER TABLE DBSINGULAR.TB_EMAIL_ARQUIVO
 ALTER TABLE DBSINGULAR.TB_DESTINATARIO_EMAIL
    ADD CONSTRAINT FK_DESTINATARIO_EMAIL FOREIGN KEY (CO_EMAIL)
       REFERENCES DBSINGULAR.TB_EMAIL (CO_EMAIL);
-      
+
+ALTER TABLE DBSINGULAR.TB_PARAMETRO
+   ADD CONSTRAINT FK_PARAMETRO_GRUPOPROCESSO FOREIGN KEY (CO_GRUPO_PROCESSO)
+      REFERENCES DBSINGULAR.TB_GRUPO_PROCESSO (CO_GRUPO_PROCESSO);
+
 /*==============================================================*/
 /* Index: IX_INSTANCIA_PROCESSO                                 */
 /*==============================================================*/
@@ -216,3 +220,11 @@ CREATE UNIQUE INDEX IX_GRUPO_NOME ON DBSINGULAR.TB_GRUPO_PROCESSO (NO_GRUPO ASC)
 /* Index: IX_GRUPO_CONEXAO                                      */
 /*==============================================================*/
 CREATE UNIQUE INDEX IX_GRUPO_CONEXAO ON DBSINGULAR.TB_GRUPO_PROCESSO (URL_CONEXAO ASC);
+
+/*==============================================================*/
+/* Index: IX_PARAMETRO                                          */
+/*==============================================================*/
+CREATE UNIQUE INDEX DBSINGULAR.IX_PARAMETRO ON DBSINGULAR.TB_PARAMETRO (
+   CO_GRUPO_PROCESSO ASC,
+   NO_PARAMETRO ASC
+);
