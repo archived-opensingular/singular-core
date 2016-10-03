@@ -172,21 +172,22 @@ public class AuthorizationService implements Loggable {
         return hasPermission(idUsuario, permissionNeeded, permissions);
     }
 
-    private String removeTask(SingularPermission singularPermission) {
-        int idx = singularPermission.getSingularId().lastIndexOf("_");
+    private String removeTask(String permissionId) {
+        int idx = permissionId.lastIndexOf("_");
         if (idx > -1) {
-            return singularPermission.getSingularId().substring(0, idx);
+            return permissionId.substring(0, idx);
         }
-        return singularPermission.getSingularId();
+        return permissionId;
     }
 
 
     protected boolean hasPermission(String idUsuario, String permissionNeeded, List<SingularPermission> permissions) {
-        if (!permissions.stream().filter(ps -> ps.getSingularId().equals(permissionNeeded)).findFirst().isPresent()) {
+        if (permissions.stream().filter(ps -> ps.getSingularId().equals(permissionNeeded)).findFirst().isPresent()) {
             return true;
         }
 
-        if (!permissions.stream().map(this::removeTask).filter(p -> p.equals(permissionNeeded)).findFirst().isPresent()) {
+        String definitionPermission = removeTask(permissionNeeded);
+        if (permissions.stream().filter(ps -> ps.getSingularId().equals(definitionPermission)).findFirst().isPresent()) {
             return true;
         }
 
