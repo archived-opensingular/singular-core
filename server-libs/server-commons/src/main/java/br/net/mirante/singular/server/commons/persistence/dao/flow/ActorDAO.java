@@ -1,9 +1,12 @@
 package br.net.mirante.singular.server.commons.persistence.dao.flow;
 
 import java.sql.PreparedStatement;
+import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
 import br.net.mirante.singular.commons.base.SingularProperties;
 import br.net.mirante.singular.flow.core.MUser;
@@ -91,5 +94,43 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
             }
         }
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Actor> listAllocableUsers(Integer taskInstanceId) {
+        StringBuilder sql = new StringBuilder();
+
+        sql.append(" SELECT DISTINCT a.CO_ATOR as \"cod\", ");
+        sql.append("    a.CO_USUARIO as \"codUsuario\", ");
+        sql.append("    a.NO_ATOR as \"nome\",  ");
+        sql.append("    a.DS_EMAIL as \"email\" ");
+        sql.append(" FROM DBSINGULAR.VW_ATOR a ");
+        sql.append(" INNER JOIN DBSEGURANCA.TB_USUARIO u ");
+        sql.append("  ON u.CO_USERNAME = a.CO_USUARIO ");
+        sql.append(" INNER JOIN DBSEGURANCA.RL_PERFIL_USUARIO pu ");
+        sql.append("  ON pu.CO_USERNAME = u.CO_USERNAME ");
+        sql.append(" INNER JOIN DBSEGURANCA.TB_PERFIL p ");
+        sql.append("  ON pu.CO_USERNAME = u.CO_USERNAME ");
+        sql.append(" INNER JOIN DBSEGURANCA.TB_PERFIL_DETALHE pd ");
+        sql.append(" INNER JOIN DBSEGURANCA.TB_MODULO m ");
+        sql.append("  ON pd.CO_MODULO = m.CO_MODULO ");
+        sql.append("  AND pd.CO_SISTEMA = m.CO_SISTEMA ");
+        sql.append("  ON p.CO_PERFIL = PD.CO_PERFIL ");
+        sql.append(" INNER JOIN DBSINGULAR.RL_PERMISSAO_TAREFA pt ");
+        sql.append("  ON pt.CO_PERMISSAO = m.CO_SISTEMA || m.CO_MODULO ");
+        sql.append(" INNER JOIN DBSINGULAR.TB_DEFINICAO_TAREFA dt ");
+        sql.append("  ON dt.CO_DEFINICAO_TAREFA = pt.CO_DEFINICAO_TAREFA ");
+        sql.append(" INNER JOIN DBSINGULAR.TB_VERSAO_TAREFA vt ");
+        sql.append("  ON vt.CO_DEFINICAO_TAREFA = pt.CO_DEFINICAO_TAREFA ");
+        sql.append(" INNER JOIN DBSINGULAR.TB_INSTANCIA_TAREFA it ");
+        sql.append("  ON it.CO_VERSAO_TAREFA = vt.CO_VERSAO_TAREFA ");
+        sql.append(" WHERE it.CO_INSTANCIA_TAREFA = :taskInstanceId ");
+
+        SQLQuery query = getSession().createSQLQuery(sql.toString());
+        query.setParameter("taskInstanceId", taskInstanceId);
+
+        query.setResultTransformer(Transformers.aliasToBean(Actor.class));
+
+        return query.list();
     }
 }
