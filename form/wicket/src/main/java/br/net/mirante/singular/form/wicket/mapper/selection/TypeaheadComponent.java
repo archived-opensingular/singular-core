@@ -1,40 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static com.google.common.collect.Maps.newLinkedHashMap;
-
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.json.JSONArray;
-import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.markup.head.CssReferenceHeaderItem;
-import org.apache.wicket.markup.head.HeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.request.IRequestParameters;
-import org.apache.wicket.request.Request;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.handler.TextRequestHandler;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.string.StringValue;
-
 import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.SingularFormException;
@@ -47,6 +12,33 @@ import br.net.mirante.singular.form.wicket.model.AbstractSInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.template.SingularTemplate;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.json.JSONArray;
+import org.apache.wicket.ajax.json.JSONObject;
+import org.apache.wicket.markup.head.*;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.TextRequestHandler;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.string.StringValue;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static br.net.mirante.singular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 
 
 /**
@@ -61,10 +53,14 @@ import br.net.mirante.singular.util.wicket.template.SingularTemplate;
  */
 public class TypeaheadComponent extends Panel {
 
-    public static final CssReferenceHeaderItem CSS_REFERENCE = CssReferenceHeaderItem.forReference(new PackageResourceReference(TypeaheadComponent.class, "TypeaheadComponent.css"){
+    public final CssReferenceHeaderItem CSS_REFERENCE = CssReferenceHeaderItem.forReference(new PackageResourceReference(TypeaheadComponent.class, "TypeaheadComponent.css") {
         @Override
         public List<HeaderItem> getDependencies() {
-            return SingularTemplate.getDefaultCSSUrls();
+            if (getPage() instanceof SingularTemplate) {
+                return ((SingularTemplate) getPage()).getStyles();
+            } else {
+                return Collections.emptyList();
+            }
         }
     });
 
@@ -146,8 +142,8 @@ public class TypeaheadComponent extends Panel {
                 }
                 if (!Value.dehydrate(instance()).equals(lastValue)) {
                     lastValue = Value.dehydrate(instance());
-                    final IFunction<Object, Object> idFunction = instance().asAtrProvider().getIdFunction();
-                    final SInstanceConverter<Serializable, SInstance>        converter  = instance().asAtrProvider().getConverter();
+                    final IFunction<Object, Object>                   idFunction = instance().asAtrProvider().getIdFunction();
+                    final SInstanceConverter<Serializable, SInstance> converter  = instance().asAtrProvider().getConverter();
                     if (idFunction != null && converter != null && !instance().isEmptyOfData()) {
                         final Serializable converted = converter.toObject(instance());
                         if (converted != null) {
@@ -184,9 +180,9 @@ public class TypeaheadComponent extends Panel {
 
     private Optional<Serializable> getValueFromProvider(String key) {
 
-        final Stream<Serializable> stream;
-        final Provider<Serializable, SInstance> provider = instance().asAtrProvider().getProvider();
-        final ProviderContext<SInstance> providerContext = new ProviderContext<>();
+        final Stream<Serializable>              stream;
+        final Provider<Serializable, SInstance> provider        = instance().asAtrProvider().getProvider();
+        final ProviderContext<SInstance>        providerContext = new ProviderContext<>();
 
         providerContext.setInstance(instance());
 
@@ -287,17 +283,17 @@ public class TypeaheadComponent extends Panel {
 
     private Map<String, String> optionsConfigMap() {
 
-        final Map<String, String> map = newLinkedHashMap();
-        final SInstance instance = model.getObject();
-        final Provider<Serializable, SInstance> provider = instance.asAtrProvider().getProvider();
-        final ProviderContext<SInstance> providerContext = new ProviderContext<>();
+        final Map<String, String>               map             = newLinkedHashMap();
+        final SInstance                         instance        = model.getObject();
+        final Provider<Serializable, SInstance> provider        = instance.asAtrProvider().getProvider();
+        final ProviderContext<SInstance>        providerContext = new ProviderContext<>();
 
         providerContext.setInstance(instance);
         providerContext.setQuery(StringUtils.EMPTY);
 
         if (provider != null) {
             for (Object o : provider.load(providerContext)) {
-                final String key = String.valueOf(instance.asAtrProvider().getIdFunction().apply(o));
+                final String key     = String.valueOf(instance.asAtrProvider().getIdFunction().apply(o));
                 final String display = instance.asAtrProvider().getDisplayFunction().apply((Serializable) o);
                 map.put(key, display);
                 cache.put(key, new TypeaheadCache((Serializable) o, display));
@@ -314,7 +310,7 @@ public class TypeaheadComponent extends Panel {
     private PackageResourceReference resourceRef(String resourceName) {
         return new PackageResourceReference(getClass(), resourceName);
     }
-    
+
     @Override
     protected void onInitialize() {
         super.onInitialize();

@@ -5,13 +5,7 @@
 
 package br.net.mirante.singular.showcase.view.template;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -20,16 +14,17 @@ import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.event.IEvent;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.head.*;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.resource.JQueryPluginResourceReference;
 
-import br.net.mirante.singular.util.wicket.template.SingularTemplate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
 public abstract class Template extends SingularTemplate {
@@ -87,7 +82,7 @@ public abstract class Template extends SingularTemplate {
     }
 
     private void addQuickSidebar(IHeaderResponse response) {
-        response.render(JavaScriptReferenceHeaderItem.forUrl("/singular-static/resources/metronic/layout4/scripts/quick-sidebar.js"));
+        response.render(JavaScriptReferenceHeaderItem.forUrl("/singular-static/resources/" + getCurrentSkinFolder() + "/layout4/scripts/quick-sidebar.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
                 .append("    QuickSidebar.init(); // init quick sidebar\n")

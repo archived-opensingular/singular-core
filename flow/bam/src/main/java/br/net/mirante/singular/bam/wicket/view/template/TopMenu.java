@@ -5,13 +5,8 @@
 
 package br.net.mirante.singular.bam.wicket.view.template;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
-import java.util.Optional;
-
-import javax.inject.Inject;
-
+import br.net.mirante.singular.bam.service.UIAdminFacade;
+import br.net.mirante.singular.bam.wicket.UIAdminSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -19,9 +14,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.UrlUtils;
 
-import br.net.mirante.singular.bam.service.UIAdminFacade;
-import br.net.mirante.singular.bam.wicket.UIAdminSession;
-import org.springframework.test.context.web.WebAppConfiguration;
+import javax.inject.Inject;
+import java.util.Optional;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class TopMenu extends Panel {
 
@@ -43,7 +40,7 @@ public class TopMenu extends Panel {
 
         WebMarkupContainer avatar = new WebMarkupContainer("codrh");
         avatar.add($b.attr("src", Optional.ofNullable(StringUtils.trimToNull(uiAdminFacade.getUserAvatar()))
-            .orElse(UrlUtils.rewriteToContextRelative("/singular-static/resources/metronic/layout4/img/avatar.png", getRequestCycle())).replace("{0}", UIAdminSession.get().getUserId())));
+                .orElse(UrlUtils.rewriteToContextRelative("/singular-static/resources/singular/layout4/img/avatar.png", getRequestCycle())).replace("{0}", UIAdminSession.get().getUserId())));
         queue(avatar);
         
         WebMarkupContainer logout = new WebMarkupContainer("logout");

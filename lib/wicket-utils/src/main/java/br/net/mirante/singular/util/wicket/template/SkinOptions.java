@@ -5,10 +5,9 @@
 
 package br.net.mirante.singular.util.wicket.template;
 
-import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.commons.util.Loggable;
 import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.markup.head.CssUrlReferenceHeaderItem;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
@@ -20,6 +19,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This class stores the options of css skins for the showcase
@@ -33,14 +33,12 @@ public class SkinOptions implements Serializable, Loggable {
 
     public static class Skin implements Serializable {
 
-        private final String                    name;
-        private final CssUrlReferenceHeaderItem ref;
-        private final Boolean                   defaultSkin;
+        private final String  name;
+        private final Boolean defaultSkin;
 
-        private Skin(String name, Boolean defaultSkin, CssUrlReferenceHeaderItem ref) {
+        private Skin(String name, Boolean defaultSkin) {
             this.name = name;
             this.defaultSkin = defaultSkin;
-            this.ref = ref;
         }
 
         public String name() {
@@ -54,22 +52,14 @@ public class SkinOptions implements Serializable, Loggable {
         public String getName() {
             return name;
         }
-
-        public CssUrlReferenceHeaderItem getRef() {
-            return ref;
-        }
-
-        public Boolean getDefaultSkin() {
-            return defaultSkin;
-        }
     }
 
-    public void addSkin(String name, CssUrlReferenceHeaderItem ref) {
-        skins.add(new Skin(name, false, ref));
+    public void addSkin(String name) {
+        skins.add(new Skin(name, false));
     }
 
-    public void addDefaulSkin(String name, CssUrlReferenceHeaderItem ref) {
-        skins.add(new Skin(name, true, ref));
+    public void addDefaulSkin(String name) {
+        skins.add(new Skin(name, true));
     }
 
     public List<Skin> options() {
@@ -77,31 +67,30 @@ public class SkinOptions implements Serializable, Loggable {
     }
 
     public void selectSkin(Skin selection) {
-        final Cookie cookie = new Cookie("skin", "");
-        cookie.setPath("/");
+        final Cookie cookie = new Cookie("skin", "" );
+        cookie.setPath("/" );
         if (selection != null) {
             final JSONObject json = new JSONObject();
             json.put("name", selection.getName());
-            json.put("url", selection.getRef().getUrl());
             try {
-                cookie.setValue(URLEncoder.encode(json.toString(), "UTF-8"));
+                cookie.setValue(URLEncoder.encode(json.toString(), "UTF-8" ));
             } catch (UnsupportedEncodingException e) {
                 getLogger().error(e.getMessage(), e);
             }
         }
-        response().addCookie(cookie);
+        response().ifPresent(r -> r.addCookie(cookie));
         current = selection;
     }
 
     public Skin currentSkin() {
         if (current == null) {
-            final Cookie cookie = request().getCookie("skin");
+            final Cookie cookie = request().getCookie("skin" );
             if (cookie != null) {
                 return options()
                         .stream()
                         .filter(s -> {
                             try {
-                                return s.getName().equals(new JSONObject(URLDecoder.decode(cookie.getValue(), "UTF-8")).get("name"));
+                                return s.getName().equals(new JSONObject(URLDecoder.decode(cookie.getValue(), "UTF-8" )).get("name" ));
                             } catch (UnsupportedEncodingException e) {
                                 getLogger().error(e.getMessage(), e);
                                 return false;
@@ -119,15 +108,25 @@ public class SkinOptions implements Serializable, Loggable {
         return options()
                 .stream()
                 .filter(s -> s.defaultSkin)
-                .findFirst().orElseThrow(() -> new SingularException("Nenhum skin foi configurada como default"));
+                .findFirst()
+                .orElseGet(() -> {
+                    addDefaulSkin("singular" );
+                    selectSkin(getDefaultSkin());
+                    return getDefaultSkin();
+                });
     }
 
     private static WebRequest request() {
         return (WebRequest) RequestCycle.get().getRequest();
     }
 
-    private static WebResponse response() {
-        return (WebResponse) RequestCycle.get().getResponse();
+    private static Optional<WebResponse> response() {
+        Response response = RequestCycle.get().getResponse();
+        if (response instanceof WebResponse) {
+            return Optional.of((WebResponse) response);
+        } else {
+            return Optional.empty();
+        }
     }
 
 }
