@@ -2326,12 +2326,12 @@ output {
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(55, 90, 55, 0.6);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(55, 90, 55, 0.6); }
   .form-control::-moz-placeholder {
-    color: #b2b7c7;
+    color: #5b645d;
     opacity: 1; }
   .form-control:-ms-input-placeholder {
-    color: #b2b7c7; }
+    color: #5b645d; }
   .form-control::-webkit-input-placeholder {
-    color: #b2b7c7; }
+    color: #5b645d; }
   .form-control::-ms-expand {
     border: 0;
     background-color: transparent; }

@@ -183,12 +183,12 @@ body {
     padding-right: 0;
     font-size: 14px; }
     .form-group.form-md-line-input .form-control::-moz-placeholder {
-      color: #b2b7c7;
+      color: #5b645d;
       opacity: 1; }
     .form-group.form-md-line-input .form-control:-ms-input-placeholder {
-      color: #b2b7c7; }
+      color: #5b645d; }
     .form-group.form-md-line-input .form-control::-webkit-input-placeholder {
-      color: #b2b7c7; }
+      color: #5b645d; }
     .form-group.form-md-line-input .form-control.form-control-static {
       border-bottom: 0; }
     .form-group.form-md-line-input .form-control.input-sm {
@@ -263,7 +263,7 @@ body {
     font-size: 16px;
     top: 25px;
     transition: 0.2s ease all;
-    color: #b2b7c7; }
+    color: #5b645d; }
   .form-group.form-md-line-input.form-md-floating-label .form-control[readonly] ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control.edited ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control.form-control-static ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control:focus:not([readonly]) ~ label, .form-group.form-md-line-input.form-md-floating-label .form-control.focus:not([readonly]) ~ label {
     top: 0;
     font-size: 13px; }
@@ -11983,7 +11983,7 @@ Light Table
   .table.table-light > thead > tr > th {
     font-weight: 600;
     font-size: 13px;
-    color: #b2b7c7;
+    color: #5b645d;
     font-family: "Open Sans", sans-serif;
     border: 0;
     border-bottom: 1px solid #F2F5F8; }

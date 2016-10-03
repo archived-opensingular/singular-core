@@ -345,3 +345,19 @@ body {
 .page-spinner-bar > div,
 .block-spinner-bar > div {
   background: #5a945a; }
+
+.toast-success {
+  background-color: #508450; }
+
+.toast-info {
+  background-color: #5C9BD1; }
+
+.toast-error {
+  background-color: #E35B5A; }
+
+.toast-warning {
+  background-color: #F7CA18; }
+
+.toast-message a {
+  color: #FAFAFA !important;
+  font-weight: bold; }
