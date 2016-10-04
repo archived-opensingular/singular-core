@@ -3,7 +3,8 @@
     <ul class="nav navbar-nav pull-right">
 
         <li class="dropdown dropdown-user">
-            <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+            <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
+               data-close-others="true">
                 <span wicket:id="nome" class="username username-hide-on-mobile"></span>
                 <!-- DOC: Do not remove below empty space(&nbsp;) as its purposely used -->
                 <img wicket:id="codrh" class="img-circle"/>
@@ -11,22 +12,25 @@
             <ul class="dropdown-menu dropdown-menu-default">
                 <li>
                     <a wicket:id="logout" href="#">
-                        <i class="icon-key"></i> <wicket:message key="top.menu.logout"/>
+                        <i class="icon-key"></i>
+                        <wicket:message key="top.menu.logout"/>
                     </a>
                 </li>
-                <li>
-                    <hr />
-                </li>
-                <li style="text-align: center;">
-                    <a href="#">
-                        <wicket:message key="top.menu.skins"/>
-                    </a>
-                </li>
-                <li wicket:id="skin_options">
-                    <a wicket:id="change_action" href="#">
-                        <i class="fa fa-paint-brush"></i> <span wicket:id="label">skin</span>
-                    </a>
-                </li>
+                <div wicket:id="opcoes-visuais">
+                    <li>
+                        <hr/>
+                    </li>
+                    <li style="text-align: center;">
+                        <a href="#">
+                            <wicket:message key="top.menu.skins"/>
+                        </a>
+                    </li>
+                    <li wicket:id="skin_options">
+                        <a wicket:id="change_action" href="#">
+                            <i class="fa fa-paint-brush"></i> <span wicket:id="label">skin</span>
+                        </a>
+                    </li>
+                </div>
             </ul>
         </li>
         <!-- END USER LOGIN DROPDOWN -->
