@@ -13,15 +13,19 @@ public class ItemActionConfirmation implements Serializable {
     private String confirmationMessage;
     private String cancelButtonLabel;
     private String confirmationButtonLabel;
+    private String selectEndpoint;
 
     public ItemActionConfirmation() {
     }
 
-    public ItemActionConfirmation(String title, String confirmationMessage, String cancelButtonLabel, String confirmationButtonLabel) {
+    public ItemActionConfirmation(String title, String confirmationMessage,
+                                  String cancelButtonLabel, String confirmationButtonLabel,
+                                  String selectEndpoint) {
         this.title = title;
         this.confirmationMessage = confirmationMessage;
         this.cancelButtonLabel = cancelButtonLabel;
         this.confirmationButtonLabel = confirmationButtonLabel;
+        this.selectEndpoint = selectEndpoint;
     }
 
     public String getTitle() {
@@ -54,5 +58,13 @@ public class ItemActionConfirmation implements Serializable {
 
     public void setConfirmationButtonLabel(String confirmationButtonLabel) {
         this.confirmationButtonLabel = confirmationButtonLabel;
+    }
+
+    public String getSelectEndpoint() {
+        return selectEndpoint;
+    }
+
+    public void setSelectEndpoint(String selectEndpoint) {
+        this.selectEndpoint = selectEndpoint;
     }
 }

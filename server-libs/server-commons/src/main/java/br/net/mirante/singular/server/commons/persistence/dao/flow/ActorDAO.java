@@ -102,7 +102,7 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
 
         sql.append(" SELECT DISTINCT a.CO_ATOR as \"cod\", ");
         sql.append("    a.CO_USUARIO as \"codUsuario\", ");
-        sql.append("    a.NO_ATOR as \"nome\",  ");
+        sql.append("    UPPER(a.NO_ATOR) as \"nome\",  ");
         sql.append("    a.DS_EMAIL as \"email\" ");
         sql.append(" FROM DBSINGULAR.VW_ATOR a ");
         sql.append(" INNER JOIN DBSEGURANCA.TB_USUARIO u ");
@@ -125,6 +125,7 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
         sql.append(" INNER JOIN DBSINGULAR.TB_INSTANCIA_TAREFA it ");
         sql.append("  ON it.CO_VERSAO_TAREFA = vt.CO_VERSAO_TAREFA ");
         sql.append(" WHERE it.CO_INSTANCIA_TAREFA = :taskInstanceId ");
+        sql.append(" ORDER BY UPPER(a.NO_ATOR) ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setParameter("taskInstanceId", taskInstanceId);

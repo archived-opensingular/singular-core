@@ -5,6 +5,14 @@
 
 package br.net.mirante.singular.server.commons.flow.rest;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ActionRequest.class, name = "ActionRequest"),
+        @JsonSubTypes.Type(value = ActionAtribuirRequest.class, name = "ActionAtribuirRequest")
+})
 public class ActionRequest {
 
     private String name;

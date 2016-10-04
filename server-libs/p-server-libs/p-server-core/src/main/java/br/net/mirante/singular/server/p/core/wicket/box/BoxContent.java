@@ -5,8 +5,42 @@
 
 package br.net.mirante.singular.server.p.core.wicket.box;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
+
+import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
+import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import br.net.mirante.singular.commons.lambda.IBiFunction;
 import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.persistence.entity.Actor;
+import br.net.mirante.singular.server.commons.flow.rest.ActionAtribuirRequest;
 import br.net.mirante.singular.server.commons.flow.rest.ActionRequest;
 import br.net.mirante.singular.server.commons.flow.rest.ActionResponse;
 import br.net.mirante.singular.server.commons.form.FormActions;
@@ -29,33 +63,6 @@ import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-import static br.net.mirante.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
@@ -221,6 +228,35 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         }
     }
 
+    private void relocate(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItem, AjaxRequestTarget target, Actor actor) {
+        final BoxItemAction boxAction = boxItem.getActionByName(itemAction.getName());
+
+        String url = baseUrl
+                + boxAction.getEndpoint()
+                + appendParameters(additionalParams);
+
+        try {
+            callModule(url, buildCallAtribuirObject(boxAction, boxItem, actor));
+        } catch (Exception e) {
+            LOGGER.error("Erro ao acessar serviço: " + url, e);
+            addToastrErrorMessage("Não foi possível executar esta ação.");
+        } finally {
+            target.add(tabela);
+        }
+    }
+
+    private Object buildCallAtribuirObject(BoxItemAction boxAction, BoxItemModel boxItem, Actor actor) {
+        ActionAtribuirRequest actionRequest = new ActionAtribuirRequest();
+        actionRequest.setIdUsuario(getBoxPage().getIdUsuario());
+        actionRequest.setIdUsuarioDestino(actor.getCodUsuario());
+        if (boxAction.isUseExecute()) {
+            actionRequest.setName(boxAction.getName());
+            actionRequest.setLastVersion(boxItem.getVersionStamp());
+        }
+
+        return actionRequest;
+    }
+
     private void callModule(String url, Object arg) {
         ActionResponse response = new RestTemplate().postForObject(url, arg, ActionResponse.class);
         if (response.isSuccessful()) {
@@ -245,6 +281,13 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         final ItemActionConfirmation confirmation      = itemAction.getConfirmation();
         BSModalBorder                confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
         confirmationModal.addOrReplace(new Label("message", $m.ofValue(confirmation.getConfirmationMessage())));
+
+        Model<Actor> model  = new Model();
+        if (StringUtils.isNotBlank(confirmation.getSelectEndpoint())) {
+            List<Actor>  actors = buscarUsuarios(currentModel);
+            confirmationModal.addOrReplace(criarDropDown(actors, model));
+        }
+
         confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -252,16 +295,47 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 confirmationModal.hide(target);
             }
         });
-        confirmationModal.addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.ofValue(confirmation.getConfirmationButtonLabel()), new AjaxButton("delete-btn", confirmationForm) {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                executeDynamicAction(itemAction, baseUrl, additionalParams, currentModel.getObject(), target);
-                target.add(tabela);
-                confirmationModal.hide(target);
-            }
-        });
+
+        if (StringUtils.isNotBlank(confirmation.getSelectEndpoint())) {
+            confirmationModal.addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.ofValue(confirmation.getConfirmationButtonLabel()), new AjaxButton("delete-btn", confirmationForm) {
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    relocate(itemAction, baseUrl, additionalParams, currentModel.getObject(), target, model.getObject());
+                    target.add(tabela);
+                    confirmationModal.hide(target);
+                }
+            });
+        } else {
+            confirmationModal.addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.ofValue(confirmation.getConfirmationButtonLabel()), new AjaxButton("delete-btn", confirmationForm) {
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    executeDynamicAction(itemAction, baseUrl, additionalParams, currentModel.getObject(), target);
+                    target.add(tabela);
+                    confirmationModal.hide(target);
+                }
+            });
+        }
 
         return confirmationModal;
+    }
+
+    private DropDownChoice criarDropDown(List<Actor> actors, Model<Actor> model) {
+        return new DropDownChoice<>("selecao",
+                model,
+                actors,
+                new ChoiceRenderer<>("nome", "codUsuario"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Actor> buscarUsuarios(IModel<BoxItemModel> currentModel) {
+        final String connectionURL = getProcessGroup().getConnectionURL();
+        final String url           = connectionURL + PATH_BOX_SEARCH + "/listarUsuarios";
+        try {
+            return Arrays.asList(new RestTemplate().postForObject(url, currentModel.getObject(), Actor[].class));
+        } catch (Exception e) {
+            LOGGER.error("Erro ao acessar serviço: " + url, e);
+            return Collections.emptyList();
+        }
     }
 
     private String appendParameters(Map<String, String> additionalParams) {

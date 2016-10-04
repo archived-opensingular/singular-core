@@ -21,8 +21,8 @@ public class DefaultActions {
     public static final ActionDefinition ACTION_VIEW     = new ActionDefinition("visualizar");
     public static final ActionDefinition ACTION_ANALYSE  = new ActionDefinition("analisar");
 
-    public static final ItemActionConfirmation CONFIRMATION_DELETE   = new ItemActionConfirmation("Excluir o rascunho", "Confirma a exclusão?", "Cancelar", "Remover");
-    public static final ItemActionConfirmation CONFIRMATION_RELOCATE = new ItemActionConfirmation("Redistribuir", "Escolha:", "Cancelar", "Atribuir");
+    public static final ItemActionConfirmation CONFIRMATION_DELETE   = new ItemActionConfirmation("Excluir o rascunho", "Confirma a exclusão?", "Cancelar", "Remover", null);
+    public static final ItemActionConfirmation CONFIRMATION_RELOCATE = new ItemActionConfirmation("Redistribuir", "Escolha:", "Cancelar", "Atribuir", "/listarUsuarios");
 
     public static final ItemAction EDIT    = new ItemAction(ACTION_EDIT.getName(), "Alterar", Icone.PENCIL, ItemActionType.POPUP);
     public static final ItemAction DELETE  = new ItemAction(ACTION_DELETE.getName(), "Excluir", Icone.MINUS, ItemActionType.ENDPOINT, CONFIRMATION_DELETE);
