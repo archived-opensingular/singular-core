@@ -180,6 +180,6 @@
               p:sessionCountWarnThreshold="100000"/>
     </util:list>
 
-    <bean id="hardCoded" class="br.net.mirante.singular.sso.HarCodedAuthHandler"/>
+    <bean id="hardCoded" class="br.net.mirante.singular.sso.HardCodedAuthHandler"/>
 
 </beans>
