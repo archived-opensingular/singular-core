@@ -1258,7 +1258,8 @@ General User Record Listing
 ***/
 .general-item-list > .item {
   padding: 10px 0;
-  border-bottom: 1px solid #F1F4F7; }
+    border-bottom: 1px solid #ECECEA;
+}
   .general-item-list > .item:last-child {
     border-bottom: 0; }
   .general-item-list > .item > .item-head {
@@ -6654,16 +6655,18 @@ Notes
   .note .highlight {
     background-color: #fff; }
   .note.note-default {
-    background-color: white;
-    border-color: #b0c1d2;
+      background-color: #f8f8f7;
+      border-color: #bcbcb4;
     color: black; }
     .note.note-default.note-bordered {
-      background-color: #eef1f5;
-      border-color: #c0cedb; }
+        background-color: #eaeae7;
+        border-color: #c8c8c2;
+    }
     .note.note-default.note-shadow {
-      background-color: #f1f4f7;
-      border-color: #d1dbe4;
-      box-shadow: 5px 5px rgba(212, 221, 230, 0.2); }
+        background-color: #ececea;
+        border-color: #d4d4cf;
+        box-shadow: 5px 5px rgba(214, 214, 210, 0.2);
+    }
   .note.note-success {
     background-color: #b1d0b1;
     border-color: #62a062;
@@ -7057,11 +7060,14 @@ Portlets
   padding: 12px 20px 15px 20px;
   background-color: #fff; }
   .portlet.light.bordered {
-    border: 1px solid #e7ecf1 !important; }
+      border: 1px solid #e5e5e2 !important;
+  }
     .portlet.light.bordered > .portlet-title {
-      border-bottom: 1px solid #eef1f5; }
+        border-bottom: 1px solid #eaeae7;
+    }
   .portlet.light.bg-inverse {
-    background: #f1f4f7; }
+      background: #ECECEA;
+  }
   .portlet.light > .portlet-title {
     padding: 0;
     min-height: 48px; }
@@ -11576,7 +11582,8 @@ Dashboard Stats 2
   margin-bottom: 20px;
   box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.03); }
   .dashboard-stat2.bordered {
-    border: 1px solid #e7ecf1; }
+      border: 1px solid #e5e5e2;
+  }
   .dashboard-stat2 .display {
     margin-bottom: 20px; }
     .dashboard-stat2 .display:before, .dashboard-stat2 .display:after {
@@ -11909,7 +11916,7 @@ Scrollable Tables
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  border: 1px solid #e7ecf1;
+    border: 1px solid #e5e5e2;
   margin: 10px 0 !important; }
   .DTS .table-scrollable {
     border: 0; }
@@ -12077,7 +12084,7 @@ Custom tables
   color: #3f444a; }
 
 .table-advance thead tr th {
-  background-color: #f1f4f7;
+    background-color: #ECECEA;
   font-size: 14px;
   font-weight: 400;
   color: #3f444a; }
@@ -12162,7 +12169,8 @@ Light Table
   .table.table-light.table-hover > tbody > tr > th:hover,
   .table.table-light.table-hover > tbody > tr:hover > td,
   .table.table-light.table-hover > tbody > tr:hover > th {
-    background: #eef1f5; }
+      background: #eaeae7;
+  }
 
 /***
 Customized Bootstrap Tabs 
@@ -12434,10 +12442,11 @@ Custom tabs
 .tabbable-line > .tab-content {
   margin-top: 0;
   border: 0;
-  border-top: 1px solid #eef1f5;
+    border-top: 1px solid #eaeae7;
   padding: 30px 0; }
   .page-container-bg-solid .tabbable-line > .tab-content {
-    border-top: 1px solid #dae2ea; }
+      border-top: 1px solid #dbdbd7;
+  }
   .portlet .tabbable-line > .tab-content {
     padding-bottom: 0; }
 
@@ -12883,7 +12892,8 @@ Custimized Bootstrap Wells
   padding: 20px;
   border-radius: 2px; }
   .widget-thumb.bordered {
-    border: 1px solid #e7ecf1; }
+      border: 1px solid #e5e5e2;
+  }
   .widget-thumb .widget-thumb-heading {
     font-size: 14px;
     font-weight: bold;
@@ -14241,7 +14251,7 @@ Tasks Widget
       float: right; } }
 
 .mt-widget-1 {
-  border: 1px solid #e7ecf1;
+    border: 1px solid #e5e5e2;
   text-align: center;
   position: relative; }
   .mt-widget-1 .mt-icon {
@@ -14257,7 +14267,7 @@ Tasks Widget
   .mt-widget-1 .mt-img {
     display: inline-block;
     border-radius: 50% !important;
-    border: 4px solid #e7ecf1;
+      border: 4px solid #e5e5e2;
     margin: 40px 0 30px 0; }
     .mt-widget-1 .mt-img > img {
       border: 1px solid trnsparent;
@@ -14275,13 +14285,16 @@ Tasks Widget
   .mt-widget-1 .mt-body .mt-stats {
     margin: 30px 0px 0px 0px; }
     .mt-widget-1 .mt-body .mt-stats .btn-group {
-      border-top: 1px solid #e7ecf1; }
+        border-top: 1px solid #e5e5e2;
+    }
       .mt-widget-1 .mt-body .mt-stats .btn-group .btn {
         padding: 10px 10px;
         font-size: 14px;
-        border-right: 1px solid #e7ecf1; }
+          border-right: 1px solid #e5e5e2;
+      }
         .mt-widget-1 .mt-body .mt-stats .btn-group .btn:hover {
-          background-color: #e7ecf1; }
+            background-color: #e5e5e2;
+        }
         .mt-widget-1 .mt-body .mt-stats .btn-group .btn:last-child {
           border: 0; }
         .mt-widget-1 .mt-body .mt-stats .btn-group .btn > i {
@@ -14295,7 +14308,7 @@ Tasks Widget
           border-bottom-right-radius: 2px !important; }
 
 .mt-widget-2 {
-  border: 1px solid #e7ecf1;
+    border: 1px solid #e5e5e2;
   position: relative; }
   .mt-widget-2 .mt-head {
     position: absolute;
@@ -14364,19 +14377,21 @@ Tasks Widget
         list-style: none;
         display: inline-block; }
     .mt-widget-2 .mt-body .mt-body-actions {
-      border-top: 1px solid #e7ecf1; }
+        border-top: 1px solid #e5e5e2;
+    }
       .mt-widget-2 .mt-body .mt-body-actions > i {
         font-size: 18px; }
       .mt-widget-2 .mt-body .mt-body-actions .btn {
         font-size: 14px;
-        border-right: 1px solid #e7ecf1;
+          border-right: 1px solid #e5e5e2;
         padding: 12px 0 12px 0;
         text-align: center; }
         .mt-widget-2 .mt-body .mt-body-actions .btn:last-child {
           border: 0; }
 
 .mt-widget-3 {
-  border: 1px solid #e7ecf1; }
+    border: 1px solid #e5e5e2;
+}
   .mt-widget-3 .mt-head {
     background-color: #5DC9E6;
     margin-bottom: 20px;
@@ -14413,7 +14428,7 @@ Tasks Widget
       padding: 5px;
       font-size: 15px; }
   .mt-widget-3 .mt-body-actions-icons .btn {
-    border-right: 1px solid #e7ecf1;
+      border-right: 1px solid #e5e5e2;
     font-size: 11px;
     text-align: center;
     padding: 0; }
@@ -14887,7 +14902,7 @@ Tasks Widget
   border-left: 1px solid;
   border-right: 1px solid;
   border-bottom: 1px solid;
-  border-color: #e7ecf1;
+    border-color: #e5e5e2;
   padding: 15px; }
   .mt-element-list .list-default.mt-list-container .mt-list-title {
     padding-bottom: 15px;
@@ -14899,7 +14914,7 @@ Tasks Widget
     .mt-element-list .list-default.mt-list-container ul > .mt-list-item {
       list-style: none;
       border-bottom: 1px solid;
-      border-color: #e7ecf1;
+        border-color: #e5e5e2;
       padding: 25px 0;
       min-height: 45px; }
       .mt-element-list .list-default.mt-list-container ul > .mt-list-item:first-child {
@@ -14909,7 +14924,7 @@ Tasks Widget
         border: none; }
       .mt-element-list .list-default.mt-list-container ul > .mt-list-item > .list-icon-container {
         border: 1px solid;
-        border-color: #e7ecf1;
+          border-color: #e5e5e2;
         border-radius: 50% !important;
         padding: 0.9em;
         float: left;
@@ -14953,12 +14968,14 @@ Tasks Widget
     padding: 15px;
     border-left: 3px solid;
     border-color: #2F353B;
-    border-bottom-color: #e7ecf1; }
+      border-bottom-color: #e5e5e2;
+  }
     .mt-element-list .list-default.ext-1.mt-list-container ul > .mt-list-item:hover {
       background-color: #e5e5e5; }
     .mt-element-list .list-default.ext-1.mt-list-container ul > .mt-list-item.done {
       border-color: #26C281;
-      border-bottom-color: #e7ecf1; }
+        border-bottom-color: #e5e5e2;
+    }
       .mt-element-list .list-default.ext-1.mt-list-container ul > .mt-list-item.done:hover {
         background-color: #96ebc8; }
     .mt-element-list .list-default.ext-1.mt-list-container ul > .mt-list-item > .list-icon-container {
@@ -14991,7 +15008,7 @@ Tasks Widget
   border-left: 1px solid;
   border-right: 1px solid;
   border-bottom: 1px solid;
-  border-color: #e7ecf1;
+    border-color: #e5e5e2;
   padding: 15px; }
   .mt-element-list .list-simple.mt-list-container ul {
     margin-bottom: 0;
@@ -14999,7 +15016,7 @@ Tasks Widget
     .mt-element-list .list-simple.mt-list-container ul > .mt-list-item {
       list-style: none;
       border-bottom: 1px solid;
-      border-color: #e7ecf1;
+        border-color: #e5e5e2;
       padding: 15px 0; }
       .mt-element-list .list-simple.mt-list-container ul > .mt-list-item:first-child {
         padding-top: 0; }
@@ -15053,12 +15070,14 @@ Tasks Widget
     padding: 15px;
     border-left: 3px solid;
     border-color: #34495e;
-    border-bottom-color: #e7ecf1; }
+      border-bottom-color: #e5e5e2;
+  }
     .mt-element-list .list-simple.ext-1.mt-list-container ul > .mt-list-item:hover {
       background-color: #e5e5e5; }
     .mt-element-list .list-simple.ext-1.mt-list-container ul > .mt-list-item.done {
       border-color: #26C281;
-      border-bottom-color: #e7ecf1; }
+        border-bottom-color: #e5e5e2;
+    }
       .mt-element-list .list-simple.ext-1.mt-list-container ul > .mt-list-item.done:hover {
         background-color: #96ebc8; }
 
@@ -15086,7 +15105,7 @@ Tasks Widget
   border-left: 1px solid;
   border-right: 1px solid;
   border-bottom: 1px solid;
-  border-color: #e7ecf1;
+    border-color: #e5e5e2;
   padding: 15px 0; }
   .mt-element-list .list-news.mt-list-container ul {
     margin-bottom: 0;
@@ -15094,7 +15113,7 @@ Tasks Widget
     .mt-element-list .list-news.mt-list-container ul > .mt-list-item {
       list-style: none;
       border-bottom: 1px solid;
-      border-color: #e7ecf1;
+        border-color: #e5e5e2;
       padding: 15px;
       position: relative; }
       .mt-element-list .list-news.mt-list-container ul > .mt-list-item:first-child {
@@ -15217,7 +15236,7 @@ Tasks Widget
   border-left: 1px solid;
   border-right: 1px solid;
   border-bottom: 1px solid;
-  border-color: #e7ecf1;
+    border-color: #e5e5e2;
   position: relative; }
   .mt-element-list .list-todo.mt-list-container .list-todo-line {
     position: absolute;
@@ -15227,7 +15246,8 @@ Tasks Widget
     top: 0;
     left: 25px;
     border-left: 1px solid;
-    border-color: #e7ecf1; }
+      border-color: #e5e5e2;
+  }
   .mt-element-list .list-todo.mt-list-container ul {
     margin-bottom: 0;
     padding: 0;
@@ -15237,7 +15257,7 @@ Tasks Widget
       list-style: none;
       border-bottom: 1px solid;
       border-bottom-style: dashed;
-      border-color: #e7ecf1;
+        border-color: #e5e5e2;
       padding: 15px;
       position: relative; }
       .mt-element-list .list-todo.mt-list-container ul > .mt-list-item:last-child {
@@ -15274,7 +15294,7 @@ Tasks Widget
             display: inline-block; }
         .mt-element-list .list-todo.mt-list-container ul > .mt-list-item > .list-todo-item .task-list {
           border: 1px solid;
-          border-color: #e7ecf1;
+            border-color: #e5e5e2;
           padding: 0;
           margin: 0;
           position: relative;
@@ -15284,7 +15304,8 @@ Tasks Widget
             list-style: none;
             padding: 15px;
             border-bottom: 1px solid;
-            border-color: #e7ecf1; }
+              border-color: #e5e5e2;
+          }
             .mt-element-list .list-todo.mt-list-container ul > .mt-list-item > .list-todo-item .task-list .task-list-item a {
               color: #2f353b; }
               .mt-element-list .list-todo.mt-list-container ul > .mt-list-item > .list-todo-item .task-list .task-list-item a:hover {
@@ -17986,7 +18007,7 @@ Tasks Widget
 
 .mt-element-card .mt-card-item {
   border: 1px solid;
-  border-color: #e7ecf1;
+    border-color: #e5e5e2;
   position: relative;
   margin-bottom: 30px; }
   .mt-element-card .mt-card-item .mt-card-avatar {
