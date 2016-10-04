@@ -216,10 +216,23 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return extraPanel;
     }
 
+    private Component buildPreFormPanelContent(String id) {
+        final TemplatePanel extraPanel     = new TemplatePanel(id, MarkupCreator.div("extraContainer"));
+        final BSContainer   extraContainer = new BSContainer("extraContainer");
+        extraPanel.add(extraContainer);
+        appendBeforeFormContent(extraContainer);
+        extraPanel.add($b.visibleIf(() -> extraContainer.visitChildren((object, visit) -> visit.stop("found!")) != null));
+        return extraPanel;
+    }
+
     protected void appendExtraContent(BSContainer extraContainer) {
     }
 
-    protected void onBuildSingularFormPanel(SingularFormPanel singularFormPanel) {
+    private void onBuildSingularFormPanel(SingularFormPanel singularFormPanel) {
+        singularFormPanel.setPreFormPanelFactory(this::buildPreFormPanelContent);
+    }
+
+    protected void appendBeforeFormContent(BSContainer container) {
     }
 
     protected abstract IModel<?> getContentSubtitleModel();

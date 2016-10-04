@@ -41,6 +41,7 @@ public class TopMenu extends Panel {
         Optional<String>   avatarSrc = Optional.ofNullable(null);
         avatarSrc.ifPresent(src -> avatar.add($b.attr("src", src)));
         queue(avatar);
+        avatar.setVisible(avatarSrc.isPresent());
 
         WebMarkupContainer logout = new WebMarkupContainer("logout");
         logout.add($b.attr("href", SecurityUtil.getLogoutPath()));
