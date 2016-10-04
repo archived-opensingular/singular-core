@@ -15,6 +15,9 @@ import java.util.Optional;
 
 import br.net.mirante.singular.server.commons.wicket.error.AccessDeniedContent;
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
+import org.apache.wicket.RestartResponseException;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
@@ -50,9 +53,15 @@ public class BoxPage extends ServerTemplate {
                     MenuGroup mg = entry.getValue().get(0);
                     menu = mg.getLabel();
                     item = mg.getItemBoxes().get(0).getName();
-                    break;
+                    PageParameters pageParameters = new PageParameters();
+                    pageParameters.add(PROCESS_GROUP_PARAM_NAME, processGroupCod);
+                    pageParameters.add(MENU_PARAM_NAME,  menu);
+                    pageParameters.add(ITEM_PARAM_NAME, item);
+                    throw new RestartResponseException(getPage().getClass(), pageParameters);
                 }
             }
+
+
 
         }
 
