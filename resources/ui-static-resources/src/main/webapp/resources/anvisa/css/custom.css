@@ -54,3 +54,7 @@
 .btn:focus {
     color: #fffffc;
 }
+
+.btn-default:focus {
+    color: #333;
+}
