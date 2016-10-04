@@ -47,7 +47,12 @@ public class TopMenu extends Panel {
         logout.add($b.attr("href", SecurityUtil.getLogoutPath()));
         queue(logout);
 
-        queue(buildSkinOptions());
+        final WebMarkupContainer opcoesVisuais = new WebMarkupContainer("opcoes-visuais");
+        opcoesVisuais.setRenderBodyOnly(true);
+        opcoesVisuais.setVisible(option.options().size() > 1);
+        opcoesVisuais.queue(buildSkinOptions());
+
+        queue(opcoesVisuais);
     }
 
     protected ListView buildSkinOptions() {
@@ -57,12 +62,6 @@ public class TopMenu extends Panel {
                 final Skin skin = (Skin) item.getModel().getObject();
                 item.add(buildSelectSkinLink(skin));
                 item.queue(new Label("label", skin.getName()));
-            }
-
-            @Override
-            protected void onInitialize() {
-                this.setVisible(option.options().size() > 1);
-                super.onInitialize();
             }
         };
     }

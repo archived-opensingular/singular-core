@@ -15,16 +15,18 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
@@ -62,16 +64,16 @@ public abstract class AbstractHistoricoContent extends Content {
         queue(getBtnCancelar());
     }
 
-    protected Link<?> getBtnCancelar() {
-        return new Link<Void>("btnCancelar") {
+    protected AjaxLink<?> getBtnCancelar() {
+        return new AjaxLink<Void>("btnCancelar") {
             @Override
-            public void onClick() {
-                setResponsePage(getBackPage());
+            public void onClick(AjaxRequestTarget target) {
+                onCancelar(target);
             }
         };
     }
 
-    protected abstract Class<? extends Page> getBackPage();
+    protected abstract void onCancelar(AjaxRequestTarget t);
 
     private BSDataTable<PetitionContentHistoryEntity, String> setupDataTable() {
         return new BSDataTableBuilder<>(createDataProvider())
@@ -97,15 +99,7 @@ public abstract class AbstractHistoricoContent extends Content {
                             final String url = DispatcherPageUtil.baseURL(getBaseUrl())
                                     .formAction(FormActions.FORM_VIEW.getId())
                                     .formId(null)
-                                    .param(Parameters.FORM_VERSION_KEY, model
-                                            .getObject()
-                                            .getFormVersionHistoryEntities()
-                                            .stream()
-                                            .filter(f -> SimNao.SIM.equals(f.getMainForm()))
-                                            .findFirst()
-                                            .map(FormVersionHistoryEntity::getCod)
-                                            .orElse(null)
-                                    )
+                                    .params(buildViewFormParameters(model))
                                     .build();
                             final WebMarkupContainer link = new WebMarkupContainer(id);
                             link.add($b.attr("target", String.format("_%s", model.getObject().getCod())));
@@ -113,6 +107,20 @@ public abstract class AbstractHistoricoContent extends Content {
                             return link;
                         })
                 ).build("tabela");
+    }
+
+    protected Map<String, String> buildViewFormParameters(IModel<PetitionContentHistoryEntity> model) {
+        final Map<String, String> params = new HashMap<>();
+        params.put(Parameters.FORM_VERSION_KEY, model
+                .getObject()
+                .getFormVersionHistoryEntities()
+                .stream()
+                .filter(f -> SimNao.SIM.equals(f.getMainForm()))
+                .findFirst()
+                .map(FormVersionHistoryEntity::getCodFormVersion)
+                .map(Object::toString)
+                .orElse(null));
+        return params;
     }
 
     private BaseDataProvider<PetitionContentHistoryEntity, String> createDataProvider() {
