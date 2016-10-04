@@ -45,6 +45,7 @@ public class FlowConfirmButton<T extends PetitionEntity> extends SingularSaveBut
                                      final Form<?> form,
                                      final IModel<? extends SInstance> instanceModel) {
         modal.hide(ajaxRequestTarget);
+        formPage.addToastrErrorMessage("Não é possivel " + transitionName.toLowerCase() + " enquanto houver correções a serem feitas.");
         ajaxRequestTarget.add(form);
     }
 
