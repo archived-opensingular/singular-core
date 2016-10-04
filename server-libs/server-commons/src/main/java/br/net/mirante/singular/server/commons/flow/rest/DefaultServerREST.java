@@ -5,10 +5,27 @@
 
 package br.net.mirante.singular.server.commons.flow.rest;
 
-import br.net.mirante.singular.commons.base.SingularProperties;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_DELETE;
+import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
+
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.spring.SpringServiceRegistry;
+import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.persistence.filter.QuickFilter;
@@ -18,22 +35,6 @@ import br.net.mirante.singular.server.commons.spring.security.PermissionResolver
 import br.net.mirante.singular.server.commons.spring.security.SingularPermission;
 import br.net.mirante.singular.server.commons.util.PetitionUtil;
 import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_DELETE;
 
 /**
  * Essa interface deve ser protegida de forma que apenas o próprio servidor possa
@@ -51,7 +52,10 @@ public class DefaultServerREST {
     public static final String COUNT_PETITIONS  = "/countPetitions";
     public static final String SEARCH_TASKS     = "/searchTasks";
     public static final String COUNT_TASKS      = "/countTasks";
+    public static final String USERS            = "/listarUsuarios";
+
     static final        Logger LOGGER           = LoggerFactory.getLogger(DefaultServerREST.class);
+
     @Inject
     protected PetitionService<PetitionEntity> petitionService;
 
@@ -131,4 +135,8 @@ public class DefaultServerREST {
         return petitionService.countTasks(filter, permissions);
     }
 
+    @RequestMapping(value = PATH_BOX_SEARCH + USERS, method = RequestMethod.POST)
+    public List<Actor> listarUsuarios(@RequestBody Map<String, Object> selectedTask) {
+        return petitionService.listAllocableUsers(selectedTask);
+    }
 }

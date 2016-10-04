@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_RELOCATE;
+import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_ASSIGN;
 
 /**
  * Classe responsável por guardar a configuração de ações
@@ -28,7 +28,7 @@ public class ActionConfig implements Loggable {
 
     static {
         MAP_DEFAULT_ACTIONS = new HashMap<>();
-        MAP_DEFAULT_ACTIONS.put(ACTION_RELOCATE, AtribuirController.class);
+        MAP_DEFAULT_ACTIONS.put(ACTION_ASSIGN, AtribuirController.class);
     }
 
     private List<ActionDefinition> defaultActions;

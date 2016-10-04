@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.server.commons.flow.rest;
 
-import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_RELOCATE;
+import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.ACTION_ASSIGN;
 
 import javax.xml.ws.WebServiceException;
 
@@ -40,7 +40,7 @@ public class AtribuirController extends IController implements Loggable {
 
     @Override
     public String getActionName() {
-        return ACTION_RELOCATE.getName();
+        return ACTION_ASSIGN.getName();
     }
 
 

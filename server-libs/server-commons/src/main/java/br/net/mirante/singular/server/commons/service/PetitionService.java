@@ -179,7 +179,7 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         actions.add(createPopupBoxItemAction(item, FormActions.FORM_FILL, ACTION_EDIT.getName()));
         actions.add(createPopupBoxItemAction(item, FormActions.FORM_VIEW, ACTION_VIEW.getName()));
         actions.add(createDeleteAction(item));
-        actions.add(BoxItemAction.newExecuteInstante(item.get("codPeticao"), ACTION_RELOCATE.getName()));
+        actions.add(BoxItemAction.newExecuteInstante(item.get("codPeticao"), ACTION_ASSIGN.getName()));
 
         appendItemActions(item, actions);
 
@@ -520,11 +520,11 @@ public class PetitionService<T extends PetitionEntity> implements Loggable {
         List<BoxItemAction> actions = new ArrayList<>();
         if (task.getCodUsuarioAlocado() == null
                 && task.getTaskType() == TaskType.People) {
-            actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE.getName()));
+            actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_ASSIGN.getName()));
         }
 
         if (task.getTaskType() == TaskType.People) {
-            actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE_TO_OTHER.getName()));
+            actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE.getName()));
         }
 
         if (filter.getIdUsuarioLogado().equalsIgnoreCase(task.getCodUsuarioAlocado())) {

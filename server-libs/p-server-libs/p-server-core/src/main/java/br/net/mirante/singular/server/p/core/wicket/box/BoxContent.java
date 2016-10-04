@@ -282,11 +282,10 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         BSModalBorder                confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
         confirmationModal.addOrReplace(new Label("message", $m.ofValue(confirmation.getConfirmationMessage())));
 
-        Model<Actor> model  = new Model();
-        if (StringUtils.isNotBlank(confirmation.getSelectEndpoint())) {
-            List<Actor>  actors = buscarUsuarios(currentModel);
-            confirmationModal.addOrReplace(criarDropDown(actors, model));
-        }
+        Model<Actor> model  = new Model<>();
+        IModel<List<Actor>>  actorsModel = $m.get(() -> buscarUsuarios(currentModel, confirmation));
+        confirmationModal.addOrReplace(criarDropDown(actorsModel, model))
+            .setVisible(StringUtils.isNotBlank(confirmation.getSelectEndpoint()));
 
         confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
@@ -319,17 +318,18 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         return confirmationModal;
     }
 
-    private DropDownChoice criarDropDown(List<Actor> actors, Model<Actor> model) {
+    private DropDownChoice criarDropDown(IModel<List<Actor>> actorsModel, Model<Actor> model) {
         return new DropDownChoice<>("selecao",
                 model,
-                actors,
+                actorsModel,
                 new ChoiceRenderer<>("nome", "codUsuario"));
     }
 
     @SuppressWarnings("unchecked")
-    private List<Actor> buscarUsuarios(IModel<BoxItemModel> currentModel) {
+    private List<Actor> buscarUsuarios(IModel<BoxItemModel> currentModel, ItemActionConfirmation confirmation) {
         final String connectionURL = getProcessGroup().getConnectionURL();
-        final String url           = connectionURL + PATH_BOX_SEARCH + "/listarUsuarios";
+        final String url           = connectionURL + PATH_BOX_SEARCH + confirmation.getSelectEndpoint();
+
         try {
             return Arrays.asList(new RestTemplate().postForObject(url, currentModel.getObject(), Actor[].class));
         } catch (Exception e) {
