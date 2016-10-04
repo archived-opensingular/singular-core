@@ -9,11 +9,11 @@ import org.springframework.util.StringUtils;
 
 import java.security.GeneralSecurityException;
 
-public class HardCodedAuthHandler extends AbstractUsernamePasswordAuthenticationHandler {
+public class HarCodedAuthHandler extends AbstractUsernamePasswordAuthenticationHandler {
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential) throws GeneralSecurityException, PreventedException {
         if (credential.getUsername() != null && !StringUtils.isEmpty(credential.getUsername())) {
-            return createHandlerResult(credential, new SimplePrincipal(credential.getUsername()), null);
+            return createHandlerResult(credential, new SimplePrincipal("vinicius.nunes"), null);
         }
         return null;
     }
