@@ -13,7 +13,7 @@ public class HarCodedAuthHandler extends AbstractUsernamePasswordAuthenticationH
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential) throws GeneralSecurityException, PreventedException {
         if (credential.getUsername() != null && !StringUtils.isEmpty(credential.getUsername())) {
-            return createHandlerResult(credential, new SimplePrincipal("vinicius.nunes"), null);
+            return createHandlerResult(credential, new SimplePrincipal("73BA3A5D3DB744BB99BEB27E8428C335"), null);
         }
         return null;
     }
