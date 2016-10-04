@@ -15,9 +15,9 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -62,16 +62,16 @@ public abstract class AbstractHistoricoContent extends Content {
         queue(getBtnCancelar());
     }
 
-    protected Link<?> getBtnCancelar() {
-        return new Link<Void>("btnCancelar") {
+    protected AjaxLink<?> getBtnCancelar() {
+        return new AjaxLink<Void>("btnCancelar") {
             @Override
-            public void onClick() {
-                setResponsePage(getBackPage());
+            public void onClick(AjaxRequestTarget target) {
+                onCancelar(target);
             }
         };
     }
 
-    protected abstract Class<? extends Page> getBackPage();
+    protected abstract void onCancelar(AjaxRequestTarget t);
 
     private BSDataTable<PetitionContentHistoryEntity, String> setupDataTable() {
         return new BSDataTableBuilder<>(createDataProvider())
