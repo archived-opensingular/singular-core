@@ -13,6 +13,10 @@ public class FeaturePermissionEntityPK implements Serializable {
     @Column(name = "CO_PERMISSAO")
     private String permission;
 
+    @Column(name = "CO_MODULO_SINGULAR")
+    private String module;
+
+
 
     public String getFeature() {
         return feature;
@@ -30,6 +34,14 @@ public class FeaturePermissionEntityPK implements Serializable {
         this.permission = permission;
     }
 
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -38,7 +50,8 @@ public class FeaturePermissionEntityPK implements Serializable {
         FeaturePermissionEntityPK that = (FeaturePermissionEntityPK) o;
 
         if (!feature.equals(that.feature)) return false;
-        return permission.equals(that.permission);
+        if (!permission.equals(that.permission)) return false;
+        return module.equals(that.module);
 
     }
 
@@ -46,6 +59,7 @@ public class FeaturePermissionEntityPK implements Serializable {
     public int hashCode() {
         int result = feature.hashCode();
         result = 31 * result + permission.hashCode();
+        result = 31 * result + module.hashCode();
         return result;
     }
 }
