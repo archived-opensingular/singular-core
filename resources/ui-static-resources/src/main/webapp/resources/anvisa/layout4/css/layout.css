@@ -415,9 +415,13 @@ Page Header
       .page-header.navbar .top-menu .navbar-nav > li.dropdown-user {
         padding: 0 0 0 10px; }
         .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle {
-          padding: 13px; }
+          padding: 13px;
+          display: table;
+          height: 100%;
+        }
           .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > .username {
-            display: inline-block;
+            display: table-cell;
+            vertical-align: middle;
             font-size: 14px;
             font-weight: 600; }
             .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > .username i {
@@ -432,6 +436,18 @@ Page Header
             margin: 0;
             font-size: 14px;
             font-weight: 600; }
+
+.page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle:after {
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  content: "\f078";
+  color: #508450;
+  display: table-cell;
+  padding-left: 10px;
+  vertical-align: middle;
+}
         .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-menu {
           width: 175px; }
           .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-menu > li > a {
