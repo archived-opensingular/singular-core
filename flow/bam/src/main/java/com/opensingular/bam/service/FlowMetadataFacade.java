@@ -22,8 +22,8 @@ import com.opensingular.bam.support.persistence.dto.DefinitionDTO;
 import org.opensingular.flow.core.authorization.AccessLevel;
 import org.opensingular.flow.core.dto.GroupDTO;
 import org.opensingular.flow.core.service.IFlowMetadataProvider;
-import org.opensingular.singular.persistence.entity.Dashboard;
-import org.opensingular.singular.persistence.entity.Portlet;
+import org.opensingular.flow.persistence.entity.Dashboard;
+import org.opensingular.flow.persistence.entity.Portlet;
 
 @Service
 public class FlowMetadataFacade {

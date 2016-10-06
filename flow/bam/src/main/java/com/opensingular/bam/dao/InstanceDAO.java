@@ -27,7 +27,7 @@ import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
 import org.opensingular.flow.core.TaskType;
-import org.opensingular.singular.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 
 @Repository
 public class InstanceDAO extends BaseDAO{

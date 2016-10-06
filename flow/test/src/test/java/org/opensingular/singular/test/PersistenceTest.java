@@ -1,9 +1,10 @@
 package org.opensingular.singular.test;
 
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.singular.flow.test.definicao.Peticao;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessInstance;
-import org.opensingular.singular.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.singular.test.support.TestSupport;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,7 +31,7 @@ public abstract class PersistenceTest extends TestSupport {
         //Clear da sessão para evidenciar a consulta como única.
         sessionFactory.getCurrentSession().clear();
         Logger.getLogger(getClass().getSimpleName()).info("##LOAD BEGIN: Clear na sessão, recarregando process instance: ");
-        org.opensingular.singular.persistence.entity.ProcessInstanceEntity pientity = (org.opensingular.singular.persistence.entity.ProcessInstanceEntity) sessionFactory.getCurrentSession().load(org.opensingular.singular.persistence.entity.ProcessInstanceEntity.class, cod);
+        ProcessInstanceEntity pientity = (ProcessInstanceEntity) sessionFactory.getCurrentSession().load(ProcessInstanceEntity.class, cod);
         Assert.assertNotNull(pientity.getCurrentTask());
         Assert.assertEquals(pientity.getCurrentTask().getClass(), TaskInstanceEntity.class);
         Logger.getLogger(getClass().getSimpleName()).info("##LOAD END. ");

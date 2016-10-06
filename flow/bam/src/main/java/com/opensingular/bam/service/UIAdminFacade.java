@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import com.opensingular.bam.dto.InstanceDTO;
 
 import org.opensingular.flow.core.service.IUIAdminService;
-import org.opensingular.singular.persistence.entity.Dashboard;
+import org.opensingular.flow.persistence.entity.Dashboard;
 
 @Service("uiAdminFacade")
 public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO, MetaDataDTO, StatusDTO,

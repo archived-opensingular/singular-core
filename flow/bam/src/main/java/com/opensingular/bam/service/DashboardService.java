@@ -7,7 +7,7 @@ package com.opensingular.bam.service;
 
 import java.util.List;
 
-import org.opensingular.singular.persistence.entity.Dashboard;
+import org.opensingular.flow.persistence.entity.Dashboard;
 
 public interface DashboardService {
 

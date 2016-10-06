@@ -22,7 +22,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.StringValue;
 
-import org.opensingular.singular.persistence.entity.Dashboard;
+import org.opensingular.flow.persistence.entity.Dashboard;
 import com.opensingular.bam.service.FlowMetadataFacade;
 import com.opensingular.bam.service.UIAdminFacade;
 import com.opensingular.bam.wicket.UIAdminSession;

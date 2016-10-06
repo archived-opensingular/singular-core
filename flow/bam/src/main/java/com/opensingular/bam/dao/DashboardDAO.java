@@ -12,7 +12,7 @@ import org.hibernate.FetchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import org.opensingular.singular.persistence.entity.Dashboard;
+import org.opensingular.flow.persistence.entity.Dashboard;
 
 @Repository
 public class DashboardDAO extends BaseDAO {

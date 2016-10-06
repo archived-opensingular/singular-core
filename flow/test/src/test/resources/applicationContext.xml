@@ -9,7 +9,7 @@
 
     <context:component-scan base-package="org.opensingular.singular"/>
 
-    <bean name="singularFlowConfigurationBean" class="org.opensingular.singular.persistence.util.HibernateSingularFlowConfigurationBean">
+    <bean name="singularFlowConfigurationBean" class="org.opensingular.flow.persistence.util.HibernateSingularFlowConfigurationBean">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="definitionsPackages" value="org.opensingular.singular"/>
         <property name="userService" ref="testUserService"/>

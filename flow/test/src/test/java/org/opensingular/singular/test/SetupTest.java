@@ -2,28 +2,29 @@ package org.opensingular.singular.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.opensingular.singular.persistence.entity.TaskPermissionEntity;
+import org.opensingular.flow.persistence.entity.ProcessVersionEntity;
+import org.opensingular.flow.persistence.entity.TaskPermissionEntity;
 import org.junit.Test;
 
 import org.opensingular.flow.core.TaskType;
-import org.opensingular.singular.persistence.entity.Actor;
-import org.opensingular.singular.persistence.entity.CategoryEntity;
-import org.opensingular.singular.persistence.entity.ExecutionVariableEntity;
-import org.opensingular.singular.persistence.entity.ProcessDefinitionEntity;
-import org.opensingular.singular.persistence.entity.ProcessGroupEntity;
-import org.opensingular.singular.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.singular.persistence.entity.ProcessRight;
-import org.opensingular.singular.persistence.entity.ProcessRightPK;
-import org.opensingular.singular.persistence.entity.RoleDefinitionEntity;
-import org.opensingular.singular.persistence.entity.RoleInstanceEntity;
-import org.opensingular.singular.persistence.entity.TaskDefinitionEntity;
-import org.opensingular.singular.persistence.entity.TaskHistoricTypeEntity;
-import org.opensingular.singular.persistence.entity.TaskInstanceEntity;
-import org.opensingular.singular.persistence.entity.TaskInstanceHistoryEntity;
-import org.opensingular.singular.persistence.entity.TaskTransitionVersionEntity;
-import org.opensingular.singular.persistence.entity.TaskVersionEntity;
-import org.opensingular.singular.persistence.entity.VariableInstanceEntity;
-import org.opensingular.singular.persistence.entity.VariableTypeInstance;
+import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.CategoryEntity;
+import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
+import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
+import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.ProcessRight;
+import org.opensingular.flow.persistence.entity.ProcessRightPK;
+import org.opensingular.flow.persistence.entity.RoleDefinitionEntity;
+import org.opensingular.flow.persistence.entity.RoleInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
+import org.opensingular.flow.persistence.entity.TaskHistoricTypeEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceHistoryEntity;
+import org.opensingular.flow.persistence.entity.TaskTransitionVersionEntity;
+import org.opensingular.flow.persistence.entity.TaskVersionEntity;
+import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
+import org.opensingular.flow.persistence.entity.VariableTypeInstance;
 import org.opensingular.singular.test.support.TestSupport;
 
 /**
@@ -41,7 +42,7 @@ public abstract class SetupTest extends TestSupport {
         listaAllFor(Actor.class);
         listaAllFor(CategoryEntity.class);
         listaAllFor(ExecutionVariableEntity.class);
-        listaAllFor(org.opensingular.singular.persistence.entity.ProcessVersionEntity.class);
+        listaAllFor(ProcessVersionEntity.class);
         listaAllFor(ProcessDefinitionEntity.class);
         listaAllFor(ProcessGroupEntity.class);
         listaAllFor(ProcessInstanceEntity.class);

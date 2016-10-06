@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 import com.opensingular.bam.dao.DashboardDAO;
 import org.springframework.stereotype.Service;
 
-import org.opensingular.singular.persistence.entity.Dashboard;
+import org.opensingular.flow.persistence.entity.Dashboard;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {

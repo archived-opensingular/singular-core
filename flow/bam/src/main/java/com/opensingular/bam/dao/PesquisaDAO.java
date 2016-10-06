@@ -23,7 +23,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import org.opensingular.flow.core.TaskType;
-import org.opensingular.singular.persistence.entity.ProcessDefinitionEntity;
+import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
 
 @Repository
 @SuppressWarnings("unchecked")

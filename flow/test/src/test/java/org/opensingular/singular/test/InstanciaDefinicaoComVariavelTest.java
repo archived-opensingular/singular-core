@@ -1,11 +1,12 @@
 package org.opensingular.singular.test;
 
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.singular.flow.test.definicao.DefinicaoComVariaveis;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessInstance;
-import org.opensingular.singular.persistence.entity.ExecutionVariableEntity;
-import org.opensingular.singular.persistence.entity.VariableInstanceEntity;
-import org.opensingular.singular.persistence.entity.VariableTypeInstance;
+import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
+import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
+import org.opensingular.flow.persistence.entity.VariableTypeInstance;
 import org.opensingular.singular.test.support.TestSupport;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -40,8 +41,8 @@ public abstract class InstanciaDefinicaoComVariavelTest extends TestSupport {
     @Test()
     public void teste2PersistenciaVariaveis() {
         DefinicaoComVariaveis d = mbpmBean.getProcessDefinition(DefinicaoComVariaveis.class);
-        List<org.opensingular.singular.persistence.entity.ProcessInstanceEntity> instances = testDAO.findAllProcessInstancesByDefinition(d.getEntityProcessVersion());
-        for (org.opensingular.singular.persistence.entity.ProcessInstanceEntity p : instances) {
+        List<ProcessInstanceEntity> instances = testDAO.findAllProcessInstancesByDefinition(d.getEntityProcessVersion());
+        for (ProcessInstanceEntity p : instances) {
             List<VariableInstanceEntity> variables = testDAO.retrieveVariablesByInstance(p.getCod());
             assertEquals(2, variables.size());
             List<ExecutionVariableEntity> executionVariables = testDAO.retrieveExecutionVariablesByInstance(p.getCod());

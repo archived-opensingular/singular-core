@@ -18,12 +18,12 @@ import org.hibernate.criterion.Projections;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.singular.persistence.entity.Actor;
-import org.opensingular.singular.persistence.entity.ExecutionVariableEntity;
-import org.opensingular.singular.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.singular.persistence.entity.TaskInstanceHistoryEntity;
-import org.opensingular.singular.persistence.entity.VariableInstanceEntity;
-import org.opensingular.singular.persistence.entity.VariableTypeInstance;
+import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceHistoryEntity;
+import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
+import org.opensingular.flow.persistence.entity.VariableTypeInstance;
 
 @Named
 @Transactional
@@ -62,7 +62,7 @@ public class TestDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<org.opensingular.singular.persistence.entity.ProcessInstanceEntity> findAllProcessInstancesByDefinition(IEntityProcessVersion entity) {
+    public List<ProcessInstanceEntity> findAllProcessInstancesByDefinition(IEntityProcessVersion entity) {
         return getSession().createQuery(
                 "select pi from "+ProcessInstanceEntity.class.getSimpleName()+" pi inner join pi.processVersion p where p.cod = :id"
         ).setParameter("id", entity.getCod()).list();

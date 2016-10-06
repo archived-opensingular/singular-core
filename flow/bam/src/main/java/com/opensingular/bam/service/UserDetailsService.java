@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.opensingular.flow.core.MUser;
-import org.opensingular.singular.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.Actor;
 
 @Service
 @Transactional(readOnly = true)

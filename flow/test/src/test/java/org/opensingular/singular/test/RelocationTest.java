@@ -35,10 +35,10 @@ import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
 import org.opensingular.flow.core.ws.BaseSingularRest;
 import org.opensingular.singular.flow.test.TestDAO;
-import org.opensingular.singular.persistence.entity.Actor;
-import org.opensingular.singular.persistence.entity.TaskInstanceEntity;
-import org.opensingular.singular.persistence.entity.TaskVersionEntity;
-import org.opensingular.singular.persistence.util.HibernateSingularFlowConfigurationBean;
+import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskVersionEntity;
+import org.opensingular.flow.persistence.util.HibernateSingularFlowConfigurationBean;
 
 @ActiveProfiles("mssql")
 @RunWith(SpringJUnit4ClassRunner.class)
