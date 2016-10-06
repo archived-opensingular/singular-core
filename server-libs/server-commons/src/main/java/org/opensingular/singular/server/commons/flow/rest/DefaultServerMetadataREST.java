@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.opensingular.singular.commons.base.SingularUtil;
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;

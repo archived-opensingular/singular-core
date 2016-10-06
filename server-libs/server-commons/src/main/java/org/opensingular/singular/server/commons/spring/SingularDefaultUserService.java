@@ -5,8 +5,8 @@ import javax.inject.Inject;
 import org.apache.wicket.Application;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.opensingular.singular.flow.core.MUser;
-import org.opensingular.singular.flow.core.service.IUserService;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.singular.server.commons.persistence.dao.flow.ActorDAO;
 import org.opensingular.singular.server.commons.wicket.SingularSession;
 

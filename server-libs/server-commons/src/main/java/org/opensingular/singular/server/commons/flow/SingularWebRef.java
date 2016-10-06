@@ -1,8 +1,8 @@
 package org.opensingular.singular.server.commons.flow;
 
-import org.opensingular.singular.flow.core.view.Lnk;
-import org.opensingular.singular.flow.core.view.ModalViewDef;
-import org.opensingular.singular.flow.core.view.WebRef;
+import org.opensingular.flow.core.view.Lnk;
+import org.opensingular.flow.core.view.ModalViewDef;
+import org.opensingular.flow.core.view.WebRef;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.wicket.markup.html.WebPage;
 

@@ -11,7 +11,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import org.opensingular.singular.flow.core.entity.IEntityProcessGroup;
+import org.opensingular.flow.core.entity.IEntityProcessGroup;
 import org.opensingular.singular.server.commons.persistence.entity.parameter.ParameterEntity;
 import org.opensingular.singular.support.persistence.BaseDAO;
 

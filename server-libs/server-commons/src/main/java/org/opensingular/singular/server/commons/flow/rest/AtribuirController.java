@@ -12,9 +12,9 @@ import javax.xml.ws.WebServiceException;
 import org.springframework.stereotype.Controller;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.MUser;
-import org.opensingular.singular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;
 
 @Controller

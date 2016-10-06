@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.flow.renderer.remote.dto;
 
 
-import org.opensingular.singular.flow.core.EventType;
+import org.opensingular.flow.core.EventType;
 
 public class Transition {
     private TransitionTask origin;

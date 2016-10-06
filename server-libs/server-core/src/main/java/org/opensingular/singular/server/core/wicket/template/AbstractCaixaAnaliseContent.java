@@ -1,6 +1,5 @@
 package org.opensingular.singular.server.core.wicket.template;
 
-import static org.opensingular.singular.flow.core.ws.BaseSingularRest.*;
 import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
 import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
 

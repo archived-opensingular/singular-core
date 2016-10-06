@@ -26,15 +26,15 @@ import static org.opensingular.singular.server.commons.util.Parameters.SIGLA_FOR
 
 import org.opensingular.singular.commons.base.SingularException;
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.MTask;
-import org.opensingular.singular.flow.core.MTransition;
-import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.flow.core.ProcessInstance;
-import org.opensingular.singular.flow.core.SingularFlowException;
-import org.opensingular.singular.flow.core.TaskInstance;
-import org.opensingular.singular.flow.core.TaskType;
-import org.opensingular.singular.flow.core.service.IUserService;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.MTransition;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.TaskType;
+import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;

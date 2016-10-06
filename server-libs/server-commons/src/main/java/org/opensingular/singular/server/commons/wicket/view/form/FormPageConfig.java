@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.wicket.view.form;
 
-import org.opensingular.singular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;
 import org.opensingular.singular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.server.commons.flow.LazyFlowDefinitionResolver;

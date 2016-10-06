@@ -5,10 +5,11 @@ import java.util.Optional;
 
 import javax.servlet.ServletContext;
 
+import org.opensingular.flow.core.SingularFlowConfigurationBean;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.flow.core.service.IFlowMetadataREST;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.service.IFlowMetadataREST;
 import org.opensingular.singular.server.commons.flow.SingularServerFlowConfigurationBean;
 import org.opensingular.singular.server.commons.flow.rest.DefaultServerMetadataREST;
 import org.opensingular.singular.server.commons.flow.rest.DefaultServerREST;
@@ -30,7 +31,7 @@ public abstract class FlowInitializer {
     public abstract Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap();
 
 
-    public Class<? extends org.opensingular.singular.flow.core.SingularFlowConfigurationBean> singularFlowConfiguration() {
+    public Class<? extends SingularFlowConfigurationBean> singularFlowConfiguration() {
         return SingularServerFlowConfigurationBean.class;
     }
 

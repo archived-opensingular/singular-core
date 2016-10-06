@@ -6,7 +6,7 @@
 package org.opensingular.singular.server.commons.flow.rest;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataRef;
 
 import java.util.ArrayList;
 import java.util.Collections;

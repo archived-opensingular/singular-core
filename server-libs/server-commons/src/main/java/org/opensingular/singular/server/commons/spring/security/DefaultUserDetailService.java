@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import org.opensingular.singular.server.commons.config.SingularServerConfiguration;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import org.opensingular.singular.flow.core.MUser;
+import org.opensingular.flow.core.MUser;
 import org.opensingular.singular.server.commons.config.IServerContext;
 import org.opensingular.singular.server.commons.persistence.dao.flow.ActorDAO;
 

@@ -1,11 +1,11 @@
 package org.opensingular.singular.server.commons.flow;
 
-import org.opensingular.singular.flow.core.FlowMap;
-import org.opensingular.singular.flow.core.MTask;
-import org.opensingular.singular.flow.core.MTaskEnd;
-import org.opensingular.singular.flow.core.MTransition;
-import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.flow.core.renderer.IFlowRenderer;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.MTaskEnd;
+import org.opensingular.flow.core.MTransition;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.renderer.IFlowRenderer;
 import com.google.common.base.Throwables;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxICell;

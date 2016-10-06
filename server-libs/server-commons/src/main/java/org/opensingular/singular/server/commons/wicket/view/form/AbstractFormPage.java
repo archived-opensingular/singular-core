@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.wicket.view.form;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.flow.core.MTransition;
+import org.opensingular.flow.core.MTransition;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;

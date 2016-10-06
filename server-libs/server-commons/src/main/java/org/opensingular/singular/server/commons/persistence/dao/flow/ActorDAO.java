@@ -9,7 +9,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 
 import org.opensingular.singular.commons.base.SingularProperties;
-import org.opensingular.singular.flow.core.MUser;
+import org.opensingular.flow.core.MUser;
 import org.opensingular.singular.persistence.entity.Actor;
 import org.opensingular.singular.server.commons.exception.SingularServerException;
 import org.opensingular.singular.support.persistence.BaseDAO;

@@ -3,7 +3,7 @@ package org.opensingular.singular.server.commons.form;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import org.opensingular.singular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.singular.persistence.entity.ProcessInstanceEntity;

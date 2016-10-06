@@ -1,6 +1,10 @@
 package org.opensingular.singular.server.module.wicket.view.util.dispatcher;
 
-import org.opensingular.singular.flow.core.*;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ITaskPageStrategy;
+import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.MTaskUserExecutable;
+import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.singular.form.persistence.entity.FormTypeEntity;

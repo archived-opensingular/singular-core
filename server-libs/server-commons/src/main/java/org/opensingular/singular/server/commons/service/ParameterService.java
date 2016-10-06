@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.flow.core.entity.IEntityProcessGroup;
+import org.opensingular.flow.core.entity.IEntityProcessGroup;
 import org.opensingular.singular.server.commons.persistence.dao.ParameterDAO;
 import org.opensingular.singular.server.commons.persistence.entity.parameter.ParameterEntity;
 

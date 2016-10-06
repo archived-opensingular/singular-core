@@ -1,8 +1,8 @@
 package org.opensingular.singular.server.commons.flow;
 
-import org.opensingular.singular.flow.core.ITaskPageStrategy;
-import org.opensingular.singular.flow.core.MUser;
-import org.opensingular.singular.flow.core.TaskInstance;
+import org.opensingular.flow.core.ITaskPageStrategy;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.TaskInstance;
 import org.apache.wicket.markup.html.WebPage;
 
 public class SingularServerTaskPageStrategy implements ITaskPageStrategy {

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.opensingular.singular.server.commons.flow.action.DefaultActions.ACTION_DELETE;
 import static org.opensingular.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
 
-import org.opensingular.singular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.singular.form.spring.SpringServiceRegistry;
 import org.opensingular.singular.persistence.entity.Actor;

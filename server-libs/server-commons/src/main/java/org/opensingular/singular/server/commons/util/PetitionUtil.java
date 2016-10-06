@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.util;
 
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.singular.server.commons.exception.PetitionWithoutDefinitionException;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;
 

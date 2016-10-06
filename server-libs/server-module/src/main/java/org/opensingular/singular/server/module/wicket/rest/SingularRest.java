@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.opensingular.singular.flow.core.ws.BaseSingularRest;
+import org.opensingular.flow.core.ws.BaseSingularRest;
 
 @RestController
 @RequestMapping("/rest/flow/")

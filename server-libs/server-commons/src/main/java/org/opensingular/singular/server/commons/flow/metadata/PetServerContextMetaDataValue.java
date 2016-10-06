@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.flow.metadata;
 
-import org.opensingular.singular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.singular.server.commons.config.IServerContext;
 
 import java.util.ArrayList;

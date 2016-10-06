@@ -6,8 +6,8 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
-import org.opensingular.singular.flow.core.MUser;
-import org.opensingular.singular.flow.core.TaskType;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.TaskType;
 import org.opensingular.singular.server.commons.exception.SingularServerException;
 import org.opensingular.singular.server.commons.service.dto.BoxItemAction;
 
