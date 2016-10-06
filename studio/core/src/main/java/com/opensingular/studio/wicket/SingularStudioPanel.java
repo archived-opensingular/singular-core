@@ -1,5 +1,8 @@
-package org.opensingular.singular.studio.wicket;
+package com.opensingular.studio.wicket;
 
+import com.opensingular.studio.core.CollectionCanvas;
+import com.opensingular.studio.core.CollectionEditorConfig;
+import com.opensingular.studio.core.CollectionInfo;
 import org.opensingular.singular.commons.util.Loggable;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -7,10 +10,7 @@ import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormPersistence;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.singular.studio.core.CollectionCanvas;
-import org.opensingular.singular.studio.core.CollectionEditorConfig;
-import org.opensingular.singular.studio.core.CollectionInfo;
-import org.opensingular.singular.studio.spring.StudioCollectionToolboxBean;
+import com.opensingular.studio.spring.StudioCollectionToolboxBean;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;

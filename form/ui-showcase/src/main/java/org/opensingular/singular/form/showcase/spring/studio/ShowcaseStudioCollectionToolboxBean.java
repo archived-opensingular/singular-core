@@ -5,9 +5,9 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.TypeLoader;
 import org.opensingular.singular.form.showcase.dao.form.studio.ShowcaseStudioTypeLoader;
 import org.opensingular.singular.form.showcase.view.page.form.crud.services.ShowcaseDocumentFactory;
-import org.opensingular.singular.studio.core.CollectionGallery;
-import org.opensingular.singular.studio.persistence.StudioCollectionPersistenceFactory;
-import org.opensingular.singular.studio.spring.StudioCollectionToolboxBean;
+import com.opensingular.studio.core.CollectionGallery;
+import com.opensingular.studio.persistence.StudioCollectionPersistenceFactory;
+import com.opensingular.studio.spring.StudioCollectionToolboxBean;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

@@ -1,5 +1,6 @@
-package org.opensingular.singular.studio.wicket;
+package com.opensingular.studio.wicket;
 
+import com.opensingular.studio.core.CollectionCanvas;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
@@ -9,8 +10,7 @@ import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.singular.studio.core.CollectionCanvas;
-import org.opensingular.singular.studio.spring.StudioCollectionToolboxBean;
+import com.opensingular.studio.spring.StudioCollectionToolboxBean;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;

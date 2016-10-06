@@ -1,4 +1,4 @@
-package org.opensingular.singular.studio.persistence;
+package com.opensingular.studio.persistence;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;

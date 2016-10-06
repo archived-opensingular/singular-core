@@ -1,4 +1,4 @@
-package org.opensingular.singular.studio.core.type;
+package com.opensingular.studio.core.type;
 
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.PackageBuilder;

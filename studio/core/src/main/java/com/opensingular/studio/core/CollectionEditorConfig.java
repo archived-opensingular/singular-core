@@ -1,4 +1,4 @@
-package org.opensingular.singular.studio.core;
+package com.opensingular.studio.core;
 
 import org.apache.commons.lang3.tuple.Pair;
 

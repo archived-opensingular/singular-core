@@ -2,9 +2,9 @@ package org.opensingular.singular.form.showcase.component.studio;
 
 import org.opensingular.singular.form.showcase.component.CaseItem;
 import org.opensingular.singular.form.showcase.component.Group;
-import org.opensingular.singular.studio.core.CollectionDefinition;
-import org.opensingular.singular.studio.core.CollectionEditorConfigBuilder;
-import org.opensingular.singular.studio.core.CollectionInfoBuilder;
+import com.opensingular.studio.core.CollectionDefinition;
+import com.opensingular.studio.core.CollectionEditorConfigBuilder;
+import com.opensingular.studio.core.CollectionInfoBuilder;
 
 @CaseItem(componentName = "Order", group = Group.STUDIO_SAMPLES)
 public class OrderCollectionDefinition implements CollectionDefinition<STypeOrder> {

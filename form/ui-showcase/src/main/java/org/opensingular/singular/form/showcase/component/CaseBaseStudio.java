@@ -6,7 +6,7 @@
 package org.opensingular.singular.form.showcase.component;
 
 import org.opensingular.form.wicket.enums.AnnotationMode;
-import org.opensingular.singular.studio.core.CollectionDefinition;
+import com.opensingular.studio.core.CollectionDefinition;
 
 import java.util.Optional;
 

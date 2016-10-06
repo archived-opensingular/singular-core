@@ -7,8 +7,8 @@ package org.opensingular.singular.form.showcase.view.page.studio;
 
 import org.opensingular.singular.form.showcase.component.CaseBaseStudio;
 import org.opensingular.singular.form.showcase.view.page.ItemCasePanel;
-import org.opensingular.singular.studio.core.CollectionGallery;
-import org.opensingular.singular.studio.wicket.SingularStudioCollectionPanel;
+import com.opensingular.studio.core.CollectionGallery;
+import com.opensingular.studio.wicket.SingularStudioCollectionPanel;
 import org.apache.wicket.model.IModel;
 
 import javax.inject.Inject;

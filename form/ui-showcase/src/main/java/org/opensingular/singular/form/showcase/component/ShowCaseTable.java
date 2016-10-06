@@ -24,7 +24,7 @@ import org.opensingular.singular.commons.base.SingularUtil;
 import org.opensingular.form.SPackage;
 import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple;
 import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple2;
-import org.opensingular.singular.studio.core.CollectionDefinition;
+import com.opensingular.studio.core.CollectionDefinition;
 import org.opensingular.singular.util.wicket.resource.Icone;
 
 @Service

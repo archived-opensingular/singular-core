@@ -44,9 +44,9 @@
 
     <bean id="showcaseStudioTypeLoader" class="org.opensingular.singular.form.showcase.dao.form.studio.ShowcaseStudioTypeLoader" />
 
-    <bean id="collectionGallery" class="org.opensingular.singular.studio.core.CollectionGallery" />
+    <bean id="collectionGallery" class="com.opensingular.studio.core.CollectionGallery" />
 
-    <bean id="persistenceFactory" class="org.opensingular.singular.studio.persistence.StudioCollectionPersistenceFactory">
+    <bean id="persistenceFactory" class="com.opensingular.studio.persistence.StudioCollectionPersistenceFactory">
         <constructor-arg ref="showcaseDocumentFactory"/>
     </bean>
 

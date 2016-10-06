@@ -1,9 +1,9 @@
-package org.opensingular.singular.studio.wicket;
+package com.opensingular.studio.wicket;
 
+import com.opensingular.studio.core.CollectionCanvas;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.singular.studio.core.CollectionCanvas;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -13,9 +13,9 @@ public class SingularStudioCollectionPanel extends Panel {
 
     private final PanelControl panelControl = new PanelControl();
     private final CollectionCanvas canvas;
-    private boolean showList = true;
-    private FormKey formKey = null;
-    private ViewMode viewMode = ViewMode.EDIT;
+    private boolean        showList       = true;
+    private FormKey        formKey        = null;
+    private ViewMode       viewMode       = ViewMode.EDIT;
     private AnnotationMode annotationMode = AnnotationMode.NONE;
 
     public SingularStudioCollectionPanel(String content, CollectionCanvas canvas) {

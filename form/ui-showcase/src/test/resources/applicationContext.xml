@@ -41,7 +41,7 @@
     <bean id="filePersistence" class="org.opensingular.form.persistence.service.AttachmentPersistenceService" />
     <bean id="attachmentDao" class="org.opensingular.form.persistence.dao.AttachmentDao" />
     <bean id="attachmentContentDao" class="org.opensingular.form.persistence.dao.AttachmentContentDao" />
-    <bean id="studioCollectionPersistenceFactory" class="org.opensingular.singular.studio.persistence.StudioCollectionPersistenceFactory" />
-    <bean id="collectionGallery" class="org.opensingular.singular.studio.core.CollectionGallery" />
+    <bean id="studioCollectionPersistenceFactory" class="com.opensingular.studio.persistence.StudioCollectionPersistenceFactory" />
+    <bean id="collectionGallery" class="com.opensingular.studio.core.CollectionGallery" />
 
 </beans>

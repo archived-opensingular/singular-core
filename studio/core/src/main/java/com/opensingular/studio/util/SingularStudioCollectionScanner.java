@@ -1,8 +1,8 @@
-package org.opensingular.singular.studio.util;
+package com.opensingular.studio.util;
 
+import com.opensingular.studio.core.CollectionDefinition;
+import com.opensingular.studio.core.SingularStudioException;
 import org.opensingular.form.SType;
-import org.opensingular.singular.studio.core.CollectionDefinition;
-import org.opensingular.singular.studio.core.SingularStudioException;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package org.opensingular.singular.studio.core;
+package com.opensingular.studio.core;
 
 import org.opensingular.singular.commons.lambda.IFunction;
 import org.opensingular.form.SType;

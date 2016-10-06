@@ -1,7 +1,7 @@
-package org.opensingular.singular.studio.core;
+package com.opensingular.studio.core;
 
+import com.opensingular.studio.util.SingularStudioCollectionScanner;
 import org.opensingular.form.SType;
-import org.opensingular.singular.studio.util.SingularStudioCollectionScanner;
 import org.apache.commons.collections.ListUtils;
 
 import java.util.ArrayList;

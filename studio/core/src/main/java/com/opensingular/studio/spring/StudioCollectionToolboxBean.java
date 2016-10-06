@@ -1,14 +1,14 @@
-package org.opensingular.singular.studio.spring;
+package com.opensingular.studio.spring;
 
+import com.opensingular.studio.core.CollectionCanvas;
+import com.opensingular.studio.core.CollectionEditorConfig;
+import com.opensingular.studio.core.CollectionGallery;
+import com.opensingular.studio.core.CollectionInfo;
+import com.opensingular.studio.persistence.StudioCollectionPersistenceFactory;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.persistence.FormPersistence;
-import org.opensingular.singular.studio.core.CollectionCanvas;
-import org.opensingular.singular.studio.core.CollectionEditorConfig;
-import org.opensingular.singular.studio.core.CollectionGallery;
-import org.opensingular.singular.studio.core.CollectionInfo;
-import org.opensingular.singular.studio.persistence.StudioCollectionPersistenceFactory;
 
 import java.util.HashMap;
 import java.util.Map;
