@@ -5,12 +5,12 @@
 
 package org.opensingular.singular.form.showcase.view.template;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 import javax.inject.Inject;
 
 import org.opensingular.singular.form.showcase.wicket.UIAdminWicketFilterContext;
-import org.opensingular.singular.util.wicket.toastr.ToastrHelper;
+import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 
 import org.apache.wicket.behavior.AttributeAppender;

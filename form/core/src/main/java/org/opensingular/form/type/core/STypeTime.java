@@ -1,7 +1,7 @@
 package org.opensingular.form.type.core;
 
 import org.opensingular.form.STypeSimple;
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.SInfoType;
 import com.google.common.base.Strings;
 

@@ -19,7 +19,7 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.form.wicket.model.SelectSInstanceAwareModel;
 import org.opensingular.form.wicket.renderer.SingularChoiceRenderer;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class RadioMapper extends SelectMapper {
 

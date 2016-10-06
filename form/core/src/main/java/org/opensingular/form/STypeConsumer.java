@@ -1,6 +1,6 @@
 package org.opensingular.form;
 
-import org.opensingular.singular.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.type.basic.SPackageBasic;
 
 @SInfoType(name = "STypeConsumer", spackage = SPackageBasic.class)

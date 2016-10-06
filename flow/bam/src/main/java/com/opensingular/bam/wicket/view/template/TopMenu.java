@@ -17,8 +17,8 @@ import org.apache.wicket.request.UrlUtils;
 import javax.inject.Inject;
 import java.util.Optional;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class TopMenu extends Panel {
 

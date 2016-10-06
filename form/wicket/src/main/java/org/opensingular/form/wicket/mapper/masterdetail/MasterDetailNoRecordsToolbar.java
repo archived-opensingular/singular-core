@@ -11,7 +11,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
 
-import static org.opensingular.singular.util.wicket.util.Shortcuts.$m;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 class MasterDetailNoRecordsToolbar extends AbstractToolbar implements IMarkupResourceStreamProvider {
 

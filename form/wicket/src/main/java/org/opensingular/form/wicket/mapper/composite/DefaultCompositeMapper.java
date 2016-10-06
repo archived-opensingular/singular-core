@@ -8,7 +8,7 @@ package org.opensingular.form.wicket.mapper.composite;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSGrid;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 
 @SuppressWarnings("serial")
 public class DefaultCompositeMapper extends AbstractCompositeMapper {

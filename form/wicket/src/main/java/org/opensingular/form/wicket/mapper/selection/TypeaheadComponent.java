@@ -1,7 +1,7 @@
 package org.opensingular.form.wicket.mapper.selection;
 
 import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
@@ -11,7 +11,7 @@ import org.opensingular.form.util.transformer.Value;
 import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
-import org.opensingular.singular.util.wicket.template.SingularTemplate;
+import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -37,7 +37,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static org.opensingular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 
 

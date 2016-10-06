@@ -22,7 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import org.opensingular.singular.commons.base.SingularPropertiesImpl;
+import org.opensingular.lib.commons.base.SingularPropertiesImpl;
 import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.FlowMap;
@@ -34,7 +34,6 @@ import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
 import org.opensingular.flow.core.ws.BaseSingularRest;
-import org.opensingular.flow.test.TestDAO;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskVersionEntity;

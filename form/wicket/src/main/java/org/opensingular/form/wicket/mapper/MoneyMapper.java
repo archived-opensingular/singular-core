@@ -26,8 +26,8 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.MoneyMaskBehavior;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public class MoneyMapper extends AbstractControlsFieldComponentMapper {
 

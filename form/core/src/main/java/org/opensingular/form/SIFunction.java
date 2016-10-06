@@ -1,6 +1,6 @@
 package org.opensingular.form;
 
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 
 public class SIFunction<T, R> extends SICode<IFunction<T, R>> {

@@ -2,9 +2,9 @@ package org.opensingular.form.wicket.mapper.richtext;
 
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.StringMapper;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSLabel;
-import org.opensingular.singular.util.wicket.output.BOutputPanel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
+import org.opensingular.lib.wicket.util.output.BOutputPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 

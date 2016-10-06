@@ -2,7 +2,7 @@ package org.opensingular.form.exemplos.notificacaosimplificada.domain;
 
 // Generated 16/03/2010 08:00:26 by Mirante 3.2.2.GA
 
-import org.opensingular.singular.support.persistence.enums.SimNao;
+import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 
 import javax.persistence.Column;

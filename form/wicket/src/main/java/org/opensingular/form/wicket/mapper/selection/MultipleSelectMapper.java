@@ -27,7 +27,7 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.renderer.SingularChoiceRenderer;
 import org.opensingular.form.wicket.model.MultipleSelectSInstanceAwareModel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 @SuppressWarnings("serial")
 public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {

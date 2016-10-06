@@ -25,8 +25,8 @@ import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.singular.form.showcase.component.CaseItem;
 import org.opensingular.singular.form.showcase.component.Group;
 import org.opensingular.singular.form.showcase.component.Resource;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 
 /**
  * Custom String Mapper

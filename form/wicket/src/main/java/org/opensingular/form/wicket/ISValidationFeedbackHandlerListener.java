@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
-import org.opensingular.singular.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.validation.IValidationError;
 

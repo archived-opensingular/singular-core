@@ -6,7 +6,7 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SIDateTimeModel;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;

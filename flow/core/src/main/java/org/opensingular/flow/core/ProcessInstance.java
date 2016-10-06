@@ -19,7 +19,7 @@ import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.view.Lnk;
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.apache.commons.lang3.StringUtils;
 

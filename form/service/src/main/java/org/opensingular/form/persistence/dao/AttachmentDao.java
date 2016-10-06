@@ -14,10 +14,10 @@ import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
 
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 
 @SuppressWarnings("serial")
 @Transactional(Transactional.TxType.MANDATORY)

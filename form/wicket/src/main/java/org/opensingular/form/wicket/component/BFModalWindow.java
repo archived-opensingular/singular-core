@@ -8,8 +8,8 @@ package org.opensingular.form.wicket.component;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
-import org.opensingular.singular.util.wicket.modal.BSModalWindow;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.modal.BSModalWindow;
 
 public class BFModalWindow extends BSModalWindow {
 

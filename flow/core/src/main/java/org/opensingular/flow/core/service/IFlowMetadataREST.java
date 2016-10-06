@@ -8,7 +8,7 @@ package org.opensingular.flow.core.service;
 import java.time.LocalDate;
 import java.util.Set;
 
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.flow.core.authorization.AccessLevel;

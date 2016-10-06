@@ -15,7 +15,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import org.opensingular.flow.core.entity.IEntityCategory;

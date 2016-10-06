@@ -1,6 +1,6 @@
 package org.opensingular.form.exemplos.notificacaosimplificada.domain.enums;
 
-import org.opensingular.singular.support.persistence.util.EnumId;
+import org.opensingular.lib.support.persistence.util.EnumId;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;

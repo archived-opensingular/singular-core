@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.ViewMapperRegistry;
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;

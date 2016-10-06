@@ -14,13 +14,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleTask;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.singular.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The base persistent class for the RL_PAPEL_TAREFA database table.

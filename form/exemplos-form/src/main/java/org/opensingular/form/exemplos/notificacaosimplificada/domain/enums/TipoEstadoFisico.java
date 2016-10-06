@@ -1,6 +1,6 @@
 package org.opensingular.form.exemplos.notificacaosimplificada.domain.enums;
 
-import org.opensingular.singular.support.persistence.util.EnumId;
+import org.opensingular.lib.support.persistence.util.EnumId;
 
 public enum TipoEstadoFisico implements EnumId<TipoEstadoFisico, Character> {
 

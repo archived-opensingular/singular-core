@@ -6,7 +6,7 @@
 package org.opensingular.form.provider;
 
 import org.opensingular.form.document.SDocument;
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.form.SingularFormException;
 
 import java.util.List;

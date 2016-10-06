@@ -5,8 +5,8 @@
 
 package org.opensingular.form.wicket.panel;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 import static com.google.common.collect.Lists.newArrayList;
 
 import java.io.Serializable;
@@ -31,10 +31,10 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 
 import org.opensingular.form.wicket.component.SingularForm;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SInstance;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSGrid;
-import org.opensingular.singular.util.wicket.bootstrap.layout.IBSGridCol;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
+import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol;
 
 public abstract class BSPanelGrid extends Panel {
 

@@ -5,7 +5,7 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
-import static org.opensingular.singular.util.wicket.util.Shortcuts.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import java.util.ArrayList;
@@ -37,8 +37,8 @@ import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.model.STypeModel;
-import org.opensingular.singular.commons.lambda.IConsumer;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
@@ -53,18 +53,18 @@ import org.opensingular.form.validation.IValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByMasterDetail;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
-import org.opensingular.singular.util.wicket.datatable.IBSAction;
-import org.opensingular.singular.util.wicket.datatable.column.BSPropertyColumn;
-import org.opensingular.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
-import org.opensingular.singular.util.wicket.model.IMappingModel;
-import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
-import org.opensingular.singular.util.wicket.resource.Icone;
-import org.opensingular.singular.util.wicket.util.JavaScriptUtils;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.datatable.IBSAction;
+import org.opensingular.lib.wicket.util.datatable.column.BSPropertyColumn;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel.ActionConfig;
+import org.opensingular.lib.wicket.util.model.IMappingModel;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
+import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 @SuppressWarnings("serial")
 public class ListMasterDetailMapper implements IWicketComponentMapper {

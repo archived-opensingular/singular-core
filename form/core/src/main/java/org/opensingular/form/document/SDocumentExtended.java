@@ -1,6 +1,6 @@
 package org.opensingular.form.document;
 
-import org.opensingular.singular.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IConsumer;
 
 import java.util.Objects;
 

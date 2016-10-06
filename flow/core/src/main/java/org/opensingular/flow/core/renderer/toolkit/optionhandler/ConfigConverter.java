@@ -29,7 +29,7 @@
  ***************************************************************************/
 package org.opensingular.flow.core.renderer.toolkit.optionhandler;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import com.yworks.yfiles.annotations.DefaultValue;
 import com.yworks.yfiles.graphml.PropertyInfo;
 import com.yworks.yfiles.utils.FlagsEnum;

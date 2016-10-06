@@ -7,7 +7,7 @@ package org.opensingular.form.wicket.mapper;
 
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.TelefoneNacionalMaskBehaviour;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;

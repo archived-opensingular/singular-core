@@ -1,15 +1,15 @@
 package org.opensingular.form.wicket.mapper.attachment;
 
-import static org.opensingular.singular.util.wicket.util.Shortcuts.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import org.apache.wicket.core.util.string.JavaScriptUtils;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
 import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 /**
  * Classe de link para utilização em conjunto dom {@link DownloadSupportedBehavior}

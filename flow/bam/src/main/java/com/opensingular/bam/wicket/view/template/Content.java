@@ -5,7 +5,7 @@
 
 package com.opensingular.bam.wicket.view.template;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 import javax.inject.Inject;
 

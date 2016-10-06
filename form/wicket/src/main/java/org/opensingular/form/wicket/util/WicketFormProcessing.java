@@ -8,7 +8,7 @@ package org.opensingular.form.wicket.util;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;

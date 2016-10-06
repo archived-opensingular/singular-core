@@ -8,7 +8,7 @@ package org.opensingular.form.view;
 import java.util.function.Function;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularUtil;
 
 /**
  * Representa uma regra de mapeamento de uma instância em uma view. Se a regra

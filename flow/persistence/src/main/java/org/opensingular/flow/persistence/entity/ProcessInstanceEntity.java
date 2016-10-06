@@ -17,8 +17,8 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
-import org.opensingular.singular.support.persistence.util.Constants;
-import org.opensingular.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.opensingular.lib.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 /**
  * The persistent class for the TB_INSTANCIA_PROCESSO database table.

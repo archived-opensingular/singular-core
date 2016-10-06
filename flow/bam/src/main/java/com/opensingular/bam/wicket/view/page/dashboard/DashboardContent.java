@@ -5,8 +5,8 @@
 
 package com.opensingular.bam.wicket.view.page.dashboard;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,8 +38,8 @@ import org.opensingular.flow.core.authorization.AccessLevel;
 import org.opensingular.flow.core.dto.GroupDTO;
 import org.opensingular.flow.core.dto.IStatusDTO;
 import org.opensingular.flow.core.service.IFlowMetadataREST;
-import org.opensingular.singular.util.wicket.resource.Color;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.Color;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 @SuppressWarnings("serial")
 public class DashboardContent extends Content {

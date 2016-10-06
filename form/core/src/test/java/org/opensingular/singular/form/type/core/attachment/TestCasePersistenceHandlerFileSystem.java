@@ -7,7 +7,7 @@ import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
 
 public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHandlerBase {

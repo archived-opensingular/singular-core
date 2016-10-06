@@ -6,7 +6,7 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.util.STypeEMail;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSRow;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.junit.Assert;

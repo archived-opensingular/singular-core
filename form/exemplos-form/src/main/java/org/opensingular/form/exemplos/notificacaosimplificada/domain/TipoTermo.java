@@ -19,9 +19,9 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.generic.MedEntity;
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
-import org.opensingular.singular.support.persistence.enums.SimNao;
-import org.opensingular.singular.support.persistence.util.GenericEnumUserType;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.enums.SimNao;
+import org.opensingular.lib.support.persistence.util.GenericEnumUserType;
 
 
 /**

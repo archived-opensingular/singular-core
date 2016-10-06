@@ -17,15 +17,15 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.template.PackageTextTemplate;
 
-import static org.opensingular.singular.util.wicket.jquery.JQuery.$;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.jquery.JQuery.$;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.singular.util.wicket.util.JavaScriptUtils;
+import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 
 public class PortletRichTextPanel extends Panel implements Loggable {
 

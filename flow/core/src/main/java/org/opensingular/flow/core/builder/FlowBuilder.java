@@ -12,7 +12,7 @@ import org.opensingular.flow.core.IExecutionDateStrategy;
 import org.opensingular.flow.core.MProcessRole;
 import org.opensingular.flow.core.MTaskEnd;
 import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.flow.core.DashboardView;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.IRoleChangeListener;

@@ -31,7 +31,7 @@ import org.opensingular.form.validation.IValidationError;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public abstract class WicketFormUtils {
     private static final MetaDataKey<Integer>         KEY_INSTANCE_ID       = new MetaDataKey<Integer>() {};

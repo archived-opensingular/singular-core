@@ -11,7 +11,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import org.opensingular.flow.core.entity.IEntityProcessGroup;
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the TB_GRUPO_PROCESSO database table.

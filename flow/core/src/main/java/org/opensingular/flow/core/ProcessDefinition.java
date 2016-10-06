@@ -27,6 +27,7 @@ import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarService;
+import org.opensingular.lib.commons.base.SingularException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -381,7 +382,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @param taskDefinition
      *            a definição informada.
      * @return a definição da tarefa informada.
-     * @throws org.opensingular.singular.commons.base.SingularException
+     * @throws SingularException
      *             caso não encontre a tarefa.
      */
     public MTask<?> getTask(ITaskDefinition taskDefinition) {

@@ -6,8 +6,8 @@
 package org.opensingular.form.wicket.mapper;
 
 import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static org.opensingular.singular.util.wicket.util.Shortcuts.$b;
-import static org.opensingular.singular.util.wicket.util.Shortcuts.$m;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.io.Serializable;
@@ -33,12 +33,12 @@ import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSCol;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSGrid;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSRow;
-import org.opensingular.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
+import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 public class PanelListaMapper extends AbstractListaMapper {
 

@@ -1,10 +1,10 @@
 package org.opensingular.form.wicket.mapper.annotation;
 
-import static org.opensingular.singular.util.wicket.util.Shortcuts.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import org.apache.wicket.markup.html.basic.Label;
 
-import org.opensingular.singular.commons.util.FormatUtil;
+import org.opensingular.lib.commons.util.FormatUtil;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 
 final class ApprovalStatusLabel extends Label {

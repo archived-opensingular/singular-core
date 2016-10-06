@@ -2,7 +2,7 @@ package org.opensingular.form.builder.selection;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.provider.FreemarkerUtil;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SType;
 
 import java.io.Serializable;

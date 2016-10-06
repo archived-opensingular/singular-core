@@ -17,9 +17,9 @@ import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSLabel;
-import org.opensingular.singular.util.wicket.output.BOutputPanel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
+import org.opensingular.lib.wicket.util.output.BOutputPanel;
 
 public class MaterialDesignInputMapper implements IWicketComponentMapper {
 

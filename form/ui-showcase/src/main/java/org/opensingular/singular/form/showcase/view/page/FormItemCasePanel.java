@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.form.showcase.view.page;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -42,8 +42,8 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.singular.form.showcase.dao.form.ShowcaseTypeLoader;
 import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
-import org.opensingular.singular.util.wicket.output.BOutputPanel;
-import org.opensingular.singular.util.wicket.tab.BSTabPanel;
+import org.opensingular.lib.wicket.util.output.BOutputPanel;
+import org.opensingular.lib.wicket.util.tab.BSTabPanel;
 
 public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements SingularWicketContainer<FormItemCasePanel, Void> {
 

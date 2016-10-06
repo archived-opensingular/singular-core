@@ -2,7 +2,7 @@ package org.opensingular.form.builder.selection;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeList;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SType;
 import org.opensingular.form.util.transformer.Value;

@@ -8,9 +8,9 @@ package org.opensingular.form.wicket.feedback;
 import org.opensingular.form.validation.IValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
-import org.opensingular.singular.util.wicket.jquery.JQuery;
-import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
-import org.opensingular.singular.util.wicket.util.JavaScriptUtils;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
+import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.StyleAttributeModifier;
 import org.apache.wicket.behavior.Behavior;
@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 import static java.util.stream.Collectors.joining;
 
 public class SValidationFeedbackCompactPanel extends Panel implements IFeedback {

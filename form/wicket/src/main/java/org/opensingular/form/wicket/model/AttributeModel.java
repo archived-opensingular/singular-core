@@ -6,9 +6,9 @@
 package org.opensingular.form.wicket.model;
 
 import org.opensingular.form.AtrRef;
-import org.opensingular.singular.util.wicket.model.IBooleanModel;
-import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
-import org.opensingular.singular.util.wicket.model.NullOrEmptyModel;
+import org.opensingular.lib.wicket.util.model.IBooleanModel;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
+import org.opensingular.lib.wicket.util.model.NullOrEmptyModel;
 import org.apache.wicket.model.IModel;
 
 public class AttributeModel<T> implements IReadOnlyModel<T> {

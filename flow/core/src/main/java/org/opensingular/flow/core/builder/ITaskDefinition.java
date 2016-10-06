@@ -5,7 +5,7 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularUtil;
 
 @FunctionalInterface
 public interface ITaskDefinition {

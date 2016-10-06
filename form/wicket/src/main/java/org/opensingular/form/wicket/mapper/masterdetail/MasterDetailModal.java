@@ -1,6 +1,6 @@
 package org.opensingular.form.wicket.mapper.masterdetail;
 
-import static org.opensingular.singular.util.wicket.util.Shortcuts.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -14,15 +14,15 @@ import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.util.FormStateUtil;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
-import org.opensingular.singular.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.UIBuilderWicket;
-import org.opensingular.singular.util.wicket.ajax.ActionAjaxButton;
-import org.opensingular.singular.util.wicket.ajax.ActionAjaxLink;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
+import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 class MasterDetailModal extends BFModalWindow {
 

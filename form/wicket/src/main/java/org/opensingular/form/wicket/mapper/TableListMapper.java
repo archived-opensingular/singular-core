@@ -5,7 +5,7 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.singular.util.wicket.util.Shortcuts.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import java.util.Set;
 
@@ -19,8 +19,8 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.singular.commons.lambda.IBiConsumer;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IBiConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -35,12 +35,12 @@ import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
-import org.opensingular.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
-import org.opensingular.singular.util.wicket.bootstrap.layout.table.BSTRow;
-import org.opensingular.singular.util.wicket.bootstrap.layout.table.BSTSection;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.BSGridSize;
+import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
+import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
+import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
 import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
 
 public class TableListMapper extends AbstractListaMapper {

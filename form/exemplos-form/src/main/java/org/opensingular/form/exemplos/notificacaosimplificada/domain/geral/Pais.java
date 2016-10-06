@@ -13,7 +13,7 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 @XmlType(name = "pais", namespace = "http://www.anvisa.gov.br/geral/schema/domains")
 @XmlRootElement(name = "pais", namespace = "http://www.anvisa.gov.br/geral/schema/domains")

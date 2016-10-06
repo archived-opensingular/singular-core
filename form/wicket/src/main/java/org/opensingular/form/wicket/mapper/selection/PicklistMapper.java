@@ -6,7 +6,7 @@
 package org.opensingular.form.wicket.mapper.selection;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 

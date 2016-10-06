@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
 
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularUtil;
 
 /**
  * Representa um referência um recurso no class path e seu respectivo nome para

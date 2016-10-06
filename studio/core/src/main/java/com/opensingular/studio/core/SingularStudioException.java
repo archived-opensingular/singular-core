@@ -1,6 +1,6 @@
 package com.opensingular.studio.core;
 
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 
 public class SingularStudioException extends SingularException {
     public SingularStudioException() {

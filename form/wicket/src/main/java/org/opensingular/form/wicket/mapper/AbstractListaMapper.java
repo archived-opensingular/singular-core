@@ -5,7 +5,7 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,10 +33,10 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
-import org.opensingular.singular.util.wicket.ajax.ActionAjaxButton;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 public abstract class AbstractListaMapper implements IWicketComponentMapper {
 

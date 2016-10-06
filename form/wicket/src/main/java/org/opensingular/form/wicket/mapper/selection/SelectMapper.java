@@ -17,7 +17,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.provider.AtrProvider;
@@ -27,7 +27,7 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.model.SelectSInstanceAwareModel;
 import org.opensingular.form.wicket.renderer.SingularChoiceRenderer;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class SelectMapper extends AbstractControlsFieldComponentMapper {
 

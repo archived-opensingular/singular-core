@@ -5,12 +5,12 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import com.opensingular.studio.core.CollectionCanvas;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSGrid;
-import org.opensingular.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
+import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.resource.Icone;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_FORM_KEY;
-import static org.opensingular.singular.util.wicket.util.Shortcuts.$m;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 @SuppressWarnings({"serial", "unchecked"})
 public class SingularStudioListPanel extends SingularStudioPanel {

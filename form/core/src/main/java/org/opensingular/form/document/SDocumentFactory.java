@@ -8,7 +8,7 @@ package org.opensingular.form.document;
 import java.util.Objects;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.singular.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SType;
 import org.opensingular.form.io.FormSerializationUtil;
 

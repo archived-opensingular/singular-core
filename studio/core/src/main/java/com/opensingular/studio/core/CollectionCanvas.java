@@ -1,6 +1,6 @@
 package com.opensingular.studio.core;
 
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SType;
 
 import java.io.Serializable;

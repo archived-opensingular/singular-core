@@ -24,9 +24,9 @@ import org.apache.wicket.model.util.ListModel;
 
 import com.opensingular.bam.dto.FeedDTO;
 import org.opensingular.flow.core.dto.IFeedDTO;
-import org.opensingular.singular.util.wicket.behavior.SlimScrollBehaviour;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import org.opensingular.lib.wicket.util.behavior.SlimScrollBehaviour;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class FeedPanel extends Panel {
 

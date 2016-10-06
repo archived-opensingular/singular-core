@@ -5,7 +5,7 @@
 
 package org.opensingular.flow.core.variable;
 
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 
 import java.util.Objects;
 

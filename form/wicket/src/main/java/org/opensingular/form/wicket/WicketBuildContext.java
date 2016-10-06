@@ -31,7 +31,7 @@ import org.opensingular.form.wicket.mapper.TabMapper;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.slf4j.LoggerFactory;
 
-import org.opensingular.singular.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.view.SView;
@@ -47,10 +47,10 @@ import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.form.wicket.util.WicketFormUtils;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSCol;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
-import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 
 @SuppressWarnings("serial")
 public class WicketBuildContext implements Serializable {

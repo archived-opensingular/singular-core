@@ -9,7 +9,7 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.slf4j.Logger;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class ReadOnlyControlsFieldComponentMapper extends AbstractControlsFieldComponentMapper {
 

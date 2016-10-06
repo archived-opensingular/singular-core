@@ -8,7 +8,7 @@ package org.opensingular.flow.persistence.entity;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.opensingular.singular.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 
 /**

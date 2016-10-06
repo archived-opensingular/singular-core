@@ -8,7 +8,7 @@ package org.opensingular.flow.persistence.service;
 import java.util.Objects;
 
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
 
 public abstract class AbstractHibernateService {

@@ -11,7 +11,7 @@ import org.opensingular.flow.core.renderer.YFilesFlowRenderer;
 import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.core.view.IViewLocator;
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.flow.core.defaults.NullViewLocator;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;

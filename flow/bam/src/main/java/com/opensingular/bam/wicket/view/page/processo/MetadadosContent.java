@@ -5,8 +5,8 @@
 
 package com.opensingular.bam.wicket.view.page.processo;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import org.opensingular.flow.core.authorization.AccessLevel;
 import org.opensingular.flow.core.dto.IMetaDataDTO;
 import org.opensingular.flow.core.dto.IParameterDTO;
 import org.opensingular.flow.core.dto.ITransactionDTO;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 import com.opensingular.bam.wicket.view.page.dashboard.DashboardPage;
 
 public class MetadadosContent extends Content implements SingularWicketContainer<MetadadosContent, Void> {

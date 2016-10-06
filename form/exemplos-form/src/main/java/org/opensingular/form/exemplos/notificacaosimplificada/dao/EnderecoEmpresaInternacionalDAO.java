@@ -8,12 +8,12 @@ package org.opensingular.form.exemplos.notificacaosimplificada.dao;
 import java.util.List;
 
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
-import org.opensingular.singular.support.persistence.enums.SimNao;
+import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacionalId;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 
 @Repository
 public class EnderecoEmpresaInternacionalDAO extends BaseDAO<EnderecoEmpresaInternacional, EnderecoEmpresaInternacionalId> {

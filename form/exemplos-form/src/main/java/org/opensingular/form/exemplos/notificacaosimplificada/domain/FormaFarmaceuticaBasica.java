@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoEstadoFisico;
-import org.opensingular.singular.support.persistence.enums.SimNao;
+import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
-import org.opensingular.singular.support.persistence.util.GenericEnumUserType;
+import org.opensingular.lib.support.persistence.util.GenericEnumUserType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 

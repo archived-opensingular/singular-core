@@ -6,7 +6,7 @@
 package org.opensingular.form;
 
 
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.form.type.core.STypeString;
 
 public class SingularFormException extends SingularException {

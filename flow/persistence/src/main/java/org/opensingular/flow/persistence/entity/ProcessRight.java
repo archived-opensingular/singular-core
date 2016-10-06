@@ -11,7 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.opensingular.singular.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the RL_PERMISSAO_PROCESSO database table.

@@ -5,7 +5,7 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 import static java.util.stream.Collectors.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -23,7 +23,7 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.singular.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;

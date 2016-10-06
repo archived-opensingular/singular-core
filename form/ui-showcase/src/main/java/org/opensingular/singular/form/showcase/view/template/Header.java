@@ -5,9 +5,10 @@
 
 package org.opensingular.singular.form.showcase.view.template;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
+import org.opensingular.lib.wicket.util.template.SkinOptions;
 import org.opensingular.singular.form.showcase.component.ShowCaseType;
 import org.opensingular.singular.form.showcase.view.page.form.ListPage;
 import org.opensingular.singular.form.showcase.view.page.studio.StudioHomePage;
@@ -16,13 +17,13 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.util.wicket.metronic.menu.DropdownMenu;
+import org.opensingular.lib.wicket.util.metronic.menu.DropdownMenu;
 
 public class Header extends Panel {
 
     private boolean withTogglerButton;
     private boolean withSideBar;
-    private org.opensingular.singular.util.wicket.template.SkinOptions option;
+    private SkinOptions option;
 
     public Header(String id) {
         super(id);
@@ -31,7 +32,7 @@ public class Header extends Panel {
     }
 
     public Header(String id, boolean withTogglerButton, boolean withTopAction, boolean withSideBar,
-                  org.opensingular.singular.util.wicket.template.SkinOptions option) {
+                  SkinOptions option) {
         super(id);
         this.withTogglerButton = withTogglerButton;
         this.withSideBar = withSideBar;

@@ -8,7 +8,7 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SMultiSelectionBySelectView;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.opensingular.singular.util.wicket.output.BOutputPanel;
+import org.opensingular.lib.wicket.util.output.BOutputPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.junit.Test;

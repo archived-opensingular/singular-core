@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.showcase.component.form.custom;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
@@ -20,10 +20,10 @@ import org.opensingular.singular.form.showcase.component.CaseItem;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.showcase.component.Group;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSFormGroup;
-import org.opensingular.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
-import org.opensingular.singular.util.wicket.model.IMappingModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSFormGroup;
+import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.BSGridSize;
+import org.opensingular.lib.wicket.util.model.IMappingModel;
 
 /**
  * Custom String Mapper

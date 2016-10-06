@@ -8,7 +8,7 @@ package com.opensingular.bam.dto;
 import java.util.Date;
 
 import org.opensingular.flow.core.dto.IInstanceDTO;
-import org.opensingular.singular.commons.util.FormatUtil;
+import org.opensingular.lib.commons.util.FormatUtil;
 
 
 public class InstanceDTO implements IInstanceDTO {

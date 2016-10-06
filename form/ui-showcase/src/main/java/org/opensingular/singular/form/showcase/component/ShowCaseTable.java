@@ -20,12 +20,12 @@ import org.apache.wicket.util.string.StringValue;
 import org.reflections.Reflections;
 import org.springframework.stereotype.Service;
 
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.SPackage;
 import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple;
 import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple2;
 import com.opensingular.studio.core.CollectionDefinition;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 @Service
 public class ShowCaseTable {

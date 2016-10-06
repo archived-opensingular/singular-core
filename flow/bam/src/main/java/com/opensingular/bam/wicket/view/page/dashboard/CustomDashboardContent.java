@@ -5,7 +5,7 @@
 
 package com.opensingular.bam.wicket.view.page.dashboard;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.util.List;
 import java.util.Set;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.opensingular.bam.client.portlet.PortletConfig;
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.flow.core.authorization.AccessLevel;
 import org.opensingular.flow.core.dto.GroupDTO;
 import org.opensingular.flow.core.service.IFlowMetadataREST;

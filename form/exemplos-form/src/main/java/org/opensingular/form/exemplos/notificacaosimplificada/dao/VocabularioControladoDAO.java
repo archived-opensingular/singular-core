@@ -21,7 +21,7 @@ import org.opensingular.form.exemplos.notificacaosimplificada.domain.generic.Voc
 import org.springframework.stereotype.Repository;
 
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 
 @Repository
 public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Long> {

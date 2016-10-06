@@ -7,7 +7,7 @@ package org.opensingular.form.type.basic;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
-import org.opensingular.singular.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.STranslatorForAttribute;
 import org.opensingular.form.SType;

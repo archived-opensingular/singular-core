@@ -26,8 +26,8 @@ import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.singular.util.wicket.bootstrap.datepicker.BSDatepickerInputGroup;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 @SuppressWarnings("serial")
 public class DateMapper extends AbstractControlsFieldComponentMapper {

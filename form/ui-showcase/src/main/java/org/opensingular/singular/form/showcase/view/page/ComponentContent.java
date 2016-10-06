@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.showcase.view.page;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import javax.inject.Inject;
 
@@ -21,7 +21,7 @@ import org.apache.wicket.model.ResourceModel;
 
 import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
 import org.opensingular.singular.form.showcase.view.template.Content;
-import org.opensingular.singular.util.wicket.tab.BSTabPanel;
+import org.opensingular.lib.wicket.util.tab.BSTabPanel;
 
 public class ComponentContent extends Content implements SingularWicketContainer<ComponentContent, Void> {
 

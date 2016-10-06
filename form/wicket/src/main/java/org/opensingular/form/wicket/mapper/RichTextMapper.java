@@ -3,14 +3,14 @@ package org.opensingular.form.wicket.mapper;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.singular.util.wicket.behavior.CKEditorInitBehaviour;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
-import org.opensingular.singular.util.wicket.output.BOutputPanel;
+import org.opensingular.lib.wicket.util.behavior.CKEditorInitBehaviour;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.output.BOutputPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class RichTextMapper extends StringMapper {
 

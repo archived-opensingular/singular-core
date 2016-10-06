@@ -15,11 +15,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.support.persistence.util.Constants;
-import org.opensingular.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.opensingular.lib.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 @Entity
 @GenericGenerator(name = "GENERATED_CO_DASHBOARD", strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)

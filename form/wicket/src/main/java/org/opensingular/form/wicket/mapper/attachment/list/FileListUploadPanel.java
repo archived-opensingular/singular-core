@@ -1,6 +1,6 @@
 package org.opensingular.form.wicket.mapper.attachment.list;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.attachment.SIAttachment;
@@ -14,8 +14,8 @@ import org.opensingular.form.wicket.mapper.attachment.DownloadUtil;
 import org.opensingular.form.wicket.mapper.attachment.FileUploadServlet;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
-import org.opensingular.singular.util.wicket.jquery.JQuery;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
+import org.opensingular.lib.wicket.util.resource.Icone;
 import org.apache.commons.collections.iterators.TransformIterator;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +45,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forReference;
 
 /**

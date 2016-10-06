@@ -22,8 +22,8 @@ import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.apache.commons.io.IOUtils;
 
-import org.opensingular.singular.commons.base.SingularException;
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.io.HashUtil;
 
 /**

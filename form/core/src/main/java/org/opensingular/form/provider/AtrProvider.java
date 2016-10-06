@@ -4,7 +4,7 @@ import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STranslatorForAttribute;
 import org.opensingular.form.converter.SInstanceConverter;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 import java.io.Serializable;
 

@@ -6,7 +6,7 @@
 package org.opensingular.form.view;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.singular.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.form.SType;
 
 import java.io.Serializable;

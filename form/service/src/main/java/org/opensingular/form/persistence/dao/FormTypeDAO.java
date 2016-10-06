@@ -1,7 +1,7 @@
 package org.opensingular.form.persistence.dao;
 
 import org.opensingular.form.persistence.entity.FormTypeEntity;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 import org.hibernate.criterion.Restrictions;
 
 public class FormTypeDAO extends BaseDAO<FormTypeEntity, Integer> {

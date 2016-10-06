@@ -5,7 +5,7 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 
 /**
  * The base class of all runtime exceptions for Singular-Flow.

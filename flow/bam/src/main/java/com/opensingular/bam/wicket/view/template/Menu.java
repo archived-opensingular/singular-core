@@ -23,7 +23,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 
 import org.opensingular.flow.core.dto.IMenuItemDTO;
 import org.opensingular.flow.persistence.entity.Dashboard;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public class Menu extends Panel {
 

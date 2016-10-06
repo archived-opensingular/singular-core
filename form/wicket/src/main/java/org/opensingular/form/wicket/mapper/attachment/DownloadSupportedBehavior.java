@@ -37,7 +37,7 @@ import org.apache.wicket.util.string.StringValue;
 
 import com.google.common.collect.ImmutableMap;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;

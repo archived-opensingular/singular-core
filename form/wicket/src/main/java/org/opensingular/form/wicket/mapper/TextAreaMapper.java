@@ -21,7 +21,7 @@ import org.opensingular.form.view.SViewTextArea;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.CountDownBehaviour;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class TextAreaMapper extends StringMapper {
 

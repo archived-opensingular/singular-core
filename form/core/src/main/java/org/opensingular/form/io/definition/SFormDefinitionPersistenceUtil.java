@@ -16,7 +16,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
 import com.google.common.collect.Lists;
 
-import org.opensingular.singular.commons.internal.function.SupplierUtil;
+import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 /**
  * Transforma a definição de um tipo ou mesmo de um pacote inteiro em uma

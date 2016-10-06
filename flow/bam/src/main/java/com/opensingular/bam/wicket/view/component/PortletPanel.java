@@ -5,7 +5,7 @@
 
 package com.opensingular.bam.wicket.view.component;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -45,8 +45,8 @@ import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public class PortletPanel<C extends PortletConfig> extends Panel {
 

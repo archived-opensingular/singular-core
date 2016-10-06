@@ -13,7 +13,7 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 @Entity
 @Table(name = "TB_UNIDADE_FEDERACAO", schema = "DBGERAL")

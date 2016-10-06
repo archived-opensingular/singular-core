@@ -11,7 +11,7 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
-import org.opensingular.singular.util.wicket.ajax.ActionAjaxLink;
+import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.util.tester.TagTester;

@@ -5,8 +5,8 @@
 
 package org.opensingular.form.wicket.mapper.annotation;
 
-import static org.opensingular.singular.util.wicket.util.Shortcuts.$m;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.apache.commons.lang3.BooleanUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -30,10 +30,10 @@ import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SIAnnotationModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.singular.util.wicket.ajax.ActionAjaxButton;
-import org.opensingular.singular.util.wicket.ajax.ActionAjaxLink;
-import org.opensingular.singular.util.wicket.jquery.JQuery;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
+import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 /**
  * This is the visual component of an annotated field on screen.

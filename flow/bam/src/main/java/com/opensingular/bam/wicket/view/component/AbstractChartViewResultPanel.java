@@ -9,7 +9,7 @@ import org.apache.wicket.model.IModel;
 
 import com.opensingular.bam.client.portlet.ChartPortletConfig;
 import com.opensingular.bam.client.portlet.PortletContext;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public abstract class AbstractChartViewResultPanel<C extends ChartPortletConfig> extends ViewResultPanel<C> {
 

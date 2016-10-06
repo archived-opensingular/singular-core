@@ -1,7 +1,7 @@
 package org.opensingular.form.wicket.mapper.masterdetail;
 
-import org.opensingular.singular.commons.base.SingularException;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.type.basic.SPackageBasic;

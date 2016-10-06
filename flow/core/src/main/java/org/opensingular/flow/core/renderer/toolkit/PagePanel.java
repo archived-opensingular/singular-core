@@ -29,7 +29,7 @@
  ***************************************************************************/
 package org.opensingular.flow.core.renderer.toolkit;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.view.export.CanvasPrintable;
 

@@ -1,6 +1,6 @@
 package org.opensingular.singular.showcase.view.page.showcase;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 import static org.junit.Assert.assertNotNull;
 
 import javax.inject.Inject;

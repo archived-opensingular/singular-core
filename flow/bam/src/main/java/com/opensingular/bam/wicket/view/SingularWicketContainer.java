@@ -20,8 +20,8 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.springframework.web.util.JavaScriptUtils;
 
-import org.opensingular.singular.util.wicket.model.FallbackReadOnlyModel;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.model.FallbackReadOnlyModel;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public interface SingularWicketContainer<CONTAINER extends MarkupContainer, T> {
 

@@ -18,10 +18,10 @@ import org.opensingular.singular.form.showcase.view.page.ComponentPage;
 import org.opensingular.singular.form.showcase.view.page.form.crud.CrudPage;
 import org.opensingular.singular.form.showcase.view.page.prototype.PrototypeListPage;
 import org.opensingular.singular.form.showcase.view.page.studio.StudioHomePage;
-import org.opensingular.singular.util.wicket.menu.MetronicMenu;
-import org.opensingular.singular.util.wicket.menu.MetronicMenuGroup;
-import org.opensingular.singular.util.wicket.menu.MetronicMenuItem;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.menu.MetronicMenu;
+import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
+import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 public class Menu extends Panel {
 

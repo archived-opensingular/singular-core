@@ -15,17 +15,18 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import org.opensingular.lib.wicket.util.template.SkinOptions;
 import org.opensingular.singular.form.showcase.wicket.UIAdminSession;
-import org.opensingular.singular.util.wicket.template.SkinOptions.Skin;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import org.opensingular.lib.wicket.util.template.SkinOptions.Skin;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class TopMenu extends Panel {
 
     private boolean withSideBar;
-    private org.opensingular.singular.util.wicket.template.SkinOptions option;
+    private SkinOptions option;
 
-    public TopMenu(String id, boolean withSideBar, org.opensingular.singular.util.wicket.template.SkinOptions option) {
+    public TopMenu(String id, boolean withSideBar, SkinOptions option) {
         super(id);
         this.withSideBar = withSideBar;
         this.option = option;

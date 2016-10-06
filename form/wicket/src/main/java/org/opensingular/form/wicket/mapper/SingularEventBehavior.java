@@ -8,7 +8,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 
 import org.opensingular.form.wicket.IWicketComponentMapper;
-import org.opensingular.singular.util.wicket.jquery.JQuery;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
 
 public class SingularEventBehavior extends Behavior {
 

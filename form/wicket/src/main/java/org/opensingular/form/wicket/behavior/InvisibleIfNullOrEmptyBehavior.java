@@ -8,7 +8,7 @@ package org.opensingular.form.wicket.behavior;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 
-import org.opensingular.singular.util.wicket.model.NullOrEmptyModel;
+import org.opensingular.lib.wicket.util.model.NullOrEmptyModel;
 
 public class InvisibleIfNullOrEmptyBehavior extends Behavior {
 

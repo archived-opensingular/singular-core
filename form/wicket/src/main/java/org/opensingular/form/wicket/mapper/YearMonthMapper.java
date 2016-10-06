@@ -16,8 +16,8 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
-import org.opensingular.singular.util.wicket.form.YearMonthField;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.form.YearMonthField;
 
 public class YearMonthMapper extends AbstractControlsFieldComponentMapper {
 

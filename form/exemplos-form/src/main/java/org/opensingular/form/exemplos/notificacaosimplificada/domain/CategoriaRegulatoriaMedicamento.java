@@ -1,7 +1,7 @@
 package org.opensingular.form.exemplos.notificacaosimplificada.domain;
 
 
-import org.opensingular.singular.support.persistence.enums.SimNao;
+import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 
 import javax.persistence.Entity;

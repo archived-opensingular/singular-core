@@ -5,7 +5,7 @@
 
 package org.opensingular.form.type.core.attachment.handlers;
 
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.apache.commons.lang3.StringUtils;
 

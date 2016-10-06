@@ -6,7 +6,7 @@
 package org.opensingular.form.type.core;
 
 import org.opensingular.form.STypeSimple;
-import org.opensingular.singular.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SViewTextArea;

@@ -27,7 +27,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.core.renderer.bpmn.layout.BpmnLayout;
 import org.opensingular.flow.core.renderer.bpmn.layout.LayoutOrientation;
 import org.opensingular.flow.core.renderer.bpmn.view.ActivityNodeStyle;

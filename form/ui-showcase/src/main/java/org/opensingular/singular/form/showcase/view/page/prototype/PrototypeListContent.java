@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.showcase.view.page.prototype;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,14 +49,14 @@ import org.opensingular.singular.form.showcase.dao.form.Prototype;
 import org.opensingular.singular.form.showcase.dao.form.PrototypeDAO;
 import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
 import org.opensingular.singular.form.showcase.view.template.Content;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
-import org.opensingular.singular.util.wicket.datatable.column.BSActionColumn;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
-import org.opensingular.singular.util.wicket.output.BOutputPanel;
-import org.opensingular.singular.util.wicket.resource.Icone;
-import org.opensingular.singular.util.wicket.tab.BSTabPanel;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.output.BOutputPanel;
+import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.tab.BSTabPanel;
 
 public class PrototypeListContent extends Content
         implements SingularWicketContainer<PrototypeListContent, Void> {

@@ -1,7 +1,7 @@
 package org.opensingular.form.wicket.behavior;
 
 import org.opensingular.form.wicket.component.SingularFormComponentPanel;
-import org.opensingular.singular.commons.lambda.IBiConsumer;
+import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.IAjaxUpdateListener;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;

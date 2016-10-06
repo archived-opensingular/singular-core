@@ -23,13 +23,13 @@ import org.apache.wicket.util.visit.Visits;
 
 import com.google.common.collect.Sets;
 
-import org.opensingular.singular.commons.lambda.IPredicate;
+import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstances;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.validation.IValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public class SValidationFeedbackHandler implements Serializable {
 

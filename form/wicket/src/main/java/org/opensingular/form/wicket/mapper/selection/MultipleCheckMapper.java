@@ -15,7 +15,7 @@ import org.apache.wicket.model.IModel;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.model.MultipleSelectSInstanceAwareModel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 @SuppressWarnings("serial")
 public class MultipleCheckMapper extends MultipleSelectMapper {

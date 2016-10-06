@@ -1,7 +1,7 @@
 package org.opensingular.form.exemplos.notificacaosimplificada.dao;
 
-import org.opensingular.singular.support.persistence.SimpleDAO;
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.SimpleDAO;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;

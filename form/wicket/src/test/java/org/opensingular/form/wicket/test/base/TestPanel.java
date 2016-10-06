@@ -3,7 +3,7 @@ package org.opensingular.form.wicket.test.base;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 
 public abstract class TestPanel extends Panel {
 

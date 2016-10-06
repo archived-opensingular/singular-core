@@ -5,8 +5,8 @@
 
 package com.opensingular.bam.wicket;
 
-import org.opensingular.singular.commons.base.SingularProperties;
-import org.opensingular.singular.util.wicket.page.error.Error403Page;
+import org.opensingular.lib.commons.base.SingularProperties;
+import org.opensingular.lib.wicket.util.page.error.Error403Page;
 import com.opensingular.bam.wicket.view.page.dashboard.DashboardPage;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;

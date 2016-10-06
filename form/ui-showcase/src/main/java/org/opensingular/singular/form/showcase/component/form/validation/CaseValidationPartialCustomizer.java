@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.showcase.component.form.validation;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 

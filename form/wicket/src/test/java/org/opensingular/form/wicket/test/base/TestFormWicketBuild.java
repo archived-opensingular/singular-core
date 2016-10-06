@@ -16,9 +16,9 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSGrid;
-import org.opensingular.singular.util.wicket.panel.FormPanel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
+import org.opensingular.lib.wicket.util.panel.FormPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.model.IModel;
@@ -31,7 +31,7 @@ import org.junit.Test;
 
 import java.util.function.Supplier;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.findContainerRelativePath;
 
 public class TestFormWicketBuild  {
 

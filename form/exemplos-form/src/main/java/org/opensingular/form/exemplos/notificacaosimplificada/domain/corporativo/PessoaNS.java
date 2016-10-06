@@ -25,8 +25,8 @@ import org.opensingular.form.exemplos.notificacaosimplificada.domain.Schemas;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.geral.Cidade;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.corporativo.enums.TipoPessoaNS;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.geral.Pais;
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
-import org.opensingular.singular.support.persistence.util.GenericEnumUserType;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.GenericEnumUserType;
 
 @Entity
 @Table(schema = Schemas.DBCORPORATIVO, name = "TB_PESSOA")

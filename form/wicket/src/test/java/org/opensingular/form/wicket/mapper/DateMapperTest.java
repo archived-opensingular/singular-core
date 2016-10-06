@@ -13,14 +13,14 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import org.opensingular.singular.commons.lambda.IPredicate;
+import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.opensingular.singular.util.wicket.bootstrap.datepicker.BSDatepickerInputGroup;
-import org.opensingular.singular.util.wicket.output.BOutputPanel;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
+import org.opensingular.lib.wicket.util.output.BOutputPanel;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 @RunWith(Enclosed.class)
 public class DateMapperTest {

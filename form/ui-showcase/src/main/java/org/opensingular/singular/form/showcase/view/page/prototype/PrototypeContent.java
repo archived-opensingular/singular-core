@@ -20,7 +20,7 @@ import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.singular.form.showcase.dao.form.Prototype;
 import org.opensingular.singular.form.showcase.dao.form.PrototypeDAO;
 import org.opensingular.singular.form.showcase.view.template.Content;
-import org.opensingular.singular.util.wicket.ajax.ActionAjaxButton;
+import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;

@@ -5,7 +5,7 @@
 
 package com.opensingular.bam.wicket.view.page.processo;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -28,13 +28,13 @@ import com.opensingular.bam.wicket.view.template.Content;
 import org.opensingular.flow.core.authorization.AccessLevel;
 import org.opensingular.flow.core.dto.IDefinitionDTO;
 import org.opensingular.form.wicket.component.SingularForm;
-import org.opensingular.singular.util.wicket.ajax.ActionAjaxButton;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
-import org.opensingular.singular.util.wicket.datatable.column.BSActionColumn;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
-import org.opensingular.singular.util.wicket.resource.Icone;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public class ProcessosContent extends Content implements SingularWicketContainer<ProcessosContent, Void> {
 

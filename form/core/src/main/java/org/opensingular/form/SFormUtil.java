@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 
-import org.opensingular.singular.commons.internal.function.SupplierUtil;
+import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import static java.util.stream.Collectors.joining;
 

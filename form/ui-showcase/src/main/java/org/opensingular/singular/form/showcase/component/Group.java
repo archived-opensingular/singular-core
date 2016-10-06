@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.showcase.component;
 
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 public enum Group {
     INPUT("Input", Icone.PUZZLE, ShowCaseType.FORM),

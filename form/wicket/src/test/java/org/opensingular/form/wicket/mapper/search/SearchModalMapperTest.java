@@ -11,7 +11,7 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.util.transformer.Value;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.wicket.markup.html.form.Button;
 import org.junit.Assert;

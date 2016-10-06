@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.showcase.view.page.form.crud;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -54,15 +54,15 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.SFeedbackPanel;
 import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
 import org.opensingular.singular.form.showcase.view.template.Content;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
-import org.opensingular.singular.util.wicket.datatable.column.BSActionColumn;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder.ButtonStyle;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder.Size;
-import org.opensingular.singular.util.wicket.output.BOutputPanel;
-import org.opensingular.singular.util.wicket.resource.Icone;
-import org.opensingular.singular.util.wicket.tab.BSTabPanel;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder.Size;
+import org.opensingular.lib.wicket.util.output.BOutputPanel;
+import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.tab.BSTabPanel;
 
 public class CrudContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 

@@ -6,7 +6,7 @@ package org.opensingular.form.persistence.dao;
 
 
 import org.opensingular.form.persistence.entity.FormEntity;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 
 public class FormDAO extends BaseDAO<FormEntity, Long> {
 

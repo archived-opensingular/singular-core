@@ -9,8 +9,8 @@ import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.model.IModel;
 
 import org.opensingular.form.wicket.feedback.SFeedbackPanel;
-import org.opensingular.singular.util.wicket.feedback.BSFeedbackPanel;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 public class BFModalBorder extends BSModalBorder {
 

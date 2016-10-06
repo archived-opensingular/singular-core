@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.showcase.view.page;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.showcase.component.CaseBase;
 import org.opensingular.singular.form.showcase.component.ResourceRef;
 import org.opensingular.form.wicket.util.ProcessadorCodigoFonte;
-import org.opensingular.singular.util.wicket.tab.BSTabPanel;
+import org.opensingular.lib.wicket.util.tab.BSTabPanel;
 
 public abstract class ItemCasePanel<T extends CaseBase> extends Panel {
 

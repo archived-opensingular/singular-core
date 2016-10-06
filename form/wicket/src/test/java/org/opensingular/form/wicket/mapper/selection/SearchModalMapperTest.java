@@ -10,7 +10,7 @@ import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
-import org.opensingular.singular.util.wicket.ajax.ActionAjaxLink;
+import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Button;

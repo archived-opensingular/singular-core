@@ -3,7 +3,7 @@ package com.opensingular.studio.wicket;
 import com.opensingular.studio.core.CollectionCanvas;
 import com.opensingular.studio.core.CollectionEditorConfig;
 import com.opensingular.studio.core.CollectionInfo;
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.persistence.FormKey;

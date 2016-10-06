@@ -21,7 +21,7 @@ import org.opensingular.form.wicket.behavior.CountDownBehaviour;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class StringMapper extends AbstractControlsFieldComponentMapper {
 

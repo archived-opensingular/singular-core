@@ -11,8 +11,8 @@ import java.util.List;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import org.opensingular.form.wicket.component.SingularForm;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSGrid;
-import org.opensingular.singular.util.wicket.metronic.breadcrumb.MetronicBreadcrumbBar;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
+import org.opensingular.lib.wicket.util.metronic.breadcrumb.MetronicBreadcrumbBar;
 
 public class BreadPanel extends Panel {
 

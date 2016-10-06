@@ -5,7 +5,7 @@
 
 package org.opensingular.form.wicket.feedback;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 import static java.util.stream.Collectors.*;
 
 import org.apache.wicket.Component;
@@ -18,8 +18,8 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.opensingular.form.validation.IValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
-import org.opensingular.singular.util.wicket.jquery.JQuery;
-import org.opensingular.singular.util.wicket.util.JavaScriptUtils;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
+import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 
 public class SValidationFeedbackIndicator extends WebMarkupContainer implements IFeedback {
 

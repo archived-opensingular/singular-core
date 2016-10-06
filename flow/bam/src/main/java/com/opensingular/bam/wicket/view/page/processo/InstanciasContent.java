@@ -5,7 +5,7 @@
 
 package com.opensingular.bam.wicket.view.page.processo;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.util.Iterator;
 
@@ -23,8 +23,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.opensingular.flow.core.authorization.AccessLevel;
 import org.opensingular.flow.core.dto.IDefinitionDTO;
 import org.opensingular.flow.core.dto.IInstanceDTO;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 
 public class InstanciasContent extends Content implements SingularWicketContainer<InstanciasContent, Void> {
 

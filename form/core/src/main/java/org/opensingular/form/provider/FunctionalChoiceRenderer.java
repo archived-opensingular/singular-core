@@ -1,6 +1,6 @@
 package org.opensingular.form.provider;
 
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 import java.io.Serializable;
 

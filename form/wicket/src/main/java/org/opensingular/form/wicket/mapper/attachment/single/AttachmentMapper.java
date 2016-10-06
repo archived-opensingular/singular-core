@@ -17,9 +17,9 @@ import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import org.opensingular.form.wicket.IAjaxUpdateListener;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSWellBorder;
-import org.opensingular.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSWellBorder;
+import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
 public class AttachmentMapper extends AbstractControlsFieldComponentMapper {
 

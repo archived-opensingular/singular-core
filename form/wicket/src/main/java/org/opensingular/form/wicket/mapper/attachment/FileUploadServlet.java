@@ -1,6 +1,6 @@
 package org.opensingular.form.wicket.mapper.attachment;
 
-import static org.opensingular.singular.commons.util.ConversionUtils.*;
+import static org.opensingular.lib.commons.util.ConversionUtils.*;
 import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.*;
 
 import java.io.File;
@@ -24,8 +24,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.json.JSONArray;
 
-import org.opensingular.singular.commons.base.SingularException;
-import org.opensingular.singular.commons.base.SingularProperties;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.form.io.IOUtil;
 
 /**

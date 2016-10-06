@@ -1,6 +1,6 @@
 package org.opensingular.form.exemplos.notificacaosimplificada.spring;
 
-import org.opensingular.singular.support.spring.util.AutoScanDisabled;
+import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

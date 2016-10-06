@@ -5,7 +5,7 @@
 
 package org.opensingular.form.wicket.mapper.composite;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import java.util.HashMap;
@@ -30,11 +30,11 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.annotation.AnnotationComponent;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSCol;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSGrid;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSRow;
-import org.opensingular.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
+import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 
 public abstract class AbstractCompositeMapper implements IWicketComponentMapper {
 

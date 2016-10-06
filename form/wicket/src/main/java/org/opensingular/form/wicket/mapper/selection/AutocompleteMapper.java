@@ -7,7 +7,7 @@ import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.view.SViewSelectionBySelect;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;

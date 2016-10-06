@@ -1,6 +1,6 @@
 package org.opensingular.flow.test.mssql;
 
-import org.opensingular.singular.commons.base.SingularPropertiesImpl;
+import org.opensingular.lib.commons.base.SingularPropertiesImpl;
 import org.opensingular.flow.test.PeticaoTest;
 import org.junit.BeforeClass;
 import org.springframework.test.context.ActiveProfiles;
