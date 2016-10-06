@@ -20,6 +20,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import static org.opensingular.form.wicket.helpers.TestFinders.*;
 
 @RunWith(Enclosed.class)
 public class DependsOnTest {

@@ -21,7 +21,7 @@ import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
-
+import static org.opensingular.form.wicket.helpers.TestFinders.*;
 @RunWith(Enclosed.class)
 public class DateMapperTest {
 
