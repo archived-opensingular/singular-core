@@ -38,9 +38,9 @@
         <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
 	</bean>
 
-    <bean id="filePersistence" class="org.opensingular.singular.form.persistence.service.AttachmentPersistenceService" />
-    <bean id="attachmentDao" class="org.opensingular.singular.form.persistence.dao.AttachmentDao" />
-    <bean id="attachmentContentDao" class="org.opensingular.singular.form.persistence.dao.AttachmentContentDao" />
+    <bean id="filePersistence" class="org.opensingular.form.persistence.service.AttachmentPersistenceService" />
+    <bean id="attachmentDao" class="org.opensingular.form.persistence.dao.AttachmentDao" />
+    <bean id="attachmentContentDao" class="org.opensingular.form.persistence.dao.AttachmentContentDao" />
     <bean id="studioCollectionPersistenceFactory" class="org.opensingular.singular.studio.persistence.StudioCollectionPersistenceFactory" />
     <bean id="collectionGallery" class="org.opensingular.singular.studio.core.CollectionGallery" />
 

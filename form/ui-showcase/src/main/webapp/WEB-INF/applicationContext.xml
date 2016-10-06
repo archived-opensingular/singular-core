@@ -50,8 +50,8 @@
         <constructor-arg ref="showcaseDocumentFactory"/>
     </bean>
 
-    <bean id="filePersistence" class="org.opensingular.singular.form.persistence.service.AttachmentPersistenceService" />
-	<bean id="attachmentContentDao" class="org.opensingular.singular.form.persistence.dao.AttachmentContentDao" />
-    <bean id="attachmentDao" class="org.opensingular.singular.form.persistence.dao.AttachmentDao" />
+    <bean id="filePersistence" class="org.opensingular.form.persistence.service.AttachmentPersistenceService" />
+	<bean id="attachmentContentDao" class="org.opensingular.form.persistence.dao.AttachmentContentDao" />
+    <bean id="attachmentDao" class="org.opensingular.form.persistence.dao.AttachmentDao" />
 
 </beans>
