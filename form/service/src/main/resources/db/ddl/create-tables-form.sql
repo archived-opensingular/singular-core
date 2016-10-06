@@ -60,15 +60,6 @@ CREATE TABLE DBSINGULAR.TB_VERSAO_ANOTACAO_FORMULARIO
 );
 
 /*==============================================================*/
-/* Table: TB_ANEXO_FORMULARIO                                   */
-/*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_ANEXO_FORMULARIO (
-   CO_ANEXO_FORMULARIO  INT                  NOT NULL,
-   CO_VERSAO_FORMULARIO INT                  NOT NULL,
-   TX_SHA1              CHAR(40)             NOT NULL,
-   CONSTRAINT PK_TB_ANEXO_FORMULARIO PRIMARY KEY (CO_ANEXO_FORMULARIO)
-);
-/*==============================================================*/
 /* Table: TB_CONTEUDO_ARQUIVO                                   */
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_CONTEUDO_ARQUIVO (
