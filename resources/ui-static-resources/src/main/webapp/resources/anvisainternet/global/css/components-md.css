@@ -882,7 +882,7 @@ h6.block {
 /* Links */
 a {
   text-shadow: none;
-  color: #508450; }
+  color: #3c638a; }
   a:focus, a:hover, a:active {
     outline: 0; }
 
@@ -4415,7 +4415,7 @@ Custom color buttons
     overflow: visible; }
   .btn:not(.md-skip).btn-link {
     box-shadow: none;
-    color: #508450; }
+    color: #3c638a; }
     .btn:not(.md-skip).btn-link:hover {
       text-decoration: none; }
   .btn:not(.md-skip) > i {
@@ -12991,11 +12991,11 @@ Custimized Bootstrap Wells
     color: #fff;
     border: 1px solid #ebf0f6;
     padding: 3px 10px;
-    background: #508450; }
+    background: #3c638a; }
     .widget-media .widget-btn-blue .widget-btn-icon {
       line-height: 1.5; }
     .widget-media .widget-btn-blue:hover {
-      color: #508450;
+      color: #3c638a;
       background: #fff;
       text-decoration: none; }
   .widget-media .widget-media-body {

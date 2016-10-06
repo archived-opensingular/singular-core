@@ -271,18 +271,18 @@ body {
     Page Footer
     ******/
 .page-footer .page-footer-inner {
-  color: #508450; }
+  color: #f2f2f2; }
 
 .page-footer-fixed .page-footer {
-  background-color: #f2f2f2; }
+  background-color: #508450; }
   .page-footer-fixed .page-footer .page-footer-inner {
-    color: #508450; }
+    color: #f2f2f2; }
 
 .page-boxed .page-footer .page-footer-inner {
-  color: #508450; }
+  color: #f2f2f2; }
 
 .page-footer-fixed .page-boxed .page-footer {
-  background-color: #f2f2f2; }
+  background-color: #508450; }
 
 @media (min-width: 992px) {
   /* 992px */

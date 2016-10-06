@@ -357,7 +357,7 @@ Color variants
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary {
   color: #fff;
-  background: #508450; }
+  background: #3c638a; }
 
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-info,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-info {
@@ -1804,7 +1804,7 @@ NoUIRangeSlider
 Color variants
 ***/
 .noUi-primary .noUi-connect {
-  background: #508450; }
+  background: #3c638a; }
 
 .noUi-info .noUi-connect {
   background: #a9dbff; }
