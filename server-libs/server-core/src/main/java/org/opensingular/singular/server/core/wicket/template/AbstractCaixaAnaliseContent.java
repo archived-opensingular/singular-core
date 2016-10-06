@@ -45,6 +45,7 @@ import org.opensingular.singular.util.wicket.datatable.column.MetronicStatusColu
 import org.opensingular.singular.util.wicket.metronic.menu.DropdownMenu;
 import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
 import org.opensingular.singular.util.wicket.resource.Icone;
+import static org.opensingular.flow.core.ws.BaseSingularRest.*;
 
 public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> extends Content implements Loggable {
 
