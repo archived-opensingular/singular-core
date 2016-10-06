@@ -110,7 +110,7 @@ public abstract class SingularTemplate extends WebPage {
                         skinnableResource("/layout4/scripts/layout.js" ),
                         skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.js" ),
                         skinnableResource("/global/plugins/typeahead/typeahead.bundle.js" ),
-                        commonResource("plugins/stringjs/string.min.js" ),
+                        commonResource("/plugins/stringjs/string.min.js" ),
                         commonResource("/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js" ),
                         commonResource("/plugins/syntaxHighlighter/js/shCore.js" ),
                         commonResource("/plugins/syntaxHighlighter/js/shBrushJava.js" ),
