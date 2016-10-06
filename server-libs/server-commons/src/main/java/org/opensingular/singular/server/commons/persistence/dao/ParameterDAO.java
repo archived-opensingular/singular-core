@@ -13,7 +13,7 @@ import org.hibernate.criterion.Restrictions;
 
 import org.opensingular.flow.core.entity.IEntityProcessGroup;
 import org.opensingular.singular.server.commons.persistence.entity.parameter.ParameterEntity;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 
 @Transactional(Transactional.TxType.MANDATORY)
 public class ParameterDAO extends BaseDAO<ParameterEntity, Long> {

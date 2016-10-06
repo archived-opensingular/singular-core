@@ -2,8 +2,8 @@ package org.opensingular.singular.server.commons.wicket.view.template;
 
 import org.opensingular.singular.server.commons.spring.security.SecurityUtil;
 import org.opensingular.singular.server.commons.wicket.SingularSession;
-import org.opensingular.singular.util.wicket.template.SkinOptions;
-import org.opensingular.singular.util.wicket.template.SkinOptions.Skin;
+import org.opensingular.lib.wicket.util.template.SkinOptions;
+import org.opensingular.lib.wicket.util.template.SkinOptions.Skin;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.StatelessLink;
@@ -13,8 +13,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 import java.util.Optional;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class TopMenu extends Panel {
 

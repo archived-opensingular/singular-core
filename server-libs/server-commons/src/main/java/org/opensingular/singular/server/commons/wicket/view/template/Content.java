@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.wicket.view.template;
 
-import org.opensingular.singular.commons.lambda.IFunction;
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.singular.server.commons.wicket.SingularSession;
 import org.opensingular.singular.server.commons.wicket.view.SingularToastrHelper;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
@@ -16,7 +16,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
 import static org.opensingular.singular.server.commons.wicket.view.template.Menu.MENU_CACHE;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public abstract class Content extends Panel implements Loggable {
 

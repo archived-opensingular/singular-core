@@ -1,10 +1,10 @@
 package org.opensingular.singular.server.commons.persistence.entity.form;
 
 import org.opensingular.form.persistence.entity.FormVersionEntity;
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
-import org.opensingular.singular.support.persistence.enums.SimNao;
-import org.opensingular.singular.support.persistence.util.Constants;
-import org.opensingular.singular.support.persistence.util.GenericEnumUserType;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.enums.SimNao;
+import org.opensingular.lib.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.GenericEnumUserType;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;

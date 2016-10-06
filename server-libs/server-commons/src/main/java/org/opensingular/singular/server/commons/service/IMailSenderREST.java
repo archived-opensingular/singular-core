@@ -4,7 +4,7 @@
  */
 package org.opensingular.singular.server.commons.service;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 
 public interface IMailSenderREST extends Loggable {
 

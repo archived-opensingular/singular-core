@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.server.commons.spring.security;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;

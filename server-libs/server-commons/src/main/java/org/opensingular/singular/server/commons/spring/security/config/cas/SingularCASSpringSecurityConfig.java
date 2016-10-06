@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.spring.security.config.cas;
 
 
-import org.opensingular.singular.commons.base.SingularProperties;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.singular.server.commons.exception.SingularServerException;
 import org.opensingular.singular.server.commons.spring.security.AbstractSingularSpringSecurityAdapter;
 import org.opensingular.singular.server.commons.spring.security.SingularUserDetailsService;

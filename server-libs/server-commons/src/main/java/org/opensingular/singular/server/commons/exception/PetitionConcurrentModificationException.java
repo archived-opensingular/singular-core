@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.server.commons.exception;
 
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 
 /**
  * Exceção para quando uma petição for modificada

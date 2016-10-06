@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.server.commons.wicket.error;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import org.apache.wicket.model.IModel;
 

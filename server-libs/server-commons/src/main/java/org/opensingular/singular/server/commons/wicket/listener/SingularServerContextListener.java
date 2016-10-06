@@ -6,7 +6,7 @@ import org.opensingular.singular.server.commons.spring.security.SecurityUtil;
 import org.opensingular.singular.server.commons.wicket.SingularApplication;
 import org.opensingular.singular.server.commons.wicket.SingularSession;
 import org.opensingular.singular.server.commons.wicket.error.Page500;
-import org.opensingular.singular.util.wicket.page.error.Error403Page;
+import org.opensingular.lib.wicket.util.page.error.Error403Page;
 import org.apache.wicket.core.request.handler.IPageClassRequestHandler;
 import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;

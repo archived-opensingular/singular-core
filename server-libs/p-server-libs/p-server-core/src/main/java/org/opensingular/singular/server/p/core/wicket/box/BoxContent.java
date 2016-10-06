@@ -34,11 +34,11 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.opensingular.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
 import static org.opensingular.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
-import org.opensingular.singular.commons.lambda.IBiFunction;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IBiFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.singular.server.commons.flow.rest.ActionAtribuirRequest;
 import org.opensingular.singular.server.commons.flow.rest.ActionRequest;
@@ -58,11 +58,11 @@ import org.opensingular.singular.server.core.wicket.ModuleLink;
 import org.opensingular.singular.server.core.wicket.historico.HistoricoPage;
 import org.opensingular.singular.server.p.core.wicket.model.BoxItemModel;
 import org.opensingular.singular.server.p.core.wicket.view.AbstractCaixaContent;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.IBSAction;
-import org.opensingular.singular.util.wicket.datatable.column.BSActionColumn;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.IBSAction;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 

@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
-import org.opensingular.singular.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.singular.server.commons.service.PetitionService;
@@ -35,10 +35,10 @@ import org.opensingular.singular.server.commons.service.dto.MenuGroup;
 import org.opensingular.singular.server.commons.service.dto.ProcessDTO;
 import org.opensingular.singular.server.commons.wicket.SingularApplication;
 import org.opensingular.singular.server.commons.wicket.SingularSession;
-import org.opensingular.singular.util.wicket.menu.MetronicMenu;
-import org.opensingular.singular.util.wicket.menu.MetronicMenuGroup;
-import org.opensingular.singular.util.wicket.menu.MetronicMenuItem;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.menu.MetronicMenu;
+import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
+import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 public class Menu extends Panel {
 

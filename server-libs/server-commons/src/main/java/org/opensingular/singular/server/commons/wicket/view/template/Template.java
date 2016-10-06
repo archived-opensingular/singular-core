@@ -2,7 +2,7 @@ package org.opensingular.singular.server.commons.wicket.view.template;
 
 import org.opensingular.singular.server.commons.wicket.view.SingularToastrHelper;
 import org.opensingular.singular.server.commons.wicket.view.behavior.SingularJSBehavior;
-import org.opensingular.singular.util.wicket.template.SingularTemplate;
+import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -23,8 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public abstract class Template extends SingularTemplate {
 

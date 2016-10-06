@@ -10,9 +10,9 @@ import org.opensingular.singular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.singular.server.commons.service.PetitionService;
 import org.opensingular.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import org.opensingular.singular.server.p.core.wicket.view.AbstractPeticaoCaixaContent;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.column.BSActionColumn;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.resource.Icone;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
@@ -23,8 +23,8 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static org.opensingular.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 

@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.spring.security.config;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 

@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.persistence.dao.form;
 
 import org.opensingular.singular.server.commons.persistence.entity.form.FormPetitionEntity;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;

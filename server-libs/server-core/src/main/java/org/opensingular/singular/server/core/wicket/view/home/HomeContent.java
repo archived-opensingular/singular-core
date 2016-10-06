@@ -3,7 +3,7 @@ package org.opensingular.singular.server.core.wicket.view.home;
 import org.opensingular.singular.server.commons.wicket.view.template.Content;
 import org.apache.wicket.model.IModel;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class HomeContent extends Content {
 

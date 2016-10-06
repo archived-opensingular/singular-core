@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.p.core.wicket.acompanhamento;
 
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.util.List;
 
@@ -16,8 +16,8 @@ import org.opensingular.singular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.singular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.singular.server.commons.service.PetitionService;
 import org.opensingular.singular.server.p.core.wicket.view.AbstractPeticaoCaixaContent;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
 
 public class AcompanhamentoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 

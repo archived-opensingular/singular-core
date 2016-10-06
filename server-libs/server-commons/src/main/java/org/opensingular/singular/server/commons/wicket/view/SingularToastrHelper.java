@@ -6,7 +6,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.json.JSONStringer;
 import org.json.JSONWriter;
 
-import org.opensingular.singular.util.wicket.toastr.ToastrHelper;
+import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 import de.alpharogroup.wicket.js.addon.core.StringTextType;
 import de.alpharogroup.wicket.js.addon.core.StringTextValue;
 import de.alpharogroup.wicket.js.addon.core.ValueEnum;

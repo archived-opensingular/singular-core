@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.opensingular.singular.commons.base.SingularUtil;
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.form.SFormUtil;
@@ -33,7 +33,7 @@ import org.opensingular.singular.server.commons.service.dto.MenuGroup;
 import org.opensingular.singular.server.commons.service.dto.ProcessDTO;
 import org.opensingular.singular.server.commons.spring.security.PermissionResolverService;
 import org.opensingular.singular.server.commons.spring.security.SingularPermission;
-import org.opensingular.singular.support.spring.util.AutoScanDisabled;
+import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 
 @AutoScanDisabled
 @RequestMapping("/rest/flow")

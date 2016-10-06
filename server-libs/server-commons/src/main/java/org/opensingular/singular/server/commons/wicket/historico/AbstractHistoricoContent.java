@@ -10,11 +10,11 @@ import org.opensingular.singular.server.commons.util.Parameters;
 import org.opensingular.singular.server.commons.wicket.SingularSession;
 import org.opensingular.singular.server.commons.wicket.view.template.Content;
 import org.opensingular.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import org.opensingular.singular.support.persistence.enums.SimNao;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.support.persistence.enums.SimNao;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.resource.Icone;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public abstract class AbstractHistoricoContent extends Content {
 

@@ -19,10 +19,10 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import org.opensingular.singular.server.commons.persistence.entity.enums.AddresseType;
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
-import org.opensingular.singular.support.persistence.util.Constants;
-import org.opensingular.singular.support.persistence.util.GenericEnumUserType;
-import org.opensingular.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.GenericEnumUserType;
+import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 @Entity
 @GenericGenerator(name = EmailAddresseeEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)

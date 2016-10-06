@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.flow;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.schedule.IScheduleService;

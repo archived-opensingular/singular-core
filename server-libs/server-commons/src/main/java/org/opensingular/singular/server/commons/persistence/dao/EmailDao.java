@@ -7,7 +7,7 @@ package org.opensingular.singular.server.commons.persistence.dao;
 import javax.transaction.Transactional;
 
 import org.opensingular.singular.server.commons.persistence.entity.email.EmailEntity;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 
 @SuppressWarnings("unchecked")
 @Transactional(Transactional.TxType.MANDATORY)

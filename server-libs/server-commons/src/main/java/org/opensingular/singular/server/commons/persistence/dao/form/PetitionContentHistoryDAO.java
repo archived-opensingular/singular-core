@@ -3,7 +3,7 @@ package org.opensingular.singular.server.commons.persistence.dao.form;
 
 import org.opensingular.singular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 

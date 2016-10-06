@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.config;
 
 
-import org.opensingular.singular.commons.base.SingularProperties;
+import org.opensingular.lib.commons.base.SingularProperties;
 
 import java.util.Optional;
 

@@ -18,8 +18,8 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import org.opensingular.singular.commons.base.SingularProperties;
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.base.SingularProperties;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.singular.server.commons.config.ConfigProperties;
 import org.opensingular.singular.server.commons.service.dto.Email;

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.opensingular.flow.schedule.IScheduleService;
 import org.opensingular.singular.server.commons.service.IMailSenderREST;
-import org.opensingular.singular.support.spring.util.AutoScanDisabled;
+import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 
 @AutoScanDisabled
 @RequestMapping(IMailSenderREST.PATH)

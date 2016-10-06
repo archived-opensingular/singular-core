@@ -10,7 +10,7 @@ import org.opensingular.singular.server.commons.flow.rest.DefaultServerREST;
 import org.opensingular.singular.server.commons.service.dto.ItemAction;
 import org.opensingular.singular.server.commons.service.dto.ItemActionConfirmation;
 import org.opensingular.singular.server.commons.service.dto.ItemActionType;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 public class DefaultActions {
 

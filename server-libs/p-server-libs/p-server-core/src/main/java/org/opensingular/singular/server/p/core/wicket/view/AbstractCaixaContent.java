@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.p.core.wicket.view;
 
-import org.opensingular.singular.commons.lambda.IConsumer;
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.exception.SingularServerException;
 import org.opensingular.singular.server.commons.form.FormActions;
@@ -12,13 +12,13 @@ import org.opensingular.singular.server.commons.service.dto.MenuGroup;
 import org.opensingular.singular.server.commons.service.dto.ProcessDTO;
 import org.opensingular.singular.server.commons.wicket.SingularSession;
 import org.opensingular.singular.server.commons.wicket.view.template.Content;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
-import org.opensingular.singular.util.wicket.datatable.column.BSActionColumn;
-import org.opensingular.singular.util.wicket.metronic.menu.DropdownMenu;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.metronic.menu.DropdownMenu;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.resource.Icone;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -40,7 +40,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 /**
  * Classe base para construição de caixas do servidor de petições

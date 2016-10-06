@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.core.wicket.entrada;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.util.Iterator;
 
@@ -10,10 +10,10 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import org.opensingular.singular.server.core.wicket.historico.HistoricoPage;
 import org.opensingular.singular.server.core.wicket.template.AbstractCaixaAnaliseContent;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
-import org.opensingular.singular.util.wicket.datatable.column.MetronicStatusColumn;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.datatable.column.MetronicStatusColumn;
 
 public class EntradaContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> {
 

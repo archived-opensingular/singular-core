@@ -5,7 +5,7 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.singular.server.commons.wicket.builder.HTMLParameters;
 import org.opensingular.singular.server.commons.wicket.builder.MarkupCreator;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;

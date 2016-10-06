@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.springframework.transaction.PlatformTransactionManager;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.schedule.IScheduledJob;
 import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
 

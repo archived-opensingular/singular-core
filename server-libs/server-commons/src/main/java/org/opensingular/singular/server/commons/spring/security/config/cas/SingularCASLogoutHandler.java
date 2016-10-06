@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.spring.security.config.cas;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.singular.server.commons.spring.security.config.SingularLogoutHandler;
 
 import javax.servlet.http.HttpServletRequest;

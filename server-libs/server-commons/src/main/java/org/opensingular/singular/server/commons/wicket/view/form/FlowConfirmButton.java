@@ -1,11 +1,11 @@
 package org.opensingular.singular.server.commons.wicket.view.form;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.singular.server.commons.exception.PetitionConcurrentModificationException;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;

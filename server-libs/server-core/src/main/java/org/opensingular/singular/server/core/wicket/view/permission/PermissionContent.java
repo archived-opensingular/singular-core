@@ -6,7 +6,7 @@
 package org.opensingular.singular.server.core.wicket.view.permission;
 
 import static org.opensingular.singular.server.commons.service.IServerMetadataREST.PATH_LIST_PERMISSIONS;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,14 +22,14 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.springframework.web.client.RestTemplate;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.service.PetitionService;
 import org.opensingular.singular.server.commons.spring.security.SingularPermission;
 import org.opensingular.singular.server.commons.wicket.view.template.Content;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 
 public class PermissionContent extends Content implements Loggable {
 

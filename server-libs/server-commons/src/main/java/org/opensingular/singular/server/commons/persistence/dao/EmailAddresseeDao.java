@@ -14,7 +14,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import org.opensingular.singular.server.commons.persistence.entity.email.EmailAddresseeEntity;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 
 @SuppressWarnings("unchecked")
 @Transactional(Transactional.TxType.MANDATORY)

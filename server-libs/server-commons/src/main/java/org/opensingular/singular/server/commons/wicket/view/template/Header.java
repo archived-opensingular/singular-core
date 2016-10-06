@@ -3,9 +3,9 @@ package org.opensingular.singular.server.commons.wicket.view.template;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 
-import org.opensingular.singular.util.wicket.template.SkinOptions;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import org.opensingular.lib.wicket.util.template.SkinOptions;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class Header extends Panel {
 

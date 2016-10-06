@@ -8,12 +8,12 @@ import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 
-import org.opensingular.singular.commons.base.SingularProperties;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.singular.server.commons.exception.SingularServerException;
-import org.opensingular.singular.support.persistence.BaseDAO;
-import org.opensingular.singular.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 
 public class ActorDAO extends BaseDAO<Actor, Integer> {

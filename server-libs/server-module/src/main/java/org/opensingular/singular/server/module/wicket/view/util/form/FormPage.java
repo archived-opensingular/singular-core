@@ -11,7 +11,7 @@ import org.wicketstuff.annotation.mount.MountPath;
 import javax.inject.Inject;
 import java.util.Optional;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 @MountPath("/view")

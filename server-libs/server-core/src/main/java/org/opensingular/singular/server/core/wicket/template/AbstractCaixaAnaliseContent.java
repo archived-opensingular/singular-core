@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.core.wicket.template;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +26,7 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.config.ServerContext;
 import org.opensingular.singular.server.commons.form.FormActions;
@@ -38,13 +38,13 @@ import org.opensingular.singular.server.commons.util.Parameters;
 import org.opensingular.singular.server.commons.wicket.SingularSession;
 import org.opensingular.singular.server.commons.wicket.view.template.Content;
 import org.opensingular.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
-import org.opensingular.singular.util.wicket.datatable.IBSAction;
-import org.opensingular.singular.util.wicket.datatable.column.BSActionColumn;
-import org.opensingular.singular.util.wicket.datatable.column.MetronicStatusColumn;
-import org.opensingular.singular.util.wicket.metronic.menu.DropdownMenu;
-import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.IBSAction;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.datatable.column.MetronicStatusColumn;
+import org.opensingular.lib.wicket.util.metronic.menu.DropdownMenu;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
+import org.opensingular.lib.wicket.util.resource.Icone;
 import static org.opensingular.flow.core.ws.BaseSingularRest.*;
 
 public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> extends Content implements Loggable {

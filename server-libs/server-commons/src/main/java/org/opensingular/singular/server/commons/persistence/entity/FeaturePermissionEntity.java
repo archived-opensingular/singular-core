@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.persistence.entity;
 
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
-import org.opensingular.singular.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;

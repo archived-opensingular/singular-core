@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.p.core.wicket.rascunho;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.util.List;
 
@@ -20,8 +20,8 @@ import org.opensingular.singular.server.commons.util.Parameters;
 import org.opensingular.singular.server.commons.wicket.view.util.DispatcherPageUtil;
 import org.opensingular.singular.server.core.wicket.ModuleLink;
 import org.opensingular.singular.server.p.core.wicket.view.AbstractPeticaoCaixaContent;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public class RascunhoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 

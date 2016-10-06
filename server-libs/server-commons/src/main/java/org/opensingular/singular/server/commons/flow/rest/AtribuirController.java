@@ -11,7 +11,7 @@ import javax.xml.ws.WebServiceException;
 
 import org.springframework.stereotype.Controller;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.core.ProcessInstance;

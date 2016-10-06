@@ -14,15 +14,15 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 
-import org.opensingular.singular.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.singular.server.commons.service.PetitionService;
 import org.opensingular.singular.server.commons.wicket.SingularSession;
 import org.opensingular.singular.server.core.wicket.concluida.ConcluidaPage;
 import org.opensingular.singular.server.core.wicket.inicio.InicioPage;
-import org.opensingular.singular.util.wicket.menu.MetronicMenu;
-import org.opensingular.singular.util.wicket.menu.MetronicMenuGroup;
-import org.opensingular.singular.util.wicket.menu.MetronicMenuItem;
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.menu.MetronicMenu;
+import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
+import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 
 @SuppressWarnings("serial")

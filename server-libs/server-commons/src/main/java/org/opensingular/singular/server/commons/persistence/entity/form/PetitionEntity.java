@@ -3,10 +3,10 @@ package org.opensingular.singular.server.commons.persistence.entity.form;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.singular.support.persistence.entity.BaseEntity;
-import org.opensingular.singular.support.persistence.enums.SimNao;
-import org.opensingular.singular.support.persistence.util.Constants;
-import org.opensingular.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.enums.SimNao;
+import org.opensingular.lib.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;

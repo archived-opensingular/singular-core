@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.exception;
 
-import org.opensingular.singular.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 
 /**
  * Exceções do Singular pet server e seus módulos

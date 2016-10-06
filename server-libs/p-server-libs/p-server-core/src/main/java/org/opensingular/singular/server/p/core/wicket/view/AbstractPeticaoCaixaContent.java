@@ -6,7 +6,7 @@
 package org.opensingular.singular.server.p.core.wicket.view;
 
 import static org.opensingular.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 import java.util.HashMap;
 import java.util.Map;

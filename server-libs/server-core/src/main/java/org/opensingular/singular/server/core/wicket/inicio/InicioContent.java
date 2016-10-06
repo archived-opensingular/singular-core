@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.server.core.wicket.inicio;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.net.URL;
 import java.util.Iterator;
@@ -18,7 +18,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.exception.SingularServerException;
 import org.opensingular.singular.server.commons.form.FormActions;
@@ -30,12 +30,12 @@ import org.opensingular.singular.server.commons.wicket.view.util.DispatcherPageU
 import org.opensingular.singular.server.core.wicket.ModuleLink;
 import org.opensingular.singular.server.core.wicket.historico.HistoricoPage;
 import org.opensingular.singular.server.core.wicket.template.AbstractCaixaAnaliseContent;
-import org.opensingular.singular.util.wicket.datatable.BSDataTable;
-import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
-import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
-import org.opensingular.singular.util.wicket.datatable.column.MetronicStatusColumn;
-import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
-import org.opensingular.singular.util.wicket.util.WicketUtils;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.datatable.column.MetronicStatusColumn;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public class InicioContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> {
 

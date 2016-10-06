@@ -15,7 +15,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 @StatelessComponent
 @MountPath("login")

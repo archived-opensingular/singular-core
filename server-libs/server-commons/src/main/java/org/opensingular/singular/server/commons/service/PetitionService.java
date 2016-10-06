@@ -24,8 +24,8 @@ import static org.opensingular.singular.server.commons.flow.rest.DefaultServerRE
 import static org.opensingular.singular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
 import static org.opensingular.singular.server.commons.util.Parameters.SIGLA_FORM_NAME;
 
-import org.opensingular.singular.commons.base.SingularException;
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.MTask;
 import org.opensingular.flow.core.MTransition;
@@ -84,7 +84,7 @@ import org.opensingular.singular.server.commons.spring.security.SingularPermissi
 import org.opensingular.singular.server.commons.util.PetitionUtil;
 import org.opensingular.singular.server.commons.wicket.view.form.FormPageConfig;
 import org.opensingular.singular.server.commons.wicket.view.util.DispatcherPageUtil;
-import org.opensingular.singular.support.persistence.enums.SimNao;
+import org.opensingular.lib.support.persistence.enums.SimNao;
 
 @Transactional
 public class PetitionService<T extends PetitionEntity> implements Loggable {

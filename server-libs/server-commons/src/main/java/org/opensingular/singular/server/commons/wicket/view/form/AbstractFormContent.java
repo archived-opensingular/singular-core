@@ -13,9 +13,9 @@ import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.singular.server.commons.wicket.view.template.Content;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
-import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -32,7 +32,7 @@ import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Optional;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public abstract class AbstractFormContent extends Content {
 

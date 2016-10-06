@@ -3,7 +3,7 @@ package org.opensingular.singular.server.core.wicket;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class ModuleLink extends Link<Object> {
 

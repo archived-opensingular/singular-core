@@ -10,7 +10,7 @@ import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
 import org.apache.wicket.markup.head.filter.JavaScriptAcceptingHeaderResponseFilter;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
 
-import org.opensingular.singular.util.wicket.template.SingularTemplate;
+import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
 public class SingularHeaderResponseDecorator implements IHeaderResponseDecorator {
 

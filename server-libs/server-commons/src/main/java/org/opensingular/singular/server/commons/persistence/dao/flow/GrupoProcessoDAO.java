@@ -6,7 +6,7 @@
 package org.opensingular.singular.server.commons.persistence.dao.flow;
 
 import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.List;

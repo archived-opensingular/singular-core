@@ -7,7 +7,7 @@ package org.opensingular.singular.server.commons.service.dto;
 
 import java.io.Serializable;
 
-import org.opensingular.singular.util.wicket.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 public class ItemAction implements Serializable {
 

@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.wicket.view.form;
 
-import org.opensingular.singular.commons.lambda.IBiConsumer;
+import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
@@ -14,7 +14,7 @@ import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.singular.server.commons.wicket.builder.HTMLParameters;
 import org.opensingular.singular.server.commons.wicket.builder.MarkupCreator;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;

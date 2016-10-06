@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.wicket.view.form;
 
-import org.opensingular.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.core.MTransition;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
@@ -27,9 +27,9 @@ import org.opensingular.singular.server.commons.wicket.SingularSession;
 import org.opensingular.singular.server.commons.wicket.builder.MarkupCreator;
 import org.opensingular.singular.server.commons.wicket.view.template.Content;
 import org.opensingular.singular.server.commons.wicket.view.template.Template;
-import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.opensingular.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import org.opensingular.singular.util.wicket.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -47,8 +47,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
-import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
 

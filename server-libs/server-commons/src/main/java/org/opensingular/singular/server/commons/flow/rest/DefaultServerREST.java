@@ -34,7 +34,7 @@ import org.opensingular.singular.server.commons.spring.security.AuthorizationSer
 import org.opensingular.singular.server.commons.spring.security.PermissionResolverService;
 import org.opensingular.singular.server.commons.spring.security.SingularPermission;
 import org.opensingular.singular.server.commons.util.PetitionUtil;
-import org.opensingular.singular.support.spring.util.AutoScanDisabled;
+import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 
 /**
  * Essa interface deve ser protegida de forma que apenas o próprio servidor possa

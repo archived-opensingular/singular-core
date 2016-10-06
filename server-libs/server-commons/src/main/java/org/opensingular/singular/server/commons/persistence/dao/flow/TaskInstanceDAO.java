@@ -7,7 +7,7 @@ import org.opensingular.singular.server.commons.persistence.entity.form.Petition
 import org.opensingular.singular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.singular.server.commons.spring.security.SingularPermission;
 import org.opensingular.singular.server.commons.util.JPAQueryUtil;
-import org.opensingular.singular.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.BaseDAO;
 import org.hibernate.Query;
 
 import java.util.Collections;
