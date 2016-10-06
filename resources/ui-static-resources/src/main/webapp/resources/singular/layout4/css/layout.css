@@ -415,9 +415,12 @@ Page Header
       .page-header.navbar .top-menu .navbar-nav > li.dropdown-user {
         padding: 0 0 0 10px; }
         .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle {
-          padding: 13px; }
+          padding: 13px;
+          display: table;
+          height: 100%; }
           .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > .username {
-            display: inline-block;
+            display: table-cell;
+            vertical-align: middle;
             font-size: 14px;
             font-weight: 600; }
             .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > .username i {
@@ -432,6 +435,16 @@ Page Header
             margin: 0;
             font-size: 14px;
             font-weight: 600; }
+          .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle:after {
+            font: normal normal normal 14px/1 FontAwesome;
+            font-size: inherit;
+            text-rendering: auto;
+            -webkit-font-smoothing: antialiased;
+            content: "\f078";
+            color: #40BAA7;
+            display: table-cell;
+            padding-left: 10px;
+            vertical-align: middle; }
         .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-menu {
           width: 175px; }
           .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-menu > li > a {
@@ -1881,7 +1894,7 @@ Theme Panel
 .upload-panel-body {
   margin-bottom: 15px; }
   .upload-panel-body .list-detail-empty {
-    background-color: #ffffff;
+    background-color: #e8e9f0;
     border: 1px solid currentColor;
     border-radius: 3px;
     position: relative; }
@@ -2017,7 +2030,7 @@ Theme Panel
 
 .list-detail-empty {
   color: rgba(74, 74, 74, 0.7);
-  background-color: #eaeef2; }
+  background-color: #e8e9f0; }
   .list-detail-empty .list-detail-empty-message {
     text-align: center;
     line-height: 48px;
@@ -2105,14 +2118,12 @@ Theme Panel
 
 .list-by-form-empty-state {
   padding: 15px;
-  background: #eaeef2;
+  background: #e8e9f0;
   color: rgba(74, 74, 74, 0.7);
   text-align: center; }
 
 .worklist {
   padding: 15px; }
-  .worklist thead tr:hover {
-    background-color: #fff; }
   .worklist thead tr th {
     border-bottom: 1px solid #dfdfdf;
     font-size: 12px;
@@ -2128,11 +2139,11 @@ Theme Panel
       .worklist th a:hover {
         color: #4d4d4d;
         text-decoration: none; }
+  .worklist tbody tr:hover {
+    color: #666666;
+    background-color: #f2f2f2; }
   .worklist tr {
     color: #acb1c2; }
-    .worklist tr:hover {
-      color: #666666;
-      background-color: #f2f2f2; }
     .worklist tr:first-child td {
       border-top: 1px solid #acb1c2 !important; }
     .worklist tr td {
