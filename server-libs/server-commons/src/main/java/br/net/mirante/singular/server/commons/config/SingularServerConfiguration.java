@@ -55,7 +55,7 @@ public class SingularServerConfiguration implements ServletContextAware {
     public String[] getDefinitionsPackages() {
         return definitionsPackages;
     }
-
+    //TODO (lucas.lopes) - definir outra forma. Anotação no processo talvez.
     public Map<Class<? extends
             ProcessDefinition>, String> getProcessDefinitionFormNameMap() {
         return Collections.unmodifiableMap(processDefinitionFormNameMap);

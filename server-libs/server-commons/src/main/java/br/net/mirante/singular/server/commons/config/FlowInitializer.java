@@ -27,6 +27,7 @@ public abstract class FlowInitializer {
         return DefaultServerREST.class;
     }
 
+    //TODO (lucas.lopes) - definir outra forma. Anotação no processo talvez.
     public abstract Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap();
 
 
