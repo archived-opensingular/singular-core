@@ -5,7 +5,7 @@ import org.springframework.context.annotation.DependsOn;
 
 import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.core.service.IUserService;
-import org.opensingular.singular.flow.schedule.IScheduleService;
+import org.opensingular.flow.schedule.IScheduleService;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.singular.form.persistence.dao.AttachmentContentDao;
 import org.opensingular.singular.form.persistence.dao.AttachmentDao;

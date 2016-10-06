@@ -5,8 +5,8 @@ import javax.inject.Inject;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.flow.schedule.IScheduledJob;
-import org.opensingular.singular.flow.schedule.quartz.QuartzScheduleService;
+import org.opensingular.flow.schedule.IScheduledJob;
+import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
 
 public class TransactionalQuartzScheduledService extends QuartzScheduleService implements Loggable{
 

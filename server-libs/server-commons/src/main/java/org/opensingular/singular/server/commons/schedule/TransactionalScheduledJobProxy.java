@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.schedule;
 
-import org.opensingular.singular.flow.schedule.IScheduleData;
-import org.opensingular.singular.flow.schedule.IScheduledJob;
+import org.opensingular.flow.schedule.IScheduleData;
+import org.opensingular.flow.schedule.IScheduledJob;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 

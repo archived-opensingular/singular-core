@@ -7,8 +7,8 @@ package org.opensingular.singular.server.core.service;
 import javax.inject.Inject;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.flow.schedule.IScheduleData;
-import org.opensingular.singular.flow.schedule.IScheduledJob;
+import org.opensingular.flow.schedule.IScheduleData;
+import org.opensingular.flow.schedule.IScheduledJob;
 import org.opensingular.singular.server.commons.service.EmailPersistenceService;
 import org.opensingular.singular.server.commons.service.dto.Email.Addressee;
 

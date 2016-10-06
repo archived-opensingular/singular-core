@@ -3,8 +3,8 @@ package org.opensingular.singular.server.core.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 
-import org.opensingular.singular.flow.schedule.IScheduleService;
-import org.opensingular.singular.flow.schedule.ScheduleDataBuilder;
+import org.opensingular.flow.schedule.IScheduleService;
+import org.opensingular.flow.schedule.ScheduleDataBuilder;
 import org.opensingular.singular.server.commons.config.SchedulerInitializer;
 import org.opensingular.singular.server.core.service.DefaultMailSenderREST;
 import org.opensingular.singular.server.core.service.EmailSender;
