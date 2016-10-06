@@ -5,13 +5,13 @@
 
 package org.opensingular.singular.showcase.dao.form;
 
-import org.opensingular.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeCredenciamentoEscolaGoverno;
-import org.opensingular.singular.exemplos.notificacaosimplificada.form.baixorisco.STypeNotificacaoSimplificadaBaixoRisco;
-import org.opensingular.singular.exemplos.notificacaosimplificada.form.dinamizado.STypeNotificacaoSimplificadaDinamizado;
-import org.opensingular.singular.exemplos.notificacaosimplificada.form.gas.STypeNotificacaoSimplificadaGasMedicinal;
-import org.opensingular.singular.exemplos.notificacaosimplificada.form.habilitacao.STypeHabilitacaoEmpresa;
-import org.opensingular.singular.exemplos.notificacaosimplificada.form.vegetal.STypeNotificacaoSimplificadaFitoterapico;
-import org.opensingular.singular.exemplos.opas.gestaoobrasservicosaquisicoes.form.STypeGestaoObras;
+import org.opensingular.form.exemplos.emec.credenciamentoescolagoverno.form.STypeCredenciamentoEscolaGoverno;
+import org.opensingular.form.exemplos.notificacaosimplificada.form.baixorisco.STypeNotificacaoSimplificadaBaixoRisco;
+import org.opensingular.form.exemplos.notificacaosimplificada.form.dinamizado.STypeNotificacaoSimplificadaDinamizado;
+import org.opensingular.form.exemplos.notificacaosimplificada.form.gas.STypeNotificacaoSimplificadaGasMedicinal;
+import org.opensingular.form.exemplos.notificacaosimplificada.form.habilitacao.STypeHabilitacaoEmpresa;
+import org.opensingular.form.exemplos.notificacaosimplificada.form.vegetal.STypeNotificacaoSimplificadaFitoterapico;
+import org.opensingular.form.exemplos.opas.gestaoobrasservicosaquisicoes.form.STypeGestaoObras;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.SPackage;
