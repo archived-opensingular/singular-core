@@ -41,6 +41,7 @@ import org.opensingular.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import org.opensingular.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import org.opensingular.singular.util.wicket.bootstrap.layout.table.BSTSection;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
 
 public class TableListMapper extends AbstractListaMapper {
 

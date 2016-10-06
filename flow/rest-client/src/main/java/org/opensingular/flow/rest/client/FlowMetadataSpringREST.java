@@ -24,8 +24,9 @@ import org.springframework.web.client.RestTemplate;
 import org.opensingular.flow.core.MBPMUtil;
 import org.opensingular.flow.core.authorization.AccessLevel;
 import org.opensingular.flow.core.service.IFlowMetadataService;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.*;
 
-class FlowMetadataSpringREST implements IFlowMetadataService{
+class FlowMetadataSpringREST implements IFlowMetadataService {
 
     static final Logger logger = LoggerFactory.getLogger(MBPMUtil.class);
     
