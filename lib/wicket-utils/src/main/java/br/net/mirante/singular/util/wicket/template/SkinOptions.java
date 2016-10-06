@@ -67,13 +67,13 @@ public class SkinOptions implements Serializable, Loggable {
     }
 
     public void selectSkin(Skin selection) {
-        final Cookie cookie = new Cookie("skin", "" );
-        cookie.setPath("/" );
+        final Cookie cookie = new Cookie("skin", "");
+        cookie.setPath("/");
         if (selection != null) {
             final JSONObject json = new JSONObject();
             json.put("name", selection.getName());
             try {
-                cookie.setValue(URLEncoder.encode(json.toString(), "UTF-8" ));
+                cookie.setValue(URLEncoder.encode(json.toString(), "UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 getLogger().error(e.getMessage(), e);
             }
@@ -84,36 +84,35 @@ public class SkinOptions implements Serializable, Loggable {
 
     public Skin currentSkin() {
         if (current == null) {
-            final Cookie cookie = request().getCookie("skin" );
+            final Cookie cookie = request().getCookie("skin");
             if (cookie != null) {
-                return options()
-                        .stream()
-                        .filter(s -> {
-                            try {
-                                return s.getName().equals(new JSONObject(URLDecoder.decode(cookie.getValue(), "UTF-8" )).get("name" ));
-                            } catch (UnsupportedEncodingException e) {
-                                getLogger().error(e.getMessage(), e);
-                                return false;
-                            }
-                        })
-                        .findFirst()
-                        .orElse(getDefaultSkin());
+                try {
+                    String name = (String) new JSONObject(URLDecoder.decode(cookie.getValue(), "UTF-8")).get("name");
+                    return options()
+                            .stream()
+                            .filter(s -> s.getName().equals(name))
+                            .findFirst()
+                            .orElseGet(() -> {
+                                if (!getDefaultSkin().isPresent()) {
+                                    addDefaulSkin(name);
+                                }
+                                return getDefaultSkin().orElse(fallBackSkin());
+                            });
+                } catch (UnsupportedEncodingException e) {
+                    getLogger().error(e.getMessage(), e);
+                    return getDefaultSkin().orElse(fallBackSkin());
+                }
             }
-            return getDefaultSkin();
+            return getDefaultSkin().orElse(fallBackSkin());
         }
         return current;
     }
 
-    public Skin getDefaultSkin() {
+    public Optional<Skin> getDefaultSkin() {
         return options()
                 .stream()
                 .filter(s -> s.defaultSkin)
-                .findFirst()
-                .orElseGet(() -> {
-                    addDefaulSkin("singular" );
-                    selectSkin(getDefaultSkin());
-                    return getDefaultSkin();
-                });
+                .findFirst();
     }
 
     private static WebRequest request() {
@@ -127,6 +126,13 @@ public class SkinOptions implements Serializable, Loggable {
         } else {
             return Optional.empty();
         }
+    }
+
+    public Skin fallBackSkin() {
+        return getDefaultSkin().orElseGet(() -> {
+            addDefaulSkin("singular");
+            return options().get(0);
+        });
     }
 
 }
