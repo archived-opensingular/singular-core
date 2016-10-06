@@ -15,8 +15,8 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.validation.InstanceValidationContext;
-import org.opensingular.singular.form.wicket.model.SInstanceRootModel;
-import org.opensingular.singular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.form.wicket.model.SInstanceRootModel;
+import org.opensingular.form.wicket.util.WicketFormProcessing;
 
 public class PartialValidationButton extends AjaxButton {
 

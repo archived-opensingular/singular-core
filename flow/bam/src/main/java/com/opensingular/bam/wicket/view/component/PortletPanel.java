@@ -42,9 +42,9 @@ import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.MformPersistenciaXML;
-import org.opensingular.singular.form.wicket.component.SingularForm;
-import org.opensingular.singular.form.wicket.component.SingularSaveButton;
-import org.opensingular.singular.form.wicket.panel.SingularFormPanel;
+import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularSaveButton;
+import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.singular.util.wicket.modal.BSModalBorder;
 import org.opensingular.singular.util.wicket.util.WicketUtils;
 

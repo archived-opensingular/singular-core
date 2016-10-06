@@ -7,8 +7,8 @@ package org.opensingular.singular.form.showcase.view.page.form.crud.services;
 
 import org.opensingular.form.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.singular.form.spring.SpringSDocumentFactory;
-import org.opensingular.singular.form.spring.SpringServiceRegistry;
+import org.opensingular.form.spring.SpringSDocumentFactory;
+import org.opensingular.form.spring.SpringServiceRegistry;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

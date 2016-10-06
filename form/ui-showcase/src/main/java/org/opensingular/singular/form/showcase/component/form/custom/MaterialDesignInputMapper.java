@@ -13,10 +13,10 @@ import org.apache.wicket.model.Model;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.singular.form.wicket.IWicketComponentMapper;
-import org.opensingular.singular.form.wicket.WicketBuildContext;
-import org.opensingular.singular.form.wicket.model.AttributeModel;
-import org.opensingular.singular.form.wicket.model.SInstanceValueModel;
+import org.opensingular.form.wicket.IWicketComponentMapper;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.model.AttributeModel;
+import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSLabel;
 import org.opensingular.singular.util.wicket.output.BOutputPanel;

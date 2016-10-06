@@ -19,25 +19,25 @@
     <bean id="uiAdminWicketFilterContext" class="org.opensingular.singular.form.showcase.wicket.UIAdminWicketFilterContext"/>
 
 
-    <bean id="singularFormConfig" class="org.opensingular.singular.form.wicket.SingularFormConfigWicketImpl">
+    <bean id="singularFormConfig" class="org.opensingular.form.wicket.SingularFormConfigWicketImpl">
         <property name="serviceRegistry" ref="springServiceRegistry"/>
     </bean>
 
-    <bean id="singularFormContext" class="org.opensingular.singular.form.wicket.SingularFormContextWicketImpl"
+    <bean id="singularFormContext" class="org.opensingular.form.wicket.SingularFormContextWicketImpl"
           factory-bean="singularFormConfig" factory-method="createContext"/>
 
-    <bean id="springServiceRegistry" class="org.opensingular.singular.form.spring.SpringServiceRegistry"/>
+    <bean id="springServiceRegistry" class="org.opensingular.form.spring.SpringServiceRegistry"/>
 
     <bean id="showcaseTypeLoader" class="org.opensingular.singular.form.showcase.dao.form.ShowcaseTypeLoader" />
 
-	<bean id="formConfigWithoutDatabase" class="org.opensingular.singular.form.spring.SpringFormConfig">
+	<bean id="formConfigWithoutDatabase" class="org.opensingular.form.spring.SpringFormConfig">
         <property name="typeLoader" ref="showcaseTypeLoader"/>
 	</bean>
 	
 	<bean id="showcaseDatabaseDocumentFactory" 
 		  class="org.opensingular.singular.form.showcase.view.page.form.crud.services.ShowcaseDocumentFactory"/>
 
-	<bean id="formConfigWithDatabase" class="org.opensingular.singular.form.spring.SpringFormConfig" >
+	<bean id="formConfigWithDatabase" class="org.opensingular.form.spring.SpringFormConfig" >
         <property name="typeLoader" ref="showcaseTypeLoader"/>
         <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
 	</bean>

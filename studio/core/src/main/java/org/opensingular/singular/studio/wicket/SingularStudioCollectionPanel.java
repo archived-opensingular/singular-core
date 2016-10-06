@@ -1,8 +1,8 @@
 package org.opensingular.singular.studio.wicket;
 
 import org.opensingular.form.persistence.FormKey;
-import org.opensingular.singular.form.wicket.enums.AnnotationMode;
-import org.opensingular.singular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.enums.AnnotationMode;
+import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.studio.core.CollectionCanvas;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;

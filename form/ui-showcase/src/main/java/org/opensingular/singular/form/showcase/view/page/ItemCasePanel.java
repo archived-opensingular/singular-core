@@ -21,7 +21,7 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.showcase.component.CaseBase;
 import org.opensingular.singular.form.showcase.component.ResourceRef;
-import org.opensingular.singular.form.wicket.util.ProcessadorCodigoFonte;
+import org.opensingular.form.wicket.util.ProcessadorCodigoFonte;
 import org.opensingular.singular.util.wicket.tab.BSTabPanel;
 
 public abstract class ItemCasePanel<T extends CaseBase> extends Panel {

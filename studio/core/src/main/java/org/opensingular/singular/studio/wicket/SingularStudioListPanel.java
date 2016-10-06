@@ -2,8 +2,8 @@ package org.opensingular.singular.studio.wicket;
 
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
-import org.opensingular.singular.form.wicket.enums.ViewMode;
-import org.opensingular.singular.form.wicket.model.SInstanceRootModel;
+import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.singular.studio.core.CollectionCanvas;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSGrid;

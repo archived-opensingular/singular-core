@@ -7,7 +7,7 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByForm;
-import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Test;
 

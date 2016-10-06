@@ -30,7 +30,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import static org.opensingular.singular.form.wicket.helpers.TestFinders.findOnForm;
+import static org.opensingular.form.wicket.helpers.TestFinders.findOnForm;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @Ignore("Problems with maven environment")

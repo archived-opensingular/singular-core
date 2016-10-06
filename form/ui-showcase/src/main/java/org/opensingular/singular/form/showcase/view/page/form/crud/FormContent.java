@@ -31,12 +31,12 @@ import org.opensingular.singular.form.showcase.dao.form.ExampleDataDAO;
 import org.opensingular.singular.form.showcase.dao.form.ExampleDataDTO;
 import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
 import org.opensingular.singular.form.showcase.view.template.Content;
-import org.opensingular.singular.form.wicket.component.SingularForm;
-import org.opensingular.singular.form.wicket.component.SingularSaveButton;
-import org.opensingular.singular.form.wicket.component.SingularValidationButton;
-import org.opensingular.singular.form.wicket.enums.AnnotationMode;
-import org.opensingular.singular.form.wicket.enums.ViewMode;
-import org.opensingular.singular.form.wicket.panel.SingularFormPanel;
+import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularSaveButton;
+import org.opensingular.form.wicket.component.SingularValidationButton;
+import org.opensingular.form.wicket.enums.AnnotationMode;
+import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.panel.SingularFormPanel;
 
 public class FormContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 

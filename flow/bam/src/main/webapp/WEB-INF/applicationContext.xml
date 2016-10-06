@@ -17,17 +17,17 @@
     <beans profile="production,development">
         <import resource="${FLOW_BAM_SECURITY}"/>
 
-        <bean id="singularFormConfig" class="org.opensingular.singular.form.wicket.SingularFormConfigWicketImpl">
+        <bean id="singularFormConfig" class="org.opensingular.form.wicket.SingularFormConfigWicketImpl">
             <property name="serviceRegistry" ref="springServiceRegistry"/>
         </bean>
 
-	    <bean id="springServiceRegistry" class="org.opensingular.singular.form.spring.SpringServiceRegistry"/>
+	    <bean id="springServiceRegistry" class="org.opensingular.form.spring.SpringServiceRegistry"/>
 
-        <bean id="singularFormContext" class="org.opensingular.singular.form.wicket.SingularFormContextWicketImpl"
+        <bean id="singularFormContext" class="org.opensingular.form.wicket.SingularFormContextWicketImpl"
               factory-bean="singularFormConfig" factory-method="createContext">
         </bean>
 
-		<bean id="bamFilterformConfig" class="org.opensingular.singular.form.spring.SpringFormConfig">
+		<bean id="bamFilterformConfig" class="org.opensingular.form.spring.SpringFormConfig">
 			<!-- 
 	        <property name="typeLoader" ref="showcaseTypeLoader"/>
 	        <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>

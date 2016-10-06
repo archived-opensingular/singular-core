@@ -13,7 +13,7 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.type.country.brazil.STypeCEP;
 import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.view.SViewListByMasterDetail;
-import org.opensingular.singular.form.wicket.enums.AnnotationMode;
+import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.singular.form.showcase.component.CaseItem;
 import org.opensingular.singular.form.showcase.component.Group;
 import org.opensingular.singular.form.showcase.component.Resource;

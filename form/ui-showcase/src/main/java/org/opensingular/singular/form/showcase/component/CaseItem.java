@@ -11,7 +11,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.opensingular.singular.form.wicket.enums.AnnotationMode;
+import org.opensingular.form.wicket.enums.AnnotationMode;
 
 @Inherited
 @Retention(value = RetentionPolicy.RUNTIME)

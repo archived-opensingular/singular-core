@@ -27,7 +27,7 @@ import com.opensingular.bam.wicket.view.page.dashboard.DashboardPage;
 import com.opensingular.bam.wicket.view.template.Content;
 import org.opensingular.flow.core.authorization.AccessLevel;
 import org.opensingular.flow.core.dto.IDefinitionDTO;
-import org.opensingular.singular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.singular.util.wicket.ajax.ActionAjaxButton;
 import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
 import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;

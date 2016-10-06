@@ -23,7 +23,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
-import org.opensingular.singular.form.wicket.feedback.SFeedbackPanel;
+import org.opensingular.form.wicket.feedback.SFeedbackPanel;
 import org.opensingular.singular.form.showcase.component.ShowCaseType;
 import org.opensingular.singular.form.showcase.dao.form.ShowcaseTypeLoader;
 import org.opensingular.singular.form.showcase.view.SingularWicketContainer;

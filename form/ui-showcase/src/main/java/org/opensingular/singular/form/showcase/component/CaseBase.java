@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.opensingular.singular.form.wicket.enums.AnnotationMode;
+import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.singular.form.showcase.view.page.ItemCasePanel;
 
 /**

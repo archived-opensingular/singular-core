@@ -19,7 +19,7 @@ import org.opensingular.form.SType;
 import org.opensingular.singular.form.showcase.component.CaseBaseForm;
 import org.opensingular.singular.form.showcase.component.ShowCaseTable;
 import org.opensingular.singular.form.showcase.view.page.form.examples.STypeCurriculo;
-import org.opensingular.singular.form.spring.SpringTypeLoader;
+import org.opensingular.form.spring.SpringTypeLoader;
 import org.opensingular.singular.form.showcase.component.CaseBase;
 import org.opensingular.singular.form.showcase.component.ShowCaseType;
 import org.opensingular.singular.form.showcase.view.page.form.examples.STypeExample;

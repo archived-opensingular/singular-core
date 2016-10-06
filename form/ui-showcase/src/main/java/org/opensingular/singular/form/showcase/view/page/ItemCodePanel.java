@@ -13,7 +13,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.form.wicket.util.ProcessadorCodigoFonte;
+import org.opensingular.form.wicket.util.ProcessadorCodigoFonte;
 import org.opensingular.singular.util.wicket.util.WicketUtils;
 
 public class ItemCodePanel extends Panel {

@@ -8,8 +8,8 @@ package org.opensingular.form.exemplos.canabidiol.custom;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 
-import org.opensingular.singular.form.wicket.mapper.BooleanMapper;
-import org.opensingular.singular.form.wicket.model.AttributeModel;
+import org.opensingular.form.wicket.mapper.BooleanMapper;
+import org.opensingular.form.wicket.model.AttributeModel;
 
 /**
  * Mapper customizado para substituir os "\n"

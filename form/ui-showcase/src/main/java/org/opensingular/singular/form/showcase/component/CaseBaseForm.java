@@ -9,7 +9,7 @@ import org.opensingular.form.SDictionary;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.singular.form.wicket.enums.AnnotationMode;
+import org.opensingular.form.wicket.enums.AnnotationMode;
 
 import java.util.Optional;
 
