@@ -9,7 +9,7 @@ public enum AddresseType {
     BCC("Bcc", RecipientType.BCC)
     ;
 
-    public static final String CLASS_NAME = "org.opensingular.singular.server.commons.persistence.entity.enums.AddresseType";
+    public static final String CLASS_NAME = "org.opensingular.server.commons.persistence.entity.enums.AddresseType";
 
     private final String cod;
     private final RecipientType recipientType;
