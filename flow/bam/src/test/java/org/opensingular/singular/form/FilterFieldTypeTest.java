@@ -2,11 +2,11 @@ package org.opensingular.singular.form;
 
 import java.util.Arrays;
 
-import org.opensingular.singular.bam.form.FilterFieldType;
+import com.opensingular.bam.form.FilterFieldType;
 import org.junit.Test;
 
-import org.opensingular.singular.bamclient.portlet.filter.FieldType;
-import static org.opensingular.singular.bam.form.FilterFieldType.valueOfFieldType;
+import com.opensingular.bam.client.portlet.filter.FieldType;
+import static com.opensingular.bam.form.FilterFieldType.valueOfFieldType;
 import static org.junit.Assert.assertTrue;
 
 

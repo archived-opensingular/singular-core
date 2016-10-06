@@ -4,12 +4,12 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.opensingular.singular.bamclient.chart.PieChart;
-import org.opensingular.singular.bamclient.portlet.AmChartPortletConfig;
-import org.opensingular.singular.bamclient.portlet.DataEndpoint;
-import org.opensingular.singular.bamclient.portlet.MorrisChartPortletConfig;
-import org.opensingular.singular.bamclient.portlet.PortletConfig;
-import org.opensingular.singular.bam.spring.ObjectMapperFactory;
+import com.opensingular.bam.client.chart.PieChart;
+import com.opensingular.bam.client.portlet.AmChartPortletConfig;
+import com.opensingular.bam.client.portlet.DataEndpoint;
+import com.opensingular.bam.client.portlet.MorrisChartPortletConfig;
+import com.opensingular.bam.client.portlet.PortletConfig;
+import com.opensingular.bam.spring.ObjectMapperFactory;
 import junit.framework.TestCase;
 
 public class PortletConfigSerializationTest extends TestCase {

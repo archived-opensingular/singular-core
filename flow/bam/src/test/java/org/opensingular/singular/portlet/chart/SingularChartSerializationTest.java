@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.opensingular.singular.bamclient.builder.amchart.AmChartValueField;
-import org.opensingular.singular.bamclient.chart.AreaChart;
-import org.opensingular.singular.bamclient.chart.ColumnSerialChart;
-import org.opensingular.singular.bamclient.chart.DonutPieChart;
-import org.opensingular.singular.bamclient.chart.LineSerialChart;
-import org.opensingular.singular.bamclient.chart.PieChart;
-import org.opensingular.singular.bamclient.chart.SingularChart;
-import org.opensingular.singular.bam.spring.ObjectMapperFactory;
+import com.opensingular.bam.client.builder.amchart.AmChartValueField;
+import com.opensingular.bam.client.chart.AreaChart;
+import com.opensingular.bam.client.chart.ColumnSerialChart;
+import com.opensingular.bam.client.chart.DonutPieChart;
+import com.opensingular.bam.client.chart.LineSerialChart;
+import com.opensingular.bam.client.chart.PieChart;
+import com.opensingular.bam.client.chart.SingularChart;
+import com.opensingular.bam.spring.ObjectMapperFactory;
 import junit.framework.TestCase;
 
 public class SingularChartSerializationTest extends TestCase {

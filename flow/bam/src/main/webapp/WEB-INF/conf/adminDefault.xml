@@ -35,6 +35,6 @@
         <bean class="org.opensingular.singular.rest.client.FlowMetadataProvider"/>
     </beans>
     <beans profile="development">
-        <bean class="org.opensingular.singular.bam.util.FlowMetadataProviderMock"/>
+        <bean class="com.opensingular.bam.util.FlowMetadataProviderMock"/>
     </beans>
 </beans>

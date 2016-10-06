@@ -23,7 +23,7 @@
         <property name="packagesToScan" value="org.opensingular.mirante"/>
         <property name="hibernateProperties">
             <props>
-                <prop key="hibernate.dialect">org.opensingular.singular.bam.persistence.hibernate.SingularSQL2005Dialect</prop>
+                <prop key="hibernate.dialect">com.opensingular.bam.persistence.hibernate.SingularSQL2005Dialect</prop>
                 <prop key="hibernate.connection.isolation">2</prop>
                 <prop key="hibernate.jdbc.batch_size">30</prop>
                 <prop key="hibernate.show_sql">${database.show_sql}</prop>

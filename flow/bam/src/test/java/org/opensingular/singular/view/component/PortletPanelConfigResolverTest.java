@@ -1,12 +1,12 @@
 package org.opensingular.singular.view.component;
 
-import org.opensingular.singular.bam.wicket.view.component.AmChartViewResultPanel;
-import org.opensingular.singular.bam.wicket.view.component.ViewResultPanel;
+import com.opensingular.bam.wicket.view.component.AmChartViewResultPanel;
+import com.opensingular.bam.wicket.view.component.ViewResultPanel;
 import org.apache.wicket.util.tester.WicketTester;
 
-import org.opensingular.singular.bamclient.portlet.AmChartPortletConfig;
-import org.opensingular.singular.bamclient.portlet.PortletContext;
-import static org.opensingular.singular.bam.wicket.view.component.PortletViewConfigResolver.newViewResult;
+import com.opensingular.bam.client.portlet.AmChartPortletConfig;
+import com.opensingular.bam.client.portlet.PortletContext;
+import static com.opensingular.bam.wicket.view.component.PortletViewConfigResolver.newViewResult;
 import junit.framework.TestCase;
 import static org.apache.wicket.model.Model.of;
 
