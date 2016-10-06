@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.spring;
 
-import org.opensingular.singular.form.context.SingularFormContext;
+import org.opensingular.form.context.SingularFormContext;
 import org.opensingular.singular.form.spring.SpringServiceRegistry;
 import org.opensingular.singular.form.wicket.SingularFormConfigWicket;
 import org.opensingular.singular.form.wicket.SingularFormConfigWicketImpl;

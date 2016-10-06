@@ -12,12 +12,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
-import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.singular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.singular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.singular.form.persistence.service.AttachmentPersistenceService;
-import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
-import org.opensingular.singular.form.validation.SingularEmailValidator;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.validation.SingularEmailValidator;
 import org.opensingular.singular.server.commons.exception.SingularServerException;
 import org.opensingular.singular.server.commons.persistence.dao.EmailAddresseeDao;
 import org.opensingular.singular.server.commons.persistence.dao.EmailDao;

@@ -6,9 +6,9 @@
 package org.opensingular.singular.server.commons.spring.security;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.form.SFormUtil;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SType;
+import org.opensingular.form.context.SFormConfig;
 import org.opensingular.singular.form.persistence.entity.FormEntity;
 import org.opensingular.singular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.singular.persistence.entity.ProcessDefinitionEntity;

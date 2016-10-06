@@ -8,7 +8,7 @@ package org.opensingular.singular.server.commons.spring.security;
 import org.opensingular.singular.commons.util.Loggable;
 import org.opensingular.singular.flow.core.Flow;
 import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.form.SFormUtil;
+import org.opensingular.form.SFormUtil;
 import org.opensingular.singular.server.commons.config.SingularServerConfiguration;
 import org.opensingular.singular.server.commons.flow.rest.ActionConfig;
 import org.opensingular.singular.server.commons.flow.rest.ActionDefinition;

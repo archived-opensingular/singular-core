@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.wicket.view.form;
 
 
-import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.form.context.SFormConfig;
 import org.opensingular.singular.form.service.IFormService;
 import org.opensingular.singular.server.commons.wicket.view.template.Content;
 import org.opensingular.singular.server.commons.wicket.view.template.Template;

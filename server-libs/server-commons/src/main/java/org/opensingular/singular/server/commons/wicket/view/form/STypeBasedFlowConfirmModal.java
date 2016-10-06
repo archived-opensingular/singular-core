@@ -1,12 +1,12 @@
 package org.opensingular.singular.server.commons.wicket.view.form;
 
 import org.opensingular.singular.commons.lambda.IBiConsumer;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.context.SFormConfig;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.event.SInstanceEventType;
-import org.opensingular.singular.form.persistence.FormKey;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.event.SInstanceEventType;
+import org.opensingular.form.persistence.FormKey;
 import org.opensingular.singular.form.service.IFormService;
 import org.opensingular.singular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.form.wicket.model.SInstanceRootModel;

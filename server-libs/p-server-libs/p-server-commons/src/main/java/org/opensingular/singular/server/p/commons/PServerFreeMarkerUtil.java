@@ -1,8 +1,8 @@
 package org.opensingular.singular.server.p.commons;
 
 
-import org.opensingular.singular.form.SingularFormException;
-import org.opensingular.singular.form.provider.FreemarkerUtil;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.provider.FreemarkerUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.ext.beans.BeansWrapper;

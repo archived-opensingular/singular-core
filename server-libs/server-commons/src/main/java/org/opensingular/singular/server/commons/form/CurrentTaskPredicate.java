@@ -4,8 +4,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.opensingular.singular.flow.core.builder.ITaskDefinition;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.singular.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.singular.persistence.entity.TaskInstanceEntity;
 import org.opensingular.singular.server.commons.wicket.view.form.AbstractFormContent;

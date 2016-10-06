@@ -1,10 +1,10 @@
 package org.opensingular.singular.server.commons.wicket.view.form;
 
-import org.opensingular.singular.form.RefService;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.context.SFormConfig;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.singular.form.wicket.component.SingularButton;
 import org.opensingular.singular.form.wicket.component.SingularValidationButton;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;

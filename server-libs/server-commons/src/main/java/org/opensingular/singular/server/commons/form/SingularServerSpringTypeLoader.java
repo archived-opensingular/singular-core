@@ -10,9 +10,9 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SFormUtil;
-import org.opensingular.singular.form.SType;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SType;
 import org.opensingular.singular.form.spring.SpringTypeLoader;
 import org.opensingular.singular.server.commons.config.SingularServerConfiguration;
 

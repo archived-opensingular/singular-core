@@ -22,11 +22,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.SetMultimap;
 
-import org.opensingular.singular.form.SingularFormException;
-import org.opensingular.singular.form.io.HashUtil;
-import org.opensingular.singular.form.io.IOUtil;
-import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
-import org.opensingular.singular.form.type.core.attachment.handlers.FileSystemAttachmentRef;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.io.HashUtil;
+import org.opensingular.form.io.IOUtil;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentRef;
 import org.opensingular.singular.server.commons.persistence.entity.email.EmailAddresseeEntity;
 import org.opensingular.singular.server.commons.persistence.entity.enums.AddresseType;
 

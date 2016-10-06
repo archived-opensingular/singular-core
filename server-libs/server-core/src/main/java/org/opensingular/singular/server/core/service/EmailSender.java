@@ -20,7 +20,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.opensingular.singular.commons.base.SingularProperties;
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.singular.server.commons.config.ConfigProperties;
 import org.opensingular.singular.server.commons.service.dto.Email;
 import org.opensingular.singular.server.commons.service.dto.Email.Addressee;

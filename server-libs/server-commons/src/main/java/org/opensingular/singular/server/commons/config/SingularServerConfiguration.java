@@ -2,7 +2,7 @@ package org.opensingular.singular.server.commons.config;
 
 
 import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.form.SType;
+import org.opensingular.form.SType;
 import org.springframework.web.context.ServletContextAware;
 
 import javax.servlet.ServletContext;
