@@ -2,7 +2,7 @@ package org.opensingular.singular.server.commons.wicket.view.form;
 
 import org.opensingular.singular.commons.util.Loggable;
 import org.opensingular.form.SInstance;
-import org.opensingular.singular.form.wicket.component.SingularSaveButton;
+import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.singular.server.commons.exception.PetitionConcurrentModificationException;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.singular.util.wicket.modal.BSModalBorder;

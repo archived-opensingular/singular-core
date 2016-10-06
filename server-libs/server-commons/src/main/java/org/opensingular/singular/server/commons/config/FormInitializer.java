@@ -1,8 +1,8 @@
 package org.opensingular.singular.server.commons.config;
 
 import org.opensingular.form.SType;
-import org.opensingular.singular.form.spring.SpringSDocumentFactory;
-import org.opensingular.singular.form.spring.SpringTypeLoader;
+import org.opensingular.form.spring.SpringSDocumentFactory;
+import org.opensingular.form.spring.SpringTypeLoader;
 import org.opensingular.singular.server.commons.form.SingularServerDocumentFactory;
 import org.opensingular.singular.server.commons.form.SingularServerFormConfigFactory;
 import org.opensingular.singular.server.commons.form.SingularServerSpringTypeLoader;

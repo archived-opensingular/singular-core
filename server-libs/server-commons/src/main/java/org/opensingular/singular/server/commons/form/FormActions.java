@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.form;
 
-import org.opensingular.singular.form.wicket.enums.AnnotationMode;
-import org.opensingular.singular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.enums.AnnotationMode;
+import org.opensingular.form.wicket.enums.ViewMode;
 
 public enum FormActions {
 

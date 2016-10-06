@@ -2,7 +2,7 @@ package org.opensingular.singular.server.commons.form;
 
 import org.opensingular.form.RefService;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.singular.form.spring.SpringSDocumentFactory;
+import org.opensingular.form.spring.SpringSDocumentFactory;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 

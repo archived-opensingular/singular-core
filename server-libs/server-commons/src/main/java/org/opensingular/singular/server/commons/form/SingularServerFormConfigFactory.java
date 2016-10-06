@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.springframework.context.annotation.Bean;
 
-import org.opensingular.singular.form.spring.SpringFormConfig;
+import org.opensingular.form.spring.SpringFormConfig;
 
 public class SingularServerFormConfigFactory {
 

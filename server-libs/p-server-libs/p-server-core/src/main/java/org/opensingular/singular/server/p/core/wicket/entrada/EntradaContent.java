@@ -1,8 +1,8 @@
 package org.opensingular.singular.server.p.core.wicket.entrada;
 
 
-import org.opensingular.singular.form.wicket.enums.AnnotationMode;
-import org.opensingular.singular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.enums.AnnotationMode;
+import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.server.commons.form.FormActions;
 import org.opensingular.singular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;

@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SType;
-import org.opensingular.singular.form.spring.SpringTypeLoader;
+import org.opensingular.form.spring.SpringTypeLoader;
 import org.opensingular.singular.server.commons.config.SingularServerConfiguration;
 
 public class SingularServerSpringTypeLoader extends SpringTypeLoader<String> {
