@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.persistence.entity.form;
 
-import org.opensingular.singular.form.persistence.entity.FormAnnotationVersionEntity;
+import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;

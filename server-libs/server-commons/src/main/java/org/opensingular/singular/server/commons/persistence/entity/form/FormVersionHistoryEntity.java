@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.persistence.entity.form;
 
-import org.opensingular.singular.form.persistence.entity.FormVersionEntity;
+import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.opensingular.singular.support.persistence.enums.SimNao;
 import org.opensingular.singular.support.persistence.util.Constants;

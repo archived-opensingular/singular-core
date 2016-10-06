@@ -7,7 +7,7 @@ import org.opensingular.flow.core.MTaskUserExecutable;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
-import org.opensingular.singular.form.persistence.entity.FormTypeEntity;
+import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.singular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.server.commons.exception.SingularServerException;
 import org.opensingular.singular.server.commons.flow.SingularServerTaskPageStrategy;

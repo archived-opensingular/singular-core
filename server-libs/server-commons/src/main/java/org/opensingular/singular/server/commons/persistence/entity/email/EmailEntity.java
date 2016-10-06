@@ -21,7 +21,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.form.persistence.entity.AttachmentEntity;
+import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.opensingular.singular.support.persistence.util.Constants;
 import org.opensingular.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;

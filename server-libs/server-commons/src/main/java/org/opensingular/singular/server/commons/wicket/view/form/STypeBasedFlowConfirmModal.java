@@ -7,7 +7,7 @@ import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.persistence.FormKey;
-import org.opensingular.singular.form.service.IFormService;
+import org.opensingular.form.service.IFormService;
 import org.opensingular.singular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.singular.form.wicket.panel.SingularFormPanel;
