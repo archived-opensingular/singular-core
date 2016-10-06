@@ -1,7 +1,7 @@
 package org.opensingular.singular.test;
 
 
-import org.opensingular.singular.flow.test.definicao.Peticao;
+import org.opensingular.flow.test.definicao.Peticao;
 import org.opensingular.flow.core.ExecuteWaitingTasksJob;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessDefinitionCache;
@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.INDEFERIDO;
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

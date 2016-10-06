@@ -3,9 +3,9 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.flow.test.dsl.exemplo;
+package org.opensingular.flow.test.dsl.exemplo;
 
-import org.opensingular.singular.flow.test.dsl.Builder;
+import org.opensingular.flow.test.dsl.Builder;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.MTaskJava;
 import org.opensingular.flow.core.MTaskPeople;

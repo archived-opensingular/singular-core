@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.flow.test;
+package org.opensingular.flow.test;
 
 import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.core.service.IUserService;

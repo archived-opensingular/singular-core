@@ -1,7 +1,7 @@
 package org.opensingular.singular.test;
 
-import org.opensingular.singular.flow.test.definicao.DefinicaoProcessVersoes;
-import org.opensingular.singular.flow.test.definicao.ProcessVersoes;
+import org.opensingular.flow.test.definicao.DefinicaoProcessVersoes;
+import org.opensingular.flow.test.definicao.ProcessVersoes;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessDefinitionCache;
 import org.opensingular.flow.core.ProcessInstance;

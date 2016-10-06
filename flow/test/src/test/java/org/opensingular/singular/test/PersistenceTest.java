@@ -1,7 +1,7 @@
 package org.opensingular.singular.test;
 
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.singular.flow.test.definicao.Peticao;
+import org.opensingular.flow.test.definicao.Peticao;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;

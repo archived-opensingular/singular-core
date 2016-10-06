@@ -34,7 +34,7 @@ import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
 import org.opensingular.flow.core.ws.BaseSingularRest;
-import org.opensingular.singular.flow.test.TestDAO;
+import org.opensingular.flow.test.TestDAO;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskVersionEntity;

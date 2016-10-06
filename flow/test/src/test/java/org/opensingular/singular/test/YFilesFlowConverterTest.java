@@ -31,7 +31,7 @@ import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
 import org.opensingular.flow.core.renderer.YFilesFlowConverter;
-import org.opensingular.singular.flow.test.TestDAO;
+import org.opensingular.flow.test.TestDAO;
 import org.opensingular.flow.persistence.util.HibernateSingularFlowConfigurationBean;
 
 @ActiveProfiles("mssql")

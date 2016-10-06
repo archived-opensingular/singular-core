@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.flow.test.dsl.exemplo2.dsl;
+package org.opensingular.flow.test.dsl.exemplo2.dsl;
 
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.MTask;

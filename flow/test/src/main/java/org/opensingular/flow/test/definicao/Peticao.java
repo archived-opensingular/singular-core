@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.flow.test.definicao;
+package org.opensingular.flow.test.definicao;
 
 import java.util.Calendar;
 
@@ -19,14 +19,14 @@ import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
 
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.EM_EXIGENCIA;
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.INDEFERIDO;
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
-import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.EM_EXIGENCIA;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
 
 @DefinitionInfo("Peticoes")
 public class Peticao extends ProcessDefinition<ProcessInstance> {

@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.flow.test.definicao;
+package org.opensingular.flow.test.definicao;
 
 import org.opensingular.flow.core.ProcessInstance;
 

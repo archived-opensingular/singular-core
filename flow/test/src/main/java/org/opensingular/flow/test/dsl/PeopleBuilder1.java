@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.flow.test.dsl;
+package org.opensingular.flow.test.dsl;
 
 public class PeopleBuilder1 {
     public PeopleBuilder1(TaskBuilder taskBuilder) {
