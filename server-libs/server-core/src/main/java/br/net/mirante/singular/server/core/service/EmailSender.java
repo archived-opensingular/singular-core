@@ -20,7 +20,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import br.net.mirante.singular.commons.base.SingularProperties;
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.server.commons.config.ConfigProperties;
 import br.net.mirante.singular.server.commons.service.dto.Email;
 import br.net.mirante.singular.server.commons.service.dto.Email.Addressee;

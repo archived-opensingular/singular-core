@@ -1,10 +1,10 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.persistence.FormKey;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;

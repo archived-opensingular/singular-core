@@ -6,9 +6,9 @@
 package br.net.mirante.singular.server.commons.spring.security;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.form.SFormUtil;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.SFormUtil;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;

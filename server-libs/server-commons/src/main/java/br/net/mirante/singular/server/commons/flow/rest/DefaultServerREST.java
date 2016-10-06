@@ -23,7 +23,7 @@ import static br.net.mirante.singular.server.commons.flow.action.DefaultActions.
 import static br.net.mirante.singular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
 
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.spring.SpringServiceRegistry;
 import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.server.commons.persistence.dto.TaskInstanceDTO;

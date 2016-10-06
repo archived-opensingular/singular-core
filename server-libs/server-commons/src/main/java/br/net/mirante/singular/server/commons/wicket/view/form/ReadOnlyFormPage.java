@@ -1,7 +1,7 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
 
-import br.net.mirante.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.service.IFormService;
 import br.net.mirante.singular.server.commons.wicket.view.template.Content;
 import br.net.mirante.singular.server.commons.wicket.view.template.Template;

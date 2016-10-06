@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
-import br.net.mirante.singular.form.SInstance;
+import org.opensingular.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;
 import br.net.mirante.singular.server.commons.wicket.builder.HTMLParameters;

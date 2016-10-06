@@ -2,7 +2,7 @@ package br.net.mirante.singular.server.commons.config;
 
 
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SType;
 import org.springframework.web.context.ServletContextAware;
 
 import javax.servlet.ServletContext;

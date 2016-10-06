@@ -1,8 +1,8 @@
 package br.net.mirante.singular.server.module.wicket.view.util.dispatcher;
 
 import br.net.mirante.singular.flow.core.*;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.context.SFormConfig;
 import br.net.mirante.singular.form.persistence.entity.FormTypeEntity;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;

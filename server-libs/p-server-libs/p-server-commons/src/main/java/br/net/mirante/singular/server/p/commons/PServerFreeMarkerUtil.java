@@ -1,8 +1,8 @@
 package br.net.mirante.singular.server.p.commons;
 
 
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.provider.FreemarkerUtil;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.provider.FreemarkerUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.ext.beans.BeansWrapper;

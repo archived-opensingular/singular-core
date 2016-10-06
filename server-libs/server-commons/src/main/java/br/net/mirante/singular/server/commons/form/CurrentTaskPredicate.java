@@ -4,8 +4,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.document.SDocument;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.document.SDocument;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.server.commons.wicket.view.form.AbstractFormContent;

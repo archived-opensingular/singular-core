@@ -1,10 +1,10 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
-import br.net.mirante.singular.form.RefService;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.RefService;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;

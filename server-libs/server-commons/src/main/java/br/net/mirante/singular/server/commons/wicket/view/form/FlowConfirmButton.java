@@ -1,7 +1,7 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.form.SInstance;
+import org.opensingular.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.server.commons.exception.PetitionConcurrentModificationException;
 import br.net.mirante.singular.server.commons.persistence.entity.form.PetitionEntity;

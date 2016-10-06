@@ -12,12 +12,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
-import br.net.mirante.singular.form.document.SDocument;
+import org.opensingular.singular.form.document.SDocument;
 import br.net.mirante.singular.form.persistence.entity.AttachmentContentEntitty;
 import br.net.mirante.singular.form.persistence.entity.AttachmentEntity;
 import br.net.mirante.singular.form.persistence.service.AttachmentPersistenceService;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.validation.SingularEmailValidator;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.singular.form.validation.SingularEmailValidator;
 import br.net.mirante.singular.server.commons.exception.SingularServerException;
 import br.net.mirante.singular.server.commons.persistence.dao.EmailAddresseeDao;
 import br.net.mirante.singular.server.commons.persistence.dao.EmailDao;

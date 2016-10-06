@@ -8,7 +8,7 @@ package br.net.mirante.singular.server.commons.spring.security;
 import br.net.mirante.singular.commons.util.Loggable;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.form.SFormUtil;
+import org.opensingular.singular.form.SFormUtil;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 import br.net.mirante.singular.server.commons.flow.rest.ActionConfig;
 import br.net.mirante.singular.server.commons.flow.rest.ActionDefinition;
@@ -18,7 +18,6 @@ import br.net.mirante.singular.server.commons.service.PetitionService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

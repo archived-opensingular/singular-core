@@ -10,9 +10,9 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SFormUtil;
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SFormUtil;
+import org.opensingular.singular.form.SType;
 import br.net.mirante.singular.form.spring.SpringTypeLoader;
 import br.net.mirante.singular.server.commons.config.SingularServerConfiguration;
 

@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.commons.config;
 
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SType;
 import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
 import br.net.mirante.singular.form.spring.SpringTypeLoader;
 import br.net.mirante.singular.server.commons.form.SingularServerDocumentFactory;

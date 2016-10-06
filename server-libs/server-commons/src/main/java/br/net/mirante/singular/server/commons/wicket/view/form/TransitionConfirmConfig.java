@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.commons.wicket.view.form;
 
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SType;
 
 import java.io.Serializable;
 

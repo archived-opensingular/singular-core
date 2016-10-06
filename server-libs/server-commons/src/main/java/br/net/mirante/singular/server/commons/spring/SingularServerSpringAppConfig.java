@@ -1,6 +1,6 @@
 package br.net.mirante.singular.server.commons.spring;
 
-import br.net.mirante.singular.form.context.SingularFormContext;
+import org.opensingular.singular.form.context.SingularFormContext;
 import br.net.mirante.singular.form.spring.SpringServiceRegistry;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicket;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
