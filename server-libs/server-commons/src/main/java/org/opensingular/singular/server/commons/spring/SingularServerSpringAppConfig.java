@@ -4,7 +4,7 @@ import org.opensingular.form.context.SingularFormContext;
 import org.opensingular.singular.form.spring.SpringServiceRegistry;
 import org.opensingular.singular.form.wicket.SingularFormConfigWicket;
 import org.opensingular.singular.form.wicket.SingularFormConfigWicketImpl;
-import org.opensingular.singular.persistence.service.ProcessRetrieveService;
+import org.opensingular.flow.persistence.service.ProcessRetrieveService;
 import org.opensingular.singular.support.spring.util.AutoScanDisabled;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;

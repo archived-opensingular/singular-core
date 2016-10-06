@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import org.opensingular.singular.commons.lambda.ISupplier;
-import org.opensingular.singular.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.singular.server.commons.service.PetitionService;
 import org.opensingular.singular.server.commons.service.dto.ItemBox;

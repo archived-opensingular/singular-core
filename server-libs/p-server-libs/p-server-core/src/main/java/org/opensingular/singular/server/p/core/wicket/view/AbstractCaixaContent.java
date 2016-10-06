@@ -2,7 +2,7 @@ package org.opensingular.singular.server.p.core.wicket.view;
 
 import org.opensingular.singular.commons.lambda.IConsumer;
 import org.opensingular.singular.commons.lambda.IFunction;
-import org.opensingular.singular.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.exception.SingularServerException;
 import org.opensingular.singular.server.commons.form.FormActions;
 import org.opensingular.singular.server.commons.persistence.filter.QuickFilter;

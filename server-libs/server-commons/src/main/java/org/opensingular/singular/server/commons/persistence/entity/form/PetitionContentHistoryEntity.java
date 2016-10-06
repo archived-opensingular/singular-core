@@ -1,8 +1,8 @@
 package org.opensingular.singular.server.commons.persistence.entity.form;
 
 import org.opensingular.singular.form.persistence.entity.FormAnnotationVersionEntity;
-import org.opensingular.singular.persistence.entity.Actor;
-import org.opensingular.singular.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.opensingular.singular.support.persistence.util.Constants;
 import org.opensingular.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;

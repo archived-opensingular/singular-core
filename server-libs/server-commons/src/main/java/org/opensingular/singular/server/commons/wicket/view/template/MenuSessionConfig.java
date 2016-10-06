@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
-import org.opensingular.singular.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.service.dto.MenuGroup;
 
 /**

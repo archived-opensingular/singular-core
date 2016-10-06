@@ -6,8 +6,8 @@ import java.util.function.Predicate;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.singular.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.singular.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.singular.server.commons.wicket.view.form.AbstractFormContent;
 
 /**

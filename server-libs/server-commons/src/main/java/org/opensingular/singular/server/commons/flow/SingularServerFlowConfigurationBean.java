@@ -4,7 +4,7 @@ import org.opensingular.singular.commons.util.Loggable;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.singular.flow.schedule.IScheduleService;
-import org.opensingular.singular.persistence.util.HibernateSingularFlowConfigurationBean;
+import org.opensingular.flow.persistence.util.HibernateSingularFlowConfigurationBean;
 import org.opensingular.singular.server.commons.config.ConfigProperties;
 import org.opensingular.singular.server.commons.config.SingularServerConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;

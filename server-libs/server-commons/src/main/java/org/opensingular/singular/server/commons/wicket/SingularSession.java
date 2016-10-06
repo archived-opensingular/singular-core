@@ -12,7 +12,7 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import org.opensingular.singular.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.config.IServerContext;
 import org.opensingular.singular.server.commons.spring.security.SingularUserDetails;
 import org.opensingular.singular.server.commons.wicket.view.template.MenuSessionConfig;

@@ -18,7 +18,7 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.slf4j.LoggerFactory;
 
-import org.opensingular.singular.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.singular.server.commons.service.dto.ItemBox;
 import org.opensingular.singular.server.commons.service.dto.MenuGroup;

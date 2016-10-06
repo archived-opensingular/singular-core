@@ -39,7 +39,7 @@ import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;
 
 import org.opensingular.singular.commons.lambda.IBiFunction;
 import org.opensingular.singular.commons.lambda.IFunction;
-import org.opensingular.singular.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.singular.server.commons.flow.rest.ActionAtribuirRequest;
 import org.opensingular.singular.server.commons.flow.rest.ActionRequest;
 import org.opensingular.singular.server.commons.flow.rest.ActionResponse;

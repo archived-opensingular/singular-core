@@ -1,7 +1,7 @@
 package org.opensingular.singular.server.commons.persistence.dao.flow;
 
 import org.opensingular.flow.core.TaskType;
-import org.opensingular.singular.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.singular.server.commons.persistence.filter.QuickFilter;

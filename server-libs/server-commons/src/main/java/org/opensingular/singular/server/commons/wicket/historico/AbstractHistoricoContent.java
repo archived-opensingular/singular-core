@@ -1,6 +1,6 @@
 package org.opensingular.singular.server.commons.wicket.historico;
 
-import org.opensingular.singular.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.singular.server.commons.exception.SingularServerException;
 import org.opensingular.singular.server.commons.form.FormActions;
 import org.opensingular.singular.server.commons.persistence.entity.form.FormVersionHistoryEntity;

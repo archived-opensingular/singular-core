@@ -25,7 +25,7 @@ import static org.opensingular.singular.server.commons.service.IServerMetadataRE
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.singular.form.spring.SpringServiceRegistry;
-import org.opensingular.singular.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.singular.server.commons.persistence.dto.TaskInstanceDTO;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.singular.server.commons.persistence.filter.QuickFilter;

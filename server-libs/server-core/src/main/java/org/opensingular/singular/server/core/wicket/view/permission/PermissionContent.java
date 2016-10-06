@@ -23,7 +23,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.springframework.web.client.RestTemplate;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.service.PetitionService;
 import org.opensingular.singular.server.commons.spring.security.SingularPermission;
 import org.opensingular.singular.server.commons.wicket.view.template.Content;

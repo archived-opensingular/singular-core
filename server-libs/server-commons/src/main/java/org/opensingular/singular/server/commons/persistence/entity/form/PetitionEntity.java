@@ -1,8 +1,8 @@
 package org.opensingular.singular.server.commons.persistence.entity.form;
 
 import org.opensingular.singular.form.persistence.entity.FormEntity;
-import org.opensingular.singular.persistence.entity.ProcessDefinitionEntity;
-import org.opensingular.singular.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.opensingular.singular.support.persistence.enums.SimNao;
 import org.opensingular.singular.support.persistence.util.Constants;

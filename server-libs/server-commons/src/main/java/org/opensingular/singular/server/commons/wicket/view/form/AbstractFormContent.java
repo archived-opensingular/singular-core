@@ -10,7 +10,7 @@ import org.opensingular.singular.form.wicket.component.SingularValidationButton;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;
 import org.opensingular.singular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.singular.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.singular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.singular.server.commons.wicket.view.template.Content;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;

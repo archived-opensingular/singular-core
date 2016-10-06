@@ -27,7 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.singular.server.commons.config.ServerContext;
 import org.opensingular.singular.server.commons.form.FormActions;
 import org.opensingular.singular.server.commons.persistence.dto.TaskInstanceDTO;
