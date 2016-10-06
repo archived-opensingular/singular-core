@@ -38,9 +38,9 @@ import org.apache.wicket.util.string.StringValue;
 import com.google.common.collect.ImmutableMap;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
 
 /**
  * Behavior a ser adicionado ao componente de upload/download para permitir download dos arquivos

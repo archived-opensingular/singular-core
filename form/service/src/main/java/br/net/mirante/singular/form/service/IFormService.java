@@ -4,12 +4,12 @@
  */
 package br.net.mirante.singular.form.service;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.persistence.BasicAnnotationPersistence;
-import br.net.mirante.singular.form.persistence.BasicFormPersistence;
-import br.net.mirante.singular.form.persistence.FormKey;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.persistence.BasicAnnotationPersistence;
+import org.opensingular.singular.form.persistence.BasicFormPersistence;
+import org.opensingular.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 

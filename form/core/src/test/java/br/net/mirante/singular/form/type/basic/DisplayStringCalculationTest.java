@@ -1,12 +1,14 @@
 package br.net.mirante.singular.form.type.basic;
 
 import br.net.mirante.singular.form.*;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.STypeComposite;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.GregorianCalendar;
-import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -18,7 +20,7 @@ public class DisplayStringCalculationTest extends TestCaseForm {
     }
 
     private SIComposite createPedido() {
-        PackageBuilder pkt = createTestDictionary().createNewPackage("teste");
+        PackageBuilder              pkt = createTestDictionary().createNewPackage("teste");
         STypeComposite<SIComposite> tipoPedido = pkt.createCompositeType("pedido");
         tipoPedido.addFieldInteger("cod");
         tipoPedido.addFieldString("nome");

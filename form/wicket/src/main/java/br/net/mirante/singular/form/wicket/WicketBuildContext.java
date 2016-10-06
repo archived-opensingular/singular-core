@@ -30,10 +30,10 @@ import org.apache.wicket.util.string.Strings;
 import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.view.SView;
-import br.net.mirante.singular.form.view.ViewResolver;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.singular.form.view.SView;
+import org.opensingular.singular.form.view.ViewResolver;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;

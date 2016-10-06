@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import br.net.mirante.singular.commons.base.SingularUtil;
-import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.singular.form.type.core.attachment.SIAttachment;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.request.Response;
 

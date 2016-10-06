@@ -14,8 +14,8 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.commons.lambda.IBiConsumer;
 import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;

@@ -1,11 +1,12 @@
 package br.net.mirante.singular.form.type.core;
 
 import br.net.mirante.singular.form.*;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.STypeComposite;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
 public class FormTreeTypeTest extends TestCaseForm {

@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.provider.Provider;
-import br.net.mirante.singular.form.provider.ProviderContext;
-import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.view.SViewAutoComplete;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.converter.SInstanceConverter;
+import org.opensingular.singular.form.provider.Provider;
+import org.opensingular.singular.form.provider.ProviderContext;
+import org.opensingular.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.view.SViewAutoComplete;
 import br.net.mirante.singular.form.wicket.model.AbstractSInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;

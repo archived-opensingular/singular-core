@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.showcase.view.page.prototype;
 
-import br.net.mirante.singular.form.SIComposite;
+import org.opensingular.singular.form.SIComposite;
 import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.showcase.view.template.Content;
 import br.net.mirante.singular.showcase.view.template.Template;

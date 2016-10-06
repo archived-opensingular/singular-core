@@ -1,15 +1,15 @@
 package br.net.mirante.singular.form.wicket.mapper.search;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.converter.ValueToSICompositeConverter;
-import br.net.mirante.singular.form.provider.Config;
-import br.net.mirante.singular.form.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.provider.ProviderContext;
-import br.net.mirante.singular.form.type.core.STypeBoolean;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.view.SViewSearchModal;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.converter.ValueToSICompositeConverter;
+import org.opensingular.singular.form.provider.Config;
+import org.opensingular.singular.form.provider.FilteredPagedProvider;
+import org.opensingular.singular.form.provider.ProviderContext;
+import org.opensingular.singular.form.type.core.STypeBoolean;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import org.apache.commons.lang3.tuple.Triple;

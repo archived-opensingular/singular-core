@@ -1,7 +1,7 @@
 package br.net.mirante.singular.studio.wicket;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static br.net.mirante.singular.form.persistence.SPackageFormPersistence.ATR_FORM_KEY;
+import static org.opensingular.singular.form.persistence.SPackageFormPersistence.ATR_FORM_KEY;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 @SuppressWarnings({"serial", "unchecked"})

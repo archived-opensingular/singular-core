@@ -1,9 +1,9 @@
 package br.net.mirante.singular.exemplos.util;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.converter.SInstanceConverter;
+import org.opensingular.singular.form.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Pair;
 
 

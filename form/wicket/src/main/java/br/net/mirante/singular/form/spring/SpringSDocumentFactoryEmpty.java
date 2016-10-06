@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.form.spring;
 
-import br.net.mirante.singular.form.document.RefSDocumentFactory;
-import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.document.ServiceRegistry;
+import org.opensingular.singular.form.document.RefSDocumentFactory;
+import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.document.ServiceRegistry;
 
 /**
  * Representa uma factory que não faz nada com o documento e que aponta o

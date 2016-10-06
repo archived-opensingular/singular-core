@@ -11,29 +11,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.opensingular.singular.form.document.SDocument;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Matchers;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.RefService;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.STypeComposite;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.RefService;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.STypeComposite;
 import br.net.mirante.singular.form.TestCaseForm;
 import br.net.mirante.singular.form.type.core.attachment.AttachmentTestUtil;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
 
 @RunWith(Parameterized.class)
 public class TestSDocumentPersistentServices extends TestCaseForm {
 
     private STypeComposite<?> groupingType;
     private SIAttachment fileFieldInstance;
-    private SDocument document;
+    private SDocument                     document;
     private IAttachmentPersistenceHandler tempHandler, persistentHandler;
 
     public TestSDocumentPersistentServices(TestFormConfig testFormConfig) {

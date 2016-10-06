@@ -3,8 +3,8 @@ package br.net.mirante.singular.showcase.component.form.core.select;
 import java.util.Arrays;
 import java.util.List;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.provider.SimpleProvider;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.provider.SimpleProvider;
 
 public class IngredienteQuimicoFilteredProvider implements SimpleProvider<IngredienteQuimico, SIComposite> {
 

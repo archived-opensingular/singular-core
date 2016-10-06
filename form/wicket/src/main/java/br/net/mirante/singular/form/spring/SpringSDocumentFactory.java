@@ -5,9 +5,9 @@
 
 package br.net.mirante.singular.form.spring;
 
-import br.net.mirante.singular.form.document.RefSDocumentFactory;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.document.ServiceRegistry;
+import org.opensingular.singular.form.document.RefSDocumentFactory;
+import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.document.ServiceRegistry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;

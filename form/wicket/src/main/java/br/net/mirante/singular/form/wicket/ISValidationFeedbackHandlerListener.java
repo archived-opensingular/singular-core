@@ -8,8 +8,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.validation.IValidationError;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.validation.IValidationError;
 
 public interface ISValidationFeedbackHandlerListener extends Serializable {
 

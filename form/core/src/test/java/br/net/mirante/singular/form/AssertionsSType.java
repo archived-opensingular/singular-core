@@ -1,13 +1,14 @@
 package br.net.mirante.singular.form;
 
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.STypeDecimal;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.type.core.STypeDecimal;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;

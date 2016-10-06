@@ -4,20 +4,32 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarm
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeCategoriaRegulatoria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.exemplos.util.PairConverter;
 import br.net.mirante.singular.exemplos.util.TripleConverter;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.converter.ValueToSICompositeConverter;
-import br.net.mirante.singular.form.provider.Config;
-import br.net.mirante.singular.form.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.provider.ProviderContext;
-import br.net.mirante.singular.form.provider.SSimpleProvider;
-import br.net.mirante.singular.form.type.core.SIInteger;
-import br.net.mirante.singular.form.type.core.STypeBoolean;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.STypeAttachmentList;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.converter.ValueToSICompositeConverter;
+import org.opensingular.singular.form.provider.Config;
+import org.opensingular.singular.form.provider.FilteredPagedProvider;
+import org.opensingular.singular.form.provider.ProviderContext;
+import org.opensingular.singular.form.provider.SSimpleProvider;
+import org.opensingular.singular.form.type.core.SIInteger;
+import org.opensingular.singular.form.type.core.STypeBoolean;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.util.transformer.Value;
 import br.net.mirante.singular.form.view.*;
+import org.opensingular.singular.form.view.SViewByBlock;
+import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.singular.form.view.SViewListByTable;
+import org.opensingular.singular.form.view.SViewSearchModal;
+import org.opensingular.singular.form.view.SViewTextArea;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -260,7 +272,7 @@ public class STypeNotificacaoSimplificadaDinamizado extends STypeComposite<SICom
     private void addIndicacaoTerapeutica() {
         final STypeComposite<SIComposite> indicacaoTerapeutica          = addFieldComposite("indicacaoTerapeutica");
         final STypeInteger                idIndicacaoTerapeutica        = indicacaoTerapeutica.addFieldInteger("id");
-        final STypeSimple                 descricaoIndicacaoTerapeutica = indicacaoTerapeutica.addFieldString("descricao");
+        final STypeSimple descricaoIndicacaoTerapeutica = indicacaoTerapeutica.addFieldString("descricao");
         indicacaoTerapeutica
                 .asAtr()
                 .label("Indicação")

@@ -1,11 +1,9 @@
 package br.net.mirante.singular.form;
 
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.type.core.SIDate;
-import br.net.mirante.singular.form.type.core.STypeDate;
-
-import java.util.function.Supplier;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
 
 /**
  * Apoio para teste voltado para uma única classe de SType

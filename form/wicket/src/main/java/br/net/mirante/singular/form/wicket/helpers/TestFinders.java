@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.helpers;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import com.google.common.collect.Lists;
 import org.apache.wicket.Component;

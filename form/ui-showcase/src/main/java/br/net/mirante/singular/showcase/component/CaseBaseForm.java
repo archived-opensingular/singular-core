@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.showcase.component;
 
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.SingularFormException;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.SingularFormException;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 
 import java.util.Optional;

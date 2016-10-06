@@ -28,10 +28,10 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.SFormUtil;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import org.opensingular.singular.form.SFormUtil;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.validation.IValidationError;
+import org.opensingular.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;

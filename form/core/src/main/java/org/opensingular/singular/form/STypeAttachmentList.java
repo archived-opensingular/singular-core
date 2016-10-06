@@ -1,0 +1,34 @@
+package org.opensingular.singular.form;
+
+import org.opensingular.singular.form.type.core.SPackageCore;
+import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+
+@SInfoType(name = "STypeAttachmentList", spackage = SPackageCore.class)
+public class STypeAttachmentList extends STypeList<STypeAttachment, SIAttachment> {
+
+    void setElementsTypeFieldName(String fieldName) {
+        setElementsType(fieldName, STypeAttachment.class);
+    }
+
+    @Override
+    protected void onLoadType(TypeBuilder tb) {
+        super.onLoadType(tb);
+        asAtr().displayString(context -> {
+            final StringBuilder displayString = new StringBuilder();
+            if (context.instance() instanceof SIList) {
+                ((SIList<?>) context.instance()).getChildren()
+                        .stream()
+                        .map(i -> (SIAttachment) i)
+                        .map(SIAttachment::toStringDisplayDefault)
+                        .forEach(name -> {
+                            if (!displayString.toString().isEmpty()) {
+                                displayString.append(", ");
+                            }
+                            displayString.append(name);
+                        });
+            }
+            return displayString.toString();
+        });
+    }
+}

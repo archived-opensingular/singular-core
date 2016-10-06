@@ -2,17 +2,33 @@ package br.net.mirante.singular.form;
 
 import br.net.mirante.singular.form.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno1;
 import br.net.mirante.singular.form.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno2;
-import br.net.mirante.singular.form.type.core.*;
-import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
-import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
-import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
-import br.net.mirante.singular.form.type.util.STypeEMail;
+import org.opensingular.singular.form.AtrRef;
+import org.opensingular.singular.form.ICompositeInstance;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SISimple;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.type.core.SIInteger;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeBoolean;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.country.brazil.STypeCEP;
+import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.singular.form.type.country.brazil.STypeCPF;
+import org.opensingular.singular.form.type.util.STypeEMail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.io.Serializable;
-import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

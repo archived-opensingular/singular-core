@@ -1,14 +1,18 @@
 package br.net.mirante.singular.form.document;
 
 import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.RefService;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.singular.form.document.ServiceRegistry;
+import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -25,7 +29,8 @@ public class TestSDocumentServices extends TestCaseForm {
         super(testFormConfig);
     }
 
-    @Before public void setup(){
+    @Before
+    public void setup() {
         createTypes(createTestDictionary().createNewPackage("teste"));
         createInstances();
     }
@@ -35,21 +40,24 @@ public class TestSDocumentServices extends TestCaseForm {
         groupingType.addField("anexo", STypeAttachment.class);
         groupingType.addFieldInteger("justIgnoreThis");
     }
-    
+
     private void createInstances() {
         SIComposite instance = (SIComposite) groupingType.newInstance();
         document = instance.getDocument();
         fileFieldInstance = (SIAttachment) instance.getAllChildren().iterator().next();
     }
-    
-    @SuppressWarnings({ "rawtypes", "serial" })
+
+    @SuppressWarnings({"rawtypes", "serial"})
     private RefService ref(final Object provider) {
         return new RefService() {
-            public Object get() {   return provider;    }
+            public Object get() {
+                return provider;
+            }
         };
     }
-    
-    @Test public void findsRegisteredServiceByName(){
+
+    @Test
+    public void findsRegisteredServiceByName() {
         final Object provider = new Object();
         document.bindLocalService("something", Object.class, ref(provider)); 
         

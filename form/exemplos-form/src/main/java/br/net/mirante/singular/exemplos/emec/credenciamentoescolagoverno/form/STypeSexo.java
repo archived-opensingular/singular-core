@@ -5,9 +5,9 @@
 
 package br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form;
 
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.type.core.STypeString;
 
 @SInfoType(name = "Sexo", spackage = SPackageCredenciamentoEscolaGoverno.class)
 public class STypeSexo extends STypeString {

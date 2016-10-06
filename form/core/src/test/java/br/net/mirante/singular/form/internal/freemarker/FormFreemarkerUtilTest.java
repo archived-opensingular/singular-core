@@ -1,7 +1,13 @@
 package br.net.mirante.singular.form.internal.freemarker;
 
 import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.internal.freemarker.FormFreemarkerUtil;
+import org.opensingular.singular.form.type.core.STypeString;
 import org.fest.assertions.api.AbstractAssert;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.StringAssert;
@@ -11,7 +17,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Date;
-import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -26,8 +31,9 @@ public class FormFreemarkerUtilTest extends TestCaseForm {
         super(testFormConfig);
     }
 
-    @Before public void setup() {
-        PackageBuilder pkt  = createTestDictionary().createNewPackage("pkt");
+    @Before
+    public void setup() {
+        PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
         curriculoType = pkt.createCompositeType("curriculo");
 
         dadosType = curriculoType.addFieldComposite("dados");

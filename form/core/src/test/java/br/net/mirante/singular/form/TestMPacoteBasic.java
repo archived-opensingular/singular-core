@@ -2,15 +2,16 @@ package br.net.mirante.singular.form;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import org.opensingular.singular.form.SDictionary;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.SIDate;
-import br.net.mirante.singular.form.type.core.STypeDate;
-import br.net.mirante.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.singular.form.type.core.SIDate;
+import org.opensingular.singular.form.type.core.STypeDate;
+import org.opensingular.singular.form.type.core.STypeInteger;
 
 @RunWith(Parameterized.class)
 public class TestMPacoteBasic extends TestCaseForm {

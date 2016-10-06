@@ -1,11 +1,11 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEmpresaPropria extends STypeComposite<SIComposite> {

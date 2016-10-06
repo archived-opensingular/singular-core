@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.wicket.component;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.provider.SimpleProvider;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.provider.SimpleProvider;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.FormComponent;

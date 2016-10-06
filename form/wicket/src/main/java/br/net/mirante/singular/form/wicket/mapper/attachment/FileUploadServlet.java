@@ -26,7 +26,7 @@ import org.apache.wicket.ajax.json.JSONArray;
 
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.commons.base.SingularProperties;
-import br.net.mirante.singular.form.io.IOUtil;
+import org.opensingular.singular.form.io.IOUtil;
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.

@@ -5,9 +5,9 @@
 package br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SPackage;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SPackage;
 
 public class SPackageCredenciamentoEscolaGoverno extends SPackage {
 

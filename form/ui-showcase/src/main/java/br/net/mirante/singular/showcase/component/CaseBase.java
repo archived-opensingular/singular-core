@@ -10,10 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.SingularFormException;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
 

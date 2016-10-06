@@ -2,10 +2,10 @@ package br.net.mirante.singular.showcase.component.form.core.search;
 
 import java.util.List;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.provider.Config;
-import br.net.mirante.singular.form.provider.FilteredPagedProvider;
-import br.net.mirante.singular.form.provider.ProviderContext;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.provider.Config;
+import org.opensingular.singular.form.provider.FilteredPagedProvider;
+import org.opensingular.singular.form.provider.ProviderContext;
 
 public class LazyFuncionarioProvider implements FilteredPagedProvider<Funcionario> {
 

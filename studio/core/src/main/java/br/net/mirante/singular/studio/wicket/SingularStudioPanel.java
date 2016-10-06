@@ -1,10 +1,10 @@
 package br.net.mirante.singular.studio.wicket;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.persistence.FormKey;
-import br.net.mirante.singular.form.persistence.FormPersistence;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.persistence.FormKey;
+import org.opensingular.singular.form.persistence.FormPersistence;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.studio.core.CollectionCanvas;

@@ -5,9 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.mapper.search;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.view.SViewSearchModal;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;

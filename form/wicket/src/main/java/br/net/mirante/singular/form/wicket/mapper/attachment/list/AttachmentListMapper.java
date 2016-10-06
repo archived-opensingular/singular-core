@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment.list;
 
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.AbstractListaMapper;
 import org.apache.wicket.model.IModel;

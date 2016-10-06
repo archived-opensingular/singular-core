@@ -11,16 +11,16 @@ import java.util.Optional;
 import br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeEstado;
 import br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeMunicipio;
 import br.net.mirante.singular.exemplos.opas.gestaoobrasservicosaquisicoes.enums.AcaoGestaoObras;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.internal.xml.ConversorToolkit;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.view.SViewByBlock;
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.internal.xml.ConversorToolkit;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.view.SViewByBlock;
+import org.opensingular.singular.form.view.SViewListByMasterDetail;
 
 @SInfoType(spackage = SPackageGestaoObrasServicosAquisicoes.class)
 public class STypeProcesso extends STypeComposite<SIComposite> {

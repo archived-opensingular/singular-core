@@ -25,10 +25,10 @@ import org.apache.wicket.model.IModel;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.validation.IValidationError;
+import org.opensingular.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;

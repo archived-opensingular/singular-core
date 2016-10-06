@@ -1,6 +1,6 @@
 package br.net.mirante.singular.studio.util;
 
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SType;
 import br.net.mirante.singular.studio.core.CollectionDefinition;
 import br.net.mirante.singular.studio.core.SingularStudioException;
 import org.reflections.Reflections;

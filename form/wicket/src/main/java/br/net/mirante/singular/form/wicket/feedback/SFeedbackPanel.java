@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.feedback;
 
-import br.net.mirante.singular.form.SFormUtil;
-import br.net.mirante.singular.form.SInstance;
+import org.opensingular.singular.form.SFormUtil;
+import org.opensingular.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import org.apache.commons.lang3.StringUtils;

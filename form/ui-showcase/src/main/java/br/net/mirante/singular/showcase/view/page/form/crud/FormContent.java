@@ -22,11 +22,11 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValue;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.internal.xml.MElement;
-import br.net.mirante.singular.form.io.MformPersistenciaXML;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.internal.xml.MElement;
+import org.opensingular.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.component.SingularValidationButton;

@@ -1,15 +1,6 @@
 package br.net.mirante.singular.showcase;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.io.FormSerializationUtil;
-import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
-import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import org.junit.Test;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 
 //@RunWith(value = Parameterized.class)
 public class SerializationTest {

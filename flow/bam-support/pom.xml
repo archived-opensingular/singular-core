@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>br.net.mirante</groupId>
+        <groupId>org.opensingular</groupId>
         <artifactId>singular-flow</artifactId>
         <version>1.0.1-SNAPSHOT</version>
     </parent>
@@ -17,13 +17,13 @@
     <dependencies>
 
         <dependency>
-            <groupId>br.net.mirante</groupId>
+            <groupId>org.opensingular</groupId>
             <artifactId>flow-persistence</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>br.net.mirante</groupId>
+            <groupId>org.opensingular</groupId>
             <artifactId>flow-bam-client</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>

@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.spring;
 
-import br.net.mirante.singular.form.document.ServiceRegistry;
+import org.opensingular.singular.form.document.ServiceRegistry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;

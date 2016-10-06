@@ -1,14 +1,13 @@
 package br.net.mirante.singular.form.type.core;
 
 import br.net.mirante.singular.form.AbstractTestOneType;
-import br.net.mirante.singular.form.SDictionary;
+import org.opensingular.singular.form.type.core.SIDate;
+import org.opensingular.singular.form.type.core.STypeDate;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

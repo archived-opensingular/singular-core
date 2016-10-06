@@ -6,10 +6,17 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
 import br.net.mirante.singular.commons.base.SingularUtil;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
@@ -82,8 +89,8 @@ public class PreviewContent extends Content {
 class TypeBuilder {
 
     private final PackageBuilder pkg;
-    private SIComposite metaInformation;
-    private long id;
+    private       SIComposite    metaInformation;
+    private       long           id;
 
     TypeBuilder(SIComposite metaInformation) {
         this.metaInformation = metaInformation;
@@ -97,8 +104,8 @@ class TypeBuilder {
     }
 
     public STypeComposite<? extends SIComposite> createRootType() {
-        STypeComposite<?> root = pkg.createCompositeType("root");
-        SIList children = (SIList) metaInformation.getField(SPackagePrototype.CHILDREN);
+        STypeComposite<?> root     = pkg.createCompositeType("root");
+        SIList            children = (SIList) metaInformation.getField(SPackagePrototype.CHILDREN);
         root.asAtr().label(metaInformation.getValueString(SPackagePrototype.NAME));
         addChildFieldsIfAny(root, children);
         return root;
@@ -113,7 +120,7 @@ class TypeBuilder {
     }
 
     private void addField(STypeComposite<? extends SIComposite> root, SIComposite descriptor) {
-        String type = descriptor.getValueString(SPackagePrototype.TYPE);
+        String   type        = descriptor.getValueString(SPackagePrototype.TYPE);
         SType<?> typeOfField = root.getDictionary().getType(type);
 
         SType<?> fieldType = addFieldType(root, descriptor, typeOfField);
@@ -122,7 +129,7 @@ class TypeBuilder {
     }
 
     private SType<?> addFieldType(STypeComposite<? extends SIComposite> root, SIComposite descriptor, SType<?> typeOfField) {
-        String name = descriptor.getValueString(SPackagePrototype.NAME);
+        String name    = descriptor.getValueString(SPackagePrototype.NAME);
         String genName = generateJavaIdentifier(name);
         if (isList(descriptor)) {
             return addListFieldType(root, typeOfField, name, genName);

@@ -7,14 +7,14 @@ package br.net.mirante.singular.showcase.component.form.core.multiselect;
 
 import java.io.Serializable;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.converter.SInstanceConverter;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.util.transformer.Value;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
 

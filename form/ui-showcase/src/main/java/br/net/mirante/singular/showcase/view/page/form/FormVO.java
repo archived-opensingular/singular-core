@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.showcase.view.page.form;
 
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SType;
 import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader.TemplateEntry;
 import org.apache.wicket.model.IModel;
 

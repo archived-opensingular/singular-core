@@ -1,9 +1,8 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.dinamizado;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeLinhaProducao;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.provider.STextQueryProvider;
-import br.net.mirante.singular.form.provider.TextQueryProvider;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.provider.STextQueryProvider;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
 

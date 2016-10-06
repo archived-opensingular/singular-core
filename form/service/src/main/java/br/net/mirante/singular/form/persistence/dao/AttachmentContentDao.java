@@ -11,7 +11,7 @@ import java.util.Date;
 import javax.transaction.Transactional;
 
 import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.form.io.HashAndCompressInputStream;
+import org.opensingular.singular.form.io.HashAndCompressInputStream;
 import br.net.mirante.singular.form.persistence.entity.AttachmentContentEntitty;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 

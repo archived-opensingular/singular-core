@@ -1,14 +1,19 @@
 package br.net.mirante.singular.form.view;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.view.SViewAutoComplete;
+import org.opensingular.singular.form.view.ViewResolver;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestViewResolver2 extends SPackage{
+public class TestViewResolver2 extends SPackage {
 
     private STypeComposite<SIComposite> something;
 
@@ -27,14 +32,14 @@ public class TestViewResolver2 extends SPackage{
         super.onLoadPackage(pb);
         pb.createType(StypeSomething.class);
         STypeComposite<SIComposite> baseType = pb.createCompositeType("baseType");
-        something = baseType.addField("something",StypeSomething.class);
+        something = baseType.addField("something", StypeSomething.class);
     }
 
     @Test
     public void returnBaseTypeView() throws Exception {
-        SDictionary dict = SDictionary.create();
-        PackageBuilder pkg = dict.createNewPackage("test");
-        STypeComposite<SIComposite> baseType = pkg.createCompositeType("baseType");
+        SDictionary                 dict      = SDictionary.create();
+        PackageBuilder              pkg       = dict.createNewPackage("test");
+        STypeComposite<SIComposite> baseType  = pkg.createCompositeType("baseType");
         STypeComposite<SIComposite> something = baseType.addFieldComposite("something");
 
         something.autocomplete();

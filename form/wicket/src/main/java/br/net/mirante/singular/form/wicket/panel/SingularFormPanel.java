@@ -5,12 +5,12 @@
 
 package br.net.mirante.singular.form.wicket.panel;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.RefSDocumentFactory;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.document.ServiceRegistry;
-import br.net.mirante.singular.form.document.TypeLoader;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.document.RefSDocumentFactory;
+import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.document.ServiceRegistry;
+import org.opensingular.singular.form.document.TypeLoader;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;

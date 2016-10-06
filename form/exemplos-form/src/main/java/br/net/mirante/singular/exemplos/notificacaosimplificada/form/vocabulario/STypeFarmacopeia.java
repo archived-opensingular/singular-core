@@ -2,14 +2,14 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulari
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Farmacopeia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.converter.SInstanceConverter;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.util.transformer.Value;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
 

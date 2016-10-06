@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.feedback;
 
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import org.opensingular.singular.form.validation.IValidationError;
+import org.opensingular.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;

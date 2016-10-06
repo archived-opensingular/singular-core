@@ -1,12 +1,12 @@
 package br.net.mirante.singular.form.wicket.helpers;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 
 import org.apache.commons.lang3.StringUtils;

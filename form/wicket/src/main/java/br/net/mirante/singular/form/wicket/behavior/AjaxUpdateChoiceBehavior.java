@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.behavior;
 
-import br.net.mirante.singular.form.SInstance;
+import org.opensingular.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;

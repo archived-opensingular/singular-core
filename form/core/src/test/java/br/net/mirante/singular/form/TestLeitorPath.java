@@ -1,10 +1,9 @@
 package br.net.mirante.singular.form;
 
+import br.net.opensingular.singular.form.PathReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
 public class TestLeitorPath extends TestCaseForm {

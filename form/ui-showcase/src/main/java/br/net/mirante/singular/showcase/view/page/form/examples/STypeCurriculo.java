@@ -1,17 +1,26 @@
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.core.*;
-import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
-import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
-import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
-import br.net.mirante.singular.form.type.util.STypeEMail;
-import br.net.mirante.singular.form.type.util.STypePersonName;
-import br.net.mirante.singular.form.type.util.STypeYearMonth;
-import br.net.mirante.singular.form.view.SMultiSelectionBySelectView;
-import br.net.mirante.singular.form.view.SViewListByForm;
-import br.net.mirante.singular.form.view.SViewListByTable;
-import br.net.mirante.singular.form.view.SViewTab;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeBoolean;
+import org.opensingular.singular.form.type.core.STypeDate;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.singular.form.type.country.brazil.STypeCPF;
+import org.opensingular.singular.form.type.country.brazil.STypeTelefoneNacional;
+import org.opensingular.singular.form.type.util.STypeEMail;
+import org.opensingular.singular.form.type.util.STypePersonName;
+import org.opensingular.singular.form.type.util.STypeYearMonth;
+import org.opensingular.singular.form.view.SMultiSelectionBySelectView;
+import org.opensingular.singular.form.view.SViewListByForm;
+import org.opensingular.singular.form.view.SViewListByTable;
+import org.opensingular.singular.form.view.SViewTab;
 
 @SInfoType(spackage = SPackageCurriculo.class, name = "STypeCurriculo")
 public class STypeCurriculo extends STypeComposite<SIComposite> {
@@ -28,8 +37,8 @@ public class STypeCurriculo extends STypeComposite<SIComposite> {
         STypeComposite<?> informacoesPessoais = addFieldComposite("informacoesPessoais");
         STypePersonName   nome                = informacoesPessoais.addField("nome", STypePersonName.class, true);
         STypeCPF          cpf                 = informacoesPessoais.addField("cpf", STypeCPF.class, true);
-        STypeDate         dtNasc              = informacoesPessoais.addFieldDate("dataNascimento", true);
-        STypeString       estadoCivil         = informacoesPessoais.addFieldString("estadoCivil", true);
+        STypeDate   dtNasc              = informacoesPessoais.addFieldDate("dataNascimento", true);
+        STypeString estadoCivil         = informacoesPessoais.addFieldString("estadoCivil", true);
         estadoCivil.selectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
 
         STypeString tipoContato = addField("tipoContato", STypeString.class)
@@ -82,7 +91,7 @@ public class STypeCurriculo extends STypeComposite<SIComposite> {
         }
 
         final STypeComposite<?> referencia       = addFieldComposite("referencia");
-        final STypeBoolean      foiIndicado      = referencia.addFieldBoolean("foiIndicado");
+        final STypeBoolean foiIndicado      = referencia.addFieldBoolean("foiIndicado");
         final STypeBoolean      refTemNaEmpresa  = referencia.addFieldBoolean("conheceColaboradorNaEmpresa");
         final STypeString       refQuemNaEmpresa = referencia.addFieldString("colaboradorContato");
         {
@@ -107,7 +116,7 @@ public class STypeCurriculo extends STypeComposite<SIComposite> {
         final STypeString    academicoNomeCurso    = cursoAcademico.addFieldString("nomeCurso", true);
         final STypeString    academicoInstituicao  = cursoAcademico.addFieldString("instituicao", true);
         final STypeCNPJ      academicoCNPJ         = cursoAcademico.addField("cnpj", STypeCNPJ.class, false);
-        final STypeInteger   academicoCargaHoraria = cursoAcademico.addField("cargaHoraria", STypeInteger.class, true);
+        final STypeInteger academicoCargaHoraria = cursoAcademico.addField("cargaHoraria", STypeInteger.class, true);
         final STypeYearMonth academicoMesConclusao = cursoAcademico.addField("mesConclusao", STypeYearMonth.class, true);
         {
             formacao

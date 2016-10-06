@@ -1,9 +1,9 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.helpers.DummyPage;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;

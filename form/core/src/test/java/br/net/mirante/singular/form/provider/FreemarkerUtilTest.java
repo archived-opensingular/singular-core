@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.provider;
 
+import org.opensingular.singular.form.provider.FreemarkerUtil;
 import org.junit.Assert;
 import org.junit.Test;
 

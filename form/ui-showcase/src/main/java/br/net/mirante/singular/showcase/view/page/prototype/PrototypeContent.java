@@ -5,14 +5,14 @@
 
 package br.net.mirante.singular.showcase.view.page.prototype;
 
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.internal.xml.MElement;
-import br.net.mirante.singular.form.io.MformPersistenciaXML;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.internal.xml.MElement;
+import org.opensingular.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;

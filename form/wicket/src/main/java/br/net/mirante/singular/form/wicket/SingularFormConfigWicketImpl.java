@@ -5,9 +5,9 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.context.SingularFormConfigImpl;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.context.SingularFormConfigImpl;
 
 import java.util.Map;
 

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.util.transformer.Value;
 
 public class FuncionarioRepository {
 

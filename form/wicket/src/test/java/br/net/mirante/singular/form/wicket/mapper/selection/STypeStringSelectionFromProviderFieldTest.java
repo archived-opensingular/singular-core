@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.RefService;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.provider.SimpleProvider;
-import br.net.mirante.singular.form.type.core.SIString;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.RefService;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.singular.form.provider.SimpleProvider;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import com.google.common.collect.Lists;
 import org.apache.wicket.markup.html.form.DropDownChoice;

@@ -2,12 +2,13 @@ package br.net.mirante.singular.form.type.core.attachment;
 
 import java.io.File;
 
+import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 import br.net.mirante.singular.commons.base.SingularUtil;
-import br.net.mirante.singular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
+import org.opensingular.singular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
 
 public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHandlerBase {
 

@@ -18,8 +18,8 @@ import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
 import org.slf4j.LoggerFactory;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.context.UIComponentMapper;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.context.UIComponentMapper;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateChoiceBehavior;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateSingularFormComponentPanel;

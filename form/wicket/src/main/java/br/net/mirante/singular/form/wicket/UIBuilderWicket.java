@@ -6,14 +6,29 @@
 package br.net.mirante.singular.form.wicket;
 
 import br.net.mirante.singular.commons.lambda.ISupplier;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.context.UIBuilder;
-import br.net.mirante.singular.form.context.UIComponentMapper;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.STypeAttachmentList;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.context.UIBuilder;
+import org.opensingular.singular.form.context.UIComponentMapper;
 import br.net.mirante.singular.form.type.core.*;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
-import br.net.mirante.singular.form.type.util.STypeLatitudeLongitude;
-import br.net.mirante.singular.form.type.util.STypeYearMonth;
+import org.opensingular.singular.form.type.core.STypeBoolean;
+import org.opensingular.singular.form.type.core.STypeDate;
+import org.opensingular.singular.form.type.core.STypeDateTime;
+import org.opensingular.singular.form.type.core.STypeDecimal;
+import org.opensingular.singular.form.type.core.STypeHTML;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeLong;
+import org.opensingular.singular.form.type.core.STypeMonetary;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.core.STypeTime;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.type.country.brazil.STypeTelefoneNacional;
+import org.opensingular.singular.form.type.util.STypeLatitudeLongitude;
+import org.opensingular.singular.form.type.util.STypeYearMonth;
 import br.net.mirante.singular.form.view.*;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.*;
@@ -27,6 +42,28 @@ import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.*;
 import br.net.mirante.singular.form.wicket.panel.BreadPanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import org.opensingular.singular.form.view.SMultiSelectionByCheckboxView;
+import org.opensingular.singular.form.view.SMultiSelectionByPicklistView;
+import org.opensingular.singular.form.view.SMultiSelectionBySelectView;
+import org.opensingular.singular.form.view.SView;
+import org.opensingular.singular.form.view.SViewAttachmentList;
+import org.opensingular.singular.form.view.SViewAutoComplete;
+import org.opensingular.singular.form.view.SViewBooleanByRadio;
+import org.opensingular.singular.form.view.SViewBreadcrumb;
+import org.opensingular.singular.form.view.SViewByBlock;
+import org.opensingular.singular.form.view.SViewByPortletRichText;
+import org.opensingular.singular.form.view.SViewDateTime;
+import org.opensingular.singular.form.view.SViewListByForm;
+import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.singular.form.view.SViewListByTable;
+import org.opensingular.singular.form.view.SViewReadOnly;
+import org.opensingular.singular.form.view.SViewSearchModal;
+import org.opensingular.singular.form.view.SViewSelectionByRadio;
+import org.opensingular.singular.form.view.SViewSelectionBySelect;
+import org.opensingular.singular.form.view.SViewTab;
+import org.opensingular.singular.form.view.SViewTextArea;
+import org.opensingular.singular.form.view.ViewMapperRegistry;
+import org.opensingular.singular.form.view.ViewResolver;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -58,19 +95,19 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     private IWicketComponentMapper resolveMapper(SInstance instancia) {
         final ISupplier<? extends UIComponentMapper> customMapperFactory = instancia.getType().getCustomMapperFactory();
-        final UIComponentMapper customMapper = (customMapperFactory != null) ? customMapperFactory.get() : null;
+        final UIComponentMapper                      customMapper        = (customMapperFactory != null) ? customMapperFactory.get() : null;
 
         if (customMapper != null) {
             if (customMapper instanceof IWicketComponentMapper) {
                 return (IWicketComponentMapper) customMapper;
             } else {
                 throw new SingularFormException("Para utilizar custom mapper com Wicket, é necessário " + customMapper.getClass().getName()
-                    + " implementar IWicketComponentMapper", instancia);
+                        + " implementar IWicketComponentMapper", instancia);
             }
         } else {
             final SView view = ViewResolver.resolve(instancia);
             return getViewMapperRegistry().getMapper(instancia, view).orElseThrow(
-                () -> new SingularFormException("Não há mappeamento de componente Wicket para o tipo", instancia, "view=" + view));
+                    () -> new SingularFormException("Não há mappeamento de componente Wicket para o tipo", instancia, "view=" + view));
         }
     }
 

@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.showcase.component.form.custom.comment;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 

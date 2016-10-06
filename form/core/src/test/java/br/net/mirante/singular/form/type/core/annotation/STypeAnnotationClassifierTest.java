@@ -1,23 +1,17 @@
 package br.net.mirante.singular.form.type.core.annotation;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.io.FormSerializationUtil;
-import br.net.mirante.singular.form.io.FormSerialized;
-import br.net.mirante.singular.form.type.core.STypeString;
-import org.fest.assertions.api.Assertions;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.core.annotation.AnnotationClassifier;
+import org.opensingular.singular.form.type.core.annotation.AtrAnnotation;
+import org.opensingular.singular.form.type.core.annotation.SIAnnotation;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.groups.Properties.extractProperty;

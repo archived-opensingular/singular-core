@@ -3,14 +3,14 @@ package br.net.mirante.singular.showcase.component.form.core.select;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.core.STypeDecimal;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.view.SViewAutoComplete;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.type.core.STypeDecimal;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.view.SViewAutoComplete;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
 

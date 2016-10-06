@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.mapper.composite;
 
-import br.net.mirante.singular.form.view.SViewByBlock;
-import br.net.mirante.singular.form.view.SViewTab;
+import org.opensingular.singular.form.view.SViewByBlock;
+import org.opensingular.singular.form.view.SViewTab;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 

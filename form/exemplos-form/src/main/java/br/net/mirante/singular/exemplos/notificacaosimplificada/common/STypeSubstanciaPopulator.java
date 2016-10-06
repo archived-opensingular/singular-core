@@ -8,15 +8,15 @@ import org.apache.commons.lang3.tuple.Triple;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
 import br.net.mirante.singular.exemplos.util.TripleConverter;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.STypeSimple;
-import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.view.SViewListByTable;
-import br.net.mirante.singular.form.view.SViewReadOnly;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.view.SViewListByTable;
+import org.opensingular.singular.form.view.SViewReadOnly;
 
 public class STypeSubstanciaPopulator {
 

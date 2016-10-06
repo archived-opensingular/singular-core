@@ -1,11 +1,15 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
-import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.type.core.SIString;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -63,8 +67,8 @@ public class TestFormWicketBuild  {
 
     @Test
     public void testBasic() {
-        BSGrid rootContainer = new BSGrid("teste");
-        TestPanel testPanel = buildTestPanel(rootContainer);
+        BSGrid    rootContainer = new BSGrid("teste");
+        TestPanel testPanel     = buildTestPanel(rootContainer);
 
         SIString instancia = (SIString) createIntance(() -> {
             PackageBuilder pb = dicionario.createNewPackage("teste");

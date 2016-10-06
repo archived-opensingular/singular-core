@@ -1,11 +1,11 @@
 package br.net.mirante.singular.studio.persistence;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.persistence.FormPersistence;
-import br.net.mirante.singular.form.persistence.FormPersistenceInMemory;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.persistence.FormPersistence;
+import org.opensingular.singular.form.persistence.FormPersistenceInMemory;
 
 import java.util.HashMap;
 import java.util.Map;

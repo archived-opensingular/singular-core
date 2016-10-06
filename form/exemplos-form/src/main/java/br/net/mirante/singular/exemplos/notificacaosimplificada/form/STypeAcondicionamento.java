@@ -4,11 +4,19 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemSecundaria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeUnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeAttachmentList;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.view.SViewListByMasterDetail;
 
 import java.util.Optional;
 
@@ -51,8 +59,8 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
         prazoValidade = this.addFieldInteger("prazoValidade", true);
         prazoValidade
-            .asAtr().label("Prazo de validade (meses)")
-            .asAtrBootstrap().colPreference(3);
+                .asAtr().label("Prazo de validade (meses)")
+                .asAtrBootstrap().colPreference(3);
 
         estudosEstabilidade = this.addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
 

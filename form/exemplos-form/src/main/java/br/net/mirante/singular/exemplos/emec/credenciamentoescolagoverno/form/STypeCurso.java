@@ -4,12 +4,12 @@
  */
 package br.net.mirante.singular.exemplos.emec.credenciamentoescolagoverno.form;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.view.SViewListByMasterDetail;
 
 @SInfoType(spackage = SPackageCredenciamentoEscolaGoverno.class)
 public class STypeCurso extends STypeComposite<SIComposite>{

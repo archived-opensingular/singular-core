@@ -1,7 +1,7 @@
 package br.net.mirante.singular.studio.core;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SType;
 
 import java.io.Serializable;
 import java.util.Optional;

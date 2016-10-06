@@ -7,10 +7,10 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.baixorisco
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SInfoPackage;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SPackage;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SInfoPackage;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SPackage;
 
 @SInfoPackage(name = SPackageNotificacaoSimplificadaBaixoRisco.PACOTE)
 public class SPackageNotificacaoSimplificadaBaixoRisco extends SPackage {

@@ -11,11 +11,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.type.core.STypeString;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
 

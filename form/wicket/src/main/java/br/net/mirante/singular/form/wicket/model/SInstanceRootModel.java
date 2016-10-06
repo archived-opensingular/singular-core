@@ -5,12 +5,12 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.event.ISInstanceListener;
-import br.net.mirante.singular.form.event.SInstanceEvent;
-import br.net.mirante.singular.form.event.SInstanceEventType;
-import br.net.mirante.singular.form.event.SInstanceListeners;
-import br.net.mirante.singular.form.io.InstanceSerializableRef;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.event.ISInstanceListener;
+import org.opensingular.singular.form.event.SInstanceEvent;
+import org.opensingular.singular.form.event.SInstanceEventType;
+import org.opensingular.singular.form.event.SInstanceListeners;
+import org.opensingular.singular.form.io.InstanceSerializableRef;
 
 import java.util.Collections;
 import java.util.List;

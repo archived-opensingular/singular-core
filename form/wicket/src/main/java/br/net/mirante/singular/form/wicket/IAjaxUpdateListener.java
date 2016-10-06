@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import br.net.mirante.singular.form.SInstance;
+import org.opensingular.singular.form.SInstance;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;

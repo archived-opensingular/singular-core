@@ -17,6 +17,8 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -24,7 +26,7 @@ import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
 
-import br.net.mirante.singular.form.SingularFormException;
+import org.opensingular.singular.form.SingularFormException;
 
 public abstract class TestCasePersistenceHandlerBase {
 

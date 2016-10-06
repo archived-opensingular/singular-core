@@ -5,19 +5,33 @@
 
 package br.net.mirante.singular.showcase.view.page.prototype;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.converter.SInstanceConverter;
 import br.net.mirante.singular.form.type.core.*;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
-import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
-import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
-import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
-import br.net.mirante.singular.form.type.util.STypeEMail;
-import br.net.mirante.singular.form.type.util.STypeLatitudeLongitude;
-import br.net.mirante.singular.form.type.util.STypePersonName;
-import br.net.mirante.singular.form.type.util.STypeYearMonth;
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeBoolean;
+import org.opensingular.singular.form.type.core.STypeDate;
+import org.opensingular.singular.form.type.core.STypeDateTime;
+import org.opensingular.singular.form.type.core.STypeDecimal;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeMonetary;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.type.country.brazil.STypeCEP;
+import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.singular.form.type.country.brazil.STypeCPF;
+import org.opensingular.singular.form.type.country.brazil.STypeTelefoneNacional;
+import org.opensingular.singular.form.type.util.STypeEMail;
+import org.opensingular.singular.form.type.util.STypeLatitudeLongitude;
+import org.opensingular.singular.form.type.util.STypePersonName;
+import org.opensingular.singular.form.type.util.STypeYearMonth;
+import org.opensingular.singular.form.view.SViewListByMasterDetail;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -104,10 +118,10 @@ public class SPackagePrototype extends SPackage {
         addAttributeFields(pb, fieldType, type);
 
         childFields.withView(new SViewListByMasterDetail()
-                .col(nome)
-                .col(type)
-                .col(tamanhoCampo)
-                .col(obrigatorio)
+                        .col(nome)
+                        .col(type)
+                        .col(tamanhoCampo)
+                        .col(obrigatorio)
         );
 
         addFields(pb, fieldType, type);

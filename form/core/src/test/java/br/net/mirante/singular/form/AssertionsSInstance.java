@@ -1,6 +1,10 @@
 package br.net.mirante.singular.form;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ErrorMsg;
+import org.opensingular.singular.form.ICompositeInstance;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
 
 import java.util.Objects;
 

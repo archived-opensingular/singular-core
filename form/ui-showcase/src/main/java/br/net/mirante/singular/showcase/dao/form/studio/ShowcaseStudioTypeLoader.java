@@ -5,11 +5,10 @@
 
 package br.net.mirante.singular.showcase.dao.form.studio;
 
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SFormUtil;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SFormUtil;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.SType;
 import br.net.mirante.singular.form.spring.SpringTypeLoader;
 
 import java.util.HashMap;

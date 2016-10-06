@@ -1,6 +1,6 @@
 package br.net.mirante.singular.studio.core;
 
-import br.net.mirante.singular.form.STypeSimple;
+import org.opensingular.singular.form.STypeSimple;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class CollectionEditorConfigBuilder {

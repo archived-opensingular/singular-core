@@ -4,11 +4,11 @@
  */
 package br.net.mirante.singular.exemplos.opas.gestaoobrasservicosaquisicoes.form;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.view.SViewTab;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.view.SViewTab;
 
 @SInfoType(spackage = SPackageGestaoObrasServicosAquisicoes.class)
 public class STypeGestaoObras extends STypeComposite<SIComposite>{

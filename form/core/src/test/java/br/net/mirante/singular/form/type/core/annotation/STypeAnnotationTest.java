@@ -1,11 +1,20 @@
 package br.net.mirante.singular.form.type.core.annotation;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.io.FormSerializationUtil;
-import br.net.mirante.singular.form.io.FormSerialized;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.io.FormSerializationUtil;
+import org.opensingular.singular.form.io.FormSerialized;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.core.annotation.AtrAnnotation;
+import org.opensingular.singular.form.type.core.annotation.SIAnnotation;
+import org.opensingular.singular.form.type.core.annotation.STypeAnnotation;
+import org.opensingular.singular.form.type.core.annotation.STypeAnnotationList;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,12 +56,14 @@ public class STypeAnnotationTest {
 
     }
 
-    @Test public void aNewInstanceHasNoAnnotations(){
+    @Test
+    public void aNewInstanceHasNoAnnotations() {
         SIComposite instance = baseCompositeField.newInstance();
         Assertions.assertThat(instance.asAtrAnnotation().allAnnotations()).isEmpty();
     }
 
-    @Test public void returnAllAnnotationsFromInstance(){
+    @Test
+    public void returnAllAnnotationsFromInstance() {
         SIComposite instance = baseCompositeField.newInstance();
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");

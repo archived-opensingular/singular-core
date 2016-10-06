@@ -5,11 +5,9 @@
 
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SPackage;
 import br.net.mirante.singular.form.type.core.*;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
 import br.net.mirante.singular.form.view.*;
 
 public class SPackagePeticaoGGTOX extends SPackage {

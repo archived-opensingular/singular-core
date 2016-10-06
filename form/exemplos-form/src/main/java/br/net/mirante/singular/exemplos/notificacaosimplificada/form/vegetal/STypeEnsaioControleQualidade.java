@@ -7,14 +7,20 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.view.SViewTextArea;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeAttachmentList;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.converter.SInstanceConverter;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.view.SViewSelectionByRadio;
+import org.opensingular.singular.form.view.SViewTextArea;
 
 import java.util.Arrays;
 
@@ -28,7 +34,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
     public STypeComposite<SIComposite> tipoReferencia;
     public STypeComposite<SIComposite> informacoesFarmacopeicas;
     public STypeAttachmentList resultadosLote;
-    public STypeString justificativa;
+    public STypeString         justificativa;
     public STypeAttachmentList resultadosControleQualidade;
 
     @Override
@@ -59,8 +65,8 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
         tipoEnsaio.asAtr().label("Ensaio de Controle de Qualidade").enabled(false);
 
-        tipoReferencia   = this.addFieldComposite("tipoReferencia");
-        STypeInteger                idTipoReferencia = tipoReferencia.addFieldInteger("id");
+        tipoReferencia = this.addFieldComposite("tipoReferencia");
+        STypeInteger idTipoReferencia = tipoReferencia.addFieldInteger("id");
         descricaoTipoReferencia = tipoReferencia.addFieldString("descricao");
 
         tipoReferencia.selectionOf(TipoReferencia.class, new SViewSelectionByRadio())
@@ -98,7 +104,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                     .visible(i -> TipoReferencia.NAO_FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
 
             STypeAttachment f           = resultadosLote.getElementsType();
-            SType<?>        nomeArquivo = (STypeSimple) f.getField(STypeAttachment.FIELD_NAME);
+            SType<?> nomeArquivo = (STypeSimple) f.getField(STypeAttachment.FIELD_NAME);
             nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 

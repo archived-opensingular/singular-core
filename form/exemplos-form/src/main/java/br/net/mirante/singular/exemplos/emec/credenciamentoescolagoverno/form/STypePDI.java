@@ -12,20 +12,20 @@ import java.util.Objects;
 import java.util.Optional;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.internal.xml.ConversorToolkit;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
-import br.net.mirante.singular.form.util.transformer.Value;
-import br.net.mirante.singular.form.view.SViewByBlock;
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.view.SViewListByTable;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.internal.xml.ConversorToolkit;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.country.brazil.STypeCEP;
+import org.opensingular.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.view.SViewByBlock;
+import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.singular.form.view.SViewListByTable;
 
 @SInfoType(spackage = SPackageCredenciamentoEscolaGoverno.class)
 public class STypePDI extends STypeComposite<SIComposite>{

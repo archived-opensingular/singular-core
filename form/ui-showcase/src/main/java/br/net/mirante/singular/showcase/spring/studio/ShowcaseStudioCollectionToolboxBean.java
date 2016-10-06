@@ -1,8 +1,8 @@
 package br.net.mirante.singular.showcase.spring.studio;
 
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.document.TypeLoader;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.document.TypeLoader;
 import br.net.mirante.singular.showcase.dao.form.studio.ShowcaseStudioTypeLoader;
 import br.net.mirante.singular.showcase.view.page.form.crud.services.ShowcaseDocumentFactory;
 import br.net.mirante.singular.studio.core.CollectionGallery;

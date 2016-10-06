@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.converter.ValueToSICompositeConverter;
-import br.net.mirante.singular.form.provider.Config;
-import br.net.mirante.singular.form.provider.FilteredProvider;
-import br.net.mirante.singular.form.provider.ProviderContext;
-import br.net.mirante.singular.form.view.SViewSearchModal;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.converter.ValueToSICompositeConverter;
+import org.opensingular.singular.form.provider.Config;
+import org.opensingular.singular.form.provider.FilteredProvider;
+import org.opensingular.singular.form.provider.ProviderContext;
+import org.opensingular.singular.form.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;

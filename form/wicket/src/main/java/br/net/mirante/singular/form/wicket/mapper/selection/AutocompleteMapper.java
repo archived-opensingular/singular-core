@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.view.SView;
-import br.net.mirante.singular.form.view.SViewAutoComplete;
-import br.net.mirante.singular.form.view.SViewSelectionBySelect;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.converter.SInstanceConverter;
+import org.opensingular.singular.form.view.SView;
+import org.opensingular.singular.form.view.SViewAutoComplete;
+import org.opensingular.singular.form.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;

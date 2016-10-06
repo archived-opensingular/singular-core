@@ -1,19 +1,23 @@
 package br.net.mirante.singular.form.curriculo.mform;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.core.STypeBoolean;
-import br.net.mirante.singular.form.type.core.STypeDate;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
-import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
-import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
-import br.net.mirante.singular.form.type.util.STypeEMail;
-import br.net.mirante.singular.form.type.util.STypePersonName;
-import br.net.mirante.singular.form.type.util.STypeYearMonth;
-import br.net.mirante.singular.form.view.SViewListByForm;
-import br.net.mirante.singular.form.view.SViewListByTable;
-import br.net.mirante.singular.form.view.SViewTab;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.type.core.STypeBoolean;
+import org.opensingular.singular.form.type.core.STypeDate;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.singular.form.type.country.brazil.STypeCPF;
+import org.opensingular.singular.form.type.country.brazil.STypeTelefoneNacional;
+import org.opensingular.singular.form.type.util.STypeEMail;
+import org.opensingular.singular.form.type.util.STypePersonName;
+import org.opensingular.singular.form.type.util.STypeYearMonth;
+import org.opensingular.singular.form.view.SViewListByForm;
+import org.opensingular.singular.form.view.SViewListByTable;
+import org.opensingular.singular.form.view.SViewTab;
 
 public class SPackageCurriculo extends SPackage {
 

@@ -13,10 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.core.STypeDateTime;
-import br.net.mirante.singular.form.view.SView;
-import br.net.mirante.singular.form.view.SViewDateTime;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.type.core.STypeDateTime;
+import org.opensingular.singular.form.view.SView;
+import org.opensingular.singular.form.view.SViewDateTime;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.datetime.DateTimeContainer;
 import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;

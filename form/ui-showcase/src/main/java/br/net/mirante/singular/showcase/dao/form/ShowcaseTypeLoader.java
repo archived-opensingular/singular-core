@@ -12,10 +12,10 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.gas.STypeNo
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.habilitacao.STypeHabilitacaoEmpresa;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vegetal.STypeNotificacaoSimplificadaFitoterapico;
 import br.net.mirante.singular.exemplos.opas.gestaoobrasservicosaquisicoes.form.STypeGestaoObras;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.SType;
 import br.net.mirante.singular.form.spring.SpringTypeLoader;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.CaseBaseForm;

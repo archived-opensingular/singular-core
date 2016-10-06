@@ -7,11 +7,10 @@ package br.net.mirante.singular.showcase.component.form.xsd;
 
 import java.util.Optional;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.io.FormXsdUtil;
-import br.net.mirante.singular.showcase.component.CaseBase;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.io.FormXsdUtil;
 import br.net.mirante.singular.showcase.component.CaseBaseForm;
 import br.net.mirante.singular.showcase.component.ResourceRef;
 

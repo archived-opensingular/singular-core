@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.validation;
 
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.FormComponent;

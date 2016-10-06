@@ -22,7 +22,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.form.SingularFormException;
+import org.opensingular.singular.form.SingularFormException;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;

@@ -1,11 +1,11 @@
 package br.net.mirante.singular.form.wicket.mapper.composite;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.type.core.SPackageBootstrap;
-import br.net.mirante.singular.form.view.Block;
-import br.net.mirante.singular.form.view.SViewByBlock;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.type.core.SPackageBootstrap;
+import org.opensingular.singular.form.view.Block;
+import org.opensingular.singular.form.view.SViewByBlock;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;

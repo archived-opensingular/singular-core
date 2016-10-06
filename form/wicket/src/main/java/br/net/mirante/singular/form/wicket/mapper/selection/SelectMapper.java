@@ -18,11 +18,11 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.converter.SInstanceConverter;
-import br.net.mirante.singular.form.provider.AtrProvider;
-import br.net.mirante.singular.form.provider.Provider;
-import br.net.mirante.singular.form.provider.ProviderContext;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.converter.SInstanceConverter;
+import org.opensingular.singular.form.provider.AtrProvider;
+import org.opensingular.singular.form.provider.Provider;
+import org.opensingular.singular.form.provider.ProviderContext;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import br.net.mirante.singular.form.wicket.model.SelectSInstanceAwareModel;

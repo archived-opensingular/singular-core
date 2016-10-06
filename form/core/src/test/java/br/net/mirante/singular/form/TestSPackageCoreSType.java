@@ -1,11 +1,13 @@
 package br.net.mirante.singular.form;
 
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.type.core.STypeString;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import static br.net.mirante.singular.form.AssertionsSForm.assertType;
 
 /**
  * Testa funcionaldiades básicas de SType.
@@ -21,7 +23,7 @@ public class TestSPackageCoreSType extends TestCaseForm {
 
     @Test
     public void testGetDependenteTypeIsMuttable() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder              pb = createTestDictionary().createNewPackage("teste");
         STypeComposite<SIComposite> typeRec1 = pb.createCompositeType("Rec1");
         STypeString field11 = typeRec1.addFieldString("field1");
         STypeString field12 = typeRec1.addFieldString("field2");

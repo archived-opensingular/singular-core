@@ -7,8 +7,12 @@ package br.net.mirante.singular.bam.form;
 
 import br.net.mirante.singular.bam.service.FlowMetadataFacade;
 import br.net.mirante.singular.bamclient.portlet.FilterConfig;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.document.ServiceRegistry;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.document.ServiceRegistry;
 
 import java.util.List;
 
@@ -27,7 +31,7 @@ public class FilterPackageFactory {
     }
 
     public SType<?> createFilterPackage() {
-        final PackageBuilder builder = SDictionary.create().createNewPackage("FilterPackage");
+        final PackageBuilder                        builder = SDictionary.create().createNewPackage("FilterPackage");
         final STypeComposite<? extends SIComposite> filtro = builder.createCompositeType("filter");
         appendFilters(filtro);
         return filtro;

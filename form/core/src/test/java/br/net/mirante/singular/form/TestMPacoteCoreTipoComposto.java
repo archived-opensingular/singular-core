@@ -2,10 +2,21 @@ package br.net.mirante.singular.form;
 
 import br.net.mirante.singular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInterna;
 import br.net.mirante.singular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaB;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SISimple;
+import org.opensingular.singular.form.SInfoPackage;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -14,7 +25,6 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static br.net.mirante.singular.form.AssertionsSForm.assertType;
 import static br.net.mirante.singular.form.TestMPacoteCoreTipoLista.INDICE_INVALIDO;
 
 

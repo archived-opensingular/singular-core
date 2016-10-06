@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.wicket.mapper;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.*;
 import static org.junit.Assert.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -16,9 +15,9 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import br.net.mirante.singular.commons.lambda.IPredicate;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.core.STypeDate;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.type.core.STypeDate;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerInputGroup;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;

@@ -1,6 +1,9 @@
 package br.net.mirante.singular.form;
 
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import org.opensingular.singular.form.AtrRef;
+import org.opensingular.singular.form.SAttributeEnabled;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.type.basic.SPackageBasic;
 
 import java.util.Objects;
 

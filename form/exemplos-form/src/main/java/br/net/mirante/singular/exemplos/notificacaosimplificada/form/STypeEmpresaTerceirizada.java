@@ -3,11 +3,15 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.provider.STextQueryProvider;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.view.SViewAutoComplete;
-import br.net.mirante.singular.form.view.SViewListByTable;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.provider.STextQueryProvider;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.view.SViewAutoComplete;
+import org.opensingular.singular.form.view.SViewListByTable;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao.dominioService;
 

@@ -1,8 +1,8 @@
 package br.net.mirante.singular.showcase.component.studio;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SInfoPackage;
-import br.net.mirante.singular.form.SPackage;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SInfoPackage;
+import org.opensingular.singular.form.SPackage;
 
 @SInfoPackage(name = "test.order")
 public class SPackageOrder extends SPackage {

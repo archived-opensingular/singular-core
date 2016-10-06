@@ -1,10 +1,31 @@
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.*;
 import br.net.mirante.singular.form.type.core.*;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeDate;
+import org.opensingular.singular.form.type.core.STypeDecimal;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
 import br.net.mirante.singular.form.view.*;
+import org.opensingular.singular.form.view.SMultiSelectionByCheckboxView;
+import org.opensingular.singular.form.view.SMultiSelectionByPicklistView;
+import org.opensingular.singular.form.view.SMultiSelectionBySelectView;
+import org.opensingular.singular.form.view.SViewAutoComplete;
+import org.opensingular.singular.form.view.SViewListByForm;
+import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.singular.form.view.SViewListByTable;
+import org.opensingular.singular.form.view.SViewSelectionByRadio;
+import org.opensingular.singular.form.view.SViewSelectionBySelect;
+import org.opensingular.singular.form.view.SViewTab;
 
 @SInfoType(spackage = SPackagePeticaoGGTOX.class, name = "STypePeticaoGGTOX")
 public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
@@ -380,8 +401,8 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
                 SType<?> nomeArquivo = (STypeSimple) arquivo.getField(arquivo.FIELD_NAME);
                 nomeArquivo.asAtr().label("Nome do Arquivo");
                 root.withView(new SViewListByMasterDetail()
-                        .col((STypeSimple) nomeArquivo)
-                        .col(tipo)
+                                .col((STypeSimple) nomeArquivo)
+                                .col(tipo)
                 );
             }
 
@@ -424,10 +445,10 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
                 odor = createOdorField();
 
                 root.withView(new SViewListByMasterDetail()
-                        .col(estadoFisico)
-                        .col(aspecto)
-                        .col(cor)
-                        .col(odor)
+                                .col(estadoFisico)
+                                .col(aspecto)
+                                .col(cor)
+                                .col(odor)
                 );
 
                 fusao = new Faixa("Fusao", "Fusão");
@@ -672,10 +693,10 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
                 fim = createDateField("dataFimEstudo", "Data final do estudo", 3);
 
                 root.withView(new SViewListByMasterDetail()
-                        .col(laboratorio)
-                        .col(protocolo)
-                        .col(inicio)
-                        .col(fim)
+                                .col(laboratorio)
+                                .col(protocolo)
+                                .col(inicio)
+                                .col(fim)
                 );
 
                 purezaProdutoTestado = createStringField("purezaProdutoTestado", "Pureza do produto testado", null, 6);

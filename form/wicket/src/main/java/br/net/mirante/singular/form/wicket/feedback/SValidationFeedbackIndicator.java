@@ -15,8 +15,8 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import org.opensingular.singular.form.validation.IValidationError;
+import org.opensingular.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;

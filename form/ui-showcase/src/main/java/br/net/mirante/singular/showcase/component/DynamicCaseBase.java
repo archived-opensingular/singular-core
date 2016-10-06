@@ -5,14 +5,13 @@
 
 package br.net.mirante.singular.showcase.component;
 
-import java.util.Date;
 import java.util.Optional;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.type.core.STypeString;
 
 public class DynamicCaseBase extends CaseBaseForm {
 

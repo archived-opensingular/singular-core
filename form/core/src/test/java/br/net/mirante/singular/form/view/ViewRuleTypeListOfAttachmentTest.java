@@ -1,11 +1,13 @@
 package br.net.mirante.singular.form.view;
 
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.type.core.SIString;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.view.SViewAttachmentList;
+import org.opensingular.singular.form.view.ViewResolver;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

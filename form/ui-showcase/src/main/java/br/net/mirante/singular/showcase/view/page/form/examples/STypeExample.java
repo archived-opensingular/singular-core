@@ -1,16 +1,22 @@
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
-import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
-import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
-import br.net.mirante.singular.form.type.util.STypePersonName;
-import br.net.mirante.singular.form.validation.validator.InstanceValidators;
-import br.net.mirante.singular.form.view.SViewListByForm;
-import br.net.mirante.singular.form.view.SViewSelectionBySelect;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.type.country.brazil.STypeCEP;
+import org.opensingular.singular.form.type.country.brazil.STypeCPF;
+import org.opensingular.singular.form.type.country.brazil.STypeTelefoneNacional;
+import org.opensingular.singular.form.type.util.STypePersonName;
+import org.opensingular.singular.form.validation.validator.InstanceValidators;
+import org.opensingular.singular.form.view.SViewListByForm;
+import org.opensingular.singular.form.view.SViewSelectionBySelect;
 
 @SInfoType(spackage = ExamplePackage.class, name = "STypeExample")
 public class STypeExample extends STypeComposite<SIComposite> {

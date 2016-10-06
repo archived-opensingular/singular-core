@@ -8,9 +8,9 @@ package br.net.mirante.singular.form.wicket.mapper.attachment.single;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;

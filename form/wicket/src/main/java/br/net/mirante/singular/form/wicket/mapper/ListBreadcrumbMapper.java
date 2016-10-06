@@ -6,12 +6,18 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.internal.xml.MElement;
-import br.net.mirante.singular.form.internal.xml.MParser;
-import br.net.mirante.singular.form.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.view.SViewBreadcrumb;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.internal.xml.MElement;
+import org.opensingular.singular.form.internal.xml.MParser;
+import org.opensingular.singular.form.io.MformPersistenciaXML;
+import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.singular.form.view.SViewBreadcrumb;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
@@ -96,7 +102,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
     public static class ColumnType {
 
         private SType<?> type;
-        private String customLabel;
+        private String   customLabel;
         private IFunction<SInstance, String> displayValueFunction = SInstance::toStringDisplay;
 
         public ColumnType() {
@@ -131,13 +137,13 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
     public static class BreadCrumbPanel extends MetronicPanel {
 
         private IModel<SIList<SInstance>> listModel;
-        private IModel<String> listaLabel;
-        private WicketBuildContext ctx;
-        private SViewBreadcrumb view;
-        private IModel<SInstance> currentInstance;
-        private String instanceBackupXml;
-        private boolean adding;
-        private ViewMode viewMode;
+        private IModel<String>            listaLabel;
+        private WicketBuildContext        ctx;
+        private SViewBreadcrumb           view;
+        private IModel<SInstance>         currentInstance;
+        private String                    instanceBackupXml;
+        private boolean                   adding;
+        private ViewMode                  viewMode;
 
         @SuppressWarnings("unchecked")
         public BreadCrumbPanel(String id,

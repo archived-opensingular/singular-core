@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form;
 
-import br.net.mirante.singular.form.type.util.SPackageUtil;
-import junit.framework.TestCase;
+import org.opensingular.singular.form.type.util.SPackageUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

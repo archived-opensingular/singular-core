@@ -2,21 +2,23 @@ package br.net.mirante.singular.form.view;
 
 import static org.junit.Assert.assertEquals;
 
+import org.opensingular.singular.form.view.SView;
+import org.opensingular.singular.form.view.ViewMapperRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.commons.base.SingularUtil;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeSimple;
-import br.net.mirante.singular.form.type.core.STypeDate;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
-import br.net.mirante.singular.form.type.country.brazil.STypeCNPJ;
-import br.net.mirante.singular.form.type.country.brazil.STypeCPF;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.singular.form.type.core.STypeDate;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.country.brazil.STypeCEP;
+import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.singular.form.type.country.brazil.STypeCPF;
 
 public class TestViewMapperRegistry {
 

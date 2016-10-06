@@ -6,16 +6,16 @@
 package br.net.mirante.singular.form.wicket.util;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SInstances;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeList;
-import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.event.ISInstanceListener;
-import br.net.mirante.singular.form.event.SInstanceEvent;
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SInstances;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.singular.form.event.ISInstanceListener;
+import org.opensingular.singular.form.event.SInstanceEvent;
+import org.opensingular.singular.form.validation.IValidationError;
+import org.opensingular.singular.form.validation.InstanceValidationContext;
+import org.opensingular.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.SValidationFeedbackHandler;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;

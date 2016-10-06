@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.SType;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 

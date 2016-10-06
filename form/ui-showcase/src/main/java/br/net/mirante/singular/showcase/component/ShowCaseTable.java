@@ -21,7 +21,7 @@ import org.reflections.Reflections;
 import org.springframework.stereotype.Service;
 
 import br.net.mirante.singular.commons.base.SingularUtil;
-import br.net.mirante.singular.form.SPackage;
+import org.opensingular.singular.form.SPackage;
 import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple;
 import br.net.mirante.singular.showcase.component.form.xsd.XsdCaseSimple2;
 import br.net.mirante.singular.studio.core.CollectionDefinition;

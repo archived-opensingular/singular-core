@@ -1,26 +1,36 @@
 package br.net.mirante.singular.form;
 
+import org.opensingular.singular.form.AtrRef;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SFormUtil;
+import org.opensingular.singular.form.SISimple;
+import org.opensingular.singular.form.SInfoPackage;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeBehavior;
+import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.singular.form.TypeBuilder;
 import org.junit.Assert;
 
 import br.net.mirante.singular.form.SCorePackageTest.TestPacoteA.TestTipoA;
 import br.net.mirante.singular.form.SCorePackageTest.TestPacoteA.TestTipoB;
 import br.net.mirante.singular.form.SCorePackageTest.TestPacoteA.TestTipoComCargaInterna;
 import br.net.mirante.singular.form.SCorePackageTest.TestPacoteA.TestTipoX;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.SIInteger;
-import br.net.mirante.singular.form.type.core.SIString;
-import br.net.mirante.singular.form.type.core.SPackageCore;
-import br.net.mirante.singular.form.type.core.STypeBoolean;
-import br.net.mirante.singular.form.type.core.STypeDate;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
-import br.net.mirante.singular.form.type.util.STypeEMail;
+import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.singular.form.type.core.SIInteger;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.SPackageCore;
+import org.opensingular.singular.form.type.core.STypeBoolean;
+import org.opensingular.singular.form.type.core.STypeDate;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.country.brazil.STypeCEP;
+import org.opensingular.singular.form.type.util.STypeEMail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
 public class SCorePackageTest extends TestCaseForm {
@@ -300,8 +310,8 @@ public class SCorePackageTest extends TestCaseForm {
         assertNull(SFormUtil.getInfoPackageName(TestPacoteA.class));
 
         SDictionary dictionary = createTestDictionary();
-        TestPacoteA pacoteA = dictionary.loadPackage(TestPacoteA.class);
-        TestPacoteB pacoteB = dictionary.loadPackage(TestPacoteB.class);
+        TestPacoteA pacoteA    = dictionary.loadPackage(TestPacoteA.class);
+        TestPacoteB pacoteB    = dictionary.loadPackage(TestPacoteB.class);
 
         assertEquals("teste.pacoteA", pacoteA.getName());
         assertEquals("teste.pacoteB", pacoteB.getName());
@@ -343,8 +353,8 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCargaAutomaticaPacotePorUsarUmAtributo() {
-        SDictionary dictionary = createTestDictionary();
-        PackageBuilder pb = dictionary.createNewPackage("teste");
+        SDictionary    dictionary = createTestDictionary();
+        PackageBuilder pb         = dictionary.createNewPackage("teste");
 
         assertCargaPacoteA(dictionary, false);
 
@@ -360,8 +370,8 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCargaAutomaticaPacotePorDarAddEmUmAtributo() {
-        SDictionary dictionary = createTestDictionary();
-        PackageBuilder pb = dictionary.createNewPackage("teste");
+        SDictionary    dictionary = createTestDictionary();
+        PackageBuilder pb         = dictionary.createNewPackage("teste");
 
         assertCargaPacoteA(dictionary, false);
         pb.addAttribute(STypeInteger.class, TestPacoteA.ATR_XX);
@@ -404,9 +414,9 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testSeTipoBaseadoEmClasseCarregaConfiguracaoInternaDaClasseAoExtender() {
-        SDictionary dictionary = createTestDictionary();
-        PackageBuilder pb = dictionary.createNewPackage("teste");
-        TestTipoComCargaInterna tipo = pb.createType("derivado", TestTipoComCargaInterna.class);
+        SDictionary             dictionary = createTestDictionary();
+        PackageBuilder          pb         = dictionary.createNewPackage("teste");
+        TestTipoComCargaInterna tipo       = pb.createType("derivado", TestTipoComCargaInterna.class);
 
         assertEquals((Boolean) true, tipo.isRequired());
         assertEquals((Integer) 10, tipo.getAttributeValueInitialValue());

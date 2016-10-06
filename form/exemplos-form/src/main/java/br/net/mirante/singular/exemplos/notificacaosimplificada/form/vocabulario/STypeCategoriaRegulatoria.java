@@ -2,14 +2,14 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulari
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.CategoriaRegulatoriaMedicamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SInfoType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.TypeBuilder;
-import br.net.mirante.singular.form.provider.STextQueryProvider;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.view.SViewAutoComplete;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.provider.STextQueryProvider;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.view.SViewAutoComplete;
 
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeCategoriaRegulatoria extends STypeComposite<SIComposite> {

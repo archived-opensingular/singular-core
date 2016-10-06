@@ -4,17 +4,22 @@
  */
 package br.net.mirante.singular.form.service;
 
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.internal.xml.MElement;
-import br.net.mirante.singular.form.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.persistence.*;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.internal.xml.MElement;
+import org.opensingular.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.persistence.dao.*;
 import br.net.mirante.singular.form.persistence.entity.*;
-import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
+import org.opensingular.singular.form.persistence.AbstractBasicFormPersistence;
+import org.opensingular.singular.form.persistence.AnnotationKey;
+import org.opensingular.singular.form.persistence.FormKey;
+import org.opensingular.singular.form.persistence.FormKeyLong;
+import org.opensingular.singular.form.persistence.SPackageFormPersistence;
+import org.opensingular.singular.form.persistence.SingularFormPersistenceException;
+import org.opensingular.singular.form.type.core.annotation.AtrAnnotation;
+import org.opensingular.singular.form.type.core.annotation.SIAnnotation;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 

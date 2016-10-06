@@ -1,10 +1,9 @@
 package br.net.mirante.singular.studio.spring;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.TypeLoader;
-import br.net.mirante.singular.form.persistence.FormPersistence;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.persistence.FormPersistence;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
 import br.net.mirante.singular.studio.core.CollectionEditorConfig;
 import br.net.mirante.singular.studio.core.CollectionGallery;

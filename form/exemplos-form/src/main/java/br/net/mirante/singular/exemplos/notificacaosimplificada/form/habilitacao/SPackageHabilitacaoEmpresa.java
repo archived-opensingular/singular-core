@@ -6,9 +6,9 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.habilitacao;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SInfoPackage;
-import br.net.mirante.singular.form.SPackage;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SInfoPackage;
+import org.opensingular.singular.form.SPackage;
 
 @SInfoPackage(name = SPackageHabilitacaoEmpresa.PACOTE)
 public class SPackageHabilitacaoEmpresa extends SPackage {

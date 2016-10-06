@@ -24,11 +24,11 @@ import org.apache.wicket.util.visit.Visits;
 import com.google.common.collect.Sets;
 
 import br.net.mirante.singular.commons.lambda.IPredicate;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SInstances;
-import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SInstances;
+import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.singular.form.validation.IValidationError;
+import org.opensingular.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class SValidationFeedbackHandler implements Serializable {

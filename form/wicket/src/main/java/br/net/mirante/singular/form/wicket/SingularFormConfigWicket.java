@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import br.net.mirante.singular.form.context.SingularFormConfig;
+import org.opensingular.singular.form.context.SingularFormConfig;
 
 public interface SingularFormConfigWicket extends SingularFormConfig {
 }

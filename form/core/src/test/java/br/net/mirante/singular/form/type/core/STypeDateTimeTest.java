@@ -1,17 +1,12 @@
 package br.net.mirante.singular.form.type.core;
 
 import br.net.mirante.singular.form.AbstractTestOneType;
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.TestCaseForm;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.type.core.SIDateTime;
+import org.opensingular.singular.form.type.core.STypeDateTime;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

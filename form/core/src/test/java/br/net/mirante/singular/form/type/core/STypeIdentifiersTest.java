@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.type.core;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SDictionary;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

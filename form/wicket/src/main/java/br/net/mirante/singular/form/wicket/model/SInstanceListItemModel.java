@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
-import br.net.mirante.singular.form.SInstance;
+import org.opensingular.singular.form.SInstance;
 
 public class SInstanceListItemModel<I extends SInstance>
     extends AbstractSInstanceItemListaModel<I>

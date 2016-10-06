@@ -1,14 +1,12 @@
 package br.net.mirante.singular.studio.wicket;
 
-import br.net.mirante.singular.form.persistence.FormKey;
+import org.opensingular.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.studio.core.CollectionCanvas;
-import br.net.mirante.singular.studio.spring.StudioCollectionToolboxBean;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 
-import javax.inject.Inject;
 import java.io.Serializable;
 
 public class SingularStudioCollectionPanel extends Panel {

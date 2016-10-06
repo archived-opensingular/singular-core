@@ -1,14 +1,13 @@
 package br.net.mirante.singular.form.service;
 
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.persistence.FormKey;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.entity.FormAnnotationEntity;
 import br.net.mirante.singular.form.persistence.entity.FormAnnotationVersionEntity;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
-import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
-import org.hibernate.criterion.Order;
+import org.opensingular.singular.form.type.core.annotation.SIAnnotation;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
 import org.junit.Test;

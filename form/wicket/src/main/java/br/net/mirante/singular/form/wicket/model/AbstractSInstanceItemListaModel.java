@@ -9,8 +9,8 @@ import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.SInstance;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInstance;
 
 public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
     extends AbstractSInstanceModel<I>

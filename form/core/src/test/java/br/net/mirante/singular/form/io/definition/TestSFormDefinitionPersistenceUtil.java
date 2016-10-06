@@ -4,6 +4,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.util.List;
 
+import org.opensingular.singular.form.io.definition.SFormDefinitionPersistenceUtil;
+import org.opensingular.singular.form.io.definition.SIPersistenceArchive;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,17 +13,17 @@ import org.junit.runners.Parameterized;
 
 import com.google.common.collect.Lists;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SFormUtil;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.STypeList;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SFormUtil;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
 import br.net.mirante.singular.form.TestCaseForm;
 import br.net.mirante.singular.form.io.FormAssert;
-import br.net.mirante.singular.form.io.PersistenceBuilderXML;
-import br.net.mirante.singular.form.type.core.STypeString;
-import br.net.mirante.singular.form.type.country.brazil.STypeCEP;
+import org.opensingular.singular.form.io.PersistenceBuilderXML;
+import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.country.brazil.STypeCEP;
 
 @RunWith(Parameterized.class)
 public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {

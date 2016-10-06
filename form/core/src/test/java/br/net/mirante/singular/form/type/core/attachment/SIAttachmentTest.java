@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.type.core.attachment;
 
-import br.net.mirante.singular.form.SDictionary;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;

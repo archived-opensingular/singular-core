@@ -1,8 +1,14 @@
 package br.net.mirante.singular.form;
 
 import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.ICompositeInstance;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocumentFactory;
 import junit.framework.TestCase;
 import org.junit.runners.Parameterized;
 
@@ -28,7 +34,10 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
         executionParams.add(new TestFormConfig(name, factory));
     }
 
-    private static interface SerializableSupplier<T> extends Supplier<T>, Serializable {};
+    private static interface SerializableSupplier<T> extends Supplier<T>, Serializable {
+    }
+
+    ;
 
     protected static class TestFormConfig {
         private final String scenarioName;
@@ -62,12 +71,12 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
         return dictionaryFactory.get();
     }
 
-    /** Cria assertivas para um {@link br.net.mirante.singular.form.SType}. */
+    /** Cria assertivas para um {@link SType}. */
     public static AssertionsSType assertType(SType<?> type) {
         return new AssertionsSType(type);
     }
 
-    /** Cria assertivas para um {@link br.net.mirante.singular.form.SInstance}. */
+    /** Cria assertivas para um {@link SInstance}. */
     public static AssertionsSInstance assertInstance(SInstance instance) {
         return new AssertionsSInstance(instance);
     }

@@ -14,8 +14,8 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.validator.StringValidator;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.CountDownBehaviour;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;

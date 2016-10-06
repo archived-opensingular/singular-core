@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.type.core.attachment;
 
-import br.net.mirante.singular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.singular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 
 public class InMemoryAttachmentPersistenceFilesTest extends BaseAttachmentPersistenceFilesTest {
 

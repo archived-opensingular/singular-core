@@ -5,7 +5,6 @@
 
 package br.net.mirante.singular.showcase.component;
 
-import br.net.mirante.singular.form.SPackage;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.studio.core.CollectionDefinition;
 

@@ -1,7 +1,10 @@
 package br.net.mirante.singular.form;
 
 import br.net.mirante.singular.commons.lambda.IPredicate;
-import br.net.mirante.singular.form.SInstances.IVisitor;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SInstances;
+import org.opensingular.singular.form.SInstances.IVisitor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

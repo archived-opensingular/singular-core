@@ -1,17 +1,25 @@
 package br.net.mirante.singular.form.type.core;
 
 import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.document.RefType;
-import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.document.SDocumentFactoryEmpty;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.RefService;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.document.RefType;
+import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.singular.form.document.SDocumentFactoryEmpty;
 import br.net.mirante.singular.form.io.TesteFormSerializationUtil;
-import org.junit.Before;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeString;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.io.Serializable;
-import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -25,7 +33,7 @@ public class InitListenerTest extends TestCaseForm {
     @Test
     public void runInitializationCode() {
         STypeComposite<SIComposite> base = createTestDictionary().createNewPackage("test").createCompositeType("base");
-        STypeString field1 = base.addFieldString("field1");
+        STypeString                 field1 = base.addFieldString("field1");
         STypeString field2 = base.addFieldString("field2");
 
         field1.withInitListener(x -> x.setValue("abacate"));

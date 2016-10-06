@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.type.core;
 
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.type.util.SIYearMonth;
-import br.net.mirante.singular.form.type.util.STypeYearMonth;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.type.util.SIYearMonth;
+import org.opensingular.singular.form.type.util.STypeYearMonth;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,12 +1,12 @@
 package br.net.mirante.singular.form.wicket.util;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.util.transformer.Value;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.util.transformer.Value;
 
 import java.io.Serializable;
 
-import static br.net.mirante.singular.form.util.transformer.Value.dehydrate;
-import static br.net.mirante.singular.form.util.transformer.Value.hydrate;
+import static org.opensingular.singular.form.util.transformer.Value.dehydrate;
+import static org.opensingular.singular.form.util.transformer.Value.hydrate;
 
 public class FormStateUtil {
 

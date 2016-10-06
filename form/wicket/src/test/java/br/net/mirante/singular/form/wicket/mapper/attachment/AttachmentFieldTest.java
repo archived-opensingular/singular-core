@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.SDictionary;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.wicket.Component;

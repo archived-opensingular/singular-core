@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.SIList;
-import br.net.mirante.singular.form.STypeAttachmentList;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.STypeAttachmentList;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.type.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;

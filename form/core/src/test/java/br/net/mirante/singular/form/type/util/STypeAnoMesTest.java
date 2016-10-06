@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.type.util;
 
+import org.opensingular.singular.form.type.util.STypeYearMonth;
 import org.junit.Test;
 
 import java.time.YearMonth;
@@ -8,10 +9,10 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class STypeAnoMesTest {
 
-    STypeYearMonth type = new STypeYearMonth();
-    YearMonth dec2015 = YearMonth.of(2015, 12),
-            jan2015 = YearMonth.of(2015, 1),
-            jan01 = YearMonth.of(1, 1);
+    STypeYearMonth type    = new STypeYearMonth();
+    YearMonth      dec2015 = YearMonth.of(2015, 12),
+            jan2015        = YearMonth.of(2015, 1),
+            jan01          = YearMonth.of(1, 1);
 
     @Test
     public void formatingString() {

@@ -1,5 +1,8 @@
 package br.net.mirante.singular.form;
 
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
@@ -12,12 +15,12 @@ public class AssertionsSForm {
     private AssertionsSForm() {
     }
 
-    /** Cria assertivas para um {@link br.net.mirante.singular.form.SType}. */
+    /** Cria assertivas para um {@link SType}. */
     public static AssertionsSType assertType(SType<?> type) {
         return new AssertionsSType(type);
     }
 
-    /** Cria assertivas para um {@link br.net.mirante.singular.form.SInstance}. */
+    /** Cria assertivas para um {@link SInstance}. */
     public static AssertionsSInstance assertInstance(SInstance instance) {
         return new AssertionsSInstance(instance);
     }

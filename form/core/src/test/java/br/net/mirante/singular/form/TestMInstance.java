@@ -1,13 +1,17 @@
 package br.net.mirante.singular.form;
 
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.STypeComposite;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import br.net.mirante.singular.form.internal.xml.MElement;
-import br.net.mirante.singular.form.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.internal.xml.MElement;
+import org.opensingular.singular.form.io.MformPersistenciaXML;
+import org.opensingular.singular.form.type.core.STypeString;
 
 @RunWith(Parameterized.class)
 public class TestMInstance extends TestCaseForm {

@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.service;
 
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.persistence.FormKey;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.persistence.FormKey;
 import br.net.mirante.singular.form.persistence.entity.FormEntity;
 import br.net.mirante.singular.form.persistence.entity.FormVersionEntity;
 import org.hibernate.criterion.Order;

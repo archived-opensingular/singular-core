@@ -5,10 +5,10 @@
 
 package br.net.mirante.singular.form.spring;
 
-import br.net.mirante.singular.form.SingularFormException;
-import br.net.mirante.singular.form.context.SFormConfig;
-import br.net.mirante.singular.form.document.SDocumentFactory;
-import br.net.mirante.singular.form.document.TypeLoader;
+import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.singular.form.document.TypeLoader;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;

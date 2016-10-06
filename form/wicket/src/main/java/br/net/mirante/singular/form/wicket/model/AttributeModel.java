@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
-import br.net.mirante.singular.form.AtrRef;
+import org.opensingular.singular.form.AtrRef;
 import br.net.mirante.singular.util.wicket.model.IBooleanModel;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import br.net.mirante.singular.util.wicket.model.NullOrEmptyModel;

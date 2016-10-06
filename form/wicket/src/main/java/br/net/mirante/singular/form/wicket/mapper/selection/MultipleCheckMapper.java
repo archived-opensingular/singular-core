@@ -13,7 +13,7 @@ import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.SInstance;
+import org.opensingular.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.model.MultipleSelectSInstanceAwareModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 

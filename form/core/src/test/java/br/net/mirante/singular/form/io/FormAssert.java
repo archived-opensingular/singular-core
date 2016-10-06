@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.io;
 
-import br.net.mirante.singular.form.ICompositeInstance;
-import br.net.mirante.singular.form.SAttributeEnabled;
-import br.net.mirante.singular.form.SInstance;
+import org.opensingular.singular.form.ICompositeInstance;
+import org.opensingular.singular.form.SAttributeEnabled;
+import org.opensingular.singular.form.SInstance;
 
 import java.util.ArrayList;
 import java.util.List;

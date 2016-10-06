@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.behavior;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SInstanceViewState;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SInstanceViewState;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;

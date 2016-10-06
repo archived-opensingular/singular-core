@@ -4,12 +4,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import br.net.mirante.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.SIString;
 
 @RunWith(Parameterized.class)
 public class TestMInstanciaDescendants extends TestCaseForm {

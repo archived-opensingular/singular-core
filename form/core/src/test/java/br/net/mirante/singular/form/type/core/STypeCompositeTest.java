@@ -1,15 +1,17 @@
 package br.net.mirante.singular.form.type.core;
 
 import br.net.mirante.singular.form.*;
-import br.net.mirante.singular.form.internal.xml.MParser;
-import br.net.mirante.singular.form.io.MformPersistenciaXML;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.internal.xml.MParser;
+import org.opensingular.singular.form.io.MformPersistenciaXML;
+import org.opensingular.singular.form.type.core.STypeString;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -23,15 +25,17 @@ public class STypeCompositeTest extends TestCaseForm {
         super(testFormConfig);
     }
 
-    @Before public void setup() {
-        PackageBuilder pkt  = createTestDictionary().createNewPackage("pkt");
+    @Before
+    public void setup() {
+        PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
         baseType = pkt.createCompositeType("baseType");
         name = baseType.addFieldString("name");
         subStuff = baseType.addFieldComposite("subStuff");
         content = subStuff.addFieldString("content");
     }
 
-    @Test public void setCompositeValue() throws Exception{
+    @Test
+    public void setCompositeValue() throws Exception {
         SIComposite original = baseType.newInstance();
         original.getDescendant(name).setValue("My first name");
         original.getDescendant(content).setValue("My first content");

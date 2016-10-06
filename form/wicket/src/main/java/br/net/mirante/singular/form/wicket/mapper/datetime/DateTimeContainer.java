@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.mapper.datetime;
 
-import br.net.mirante.singular.form.view.SViewDateTime;
+import org.opensingular.singular.form.view.SViewDateTime;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;

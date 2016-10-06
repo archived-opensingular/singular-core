@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.masterdetail;
 
-import br.net.mirante.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.singular.form.view.SViewListByMasterDetail;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.junit.Assert;
 import org.junit.Test;

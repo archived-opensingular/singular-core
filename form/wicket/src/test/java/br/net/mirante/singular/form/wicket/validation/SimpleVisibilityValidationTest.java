@@ -3,8 +3,8 @@ package br.net.mirante.singular.form.wicket.validation;
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.type.core.STypeString;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 
 public class SimpleVisibilityValidationTest extends SingularFormBaseTest {

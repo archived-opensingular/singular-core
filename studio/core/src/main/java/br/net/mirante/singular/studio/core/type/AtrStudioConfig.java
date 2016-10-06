@@ -1,8 +1,7 @@
 package br.net.mirante.singular.studio.core.type;
 
-import br.net.mirante.singular.form.SAttributeEnabled;
-import br.net.mirante.singular.form.STranslatorForAttribute;
-import com.google.common.util.concurrent.AtomicDouble;
+import org.opensingular.singular.form.SAttributeEnabled;
+import org.opensingular.singular.form.STranslatorForAttribute;
 
 /**
  * Created by Daniel on 19/05/2016.

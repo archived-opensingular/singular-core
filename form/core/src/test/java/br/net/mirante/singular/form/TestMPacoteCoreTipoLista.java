@@ -5,9 +5,22 @@ import br.net.mirante.singular.form.TestMPacoteCoreTipoLista.TestPackageWithCirc
 import br.net.mirante.singular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.Pedido;
 import br.net.mirante.singular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.TestTipoListaComCargaInterna;
 import br.net.mirante.singular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.TipoPedido;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.*;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SIList;
+import org.opensingular.singular.form.SInfoPackage;
+import org.opensingular.singular.form.SInfoType;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
+import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.singular.form.type.core.SIInteger;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeBoolean;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +28,6 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
-import static br.net.mirante.singular.form.AssertionsSForm.assertInstance;
-import static br.net.mirante.singular.form.AssertionsSForm.assertType;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
@@ -354,8 +365,8 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         @SInfoType(spackage = TestPacoteListaA.class)
         public static final class TipoPedido extends STypeComposite<Pedido> {
 
-            public STypeString id;
-            public STypeString nome;
+            public STypeString   id;
+            public STypeString   nome;
             public TipoEmbalagem embalagem;
 
             public TipoPedido() {
@@ -409,7 +420,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     }
 
     private SIList<SIInteger> createIntList(int size) {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder    pb   = createTestDictionary().createNewPackage("teste");
         SIList<SIInteger> list = pb.createListTypeOf("numbers", STypeInteger.class).newInstance();
 
         for (int i = 0; i < size; i++) {
@@ -420,7 +431,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     @Test
     public void realTestCircularReferenceWithListAndComposite() {
-        TypeTestTree tTree = createTestDictionary().getType(TypeTestTree.class);
+        TypeTestTree    tTree = createTestDictionary().getType(TypeTestTree.class);
         AssertionsSType aTree = assertType(tTree);
         aTree.isAttrLabel("Tree").isComposite(2);
         aTree.isString("name").isNotRecursiveReference();
@@ -462,7 +473,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         @SInfoType(name = "tree", spackage = TestPackageWithCircularReference.class)
         public static final class TypeTestTree extends STypeComposite<SIComposite> {
 
-            public STypeString name;
+            public STypeString                          name;
             public STypeList<TypeTestTree, SIComposite> childrens;
 
             @Override
@@ -477,8 +488,8 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         @SInfoType(name = "park", spackage = TestPackageWithCircularReference.class)
         public static final class TypeTestPark extends STypeComposite<SIComposite> {
 
-            public STypeString name;
-            public TypeTestTree tree;
+            public STypeString                          name;
+            public TypeTestTree                         tree;
             public STypeList<TypeTestTree, SIComposite> trees;
 
             @Override
@@ -492,11 +503,11 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     @Test
     public void testCircularReferenceWithOutTypeDefinedByClass() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("test");
-        STypeComposite<SIComposite> tTree = pb.createCompositeType("tree");
-        STypeString tTreeName = tTree.addFieldString("name");
+        PackageBuilder                                      pb             = createTestDictionary().createNewPackage("test");
+        STypeComposite<SIComposite>                         tTree          = pb.createCompositeType("tree");
+        STypeString                                         tTreeName      = tTree.addFieldString("name");
         STypeList<STypeComposite<SIComposite>, SIComposite> tTreeChildrens = tTree.addFieldListOf("childrens", tTree);
-        STypeComposite<SIComposite> tSubTree = tTreeChildrens.getElementsType();
+        STypeComposite<SIComposite>                         tSubTree       = tTreeChildrens.getElementsType();
         tTree.asAtr().label("Tree");
         tSubTree.asAtr().label("SubTree");
 
@@ -512,16 +523,16 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         testTreeRecursiveInstance(tTree, tTreeName, tTreeChildrens);
 
-        STypeComposite<SIComposite> tPark = pb.createCompositeType("park");
-        STypeString tParkName = tPark.addFieldString("name");
-        STypeComposite<SIComposite> tParkTree = tPark.addField("tree", tTree);
+        STypeComposite<SIComposite>                         tPark      = pb.createCompositeType("park");
+        STypeString                                         tParkName  = tPark.addFieldString("name");
+        STypeComposite<SIComposite>                         tParkTree  = tPark.addField("tree", tTree);
         STypeList<STypeComposite<SIComposite>, SIComposite> tParkTrees = tPark.addFieldListOf("trees", tTree);
 
         testCompositeWithTreeFields(tTree, tTreeName, tTreeChildrens, tPark);
     }
 
     private void testCompositeWithTreeFields(STypeComposite<SIComposite> tTree, SType<?> tTreeName,
-            SType<?> tTreeChildrens2, STypeComposite<SIComposite> tPark) {
+                                             SType<?> tTreeChildrens2, STypeComposite<SIComposite> tPark) {
         STypeList<STypeComposite<SIComposite>, SIComposite> tTreeChildrens =
                 (STypeList<STypeComposite<SIComposite>, SIComposite>) tTreeChildrens2;
 

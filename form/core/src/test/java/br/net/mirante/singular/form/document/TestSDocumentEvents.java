@@ -1,28 +1,27 @@
 package br.net.mirante.singular.form.document;
 
-import br.net.mirante.singular.form.SDictionary;
+import org.opensingular.singular.form.SDictionary;
 import br.net.mirante.singular.form.TestCaseForm;
-import br.net.mirante.singular.form.event.ISInstanceListener;
-import br.net.mirante.singular.form.event.SInstanceAttributeChangeEvent;
-import br.net.mirante.singular.form.event.SInstanceEventType;
-import br.net.mirante.singular.form.event.SInstanceValueChangeEvent;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
-import br.net.mirante.singular.form.type.core.SIString;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.singular.form.event.ISInstanceListener;
+import org.opensingular.singular.form.event.SInstanceAttributeChangeEvent;
+import org.opensingular.singular.form.event.SInstanceEventType;
+import org.opensingular.singular.form.event.SInstanceValueChangeEvent;
+import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.function.Supplier;
-
 @RunWith(Parameterized.class)
 public class TestSDocumentEvents extends TestCaseForm {
 
     private SDictionary dictionary;
     private SIString    root;
-    private SDocument   doc;
+    private SDocument doc;
 
     private ISInstanceListener.EventCollector globalCollector;
     private ISInstanceListener.EventCollector attributeCollector;

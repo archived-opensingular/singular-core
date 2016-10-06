@@ -1,13 +1,14 @@
 package br.net.mirante.singular.form.io;
 
+import org.opensingular.singular.form.io.FormXsdUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import br.net.mirante.singular.form.AssertionsSForm;
 import br.net.mirante.singular.form.AssertionsSType;
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SType;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SType;
 import br.net.mirante.singular.form.TestCaseForm;
 
 /**

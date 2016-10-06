@@ -2,9 +2,9 @@ package br.net.mirante.singular.form.wicket.mapper.masterdetail;
 
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.SType;
-import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.type.basic.SPackageBasic;
 
 class ColumnType {
 

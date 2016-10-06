@@ -25,8 +25,8 @@ import br.net.mirante.singular.form.persistence.dao.AttachmentDao;
 import br.net.mirante.singular.form.persistence.dto.AttachmentRef;
 import br.net.mirante.singular.form.persistence.entity.AttachmentContentEntitty;
 import br.net.mirante.singular.form.persistence.entity.AttachmentEntity;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
 
 @Transactional
 public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {

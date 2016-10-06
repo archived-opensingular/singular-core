@@ -1,7 +1,8 @@
 package br.net.mirante.singular.form.type.core;
 
 import br.net.mirante.singular.form.AbstractTestOneType;
-import br.net.mirante.singular.form.SDictionary;
+import org.opensingular.singular.form.type.core.SIBigDecimal;
+import org.opensingular.singular.form.type.core.STypeDecimal;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,7 +12,6 @@ import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.function.Supplier;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

@@ -1,13 +1,21 @@
 package br.net.mirante.singular.form;
 
+import org.opensingular.singular.form.PackageBuilder;
+import br.net.opensingular.singular.form.PathReader;
+import org.opensingular.singular.form.SDictionary;
+import org.opensingular.singular.form.SFormUtil;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.SType;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.STypeList;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import br.net.mirante.singular.form.type.core.SIString;
-import br.net.mirante.singular.form.type.core.STypeInteger;
-import br.net.mirante.singular.form.type.core.STypeString;
+import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.singular.form.type.core.STypeString;
 
 @RunWith(Parameterized.class)
 public class TestMFormUtil extends TestCaseForm {
@@ -56,10 +64,10 @@ public class TestMFormUtil extends TestCaseForm {
 
     @Test
     public void testResolverTipoCampo() {
-        SDictionary dicionario = createTestDictionary();
+        SDictionary    dicionario = createTestDictionary();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        STypeComposite<SIComposite> tipoBloco = pb.createCompositeType("bloco");
+        STypeComposite<SIComposite>      tipoBloco = pb.createCompositeType("bloco");
         STypeInteger integer1 = tipoBloco.addFieldInteger("integer1");
         STypeString string1 = tipoBloco.addFieldString("string1");
         STypeComposite<?> tipoSubBloco = tipoBloco.addFieldComposite("subBloco");

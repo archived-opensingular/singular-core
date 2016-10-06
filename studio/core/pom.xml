@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>br.net.mirante</groupId>
+        <groupId>org.opensingular</groupId>
         <artifactId>singular-studio</artifactId>
         <version>1.0.1-SNAPSHOT</version>
     </parent>
@@ -45,14 +45,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>br.net.mirante</groupId>
+            <groupId>org.opensingular</groupId>
             <artifactId>form-wicket</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
 
         <dependency>
-            <groupId>br.net.mirante</groupId>
+            <groupId>org.opensingular</groupId>
             <artifactId>form-service</artifactId>
             <version>${singular.version}</version>
         </dependency>

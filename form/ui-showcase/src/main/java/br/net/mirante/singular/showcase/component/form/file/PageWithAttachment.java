@@ -5,11 +5,11 @@
 
 package br.net.mirante.singular.showcase.component.form.file;
 
-import br.net.mirante.singular.form.RefService;
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.document.SDocument;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.singular.form.RefService;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.document.SDocument;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
 
 public class PageWithAttachment {
 

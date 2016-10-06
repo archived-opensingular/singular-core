@@ -9,10 +9,10 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
-import br.net.mirante.singular.form.provider.SSimpleProvider;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.type.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.util.transformer.SCompositeListBuilder;
+import org.opensingular.singular.form.provider.SSimpleProvider;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.singular.form.util.transformer.SCompositeListBuilder;
 
 @SuppressWarnings("serial")
 @Component("filesChoiceProvider")

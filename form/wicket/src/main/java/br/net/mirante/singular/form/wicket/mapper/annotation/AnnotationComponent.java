@@ -20,10 +20,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 
-import br.net.mirante.singular.form.SIComposite;
-import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation.DefaultAnnotationClassifier;
-import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
+import org.opensingular.singular.form.SIComposite;
+import org.opensingular.singular.form.type.core.annotation.AtrAnnotation;
+import org.opensingular.singular.form.type.core.annotation.AtrAnnotation.DefaultAnnotationClassifier;
+import org.opensingular.singular.form.type.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;

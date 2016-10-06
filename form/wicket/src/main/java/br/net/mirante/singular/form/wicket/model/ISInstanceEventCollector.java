@@ -5,8 +5,8 @@
 
 package br.net.mirante.singular.form.wicket.model;
 
-import br.net.mirante.singular.form.SInstance;
-import br.net.mirante.singular.form.event.SInstanceEvent;
+import org.opensingular.singular.form.SInstance;
+import org.opensingular.singular.form.event.SInstanceEvent;
 
 import java.util.List;
 

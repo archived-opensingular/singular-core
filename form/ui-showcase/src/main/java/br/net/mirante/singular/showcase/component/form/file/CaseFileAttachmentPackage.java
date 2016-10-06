@@ -5,12 +5,11 @@
 
 package br.net.mirante.singular.showcase.component.form.file;
 
-import br.net.mirante.singular.form.PackageBuilder;
-import br.net.mirante.singular.form.SPackage;
-import br.net.mirante.singular.form.STypeComposite;
-import br.net.mirante.singular.form.type.basic.AtrBasic;
-import br.net.mirante.singular.form.type.basic.AtrBootstrap;
-import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.singular.form.PackageBuilder;
+import org.opensingular.singular.form.SPackage;
+import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.singular.form.type.basic.AtrBootstrap;
+import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
 import br.net.mirante.singular.showcase.component.CaseItem;
 import br.net.mirante.singular.showcase.component.Group;
 import br.net.mirante.singular.showcase.component.Resource;
