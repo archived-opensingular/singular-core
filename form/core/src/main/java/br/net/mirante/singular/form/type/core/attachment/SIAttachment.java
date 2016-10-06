@@ -23,11 +23,11 @@ public class SIAttachment extends SIComposite {
         return AttachmentDocumentService.lookup(this);
     }
 
-    public void setContent(String name, File f, long length) {
-        if (f == null){
+    public void setContent(String name, File file, long length) {
+        if (file == null) {
             throw new SingularFormException("O arquivo não pode ser nulo.");
         }
-        setContent(name, getAttachmentService().addContent(getFileId(), f, length, name));
+        setContent(name, getAttachmentService().addContent(getFileId(), file, length, name));
     }
 
     private void setContent(String name, IAttachmentRef ref) {
@@ -36,7 +36,6 @@ public class SIAttachment extends SIComposite {
         setFileSize(ref.getSize());
         setFileName(name);
     }
-
 
     void deleteReference() {
         if (getFileId() != null) {
@@ -125,7 +124,7 @@ public class SIAttachment extends SIComposite {
     }
 
     public String getContentType() {
-        try (InputStream is = newInputStream()){
+        try (InputStream is = newInputStream()) {
             return new Tika().detect(is);
         } catch (IOException e) {
             throw new SingularFormException("Não foi possivel detectar o content type.");
@@ -151,7 +150,7 @@ public class SIAttachment extends SIComposite {
         if (getFileSize() <= 0 || getFileName() == null) {
             return super.toStringDisplayDefault();
         }
-        final String[] sufixo = new String[]{"B", "KB", "MB", "GB"};
+        final String[] sufixo = new String[] { "B", "KB", "MB", "GB" };
         int posSufixo = 0;
         double bytesSize = getFileSize();
 

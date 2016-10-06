@@ -64,7 +64,7 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
     @Override
     protected File findFileFromId(String fileId) {
         try {
-            File f = File.createTempFile("tmp_handler", fileId);
+            File f = File.createTempFile("InMemoryAttachmentPersitenceHandler_", fileId);
             f.deleteOnExit();
             return f;
         } catch (Exception e) {

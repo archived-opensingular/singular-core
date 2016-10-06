@@ -2,12 +2,18 @@ package br.net.mirante.singular.form.wicket.mapper.attachment.single;
 
 import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
 import static br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet.*;
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.ObjectUtils.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -34,63 +40,23 @@ import br.net.mirante.singular.form.wicket.mapper.attachment.BaseJQueryFileUploa
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadLink;
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import br.net.mirante.singular.form.wicket.mapper.attachment.DownloadUtil;
+import br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadManager;
 import br.net.mirante.singular.form.wicket.mapper.attachment.FileUploadServlet;
 import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
-    private FileUploadPanel          self             = this;
-    private AddFileBehavior          adder;
-    private final ViewMode           viewMode;
-    private final AjaxButton         removeFileButton = new AjaxButton("remove_btn") {
-
-        @Override
-        protected void onInitialize() {
-            super.onInitialize();
-            add(new ClassAttributeModifier() {
-                protected Set<String> update(Set<String> oldClasses) {
-                    if (self.getModelObject().getFileId() == null) {
-                        oldClasses.add("file-trash-button-hidden");
-                    }
-                    return oldClasses;
-                }
-            });
-        }
-
-        @Override
-        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-            super.onSubmit(target, form);
-            self.getModelObject().clearInstance();
-            if (self.getModelObject().getParent() instanceof SIList) {
-                final SIList<?> parent = (SIList<?>) self.getModelObject().getParent();
-                parent.remove(parent.indexOf(self.getModelObject()));
-                target.add(form);
-            } else {
-                target.add(FileUploadPanel.this);
-            }
-        }
-
-    };
-    private final WebMarkupContainer uploadFileButton = new WebMarkupContainer("upload_btn") {
-
-        @Override
-        protected void onInitialize() {
-            super.onInitialize();
-            add(new ClassAttributeModifier() {
-                protected Set<String> update(Set<String> oldClasses) {
-                    if (self.getModelObject().getFileId() != null) {
-                        oldClasses.add("file-trash-button-hidden");
-                    }
-                    return oldClasses;
-                }
-            });
-        }
-    };
+    private FileUploadPanel           self             = this;
+    private AddFileBehavior           adder;
+    private final ViewMode            viewMode;
+    private final AjaxButton          removeFileButton = new RemoveButton("remove_btn");
+    private final WebMarkupContainer  uploadFileButton = new UploadButton("upload_btn");
 
     private FileUploadField           fileField;
     private WebMarkupContainer        filesContainer, progressBar;
     private DownloadSupportedBehavior downloader;
     private DownloadLink              downloadLink;
+    private UUID                      uploadId;
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
@@ -144,6 +110,25 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     @Override
+    protected void onConfigure() {
+        super.onConfigure();
+
+        final FileUploadManager fileUploadManager = getFileUploadManager();
+
+        if (uploadId == null || !fileUploadManager.findUploadInfo(uploadId).isPresent()) {
+            final SIAttachment attachment = getModelObject();
+            final Map<Boolean, List<String>> groups = attachment.asAtr().getAllowedFileTypes().stream()
+                .collect(groupingBy((String it) -> StringUtils.contains(it, '/')));
+
+            this.uploadId = fileUploadManager.createUpload(
+                defaultIfNull(attachment.asAtr().getMaxFileSize(), Long.MAX_VALUE),
+                1,
+                groups.get(false),
+                groups.get(true));
+        }
+    }
+
+    @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("FileUploadPanel.js")));
@@ -182,8 +167,15 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     private String getUploadUrl() {
-        String contextPath = getWebApplication().getServletContext().getContextPath();
-        return contextPath + FileUploadServlet.UPLOAD_URL;
+        return FileUploadServlet.getUploadUrl(getServletRequest(), uploadId);
+    }
+
+    private FileUploadManager getFileUploadManager() {
+        return FileUploadManager.get(getServletRequest().getSession());
+    }
+
+    private HttpServletRequest getServletRequest() {
+        return (HttpServletRequest) getWebRequest().getContainerRequest();
     }
 
     private long getMaxFileSize() {
@@ -198,6 +190,54 @@ public class FileUploadPanel extends Panel implements Loggable {
         return fileField;
     }
 
+    private final class UploadButton extends WebMarkupContainer {
+        private UploadButton(String id) {
+            super(id);
+        }
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new ClassAttributeModifier() {
+                protected Set<String> update(Set<String> oldClasses) {
+                    if (self.getModelObject().getFileId() != null) {
+                        oldClasses.add("file-trash-button-hidden");
+                    }
+                    return oldClasses;
+                }
+            });
+        }
+    }
+
+    private final class RemoveButton extends AjaxButton {
+        private RemoveButton(String id) {
+            super(id);
+        }
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add(new ClassAttributeModifier() {
+                protected Set<String> update(Set<String> oldClasses) {
+                    if (self.getModelObject().getFileId() == null) {
+                        oldClasses.add("file-trash-button-hidden");
+                    }
+                    return oldClasses;
+                }
+            });
+        }
+        @Override
+        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+            super.onSubmit(target, form);
+            self.getModelObject().clearInstance();
+            if (self.getModelObject().getParent() instanceof SIList) {
+                final SIList<?> parent = (SIList<?>) self.getModelObject().getParent();
+                parent.remove(parent.indexOf(self.getModelObject()));
+                target.add(form);
+            } else {
+                target.add(FileUploadPanel.this);
+            }
+        }
+    }
+
     private class AddFileBehavior extends BaseJQueryFileUploadBehavior<SIAttachment> {
 
         public AddFileBehavior() {
@@ -207,12 +247,27 @@ public class FileUploadPanel extends Panel implements Loggable {
         @Override
         public void onResourceRequested() {
             try {
-                SIAttachment siAttachment = (SIAttachment) FileUploadPanel.this.getDefaultModel().getObject();
-                siAttachment.setContent(
-                    getParamFileId("name").toString(),
-                    FileUploadServlet.lookupFile(getParamFileId("fileId").toString()),
-                    getParamFileId("size").toLong());
-                DownloadUtil.writeJSONtoResponse(siAttachment, RequestCycle.get().getResponse());
+                final String pFileId = getParamFileId("fileId").toString();
+                final String pName = getParamFileId("name").toString();
+                final long pSize = getParamFileId("size").toLong();
+
+                getLogger().debug("FileUploadPanel.AddFileBehavior(fileId={},name={},size={})", pFileId, pName, pSize);
+
+                final HttpServletRequest httpReq = (HttpServletRequest) getWebRequest().getContainerRequest();
+
+                boolean found = FileUploadServlet.consumeFile(httpReq, pFileId, file -> {
+                    final SIAttachment siAttachment = (SIAttachment) FileUploadPanel.this.getDefaultModel().getObject();
+                    siAttachment.setContent(pName, file, pSize);
+                    DownloadUtil.writeJSONtoResponse(siAttachment, RequestCycle.get().getResponse());
+                });
+
+                if (!found)
+                    throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND);
+
+            } catch (AbortWithHttpErrorCodeException e) {
+                getLogger().error(e.getMessage(), e);
+                throw e;
+
             } catch (Exception e) {
                 getLogger().error(e.getMessage(), e);
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

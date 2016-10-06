@@ -165,6 +165,8 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
                                 getLogger().error("Erro ao recuperar arquivo.", e);
                                 ((WebResponse)attributes.getResponse()).setStatus(HttpServletResponse.SC_NOT_FOUND);
                                 resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
+                            } finally {
+                                
                             }
                         }
                     });

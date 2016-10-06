@@ -3,6 +3,8 @@ package br.net.mirante.singular.commons.util;
 import static br.net.mirante.singular.commons.util.ConversionUtils.*;
 import static org.junit.Assert.*;
 
+import java.time.Duration;
+
 import org.junit.Test;
 
 public class ConversionUtilsTest {
@@ -56,6 +58,19 @@ public class ConversionUtilsTest {
         assertEquals(  5L * 1024 * 1024 * 1024 * 1024, toLongHumane("   5T ", DEFAULT_VALUE));
         assertEquals(  5L * 1024 * 1024 * 1024 * 1024, toLongHumane("   5TB", DEFAULT_VALUE));
 
+        assertEquals(Duration.ofDays   ( 7).toMillis(), toLongHumane("   1week ", DEFAULT_VALUE));
+        assertEquals(Duration.ofDays   (70).toMillis(), toLongHumane("  10weeks", DEFAULT_VALUE));
+        assertEquals(Duration.ofDays   ( 1).toMillis(), toLongHumane("   1day  ", DEFAULT_VALUE));
+        assertEquals(Duration.ofDays   (10).toMillis(), toLongHumane("  10days ", DEFAULT_VALUE));
+        assertEquals(Duration.ofHours  ( 1).toMillis(), toLongHumane("   1hour ", DEFAULT_VALUE));
+        assertEquals(Duration.ofHours  (10).toMillis(), toLongHumane("  10hours", DEFAULT_VALUE));
+        assertEquals(Duration.ofMinutes( 1).toMillis(), toLongHumane("   1min  ", DEFAULT_VALUE));
+        assertEquals(Duration.ofMinutes(10).toMillis(), toLongHumane("  10mins ", DEFAULT_VALUE));
+        assertEquals(Duration.ofSeconds( 1).toMillis(), toLongHumane("   1sec  ", DEFAULT_VALUE));
+        assertEquals(Duration.ofSeconds(10).toMillis(), toLongHumane("  10secs ", DEFAULT_VALUE));
+        assertEquals(Duration.ofMillis ( 1).toMillis(), toLongHumane("   1ms   ", DEFAULT_VALUE));
+        assertEquals(Duration.ofMillis (10).toMillis(), toLongHumane("  10ms   ", DEFAULT_VALUE));
+        
         //@formatter:on
     }
 

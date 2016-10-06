@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 @SInfoPackage(name = SPackageBasic.NAME)
 public class SPackageBasic extends SPackage {
 
-    public static final String NAME = SDictionary.SINGULAR_PACKAGES_PREFIX + "basic";
+    public static final String                                                                                                        NAME                      = SDictionary.SINGULAR_PACKAGES_PREFIX + "basic";
 
     //@formatter:off
     public static final AtrRef<?, ?, Object>                                                                   ATR_DEFAULT_IF_NULL       = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
@@ -55,6 +55,7 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeInteger, SIInteger, Integer>                                               ATR_MINIMUM_SIZE          = new AtrRef<>(SPackageBasic.class, "minimumSize", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                                               ATR_MAXIMUM_SIZE          = new AtrRef<>(SPackageBasic.class, "maximumSize", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeLong, SILong, Long>                                                        ATR_MAX_FILE_SIZE         = new AtrRef<>(SPackageBasic.class, "maxFileSize", STypeLong.class, SILong.class, Long.class);
+    public static final AtrRef<STypeString, SIString, String>                                                  ATR_ALLOWED_FILE_TYPES    = new AtrRef<>(SPackageBasic.class, "allowedFileTypes", STypeString.class, SIString.class, String.class);
 
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<SType<?>>>>
@@ -95,6 +96,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeType(ATR_FRACTIONAL_MAX_LENGTH);
         pb.createAttributeType(ATR_EDIT_SIZE);
         pb.createAttributeType(ATR_MAX_FILE_SIZE);
+        pb.createAttributeType(ATR_ALLOWED_FILE_TYPES);
 
         // Aplica os atributos ao tipos
         pb.createAttributeIntoType(SType.class, ATR_LABEL);
@@ -127,7 +129,8 @@ public class SPackageBasic extends SPackage {
         pb.addAttribute(STypeDecimal.class, ATR_INTEGER_MAX_LENGTH, 9);
         pb.addAttribute(STypeDecimal.class, ATR_FRACTIONAL_MAX_LENGTH, 2);
 
-        pb.addAttribute(STypeAttachment.class, ATR_MAX_FILE_SIZE, 100 * 1024 * 1024L); // 100MB
+        pb.addAttribute(STypeAttachment.class, ATR_MAX_FILE_SIZE, 100L * 1024 * 1024); // 100MB
+        pb.addAttribute(STypeAttachment.class, ATR_ALLOWED_FILE_TYPES);
 
         pb.getType(SType.class).asAtr().displayString(ctx -> ctx.instance().toStringDisplayDefault());
 

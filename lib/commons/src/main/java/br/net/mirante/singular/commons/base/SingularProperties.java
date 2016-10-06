@@ -17,11 +17,18 @@ public interface SingularProperties {
     public static final String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
     public static final String HIBERNATE_GENERATOR                  = "flow.persistence.hibernate.generator";
     public static final String HIBERNATE_SEQUENCE_PROPERTY_PATTERN  = "flow.persistence.%s.sequence";
+
+    public static final String SINGULAR_DEV_MODE                    = "singular.development";
+
+    // Limites globais são limites máximos, não configuráveis por arquivo.
     public static final String FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE   = "singular.fileupload.global_max_request_size";
     public static final String FILEUPLOAD_GLOBAL_MAX_FILE_SIZE      = "singular.fileupload.global_max_file_size";
-    public static final String SINGULAR_DEV_MODE      = "singular.development";
+    public static final String FILEUPLOAD_GLOBAL_MAX_FILE_COUNT     = "singular.fileupload.global_max_file_count";
+    public static final String FILEUPLOAD_GLOBAL_MAX_FILE_AGE       = "singular.fileupload.global_max_file_age";
 
-
+    // Limites default são limites configuráveis por arquivo. Não podem exceder os limites globais.
+    public static final String FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE  = "singular.fileupload.default_max_request_size";
+    public static final String FILEUPLOAD_DEFAULT_MAX_FILE_SIZE     = "singular.fileupload.default_max_file_size";
 
     public static SingularProperties get() {
         return SingularPropertiesImpl.get();

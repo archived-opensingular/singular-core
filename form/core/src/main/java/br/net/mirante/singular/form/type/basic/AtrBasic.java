@@ -5,6 +5,21 @@
 
 package br.net.mirante.singular.form.type.basic;
 
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.ObjectUtils;
+
 import br.net.mirante.singular.commons.lambda.IConsumer;
 import br.net.mirante.singular.form.SAttributeEnabled;
 import br.net.mirante.singular.form.SInstance;
@@ -13,13 +28,10 @@ import br.net.mirante.singular.form.SType;
 import br.net.mirante.singular.form.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.enums.PhraseBreak;
 import br.net.mirante.singular.form.internal.freemarker.FormFreemarkerUtil;
-import org.apache.commons.lang3.ObjectUtils;
-
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class AtrBasic extends STranslatorForAttribute {
+
+    private static final String ALLOWED_FILE_TYPES_SPLIT_REGEX = "[,\\s\\|]";
 
     public AtrBasic() {}
 
@@ -62,6 +74,13 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic maxFileSize(Long value) {
         setAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE, value);
+        return this;
+    }
+    public AtrBasic allowedFileTypes(String... value) {
+        setAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES,
+            Stream.of(value)
+                .flatMap(it -> Stream.of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+                .collect(joining(",")));
         return this;
     }
 
@@ -190,6 +209,12 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public Long getMaxFileSize() {
         return getAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE);
+    }
+
+    public List<String> getAllowedFileTypes() {
+        return Arrays.asList(defaultString(
+            getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
+                .split(ALLOWED_FILE_TYPES_SPLIT_REGEX));
     }
 
     @SuppressWarnings("unchecked")
