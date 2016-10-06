@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.rest.client;
+package org.opensingular.flow.rest.client;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -2,6 +2,7 @@ package org.opensingular.singular.rest.client;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensingular.flow.rest.client.FlowMetadataSpringREST;
 
 
 public class FlowMetadataSpringRESTTest {
