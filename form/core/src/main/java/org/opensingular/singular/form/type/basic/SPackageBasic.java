@@ -5,8 +5,7 @@
 
 package org.opensingular.singular.form.type.basic;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.form.*;
+import org.opensingular.singular.commons.lambda.IConsumer;
 import org.opensingular.singular.form.SIComposite;
 import org.opensingular.singular.form.SIConsumer;
 import org.opensingular.singular.form.SIList;
@@ -18,7 +17,6 @@ import org.opensingular.singular.form.STypeBehavior;
 import org.opensingular.singular.form.STypeConsumer;
 import org.opensingular.singular.form.STypeList;
 import org.opensingular.singular.form.enums.PhraseBreak;
-import br.net.mirante.singular.form.type.core.*;
 import org.opensingular.singular.form.type.core.SIBoolean;
 import org.opensingular.singular.form.type.core.SILong;
 import org.opensingular.singular.form.type.core.STypeDecimal;

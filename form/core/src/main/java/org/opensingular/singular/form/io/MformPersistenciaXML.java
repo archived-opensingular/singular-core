@@ -5,7 +5,6 @@
 
 package org.opensingular.singular.form.io;
 
-import br.net.mirante.singular.form.*;
 import org.opensingular.singular.form.SIComposite;
 import org.opensingular.singular.form.document.RefType;
 import org.opensingular.singular.form.document.SDocument;

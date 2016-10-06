@@ -25,8 +25,8 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
-import br.net.mirante.singular.commons.lambda.ISupplier;
+import org.opensingular.singular.commons.lambda.IConsumer;
+import org.opensingular.singular.commons.lambda.ISupplier;
 import org.opensingular.singular.form.builder.selection.SelectionBuilder;
 import org.opensingular.singular.form.calculation.SimpleValueCalculation;
 import org.opensingular.singular.form.context.UIComponentMapper;

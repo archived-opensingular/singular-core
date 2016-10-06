@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.provider;
 
-import br.net.mirante.singular.commons.base.SingularException;
+import org.opensingular.singular.commons.base.SingularException;
 import org.opensingular.singular.form.SingularFormException;
 import org.opensingular.singular.form.document.SDocument;
 

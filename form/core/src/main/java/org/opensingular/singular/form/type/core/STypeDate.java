@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.type.core;
 
-import br.net.mirante.singular.commons.base.SingularUtil;
+import org.opensingular.singular.commons.base.SingularUtil;
 import org.opensingular.singular.form.SInfoType;
 import org.opensingular.singular.form.STypeSimple;
 import com.google.common.base.Strings;

@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.view;
 
-import br.net.mirante.singular.commons.lambda.ISupplier;
+import org.opensingular.singular.commons.lambda.ISupplier;
 import org.opensingular.singular.form.SInstance;
 import org.opensingular.singular.form.SType;
 

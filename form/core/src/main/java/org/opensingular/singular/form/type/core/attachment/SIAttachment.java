@@ -14,7 +14,7 @@ import java.util.Optional;
 import org.opensingular.singular.form.SingularFormException;
 import org.apache.tika.Tika;
 
-import br.net.mirante.singular.commons.base.SingularUtil;
+import org.opensingular.singular.commons.base.SingularUtil;
 import org.opensingular.singular.form.SIComposite;
 
 public class SIAttachment extends SIComposite {

@@ -1,6 +1,5 @@
 package org.opensingular.singular.form.processor;
 
-import br.net.mirante.singular.form.*;
 import org.opensingular.singular.form.SScope;
 import org.opensingular.singular.form.SType;
 import org.opensingular.singular.form.STypeComposite;

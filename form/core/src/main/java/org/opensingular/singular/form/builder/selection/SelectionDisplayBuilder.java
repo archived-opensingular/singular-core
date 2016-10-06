@@ -1,6 +1,6 @@
 package org.opensingular.singular.form.builder.selection;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
+import org.opensingular.singular.commons.lambda.IFunction;
 import org.opensingular.singular.form.SInstance;
 import org.opensingular.singular.form.SType;
 import org.opensingular.singular.form.provider.FreemarkerUtil;

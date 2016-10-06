@@ -7,7 +7,7 @@ package org.opensingular.singular.form.view;
 
 import java.util.function.Function;
 
-import br.net.mirante.singular.commons.base.SingularUtil;
+import org.opensingular.singular.commons.base.SingularUtil;
 import org.opensingular.singular.form.SInstance;
 
 /**

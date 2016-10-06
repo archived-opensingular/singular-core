@@ -1,6 +1,5 @@
 package org.opensingular.singular.form.persistence;
 
-import br.net.mirante.singular.form.*;
 import org.opensingular.singular.form.AtrRef;
 import org.opensingular.singular.form.PackageBuilder;
 import org.opensingular.singular.form.SDictionary;

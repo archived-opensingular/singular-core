@@ -1,6 +1,6 @@
 package org.opensingular.singular.form.document;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
+import org.opensingular.singular.commons.lambda.IConsumer;
 
 import java.util.Objects;
 

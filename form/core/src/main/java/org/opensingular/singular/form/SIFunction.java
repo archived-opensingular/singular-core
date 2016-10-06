@@ -1,6 +1,6 @@
 package org.opensingular.singular.form;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
+import org.opensingular.singular.commons.lambda.IFunction;
 
 
 public class SIFunction<T, R> extends SICode<IFunction<T, R>> {

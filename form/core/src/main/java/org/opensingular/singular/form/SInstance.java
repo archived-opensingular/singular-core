@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
+import org.opensingular.singular.commons.lambda.IConsumer;
 import org.opensingular.singular.form.calculation.SimpleValueCalculation;
 import org.opensingular.singular.form.document.SDocument;
 import org.opensingular.singular.form.internal.xml.MElement;

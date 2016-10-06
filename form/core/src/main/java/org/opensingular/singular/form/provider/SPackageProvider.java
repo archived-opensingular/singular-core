@@ -1,7 +1,6 @@
 package org.opensingular.singular.form.provider;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.*;
+import org.opensingular.singular.commons.lambda.IFunction;
 import org.opensingular.singular.form.AtrRef;
 import org.opensingular.singular.form.PackageBuilder;
 import org.opensingular.singular.form.SIFunction;

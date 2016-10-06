@@ -1,4 +1,4 @@
-import br.net.mirante.singular.flow.core.renderer.bpmn.view.*;
+import org.opensingular.singular.flow.core.renderer.bpmn.view.*;
 import com.yworks.yfiles.geometry.*;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.labelmodels.*;
@@ -7,12 +7,11 @@ import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.export.ContextConfigurator;
 import com.yworks.yfiles.view.export.PixelImageExporter;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.FileOutputStream;
 
-import static br.net.mirante.singular.flow.core.renderer.bpmn.view.EventCharacteristic.END;
-import static br.net.mirante.singular.flow.core.renderer.bpmn.view.EventCharacteristic.START;
+import static org.opensingular.singular.flow.core.renderer.bpmn.view.EventCharacteristic.END;
+import static org.opensingular.singular.flow.core.renderer.bpmn.view.EventCharacteristic.START;
 
 
 public class YFilesSpike {

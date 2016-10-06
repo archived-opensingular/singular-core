@@ -28,13 +28,13 @@
         <import resource="database.xml"/>
         <import resource="cache.xml"/>
 
-        <context:component-scan base-package="br.net.mirante.singular"/>
+        <context:component-scan base-package="org.opensingular.singular"/>
     </beans>
 
     <beans profile="production">
-        <bean class="br.net.mirante.singular.rest.client.FlowMetadataProvider"/>
+        <bean class="org.opensingular.singular.rest.client.FlowMetadataProvider"/>
     </beans>
     <beans profile="development">
-        <bean class="br.net.mirante.singular.bam.util.FlowMetadataProviderMock"/>
+        <bean class="org.opensingular.singular.bam.util.FlowMetadataProviderMock"/>
     </beans>
 </beans>

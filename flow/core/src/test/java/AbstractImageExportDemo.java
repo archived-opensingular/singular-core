@@ -50,7 +50,7 @@ import com.yworks.yfiles.view.input.HandlePositions;
 import com.yworks.yfiles.view.input.IInputModeContext;
 import com.yworks.yfiles.view.input.MoveInputMode;
 import com.yworks.yfiles.view.input.RectangleReshapeHandleProvider;
-import br.net.mirante.singular.flow.core.renderer.toolkit.AbstractDemo;
+import org.opensingular.singular.flow.core.renderer.toolkit.AbstractDemo;
 
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;

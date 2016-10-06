@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.type.core;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
+import org.opensingular.singular.commons.lambda.IConsumer;
 import org.opensingular.singular.form.SInfoType;
 import org.opensingular.singular.form.STypeSimple;
 import org.opensingular.singular.form.type.basic.SPackageBasic;

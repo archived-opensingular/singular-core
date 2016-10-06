@@ -1,7 +1,6 @@
 package org.opensingular.singular.form.util;
 
 
-import br.net.mirante.singular.form.*;
 import org.opensingular.singular.form.SIComposite;
 import org.opensingular.singular.form.STypeComposite;
 import org.opensingular.singular.form.util.transformer.Value;

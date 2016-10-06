@@ -1,6 +1,6 @@
-package br.net.mirante.singular.pet.commons.test;
+package org.opensingular.singular.pet.commons.test;
 
-import br.net.mirante.singular.pet.commons.util.GenericEnumUserType;
+import org.opensingular.singular.pet.commons.util.GenericEnumUserType;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -5,7 +5,6 @@
 
 package org.opensingular.singular.form.util.transformer;
 
-import br.net.mirante.singular.form.*;
 import org.opensingular.singular.form.SIComposite;
 import org.opensingular.singular.form.SIList;
 import org.opensingular.singular.form.SISimple;

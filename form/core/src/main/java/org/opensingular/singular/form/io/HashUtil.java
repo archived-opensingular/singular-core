@@ -5,8 +5,6 @@
 
 package org.opensingular.singular.form.io;
 
-import com.google.common.base.Throwables;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,7 +13,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import br.net.mirante.singular.commons.base.SingularUtil;
+import org.opensingular.singular.commons.base.SingularUtil;
 
 /**
  * Funções utilitária para geração de hash e codificação do hash em diferentes

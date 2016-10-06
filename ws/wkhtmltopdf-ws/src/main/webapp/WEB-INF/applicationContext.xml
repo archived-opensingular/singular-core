@@ -16,5 +16,5 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
     <context:annotation-config/>
-    <context:component-scan base-package="br.net.mirante.singular.ws"/>
+    <context:component-scan base-package="org.opensingular.singular.ws"/>
 </beans>

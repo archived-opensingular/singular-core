@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import br.net.mirante.singular.form.*;
 import org.opensingular.singular.form.PackageBuilder;
 import org.opensingular.singular.form.SDictionary;
 import org.opensingular.singular.form.SFormUtil;
@@ -17,7 +16,7 @@ import org.opensingular.singular.form.STypeComposite;
 import org.opensingular.singular.form.SingularFormException;
 import com.google.common.collect.Lists;
 
-import br.net.mirante.singular.commons.internal.function.SupplierUtil;
+import org.opensingular.singular.commons.internal.function.SupplierUtil;
 
 /**
  * Transforma a definição de um tipo ou mesmo de um pacote inteiro em uma

@@ -7,7 +7,7 @@ package org.opensingular.singular.form.document;
 
 import java.util.Objects;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
+import org.opensingular.singular.commons.lambda.IConsumer;
 import org.opensingular.singular.form.SInstance;
 import org.opensingular.singular.form.SType;
 import org.opensingular.singular.form.io.FormSerializationUtil;
@@ -27,7 +27,7 @@ import org.opensingular.singular.form.io.FormSerializationUtil;
  * O método {@link #setupDocument(SDocument)} deve ser implementando com as
  * configurações necessárias pela aplicação. Na maior parte dos casos
  * provavelmente será utilizada a classe
- * {@link br.net.mirante.singular.form.spring.SpringSDocumentFactory}.
+ * {@link org.opensingular.singular.form.spring.SpringSDocumentFactory}.
  * </p>
  *
  * @author Daniel C. Bordin

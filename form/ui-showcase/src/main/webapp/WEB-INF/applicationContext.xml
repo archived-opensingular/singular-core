@@ -12,46 +12,46 @@
 
     <util:properties id="admin" location="classpath:/admin-config.properties"/>
 
-    <context:component-scan base-package="br.net.mirante.singular.showcase"/>
+    <context:component-scan base-package="org.opensingular.singular.showcase"/>
     <import resource="conf/database.xml"/>
     <import resource="conf/cache.xml"/>
 
-    <bean id="uiAdminWicketFilterContext" class="br.net.mirante.singular.showcase.wicket.UIAdminWicketFilterContext"/>
+    <bean id="uiAdminWicketFilterContext" class="org.opensingular.singular.showcase.wicket.UIAdminWicketFilterContext"/>
 
 
-    <bean id="singularFormConfig" class="br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl">
+    <bean id="singularFormConfig" class="org.opensingular.singular.form.wicket.SingularFormConfigWicketImpl">
         <property name="serviceRegistry" ref="springServiceRegistry"/>
     </bean>
 
-    <bean id="singularFormContext" class="br.net.mirante.singular.form.wicket.SingularFormContextWicketImpl"
+    <bean id="singularFormContext" class="org.opensingular.singular.form.wicket.SingularFormContextWicketImpl"
           factory-bean="singularFormConfig" factory-method="createContext"/>
 
-    <bean id="springServiceRegistry" class="br.net.mirante.singular.form.spring.SpringServiceRegistry"/>
+    <bean id="springServiceRegistry" class="org.opensingular.singular.form.spring.SpringServiceRegistry"/>
 
-    <bean id="showcaseTypeLoader" class="br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader" />
+    <bean id="showcaseTypeLoader" class="org.opensingular.singular.showcase.dao.form.ShowcaseTypeLoader" />
 
-	<bean id="formConfigWithoutDatabase" class="br.net.mirante.singular.form.spring.SpringFormConfig">
+	<bean id="formConfigWithoutDatabase" class="org.opensingular.singular.form.spring.SpringFormConfig">
         <property name="typeLoader" ref="showcaseTypeLoader"/>
 	</bean>
 	
 	<bean id="showcaseDatabaseDocumentFactory" 
-		  class="br.net.mirante.singular.showcase.view.page.form.crud.services.ShowcaseDocumentFactory"/>
+		  class="org.opensingular.singular.showcase.view.page.form.crud.services.ShowcaseDocumentFactory"/>
 
-	<bean id="formConfigWithDatabase" class="br.net.mirante.singular.form.spring.SpringFormConfig" >
+	<bean id="formConfigWithDatabase" class="org.opensingular.singular.form.spring.SpringFormConfig" >
         <property name="typeLoader" ref="showcaseTypeLoader"/>
         <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
 	</bean>
 
-    <bean id="showcaseStudioTypeLoader" class="br.net.mirante.singular.showcase.dao.form.studio.ShowcaseStudioTypeLoader" />
+    <bean id="showcaseStudioTypeLoader" class="org.opensingular.singular.showcase.dao.form.studio.ShowcaseStudioTypeLoader" />
 
-    <bean id="collectionGallery" class="br.net.mirante.singular.studio.core.CollectionGallery" />
+    <bean id="collectionGallery" class="org.opensingular.singular.studio.core.CollectionGallery" />
 
-    <bean id="persistenceFactory" class="br.net.mirante.singular.studio.persistence.StudioCollectionPersistenceFactory">
+    <bean id="persistenceFactory" class="org.opensingular.singular.studio.persistence.StudioCollectionPersistenceFactory">
         <constructor-arg ref="showcaseDocumentFactory"/>
     </bean>
 
-    <bean id="filePersistence" class="br.net.mirante.singular.form.persistence.service.AttachmentPersistenceService" />
-	<bean id="attachmentContentDao" class="br.net.mirante.singular.form.persistence.dao.AttachmentContentDao" />
-    <bean id="attachmentDao" class="br.net.mirante.singular.form.persistence.dao.AttachmentDao" />
+    <bean id="filePersistence" class="org.opensingular.singular.form.persistence.service.AttachmentPersistenceService" />
+	<bean id="attachmentContentDao" class="org.opensingular.singular.form.persistence.dao.AttachmentContentDao" />
+    <bean id="attachmentDao" class="org.opensingular.singular.form.persistence.dao.AttachmentDao" />
 
 </beans>

@@ -1,6 +1,6 @@
 package org.opensingular.singular.form;
 
-import br.net.mirante.singular.commons.lambda.IConsumer;
+import org.opensingular.singular.commons.lambda.IConsumer;
 import org.opensingular.singular.form.type.basic.SPackageBasic;
 
 @SInfoType(name = "STypeConsumer", spackage = SPackageBasic.class)

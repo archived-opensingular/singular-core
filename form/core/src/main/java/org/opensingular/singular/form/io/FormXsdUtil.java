@@ -1,6 +1,5 @@
 package org.opensingular.singular.form.io;
 
-import br.net.mirante.singular.form.*;
 import org.opensingular.singular.form.STypeComposite;
 import org.opensingular.singular.form.internal.xml.MElement;
 import org.opensingular.singular.form.internal.xml.MParser;
