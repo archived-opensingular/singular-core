@@ -72,7 +72,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
     private Date targetEndDate;
 
     @Version
-    @Column(name = "V_LOCK")
+    @Column(name = "NU_VERSAO")
     private Integer versionStamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
