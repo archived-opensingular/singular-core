@@ -15,10 +15,10 @@ import org.opensingular.singular.commons.base.SingularException;
 import org.opensingular.flow.core.defaults.NullViewLocator;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
-import org.opensingular.singular.flow.schedule.IScheduleService;
-import org.opensingular.singular.flow.schedule.ScheduleDataBuilder;
-import org.opensingular.singular.flow.schedule.ScheduledJob;
-import org.opensingular.singular.flow.schedule.quartz.QuartzScheduleService;
+import org.opensingular.flow.schedule.IScheduleService;
+import org.opensingular.flow.schedule.ScheduleDataBuilder;
+import org.opensingular.flow.schedule.ScheduledJob;
+import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;

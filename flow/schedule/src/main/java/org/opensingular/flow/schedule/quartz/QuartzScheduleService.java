@@ -3,7 +3,7 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.flow.schedule.quartz;
+package org.opensingular.flow.schedule.quartz;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -13,8 +13,8 @@ import org.quartz.SchedulerException;
 
 import com.google.common.base.Throwables;
 
-import org.opensingular.singular.flow.schedule.IScheduleService;
-import org.opensingular.singular.flow.schedule.IScheduledJob;
+import org.opensingular.flow.schedule.IScheduleService;
+import org.opensingular.flow.schedule.IScheduledJob;
 
 public class QuartzScheduleService implements IScheduleService {
 

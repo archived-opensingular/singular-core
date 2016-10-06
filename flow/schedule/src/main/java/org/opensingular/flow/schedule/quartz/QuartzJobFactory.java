@@ -3,15 +3,14 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.flow.schedule.quartz;
+package org.opensingular.flow.schedule.quartz;
 
+import org.opensingular.flow.schedule.IScheduledJob;
 import org.quartz.Job;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
-
-import org.opensingular.singular.flow.schedule.IScheduledJob;
 
 public class QuartzJobFactory implements JobFactory {
 

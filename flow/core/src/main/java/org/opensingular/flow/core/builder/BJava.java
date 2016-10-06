@@ -9,7 +9,7 @@ import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.MTaskJava;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.TaskInstance;
-import org.opensingular.singular.flow.schedule.IScheduleData;
+import org.opensingular.flow.schedule.IScheduleData;
 
 import java.io.Serializable;
 

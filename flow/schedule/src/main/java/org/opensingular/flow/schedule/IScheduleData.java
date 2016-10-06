@@ -3,13 +3,11 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.flow.schedule;
+package org.opensingular.flow.schedule;
 
-public interface IScheduledJob {
+public interface IScheduleData {
 
-    IScheduleData getScheduleData();
+    String getCronExpression();
 
-    Object run();
-
-    String getId();
+    String getDescription();
 }

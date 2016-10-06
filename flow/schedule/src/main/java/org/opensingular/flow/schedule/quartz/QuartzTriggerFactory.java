@@ -3,10 +3,12 @@
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.opensingular.singular.flow.schedule.quartz;
+package org.opensingular.flow.schedule.quartz;
 
 import java.util.function.Supplier;
 
+import org.opensingular.flow.schedule.IScheduledJob;
+import org.opensingular.flow.schedule.ScheduledJob;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -14,8 +16,7 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
-import org.opensingular.singular.flow.schedule.IScheduleData;
-import org.opensingular.singular.flow.schedule.ScheduledJob;
+import org.opensingular.flow.schedule.IScheduleData;
 
 /**
  * Classe para criação de triggers e jobs do Quartz usando as interfaces definidas.
@@ -24,12 +25,12 @@ public class QuartzTriggerFactory {
 
     /**
      * O {@link Supplier} do job a ser criado.
-     * @see org.opensingular.singular.flow.schedule.IScheduledJob#run()
+     * @see IScheduledJob#run()
      */
     private Supplier<Object> job;
     /**
      * Os dados do job.
-     * @see org.opensingular.singular.flow.schedule.IScheduledJob#getScheduleData()
+     * @see IScheduledJob#getScheduleData()
      */
     private IScheduleData scheduleData = null;
     /**
@@ -62,7 +63,7 @@ public class QuartzTriggerFactory {
      *
      * @param scheduleData os dados.
      * @return está fábrica.
-     * @see org.opensingular.singular.flow.schedule.IScheduledJob#getScheduleData()
+     * @see IScheduledJob#getScheduleData()
      */
     public QuartzTriggerFactory withScheduleData(IScheduleData scheduleData) {
         this.scheduleData = scheduleData;
@@ -96,7 +97,7 @@ public class QuartzTriggerFactory {
      *
      * @param id o(a) id.
      * @return está fábrica.
-     * @see org.opensingular.singular.flow.schedule.IScheduledJob#getId()
+     * @see IScheduledJob#getId()
      */
     public QuartzTriggerFactory withIdentity(String name) {
         jobBuilder.withIdentity(name);
@@ -108,7 +109,7 @@ public class QuartzTriggerFactory {
      *
      * @param job o {@link Supplier} do job.
      * @return está fábrica.
-     * @see org.opensingular.singular.flow.schedule.IScheduledJob#run()
+     * @see IScheduledJob#run()
      */
     public QuartzTriggerFactory forJob(Supplier<Object> job) {
         this.job = job;

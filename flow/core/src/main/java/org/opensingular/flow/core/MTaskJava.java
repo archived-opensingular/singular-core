@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
 
-import org.opensingular.singular.flow.schedule.IScheduleData;
+import org.opensingular.flow.schedule.IScheduleData;
 
 @SuppressWarnings("unchecked")
 public class MTaskJava extends MTask<MTaskJava> {

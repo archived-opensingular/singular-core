@@ -2,7 +2,7 @@
  * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
  * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.opensingular.singular.flow.schedule.quartz;
+package org.opensingular.flow.schedule.quartz;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -10,6 +10,7 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import org.opensingular.flow.schedule.IScheduledJob;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -126,7 +127,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
     /**
      * Set the Quartz JobFactory to use for this Scheduler.
      * <p>Default is {@link QuartzJobFactory}, which supports
-     * {@link org.opensingular.singular.flow.schedule.IScheduledJob} objects as well as standard Quartz
+     * {@link IScheduledJob} objects as well as standard Quartz
      * {@link org.quartz.Job} instances. Note that this default only applies
      * to a <i>local</i> Scheduler, not to a RemoteScheduler (where setting
      * a custom JobFactory is not supported by Quartz).

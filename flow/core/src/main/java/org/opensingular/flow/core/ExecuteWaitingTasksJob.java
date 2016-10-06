@@ -5,8 +5,8 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.singular.flow.schedule.IScheduleData;
-import org.opensingular.singular.flow.schedule.IScheduledJob;
+import org.opensingular.flow.schedule.IScheduleData;
+import org.opensingular.flow.schedule.IScheduledJob;
 
 import java.util.Date;
 import java.util.List;

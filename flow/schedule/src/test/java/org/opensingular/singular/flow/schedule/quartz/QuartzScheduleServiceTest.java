@@ -1,8 +1,10 @@
 package org.opensingular.singular.flow.schedule.quartz;
 
-import org.opensingular.singular.flow.schedule.IScheduledJob;
-import org.opensingular.singular.flow.schedule.ScheduledJob;
+import org.opensingular.flow.schedule.IScheduledJob;
+import org.opensingular.flow.schedule.ScheduledJob;
 import org.junit.Test;
+import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
+import org.opensingular.flow.schedule.quartz.QuartzSchedulerFactory;
 
 import static org.junit.Assert.*;
 

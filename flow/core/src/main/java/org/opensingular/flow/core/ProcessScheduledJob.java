@@ -8,9 +8,9 @@ package org.opensingular.flow.core;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import org.opensingular.singular.flow.schedule.IScheduleData;
-import org.opensingular.singular.flow.schedule.IScheduledJob;
-import org.opensingular.singular.flow.schedule.ScheduleDataBuilder;
+import org.opensingular.flow.schedule.IScheduleData;
+import org.opensingular.flow.schedule.IScheduledJob;
+import org.opensingular.flow.schedule.ScheduleDataBuilder;
 
 public class ProcessScheduledJob implements IScheduledJob {
 

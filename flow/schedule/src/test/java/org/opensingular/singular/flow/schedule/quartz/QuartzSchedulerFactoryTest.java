@@ -1,13 +1,17 @@
 package org.opensingular.singular.flow.schedule.quartz;
 
-import org.opensingular.singular.flow.schedule.IScheduleData;
-import org.opensingular.singular.flow.schedule.ScheduleDataBuilder;
-import org.opensingular.singular.flow.schedule.ScheduledJob;
+import org.opensingular.flow.schedule.IScheduleData;
+import org.opensingular.flow.schedule.ScheduleDataBuilder;
+import org.opensingular.flow.schedule.ScheduledJob;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.flow.schedule.quartz.QuartzJobFactory;
+import org.opensingular.flow.schedule.quartz.QuartzScheduledJob;
+import org.opensingular.flow.schedule.quartz.QuartzSchedulerFactory;
+import org.opensingular.flow.schedule.quartz.QuartzTriggerFactory;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -36,8 +40,8 @@ public class QuartzSchedulerFactoryTest {
     private final String JOB_NAME = "jobTest";
     private final String JOB_ID = "jobTestID";
 
-    private QuartzSchedulerFactory quartzSchedulerFactory;
-    private String jobRunResult;
+    private QuartzSchedulerFactory  quartzSchedulerFactory;
+    private String                  jobRunResult;
     private WaitForShutdownListener waitForShutdownListener;
 
     @Before
