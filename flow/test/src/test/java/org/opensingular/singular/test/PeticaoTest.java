@@ -2,12 +2,12 @@ package org.opensingular.singular.test;
 
 
 import org.opensingular.singular.flow.test.definicao.Peticao;
-import org.opensingular.singular.flow.core.ExecuteWaitingTasksJob;
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.ProcessDefinitionCache;
-import org.opensingular.singular.flow.core.ProcessInstance;
-import org.opensingular.singular.flow.core.SingularFlowException;
-import org.opensingular.singular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.ExecuteWaitingTasksJob;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessDefinitionCache;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.singular.persistence.entity.Actor;
 import org.opensingular.singular.persistence.entity.TaskInstanceEntity;
 import org.opensingular.singular.persistence.entity.TaskInstanceHistoryEntity;

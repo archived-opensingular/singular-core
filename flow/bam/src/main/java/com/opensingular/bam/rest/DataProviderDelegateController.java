@@ -5,7 +5,7 @@
 
 package com.opensingular.bam.rest;
 
-import static org.opensingular.singular.flow.core.service.IFlowMetadataREST.generateGroupToken;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.generateGroupToken;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.opensingular.flow.core.ProcessDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -24,8 +25,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.opensingular.bam.service.FlowMetadataFacade;
 import com.opensingular.bam.client.portlet.PortletContext;
-import org.opensingular.singular.flow.core.dto.GroupDTO;
-import org.opensingular.singular.flow.core.service.IFlowMetadataREST;
+import org.opensingular.flow.core.dto.GroupDTO;
+import org.opensingular.flow.core.service.IFlowMetadataREST;
 
 @RestController
 public class DataProviderDelegateController {
@@ -37,7 +38,7 @@ public class DataProviderDelegateController {
 
     /**
      * Redirects the REST call comming from the front end
-     * to the application that contains the {@link org.opensingular.singular.flow.core.ProcessDefinition}.
+     * to the application that contains the {@link ProcessDefinition}.
      * This request is forwarded by flow-ui-admin to avoid the browser blocking of
      * cross domain requests (XDR).
      *

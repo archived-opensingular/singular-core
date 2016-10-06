@@ -1,8 +1,8 @@
 package org.opensingular.singular.test;
 
 import org.opensingular.singular.flow.test.definicao.DefinicaoComVariaveis;
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.singular.persistence.entity.ExecutionVariableEntity;
 import org.opensingular.singular.persistence.entity.VariableInstanceEntity;
 import org.opensingular.singular.persistence.entity.VariableTypeInstance;

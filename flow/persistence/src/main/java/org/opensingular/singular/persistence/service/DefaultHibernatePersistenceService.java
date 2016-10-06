@@ -10,12 +10,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.opensingular.singular.flow.core.MUser;
-import org.opensingular.singular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.singular.flow.core.entity.IEntityTaskHistoricType;
-import org.opensingular.singular.flow.core.entity.IEntityTaskInstanceHistory;
-import org.opensingular.singular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.singular.flow.core.entity.IEntityVariableType;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
+import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
 import org.opensingular.singular.persistence.entity.Actor;
 import org.opensingular.singular.persistence.entity.CategoryEntity;
 import org.opensingular.singular.persistence.entity.ExecutionVariableEntity;

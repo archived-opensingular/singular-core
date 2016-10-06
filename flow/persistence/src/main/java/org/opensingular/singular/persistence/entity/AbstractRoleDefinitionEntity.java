@@ -21,9 +21,9 @@ import javax.persistence.Table;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.singular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.singular.flow.core.entity.IEntityRoleTask;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleTask;
 
 /**
  * The base persistent class for the TB_DEFINICAO_PAPEL database table.

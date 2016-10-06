@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.opensingular.singular.persistence.entity.TaskPermissionEntity;
 import org.junit.Test;
 
-import org.opensingular.singular.flow.core.TaskType;
+import org.opensingular.flow.core.TaskType;
 import org.opensingular.singular.persistence.entity.Actor;
 import org.opensingular.singular.persistence.entity.CategoryEntity;
 import org.opensingular.singular.persistence.entity.ExecutionVariableEntity;

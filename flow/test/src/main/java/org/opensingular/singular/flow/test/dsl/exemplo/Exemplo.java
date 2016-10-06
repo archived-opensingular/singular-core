@@ -6,10 +6,10 @@
 package org.opensingular.singular.flow.test.dsl.exemplo;
 
 import org.opensingular.singular.flow.test.dsl.Builder;
-import org.opensingular.singular.flow.core.FlowMap;
-import org.opensingular.singular.flow.core.MTaskJava;
-import org.opensingular.singular.flow.core.MTaskPeople;
-import org.opensingular.singular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.MTaskJava;
+import org.opensingular.flow.core.MTaskPeople;
+import org.opensingular.flow.core.ProcessInstance;
 
 public class Exemplo {
 

@@ -15,7 +15,7 @@ import com.opensingular.bam.client.portlet.filter.FilterField;
 import org.junit.Test;
 
 import com.opensingular.bam.client.portlet.FilterConfig;
-import org.opensingular.singular.flow.core.DashboardFilter;
+import org.opensingular.flow.core.DashboardFilter;
 import static org.junit.Assert.assertTrue;
 
 public class FilterConfigFactoryTest {

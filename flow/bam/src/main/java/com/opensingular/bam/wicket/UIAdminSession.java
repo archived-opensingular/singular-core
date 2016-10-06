@@ -12,7 +12,7 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import org.opensingular.singular.flow.core.MUser;
+import org.opensingular.flow.core.MUser;
 
 public class UIAdminSession extends AuthenticatedWebSession {
 

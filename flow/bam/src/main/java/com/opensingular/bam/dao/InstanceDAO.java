@@ -26,7 +26,7 @@ import org.hibernate.transform.Transformers;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
-import org.opensingular.singular.flow.core.TaskType;
+import org.opensingular.flow.core.TaskType;
 import org.opensingular.singular.persistence.entity.ProcessInstanceEntity;
 
 @Repository

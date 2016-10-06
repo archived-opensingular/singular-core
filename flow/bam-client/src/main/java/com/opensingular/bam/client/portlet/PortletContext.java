@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.opensingular.singular.flow.core.DashboardContext;
-import org.opensingular.singular.flow.core.DashboardFilter;
+import org.opensingular.flow.core.DashboardContext;
+import org.opensingular.flow.core.DashboardFilter;
 
 public class PortletContext implements DashboardContext {
 

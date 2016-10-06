@@ -5,13 +5,13 @@
 
 package org.opensingular.singular.flow.test.definicao;
 
-import org.opensingular.singular.flow.core.DefinitionInfo;
-import org.opensingular.singular.flow.core.FlowMap;
-import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.flow.core.builder.BProcessRole;
-import org.opensingular.singular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.singular.flow.core.builder.ITaskDefinition;
-import org.opensingular.singular.flow.core.defaults.NullPageStrategy;
+import org.opensingular.flow.core.DefinitionInfo;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.builder.BProcessRole;
+import org.opensingular.flow.core.builder.FlowBuilderImpl;
+import org.opensingular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.defaults.NullPageStrategy;
 
 @DefinitionInfo("DefVersoes")
 public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {

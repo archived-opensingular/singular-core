@@ -2,12 +2,12 @@ package org.opensingular.singular.test;
 
 import org.opensingular.singular.flow.test.definicao.DefinicaoProcessVersoes;
 import org.opensingular.singular.flow.test.definicao.ProcessVersoes;
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.ProcessDefinitionCache;
-import org.opensingular.singular.flow.core.ProcessInstance;
-import org.opensingular.singular.flow.core.TaskInstance;
-import org.opensingular.singular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.singular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessDefinitionCache;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.singular.test.support.TestSupport;
 import org.junit.Before;
 import org.junit.FixMethodOrder;

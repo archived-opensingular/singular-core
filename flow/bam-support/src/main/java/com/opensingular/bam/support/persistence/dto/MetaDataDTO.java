@@ -1,9 +1,9 @@
 package com.opensingular.bam.support.persistence.dto;
 
-import org.opensingular.singular.flow.core.IEntityTaskType;
-import org.opensingular.singular.flow.core.dto.IMetaDataDTO;
-import org.opensingular.singular.flow.core.dto.IParameterDTO;
-import org.opensingular.singular.flow.core.dto.ITransactionDTO;
+import org.opensingular.flow.core.IEntityTaskType;
+import org.opensingular.flow.core.dto.IMetaDataDTO;
+import org.opensingular.flow.core.dto.IParameterDTO;
+import org.opensingular.flow.core.dto.ITransactionDTO;
 
 import java.util.ArrayList;
 import java.util.List;

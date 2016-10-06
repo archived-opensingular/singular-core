@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.persistence.entity.util;
 
-import org.opensingular.singular.flow.core.MUser;
+import org.opensingular.flow.core.MUser;
 import org.opensingular.singular.persistence.entity.Actor;
 
 public class ActorWrapper {

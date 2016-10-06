@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.opensingular.bam.client.portlet.FilterConfig;
-import org.opensingular.singular.flow.core.DashboardFilter;
+import org.opensingular.flow.core.DashboardFilter;
 
 public class FilterConfigFactory {
 

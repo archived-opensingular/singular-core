@@ -21,10 +21,10 @@ import javax.persistence.TemporalType;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.MUser;
-import org.opensingular.singular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.singular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.singular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
 
 /**
  * The base persistent class for the TB_INSTANCIA_PAPEL database table.

@@ -8,7 +8,7 @@ package com.opensingular.bam.client.portlet.filter;
 
 import java.util.Date;
 
-import org.opensingular.singular.flow.core.DashboardFilter;
+import org.opensingular.flow.core.DashboardFilter;
 
 public class ExampleFilter implements DashboardFilter {
 

@@ -7,7 +7,7 @@ package com.opensingular.bam.dto;
 
 import java.math.BigDecimal;
 
-import org.opensingular.singular.flow.core.dto.IFeedDTO;
+import org.opensingular.flow.core.dto.IFeedDTO;
 
 public class FeedDTO implements IFeedDTO {
 

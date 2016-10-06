@@ -22,7 +22,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
-import org.opensingular.singular.flow.core.TaskType;
+import org.opensingular.flow.core.TaskType;
 import org.opensingular.singular.persistence.entity.ProcessDefinitionEntity;
 
 @Repository

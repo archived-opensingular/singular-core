@@ -5,17 +5,17 @@
 
 package org.opensingular.singular.flow.test.definicao;
 
-import org.opensingular.singular.flow.core.DefinitionInfo;
-import org.opensingular.singular.flow.core.ExecutionContext;
-import org.opensingular.singular.flow.core.FlowMap;
-import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.flow.core.ProcessInstance;
-import org.opensingular.singular.flow.core.builder.FlowBuilder;
-import org.opensingular.singular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.singular.flow.core.builder.ITaskDefinition;
-import org.opensingular.singular.flow.core.variable.VarDefinitionImpl;
-import org.opensingular.singular.flow.core.variable.type.VarTypeDecimal;
-import org.opensingular.singular.flow.core.variable.type.VarTypeString;
+import org.opensingular.flow.core.DefinitionInfo;
+import org.opensingular.flow.core.ExecutionContext;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.builder.FlowBuilder;
+import org.opensingular.flow.core.builder.FlowBuilderImpl;
+import org.opensingular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.variable.VarDefinitionImpl;
+import org.opensingular.flow.core.variable.type.VarTypeDecimal;
+import org.opensingular.flow.core.variable.type.VarTypeString;
 
 import java.math.BigDecimal;
 

@@ -17,8 +17,8 @@ import javax.persistence.Table;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.singular.flow.core.entity.IEntityTaskPermission;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskPermission;
 
 /**
  * The base persistent class for the RL_PERMISSAO_TAREFA database table.

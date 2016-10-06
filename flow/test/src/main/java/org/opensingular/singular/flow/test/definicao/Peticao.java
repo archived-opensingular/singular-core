@@ -7,17 +7,17 @@ package org.opensingular.singular.flow.test.definicao;
 
 import java.util.Calendar;
 
-import org.opensingular.singular.flow.core.DefinitionInfo;
-import org.opensingular.singular.flow.core.ExecutionContext;
-import org.opensingular.singular.flow.core.FlowMap;
-import org.opensingular.singular.flow.core.MBPMUtil;
-import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.flow.core.ProcessInstance;
-import org.opensingular.singular.flow.core.TaskPredicates;
-import org.opensingular.singular.flow.core.builder.BProcessRole;
-import org.opensingular.singular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.singular.flow.core.builder.ITaskDefinition;
-import org.opensingular.singular.flow.core.defaults.NullTaskAccessStrategy;
+import org.opensingular.flow.core.DefinitionInfo;
+import org.opensingular.flow.core.ExecutionContext;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.MBPMUtil;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.TaskPredicates;
+import org.opensingular.flow.core.builder.BProcessRole;
+import org.opensingular.flow.core.builder.FlowBuilderImpl;
+import org.opensingular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
 
 import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
 import static org.opensingular.singular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;

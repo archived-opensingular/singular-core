@@ -21,10 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import org.opensingular.singular.flow.core.MBPMUtil;
-import org.opensingular.singular.flow.core.authorization.AccessLevel;
-import static org.opensingular.singular.flow.core.service.IFlowMetadataREST.*;
-import org.opensingular.singular.flow.core.service.IFlowMetadataService;
+import org.opensingular.flow.core.MBPMUtil;
+import org.opensingular.flow.core.authorization.AccessLevel;
+import org.opensingular.flow.core.service.IFlowMetadataService;
 
 class FlowMetadataSpringREST implements IFlowMetadataService{
 

@@ -5,7 +5,7 @@
 
 package com.opensingular.bam.dto;
 
-import org.opensingular.singular.flow.core.dto.IStatusDTO;
+import org.opensingular.flow.core.dto.IStatusDTO;
 
 public class StatusDTO implements IStatusDTO {
 

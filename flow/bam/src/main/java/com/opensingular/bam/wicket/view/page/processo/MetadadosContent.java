@@ -25,10 +25,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
 
-import org.opensingular.singular.flow.core.authorization.AccessLevel;
-import org.opensingular.singular.flow.core.dto.IMetaDataDTO;
-import org.opensingular.singular.flow.core.dto.IParameterDTO;
-import org.opensingular.singular.flow.core.dto.ITransactionDTO;
+import org.opensingular.flow.core.authorization.AccessLevel;
+import org.opensingular.flow.core.dto.IMetaDataDTO;
+import org.opensingular.flow.core.dto.IParameterDTO;
+import org.opensingular.flow.core.dto.ITransactionDTO;
 import org.opensingular.singular.commons.lambda.IFunction;
 import com.opensingular.bam.wicket.view.page.dashboard.DashboardPage;
 

@@ -13,10 +13,10 @@ import javax.inject.Inject;
 
 import com.opensingular.bam.support.persistence.dao.DefinitionDAO;
 import com.opensingular.bam.support.persistence.dto.DefinitionDTO;
-import org.opensingular.singular.flow.core.authorization.AccessLevel;
-import org.opensingular.singular.flow.core.dto.GroupDTO;
-import org.opensingular.singular.flow.core.service.IFlowMetadataProvider;
-import org.opensingular.singular.flow.core.service.IFlowMetadataService;
+import org.opensingular.flow.core.authorization.AccessLevel;
+import org.opensingular.flow.core.dto.GroupDTO;
+import org.opensingular.flow.core.service.IFlowMetadataProvider;
+import org.opensingular.flow.core.service.IFlowMetadataService;
 
 public class FlowMetadataProviderMock implements IFlowMetadataProvider {
 

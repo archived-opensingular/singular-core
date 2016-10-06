@@ -35,7 +35,7 @@ import com.opensingular.bam.wicket.UIAdminSession;
 import com.opensingular.bam.client.portlet.PortletConfig;
 import com.opensingular.bam.client.portlet.PortletContext;
 import com.opensingular.bam.client.portlet.PortletQuickFilter;
-import org.opensingular.singular.flow.core.authorization.AccessLevel;
+import org.opensingular.flow.core.authorization.AccessLevel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;

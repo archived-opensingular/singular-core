@@ -17,9 +17,9 @@ import javax.persistence.Table;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.singular.flow.core.entity.IEntityRoleTask;
-import org.opensingular.singular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleTask;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.singular.support.persistence.util.Constants;
 
 /**

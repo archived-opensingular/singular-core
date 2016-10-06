@@ -21,7 +21,7 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 
-import org.opensingular.singular.flow.core.dto.IMenuItemDTO;
+import org.opensingular.flow.core.dto.IMenuItemDTO;
 import org.opensingular.singular.persistence.entity.Dashboard;
 import org.opensingular.singular.util.wicket.util.WicketUtils;
 

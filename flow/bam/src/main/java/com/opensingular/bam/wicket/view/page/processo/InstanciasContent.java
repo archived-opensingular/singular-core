@@ -20,9 +20,9 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-import org.opensingular.singular.flow.core.authorization.AccessLevel;
-import org.opensingular.singular.flow.core.dto.IDefinitionDTO;
-import org.opensingular.singular.flow.core.dto.IInstanceDTO;
+import org.opensingular.flow.core.authorization.AccessLevel;
+import org.opensingular.flow.core.dto.IDefinitionDTO;
+import org.opensingular.flow.core.dto.IInstanceDTO;
 import org.opensingular.singular.util.wicket.datatable.BSDataTableBuilder;
 import org.opensingular.singular.util.wicket.datatable.BaseDataProvider;
 

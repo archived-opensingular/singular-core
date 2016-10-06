@@ -24,9 +24,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.opensingular.bam.client.portlet.PortletConfig;
 import org.opensingular.singular.commons.base.SingularException;
-import org.opensingular.singular.flow.core.authorization.AccessLevel;
-import org.opensingular.singular.flow.core.dto.GroupDTO;
-import org.opensingular.singular.flow.core.service.IFlowMetadataREST;
+import org.opensingular.flow.core.authorization.AccessLevel;
+import org.opensingular.flow.core.dto.GroupDTO;
+import org.opensingular.flow.core.service.IFlowMetadataREST;
 import org.opensingular.singular.persistence.entity.Dashboard;
 import org.opensingular.singular.persistence.entity.Portlet;
 import com.opensingular.bam.wicket.view.component.PortletPanel;

@@ -21,11 +21,11 @@ import javax.persistence.TemporalType;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.singular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.singular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.singular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.singular.flow.core.entity.IEntityVariableType;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
 
 /**
  * The base persistent class for the TB_VARIAVEL_EXECUCAO_TRANSICAO database

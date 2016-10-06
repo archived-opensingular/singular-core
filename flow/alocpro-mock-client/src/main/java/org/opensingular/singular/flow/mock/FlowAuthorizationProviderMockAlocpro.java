@@ -5,10 +5,10 @@
 
 package org.opensingular.singular.flow.mock;
 
-import org.opensingular.singular.flow.core.authorization.AccessLevel;
-import org.opensingular.singular.flow.core.dto.GroupDTO;
-import org.opensingular.singular.flow.core.service.IFlowAuthorizationProvider;
-import org.opensingular.singular.flow.core.service.IFlowAuthorizationService;
+import org.opensingular.flow.core.authorization.AccessLevel;
+import org.opensingular.flow.core.dto.GroupDTO;
+import org.opensingular.flow.core.service.IFlowAuthorizationProvider;
+import org.opensingular.flow.core.service.IFlowAuthorizationService;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

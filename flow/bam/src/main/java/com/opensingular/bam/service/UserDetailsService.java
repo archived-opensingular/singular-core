@@ -23,7 +23,7 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.opensingular.singular.flow.core.MUser;
+import org.opensingular.flow.core.MUser;
 import org.opensingular.singular.persistence.entity.Actor;
 
 @Service

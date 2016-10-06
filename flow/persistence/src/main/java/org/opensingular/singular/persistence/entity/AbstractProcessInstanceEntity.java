@@ -26,13 +26,13 @@ import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
 
-import org.opensingular.singular.flow.core.MUser;
-import org.opensingular.singular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.singular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.singular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.singular.flow.core.entity.IEntityRoleInstance;
-import org.opensingular.singular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.singular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
 
 /**
  * The base persistent class for the TB_INSTANCIA_PROCESSO database table.

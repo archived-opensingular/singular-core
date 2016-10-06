@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.flow.test.dsl;
 
-import org.opensingular.singular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.builder.ITaskDefinition;
 
 public class TaskBuilder {
 

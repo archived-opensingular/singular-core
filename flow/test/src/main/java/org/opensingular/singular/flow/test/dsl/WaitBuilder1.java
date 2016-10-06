@@ -6,7 +6,7 @@
 package org.opensingular.singular.flow.test.dsl;
 
 
-import org.opensingular.singular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.ProcessInstance;
 
 public class WaitBuilder1 {
     public WaitBuilder1(PeopleBuilder2 peopleBuilder2) {

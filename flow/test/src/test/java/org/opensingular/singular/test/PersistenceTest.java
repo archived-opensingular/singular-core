@@ -1,8 +1,8 @@
 package org.opensingular.singular.test;
 
 import org.opensingular.singular.flow.test.definicao.Peticao;
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.singular.persistence.entity.TaskInstanceEntity;
 import org.opensingular.singular.test.support.TestSupport;
 import org.junit.Assert;

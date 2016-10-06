@@ -18,8 +18,8 @@ import javax.persistence.Table;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.IEntityCategory;
-import org.opensingular.singular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 
 /**
  * The base persistent class for the TB_CATEGORIA database table.

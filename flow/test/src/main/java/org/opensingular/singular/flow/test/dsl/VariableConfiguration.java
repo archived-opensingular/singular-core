@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.flow.test.dsl;
 
-import org.opensingular.singular.flow.core.variable.VarType;
+import org.opensingular.flow.core.variable.VarType;
 
 public class VariableConfiguration {
 

@@ -17,9 +17,9 @@ import javax.persistence.Table;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.singular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.singular.flow.core.entity.IEntityVariableType;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
 
 /**
  * The base persistent class for the TB_VARIAVEL database table.

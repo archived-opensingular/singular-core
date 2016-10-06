@@ -1,4 +1,6 @@
-import org.opensingular.singular.flow.core.renderer.bpmn.view.*;
+import org.opensingular.flow.core.renderer.bpmn.view.ActivityNodeStyle;
+import org.opensingular.flow.core.renderer.bpmn.view.EventNodeStyle;
+import org.opensingular.flow.core.renderer.bpmn.view.TaskType;
 import com.yworks.yfiles.geometry.*;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.labelmodels.*;
@@ -10,8 +12,8 @@ import com.yworks.yfiles.view.export.PixelImageExporter;
 import java.awt.*;
 import java.io.FileOutputStream;
 
-import static org.opensingular.singular.flow.core.renderer.bpmn.view.EventCharacteristic.END;
-import static org.opensingular.singular.flow.core.renderer.bpmn.view.EventCharacteristic.START;
+import static org.opensingular.flow.core.renderer.bpmn.view.EventCharacteristic.END;
+import static org.opensingular.flow.core.renderer.bpmn.view.EventCharacteristic.START;
 
 
 public class YFilesSpike {

@@ -17,7 +17,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.opensingular.singular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
 import org.opensingular.singular.persistence.entity.Actor;
 import org.opensingular.singular.persistence.entity.ExecutionVariableEntity;
 import org.opensingular.singular.persistence.entity.ProcessInstanceEntity;

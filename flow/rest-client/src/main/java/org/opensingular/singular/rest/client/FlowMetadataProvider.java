@@ -13,9 +13,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import org.opensingular.singular.flow.core.dto.GroupDTO;
-import org.opensingular.singular.flow.core.service.IFlowMetadataProvider;
-import org.opensingular.singular.flow.core.service.IFlowMetadataService;
+import org.opensingular.flow.core.dto.GroupDTO;
+import org.opensingular.flow.core.service.IFlowMetadataProvider;
+import org.opensingular.flow.core.service.IFlowMetadataService;
 
 public class FlowMetadataProvider implements IFlowMetadataProvider {
 

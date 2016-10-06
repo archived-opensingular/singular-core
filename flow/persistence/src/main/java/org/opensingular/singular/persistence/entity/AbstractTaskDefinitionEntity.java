@@ -23,11 +23,11 @@ import javax.persistence.Table;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.AccessStrategyType;
-import org.opensingular.singular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.singular.flow.core.entity.IEntityRoleTask;
-import org.opensingular.singular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.singular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.AccessStrategyType;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleTask;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
 
 /**
  * The base persistent class for the TB_DEFINICAO_TAREFA database table.

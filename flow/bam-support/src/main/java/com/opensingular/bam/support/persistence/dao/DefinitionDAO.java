@@ -3,8 +3,8 @@ package com.opensingular.bam.support.persistence.dao;
 
 import com.opensingular.bam.support.persistence.dto.DefinitionDTO;
 import com.opensingular.bam.support.persistence.dto.MetaDataDTO;
-import org.opensingular.singular.flow.core.TaskType;
-import org.opensingular.singular.flow.core.dto.ITransactionDTO;
+import org.opensingular.flow.core.TaskType;
+import org.opensingular.flow.core.dto.ITransactionDTO;
 import org.opensingular.singular.persistence.entity.ProcessDefinitionEntity;
 import org.opensingular.singular.persistence.entity.ProcessVersionEntity;
 import org.opensingular.singular.support.persistence.BaseDAO;

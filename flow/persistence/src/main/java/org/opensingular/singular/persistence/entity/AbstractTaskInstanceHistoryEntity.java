@@ -19,10 +19,10 @@ import javax.persistence.Table;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.MUser;
-import org.opensingular.singular.flow.core.entity.IEntityTaskHistoricType;
-import org.opensingular.singular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.singular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
 
 /**
  * The base persistent class for the TB_HISTORICO_INSTANCIA_TAREFA database table.

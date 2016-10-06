@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.opensingular.singular.flow.core.MUser;
+import org.opensingular.flow.core.MUser;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.opensingular.singular.support.persistence.util.Constants;
 

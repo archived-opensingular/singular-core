@@ -1,7 +1,7 @@
 package com.opensingular.bam.support.persistence.dto;
 
 import org.opensingular.singular.commons.util.FormatUtil;
-import org.opensingular.singular.flow.core.dto.IDefinitionDTO;
+import org.opensingular.flow.core.dto.IDefinitionDTO;
 
 public class DefinitionDTO implements IDefinitionDTO {
 

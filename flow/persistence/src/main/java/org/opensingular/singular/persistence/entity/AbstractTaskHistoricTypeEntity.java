@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.IEntityTaskHistoricType;
+import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
 
 /**
  * The base persistent class for the TB_TIPO_HISTORICO_TAREFA database table.

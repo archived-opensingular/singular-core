@@ -7,7 +7,7 @@ package com.opensingular.bam.dto;
 
 import java.util.Date;
 
-import org.opensingular.singular.flow.core.dto.IInstanceDTO;
+import org.opensingular.flow.core.dto.IInstanceDTO;
 import org.opensingular.singular.commons.util.FormatUtil;
 
 

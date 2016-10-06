@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.flow.test;
 
-import org.opensingular.singular.flow.core.MUser;
-import org.opensingular.singular.flow.core.service.IUserService;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.service.IUserService;
 
 import javax.inject.Inject;
 import javax.inject.Named;

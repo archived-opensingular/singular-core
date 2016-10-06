@@ -8,7 +8,7 @@ package com.opensingular.bam.client.portlet;
 import java.util.function.Supplier;
 
 import com.opensingular.bam.client.chart.SingularChart;
-import org.opensingular.singular.flow.core.DashboardView;
+import org.opensingular.flow.core.DashboardView;
 
 public abstract class BamDashboardView extends DashboardView<PortletContext> {
 

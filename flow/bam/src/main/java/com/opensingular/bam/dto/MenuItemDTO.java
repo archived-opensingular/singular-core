@@ -8,7 +8,7 @@ package com.opensingular.bam.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensingular.singular.flow.core.dto.IMenuItemDTO;
+import org.opensingular.flow.core.dto.IMenuItemDTO;
 
 public class MenuItemDTO implements IMenuItemDTO {
     private static final long serialVersionUID = 25234058060013546L;

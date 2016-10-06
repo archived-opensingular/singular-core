@@ -5,10 +5,10 @@
 
 package org.opensingular.singular.persistence.util;
 
-import org.opensingular.singular.flow.core.SingularFlowConfigurationBean;
-import org.opensingular.singular.flow.core.service.IPersistenceService;
-import org.opensingular.singular.flow.core.service.IProcessDefinitionEntityService;
-import org.opensingular.singular.flow.core.service.IUserService;
+import org.opensingular.flow.core.SingularFlowConfigurationBean;
+import org.opensingular.flow.core.service.IPersistenceService;
+import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
+import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.singular.persistence.entity.util.SessionLocator;
 import org.opensingular.singular.persistence.service.DefaultHibernatePersistenceService;
 import org.opensingular.singular.persistence.service.DefaultHibernateProcessDefinitionService;

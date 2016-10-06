@@ -19,9 +19,9 @@ import javax.persistence.Table;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.IEntityTaskTransitionVersion;
-import org.opensingular.singular.flow.core.entity.IEntityTaskVersion;
-import org.opensingular.singular.flow.core.entity.TransitionType;
+import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.TransitionType;
 
 /**
  * The base persistent class for the TB_VERSAO_TRANSICAO database table.

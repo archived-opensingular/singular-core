@@ -4,7 +4,7 @@ import static org.fest.assertions.api.Assertions.*;
 
 import javax.inject.Inject;
 
-import org.opensingular.singular.flow.core.DefinitionInfo;
+import org.opensingular.flow.core.DefinitionInfo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
@@ -22,15 +22,15 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.view.GraphComponent;
 
 import org.opensingular.singular.commons.base.SingularPropertiesImpl;
-import org.opensingular.singular.flow.core.ExecutionContext;
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.FlowMap;
-import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.flow.core.ProcessInstance;
-import org.opensingular.singular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.singular.flow.core.builder.ITaskDefinition;
-import org.opensingular.singular.flow.core.defaults.NullTaskAccessStrategy;
-import org.opensingular.singular.flow.core.renderer.YFilesFlowConverter;
+import org.opensingular.flow.core.ExecutionContext;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.builder.FlowBuilderImpl;
+import org.opensingular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
+import org.opensingular.flow.core.renderer.YFilesFlowConverter;
 import org.opensingular.singular.flow.test.TestDAO;
 import org.opensingular.singular.persistence.util.HibernateSingularFlowConfigurationBean;
 

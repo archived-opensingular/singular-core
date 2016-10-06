@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.opensingular.bam.support.persistence.dao.DefinitionDAO;
 import com.opensingular.bam.support.persistence.dto.DefinitionDTO;
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.MBPMUtil;
-import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.flow.core.SingularFlowConfigurationBean;
-import org.opensingular.singular.flow.core.authorization.AccessLevel;
-import org.opensingular.singular.flow.core.renderer.FlowRendererFactory;
-import org.opensingular.singular.flow.core.service.IFlowMetadataREST;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.MBPMUtil;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.SingularFlowConfigurationBean;
+import org.opensingular.flow.core.authorization.AccessLevel;
+import org.opensingular.flow.core.renderer.FlowRendererFactory;
+import org.opensingular.flow.core.service.IFlowMetadataREST;
 
 @RestController
 public abstract class FlowMetadataRESTAdapter implements IFlowMetadataREST {

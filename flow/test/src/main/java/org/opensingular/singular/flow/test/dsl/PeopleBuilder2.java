@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.flow.test.dsl;
 
-import org.opensingular.singular.flow.core.MTaskPeople;
+import org.opensingular.flow.core.MTaskPeople;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;

@@ -24,9 +24,9 @@ import javax.persistence.TemporalType;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.singular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.singular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
 
 /**
  * The base persistent class for the TB_VERSAO_PROCESSO database table.

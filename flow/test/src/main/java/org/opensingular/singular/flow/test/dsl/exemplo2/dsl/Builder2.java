@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.flow.test.dsl.exemplo2.dsl;
 
-import org.opensingular.singular.flow.core.FlowMap;
-import org.opensingular.singular.flow.core.MTask;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.MTask;
 
 import java.util.function.Consumer;
 

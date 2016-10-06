@@ -22,12 +22,12 @@ import javax.persistence.Table;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.entity.IEntityCategory;
-import org.opensingular.singular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.singular.flow.core.entity.IEntityProcessGroup;
-import org.opensingular.singular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.singular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.singular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessGroup;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 
 /**
  * The base persistent class for the TB_DEFINICAO_PROCESSO database table.

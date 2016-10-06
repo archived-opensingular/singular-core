@@ -7,8 +7,8 @@ package org.opensingular.singular.persistence.service;
 
 import java.util.ArrayList;
 
-import org.opensingular.singular.flow.core.MTask;
-import org.opensingular.singular.flow.core.TaskType;
+import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.TaskType;
 import org.opensingular.singular.persistence.entity.CategoryEntity;
 import org.opensingular.singular.persistence.entity.ProcessDefinitionEntity;
 import org.opensingular.singular.persistence.entity.ProcessVersionEntity;

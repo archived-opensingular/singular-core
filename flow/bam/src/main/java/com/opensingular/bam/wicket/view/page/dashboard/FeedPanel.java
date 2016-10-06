@@ -23,7 +23,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.util.ListModel;
 
 import com.opensingular.bam.dto.FeedDTO;
-import org.opensingular.singular.flow.core.dto.IFeedDTO;
+import org.opensingular.flow.core.dto.IFeedDTO;
 import org.opensingular.singular.util.wicket.behavior.SlimScrollBehaviour;
 import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
 import static org.opensingular.singular.util.wicket.util.WicketUtils.$m;

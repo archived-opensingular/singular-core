@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.flow.test.definicao;
 
-import org.opensingular.singular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.ProcessInstance;
 
 public class ProcessVersoes extends ProcessInstance {
 

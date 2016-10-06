@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-import org.opensingular.singular.flow.core.entity.IEntityProcessGroup;
+import org.opensingular.flow.core.entity.IEntityProcessGroup;
 import org.opensingular.singular.support.persistence.entity.BaseEntity;
 
 /**

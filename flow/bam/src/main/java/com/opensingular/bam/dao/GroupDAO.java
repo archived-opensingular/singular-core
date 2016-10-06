@@ -11,7 +11,7 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
-import org.opensingular.singular.flow.core.dto.GroupDTO;
+import org.opensingular.flow.core.dto.GroupDTO;
 
 @Repository
 public class GroupDAO extends BaseDAO {

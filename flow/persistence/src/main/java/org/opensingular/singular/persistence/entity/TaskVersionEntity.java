@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import org.opensingular.singular.flow.core.TaskType;
+import org.opensingular.flow.core.TaskType;
 import org.opensingular.singular.support.persistence.util.Constants;
 import org.opensingular.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
 

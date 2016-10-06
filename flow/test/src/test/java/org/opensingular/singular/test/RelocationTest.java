@@ -6,7 +6,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import org.opensingular.singular.flow.core.DefinitionInfo;
+import org.opensingular.flow.core.DefinitionInfo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
@@ -23,17 +23,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import org.opensingular.singular.commons.base.SingularPropertiesImpl;
-import org.opensingular.singular.flow.core.ExecutionContext;
-import org.opensingular.singular.flow.core.Flow;
-import org.opensingular.singular.flow.core.FlowMap;
-import org.opensingular.singular.flow.core.ProcessDefinition;
-import org.opensingular.singular.flow.core.ProcessDefinitionCache;
-import org.opensingular.singular.flow.core.ProcessInstance;
-import org.opensingular.singular.flow.core.TaskInstance;
-import org.opensingular.singular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.singular.flow.core.builder.ITaskDefinition;
-import org.opensingular.singular.flow.core.defaults.NullTaskAccessStrategy;
-import org.opensingular.singular.flow.core.ws.BaseSingularRest;
+import org.opensingular.flow.core.ExecutionContext;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessDefinitionCache;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.builder.FlowBuilderImpl;
+import org.opensingular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
+import org.opensingular.flow.core.ws.BaseSingularRest;
 import org.opensingular.singular.flow.test.TestDAO;
 import org.opensingular.singular.persistence.entity.Actor;
 import org.opensingular.singular.persistence.entity.TaskInstanceEntity;
