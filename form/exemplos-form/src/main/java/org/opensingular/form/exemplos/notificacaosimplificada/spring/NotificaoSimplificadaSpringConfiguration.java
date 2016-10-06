@@ -21,7 +21,7 @@ import java.util.Properties;
 @AutoScanDisabled
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
-@ComponentScan("org.opensingular.singular.exemplos.notificacaosimplificada")
+@ComponentScan("org.opensingular.form.exemplos.notificacaosimplificada")
 public class NotificaoSimplificadaSpringConfiguration {
 
     @Value("classpath:data/exemplos/notificacaosimplificada/drops.sql")
@@ -57,7 +57,7 @@ public class NotificaoSimplificadaSpringConfiguration {
         final LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource);
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
-        sessionFactoryBean.setPackagesToScan("org.opensingular.singular.exemplos.notificacaosimplificada.domain");
+        sessionFactoryBean.setPackagesToScan("org.opensingular.form.exemplos.notificacaosimplificada.domain");
         return sessionFactoryBean;
     }
 

@@ -14,7 +14,7 @@ public enum TipoParametro implements EnumId<TipoParametro, Character> {
 
     MENOR_ZERO_ZERO_UM_PORCENTO('4', "< 0,01%");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoParametro";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoParametro";
 
     private TipoParametro(Character codigo, String descricao) {
         this.codigo = codigo;

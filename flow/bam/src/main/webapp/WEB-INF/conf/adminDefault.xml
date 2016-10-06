@@ -28,7 +28,7 @@
         <import resource="database.xml"/>
         <import resource="cache.xml"/>
 
-        <context:component-scan base-package="org.opensingular.singular"/>
+        <context:component-scan base-package="com.opensingular.bam"/>
     </beans>
 
     <beans profile="production">

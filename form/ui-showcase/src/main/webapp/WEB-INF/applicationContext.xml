@@ -12,7 +12,7 @@
 
     <util:properties id="admin" location="classpath:/admin-config.properties"/>
 
-    <context:component-scan base-package="org.opensingular.singular.showcase"/>
+    <context:component-scan base-package="org.opensingular.singular.form.showcase"/>
     <import resource="conf/database.xml"/>
     <import resource="conf/cache.xml"/>
 

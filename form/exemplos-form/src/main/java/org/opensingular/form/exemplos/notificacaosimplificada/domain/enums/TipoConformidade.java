@@ -7,7 +7,7 @@ public enum TipoConformidade {
     NAO_SE_APLICA("X", "Não se aplica"),
     NAO_INFORMADO("I", "Não analisado");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoConformidade";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoConformidade";
 
     private String codigo;
     private String descricao;

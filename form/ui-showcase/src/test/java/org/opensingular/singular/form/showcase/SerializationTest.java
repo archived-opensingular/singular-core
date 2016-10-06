@@ -1,4 +1,4 @@
-package org.opensingular.singular.showcase;
+package org.opensingular.singular.form.showcase;
 
 import org.junit.Test;
 

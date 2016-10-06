@@ -6,7 +6,7 @@ public enum TipoResultadoAnalise {
     DEFERIDO('S', "Deferido"),
     INDEFERIDO('N', "Indeferido");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoResultadoAnalise";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoResultadoAnalise";
 
     private Character codigo;
     private String    descricao;

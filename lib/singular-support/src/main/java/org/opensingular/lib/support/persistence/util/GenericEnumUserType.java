@@ -46,7 +46,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
     /**
      * Constante CLASS_NAME.
      */
-    public static final String CLASS_NAME = "org.opensingular.singular.support.persistence.util.GenericEnumUserType";
+    public static final String CLASS_NAME = "org.opensingular.lib.support.persistence.util.GenericEnumUserType";
     /**
      * Constante DEFAULT_IDENTIFIER_METHOD_NAME.
      */

@@ -14,7 +14,7 @@ public enum TipoEstadoFisico implements EnumId<TipoEstadoFisico, Character> {
 
     GASOSO('3', "Gasoso");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoEstadoFisico";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoEstadoFisico";
 
     private TipoEstadoFisico(Character codigo, String descricao) {
         this.codigo = codigo;

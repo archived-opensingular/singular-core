@@ -9,7 +9,7 @@ public enum TipoSolventeResidual implements EnumId<TipoSolventeResidual, Charact
     CLASSE_3('3', "Classe 3 - Solventes com baixo potencial tóxico"),
     CLASSE_4('4', "Classe 4 - Solventes sem avaliação do ICH");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoSolventeResidual";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoSolventeResidual";
 
     private Character codigo;
     private String    descricao;

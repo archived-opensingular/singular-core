@@ -1,4 +1,4 @@
-package org.opensingular.singular.showcase.view.page.showcase;
+package org.opensingular.singular.form.showcase.view.page.showcase;
 
 import javax.inject.Inject;
 
@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import org.opensingular.singular.showcase.SpringWicketTester;
+import org.opensingular.singular.form.showcase.SpringWicketTester;
 import org.opensingular.singular.form.showcase.component.ShowCaseTable;
 import org.opensingular.singular.form.showcase.view.page.ComponentPage;
 

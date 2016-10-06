@@ -17,7 +17,7 @@ public enum TipoObrigatoriedade {
     @XmlEnumValue("2")
     NAO_OBRIGATORIO('2', "Não obrigatório");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoObrigatoriedade";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoObrigatoriedade";
 
     private Character codigo;
     private String    descricao;

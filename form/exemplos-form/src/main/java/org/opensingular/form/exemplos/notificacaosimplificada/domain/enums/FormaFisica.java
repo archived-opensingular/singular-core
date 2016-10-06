@@ -11,7 +11,7 @@ public enum FormaFisica {
     LIQUIDO('L', "Liquido"),
     GASOSO('G', "Gasoso");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.FormaFisica";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.FormaFisica";
 
     private Character codigo;
     private String    descricao;

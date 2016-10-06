@@ -14,7 +14,7 @@ public enum SimNao implements EnumId<SimNao, String> {
     @XmlEnumValue("N")
     NAO("N", "Não");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.support.persistence.enums.SimNao";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.lib.support.persistence.enums.SimNao";
 
     private String codigo;
     private String descricao;

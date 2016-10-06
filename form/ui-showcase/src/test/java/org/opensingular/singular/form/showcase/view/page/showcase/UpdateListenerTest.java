@@ -1,4 +1,4 @@
-package org.opensingular.singular.showcase.view.page.showcase;
+package org.opensingular.singular.form.showcase.view.page.showcase;
 
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.SIString;

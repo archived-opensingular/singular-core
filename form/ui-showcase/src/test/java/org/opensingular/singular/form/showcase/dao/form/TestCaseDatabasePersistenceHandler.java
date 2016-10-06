@@ -1,4 +1,4 @@
-package org.opensingular.singular.showcase.dao.form;
+package org.opensingular.singular.form.showcase.dao.form;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

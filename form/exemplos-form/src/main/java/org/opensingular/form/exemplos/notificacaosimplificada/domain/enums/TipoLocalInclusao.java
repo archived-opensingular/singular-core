@@ -29,7 +29,7 @@ public enum TipoLocalInclusao implements EnumId<TipoLocalInclusao, Integer> {
     @XmlEnumValue("7")
     ROTULO_DESSECANTE(7, "RÓTULO DO DESSECANTE");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoLocalInclusao";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoLocalInclusao";
 
     /**
      * Identificador do tipo de unidade de medida.
