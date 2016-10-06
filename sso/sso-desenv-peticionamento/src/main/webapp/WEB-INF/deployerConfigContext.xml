@@ -180,6 +180,6 @@
               p:sessionCountWarnThreshold="100000"/>
     </util:list>
 
-    <bean id="hardCoded" class="org.opensingular.singular.sso.HardCodedAuthHandler"/>
+    <bean id="hardCoded" class="org.opensingular.server.sso.HardCodedAuthHandler"/>
 
 </beans>

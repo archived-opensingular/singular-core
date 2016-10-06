@@ -1,8 +1,8 @@
 package org.opensingular.singular.pet.module.test;
 
 
-import org.opensingular.singular.server.commons.config.IServerContext;
-import org.opensingular.singular.server.commons.config.ServerContext;
+import org.opensingular.server.commons.config.IServerContext;
+import org.opensingular.server.commons.config.ServerContext;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.junit.Assert;
 import org.junit.Test;
