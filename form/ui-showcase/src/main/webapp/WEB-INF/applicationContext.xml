@@ -16,7 +16,7 @@
     <import resource="conf/database.xml"/>
     <import resource="conf/cache.xml"/>
 
-    <bean id="uiAdminWicketFilterContext" class="org.opensingular.singular.showcase.wicket.UIAdminWicketFilterContext"/>
+    <bean id="uiAdminWicketFilterContext" class="org.opensingular.singular.form.showcase.wicket.UIAdminWicketFilterContext"/>
 
 
     <bean id="singularFormConfig" class="org.opensingular.singular.form.wicket.SingularFormConfigWicketImpl">
@@ -28,21 +28,21 @@
 
     <bean id="springServiceRegistry" class="org.opensingular.singular.form.spring.SpringServiceRegistry"/>
 
-    <bean id="showcaseTypeLoader" class="org.opensingular.singular.showcase.dao.form.ShowcaseTypeLoader" />
+    <bean id="showcaseTypeLoader" class="org.opensingular.singular.form.showcase.dao.form.ShowcaseTypeLoader" />
 
 	<bean id="formConfigWithoutDatabase" class="org.opensingular.singular.form.spring.SpringFormConfig">
         <property name="typeLoader" ref="showcaseTypeLoader"/>
 	</bean>
 	
 	<bean id="showcaseDatabaseDocumentFactory" 
-		  class="org.opensingular.singular.showcase.view.page.form.crud.services.ShowcaseDocumentFactory"/>
+		  class="org.opensingular.singular.form.showcase.view.page.form.crud.services.ShowcaseDocumentFactory"/>
 
 	<bean id="formConfigWithDatabase" class="org.opensingular.singular.form.spring.SpringFormConfig" >
         <property name="typeLoader" ref="showcaseTypeLoader"/>
         <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
 	</bean>
 
-    <bean id="showcaseStudioTypeLoader" class="org.opensingular.singular.showcase.dao.form.studio.ShowcaseStudioTypeLoader" />
+    <bean id="showcaseStudioTypeLoader" class="org.opensingular.singular.form.showcase.dao.form.studio.ShowcaseStudioTypeLoader" />
 
     <bean id="collectionGallery" class="org.opensingular.singular.studio.core.CollectionGallery" />
 

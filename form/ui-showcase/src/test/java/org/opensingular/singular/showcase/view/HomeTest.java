@@ -1,7 +1,7 @@
 package org.opensingular.singular.showcase.view;
 
 import org.opensingular.singular.showcase.SpringWicketTester;
-import org.opensingular.singular.showcase.view.page.form.crud.CrudPage;
+import org.opensingular.singular.form.showcase.view.page.form.crud.CrudPage;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Ignore;

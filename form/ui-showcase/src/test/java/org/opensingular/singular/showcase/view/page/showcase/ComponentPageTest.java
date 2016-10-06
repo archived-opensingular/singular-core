@@ -9,8 +9,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import org.opensingular.singular.showcase.SpringWicketTester;
-import org.opensingular.singular.showcase.component.ShowCaseTable;
-import org.opensingular.singular.showcase.view.page.ComponentPage;
+import org.opensingular.singular.form.showcase.component.ShowCaseTable;
+import org.opensingular.singular.form.showcase.view.page.ComponentPage;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/applicationContext.xml"})

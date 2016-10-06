@@ -10,8 +10,8 @@
     <context:component-scan base-package="org.opensingular.singular.showcase"/>
     <import resource="conf/database.xml"/>
 
-    <bean id="uiAdminWicketFilterContext" class="org.opensingular.singular.showcase.wicket.UIAdminWicketFilterContext"/>
-    <bean id="myWebApp" class="org.opensingular.singular.showcase.wicket.ShowcaseApplication"/>
+    <bean id="uiAdminWicketFilterContext" class="org.opensingular.singular.form.showcase.wicket.UIAdminWicketFilterContext"/>
+    <bean id="myWebApp" class="org.opensingular.singular.form.showcase.wicket.ShowcaseApplication"/>
 
     <bean id="singularFormConfig" class="org.opensingular.singular.form.wicket.SingularFormConfigWicketImpl">
         <property name="serviceRegistry" ref="springServiceRegistry"/>
@@ -22,16 +22,16 @@
 
     <bean id="springServiceRegistry" class="org.opensingular.singular.form.spring.SpringServiceRegistry"/>
 
-    <bean id="showcaseTypeLoader" class="org.opensingular.singular.showcase.dao.form.ShowcaseTypeLoader"/>
+    <bean id="showcaseTypeLoader" class="org.opensingular.singular.form.showcase.dao.form.ShowcaseTypeLoader"/>
 
-    <bean id="showcaseStudioTypeLoader" class="org.opensingular.singular.showcase.dao.form.studio.ShowcaseStudioTypeLoader"/>
+    <bean id="showcaseStudioTypeLoader" class="org.opensingular.singular.form.showcase.dao.form.studio.ShowcaseStudioTypeLoader"/>
 
 	<bean id="formConfigWithoutDatabase" class="org.opensingular.singular.form.spring.SpringFormConfig">
         <property name="typeLoader" ref="showcaseTypeLoader"/>
 	</bean>
 	
 	<bean id="showcaseDatabaseDocumentFactory" 
-		  class="org.opensingular.singular.showcase.view.page.form.crud.services.ShowcaseDocumentFactory"/>
+		  class="org.opensingular.singular.form.showcase.view.page.form.crud.services.ShowcaseDocumentFactory"/>
 
 	<bean id="formConfigWithDatabase" class="org.opensingular.singular.form.spring.SpringFormConfig">
         <property name="typeLoader" ref="showcaseTypeLoader"/>

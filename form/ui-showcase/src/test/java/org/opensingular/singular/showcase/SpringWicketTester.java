@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import org.apache.wicket.util.tester.WicketTester;
 import org.springframework.stereotype.Component;
 
-import org.opensingular.singular.showcase.wicket.ShowcaseApplication;
+import org.opensingular.singular.form.showcase.wicket.ShowcaseApplication;
 
 @Component
 public class SpringWicketTester {

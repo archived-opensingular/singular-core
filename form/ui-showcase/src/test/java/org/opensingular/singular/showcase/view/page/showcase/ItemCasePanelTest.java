@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.opensingular.singular.showcase.component.CaseBaseForm;
+import org.opensingular.singular.form.showcase.component.CaseBaseForm;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
@@ -19,9 +19,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;
 import org.opensingular.singular.showcase.SpringWicketTester;
-import org.opensingular.singular.showcase.component.form.core.CaseInputCoreIntegerPackage;
-import org.opensingular.singular.showcase.view.page.FormItemCasePanel;
-import org.opensingular.singular.showcase.view.page.ItemCasePanel;
+import org.opensingular.singular.form.showcase.component.form.core.CaseInputCoreIntegerPackage;
+import org.opensingular.singular.form.showcase.view.page.FormItemCasePanel;
+import org.opensingular.singular.form.showcase.view.page.ItemCasePanel;
 
 /**
  * TODO TESTE BUGADO, QUEBRA A BUILD NO SERVER??
