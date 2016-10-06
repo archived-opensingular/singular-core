@@ -1,4 +1,4 @@
-package org.opensingular.singular.test;
+package org.opensingular.flow.test;
 
 import org.opensingular.flow.test.definicao.DefinicaoProcessVersoes;
 import org.opensingular.flow.test.definicao.ProcessVersoes;
@@ -8,7 +8,7 @@ import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.entity.IEntityProcessVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.singular.test.support.TestSupport;
+import org.opensingular.flow.test.support.TestSupport;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;

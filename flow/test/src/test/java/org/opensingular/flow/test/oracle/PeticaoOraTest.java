@@ -1,13 +1,12 @@
-package org.opensingular.singular.test.oracle;
+package org.opensingular.flow.test.oracle;
 
+import org.opensingular.singular.commons.base.SingularPropertiesImpl;
+import org.opensingular.flow.test.PeticaoTest;
 import org.junit.BeforeClass;
 import org.springframework.test.context.ActiveProfiles;
 
-import org.opensingular.singular.commons.base.SingularPropertiesImpl;
-import org.opensingular.singular.test.InstanciaDefinicaoComVariavelTest;
-
 @ActiveProfiles("oracle")
-public class InstanciaDefinicaoComVariavelOraTest extends InstanciaDefinicaoComVariavelTest {
+public class PeticaoOraTest extends PeticaoTest {
 
     @BeforeClass
     public static void configProperties() {

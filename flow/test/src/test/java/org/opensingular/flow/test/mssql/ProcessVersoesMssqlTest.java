@@ -1,13 +1,13 @@
-package org.opensingular.singular.test.mssql;
+package org.opensingular.flow.test.mssql;
 
 import org.junit.BeforeClass;
 import org.springframework.test.context.ActiveProfiles;
 
 import org.opensingular.singular.commons.base.SingularPropertiesImpl;
-import org.opensingular.singular.test.InstanciaDefinicaoComVariavelTest;
+import org.opensingular.flow.test.ProcessVersoesTest;
 
 @ActiveProfiles("mssql")
-public class InstanciaDefinicaoComVariavelMssqlTest extends InstanciaDefinicaoComVariavelTest {
+public class ProcessVersoesMssqlTest extends ProcessVersoesTest {
 
     @BeforeClass
     public static void configProperties() {

@@ -1,10 +1,10 @@
-package org.opensingular.singular.test.oracle;
+package org.opensingular.flow.test.oracle;
 
 import org.junit.BeforeClass;
 import org.springframework.test.context.ActiveProfiles;
 
 import org.opensingular.singular.commons.base.SingularPropertiesImpl;
-import org.opensingular.singular.test.SetupTest;
+import org.opensingular.flow.test.SetupTest;
 
 @ActiveProfiles("oracle")
 public class SetupOraTest extends SetupTest {

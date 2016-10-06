@@ -1,12 +1,13 @@
-package org.opensingular.singular.test.mssql;
+package org.opensingular.flow.test.mssql;
 
-import org.opensingular.singular.commons.base.SingularPropertiesImpl;
-import org.opensingular.singular.test.PeticaoTest;
 import org.junit.BeforeClass;
 import org.springframework.test.context.ActiveProfiles;
 
+import org.opensingular.singular.commons.base.SingularPropertiesImpl;
+import org.opensingular.flow.test.SetupTest;
+
 @ActiveProfiles("mssql")
-public class PeticaoMssqlTest extends PeticaoTest {
+public class SetupMssqlTest extends SetupTest {
 
     @BeforeClass
     public static void configProperties() {

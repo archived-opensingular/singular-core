@@ -1,4 +1,4 @@
-package org.opensingular.singular.test;
+package org.opensingular.flow.test;
 
 
 import org.opensingular.flow.test.definicao.Peticao;
@@ -11,7 +11,7 @@ import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskInstanceHistoryEntity;
-import org.opensingular.singular.test.support.TestSupport;
+import org.opensingular.flow.test.support.TestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;

@@ -1,4 +1,4 @@
-package org.opensingular.singular.test;
+package org.opensingular.flow.test;
 
 import static org.fest.assertions.api.Assertions.*;
 

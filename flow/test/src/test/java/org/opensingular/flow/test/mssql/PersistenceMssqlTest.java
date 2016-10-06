@@ -1,17 +1,17 @@
-package org.opensingular.singular.test.oracle;
+package org.opensingular.flow.test.mssql;
 
 import org.junit.BeforeClass;
 import org.springframework.test.context.ActiveProfiles;
 
 import org.opensingular.singular.commons.base.SingularPropertiesImpl;
-import org.opensingular.singular.test.ProcessVersoesTest;
+import org.opensingular.flow.test.PersistenceTest;
 
-@ActiveProfiles("oracle")
-public class ProcessVersoesOraTest extends ProcessVersoesTest {
+@ActiveProfiles("mssql")
+public class PersistenceMssqlTest extends PersistenceTest {
 
     @BeforeClass
     public static void configProperties() {
         SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
-                "singular-ora.properties"));
+                "singular-mssql.properties"));
     }
 }

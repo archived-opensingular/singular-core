@@ -1,4 +1,4 @@
-package org.opensingular.singular.test;
+package org.opensingular.flow.test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,7 +25,7 @@ import org.opensingular.flow.persistence.entity.TaskTransitionVersionEntity;
 import org.opensingular.flow.persistence.entity.TaskVersionEntity;
 import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
 import org.opensingular.flow.persistence.entity.VariableTypeInstance;
-import org.opensingular.singular.test.support.TestSupport;
+import org.opensingular.flow.test.support.TestSupport;
 
 /**
  * Testes gerais para o setup de teste do projeto

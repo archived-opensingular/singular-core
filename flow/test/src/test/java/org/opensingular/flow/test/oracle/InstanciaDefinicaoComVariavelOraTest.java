@@ -1,17 +1,17 @@
-package org.opensingular.singular.test.mssql;
+package org.opensingular.flow.test.oracle;
 
 import org.junit.BeforeClass;
 import org.springframework.test.context.ActiveProfiles;
 
 import org.opensingular.singular.commons.base.SingularPropertiesImpl;
-import org.opensingular.singular.test.ProcessVersoesTest;
+import org.opensingular.flow.test.InstanciaDefinicaoComVariavelTest;
 
-@ActiveProfiles("mssql")
-public class ProcessVersoesMssqlTest extends ProcessVersoesTest {
+@ActiveProfiles("oracle")
+public class InstanciaDefinicaoComVariavelOraTest extends InstanciaDefinicaoComVariavelTest {
 
     @BeforeClass
     public static void configProperties() {
         SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
-                "singular-mssql.properties"));
+                "singular-ora.properties"));
     }
 }

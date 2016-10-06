@@ -1,4 +1,4 @@
-package org.opensingular.singular.test;
+package org.opensingular.flow.test;
 
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.test.definicao.DefinicaoComVariaveis;
@@ -7,7 +7,7 @@ import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
 import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
 import org.opensingular.flow.persistence.entity.VariableTypeInstance;
-import org.opensingular.singular.test.support.TestSupport;
+import org.opensingular.flow.test.support.TestSupport;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;

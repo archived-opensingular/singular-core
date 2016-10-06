@@ -1,11 +1,11 @@
-package org.opensingular.singular.test;
+package org.opensingular.flow.test;
 
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.test.definicao.Peticao;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
-import org.opensingular.singular.test.support.TestSupport;
+import org.opensingular.flow.test.support.TestSupport;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

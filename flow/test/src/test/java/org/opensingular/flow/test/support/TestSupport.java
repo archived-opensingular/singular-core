@@ -1,4 +1,4 @@
-package org.opensingular.singular.test.support;
+package org.opensingular.flow.test.support;
 
 import javax.inject.Inject;
 
