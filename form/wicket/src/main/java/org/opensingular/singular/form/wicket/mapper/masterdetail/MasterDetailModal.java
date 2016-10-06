@@ -9,9 +9,9 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
 import org.opensingular.singular.commons.lambda.IConsumer;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.singular.form.wicket.UIBuilderWicket;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.component.BFModalWindow;

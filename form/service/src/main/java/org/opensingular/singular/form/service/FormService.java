@@ -4,22 +4,22 @@
  */
 package org.opensingular.singular.form.service;
 
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.SDocumentFactory;
-import org.opensingular.singular.form.internal.xml.MElement;
-import org.opensingular.singular.form.io.MformPersistenciaXML;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.singular.form.persistence.dao.*;
 import org.opensingular.singular.form.persistence.entity.*;
-import org.opensingular.singular.form.persistence.AbstractBasicFormPersistence;
-import org.opensingular.singular.form.persistence.AnnotationKey;
-import org.opensingular.singular.form.persistence.FormKey;
-import org.opensingular.singular.form.persistence.FormKeyLong;
-import org.opensingular.singular.form.persistence.SPackageFormPersistence;
-import org.opensingular.singular.form.persistence.SingularFormPersistenceException;
-import org.opensingular.singular.form.type.core.annotation.AtrAnnotation;
-import org.opensingular.singular.form.type.core.annotation.SIAnnotation;
+import org.opensingular.form.persistence.AbstractBasicFormPersistence;
+import org.opensingular.form.persistence.AnnotationKey;
+import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormKeyLong;
+import org.opensingular.form.persistence.SPackageFormPersistence;
+import org.opensingular.form.persistence.SingularFormPersistenceException;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
+import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 

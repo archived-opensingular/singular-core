@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.form.wicket.mapper.selection;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.view.SViewBooleanByRadio;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SViewBooleanByRadio;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
 

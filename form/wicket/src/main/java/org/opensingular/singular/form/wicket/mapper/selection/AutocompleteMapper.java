@@ -1,10 +1,10 @@
 package org.opensingular.singular.form.wicket.mapper.selection;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.converter.SInstanceConverter;
-import org.opensingular.singular.form.view.SView;
-import org.opensingular.singular.form.view.SViewAutoComplete;
-import org.opensingular.singular.form.view.SViewSelectionBySelect;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewAutoComplete;
+import org.opensingular.form.view.SViewSelectionBySelect;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;

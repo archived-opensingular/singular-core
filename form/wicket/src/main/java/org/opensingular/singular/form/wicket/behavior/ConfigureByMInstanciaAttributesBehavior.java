@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.form.wicket.behavior;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SInstanceViewState;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstanceViewState;
 import org.opensingular.singular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;

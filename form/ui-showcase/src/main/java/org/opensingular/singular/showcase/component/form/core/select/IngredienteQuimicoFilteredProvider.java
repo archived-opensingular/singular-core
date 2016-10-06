@@ -3,8 +3,8 @@ package org.opensingular.singular.showcase.component.form.core.select;
 import java.util.Arrays;
 import java.util.List;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.provider.SimpleProvider;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.provider.SimpleProvider;
 
 public class IngredienteQuimicoFilteredProvider implements SimpleProvider<IngredienteQuimico, SIComposite> {
 

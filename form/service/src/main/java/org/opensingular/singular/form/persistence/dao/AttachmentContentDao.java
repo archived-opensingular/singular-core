@@ -11,7 +11,7 @@ import java.util.Date;
 import javax.transaction.Transactional;
 
 import org.opensingular.singular.commons.base.SingularException;
-import org.opensingular.singular.form.io.HashAndCompressInputStream;
+import org.opensingular.form.io.HashAndCompressInputStream;
 import org.opensingular.singular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.singular.support.persistence.BaseDAO;
 

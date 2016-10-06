@@ -2,14 +2,14 @@ package org.opensingular.singular.exemplos.notificacaosimplificada.form.vocabula
 
 import org.opensingular.singular.exemplos.notificacaosimplificada.domain.CategoriaRegulatoriaMedicamento;
 import org.opensingular.singular.exemplos.notificacaosimplificada.service.DominioService;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.provider.STextQueryProvider;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.view.SViewAutoComplete;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.provider.STextQueryProvider;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SViewAutoComplete;
 
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeCategoriaRegulatoria extends STypeComposite<SIComposite> {

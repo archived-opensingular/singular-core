@@ -1,6 +1,6 @@
 package org.opensingular.singular.form.wicket.component;
 
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.wicket.behavior.AjaxUpdateSingularFormComponentPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;

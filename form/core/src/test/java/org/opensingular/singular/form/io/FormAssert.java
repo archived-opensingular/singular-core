@@ -1,8 +1,8 @@
 package org.opensingular.singular.form.io;
 
-import org.opensingular.singular.form.ICompositeInstance;
-import org.opensingular.singular.form.SAttributeEnabled;
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SInstance;
 
 import java.util.ArrayList;
 import java.util.List;

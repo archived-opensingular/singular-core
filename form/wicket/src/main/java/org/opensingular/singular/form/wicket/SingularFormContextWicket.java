@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.wicket;
 
-import org.opensingular.singular.form.context.SingularFormContext;
+import org.opensingular.form.context.SingularFormContext;
 
 public interface SingularFormContextWicket extends SingularFormContext {
 

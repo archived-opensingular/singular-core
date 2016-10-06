@@ -5,10 +5,10 @@
 
 package org.opensingular.singular.showcase.component.form.map;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.util.STypeLatitudeLongitude;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.singular.showcase.component.CaseItem;
 import org.opensingular.singular.showcase.component.Group;
 

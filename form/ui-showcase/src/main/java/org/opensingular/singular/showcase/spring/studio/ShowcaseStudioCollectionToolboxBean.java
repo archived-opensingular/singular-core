@@ -1,8 +1,8 @@
 package org.opensingular.singular.showcase.spring.studio;
 
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.document.SDocumentFactory;
-import org.opensingular.singular.form.document.TypeLoader;
+import org.opensingular.form.SType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.document.TypeLoader;
 import org.opensingular.singular.showcase.dao.form.studio.ShowcaseStudioTypeLoader;
 import org.opensingular.singular.showcase.view.page.form.crud.services.ShowcaseDocumentFactory;
 import org.opensingular.singular.studio.core.CollectionGallery;

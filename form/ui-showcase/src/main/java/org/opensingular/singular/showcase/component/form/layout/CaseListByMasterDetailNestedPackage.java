@@ -5,15 +5,15 @@
 
 package org.opensingular.singular.showcase.component.form.layout;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.type.util.STypeYearMonth;
-import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.util.STypeYearMonth;
+import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.singular.showcase.component.CaseItem;
 import org.opensingular.singular.showcase.component.Group;
 

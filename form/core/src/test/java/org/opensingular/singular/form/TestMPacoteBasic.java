@@ -7,10 +7,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import org.opensingular.singular.form.type.basic.SPackageBasic;
-import org.opensingular.singular.form.type.core.SIDate;
-import org.opensingular.singular.form.type.core.STypeDate;
-import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.SIDate;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeInteger;
 
 @RunWith(Parameterized.class)
 public class TestMPacoteBasic extends TestCaseForm {

@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.form.wicket.mapper;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.type.util.STypeLatitudeLongitude;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.singular.form.wicket.IWicketComponentMapper;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.model.SInstanceValueModel;

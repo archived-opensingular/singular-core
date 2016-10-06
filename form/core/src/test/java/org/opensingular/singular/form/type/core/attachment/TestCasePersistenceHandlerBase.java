@@ -24,7 +24,9 @@ import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
 
-import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
 public abstract class TestCasePersistenceHandlerBase {
 

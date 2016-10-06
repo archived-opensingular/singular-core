@@ -15,9 +15,9 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import org.opensingular.singular.commons.lambda.IPredicate;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.STypeDate;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.singular.util.wicket.bootstrap.datepicker.BSDatepickerInputGroup;
 import org.opensingular.singular.util.wicket.output.BOutputPanel;

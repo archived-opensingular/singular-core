@@ -1,19 +1,20 @@
 package org.opensingular.singular.form.util.transformer;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SISimple;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.STypeSimple;
-import org.opensingular.singular.form.type.core.STypeDate;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SISimple;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.form.util.transformer.Value;
 
 import java.io.Serializable;
 import java.util.*;

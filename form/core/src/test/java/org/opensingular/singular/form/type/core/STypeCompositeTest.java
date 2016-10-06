@@ -1,11 +1,12 @@
 package org.opensingular.singular.form.type.core;
 
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.singular.form.*;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.internal.xml.MParser;
-import org.opensingular.singular.form.io.MformPersistenciaXML;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.internal.xml.MParser;
+import org.opensingular.form.io.MformPersistenciaXML;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;

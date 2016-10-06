@@ -1,6 +1,6 @@
 package org.opensingular.singular.studio.util;
 
-import org.opensingular.singular.form.SType;
+import org.opensingular.form.SType;
 import org.opensingular.singular.studio.core.CollectionDefinition;
 import org.opensingular.singular.studio.core.SingularStudioException;
 import org.reflections.Reflections;

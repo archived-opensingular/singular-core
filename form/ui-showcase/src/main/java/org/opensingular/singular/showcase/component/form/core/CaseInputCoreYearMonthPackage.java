@@ -5,11 +5,11 @@
 
 package org.opensingular.singular.showcase.component.form.core;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.basic.AtrBasic;
-import org.opensingular.singular.form.type.util.STypeYearMonth;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.basic.AtrBasic;
+import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.singular.showcase.component.CaseItem;
 import org.opensingular.singular.showcase.component.Group;
 

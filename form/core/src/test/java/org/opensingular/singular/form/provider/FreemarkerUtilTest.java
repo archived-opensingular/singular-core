@@ -2,6 +2,7 @@ package org.opensingular.singular.form.provider;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensingular.form.provider.FreemarkerUtil;
 
 
 public class FreemarkerUtilTest {

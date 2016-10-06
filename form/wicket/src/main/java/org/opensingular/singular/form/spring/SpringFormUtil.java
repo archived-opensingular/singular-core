@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.spring;
 
-import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.form.SingularFormException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;

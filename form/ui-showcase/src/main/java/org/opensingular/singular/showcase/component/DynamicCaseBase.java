@@ -7,11 +7,11 @@ package org.opensingular.singular.showcase.component;
 
 import java.util.Optional;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.STypeString;
 
 public class DynamicCaseBase extends CaseBaseForm {
 

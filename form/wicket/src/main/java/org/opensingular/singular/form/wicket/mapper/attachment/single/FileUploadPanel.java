@@ -25,9 +25,9 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.singular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.singular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;

@@ -12,20 +12,20 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.opensingular.singular.commons.lambda.IFunction;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.internal.xml.ConversorToolkit;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.country.brazil.STypeCEP;
-import org.opensingular.singular.form.util.transformer.Value;
-import org.opensingular.singular.form.view.SViewByBlock;
-import org.opensingular.singular.form.view.SViewListByMasterDetail;
-import org.opensingular.singular.form.view.SViewListByTable;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.internal.xml.ConversorToolkit;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.country.brazil.STypeCEP;
+import org.opensingular.form.util.transformer.Value;
+import org.opensingular.form.view.SViewByBlock;
+import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.SViewListByTable;
 
 @SInfoType(spackage = SPackageCredenciamentoEscolaGoverno.class)
 public class STypePDI extends STypeComposite<SIComposite>{

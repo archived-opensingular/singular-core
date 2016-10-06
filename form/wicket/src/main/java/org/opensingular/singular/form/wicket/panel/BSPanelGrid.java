@@ -31,7 +31,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 
 import org.opensingular.singular.commons.lambda.IFunction;
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.wicket.component.SingularForm;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSGrid;
 import org.opensingular.singular.util.wicket.bootstrap.layout.IBSGridCol;

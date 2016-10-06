@@ -1,6 +1,7 @@
 package org.opensingular.singular.form.type.core.attachment;
 
-import org.opensingular.singular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 

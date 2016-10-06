@@ -1,10 +1,10 @@
 package org.opensingular.singular.form.wicket.mapper.selection;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.view.SViewAutoComplete;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wicket.Component;

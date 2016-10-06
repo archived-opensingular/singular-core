@@ -1,9 +1,9 @@
 package org.opensingular.singular.showcase.component.form.core;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.STypeHTML;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.STypeHTML;
 import org.opensingular.singular.showcase.component.CaseItem;
 import org.opensingular.singular.showcase.component.Group;
 

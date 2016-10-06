@@ -1,7 +1,7 @@
 package org.opensingular.singular.form.wicket.mapper.attachment;
 
 import org.opensingular.singular.commons.base.SingularUtil;
-import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.request.Response;
 

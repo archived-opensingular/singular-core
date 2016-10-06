@@ -14,13 +14,13 @@ import java.sql.Blob;
 import org.apache.commons.io.IOUtils;
 
 import org.opensingular.singular.commons.base.SingularUtil;
-import org.opensingular.singular.form.document.SDocument;
-import org.opensingular.singular.form.io.CompressionUtil;
-import org.opensingular.singular.form.io.IOUtil;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.io.CompressionUtil;
+import org.opensingular.form.io.IOUtil;
 import org.opensingular.singular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.singular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.singular.form.persistence.service.AttachmentPersistenceService;
-import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.singular.support.spring.util.ApplicationContextProvider;
 
 public class AttachmentRef implements IAttachmentRef{

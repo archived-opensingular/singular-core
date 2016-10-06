@@ -8,16 +8,16 @@ import org.opensingular.singular.exemplos.notificacaosimplificada.form.vocabular
 import org.opensingular.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeLinhaProducao;
 import org.opensingular.singular.exemplos.notificacaosimplificada.service.DominioService;
 import org.opensingular.singular.exemplos.util.TripleConverter;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.STypeSimple;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.util.transformer.Value;
-import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.util.transformer.Value;
+import org.opensingular.form.view.SViewListByMasterDetail;
 
 @SInfoType(name = "STypeNotificacaoSimplificadaBaixoRisco", spackage = SPackageNotificacaoSimplificadaBaixoRisco.class)
 public class STypeNotificacaoSimplificadaBaixoRisco extends STypeComposite<SIComposite> {

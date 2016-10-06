@@ -17,16 +17,17 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Matchers;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.RefService;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.singular.form.TestCaseForm;
 import org.opensingular.singular.form.type.core.attachment.AttachmentTestUtil;
-import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
-import org.opensingular.singular.form.type.core.attachment.SIAttachment;
-import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 
 @RunWith(Parameterized.class)
 public class TestSDocumentPersistentServices extends TestCaseForm {

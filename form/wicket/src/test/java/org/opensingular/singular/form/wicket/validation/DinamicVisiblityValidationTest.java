@@ -1,7 +1,7 @@
 package org.opensingular.singular.form.wicket.validation;
 
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.singular.form.wicket.IWicketComponentMapper;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.FormComponent;

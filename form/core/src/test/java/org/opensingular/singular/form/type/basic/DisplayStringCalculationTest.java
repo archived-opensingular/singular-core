@@ -1,9 +1,9 @@
 package org.opensingular.singular.form.type.basic;
 
 import org.opensingular.singular.form.*;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

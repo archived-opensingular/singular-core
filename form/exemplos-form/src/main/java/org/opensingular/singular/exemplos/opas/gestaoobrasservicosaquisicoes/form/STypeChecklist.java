@@ -5,14 +5,14 @@
 package org.opensingular.singular.exemplos.opas.gestaoobrasservicosaquisicoes.form;
 
 import org.opensingular.singular.exemplos.opas.gestaoobrasservicosaquisicoes.enums.AcaoGestaoObras;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.view.SViewListByTable;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SViewListByTable;
 
 @SInfoType(spackage = SPackageGestaoObrasServicosAquisicoes.class)
 public class STypeChecklist extends STypeComposite<SIComposite> {

@@ -23,11 +23,11 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.view.AbstractSViewListWithControls;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.view.AbstractSViewListWithControls;
 import org.opensingular.singular.form.wicket.IWicketComponentMapper;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.model.SInstanceListItemModel;

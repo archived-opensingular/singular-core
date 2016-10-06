@@ -5,9 +5,9 @@
 package org.opensingular.singular.exemplos.emec.credenciamentoescolagoverno.form;
 
 import org.opensingular.singular.exemplos.notificacaosimplificada.service.DominioService;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SPackage;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SPackage;
 
 public class SPackageCredenciamentoEscolaGoverno extends SPackage {
 

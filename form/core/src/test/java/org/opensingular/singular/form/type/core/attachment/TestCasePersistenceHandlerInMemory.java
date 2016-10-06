@@ -1,6 +1,7 @@
 package org.opensingular.singular.form.type.core.attachment;
 
-import org.opensingular.singular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 
 public class TestCasePersistenceHandlerInMemory extends TestCasePersistenceHandlerBase {
 

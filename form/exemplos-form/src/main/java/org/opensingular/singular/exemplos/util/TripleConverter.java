@@ -1,9 +1,9 @@
 package org.opensingular.singular.exemplos.util;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.converter.SInstanceConverter;
-import org.opensingular.singular.form.util.transformer.Value;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SType;
+import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.util.transformer.Value;
 import org.apache.commons.lang3.tuple.Triple;
 
 

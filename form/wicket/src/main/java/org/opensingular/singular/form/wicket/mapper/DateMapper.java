@@ -19,7 +19,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
 
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.behavior.AjaxUpdateInputBehavior;

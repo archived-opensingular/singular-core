@@ -1,8 +1,8 @@
 package org.opensingular.singular.form.wicket.model;
 
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
 import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;

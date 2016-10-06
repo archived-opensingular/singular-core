@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.showcase.view.page.form.examples;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SPackage;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SPackage;
 
 public class SPackagePeticaoGGTOX extends SPackage {
 

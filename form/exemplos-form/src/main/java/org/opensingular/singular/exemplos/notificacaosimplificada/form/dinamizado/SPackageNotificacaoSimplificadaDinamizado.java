@@ -6,9 +6,9 @@
 package org.opensingular.singular.exemplos.notificacaosimplificada.form.dinamizado;
 
 import org.opensingular.singular.exemplos.notificacaosimplificada.form.baixorisco.SPackageNotificacaoSimplificadaBaixoRisco;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SInfoPackage;
-import org.opensingular.singular.form.SPackage;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SPackage;
 
 @SInfoPackage(name = SPackageNotificacaoSimplificadaDinamizado.PACOTE)
 public class SPackageNotificacaoSimplificadaDinamizado extends SPackage {

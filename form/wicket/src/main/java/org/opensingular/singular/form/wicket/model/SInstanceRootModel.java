@@ -5,12 +5,12 @@
 
 package org.opensingular.singular.form.wicket.model;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.event.ISInstanceListener;
-import org.opensingular.singular.form.event.SInstanceEvent;
-import org.opensingular.singular.form.event.SInstanceEventType;
-import org.opensingular.singular.form.event.SInstanceListeners;
-import org.opensingular.singular.form.io.InstanceSerializableRef;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.event.SInstanceEvent;
+import org.opensingular.form.event.SInstanceEventType;
+import org.opensingular.form.event.SInstanceListeners;
+import org.opensingular.form.io.InstanceSerializableRef;
 
 import java.util.Collections;
 import java.util.List;

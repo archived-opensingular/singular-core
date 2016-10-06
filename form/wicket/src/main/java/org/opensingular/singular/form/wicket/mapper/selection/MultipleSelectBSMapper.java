@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.wicket.mapper.selection;
 
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;

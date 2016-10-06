@@ -1,6 +1,7 @@
 package org.opensingular.singular.form.type.util;
 
 import org.junit.Test;
+import org.opensingular.form.type.util.STypeYearMonth;
 
 import java.time.YearMonth;
 

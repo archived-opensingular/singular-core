@@ -24,11 +24,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.util.transformer.Value;
-import org.opensingular.singular.form.view.SViewListByForm;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.util.transformer.Value;
+import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.singular.form.wicket.UIBuilderWicket;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.enums.ViewMode;

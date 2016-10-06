@@ -1,7 +1,7 @@
 package org.opensingular.singular.studio.core.type;
 
-import org.opensingular.singular.form.SAttributeEnabled;
-import org.opensingular.singular.form.STranslatorForAttribute;
+import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.STranslatorForAttribute;
 
 /**
  * Created by Daniel on 19/05/2016.

@@ -9,7 +9,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 
 public abstract class SingularSaveButton extends SingularValidationButton {
 

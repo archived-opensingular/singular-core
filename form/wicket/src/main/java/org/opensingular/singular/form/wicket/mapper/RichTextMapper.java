@@ -1,6 +1,6 @@
 package org.opensingular.singular.form.wicket.mapper;
 
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.singular.util.wicket.behavior.CKEditorInitBehaviour;

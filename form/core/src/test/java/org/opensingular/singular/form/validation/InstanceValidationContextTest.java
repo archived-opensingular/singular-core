@@ -1,10 +1,11 @@
 package org.opensingular.singular.form.validation;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.singular.form.TestCaseForm;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.type.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

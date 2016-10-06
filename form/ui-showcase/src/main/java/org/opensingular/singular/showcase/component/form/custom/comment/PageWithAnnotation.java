@@ -5,10 +5,10 @@
 
 package org.opensingular.singular.showcase.component.form.custom.comment;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.type.core.annotation.SIAnnotation;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;
 

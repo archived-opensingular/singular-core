@@ -1,10 +1,10 @@
 package org.opensingular.singular.form.wicket.mapper.attachment;
 
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.STypeAttachmentList;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.SingularFormException;
-import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.SIList;
+import org.opensingular.form.STypeAttachmentList;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;

@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.form.wicket.mapper;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.singular.form.wicket.behavior.InputMaskBehavior.Masks;

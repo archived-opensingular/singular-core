@@ -21,8 +21,8 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.IConverter;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.behavior.MoneyMaskBehavior;
 import org.opensingular.singular.form.wicket.model.SInstanceValueModel;

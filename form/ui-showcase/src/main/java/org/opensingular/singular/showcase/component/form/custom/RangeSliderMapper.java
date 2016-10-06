@@ -14,10 +14,10 @@ import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.type.basic.SPackageBasic;
-import org.opensingular.singular.form.type.core.STypeInteger;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.singular.form.wicket.IWicketComponentMapper;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.model.AttributeModel;

@@ -4,11 +4,11 @@
  */
 package org.opensingular.singular.exemplos.emec.credenciamentoescolagoverno.form;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.view.SViewByBlock;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.view.SViewByBlock;
 
 @SInfoType(spackage = SPackageCredenciamentoEscolaGoverno.class)
 public class STypePDIDocumentos extends STypeComposite<SIComposite>{

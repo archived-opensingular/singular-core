@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.wicket.mapper.datetime;
 
-import org.opensingular.singular.form.view.SViewDateTime;
+import org.opensingular.form.view.SViewDateTime;
 import org.opensingular.singular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.singular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.singular.form.wicket.model.ISInstanceAwareModel;

@@ -1,7 +1,7 @@
 package org.opensingular.singular.form.wicket.mapper.attachment.list;
 
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.SIList;
+import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.mapper.AbstractListaMapper;
 import org.apache.wicket.model.IModel;

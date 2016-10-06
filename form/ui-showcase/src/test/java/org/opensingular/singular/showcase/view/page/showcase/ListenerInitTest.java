@@ -1,12 +1,12 @@
 package org.opensingular.singular.showcase.view.page.showcase;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.view.SViewListByForm;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Test;

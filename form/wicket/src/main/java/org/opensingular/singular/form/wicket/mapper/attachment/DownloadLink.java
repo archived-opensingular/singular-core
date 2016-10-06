@@ -7,7 +7,7 @@ import org.apache.wicket.core.util.string.JavaScriptUtils;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
 import org.opensingular.singular.util.wicket.util.WicketUtils;
 

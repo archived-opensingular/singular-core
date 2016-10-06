@@ -5,11 +5,11 @@
 
 package org.opensingular.singular.form.spring;
 
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.SingularFormException;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.RefTypeByKey;
-import org.opensingular.singular.form.document.TypeLoader;
+import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.RefTypeByKey;
+import org.opensingular.form.document.TypeLoader;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;

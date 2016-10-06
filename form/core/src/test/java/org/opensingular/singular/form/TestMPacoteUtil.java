@@ -1,6 +1,6 @@
 package org.opensingular.singular.form;
 
-import org.opensingular.singular.form.type.util.SPackageUtil;
+import org.opensingular.form.type.util.SPackageUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

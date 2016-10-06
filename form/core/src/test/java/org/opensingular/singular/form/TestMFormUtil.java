@@ -6,9 +6,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.PathReader;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
 
 @RunWith(Parameterized.class)
 public class TestMFormUtil extends TestCaseForm {

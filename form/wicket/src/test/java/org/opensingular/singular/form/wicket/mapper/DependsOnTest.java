@@ -16,9 +16,9 @@ import org.junit.runner.RunWith;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.singular.form.wicket.IWicketComponentMapper;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 

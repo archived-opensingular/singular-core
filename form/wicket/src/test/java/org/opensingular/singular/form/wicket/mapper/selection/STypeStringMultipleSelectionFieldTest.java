@@ -1,12 +1,12 @@
 package org.opensingular.singular.form.wicket.mapper.selection;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.view.SMultiSelectionByCheckboxView;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SMultiSelectionByCheckboxView;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.junit.Test;

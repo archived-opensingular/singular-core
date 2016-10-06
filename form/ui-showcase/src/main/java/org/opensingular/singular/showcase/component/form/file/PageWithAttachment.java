@@ -5,11 +5,11 @@
 
 package org.opensingular.singular.showcase.component.form.file;
 
-import org.opensingular.singular.form.RefService;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.document.SDocument;
-import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
 public class PageWithAttachment {
 

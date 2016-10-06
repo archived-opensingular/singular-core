@@ -21,7 +21,7 @@ import org.reflections.Reflections;
 import org.springframework.stereotype.Service;
 
 import org.opensingular.singular.commons.base.SingularUtil;
-import org.opensingular.singular.form.SPackage;
+import org.opensingular.form.SPackage;
 import org.opensingular.singular.showcase.component.form.xsd.XsdCaseSimple;
 import org.opensingular.singular.showcase.component.form.xsd.XsdCaseSimple2;
 import org.opensingular.singular.studio.core.CollectionDefinition;

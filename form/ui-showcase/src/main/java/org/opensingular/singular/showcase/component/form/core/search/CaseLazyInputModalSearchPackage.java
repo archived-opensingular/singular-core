@@ -1,11 +1,11 @@
 package org.opensingular.singular.showcase.component.form.core.search;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.converter.ValueToSICompositeConverter;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.view.SViewSearchModal;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.converter.ValueToSICompositeConverter;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.singular.showcase.component.CaseItem;
 import org.opensingular.singular.showcase.component.Group;
 import org.opensingular.singular.showcase.component.Resource;

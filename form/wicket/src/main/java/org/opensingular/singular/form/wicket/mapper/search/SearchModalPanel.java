@@ -5,9 +5,9 @@
 
 package org.opensingular.singular.form.wicket.mapper.search;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.view.SViewSearchModal;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import org.opensingular.singular.form.wicket.component.BFModalWindow;

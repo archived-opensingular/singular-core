@@ -9,10 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.view.SView;
-import org.opensingular.singular.form.view.SViewSearchModal;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;

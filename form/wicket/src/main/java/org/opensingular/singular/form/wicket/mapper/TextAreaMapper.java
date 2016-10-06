@@ -14,10 +14,10 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.validator.StringValidator;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.type.basic.SPackageBasic;
-import org.opensingular.singular.form.view.SView;
-import org.opensingular.singular.form.view.SViewTextArea;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewTextArea;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.behavior.CountDownBehaviour;
 import org.opensingular.singular.form.wicket.model.SInstanceValueModel;

@@ -1,14 +1,14 @@
 package org.opensingular.singular.form.wicket.mapper;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.type.core.STypeBoolean;
-import org.opensingular.singular.form.type.core.STypeDecimal;
-import org.opensingular.singular.form.type.country.brazil.STypeCPF;
-import org.opensingular.singular.form.type.util.STypeYearMonth;
-import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.STypeBoolean;
+import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.country.brazil.STypeCPF;
+import org.opensingular.form.type.util.STypeYearMonth;
+import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;

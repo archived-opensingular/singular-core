@@ -8,11 +8,11 @@ package com.opensingular.bam.form;
 import com.opensingular.bam.client.portlet.FilterConfig;
 import com.opensingular.bam.client.portlet.filter.AggregationPeriod;
 import com.opensingular.bam.client.portlet.filter.FieldType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeSimple;
-import org.opensingular.singular.form.converter.SInstanceConverter;
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.web.client.RestTemplate;
 

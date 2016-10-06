@@ -19,8 +19,8 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
 
 import org.opensingular.singular.commons.lambda.IConsumer;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.singular.form.wicket.IWicketComponentMapper;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.behavior.DisabledClassBehavior;

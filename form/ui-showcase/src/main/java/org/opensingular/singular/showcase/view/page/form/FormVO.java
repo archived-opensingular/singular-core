@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.showcase.view.page.form;
 
-import org.opensingular.singular.form.SType;
+import org.opensingular.form.SType;
 import org.opensingular.singular.showcase.dao.form.ShowcaseTypeLoader.TemplateEntry;
 import org.apache.wicket.model.IModel;
 

@@ -1,6 +1,6 @@
 package org.opensingular.singular.studio.wicket;
 
-import org.opensingular.singular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormKey;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;
 import org.opensingular.singular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.studio.core.CollectionCanvas;

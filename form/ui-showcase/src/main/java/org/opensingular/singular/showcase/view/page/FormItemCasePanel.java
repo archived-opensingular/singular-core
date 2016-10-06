@@ -28,11 +28,11 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.lang.Bytes;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.context.SFormConfig;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.internal.xml.MElement;
-import org.opensingular.singular.form.io.MformPersistenciaXML;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.singular.form.wicket.component.BFModalBorder;
 import org.opensingular.singular.form.wicket.component.SingularForm;
 import org.opensingular.singular.form.wicket.component.SingularSaveButton;

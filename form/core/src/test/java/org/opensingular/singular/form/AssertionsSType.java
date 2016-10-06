@@ -1,8 +1,11 @@
 package org.opensingular.singular.form;
 
-import org.opensingular.singular.form.type.core.STypeDecimal;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;

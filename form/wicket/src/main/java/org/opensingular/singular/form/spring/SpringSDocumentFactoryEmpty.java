@@ -5,10 +5,10 @@
 
 package org.opensingular.singular.form.spring;
 
-import org.opensingular.singular.form.document.RefSDocumentFactory;
-import org.opensingular.singular.form.document.SDocument;
-import org.opensingular.singular.form.document.SDocumentFactory;
-import org.opensingular.singular.form.document.ServiceRegistry;
+import org.opensingular.form.document.RefSDocumentFactory;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.document.ServiceRegistry;
 
 /**
  * Representa uma factory que não faz nada com o documento e que aponta o

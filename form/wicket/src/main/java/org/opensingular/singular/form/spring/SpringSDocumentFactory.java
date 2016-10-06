@@ -5,9 +5,9 @@
 
 package org.opensingular.singular.form.spring;
 
-import org.opensingular.singular.form.document.RefSDocumentFactory;
-import org.opensingular.singular.form.document.SDocumentFactory;
-import org.opensingular.singular.form.document.ServiceRegistry;
+import org.opensingular.form.document.RefSDocumentFactory;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.document.ServiceRegistry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;

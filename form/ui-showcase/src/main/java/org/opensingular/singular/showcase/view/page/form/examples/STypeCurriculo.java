@@ -1,25 +1,25 @@
 package org.opensingular.singular.showcase.view.page.form.examples;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeBoolean;
-import org.opensingular.singular.form.type.core.STypeDate;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
-import org.opensingular.singular.form.type.country.brazil.STypeCPF;
-import org.opensingular.singular.form.type.country.brazil.STypeTelefoneNacional;
-import org.opensingular.singular.form.type.util.STypeEMail;
-import org.opensingular.singular.form.type.util.STypePersonName;
-import org.opensingular.singular.form.type.util.STypeYearMonth;
-import org.opensingular.singular.form.view.SMultiSelectionBySelectView;
-import org.opensingular.singular.form.view.SViewListByForm;
-import org.opensingular.singular.form.view.SViewListByTable;
-import org.opensingular.singular.form.view.SViewTab;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeBoolean;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.form.type.country.brazil.STypeCPF;
+import org.opensingular.form.type.country.brazil.STypeTelefoneNacional;
+import org.opensingular.form.type.util.STypeEMail;
+import org.opensingular.form.type.util.STypePersonName;
+import org.opensingular.form.type.util.STypeYearMonth;
+import org.opensingular.form.view.SMultiSelectionBySelectView;
+import org.opensingular.form.view.SViewListByForm;
+import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.SViewTab;
 
 @SInfoType(spackage = SPackageCurriculo.class, name = "STypeCurriculo")
 public class STypeCurriculo extends STypeComposite<SIComposite> {

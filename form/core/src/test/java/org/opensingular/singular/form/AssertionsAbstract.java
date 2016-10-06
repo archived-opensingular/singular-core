@@ -1,6 +1,9 @@
 package org.opensingular.singular.form;
 
-import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.form.AtrRef;
+import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.type.basic.SPackageBasic;
 
 import java.util.Objects;
 

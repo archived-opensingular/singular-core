@@ -5,13 +5,13 @@
 
 package org.opensingular.singular.showcase.component.form.core;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.country.brazil.STypeCEP;
-import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
-import org.opensingular.singular.form.type.country.brazil.STypeCPF;
-import org.opensingular.singular.form.type.country.brazil.STypeTelefoneNacional;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.country.brazil.STypeCEP;
+import org.opensingular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.form.type.country.brazil.STypeCPF;
+import org.opensingular.form.type.country.brazil.STypeTelefoneNacional;
 import org.opensingular.singular.showcase.component.CaseItem;
 import org.opensingular.singular.showcase.component.Group;
 

@@ -1,15 +1,15 @@
 package org.opensingular.singular.form.wicket.test.base;
 
 import org.opensingular.singular.form.curriculo.mform.SPackageCurriculo;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.SDocumentFactory;
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.singular.form.wicket.SingularFormConfigWicketImpl;
 import org.opensingular.singular.form.wicket.SingularFormContextWicket;
 import org.opensingular.singular.form.wicket.WicketBuildContext;

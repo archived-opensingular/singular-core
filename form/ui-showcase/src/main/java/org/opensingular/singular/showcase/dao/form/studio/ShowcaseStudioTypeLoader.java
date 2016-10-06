@@ -5,10 +5,10 @@
 
 package org.opensingular.singular.showcase.dao.form.studio;
 
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SFormUtil;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.SType;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
 import org.opensingular.singular.form.spring.SpringTypeLoader;
 
 import java.util.HashMap;

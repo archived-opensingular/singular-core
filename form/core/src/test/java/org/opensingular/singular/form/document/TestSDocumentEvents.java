@@ -1,14 +1,15 @@
 package org.opensingular.singular.form.document;
 
-import org.opensingular.singular.form.SDictionary;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.singular.form.TestCaseForm;
-import org.opensingular.singular.form.event.ISInstanceListener;
-import org.opensingular.singular.form.event.SInstanceAttributeChangeEvent;
-import org.opensingular.singular.form.event.SInstanceEventType;
-import org.opensingular.singular.form.event.SInstanceValueChangeEvent;
-import org.opensingular.singular.form.type.basic.SPackageBasic;
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.event.SInstanceAttributeChangeEvent;
+import org.opensingular.form.event.SInstanceEventType;
+import org.opensingular.form.event.SInstanceValueChangeEvent;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

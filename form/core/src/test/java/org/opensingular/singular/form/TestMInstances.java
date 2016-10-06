@@ -1,7 +1,10 @@
 package org.opensingular.singular.form;
 
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
 import org.opensingular.singular.commons.lambda.IPredicate;
-import org.opensingular.singular.form.SInstances.IVisitor;
+import org.opensingular.form.SInstances.IVisitor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

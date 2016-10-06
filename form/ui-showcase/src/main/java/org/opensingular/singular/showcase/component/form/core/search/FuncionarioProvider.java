@@ -3,10 +3,10 @@ package org.opensingular.singular.showcase.component.form.core.search;
 
 import java.util.List;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.provider.Config;
-import org.opensingular.singular.form.provider.FilteredProvider;
-import org.opensingular.singular.form.provider.ProviderContext;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.provider.Config;
+import org.opensingular.form.provider.FilteredProvider;
+import org.opensingular.form.provider.ProviderContext;
 
 public class FuncionarioProvider implements FilteredProvider<Funcionario> {
 

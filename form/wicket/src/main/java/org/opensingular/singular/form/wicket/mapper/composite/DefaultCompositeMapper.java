@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.form.wicket.mapper.composite;
 
-import org.opensingular.singular.form.view.SViewByBlock;
-import org.opensingular.singular.form.view.SViewTab;
+import org.opensingular.form.view.SViewByBlock;
+import org.opensingular.form.view.SViewTab;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSGrid;
 

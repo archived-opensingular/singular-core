@@ -5,9 +5,9 @@
 
 package org.opensingular.singular.exemplos.emec.credenciamentoescolagoverno.form;
 
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeString;
 
 @SInfoType(name = "Sexo", spackage = SPackageCredenciamentoEscolaGoverno.class)
 public class STypeSexo extends STypeString {

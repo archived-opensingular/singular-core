@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.wicket.model;
 
-import org.opensingular.singular.form.AtrRef;
+import org.opensingular.form.AtrRef;
 import org.opensingular.singular.util.wicket.model.IBooleanModel;
 import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
 import org.opensingular.singular.util.wicket.model.NullOrEmptyModel;

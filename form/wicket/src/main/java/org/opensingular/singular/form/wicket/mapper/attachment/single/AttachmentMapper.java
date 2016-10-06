@@ -8,9 +8,9 @@ package org.opensingular.singular.form.wicket.mapper.attachment.single;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SingularFormException;
-import org.opensingular.singular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.singular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.enums.ViewMode;

@@ -4,11 +4,11 @@
  */
 package org.opensingular.singular.exemplos.opas.gestaoobrasservicosaquisicoes.form;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.view.SViewTab;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.view.SViewTab;
 
 @SInfoType(spackage = SPackageGestaoObrasServicosAquisicoes.class)
 public class STypeGestaoObras extends STypeComposite<SIComposite>{

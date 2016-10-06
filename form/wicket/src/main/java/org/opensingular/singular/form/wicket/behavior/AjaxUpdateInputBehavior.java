@@ -11,7 +11,7 @@ import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.singular.form.wicket.IWicketComponentMapper;
 

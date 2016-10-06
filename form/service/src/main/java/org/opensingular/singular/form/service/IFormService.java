@@ -4,12 +4,12 @@
  */
 package org.opensingular.singular.form.service;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.SDocumentFactory;
-import org.opensingular.singular.form.persistence.BasicAnnotationPersistence;
-import org.opensingular.singular.form.persistence.BasicFormPersistence;
-import org.opensingular.singular.form.persistence.FormKey;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.persistence.BasicAnnotationPersistence;
+import org.opensingular.form.persistence.BasicFormPersistence;
+import org.opensingular.form.persistence.FormKey;
 import org.opensingular.singular.form.persistence.entity.FormEntity;
 import org.opensingular.singular.form.persistence.entity.FormVersionEntity;
 

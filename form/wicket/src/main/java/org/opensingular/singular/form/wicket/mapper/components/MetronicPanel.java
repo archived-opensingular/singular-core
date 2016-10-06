@@ -14,8 +14,8 @@ import org.apache.wicket.model.IModel;
 
 import org.opensingular.singular.commons.lambda.IBiConsumer;
 import org.opensingular.singular.commons.lambda.IFunction;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.singular.form.wicket.component.SingularForm;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSContainer;
 import org.opensingular.singular.util.wicket.bootstrap.layout.TemplatePanel;

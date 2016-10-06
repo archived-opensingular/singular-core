@@ -1,15 +1,15 @@
 package org.opensingular.singular.form.wicket.mapper.search;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.converter.ValueToSICompositeConverter;
-import org.opensingular.singular.form.provider.Config;
-import org.opensingular.singular.form.provider.FilteredPagedProvider;
-import org.opensingular.singular.form.provider.ProviderContext;
-import org.opensingular.singular.form.type.core.STypeBoolean;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.util.transformer.Value;
-import org.opensingular.singular.form.view.SViewSearchModal;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.converter.ValueToSICompositeConverter;
+import org.opensingular.form.provider.Config;
+import org.opensingular.form.provider.FilteredPagedProvider;
+import org.opensingular.form.provider.ProviderContext;
+import org.opensingular.form.type.core.STypeBoolean;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.util.transformer.Value;
+import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.singular.util.wicket.datatable.BSDataTable;
 import org.apache.commons.lang3.tuple.Triple;

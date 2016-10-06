@@ -13,12 +13,12 @@ import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.singular.form.wicket.IWicketComponentMapper;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.model.SInstanceFieldModel;

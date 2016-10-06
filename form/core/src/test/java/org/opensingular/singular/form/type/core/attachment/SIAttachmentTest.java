@@ -1,9 +1,11 @@
 package org.opensingular.singular.form.type.core.attachment;
 
-import org.opensingular.singular.form.SDictionary;
+import org.opensingular.form.SDictionary;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

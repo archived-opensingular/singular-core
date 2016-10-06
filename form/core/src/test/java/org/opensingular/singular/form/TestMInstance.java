@@ -5,9 +5,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import org.opensingular.singular.form.internal.xml.MElement;
-import org.opensingular.singular.form.io.MformPersistenciaXML;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.type.core.STypeString;
 
 @RunWith(Parameterized.class)
 public class TestMInstance extends TestCaseForm {

@@ -1,13 +1,13 @@
 package org.opensingular.singular.form.wicket.mapper.selection;
 
 import org.opensingular.singular.commons.lambda.IFunction;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SingularFormException;
-import org.opensingular.singular.form.converter.SInstanceConverter;
-import org.opensingular.singular.form.provider.Provider;
-import org.opensingular.singular.form.provider.ProviderContext;
-import org.opensingular.singular.form.util.transformer.Value;
-import org.opensingular.singular.form.view.SViewAutoComplete;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.provider.Provider;
+import org.opensingular.form.provider.ProviderContext;
+import org.opensingular.form.util.transformer.Value;
+import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.singular.form.wicket.model.AbstractSInstanceAwareModel;
 import org.opensingular.singular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.singular.form.wicket.util.WicketFormProcessing;

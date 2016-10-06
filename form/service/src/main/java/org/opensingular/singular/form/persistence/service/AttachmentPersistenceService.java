@@ -25,8 +25,8 @@ import org.opensingular.singular.form.persistence.dao.AttachmentDao;
 import org.opensingular.singular.form.persistence.dto.AttachmentRef;
 import org.opensingular.singular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.singular.form.persistence.entity.AttachmentEntity;
-import org.opensingular.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.singular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
 @Transactional
 public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {

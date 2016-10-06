@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.wicket.component;
 
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.wicket.util.WicketFormProcessing;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;

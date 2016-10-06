@@ -1,11 +1,11 @@
 package org.opensingular.singular.exemplos.notificacaosimplificada.form;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.country.brazil.STypeCNPJ;
 
 @SInfoType(spackage = SPackageNotificacaoSimplificada.class)
 public class STypeEmpresaPropria extends STypeComposite<SIComposite> {

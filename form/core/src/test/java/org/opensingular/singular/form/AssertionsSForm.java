@@ -1,5 +1,8 @@
 package org.opensingular.singular.form;
 
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**

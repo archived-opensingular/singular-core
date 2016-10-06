@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.form.wicket.feedback;
 
-import org.opensingular.singular.form.SFormUtil;
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.wicket.util.WicketFormUtils;
 import org.opensingular.singular.util.wicket.feedback.BSFeedbackPanel;
 import org.apache.commons.lang3.StringUtils;

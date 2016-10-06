@@ -1,6 +1,6 @@
 package org.opensingular.singular.form.wicket.mapper.masterdetail;
 
-import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.singular.util.wicket.modal.BSModalBorder;
 import org.junit.Assert;
 import org.junit.Test;

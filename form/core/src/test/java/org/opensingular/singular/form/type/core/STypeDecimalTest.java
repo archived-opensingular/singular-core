@@ -1,5 +1,7 @@
 package org.opensingular.singular.form.type.core;
 
+import org.opensingular.form.type.core.SIBigDecimal;
+import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.singular.form.AbstractTestOneType;
 import org.hamcrest.Matchers;
 import org.junit.Rule;

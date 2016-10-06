@@ -5,8 +5,8 @@
 
 package org.opensingular.singular.form.spring;
 
-import org.opensingular.singular.form.document.RefSDocumentFactory;
-import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.form.document.RefSDocumentFactory;
+import org.opensingular.form.document.SDocumentFactory;
 
 /**
  * Referência serializável a uma fábrica de documentos que utiliza referência

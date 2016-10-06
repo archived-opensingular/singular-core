@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.wicket.model;
 
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 
 public abstract class AbstractSInstanceModel<I extends SInstance>
     implements ISInstanceAwareModel<I> {

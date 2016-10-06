@@ -1,10 +1,10 @@
 package org.opensingular.singular.form.wicket.mapper.attachment;
 
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.attachment.SIAttachment;
-import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.singular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.wicket.Component;

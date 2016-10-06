@@ -1,6 +1,10 @@
 package org.opensingular.singular.form;
 
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.type.core.STypeString;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

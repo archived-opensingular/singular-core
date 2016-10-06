@@ -16,11 +16,11 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.SPackageBootstrap;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.singular.form.wicket.IWicketComponentMapper;
 import org.opensingular.singular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.singular.form.wicket.UIBuilderWicket;

@@ -4,6 +4,7 @@ import br.net.opensingular.singular.form.PathReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.PathReader;
 
 @RunWith(Parameterized.class)
 public class TestLeitorPath extends TestCaseForm {

@@ -1,11 +1,11 @@
 package org.opensingular.singular.studio.persistence;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.SDocumentFactory;
-import org.opensingular.singular.form.persistence.FormPersistence;
-import org.opensingular.singular.form.persistence.FormPersistenceInMemory;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.persistence.FormPersistence;
+import org.opensingular.form.persistence.FormPersistenceInMemory;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,13 +1,15 @@
 package org.opensingular.singular.form.view;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.TypeBuilder;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TypeBuilder;
 import org.junit.Test;
+import org.opensingular.form.view.SViewAutoComplete;
+import org.opensingular.form.view.ViewResolver;
 
 import static org.junit.Assert.assertEquals;
 

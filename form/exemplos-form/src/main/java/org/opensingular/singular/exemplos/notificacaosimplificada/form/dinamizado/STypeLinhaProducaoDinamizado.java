@@ -1,8 +1,8 @@
 package org.opensingular.singular.exemplos.notificacaosimplificada.form.dinamizado;
 
 import org.opensingular.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeLinhaProducao;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.provider.STextQueryProvider;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.provider.STextQueryProvider;
 
 import static org.opensingular.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
 

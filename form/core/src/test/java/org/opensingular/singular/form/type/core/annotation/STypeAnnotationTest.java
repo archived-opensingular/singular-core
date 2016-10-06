@@ -1,19 +1,23 @@
 package org.opensingular.singular.form.type.core.annotation;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.SDocumentFactory;
-import org.opensingular.singular.form.io.FormSerializationUtil;
-import org.opensingular.singular.form.io.FormSerialized;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.io.FormSerializationUtil;
+import org.opensingular.form.io.FormSerialized;
+import org.opensingular.form.type.core.STypeString;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
+import org.opensingular.form.type.core.annotation.SIAnnotation;
+import org.opensingular.form.type.core.annotation.STypeAnnotation;
+import org.opensingular.form.type.core.annotation.STypeAnnotationList;
 
 import java.util.List;
 

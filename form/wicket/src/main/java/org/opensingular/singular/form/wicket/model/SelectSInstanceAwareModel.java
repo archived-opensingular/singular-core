@@ -1,11 +1,11 @@
 package org.opensingular.singular.form.wicket.model;
 
 import org.opensingular.singular.commons.lambda.IFunction;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SingularFormException;
-import org.opensingular.singular.form.converter.SInstanceConverter;
-import org.opensingular.singular.form.converter.SimpleSInstanceConverter;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.converter.SimpleSInstanceConverter;
 import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;

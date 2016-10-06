@@ -6,16 +6,16 @@
 package org.opensingular.singular.form.wicket.util;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SInstances;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.document.SDocument;
-import org.opensingular.singular.form.event.ISInstanceListener;
-import org.opensingular.singular.form.event.SInstanceEvent;
-import org.opensingular.singular.form.validation.IValidationError;
-import org.opensingular.singular.form.validation.InstanceValidationContext;
-import org.opensingular.singular.form.validation.ValidationErrorLevel;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.event.SInstanceEvent;
+import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.InstanceValidationContext;
+import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.singular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.model.ISInstanceAwareModel;

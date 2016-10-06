@@ -1,7 +1,14 @@
 package org.opensingular.singular.form;
 
-import org.opensingular.singular.form.type.core.STypeDate;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

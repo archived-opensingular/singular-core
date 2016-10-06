@@ -7,7 +7,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSControls;
 

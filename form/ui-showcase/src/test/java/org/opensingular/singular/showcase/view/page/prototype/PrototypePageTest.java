@@ -1,14 +1,14 @@
 package org.opensingular.singular.showcase.view.page.prototype;
 
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.context.SFormConfig;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.SDocumentFactory;
-import org.opensingular.singular.form.internal.xml.MElement;
-import org.opensingular.singular.form.io.MformPersistenciaXML;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SType;
+import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.singular.showcase.SpringWicketTester;
 import org.opensingular.singular.showcase.dao.form.Prototype;
 import org.opensingular.singular.showcase.view.template.Content;

@@ -1,6 +1,6 @@
 package org.opensingular.singular.studio.core;
 
-import org.opensingular.singular.form.SType;
+import org.opensingular.form.SType;
 
 import java.io.Serializable;
 

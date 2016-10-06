@@ -11,16 +11,16 @@ import java.util.Optional;
 import org.opensingular.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeEstado;
 import org.opensingular.singular.exemplos.emec.credenciamentoescolagoverno.form.STypeMunicipio;
 import org.opensingular.singular.exemplos.opas.gestaoobrasservicosaquisicoes.enums.AcaoGestaoObras;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.internal.xml.ConversorToolkit;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.util.transformer.Value;
-import org.opensingular.singular.form.view.SViewByBlock;
-import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.internal.xml.ConversorToolkit;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.util.transformer.Value;
+import org.opensingular.form.view.SViewByBlock;
+import org.opensingular.form.view.SViewListByMasterDetail;
 
 @SInfoType(spackage = SPackageGestaoObrasServicosAquisicoes.class)
 public class STypeProcesso extends STypeComposite<SIComposite> {

@@ -15,8 +15,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.view.SViewSelectionByRadio;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.singular.form.wicket.model.SelectSInstanceAwareModel;

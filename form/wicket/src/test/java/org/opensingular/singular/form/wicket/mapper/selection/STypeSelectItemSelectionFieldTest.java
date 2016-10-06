@@ -1,12 +1,12 @@
 package org.opensingular.singular.form.wicket.mapper.selection;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeSimple;
-import org.opensingular.singular.form.provider.AtrProvider;
-import org.opensingular.singular.form.provider.SSimpleProvider;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.provider.AtrProvider;
+import org.opensingular.form.provider.SSimpleProvider;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.markup.html.form.DropDownChoice;

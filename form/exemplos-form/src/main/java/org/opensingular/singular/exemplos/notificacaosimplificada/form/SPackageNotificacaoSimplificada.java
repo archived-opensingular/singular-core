@@ -9,10 +9,10 @@ import org.opensingular.singular.exemplos.notificacaosimplificada.form.gas.SType
 import org.opensingular.singular.exemplos.notificacaosimplificada.form.vegetal.STypeEnsaioControleQualidade;
 import org.opensingular.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado;
 import org.opensingular.singular.exemplos.notificacaosimplificada.service.DominioService;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SInfoPackage;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SPackage;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SPackage;
 
 @SInfoPackage(name = SPackageNotificacaoSimplificada.PACOTE)
 public class SPackageNotificacaoSimplificada extends SPackage {

@@ -1,7 +1,9 @@
 package org.opensingular.singular.form;
 
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
 
 /**
  * Apoio para teste voltado para uma única classe de SType

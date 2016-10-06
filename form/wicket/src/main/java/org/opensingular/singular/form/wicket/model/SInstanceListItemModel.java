@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.wicket.model;
 
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SInstance;
 
 public class SInstanceListItemModel<I extends SInstance>
     extends AbstractSInstanceItemListaModel<I>

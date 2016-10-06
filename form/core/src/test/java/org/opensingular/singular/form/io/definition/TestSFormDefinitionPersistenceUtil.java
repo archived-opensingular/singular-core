@@ -11,17 +11,19 @@ import org.junit.runners.Parameterized;
 
 import com.google.common.collect.Lists;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SFormUtil;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.io.definition.SFormDefinitionPersistenceUtil;
+import org.opensingular.form.io.definition.SIPersistenceArchive;
 import org.opensingular.singular.form.TestCaseForm;
 import org.opensingular.singular.form.io.FormAssert;
-import org.opensingular.singular.form.io.PersistenceBuilderXML;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.type.country.brazil.STypeCEP;
+import org.opensingular.form.io.PersistenceBuilderXML;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.country.brazil.STypeCEP;
 
 @RunWith(Parameterized.class)
 public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {

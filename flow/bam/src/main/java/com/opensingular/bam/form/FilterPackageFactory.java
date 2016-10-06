@@ -7,12 +7,12 @@ package com.opensingular.bam.form;
 
 import com.opensingular.bam.service.FlowMetadataFacade;
 import com.opensingular.bam.client.portlet.FilterConfig;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.document.ServiceRegistry;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.document.ServiceRegistry;
 
 import java.util.List;
 

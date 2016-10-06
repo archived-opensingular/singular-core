@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.showcase.view.page.prototype;
 
-import org.opensingular.singular.form.SIComposite;
+import org.opensingular.form.SIComposite;
 import org.opensingular.singular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.singular.showcase.view.template.Content;
 import org.opensingular.singular.showcase.view.template.Template;

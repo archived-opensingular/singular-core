@@ -1,11 +1,11 @@
 package org.opensingular.singular.form.wicket.mapper;
 
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.SIBoolean;
-import org.opensingular.singular.form.type.core.STypeBoolean;
-import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.SIBoolean;
+import org.opensingular.form.type.core.STypeBoolean;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.RadioChoice;

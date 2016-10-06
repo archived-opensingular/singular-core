@@ -1,6 +1,6 @@
 package org.opensingular.singular.studio.core;
 
-import org.opensingular.singular.form.STypeSimple;
+import org.opensingular.form.STypeSimple;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class CollectionEditorConfigBuilder {

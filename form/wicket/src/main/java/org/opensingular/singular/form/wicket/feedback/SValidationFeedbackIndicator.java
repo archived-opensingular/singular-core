@@ -15,8 +15,8 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 
-import org.opensingular.singular.form.validation.IValidationError;
-import org.opensingular.singular.form.validation.ValidationErrorLevel;
+import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.singular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.singular.util.wicket.jquery.JQuery;
 import org.opensingular.singular.util.wicket.util.JavaScriptUtils;

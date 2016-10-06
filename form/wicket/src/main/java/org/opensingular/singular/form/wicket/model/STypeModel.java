@@ -5,7 +5,7 @@
 
 package org.opensingular.singular.form.wicket.model;
 
-import org.opensingular.singular.form.SType;
+import org.opensingular.form.SType;
 import org.opensingular.singular.util.wicket.model.IReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 

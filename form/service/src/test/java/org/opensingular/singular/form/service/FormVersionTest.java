@@ -1,8 +1,8 @@
 package org.opensingular.singular.form.service;
 
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.persistence.FormKey;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.persistence.FormKey;
 import org.opensingular.singular.form.persistence.entity.FormEntity;
 import org.opensingular.singular.form.persistence.entity.FormVersionEntity;
 import org.hibernate.criterion.Order;

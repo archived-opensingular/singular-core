@@ -6,9 +6,9 @@
 package org.opensingular.singular.exemplos.notificacaosimplificada.form.gas;
 
 import org.opensingular.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SInfoPackage;
-import org.opensingular.singular.form.SPackage;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SPackage;
 
 @SInfoPackage(name = SPackageNotificacaoSimplificadaGasMedicinal.PACOTE)
 public class SPackageNotificacaoSimplificadaGasMedicinal extends SPackage {

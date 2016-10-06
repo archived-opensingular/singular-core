@@ -1,11 +1,11 @@
 package org.opensingular.singular.form.wicket.mapper.composite;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.type.core.SPackageBootstrap;
-import org.opensingular.singular.form.view.Block;
-import org.opensingular.singular.form.view.SViewByBlock;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.type.core.SPackageBootstrap;
+import org.opensingular.form.view.Block;
+import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.singular.form.wicket.util.WicketFormProcessing;

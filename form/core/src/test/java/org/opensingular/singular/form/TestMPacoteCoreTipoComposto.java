@@ -1,10 +1,22 @@
 package org.opensingular.singular.form;
 
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SISimple;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.singular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInterna;
 import org.opensingular.singular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaB;
-import org.opensingular.singular.form.type.basic.SPackageBasic;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

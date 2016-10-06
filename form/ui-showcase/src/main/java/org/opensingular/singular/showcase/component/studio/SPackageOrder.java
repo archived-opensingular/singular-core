@@ -1,8 +1,8 @@
 package org.opensingular.singular.showcase.component.studio;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SInfoPackage;
-import org.opensingular.singular.form.SPackage;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SPackage;
 
 @SInfoPackage(name = "test.order")
 public class SPackageOrder extends SPackage {

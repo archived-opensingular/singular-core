@@ -4,10 +4,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import org.opensingular.form.io.FormXsdUtil;
 import org.opensingular.singular.form.AssertionsSForm;
 import org.opensingular.singular.form.AssertionsSType;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SType;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SType;
 import org.opensingular.singular.form.TestCaseForm;
 
 /**

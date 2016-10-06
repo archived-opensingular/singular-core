@@ -1,13 +1,16 @@
 package org.opensingular.singular.form.type.core.attachment;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.attachment.AttachmentDocumentService;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.singular.form.TestCaseForm;
-import org.opensingular.singular.form.io.HashUtil;
+import org.opensingular.form.io.HashUtil;
 import org.opensingular.singular.form.io.TesteFormSerializationUtil;
 import br.net.opensingular.singular.form.type.core.attachment.AttachmentDocumentService;
 import com.google.common.io.ByteStreams;

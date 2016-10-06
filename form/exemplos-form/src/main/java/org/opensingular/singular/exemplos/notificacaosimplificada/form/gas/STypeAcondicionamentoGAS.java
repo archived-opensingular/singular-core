@@ -2,18 +2,18 @@ package org.opensingular.singular.exemplos.notificacaosimplificada.form.gas;
 
 import org.opensingular.singular.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import org.opensingular.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeAttachmentList;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.STypeSimple;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
-import org.opensingular.singular.form.util.transformer.Value;
-import org.opensingular.singular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeAttachmentList;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.util.transformer.Value;
+import org.opensingular.form.view.SViewListByMasterDetail;
 
 import java.util.Optional;
 

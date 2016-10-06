@@ -1,13 +1,13 @@
 package org.opensingular.singular.form.service;
 
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.persistence.FormKey;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.persistence.FormKey;
 import org.opensingular.singular.form.persistence.entity.FormAnnotationEntity;
 import org.opensingular.singular.form.persistence.entity.FormAnnotationVersionEntity;
 import org.opensingular.singular.form.persistence.entity.FormEntity;
 import org.opensingular.singular.form.persistence.entity.FormVersionEntity;
-import org.opensingular.singular.form.type.core.annotation.SIAnnotation;
+import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
 import org.junit.Test;

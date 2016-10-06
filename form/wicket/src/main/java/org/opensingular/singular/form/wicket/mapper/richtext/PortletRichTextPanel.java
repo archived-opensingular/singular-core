@@ -22,7 +22,7 @@ import static org.opensingular.singular.util.wicket.util.WicketUtils.$b;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.singular.util.wicket.util.JavaScriptUtils;

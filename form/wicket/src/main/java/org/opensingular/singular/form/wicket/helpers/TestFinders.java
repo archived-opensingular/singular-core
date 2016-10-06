@@ -1,7 +1,7 @@
 package org.opensingular.singular.form.wicket.helpers;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 import org.opensingular.singular.form.wicket.model.ISInstanceAwareModel;
 import com.google.common.collect.Lists;
 import org.apache.wicket.Component;

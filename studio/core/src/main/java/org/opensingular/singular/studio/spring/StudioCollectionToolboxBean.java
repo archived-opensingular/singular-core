@@ -1,9 +1,9 @@
 package org.opensingular.singular.studio.spring;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.context.SFormConfig;
-import org.opensingular.singular.form.persistence.FormPersistence;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.persistence.FormPersistence;
 import org.opensingular.singular.studio.core.CollectionCanvas;
 import org.opensingular.singular.studio.core.CollectionEditorConfig;
 import org.opensingular.singular.studio.core.CollectionGallery;

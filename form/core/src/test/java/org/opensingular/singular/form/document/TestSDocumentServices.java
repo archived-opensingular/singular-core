@@ -1,12 +1,14 @@
 package org.opensingular.singular.form.document;
 
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.document.ServiceRegistry;
 import org.opensingular.singular.form.*;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.RefService;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.attachment.SIAttachment;
-import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +23,7 @@ public class TestSDocumentServices extends TestCaseForm {
 
     private STypeComposite<?> groupingType;
     private SIAttachment      fileFieldInstance;
-    private SDocument         document;
+    private SDocument document;
 
     public TestSDocumentServices(TestFormConfig testFormConfig) {
         super(testFormConfig);

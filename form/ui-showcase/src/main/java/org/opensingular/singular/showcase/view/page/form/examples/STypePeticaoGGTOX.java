@@ -1,29 +1,29 @@
 package org.opensingular.singular.showcase.view.page.form.examples;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.STypeSimple;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeDate;
-import org.opensingular.singular.form.type.core.STypeDecimal;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
-import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
-import org.opensingular.singular.form.view.SMultiSelectionByCheckboxView;
-import org.opensingular.singular.form.view.SMultiSelectionByPicklistView;
-import org.opensingular.singular.form.view.SMultiSelectionBySelectView;
-import org.opensingular.singular.form.view.SViewAutoComplete;
-import org.opensingular.singular.form.view.SViewListByForm;
-import org.opensingular.singular.form.view.SViewListByMasterDetail;
-import org.opensingular.singular.form.view.SViewListByTable;
-import org.opensingular.singular.form.view.SViewSelectionByRadio;
-import org.opensingular.singular.form.view.SViewSelectionBySelect;
-import org.opensingular.singular.form.view.SViewTab;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.form.view.SMultiSelectionByCheckboxView;
+import org.opensingular.form.view.SMultiSelectionByPicklistView;
+import org.opensingular.form.view.SMultiSelectionBySelectView;
+import org.opensingular.form.view.SViewAutoComplete;
+import org.opensingular.form.view.SViewListByForm;
+import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.SViewSelectionByRadio;
+import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.form.view.SViewTab;
 
 @SInfoType(spackage = SPackagePeticaoGGTOX.class, name = "STypePeticaoGGTOX")
 public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {

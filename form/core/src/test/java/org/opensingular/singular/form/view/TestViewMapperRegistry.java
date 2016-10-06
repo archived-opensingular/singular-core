@@ -5,18 +5,20 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.ViewMapperRegistry;
 import org.opensingular.singular.commons.base.SingularUtil;
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeSimple;
-import org.opensingular.singular.form.type.core.STypeDate;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.type.country.brazil.STypeCEP;
-import org.opensingular.singular.form.type.country.brazil.STypeCNPJ;
-import org.opensingular.singular.form.type.country.brazil.STypeCPF;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.country.brazil.STypeCEP;
+import org.opensingular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.form.type.country.brazil.STypeCPF;
 
 public class TestViewMapperRegistry {
 

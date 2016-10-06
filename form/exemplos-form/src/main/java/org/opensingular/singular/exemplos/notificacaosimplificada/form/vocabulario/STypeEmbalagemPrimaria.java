@@ -2,14 +2,14 @@ package org.opensingular.singular.exemplos.notificacaosimplificada.form.vocabula
 
 import org.opensingular.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
 import org.opensingular.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.TypeBuilder;
-import org.opensingular.singular.form.converter.SInstanceConverter;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.util.transformer.Value;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.util.transformer.Value;
 
 import static org.opensingular.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
 

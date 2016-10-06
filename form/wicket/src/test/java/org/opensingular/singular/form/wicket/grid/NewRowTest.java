@@ -1,10 +1,10 @@
 package org.opensingular.singular.form.wicket.grid;
 
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.type.core.STypeInteger;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.type.util.STypeEMail;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.util.STypeEMail;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.singular.util.wicket.bootstrap.layout.BSRow;
 import org.apache.wicket.util.visit.IVisit;

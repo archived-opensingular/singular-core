@@ -1,5 +1,11 @@
 package org.opensingular.singular.form;
 
+import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+
 import java.util.Objects;
 
 /**

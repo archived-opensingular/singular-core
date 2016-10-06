@@ -1,12 +1,12 @@
 package org.opensingular.singular.form.wicket.mapper;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.view.SMultiSelectionBySelectView;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SMultiSelectionBySelectView;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;

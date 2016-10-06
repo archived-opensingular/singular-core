@@ -1,14 +1,14 @@
 package org.opensingular.singular.form.wicket.mapper.selection;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.provider.Config;
-import org.opensingular.singular.form.provider.FilteredProvider;
-import org.opensingular.singular.form.provider.ProviderContext;
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.view.SViewSearchModal;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.provider.Config;
+import org.opensingular.form.provider.FilteredProvider;
+import org.opensingular.form.provider.ProviderContext;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.singular.form.wicket.mapper.search.SearchModalPanel;
 import org.opensingular.singular.util.wicket.ajax.ActionAjaxLink;

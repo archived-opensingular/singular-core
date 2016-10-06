@@ -2,9 +2,9 @@ package org.opensingular.singular.form.wicket.mapper.masterdetail;
 
 import org.opensingular.singular.commons.base.SingularException;
 import org.opensingular.singular.commons.lambda.IFunction;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.type.basic.SPackageBasic;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.type.basic.SPackageBasic;
 
 class ColumnType {
 

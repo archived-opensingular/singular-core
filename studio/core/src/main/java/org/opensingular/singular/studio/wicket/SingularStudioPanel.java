@@ -1,10 +1,10 @@
 package org.opensingular.singular.studio.wicket;
 
 import org.opensingular.singular.commons.util.Loggable;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.persistence.FormKey;
-import org.opensingular.singular.form.persistence.FormPersistence;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormPersistence;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;
 import org.opensingular.singular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.studio.core.CollectionCanvas;

@@ -1,14 +1,17 @@
 package org.opensingular.singular.form.type.core.annotation;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.SingularFormException;
-import org.opensingular.singular.form.type.core.STypeString;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.type.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.form.type.core.annotation.AnnotationClassifier;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
+import org.opensingular.form.type.core.annotation.SIAnnotation;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.groups.Properties.extractProperty;

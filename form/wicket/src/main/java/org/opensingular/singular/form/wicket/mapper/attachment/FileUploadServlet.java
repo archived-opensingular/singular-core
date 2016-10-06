@@ -26,7 +26,7 @@ import org.apache.wicket.ajax.json.JSONArray;
 
 import org.opensingular.singular.commons.base.SingularException;
 import org.opensingular.singular.commons.base.SingularProperties;
-import org.opensingular.singular.form.io.IOUtil;
+import org.opensingular.form.io.IOUtil;
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.

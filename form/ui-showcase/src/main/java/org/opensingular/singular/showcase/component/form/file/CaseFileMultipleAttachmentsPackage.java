@@ -2,11 +2,11 @@ package org.opensingular.singular.showcase.component.form.file;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.STypeAttachmentList;
-import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeAttachmentList;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.singular.showcase.component.CaseItem;
 import org.opensingular.singular.showcase.component.Group;
 import org.opensingular.singular.showcase.component.Resource;

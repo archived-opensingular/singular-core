@@ -5,12 +5,12 @@
 
 package org.opensingular.singular.form.wicket.panel;
 
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.context.SFormConfig;
-import org.opensingular.singular.form.document.RefSDocumentFactory;
-import org.opensingular.singular.form.document.SDocumentFactory;
-import org.opensingular.singular.form.document.ServiceRegistry;
-import org.opensingular.singular.form.document.TypeLoader;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.document.RefSDocumentFactory;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.document.ServiceRegistry;
+import org.opensingular.form.document.TypeLoader;
 import org.opensingular.singular.form.wicket.SingularFormContextWicket;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;

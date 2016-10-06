@@ -12,9 +12,9 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.validation.InstanceValidationContext;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.singular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.singular.form.wicket.util.WicketFormProcessing;
 

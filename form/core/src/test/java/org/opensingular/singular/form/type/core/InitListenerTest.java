@@ -1,17 +1,19 @@
 package org.opensingular.singular.form.type.core;
 
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.singular.form.*;
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.RefService;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.STypeList;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.SDocument;
-import org.opensingular.singular.form.document.SDocumentFactoryEmpty;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.document.SDocumentFactoryEmpty;
 import org.opensingular.singular.form.io.TesteFormSerializationUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +33,7 @@ public class InitListenerTest extends TestCaseForm {
     @Test
     public void runInitializationCode() {
         STypeComposite<SIComposite> base = createTestDictionary().createNewPackage("test").createCompositeType("base");
-        STypeString                 field1 = base.addFieldString("field1");
+        STypeString field1 = base.addFieldString("field1");
         STypeString field2 = base.addFieldString("field2");
 
         field1.withInitListener(x -> x.setValue("abacate"));

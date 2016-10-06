@@ -7,10 +7,10 @@ package org.opensingular.singular.showcase.component.form.xsd;
 
 import java.util.Optional;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.io.FormXsdUtil;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SType;
+import org.opensingular.form.io.FormXsdUtil;
 import org.opensingular.singular.showcase.component.CaseBaseForm;
 import org.opensingular.singular.showcase.component.ResourceRef;
 

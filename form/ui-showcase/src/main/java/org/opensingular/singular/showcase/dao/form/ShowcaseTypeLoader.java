@@ -12,10 +12,10 @@ import org.opensingular.singular.exemplos.notificacaosimplificada.form.gas.SType
 import org.opensingular.singular.exemplos.notificacaosimplificada.form.habilitacao.STypeHabilitacaoEmpresa;
 import org.opensingular.singular.exemplos.notificacaosimplificada.form.vegetal.STypeNotificacaoSimplificadaFitoterapico;
 import org.opensingular.singular.exemplos.opas.gestaoobrasservicosaquisicoes.form.STypeGestaoObras;
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SInfoType;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.SType;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
 import org.opensingular.singular.form.spring.SpringTypeLoader;
 import org.opensingular.singular.showcase.component.CaseBase;
 import org.opensingular.singular.showcase.component.CaseBaseForm;

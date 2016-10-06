@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import org.opensingular.singular.form.context.SFormConfig;
+import org.opensingular.form.context.SFormConfig;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;
 import org.opensingular.singular.showcase.SpringWicketTester;
 import org.opensingular.singular.showcase.component.form.core.CaseInputCoreIntegerPackage;

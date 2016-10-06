@@ -1,7 +1,7 @@
 package org.opensingular.singular.studio.wicket;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 import org.opensingular.singular.form.wicket.enums.ViewMode;
 import org.opensingular.singular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.singular.studio.core.CollectionCanvas;
@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static org.opensingular.singular.form.persistence.SPackageFormPersistence.ATR_FORM_KEY;
+import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_FORM_KEY;
 import static org.opensingular.singular.util.wicket.util.Shortcuts.$m;
 
 @SuppressWarnings({"serial", "unchecked"})

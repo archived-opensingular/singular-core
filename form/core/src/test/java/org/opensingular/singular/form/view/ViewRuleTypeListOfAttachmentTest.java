@@ -1,12 +1,14 @@
 package org.opensingular.singular.form.view;
 
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SIList;
-import org.opensingular.singular.form.type.core.SIString;
-import org.opensingular.singular.form.type.core.STypeString;
-import org.opensingular.singular.form.type.core.attachment.SIAttachment;
-import org.opensingular.singular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIList;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.junit.Test;
+import org.opensingular.form.view.SViewAttachmentList;
+import org.opensingular.form.view.ViewResolver;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

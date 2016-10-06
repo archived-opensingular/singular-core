@@ -5,9 +5,9 @@
 
 package org.opensingular.singular.form.wicket;
 
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.SingularFormException;
-import org.opensingular.singular.form.context.SingularFormConfigImpl;
+import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.context.SingularFormConfigImpl;
 
 import java.util.Map;
 

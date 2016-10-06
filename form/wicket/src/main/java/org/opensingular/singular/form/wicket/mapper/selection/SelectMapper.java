@@ -18,11 +18,11 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 
 import org.opensingular.singular.commons.lambda.IFunction;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.converter.SInstanceConverter;
-import org.opensingular.singular.form.provider.AtrProvider;
-import org.opensingular.singular.form.provider.Provider;
-import org.opensingular.singular.form.provider.ProviderContext;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.provider.AtrProvider;
+import org.opensingular.form.provider.Provider;
+import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.singular.form.wicket.model.SelectSInstanceAwareModel;

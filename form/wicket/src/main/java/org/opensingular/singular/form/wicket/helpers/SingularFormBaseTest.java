@@ -1,12 +1,12 @@
 package org.opensingular.singular.form.wicket.helpers;
 
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SInstance;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.SingularFormException;
-import org.opensingular.singular.form.document.RefType;
-import org.opensingular.singular.form.document.SDocumentFactory;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.singular.form.wicket.model.ISInstanceAwareModel;
 
 import org.apache.commons.lang3.StringUtils;

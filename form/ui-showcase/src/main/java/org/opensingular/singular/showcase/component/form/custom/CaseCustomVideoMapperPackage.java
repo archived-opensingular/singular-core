@@ -12,10 +12,10 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.media.video.Video;
 import org.apache.wicket.validation.validator.UrlValidator;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SIComposite;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.STypeComposite;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.singular.form.wicket.IWicketComponentMapper;
 import org.opensingular.singular.form.wicket.WicketBuildContext;
 import org.opensingular.singular.showcase.component.CaseItem;

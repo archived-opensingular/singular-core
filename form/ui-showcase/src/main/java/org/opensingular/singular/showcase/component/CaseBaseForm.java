@@ -5,10 +5,10 @@
 
 package org.opensingular.singular.showcase.component;
 
-import org.opensingular.singular.form.SDictionary;
-import org.opensingular.singular.form.SPackage;
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.SingularFormException;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;
 
 import java.util.Optional;

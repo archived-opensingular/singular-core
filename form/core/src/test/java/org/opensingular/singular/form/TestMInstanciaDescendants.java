@@ -9,7 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import org.opensingular.singular.form.type.core.SIString;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.type.core.SIString;
 
 @RunWith(Parameterized.class)
 public class TestMInstanciaDescendants extends TestCaseForm {

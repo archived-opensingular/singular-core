@@ -39,10 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import org.opensingular.singular.form.SType;
-import org.opensingular.singular.form.STypeComposite;
-import org.opensingular.singular.form.internal.xml.MElement;
-import org.opensingular.singular.form.internal.xml.MParser;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.form.internal.xml.MParser;
 import org.opensingular.singular.form.wicket.component.BFModalBorder;
 import org.opensingular.singular.form.wicket.component.SingularForm;
 import org.opensingular.singular.form.wicket.enums.AnnotationMode;

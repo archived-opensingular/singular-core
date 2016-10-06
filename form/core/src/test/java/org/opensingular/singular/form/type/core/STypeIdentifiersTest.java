@@ -1,7 +1,7 @@
 package org.opensingular.singular.form.type.core;
 
-import org.opensingular.singular.form.PackageBuilder;
-import org.opensingular.singular.form.SDictionary;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
