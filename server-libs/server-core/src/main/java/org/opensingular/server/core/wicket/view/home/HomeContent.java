@@ -1,0 +1,27 @@
+package org.opensingular.server.core.wicket.view.home;
+
+import org.opensingular.server.commons.wicket.view.template.Content;
+import org.apache.wicket.model.IModel;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
+
+public class HomeContent extends Content {
+
+    public HomeContent(String id) {
+        super(id);
+    }
+
+    public HomeContent(String id, boolean withInfoLink, boolean withBreadcrumb) {
+        super(id, withInfoLink, withBreadcrumb);
+    }
+
+    @Override
+    protected IModel<?> getContentTitleModel() {
+        return $m.ofValue("Página inicial");
+    }
+
+    @Override
+    protected IModel<?> getContentSubtitleModel() {
+        return $m.ofValue("Página inicial");
+    }
+}
