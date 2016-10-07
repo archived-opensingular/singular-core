@@ -17,7 +17,7 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
 		<dependency>
 		  <groupId>org.freemarker</groupId>
