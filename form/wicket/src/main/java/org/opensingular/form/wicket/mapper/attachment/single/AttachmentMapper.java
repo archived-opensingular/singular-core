@@ -45,18 +45,19 @@ public class AttachmentMapper extends AbstractControlsFieldComponentMapper {
     public Component appendReadOnlyInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
 
-        String markup = "";
-        markup += " <div wicket:id='well'> ";
-        markup += "     <div stype='min-height: 20px; white-space: pre-wrap; word-wrap: break-word;'> ";
-        markup += "         <i class='fa fa-file'></i> ";
-        markup += "         <a wicket:id='downloadLink'></a> ";
-        markup += "     </div> ";
-        markup += " </div> ";
+        String markup = ""
+            + "\n<div wicket:id='well'>"
+            + "\n  <div stype='min-height: 20px; white-space: pre-wrap; word-wrap: break-word;'>"
+            + "\n    <i class='fa fa-file'></i>"
+            + "\n    <a wicket:id='downloadLink'></a>"
+            + "\n  </div>"
+            + "\n</div>"
+            + "\n";
 
         final BSWellBorder well = BSWellBorder.small("well");
         final TemplatePanel panel = new TemplatePanel("_readOnlyAttachment", markup);
         final DownloadSupportedBehavior downloadSupportedBehavior = new DownloadSupportedBehavior(model);
-        final DownloadLink              downloadLink = new DownloadLink("downloadLink", (IModel<SIAttachment>) model, downloadSupportedBehavior);
+        final DownloadLink downloadLink = new DownloadLink("downloadLink", (IModel<SIAttachment>) model, downloadSupportedBehavior);
         panel.add(downloadSupportedBehavior);
         well.add(downloadLink);
         panel.add(well);

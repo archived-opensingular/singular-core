@@ -1,15 +1,15 @@
 package org.opensingular.form.wicket.mapper.attachment;
 
-import static org.opensingular.lib.commons.util.ConversionUtils.*;
-import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,15 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.json.JSONArray;
-
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularProperties;
-import org.opensingular.form.io.IOUtil;
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
@@ -34,101 +30,113 @@ import org.opensingular.form.io.IOUtil;
 @WebServlet(urlPatterns = { FileUploadServlet.UPLOAD_URL + "/*" })
 public class FileUploadServlet extends HttpServlet {
 
-    public static final String PARAM_NAME = "FILE-UPLOAD";
     public final static String UPLOAD_URL = "/upload";
-    public static File         UPLOAD_WORK_FOLDER;
 
-    static {
-        String tempPath = System.getProperty("java.io.tmpdir", "/tmp");
-        File f = new File(tempPath + "/singular-servlet-work-dir" + UUID.randomUUID().toString());
-        if (!f.exists()) {
-            f.mkdirs();
-        }
-        f.deleteOnExit();
-        UPLOAD_WORK_FOLDER = f;
+    public static final String PARAM_NAME = "FILE-UPLOAD";
+
+    public static String getUploadUrl(HttpServletRequest req, UUID uploadId) {
+        return req.getServletContext().getContextPath() + UPLOAD_URL + "/" + uploadId;
     }
 
-    public final static File lookupFile(String fileId) {
-        // validação bem básica para evitar brecha de segurança
-        UUID.fromString(fileId);
-        return new File(UPLOAD_WORK_FOLDER, fileId);
+    public final static Optional<File> lookupFile(HttpServletRequest req, String fileId) {
+        return FileUploadManager.get(req.getSession())
+            .findLocalFile(UUID.fromString(fileId));
     }
 
+    public final static boolean consumeFile(HttpServletRequest req, String fileId, Consumer<File> callback) {
+        FileUploadManager manager = FileUploadManager.get(req.getSession());
+        return manager.consumeFile(UUID.fromString(fileId), callback);
+    }
+    
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        validadeMultpart(request);
-        FileUploadProcessor processor = new FileUploadProcessor(request, response);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!ServletFileUpload.isMultipartContent(req)) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request is not multipart, please 'multipart/form-data' enctype for your form.");
+            return;
+        }
+
+        final String uploadIdParam = substringAfterLast(defaultString(req.getPathTranslated()), "/");
+        if (isBlank(uploadIdParam)) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unidentifiable upload");
+            return;
+        }
+
+        final UUID uploadId = UUID.fromString(uploadIdParam);
+
+        final FileUploadManager manager = FileUploadManager.get(req.getSession());
+        final Optional<UploadInfo> uploadInfo = manager.findUploadInfo(uploadId);
+        if (!uploadInfo.isPresent()) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unregistered upload");
+            return;
+        }
+
+        final FileUploadProcessor processor = new FileUploadProcessor(uploadInfo.get(), req, resp);
         processor.handleFiles();
     }
 
-    private void validadeMultpart(HttpServletRequest request) {
-        if (!ServletFileUpload.isMultipartContent(request)) {
-            throw new IllegalArgumentException("Request is not multipart, please 'multipart/form-data' enctype for your form.");
+    private static class FileUploadProcessor {
+
+        private final JSONArray           filesJson;
+        private final HttpServletRequest  request;
+        private final HttpServletResponse response;
+        private final UploadInfo          uploadInfo;
+        private final FileUploadManager   manager;
+        private final FileUploadConfig    config;
+
+        private FileUploadProcessor(UploadInfo uploadInfo, HttpServletRequest request, HttpServletResponse response) {
+            this.uploadInfo = uploadInfo;
+            this.request = request;
+            this.response = response;
+            this.filesJson = new JSONArray();
+            this.manager = FileUploadManager.get(request.getSession());
+            this.config = new FileUploadConfig(SingularProperties.get());
         }
-    }
 
-}
+        private ServletFileUpload createHandler(FileUploadConfig config) {
+            final ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
 
-class FileUploadProcessor {
+            servletFileUpload.setFileSizeMax(resolveMax(
+                uploadInfo.maxFileSize,
+                config.defaultMaxFileSize,
+                config.globalMaxFileSize));
 
-    private JSONArray           filesJson;
-    private HttpServletRequest  request;
-    private HttpServletResponse response;
+            servletFileUpload.setSizeMax(resolveMax(
+                uploadInfo.maxFileSize * uploadInfo.maxFileCount,
+                config.defaultMaxRequestSize,
+                config.globalMaxRequestSize));
 
-    FileUploadProcessor(
-        HttpServletRequest request, HttpServletResponse response) {
-        this.request = request;
-        this.response = response;
-        this.filesJson = new JSONArray();
-    }
-
-    private ServletFileUpload handler() {
-        final SingularProperties sp = SingularProperties.get();
-        final ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
-
-        long maxFileSize = toLongHumane(sp.getProperty(SingularProperties.FILEUPLOAD_GLOBAL_MAX_FILE_SIZE), -1);
-        long maxRequestSize = toLongHumane(sp.getProperty(SingularProperties.FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE), -1);
-        servletFileUpload.setFileSizeMax(maxFileSize);
-        servletFileUpload.setSizeMax(maxRequestSize);
-        
-        return servletFileUpload;
-    }
-
-    public void handleFiles() {
-        try {
-            Map<String, List<FileItem>> params = handler().parseParameterMap(request);
-            addFileToService(params.get(PARAM_NAME));
-        } catch (Exception e) {
-            throw new SingularException(e);
-        } finally {
-            DownloadUtil.writeJSONtoResponse(filesJson, response);
+            return servletFileUpload;
         }
-    }
 
-    private void addFileToService(List<FileItem> files) throws Exception {
-        processFiles(filesJson, files);
-    }
-
-    private void processFiles(JSONArray fileGroup, List<FileItem> items) throws Exception {
-        for (FileItem item : items) {
-            processFileItem(fileGroup, (DiskFileItem) item);
+        private static long resolveMax(long specifiedMax, long defaultMax, long globalMax) {
+            return Math.min((specifiedMax > 0) ? specifiedMax : defaultMax, globalMax);
         }
-    }
 
-    private void processFileItem(JSONArray fileGroup, FileItem item) throws Exception {
-        if (!item.isFormField()) {
-            String id = UUID.randomUUID().toString();
-            long size = item.getSize();
-            String name = item.getName();
-            File f = new File(FileUploadServlet.UPLOAD_WORK_FOLDER, id);
-            f.deleteOnExit();
-            try (
-                OutputStream outputStream = IOUtil.newBuffredOutputStream(f);
-                InputStream in = item.getInputStream();) {
-                IOUtils.copy(in, outputStream);
+        public void handleFiles() {
+            try {
+                Map<String, List<FileItem>> params = createHandler(config).parseParameterMap(request);
+                for (FileItem item : params.get(PARAM_NAME))
+                    processFileItem(filesJson, item);
+            } catch (Exception e) {
+                throw new SingularException(e);
+            } finally {
+                DownloadUtil.writeJSONtoResponse(filesJson, response);
             }
-            fileGroup.put(DownloadUtil.toJSON(id, null, name, size));
+        }
+
+        private void processFileItem(JSONArray fileGroup, FileItem item) throws Exception {
+            if (!item.isFormField()) {
+                long size = item.getSize();
+                String originalFilename = item.getName();
+
+                try (
+                    InputStream in = item.getInputStream()) {
+
+                    FileUploadInfo fileInfo = manager.createFile(uploadInfo.uploadId, originalFilename, in);
+
+                    fileGroup.put(DownloadUtil.toJSON(fileInfo.fileId.toString(), fileInfo.hash, originalFilename, size));
+                }
+            }
         }
     }
-
 }
