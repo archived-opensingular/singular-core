@@ -109,9 +109,6 @@ public abstract class AbstractSViewListWithCustomColuns<SELF extends AbstractSVi
     public final SELF col(String customLabel, IFunction<SInstance, String> displayFunction) {
         columns.add(new Column(null, customLabel, displayFunction));
         return (SELF) this;
-        // TODO (by Daniel) Me implementa, por favor.
-//        throw new RuntimeException("Método não implementando");
-        // return (SELF) this;
     }
 
     public List<Column> getColumns() {
