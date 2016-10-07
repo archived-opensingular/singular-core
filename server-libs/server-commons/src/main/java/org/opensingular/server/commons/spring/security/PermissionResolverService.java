@@ -36,8 +36,6 @@ import java.util.stream.Collectors;
 
 /**
  * Classe responsável por resolver as permissões do usuário em permissões do singular
- *
- * @author Delfino Filho
  */
 public class PermissionResolverService implements Loggable {
 
