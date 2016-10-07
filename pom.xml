@@ -15,7 +15,6 @@
         <module>form</module>
         <module>lib</module>
         <module>resources</module>
-        <module>studio</module>
         <module>ws</module>
     </modules>
 

@@ -16,13 +16,10 @@
 	<modules>
 		<module>core</module>
 		<module>schedule</module>
-		<module>bam</module>
 		<module>persistence</module>
 		<module>test</module>
 		<module>rest-client</module>
 		<module>alocpro-mock-client</module>
-		<module>bam-client</module>
-		<module>bam-support</module>
 	</modules>
 
 </project>
