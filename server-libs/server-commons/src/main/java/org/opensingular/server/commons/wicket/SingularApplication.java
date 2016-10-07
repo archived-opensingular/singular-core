@@ -63,7 +63,7 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
             applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         }
 
-        new AnnotatedMountScanner().scanPackage("org.opensingular.mirante").mount(this);
+        new AnnotatedMountScanner().scanPackage("org.opensingular").mount(this);
 
         for (String packageName : getPackagesToScan()) {
             new AnnotatedMountScanner().scanPackage(packageName).mount(this);
