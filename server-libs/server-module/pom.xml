@@ -43,7 +43,7 @@
         <dependency>
             <groupId>com.opensingular</groupId>
             <artifactId>bam-support</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${singular-enterprise.version}</version>
         </dependency>
 
         <!-- JAVAX -->
