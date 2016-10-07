@@ -16,14 +16,11 @@
 
 package org.opensingular.form.wicket.util;
 
+import org.opensingular.form.*;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SInstances;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeList;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEvent;
@@ -178,8 +175,21 @@ public class WicketFormProcessing implements Loggable {
     private static void evaluateUpdateListeners(SInstance i) {
         Optional.ofNullable(i.asAtr().getUpdateListener()).ifPresent(x -> x.accept(i));
         SInstances.streamDescendants(SInstances.getRootInstance(i), true)
-                .filter(a -> i.getType().getDependentTypes().contains(a.getType()))
+                .filter(isDependantOf(i))
+                .filter(WicketFormProcessing::isNotOrphan)
                 .forEach(WicketFormProcessing::evaluateUpdateListeners);
+    }
+
+    private static Predicate<SInstance> isDependantOf(SInstance i) {
+        return (x) -> i.getType().getDependentTypes().contains(x.getType());
+    }
+
+    private static boolean isOrphan(SInstance i){
+        return !(i instanceof SIComposite) && i.getParent() == null;
+    }
+
+    private static boolean isNotOrphan(SInstance i){
+        return !isOrphan(i);
     }
 
     public static void onFieldProcess(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstanceModel) {
