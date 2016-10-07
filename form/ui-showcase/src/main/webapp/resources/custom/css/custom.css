@@ -35,27 +35,6 @@ DECLARE ESSE CSS NA SUA APLICAÇÃO NO MESMO CAMINHO RELATIVO
     margin-left: auto;
 }
 
-.toast-success {
-    background-color: #1BBC9B;
-}
-
-.toast-info {
-    background-color: #5C9BD1;
-}
-
-.toast-error {
-    background-color: #E35B5A;
-}
-
-.toast-warning {
-    background-color: #F7CA18;
-}
-
-.toast-message a {
-    color: #FAFAFA !important;
-    font-weight: bold;
-}
-
 .radio-list {
     min-height: 30px;
 }

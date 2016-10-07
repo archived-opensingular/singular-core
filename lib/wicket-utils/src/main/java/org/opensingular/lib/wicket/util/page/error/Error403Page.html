@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>
+        <wicket:message key="label.page.title.error"/>
+        |
+        <wicket:message key="label.page.title.error.403"/>
+    </title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="/singular-static/resources/comum/img/favicon.png"/>
+    <link href="/singular-static/resources/comum/css/error.css" rel="stylesheet" type="text/css"/>
+    <script src="/singular-static/resources/comum/plugins/jquery.min.js" type="text/javascript"></script>
+    <script src="/singular-static/resources/comum/scripts/singular-resource-handler.js" type="text/javascript"></script>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-md page-500-full-page">
+<script>
+    SingularResourceHandler
+            .addStyle('/global/plugins/font-awesome/css/font-awesome.min.css"')
+            .addStyle('/global/plugins/simple-line-icons/simple-line-icons.min.css"')
+            .addStyle('/global/plugins/bootstrap/css/bootstrap.min.css')
+            .addStyle('/global/plugins/uniform/css/uniform.default.css')
+            .addStyle('/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css')
+            .addStyle('/global/css/components-md.css')
+            .addStyle('/global/css/plugins-md.css')
+            .addStyle('/layout4/css/layout.css')
+            .addStyle('/layout4/css/themes/default.css')
+            .apply();
+</script>
+<div class="row">
+    <div class="col-md-12 page-500">
+        <div class=" number">
+            403
+        </div>
+        <div class=" details">
+            <h3>
+                <wicket:message key="label.body.title"/>
+            </h3>
+            <p>
+                <wicket:message key="label.body.message.main"/>
+                <br/>
+                <a onclick="history.back(); return false;">
+                    <wicket:message key="label.body.message.more"/>
+                </a><br/><br/>
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

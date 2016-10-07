@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>br.net.mirante</groupId>
+        <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
         <version>1.0.1-SNAPSHOT</version>
     </parent>
@@ -15,7 +15,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>br.net.mirante</groupId>
+            <groupId>org.opensingular</groupId>
             <artifactId>singular-commons</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
@@ -62,7 +62,7 @@
             <artifactId>mirror</artifactId>
             <version>1.6.1</version>
         </dependency>
-    
+
     </dependencies>
 
 </project>

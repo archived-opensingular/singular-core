@@ -1,0 +1,59 @@
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<wicket:panel>
+    <ul class="nav navbar-nav pull-right">
+
+        <li class="dropdown dropdown-user">
+            <a href="javascript:" class=" dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                <span wicket:id="nome" class="username username-hide-on-mobile">
+                    <i class="fa fa-chevron-down"></i>
+                </span>
+                <!-- DOC: Do not remove below empty space(&nbsp;) as its purposely used -->
+                <img wicket:id="codrh" class="img-circle"/>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-default">
+                <li style="text-align: center;">
+                    <a href="#">
+                        <wicket:message key="top.menu.skins"/>
+                    </a>
+                </li>
+                <li wicket:id="skin_options">
+                    <a wicket:id="change_action" href="#">
+                        <i class="fa fa-paint-brush"></i> <span wicket:id="label">skin</span>
+                    </a>
+                </li>
+                <li>
+                    <hr />
+                </li>
+                <li>
+                    <a wicket:id="logout" href="#">
+                        <i class="icon-key"></i> <wicket:message key="top.menu.logout"/>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <!-- END USER LOGIN DROPDOWN -->
+        <!-- BEGIN USER LOGIN DROPDOWN -->
+        <li wicket:id="sideBarToggle" class="dropdown dropdown-extended quick-sidebar-toggler">
+            <span class="sr-only"></span>
+            <i class="icon-logout"></i>
+        </li>
+        <!-- END USER LOGIN DROPDOWN -->
+    </ul>
+</wicket:panel>
+</html>

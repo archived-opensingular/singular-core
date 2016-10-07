@@ -11,11 +11,11 @@ Módulos JAVA do projeto SINGULAR.
 ## Links
 
 * URL's:
-    * Mirante Tecnologia
+    * Apoio ao desenvolvimento
         * [Atlassian](https://mirante.atlassian.net/secure/RapidBoard.jspa?rapidView=86&projectKey=MIR)
         * [HipChat](https://miranteteam.hipchat.com)
     * Equipe de Desenvolvimento
         * [GitBlit](http://git.mirante.net.br/summary/MIRANTE%2Fsingular.git)
         * [TeamCity](http://ci.mirante.net.br/project.html?projectId=Mirante&tab=projectOverview)
         * [Sonar](http://sonar.mirante.net.br/dashboard/index/36298)
-        * [Site do Projeto](http://singular.mirante.net.br)
+        * [Site do Projeto](http://www.opensingular.org)

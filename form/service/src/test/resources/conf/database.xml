@@ -27,13 +27,13 @@
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <!-- Incluir o pacote quando tiver um -->
-        <property name="packagesToScan" value="br.net.mirante.singular.showcase.dao.form,br.net.mirante.singular.form.persistence"/>
+        <property name="packagesToScan" value="org.opensingular.singular.form.showcase.dao.form,org.opensingular.form.persistence"/>
 
         <property name="hibernateProperties">
             <props>
                 <!-- Esse dialect do sql server foi colocado para testar se o script é compatível com sql server  -->
                 <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
-                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.show_sql">false</prop>
                 <prop key="hibernate.format_sql">true</prop>
                 <prop key="hibernate.hbm2ddl.auto">create</prop>
             </props>

@@ -1,0 +1,49 @@
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:border>
+
+<div class="modal-dialog" wicket:id="dialog">
+  <div class="modal-content">
+    <div class="modal-header" wicket:id="header">
+      <button type="button" wicket:id="closeIcon"    aria-hidden="true" class="close">&times;</button>
+      <button type="button" wicket:id="compressIcon" aria-hidden="true" class="modal-header-icon"><i class="fa fa-compress"></i></button>
+      <button type="button" wicket:id="expandIcon"   aria-hidden="true" class="modal-header-icon"><i class="fa fa-expand  "></i></button>
+      <h4 class="modal-title" wicket:id="title" style="border-bottom: 0px;">[title]</h4>
+    </div>
+    <div class="modal-body" wicket:id="body">
+      <wicket:body/>
+    </div>
+    <div class="modal-footer" wicket:id="footer">
+      <div class="Metronic-alerts alert alert-danger fade in" style="text-align: left;" wicket:enclosure="feedbackGeral">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+        <wicket:container wicket:id="feedbackGeral"></wicket:container>
+      </div>
+      <wicket:container wicket:id="buttons"></wicket:container>
+    </div>
+  </div>
+</div>
+
+<wicket:fragment wicket:id="buttonsFragment">
+  <button wicket:id="buttons" class="btn"><wicket:container wicket:id="label"></wicket:container></button>
+</wicket:fragment>
+
+</wicket:border>
+</body>
+</html>
+

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<wicket:head xmlns:wicket="http://wicket.apache.org">
+
+    <style type="text/css">
+
+        .row.equalheights {
+            display: flex;
+        }
+
+        .row.equalheights > [class*="col-"] {
+            display: flex;
+        }
+
+        .row.equalheights > div > ul.nav {
+            margin-bottom: inherit;
+            padding-bottom: inherit;
+            width: 100%;
+        }
+
+        .row.equalheights > div > .tab-content {
+            width: 100%;
+        }
+        
+        .nav.nav-tabs > .tab-item.has-errors > a > span {
+            border-bottom-style: dotted;
+            border-bottom-color: red;
+            border-bottom-width: 2px;
+        }
+        .nav.nav-tabs > .tab-item.has-errors > a:before {
+            -content: '* ';
+            color: red;
+        }
+
+    </style>
+
+</wicket:head>
+
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+    <form wicket:id="panel-form">
+        <div class="row equalheights">
+            <div wicket:id="tab-navigation">
+                <ul class="nav nav-tabs tabs-left">
+                    <li role="presentation" wicket:id="tab" class="tab-item">
+                        <a wicket:id="tabAnchor" role="tab">
+                            <span wicket:id="header-text" class="tab-header-text"></span>
+                            <span wicket:id="header-icon" class="tab-header-icon"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div wicket:id="tab-content">
+                <div class="tab-content">
+                    <div class="tab-pane active in">
+                        <div class="form-body" wicket:id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</wicket:panel>

@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>br.net.mirante</groupId>
+    <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
     <version>1.0.1-SNAPSHOT</version>
@@ -15,7 +15,7 @@
         <module>form</module>
         <module>lib</module>
         <module>resources</module>
-        <module>studio</module>
+        <module>ws</module>
     </modules>
 
     <distributionManagement>
@@ -223,7 +223,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
-        <singular.version>1.0.0-SNAPSHOT</singular.version>
+        <singular.version>1.0.1-SNAPSHOT</singular.version>
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <wicket.version>7.3.0</wicket.version>

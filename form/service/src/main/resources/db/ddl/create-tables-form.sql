@@ -33,17 +33,6 @@ CREATE TABLE DBSINGULAR.TB_TIPO_FORMULARIO (
 );
 
 /*==============================================================*/
-/* Table: TB_ARQUIVO_PETICAO                                    */
-/*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_ARQUIVO_PETICAO (
-   CO_ARQUIVO_PETICAO   VARCHAR(36)               NOT NULL,
-   DS_SHA1                 VARCHAR(40) NOT NULL,
-   BL_ARQUIVO_PETICAO     BLOB         NOT NULL,
-   NU_TAMANHO           BIGINT        NOT NULL,
-   CONSTRAINT PK_ARQUIVO_PETICAO PRIMARY KEY (CO_ARQUIVO_PETICAO)
-);
-
-/*==============================================================*/
 /* Table: TB_VERSAO_FORMULARIO                                  */
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_VERSAO_FORMULARIO (
@@ -71,23 +60,15 @@ CREATE TABLE DBSINGULAR.TB_VERSAO_ANOTACAO_FORMULARIO
 );
 
 /*==============================================================*/
-/* Table: TB_ANEXO_FORMULARIO                                   */
-/*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_ANEXO_FORMULARIO (
-   CO_ANEXO_FORMULARIO  INT                  NOT NULL,
-   CO_VERSAO_FORMULARIO INT                  NOT NULL,
-   TX_SHA1              CHAR(40)             NOT NULL,
-   CONSTRAINT PK_TB_ANEXO_FORMULARIO PRIMARY KEY (CO_ANEXO_FORMULARIO)
-);
-/*==============================================================*/
 /* Table: TB_CONTEUDO_ARQUIVO                                   */
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_CONTEUDO_ARQUIVO (
+   CO_CONTEUDO_ARQUIVO  INT          		 NOT NULL,
    TX_SHA1              CHAR(40)             NOT NULL,
-   NU_BYTES             NUMERIC(10)          NOT NULL,
+   NU_BYTES             INT			         NOT NULL,
    DT_INCLUSAO          DATETIME             NOT NULL,
    BL_CONTEUDO          IMAGE                NOT NULL,
-   CONSTRAINT PK_TB_CONTEUDO_ARQUIVO PRIMARY KEY (TX_SHA1)
+   CONSTRAINT PK_TB_CONTEUDO_ARQUIVO PRIMARY KEY (CO_CONTEUDO_ARQUIVO)
 );
 
 /*==============================================================*/
@@ -96,6 +77,7 @@ CREATE TABLE DBSINGULAR.TB_CONTEUDO_ARQUIVO (
 CREATE TABLE DBSINGULAR.TB_ARQUIVO (
    CO_ARQUIVO           INT                  NOT NULL,
    NO_ARQUIVO           VARCHAR(200)         NOT NULL,
+   CO_CONTEUDO_ARQUIVO	INT			         NOT NULL,
    TX_SHA1              CHAR(40)             NOT NULL,
    NU_BYTES             INT                  NOT NULL,
    DT_CRIACAO           SMALLDATETIME        NOT NULL,
