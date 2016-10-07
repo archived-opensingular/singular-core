@@ -16,13 +16,13 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>flow-core</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>flow-persistence</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
 
         <!-- Spring -->
