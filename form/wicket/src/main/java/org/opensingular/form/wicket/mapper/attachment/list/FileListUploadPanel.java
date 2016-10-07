@@ -16,23 +16,22 @@
 
 package org.opensingular.form.wicket.mapper.attachment.list;
 
-import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
-import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
-import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
-import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
-import org.opensingular.form.wicket.mapper.attachment.DownloadUtil;
-import org.opensingular.form.wicket.mapper.attachment.FileUploadServlet;
-import org.opensingular.form.wicket.model.ISInstanceAwareModel;
-import org.opensingular.form.wicket.model.SInstanceListItemModel;
-import org.opensingular.lib.wicket.util.jquery.JQuery;
-import org.opensingular.lib.wicket.util.resource.Icone;
-import org.apache.commons.collections.iterators.TransformIterator;
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.wicket.markup.head.JavaScriptHeaderItem.*;
+import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.StyleAttributeModifier;
@@ -45,6 +44,7 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
@@ -54,23 +54,32 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-import static org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem.forReference;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
+import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
+import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
+import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
+import org.opensingular.form.wicket.mapper.attachment.DownloadUtil;
+import org.opensingular.form.wicket.mapper.attachment.FileUploadManager;
+import org.opensingular.form.wicket.mapper.attachment.FileUploadServlet;
+import org.opensingular.form.wicket.model.ISInstanceAwareModel;
+import org.opensingular.form.wicket.model.SInstanceListItemModel;
+import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 /**
  * Lista  os uploads múltiplos.
  * <p>
  * O upload múltiplo executado via jquery para a servlet {@link FileUploadServlet} atualiza
  * o código no cliente via javascript por meio do código java script associado a esse painel FileListUploadPanel.js
- * Para manter os models atualizados o js cliente se comunica com esse panel através do {@link FileListUploadPanel.AddFileBehavior}
- * para remover os arquivos e atualizar os models o js cliente se comunica com esse panel através do {@link FileListUploadPanel.RemoveFileBehavior}
+ * Para manter os models atualizados o js cliente se comunica com esse panel através do {@link org.opensingular.form.wicket.mapper.attachment.list.FileListUploadPanel.AddFileBehavior}
+ * para remover os arquivos e atualizar os models o js cliente se comunica com esse panel através do {@link org.opensingular.form.wicket.mapper.attachment.list.FileListUploadPanel.RemoveFileBehavior}
  *
  * @author fabricio, vinicius
  */
@@ -82,7 +91,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
     private RemoveFileBehavior        remover;
     private WicketBuildContext        ctx;
     private DownloadSupportedBehavior downloader;
-
+    private UUID                      uploadId;
 
     private Label buildUploadLabel() {
         return new Label("uploadLabel", Model.of(ObjectUtils.defaultIfNull(ctx.getCurrentInstance().asAtr().getLabel(), StringUtils.EMPTY))) {
@@ -101,26 +110,25 @@ public class FileListUploadPanel extends Panel implements Loggable {
                 return model.getObject().isEmpty();
             }
         }.add(
-                new WebMarkupContainer("select-file-link") {{
+            new WebMarkupContainer("select-file-link") {
+                {
                     if (viewMode.isEdition()) {
                         add($b.onReadyScript(() -> JQuery.on(this, "click", JQuery.$(fileField).append(".click();"))));
                     }
-                }}.add(new Label("select-file-link-message", new Model<String>() {
-                    @Override
-                    public String getObject() {
-                        return "Selecione o(s) arquivo(s)";
-                    }
-                })).add($b.visibleIf(viewMode::isEdition))
-        ).add(
+                }
+            }.add(new Label("select-file-link-message", new Model<String>() {
+                @Override
+                public String getObject() {
+                    return "Selecione o(s) arquivo(s)";
+                }
+            })).add($b.visibleIf(viewMode::isEdition))).add(
                 new Label("empty-message", new Model<String>() {
                     @Override
                     public String getObject() {
                         return "Nenhum arquivo adicionado";
                     }
-                }).add($b.visibleIf(viewMode::isVisualization))
-        );
+                }).add($b.visibleIf(viewMode::isVisualization)));
     }
-
 
     private WebMarkupContainer buildFileList(IModel<SIList<SIAttachment>> model) {
         final WebMarkupContainer fileList = new WebMarkupContainer("fileList");
@@ -153,9 +161,8 @@ public class FileListUploadPanel extends Panel implements Loggable {
         return buttonContainer;
     }
 
-
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
-                               WicketBuildContext ctx) {
+        WicketBuildContext ctx) {
         super(id, model);
         this.ctx = ctx;
         add(buildUploadLabel());
@@ -163,8 +170,27 @@ public class FileListUploadPanel extends Panel implements Loggable {
         add(buildButtonContainer(model));
         add(buildEmptyBox(model, fileField, ctx.getViewMode()));
         add(adder = new AddFileBehavior());
-        add(remover = new RemoveFileBehavior());
+        add(remover = new RemoveFileBehavior(model));
         add(downloader = new DownloadSupportedBehavior(model));
+    }
+
+    @Override
+    protected void onConfigure() {
+        super.onConfigure();
+
+        final FileUploadManager fileUploadManager = getFileUploadManager();
+
+        if (uploadId == null || !fileUploadManager.findUploadInfo(uploadId).isPresent()) {
+            final SType<SIAttachment> attachment = getModelObject().getElementsType();
+            final Map<Boolean, List<String>> groups = attachment.asAtr().getAllowedFileTypes().stream()
+                .collect(groupingBy((String it) -> StringUtils.contains(it, '/')));
+
+            this.uploadId = fileUploadManager.createUpload(
+                defaultIfNull(attachment.asAtr().getMaxFileSize(), Long.MAX_VALUE),
+                1,
+                groups.get(false),
+                groups.get(true));
+        }
     }
 
     private static void removeFileFrom(SIList<SIAttachment> list, String fileId) {
@@ -175,14 +201,11 @@ public class FileListUploadPanel extends Panel implements Loggable {
     }
 
     private static SIAttachment findFileByID(SIList<SIAttachment> list, String fileId) {
-        SIAttachment file = null;
-        for (SIAttachment a : list) {
-            if (fileId.equals(a.getFileId())) {
-                file = a;
-                break;
-            }
+        for (SIAttachment file : list) {
+            if (file.getFileId().equals(fileId))
+                return file;
         }
-        return file;
+        return null;
     }
 
     @Override
@@ -200,21 +223,21 @@ public class FileListUploadPanel extends Panel implements Loggable {
     private String generateInitJS() {
         if (ctx.getViewMode().isEdition()) {
             return ""
-                    //@formatter:off
-                    + "\n $(function () { "
-                    + "\n   var params = { "
-                    + "\n     param_name : '" + PARAM_NAME + "', "
-                    + "\n     component_id: '" + this.getMarkupId() + "', "
-                    + "\n     file_field_id: '" + fileField.getMarkupId() + "', "
-                    + "\n     fileList_id: '" + fileList.getMarkupId() + "', "
-                    + "\n     upload_url : '" + uploadUrl() + "', "
-                    + "\n     download_url : '" + downloader.getUrl() + "', "
-                    + "\n     add_url : '" + adder.getUrl() + "', "
-                    + "\n     remove_url : '" + remover.getUrl() + "', "
-                    + "\n     max_file_size: " + getMaxFileSize() + "  "
-                    + "\n   }; "
-                    + "\n   window.FileListUploadPanel.setup(params); "
-                    + "\n });";
+            //@formatter:off
+                + "\n $(function () { "
+                + "\n   var params = { "
+                + "\n     param_name : '" + PARAM_NAME + "', "
+                + "\n     component_id: '" + this.getMarkupId() + "', "
+                + "\n     file_field_id: '" + fileField.getMarkupId() + "', "
+                + "\n     fileList_id: '" + fileList.getMarkupId() + "', "
+                + "\n     upload_url : '" + uploadUrl() + "', "
+                + "\n     download_url : '" + downloader.getUrl() + "', "
+                + "\n     add_url : '" + adder.getUrl() + "', "
+                + "\n     remove_url : '" + remover.getUrl() + "', "
+                + "\n     max_file_size: " + getMaxFileSize() + "  "
+                + "\n   }; "
+                + "\n   window.FileListUploadPanel.setup(params); "
+                + "\n });";
             //@formatter:on
         } else {
             return "";
@@ -240,29 +263,25 @@ public class FileListUploadPanel extends Panel implements Loggable {
     }
 
     private String uploadUrl() {
-        String contextPath = getWebApplication().getServletContext().getContextPath();
-        return contextPath + FileUploadServlet.UPLOAD_URL;
+        return FileUploadServlet.getUploadUrl(getServletRequest(), uploadId);
     }
 
-    private ISInstanceAwareModel dummyModel() {
-        return new ISInstanceAwareModel() {
-            @Override
-            public Object getObject() {
-                return null;
-            }
+    private HttpServletRequest getServletRequest() {
+        return (HttpServletRequest) getWebRequest().getContainerRequest();
+    }
 
-            @Override
-            public void setObject(Object object) {
-            }
+    private FileUploadManager getFileUploadManager() {
+        return FileUploadManager.get(getServletRequest().getSession());
+    }
 
-            @Override
-            public void detach() {
-            }
-
-            @Override
-            public SInstance getMInstancia() {
-                return (SInstance) getDefaultModel().getObject();
-            }
+    private ISInstanceAwareModel<? extends List<FileUpload>> dummyModel() {
+        return new ISInstanceAwareModel<List<FileUpload>>() {
+            //@formatter:off
+            @Override public SInstance getMInstancia() { return (SInstance) getDefaultModel().getObject(); }
+            @Override public List<FileUpload> getObject() { return null; }
+            @Override public void setObject(List<FileUpload> object) {}
+            @Override public void detach() {}
+            //@formatter:on
         };
     }
 
@@ -293,20 +312,29 @@ public class FileListUploadPanel extends Panel implements Loggable {
     }
 
     private class AddFileBehavior extends BaseJQueryFileUploadBehavior<SIList<SIAttachment>> {
-
         public AddFileBehavior() {
-            super((IModel<SIList<SIAttachment>>) FileListUploadPanel.this.getDefaultModel());
+            super(FileListUploadPanel.this.getModel());
         }
-
         @Override
         public void onResourceRequested() {
             try {
-                SIAttachment siAttachment = currentInstance().addNew();
-                siAttachment.setContent(
-                        getParamFileId("name").toString(),
-                        FileUploadServlet.lookupFile(getParamFileId("fileId").toString()),
-                        getParamFileId("size").toLong());
-                DownloadUtil.writeJSONtoResponse(siAttachment, RequestCycle.get().getResponse());
+                final HttpServletRequest httpReq = (HttpServletRequest) getWebRequest().getContainerRequest();
+
+                final String pFileId = getParamFileId("fileId").toString();
+                final String pName = getParamFileId("name").toString();
+                final long pSize = getParamFileId("size").toLong();
+
+                getLogger().debug("FileListUploadPanel.AddFileBehavior(fileId={},name={},size={})", pFileId, pName, pSize);
+
+                boolean found = FileUploadServlet.consumeFile(httpReq, pFileId, file -> {
+                    final SIAttachment siAttachment = currentInstance().addNew();
+                    siAttachment.setContent(pName, file, pSize);
+                    DownloadUtil.writeJSONtoResponse(siAttachment, RequestCycle.get().getResponse());
+                });
+
+                if (!found)
+                    throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND);
+
             } catch (Exception e) {
                 getLogger().error(e.getMessage(), e);
                 throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -315,11 +343,9 @@ public class FileListUploadPanel extends Panel implements Loggable {
     }
 
     private class RemoveFileBehavior extends BaseJQueryFileUploadBehavior<SIList<SIAttachment>> {
-
-        public RemoveFileBehavior() {
-            super((IModel<SIList<SIAttachment>>) FileListUploadPanel.this.getDefaultModel());
+        public RemoveFileBehavior(IModel<SIList<SIAttachment>> listModel) {
+            super(listModel);
         }
-
         @Override
         public void onResourceRequested() {
             try {
@@ -333,46 +359,49 @@ public class FileListUploadPanel extends Panel implements Loggable {
     }
 
     private class FilesListView extends RefreshingView<SIAttachment> {
-        private final IModel<SIList<SIAttachment>> model;
-        private final WicketBuildContext           ctx;
-
-        public FilesListView(IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
-            super("fileItem", model);
-            this.model = model;
+        private final WicketBuildContext ctx;
+        public FilesListView(IModel<SIList<SIAttachment>> listModel, WicketBuildContext ctx) {
+            super("fileItem", listModel);
             this.ctx = ctx;
         }
-
         @SuppressWarnings("unchecked")
+        public SIList<SIAttachment> getAttackmentList() {
+            return (SIList<SIAttachment>) getDefaultModelObject();
+        }
+        @SuppressWarnings("unchecked")
+        public IModel<SIList<SIAttachment>> getAttackmentListModel() {
+            return (IModel<SIList<SIAttachment>>) getDefaultModel();
+        }
+
         @Override
         protected Iterator<IModel<SIAttachment>> getItemModels() {
-            return new TransformIterator(model.getObject().iterator(), input -> new SInstanceListItemModel<>(model, model.getObject().indexOf((SInstance) input)));
+            final SIList<SIAttachment> objList = this.getAttackmentList();
+            final List<IModel<SIAttachment>> modelList = new ArrayList<>();
+            for (int i = 0; i < objList.size(); i++)
+                modelList.add(new SInstanceListItemModel<>(this.getAttackmentListModel(), i));
+            return modelList.iterator();
         }
 
         @Override
         protected void populateItem(Item<SIAttachment> item) {
-            ISInstanceAwareModel itemModel = (SInstanceListItemModel) item.getModel();
+            IModel<SIAttachment> itemModel = item.getModel();
             item.add(new DownloadLink("downloadLink", itemModel, downloader));
             item.add(new RemoveButton(itemModel));
         }
 
         private class RemoveButton extends AjaxButton {
-            private final ISInstanceAwareModel itemModel;
-
-            public RemoveButton(ISInstanceAwareModel itemModel) {
+            private final IModel<SIAttachment> itemModel;
+            public RemoveButton(IModel<SIAttachment> itemModel) {
                 super("remove_btn");
                 this.itemModel = itemModel;
             }
-
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
-                SIAttachment file = (SIAttachment) itemModel.getObject();
-
-                removeFileFrom(model.getObject(), file.getFileId());
-
+                SIAttachment file = itemModel.getObject();
+                removeFileFrom(FilesListView.this.getAttackmentList(), file.getFileId());
                 target.add(FileListUploadPanel.this);
                 target.add(fileList);
             }
-
             @Override
             public boolean isVisible() {
                 return ctx.getViewMode().isEdition();
