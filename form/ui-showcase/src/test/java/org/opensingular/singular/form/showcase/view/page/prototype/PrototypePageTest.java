@@ -1,4 +1,4 @@
-package org.opensingular.singular.showcase.view.page.prototype;
+package org.opensingular.singular.form.showcase.view.page.prototype;
 
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
@@ -12,7 +12,7 @@ import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.singular.form.showcase.view.page.prototype.PrototypeContent;
 import org.opensingular.singular.form.showcase.view.page.prototype.PrototypePage;
 import org.opensingular.singular.form.showcase.view.page.prototype.SPackagePrototype;
-import org.opensingular.singular.showcase.SpringWicketTester;
+import org.opensingular.singular.form.showcase.SpringWicketTester;
 import org.opensingular.singular.form.showcase.dao.form.Prototype;
 import org.opensingular.singular.form.showcase.view.template.Content;
 import org.apache.wicket.markup.html.link.AbstractLink;

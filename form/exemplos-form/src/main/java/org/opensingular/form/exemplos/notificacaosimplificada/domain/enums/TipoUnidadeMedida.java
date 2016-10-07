@@ -35,7 +35,7 @@ public enum TipoUnidadeMedida implements EnumId<TipoUnidadeMedida, Character> {
     @XmlEnumValue("T")
     TEMPERATURA('T', "Temperatura");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoUnidadeMedida";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoUnidadeMedida";
 
     /**
      * Identificador do tipo de unidade de medida.

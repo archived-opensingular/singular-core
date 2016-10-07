@@ -1,4 +1,4 @@
-package org.opensingular.singular.showcase.view.page.showcase;
+package org.opensingular.singular.form.showcase.view.page.showcase;
 
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;

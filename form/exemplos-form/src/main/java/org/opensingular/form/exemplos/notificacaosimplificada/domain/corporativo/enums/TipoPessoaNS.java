@@ -11,7 +11,7 @@ public enum TipoPessoaNS {
     JURIDICA("J", "Jurídica"),
     FISICA("F", "Física");
 
-    public static final String CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.corporativo.enums.TipoPessoaNS";
+    public static final String CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.corporativo.enums.TipoPessoaNS";
 
     private String cod;
     private String descricao;

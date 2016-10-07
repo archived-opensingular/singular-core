@@ -14,7 +14,7 @@ public enum TipoClassificacaoCid {
     @XmlEnumValue("M")
     MANIFESTACAO('M', "Manifestação");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoClassificacaoCid";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoClassificacaoCid";
 
     private Character codigo;
     private String    descricao;

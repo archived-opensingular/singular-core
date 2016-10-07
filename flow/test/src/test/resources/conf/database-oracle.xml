@@ -27,7 +27,7 @@
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <!-- Incluir o pacote quando tiver um -->
-        <property name="packagesToScan" value="org.opensingular.singular.persistence.entity"/>
+        <property name="packagesToScan" value="org.opensingular.flow.persistence.entity"/>
 
         <property name="hibernateProperties">
             <props>

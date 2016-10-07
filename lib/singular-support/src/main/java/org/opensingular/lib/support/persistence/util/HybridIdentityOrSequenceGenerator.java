@@ -31,7 +31,7 @@ public class HybridIdentityOrSequenceGenerator implements PostInsertIdentifierGe
     private static final String ENTITY = "entity_name";
     private static final String SEQUENCE = "sequence";
 
-    public static final String CLASS_NAME = "org.opensingular.singular.support.persistence.util.HybridIdentityOrSequenceGenerator";
+    public static final String CLASS_NAME = "org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator";
 
     private PostInsertIdentifierGenerator delegate;
 

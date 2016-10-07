@@ -5,7 +5,7 @@ public enum SituacaoNecessitaAnaliseComplementar {
     SIM('S', "Sim"),
     NAO('N', "Não");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.SituacaoNecessitaAnaliseComplementar";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.SituacaoNecessitaAnaliseComplementar";
 
     private Character codigo;
     private String    descricao;

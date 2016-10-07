@@ -9,7 +9,7 @@ public enum TipoControleValor implements EnumId<TipoControleValor, Character> {
     MENOR('3', "<"),
     MENOR_IGUAL('4', "<=");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoControleValor";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoControleValor";
 
     private Character codigo;
     private String    descricao;

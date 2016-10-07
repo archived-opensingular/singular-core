@@ -6,7 +6,7 @@ public enum TipoAcao {
     ALTERAR('A', "Alterar", "Alterado"),
     EXCLUIR('E', "Excluir", "Excluído");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoAcao";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoAcao";
 
     private Character codigo;
     private String    descricao;

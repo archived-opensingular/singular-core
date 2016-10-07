@@ -10,7 +10,7 @@ public enum TipoClassificacao implements EnumId<TipoClassificacao, Character> {
 
     USO('U', "Uso");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoClassificacao";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoClassificacao";
 
     private TipoClassificacao(Character codigo, String descricao) {
         this.codigo = codigo;

@@ -9,7 +9,7 @@ public enum TipoTarja implements EnumId<TipoTarja, Character> {
     VERMELHA_COM_RETENCAO('3', "Vermelha com retenção"),
     PRETA('4', "Preta");
 
-    public static final String ENUM_CLASS_NAME = "org.opensingular.singular.exemplos.notificacaosimplificada.domain.enums.TipoTarja";
+    public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoTarja";
 
     private Character codigo;
     private String    descricao;

@@ -1,4 +1,4 @@
-package org.opensingular.singular.showcase.view.page.showcase;
+package org.opensingular.singular.form.showcase.view.page.showcase;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 import static org.junit.Assert.assertNotNull;
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.wicket.enums.AnnotationMode;
-import org.opensingular.singular.showcase.SpringWicketTester;
+import org.opensingular.singular.form.showcase.SpringWicketTester;
 import org.opensingular.singular.form.showcase.component.form.core.CaseInputCoreIntegerPackage;
 import org.opensingular.singular.form.showcase.view.page.FormItemCasePanel;
 import org.opensingular.singular.form.showcase.view.page.ItemCasePanel;
