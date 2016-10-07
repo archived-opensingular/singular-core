@@ -63,7 +63,7 @@ public class FileUploadServlet extends HttpServlet {
         FileUploadManager manager = FileUploadManager.get(req.getSession());
         return manager.consumeFile(UUID.fromString(fileId), callback);
     }
-    
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!ServletFileUpload.isMultipartContent(req)) {
@@ -142,14 +142,17 @@ public class FileUploadServlet extends HttpServlet {
 
         private void processFileItem(JSONArray fileGroup, FileItem item) throws Exception {
             if (!item.isFormField()) {
-                long size = item.getSize();
-                String originalFilename = item.getName();
+                final long size = item.getSize();
+                final String originalFilename = item.getName();
+                final String contentType = lowerCase(item.getContentType());
+                final String extension = lowerCase(substringAfterLast(originalFilename, "."));
 
-                try (
-                    InputStream in = item.getInputStream()) {
+                if (!(uploadInfo.isMimeTypeAllowed(contentType) || uploadInfo.isExtensionAllowed(extension))) {
+                    // TODO retorn error
+                }
 
-                    FileUploadInfo fileInfo = manager.createFile(uploadInfo.uploadId, originalFilename, in);
-
+                try (InputStream in = item.getInputStream()) {
+                    final FileUploadInfo fileInfo = manager.createFile(uploadInfo.uploadId, originalFilename, in);
                     fileGroup.put(DownloadUtil.toJSON(fileInfo.fileId.toString(), fileInfo.hash, originalFilename, size));
                 }
             }

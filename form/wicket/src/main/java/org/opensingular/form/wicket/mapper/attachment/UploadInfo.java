@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONWriter;
+import org.opensingular.form.servlet.MimeTypes;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -37,6 +38,15 @@ final class UploadInfo implements Serializable {
         this.touch();
     }
 
+    public boolean isMimeTypeAllowed(String mimeType) {
+        return allowedContentTypes.contains(mimeType)
+            || allowedExtensions.contains(MimeTypes.getExtensionForMimeType(mimeType));
+    }
+    public boolean isExtensionAllowed(String extension) {
+        return allowedExtensions.contains(extension)
+            || allowedContentTypes.contains(MimeTypes.getMimeTypeForExtension(extension));
+    }
+
     public long lastAccess() {
         return lastAccess;
     }
@@ -46,7 +56,7 @@ final class UploadInfo implements Serializable {
         return this;
     }
 
-    protected ImmutableSet<String> toSet(Collection<String> collection) {
+    private ImmutableSet<String> toSet(Collection<String> collection) {
         return ImmutableSet.copyOf(defaultIfNull(collection, Collections.emptyList()));
     }
 
