@@ -120,7 +120,7 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
         sql.append("    a.CO_USUARIO as \"codUsuario\", ");
         sql.append("    UPPER(a.NO_ATOR) as \"nome\",  ");
         sql.append("    a.DS_EMAIL as \"email\" ");
-        sql.append(" FROM DBSINGULAR.VW_ATOR a ");
+        sql.append(" FROM " + Constants.SCHEMA + ".VW_ATOR a ");
         sql.append(" INNER JOIN DBSEGURANCA.TB_USUARIO u ");
         sql.append("  ON u.CO_USERNAME = a.CO_USUARIO ");
         sql.append(" INNER JOIN DBSEGURANCA.RL_PERFIL_USUARIO pu ");
@@ -132,13 +132,13 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
         sql.append("  ON pd.CO_MODULO = m.CO_MODULO ");
         sql.append("  AND pd.CO_SISTEMA = m.CO_SISTEMA ");
         sql.append("  ON p.CO_PERFIL = PD.CO_PERFIL ");
-        sql.append(" INNER JOIN DBSINGULAR.RL_PERMISSAO_TAREFA pt ");
+        sql.append(" INNER JOIN " + Constants.SCHEMA + ".RL_PERMISSAO_TAREFA pt ");
         sql.append("  ON pt.CO_PERMISSAO = m.CO_SISTEMA || m.CO_MODULO ");
-        sql.append(" INNER JOIN DBSINGULAR.TB_DEFINICAO_TAREFA dt ");
+        sql.append(" INNER JOIN " + Constants.SCHEMA + ".TB_DEFINICAO_TAREFA dt ");
         sql.append("  ON dt.CO_DEFINICAO_TAREFA = pt.CO_DEFINICAO_TAREFA ");
-        sql.append(" INNER JOIN DBSINGULAR.TB_VERSAO_TAREFA vt ");
+        sql.append(" INNER JOIN " + Constants.SCHEMA + ".TB_VERSAO_TAREFA vt ");
         sql.append("  ON vt.CO_DEFINICAO_TAREFA = pt.CO_DEFINICAO_TAREFA ");
-        sql.append(" INNER JOIN DBSINGULAR.TB_INSTANCIA_TAREFA it ");
+        sql.append(" INNER JOIN " + Constants.SCHEMA + ".TB_INSTANCIA_TAREFA it ");
         sql.append("  ON it.CO_VERSAO_TAREFA = vt.CO_VERSAO_TAREFA ");
         sql.append(" WHERE it.CO_INSTANCIA_TAREFA = :taskInstanceId ");
         sql.append(" ORDER BY UPPER(a.NO_ATOR) ");
