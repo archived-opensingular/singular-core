@@ -114,10 +114,10 @@
 
 </div>
 <div class="copyright">
-    2016 © Singular por
-    <a target="_blank" id="ownerLink7" href="http://www.mirante.net.br/"
-       title="Desde 1998 colaborando para o desenvolvimento do seu negócio.">
-        Mirante Tecnologia.
+    2016 © Singular
+    <a target="_blank" id="ownerLink7" href="http://www.opensingular.org"
+       title="Soluções Inteligentes para criação de petição e análise.">
+        Singular.
     </a>
 </div>
 
