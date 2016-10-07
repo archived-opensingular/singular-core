@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2016, Singular and/or its affiliates. All rights reserved.
+ * Singular PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
 package org.opensingular.form.internal.xml;
@@ -187,7 +187,7 @@ import java.util.Iterator;
  * </xmp>
  * </pre>
  *
- * @author Daniel C. Bordin - Mirante Informática
+ * @author Daniel C. Bordin
  */
 public abstract class MElement implements Element, Serializable {
 

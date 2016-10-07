@@ -1,6 +1,6 @@
 package org.opensingular.form.exemplos.notificacaosimplificada.domain;
 
-// Generated 16/03/2010 08:00:26 by Mirante 3.2.2.GA
+// Generated 16/03/2010 08:00:26
 
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.FormaFisica;
 import org.opensingular.lib.support.persistence.enums.SimNao;

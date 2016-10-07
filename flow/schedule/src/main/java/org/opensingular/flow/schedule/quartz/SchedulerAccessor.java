@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2016, Singular and/or its affiliates. All rights reserved.
+ * Singular PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 package org.opensingular.flow.schedule.quartz;
 
@@ -33,7 +33,7 @@ import org.quartz.xml.XMLSchedulingDataProcessor;
  * <p></p>
  * <p>For concrete usage, check out the {@link QuartzSchedulerFactory}.</p>
  *
- * @author Mirante Tecnologia
+ * @author Daniel Bordin
  */
 public abstract class SchedulerAccessor {
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2016, Singular and/or its affiliates. All rights reserved.
+ * Singular PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
 package org.opensingular.form.internal.xml;
@@ -86,8 +86,8 @@ import java.util.List;
  * // </pedido>
  * </xmp>
  *
- * @author Daniel Bordin - Mirante Informática
- * @author Ricardo Campos - Mirante Informática
+ * @author Daniel Bordin
+ * @author Ricardo Campos
  * @version 24/08/2000
  * @since 20/04/2000 12:07:27
  * @deprecated Utilize MElement (é bem mais simples)

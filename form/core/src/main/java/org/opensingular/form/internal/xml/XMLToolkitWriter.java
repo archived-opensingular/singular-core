@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2016, Singular and/or its affiliates. All rights reserved.
+ * Singular PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
 package org.opensingular.form.internal.xml;
@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 /**
  * Creation date: (24/04/2000 10:34:52)
  *
- * @author Daniel Bordin - Mirante Informática
+ * @author Daniel Bordin
  */
 
 final class XMLToolkitWriter {

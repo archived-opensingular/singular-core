@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2016, Singular and/or its affiliates. All rights reserved.
+ * Singular PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
 package org.opensingular.flow.core;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * determinado processo.
  * </p>
  *
- * @author Mirante Tecnologia
+ * @author Daniel Bordin
  */
 @SuppressWarnings({ "serial", "unchecked" })
 public class ProcessInstance implements Serializable {

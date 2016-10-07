@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2016, Singular and/or its affiliates. All rights reserved.
+ * Singular PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
 package org.opensingular.form.internal.xml;
@@ -61,8 +61,8 @@ import org.w3c.dom.Element;
  * na lista de filhos. Nesse caso, o percorredor retorna todos os filhos do
  * elemento.
  *
- * @author Daniel Bordin - Mirante Informática
- * @author Ricardo Campos - Mirante Informática
+ * @author Daniel Bordin
+ * @author Ricardo Campos
  * @see MElementResult
  * @deprecated Utilizar MElementResult, pois no futuro será removida do pacote
  */

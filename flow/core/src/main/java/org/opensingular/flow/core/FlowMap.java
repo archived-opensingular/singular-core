@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2016, Singular and/or its affiliates. All rights reserved.
+ * Singular PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
 package org.opensingular.flow.core;
@@ -32,7 +32,7 @@ import org.opensingular.lib.commons.base.SingularException;
 /**
  * <p>Esta classe representa o mapa de fluxo de uma dada definição de processo.</p>
  *
- * @author Mirante Tecnologia
+ * @author Daniel Bordin
  */
 @SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class FlowMap implements Serializable {

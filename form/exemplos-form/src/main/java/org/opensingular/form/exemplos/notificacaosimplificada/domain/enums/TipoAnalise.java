@@ -1,6 +1,6 @@
 /**
- * Mirante Tecnologia - Fábrica de Software
- * www.mirante.net.br
+
+
  */
 package org.opensingular.form.exemplos.notificacaosimplificada.domain.enums;
 
@@ -8,7 +8,7 @@ package org.opensingular.form.exemplos.notificacaosimplificada.domain.enums;
  * Tipos de análise realizadas para diferenciar uma anális realizada pelo Gerente Geral das outras análises relacionadas
  * a um processo
  *
- * @author Lucas Souza <lucas.souza@mirante.com.br>
+ * @author Lucas Souza
  */
 public enum TipoAnalise {
 

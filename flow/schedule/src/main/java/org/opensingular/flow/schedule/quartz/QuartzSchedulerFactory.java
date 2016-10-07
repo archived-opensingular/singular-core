@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2016, Singular and/or its affiliates. All rights reserved.
+ * Singular PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 package org.opensingular.flow.schedule.quartz;
 
@@ -40,7 +40,7 @@ import org.quartz.spi.JobFactory;
  * contrast to Timer which uses a TimerTask instance that is shared
  * between repeated executions. Just JobDetail descriptors are shared.</p>
  *
- * @author Mirante Tecnologia
+ * @author Daniel Bordin
  * @see org.quartz.Scheduler
  * @see org.quartz.SchedulerFactory
  * @see org.quartz.impl.StdSchedulerFactory

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
- * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2016, Singular and/or its affiliates. All rights reserved.
+ * Singular PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
 package org.opensingular.form.wicket.behavior;
@@ -36,7 +36,7 @@ import org.springframework.util.ReflectionUtils;
  * </ul>
  *
  * @see <a href="https://github.com/RobinHerbots/jquery.inputmask">JQuery InputMask</a>
- * @author Mirante Tecnologia
+ * @author Daniel Bordin
  */
 public class InputMaskBehavior extends Behavior {
 

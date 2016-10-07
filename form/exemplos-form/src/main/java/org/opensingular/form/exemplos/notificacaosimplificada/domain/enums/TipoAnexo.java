@@ -1,6 +1,6 @@
 /**
- * Mirante Tecnologia - Fábrica de Software
- * www.mirante.net.br
+
+
  */
 package org.opensingular.form.exemplos.notificacaosimplificada.domain.enums;
 
