@@ -1,0 +1,40 @@
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:extend>
+    <div wicket:id="feedback"></div>
+    <wicket:fragment wicket:id="breadcrumbForm">
+        <li><a href="#"> <wicket:message key="breadcrumb.form" />
+        </a><i class="fa fa-circle"></i></li>
+        <li class="active"><wicket:message key="breadcrumb.form" /></li>
+    </wicket:fragment>
+    <form wicket:id="form" role="form">
+        <button type="submit" class="btn" wicket:id="insert">
+            <wicket:message key="label.button.insert" />
+        </button>
+    </form>
+    <div class="table-scrollable">
+        <table wicket:id="data-list"></table>
+    </div>
+    <form wicket:id="delete-form">
+        <div wicket:id="deleteModal"></div>
+    </form>
+    <div wicket:id="viewXmlModal" class="portlet-body form">
+        <wicket:fragment wicket:id="xmlTabs" />
+    </div>
+</wicket:extend>
+</html>

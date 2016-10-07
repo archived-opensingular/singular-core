@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<license>
+  <licensefileversion>1.0</licensefileversion>
+  <product>yFiles for Java</product>
+  <package>complete</package>
+  <type>eval</type>
+  <distribution>false</distribution>
+  <watermark><![CDATA[yFiles for Java Evaluation License (expires in ${license-days-remaining} days)]]></watermark>
+  <version>3.0</version>
+  <date>06/15/2016</date>
+  <expires>08/15/2016</expires>
+  <key>1a7319e5ad7953b1ba46d539fe931d12dd57026011cbbac203e0aeda5ee08ec91f315634e8f9151a20d7572014693eef263641949ca0d0595a1c864c14bfb7b1093e6aeb2eeaab672932be8b9c705c74a86526c39bdb0db38b2dba8ec78d0667e693b09b3dc7ec5bd3d64611910bfa5a981e373664f1b1e95c4f183061b61ebf</key>
+</license>
+

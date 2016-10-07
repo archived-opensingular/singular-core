@@ -1,0 +1,45 @@
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:extend>
+    <style type="text/css">
+        .form-content-margin-top {
+            margin-top: 15px;
+        }
+    </style>
+    <form wicket:id="save-form">
+        <div wicket:id="singular-panel"></div>
+        <div class="form-actions noborder form-content-margin-top">
+            <button type="submit" class="btn send-btn" wicket:id="save-btn">
+                <wicket:message key="label.button.save"/>
+            </button>
+            <button type="submit" class="btn save-btn" wicket:id="save-annotation-btn">
+                <wicket:message key="label.button.save"/>
+            </button>
+            <button type="submit" class="btn save-btn" wicket:id="save-whitout-validate-btn">
+                <wicket:message key="label.button.save.whitout.validate"/>
+            </button>
+            <button type="submit" class="btn validate-btn" wicket:id="validate-btn">
+                <wicket:message key="label.button.validate"/>
+            </button>
+            <button type="submit" class="btn  cancel-btn" wicket:id="cancel-btn">
+                <wicket:message key="label.button.cancel"/>
+            </button>
+        </div>
+    </form>
+</wicket:extend>
+</html>

@@ -1,0 +1,7 @@
+{
+  "idMap": "${idMap}",
+  "idLat": "${idLat}",
+  "idLng": "${idLng}",
+  "zoom": "${zoom}",
+  "readOnly" : "${readOnly}"
+}

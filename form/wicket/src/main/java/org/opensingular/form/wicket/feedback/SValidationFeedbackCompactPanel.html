@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+<wicket:head>
+
+<style type="text/css">
+
+  .has-error .singular-validation-feedback-compact-panel {
+    position: relative;
+  }
+  .has-error .singular-validation-feedback-compact-panel > span,
+  .has-error .singular-validation-feedback-compact-panel > ul {
+    /*padding-left: 1em;*/
+  }
+  .has-error .singular-validation-feedback-compact-panel > ul {
+    -display: none;
+    visibility: hidden;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+  }
+  .has-error .singular-validation-feedback-compact-panel.singular-active > ul,
+  .has-error .singular-validation-feedback-compact-panel:hover > ul {
+    display: block;
+    visibility: visible;
+    -white-space: nowrap;
+    background-color: #fee;
+    border: 1px solid red;
+    border-radius: 2px;
+  }
+  .has-error .singular-validation-feedback-compact-panel > span {
+    display: block;
+    visibility: visible;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid transparent;
+  }
+  .has-error .singular-validation-feedback-compact-panel.singular-active > span,
+  .has-error .singular-validation-feedback-compact-panel:hover > span {
+    -display: none;
+    -visibility: hidden;
+  }
+  </style>
+
+</wicket:head>
+</head>
+<body>
+<wicket:panel>
+  <span><span wicket:id="firstMessage">First message</span> <i class="glyphicon glyphicon-exclamation-circle"></i></span>
+  
+<!--   <ul wicket:id="feedbackul" class="list-unstyled"> -->
+<!--     <li wicket:id="messages"> -->
+<!--       <span wicket:id="message">All messages</span> -->
+<!--     </li> -->
+<!--   </ul> -->
+</wicket:panel>
+</body>
+</html>

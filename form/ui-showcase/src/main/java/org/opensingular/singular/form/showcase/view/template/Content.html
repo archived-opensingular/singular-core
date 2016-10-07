@@ -1,0 +1,62 @@
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<wicket:panel>
+    <div class="page-content-wrapper">
+        <div class="page-content">
+            <!-- BEGIN PAGE HEAD -->
+            <div class="page-head">
+                <!-- BEGIN PAGE TITLE -->
+                <div class="page-title">
+                    <h1>
+                        <wicket:container wicket:id="contentTitle"/>
+                        <small>
+                            <wicket:container wicket:id="contentSubtitle"/>
+                        </small>
+                    </h1>
+                </div>
+                <!-- END PAGE TITLE -->
+                <!-- BEGIN PAGE TOOLBAR -->
+                <div class="page-toolbar">
+                    <!-- BEGIN THEME PANEL -->
+                    <div wicket:id="_Info" class="btn-group btn-theme-panel">
+                        <a wicket:id="_InfoLink" href="#" class="btn tooltips" data-placement="bottom" data-html="true" data-original-title="Info" onclick="this.blur();">
+                            <i class="icon-info"></i>
+                        </a>
+                    </div>
+                    <!-- END THEME PANEL -->
+                </div>
+                <!-- END PAGE TOOLBAR -->
+            </div>
+            <!-- END PAGE HEAD -->
+            <!-- BEGIN PAGE BREADCRUMB -->
+            <ul wicket:id="breadcrumb" class="page-breadcrumb breadcrumb">
+                <li>
+                    <a wicket:id="breadcrumbDashboard">
+                        <wicket:message key="breadcrumb.home"/>
+                    </a><i class="fa fa-circle"></i>
+                </li>
+                <wicket:container wicket:id="_BreadcrumbLinks"/>
+            </ul>
+            <!-- END PAGE BREADCRUMB -->
+            <!-- BEGIN PAGE CONTENT INNER -->
+            <wicket:child/>
+            <!-- END PAGE CONTENT INNER -->
+        </div>
+    </div>
+</wicket:panel>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:panel >
+    <style>
+        .file-trash-button-hidden{
+            display: none;
+        }
+    </style>
+
+    <div class="input-group">
+        <div class="form-control" >
+            <i class="fa fa-file"></i>
+            <span wicket:id="files" class="fileinput-filename">
+                <a wicket:id="downloadLink"></a>
+            </span>
+
+            <div wicket:id="progress" class="upload-single-progress progress">
+                <div class="progress-bar" style="width: 100%;"></div>
+            </div>
+
+        </div>
+            <span class="input-group-btn">
+                <span wicket:id="upload_btn"
+                        class="btn btn-sm file-choose-button fileinput-button upload-single-choose">
+                    <i class="fa fa-upload"></i>
+                    <span>Escolher</span>
+                    <input type="file" wicket:id="fileUpload" />
+                </span>
+
+                <span wicket:id="remove_btn"
+                      class="btn btn-sm upload-single-remove file-trash-button">
+                    <i class="fa fa-remove"></i>
+                </span>
+            </span>
+    </div>
+</wicket:panel>
+</body>
+</html>
