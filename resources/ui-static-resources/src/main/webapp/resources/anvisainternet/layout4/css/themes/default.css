@@ -55,9 +55,9 @@ body {
         .page-header.navbar .top-menu .navbar-nav > li.dropdown-extended .dropdown-menu > li.external > h3 {
           color: #62878f; }
         .page-header.navbar .top-menu .navbar-nav > li.dropdown-extended .dropdown-menu > li.external > a {
-          color: #508450; }
+          color: #3c638a; }
           .page-header.navbar .top-menu .navbar-nav > li.dropdown-extended .dropdown-menu > li.external > a:hover {
-            color: #335433;
+            color: #253d55;
             text-decoration: none; }
       .page-header.navbar .top-menu .navbar-nav > li.dropdown-extended .dropdown-menu .dropdown-menu-list > li > a {
         border-bottom: 1px solid #EFF2F6 !important;
@@ -74,7 +74,7 @@ body {
     .page-header.navbar .top-menu .navbar-nav > li.dropdown-inbox > .dropdown-toggle > .corner {
       border-color: transparent transparent transparent #3c638a; }
     .page-header.navbar .top-menu .navbar-nav > li.dropdown-inbox .dropdown-menu .dropdown-menu-list .subject .from {
-      color: #508450; }
+      color: #3c638a; }
     .page-header.navbar .top-menu .navbar-nav > li.dropdown-tasks .dropdown-menu .dropdown-menu-list .progress {
       background-color: #dfe2e9; }
     .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-toggle > .username {
@@ -95,7 +95,7 @@ body {
         .page-header.navbar .top-menu .navbar-nav > li.dropdown-dark .dropdown-menu > li.external > h3 {
           color: white; }
         .page-header.navbar .top-menu .navbar-nav > li.dropdown-dark .dropdown-menu > li.external > a:hover {
-          color: #68a468; }
+          color: #4d7fb1; }
       .page-header.navbar .top-menu .navbar-nav > li.dropdown-dark .dropdown-menu.dropdown-menu-default > li a,
       .page-header.navbar .top-menu .navbar-nav > li.dropdown-dark .dropdown-menu .dropdown-menu-list > li a {
         color: white;
@@ -271,18 +271,18 @@ body {
     Page Footer
     ******/
 .page-footer .page-footer-inner {
-  color: #508450; }
+  color: #f2f2f2; }
 
 .page-footer-fixed .page-footer {
-  background-color: #ECECEA; }
+  background-color: #3c638a; }
   .page-footer-fixed .page-footer .page-footer-inner {
-    color: #508450; }
+    color: #f2f2f2; }
 
 .page-boxed .page-footer .page-footer-inner {
-  color: #508450; }
+  color: #f2f2f2; }
 
 .page-footer-fixed .page-boxed .page-footer {
-  background-color: #ECECEA; }
+  background-color: #3c638a; }
 
 @media (min-width: 992px) {
   /* 992px */
@@ -350,7 +350,7 @@ body {
   background-color: #3c638a; }
 
 .toast-info {
-  background-color: #5C9BD1; }
+  background-color: #2e75d1; }
 
 .toast-error {
   background-color: #E35B5A; }

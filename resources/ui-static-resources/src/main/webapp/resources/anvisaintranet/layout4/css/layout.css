@@ -107,15 +107,18 @@ button {
 /***
 Page Header
 ***/
+.page-header {
+  border-top: 10px solid #508450; }
+
 .page-header.navbar {
   width: 100%;
   padding: 0 20px 0 20px;
   margin: 0;
-  border: 0px;
+  border-bottom: 0px;
   padding: 0px;
   box-shadow: none;
-  height: 70px;
-  min-height: 70px;
+  height: 80px;
+  min-height: 80px;
   filter: none;
   background-image: none;
   /* Fixed header */
@@ -1330,6 +1333,9 @@ Page footer
   .page-footer .page-footer-inner {
     float: left;
     display: inline-block; }
+    .page-footer .page-footer-inner > a {
+      color: #f2f2f2;
+      font-weight: bold; }
   .page-footer .page-footer-tools {
     float: right;
     display: inline-block; }
