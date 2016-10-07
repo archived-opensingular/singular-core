@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>br.net.mirante</groupId>
+		<groupId>org.opensingular</groupId>
 		<artifactId>singular</artifactId>
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
@@ -16,13 +16,10 @@
 	<modules>
 		<module>core</module>
 		<module>schedule</module>
-		<module>bam</module>
 		<module>persistence</module>
 		<module>test</module>
 		<module>rest-client</module>
 		<module>alocpro-mock-client</module>
-		<module>bam-client</module>
-		<module>bam-support</module>
 	</modules>
 
 </project>

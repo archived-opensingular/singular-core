@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>br.net.mirante</groupId>
+        <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
         <version>1.0.1-SNAPSHOT</version>
     </parent>
@@ -18,12 +18,12 @@
 
         <!-- Projeto Singular -->
         <dependency>
-            <groupId>br.net.mirante</groupId>
+            <groupId>org.opensingular</groupId>
             <artifactId>form-wicket</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>br.net.mirante</groupId>
+            <groupId>org.opensingular</groupId>
             <artifactId>singular-support</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>

@@ -28,7 +28,7 @@
  **
  ***************************************************************************/
 
-import br.net.mirante.singular.commons.util.Loggable;
+import org.opensingular.lib.commons.util.Loggable;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.view.CanvasComponent;
 import com.yworks.yfiles.view.Colors;

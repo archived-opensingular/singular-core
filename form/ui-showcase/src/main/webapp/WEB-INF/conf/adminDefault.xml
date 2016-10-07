@@ -13,6 +13,6 @@
     <util:properties id="admin" location="classpath:/admin-config.properties"/>
     <import resource="database.xml"/>
     <import resource="cache.xml"/>
-    <context:component-scan base-package="br.net.mirante.singular"/>
+    <context:component-scan base-package="org.opensingular.singular"/>
 
 </beans>

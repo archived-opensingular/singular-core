@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>br.net.mirante</groupId>
+    <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
     <version>1.0.1-SNAPSHOT</version>
@@ -15,7 +15,6 @@
         <module>form</module>
         <module>lib</module>
         <module>resources</module>
-        <module>studio</module>
         <module>ws</module>
     </modules>
 

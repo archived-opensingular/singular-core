@@ -1,0 +1,71 @@
+package org.opensingular.form.exemplos.notificacaosimplificada.form;
+
+import org.opensingular.form.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
+import org.opensingular.form.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.provider.TextQueryProvider;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.util.transformer.Value;
+
+@SInfoType(spackage = SPackageNotificacaoSimplificada.class)
+public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
+
+    @Override
+    protected void onLoadType(TypeBuilder tb) {
+        super.onLoadType(tb);
+
+        final STypeComposite<SIComposite> id = addFieldComposite("id");
+
+        final STypeInteger idEmpresaInternacional = id.addFieldInteger("idEmpresaInternacional");
+        final STypeInteger sequencialEndereco     = id.addFieldInteger("sequencialEndereco");
+
+        final STypeString razaoSocial = addFieldString("razaoSocial");
+        final STypeString endereco    = addFieldString("endereco");
+
+        razaoSocial.
+                asAtr()
+                .required()
+                .label("Razão Social");
+
+        autocompleteOf(EnderecoEmpresaInternacional.class)
+                .id(e -> String.format("%d-%d", e.getId().getEmpresaInternacional().getId(), e.getId().getSequencialEndereco()))
+                .display(e -> e.getEmpresaInternacional().getRazaoSocial())
+                .converter(new SInstanceConverter<EnderecoEmpresaInternacional, SIComposite>() {
+                    @Override
+                    public void fillInstance(SIComposite ins, EnderecoEmpresaInternacional obj) {
+                        final SIComposite compositeId;
+                        if (ins.getField(id.getNameSimple()) != null) {
+                            compositeId = (SIComposite) ins.getField(id.getNameSimple());
+                        } else {
+                            compositeId = id.newInstance();
+                            ins.setValue(id, compositeId);
+                        }
+                        compositeId.setValue(idEmpresaInternacional, obj.getId().getEmpresaInternacional().getId());
+                        compositeId.setValue(sequencialEndereco, obj.getId().getSequencialEndereco());
+                        ins.setValue(razaoSocial, obj.getEmpresaInternacional().getRazaoSocial());
+                        ins.setValue(endereco, obj.getEnderecoCompleto());
+                    }
+
+                    @Override
+                    public EnderecoEmpresaInternacional toObject(SIComposite ins) {
+                        final SInstance value = (SInstance) ins.getField(id.getNameSimple());
+                        if (!value.isEmptyOfData()) {
+                            final Integer idEmpresa  = Value.of(value, idEmpresaInternacional);
+                            final Integer sequencial = Value.of(value, sequencialEndereco);
+                            return SPackageVocabularioControlado.dominioService(ins).buscarEmpresaInternacional(idEmpresa.longValue(), sequencial.shortValue());
+                        }
+                        return null;
+                    }
+                })
+                .filteredProvider((TextQueryProvider<EnderecoEmpresaInternacional, SIComposite>) (ins, query) -> SPackageVocabularioControlado.dominioService(ins).empresaInternacional(query));
+
+    }
+
+
+}
