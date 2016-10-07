@@ -7,7 +7,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular-server</artifactId>
 
-    <version>0.1.3-SNAPSHOT</version>
+    <version>1.5.0</version>
     <name>[projeto-raiz :: singular-server]</name>
     <packaging>pom</packaging>
 
@@ -137,18 +137,17 @@
     </profiles>
 
     <properties>
-        <project.scm.url>http://10.0.0.22/r/MIRANTE/singula-serverr.git</project.scm.url>
-        <project.scm.connection>scm:git:http://10.0.0.22/r/MIRANTE/singular-server.git</project.scm.connection>
-        <project.scm.developerConnection>scm:git:http://10.0.0.22/r/MIRANTE/singular-server.git
-        </project.scm.developerConnection>
+        <project.scm.url>https://github.com/opensingular/singular-server.git</project.scm.url>
+        <project.scm.connection>scm:git:https://github.com/opensingular/singular-server.git</project.scm.connection>
+        <project.scm.developerConnection>scm:git:https://github.com/opensingular/singular-server.git</project.scm.developerConnection>
         <sonar.exclusions>**/recursos/**</sonar.exclusions>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
         <wicket.version>7.1.0</wicket.version>
-        <singular.version>1.0.1-SNAPSHOT</singular.version>
-        <singular.server.version>0.1.3-SNAPSHOT</singular.server.version>
-        <singular-enterprise.version>0.0.1-SNAPSHOT</singular-enterprise.version>
+        <singular.version>1.5.0</singular.version>
+        <singular.server.version>1.5.0</singular.server.version>
+        <singular-enterprise.version>1.5.0</singular-enterprise.version>
         <cas.version>4.0.4</cas.version>
     </properties>
 
