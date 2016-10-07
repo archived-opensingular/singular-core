@@ -381,24 +381,24 @@ body {
   .form-group.form-md-line-input.has-error label {
     color: #e82724; }
   .form-group.form-md-line-input.has-info .form-control {
-    border-bottom: 1px solid #6cc0ff; }
+    border-bottom: 1px solid #0c9cff; }
     .form-group.form-md-line-input.has-info .form-control.edited:not([readonly]) ~ label:after,
     .form-group.form-md-line-input.has-info .form-control.edited:not([readonly]) ~ .form-control-focus:after, .form-group.form-md-line-input.has-info .form-control.form-control-static ~ label:after,
     .form-group.form-md-line-input.has-info .form-control.form-control-static ~ .form-control-focus:after, .form-group.form-md-line-input.has-info .form-control:focus:not([readonly]) ~ label:after,
     .form-group.form-md-line-input.has-info .form-control:focus:not([readonly]) ~ .form-control-focus:after, .form-group.form-md-line-input.has-info .form-control.focus:not([readonly]) ~ label:after,
     .form-group.form-md-line-input.has-info .form-control.focus:not([readonly]) ~ .form-control-focus:after {
-      background: #6cc0ff; }
+      background: #0c9cff; }
     .form-group.form-md-line-input.has-info .form-control.edited:not([readonly]) ~ label, .form-group.form-md-line-input.has-info .form-control.form-control-static ~ label, .form-group.form-md-line-input.has-info .form-control:focus:not([readonly]) ~ label, .form-group.form-md-line-input.has-info .form-control.focus:not([readonly]) ~ label {
-      color: #6cc0ff; }
+      color: #0c9cff; }
     .form-group.form-md-line-input.has-info .form-control.edited:not([readonly]) ~ i, .form-group.form-md-line-input.has-info .form-control.form-control-static ~ i, .form-group.form-md-line-input.has-info .form-control:focus:not([readonly]) ~ i, .form-group.form-md-line-input.has-info .form-control.focus:not([readonly]) ~ i {
-      color: #6cc0ff; }
+      color: #0c9cff; }
     .form-group.form-md-line-input.has-info .form-control.edited:not([readonly]) ~ .help-block, .form-group.form-md-line-input.has-info .form-control.form-control-static ~ .help-block, .form-group.form-md-line-input.has-info .form-control:focus:not([readonly]) ~ .help-block, .form-group.form-md-line-input.has-info .form-control.focus:not([readonly]) ~ .help-block {
-      color: #6cc0ff; }
+      color: #0c9cff; }
   .form-group.form-md-line-input.has-info .input-group-addon {
-    color: #6cc0ff;
-    border-bottom: 1px solid #6cc0ff; }
+    color: #0c9cff;
+    border-bottom: 1px solid #0c9cff; }
   .form-group.form-md-line-input.has-info label {
-    color: #6cc0ff; }
+    color: #0c9cff; }
 
 .form-inline .form-md-line-input {
   margin: 0;
@@ -559,15 +559,15 @@ body {
 
 .has-info .md-checkbox label,
 .has-info.md-checkbox label {
-  color: #6cc0ff; }
+  color: #0c9cff; }
 
 .has-info .md-checkbox label > .box,
 .has-info.md-checkbox label > .box {
-  border-color: #6cc0ff; }
+  border-color: #0c9cff; }
 
 .has-info .md-checkbox label > .check,
 .has-info.md-checkbox label > .check {
-  border-color: #6cc0ff; }
+  border-color: #0c9cff; }
 
 .form-md-checkboxes {
   padding-top: 5px; }
@@ -579,7 +579,7 @@ body {
   .form-md-checkboxes.has-error label {
     color: #ec5552; }
   .form-md-checkboxes.has-info label {
-    color: #a9dbff; }
+    color: #49b5ff; }
   .form-md-checkboxes.has-success label {
     color: #528752; }
   .form-md-checkboxes.has-warning label {
@@ -743,15 +743,15 @@ body {
 
 .has-info .md-radio label,
 .has-info.md-radio label {
-  color: #6cc0ff; }
+  color: #0c9cff; }
 
 .has-info .md-radio label > .box,
 .has-info.md-radio label > .box {
-  border-color: #6cc0ff; }
+  border-color: #0c9cff; }
 
 .has-info .md-radio label > .check,
 .has-info.md-radio label > .check {
-  background: #6cc0ff; }
+  background: #0c9cff; }
 
 .form-md-radios {
   padding-top: 5px; }
@@ -763,7 +763,7 @@ body {
   .form-md-radios.has-error label {
     color: #ec5552; }
   .form-md-radios.has-info label {
-    color: #a9dbff; }
+    color: #49b5ff; }
   .form-md-radios.has-success label {
     color: #528752; }
   .form-md-radios.has-warning label {
@@ -1349,7 +1349,7 @@ li [class*=" icon-"].icon-large {
   color: #528752; }
 
 .icon-state-info {
-  color: #a9dbff; }
+  color: #49b5ff; }
 
 .icon-state-warning {
   color: #f1be7e; }
@@ -1486,7 +1486,7 @@ Custom Bootstrap Badges
   background-image: none; }
 
 .badge-info {
-  background-color: #a9dbff;
+  background-color: #49b5ff;
   background-image: none; }
 
 .badge-success {
@@ -6075,7 +6075,7 @@ Input icons
     .has-warning .input-icon > i {
       color: #f1be7e; }
     .has-info .input-icon > i {
-      color: #a9dbff; }
+      color: #49b5ff; }
     .has-error .input-icon > i {
       color: #ec5552; }
   .input-icon.right {
@@ -6138,9 +6138,9 @@ Customized Bootstrap Labels
     background-color: #3f673f; }
 
 .label-info {
-  background-color: #a9dbff; }
+  background-color: #49b5ff; }
   .label-info[href]:hover, .label-info[href]:focus {
-    background-color: #76c5ff; }
+    background-color: #16a1ff; }
 
 .label-warning {
   background-color: #f1be7e; }
@@ -6179,7 +6179,7 @@ Text states
   color: #528752; }
 
 .text-info {
-  color: #a9dbff; }
+  color: #49b5ff; }
 
 .text-warning {
   color: #f1be7e; }
@@ -6223,27 +6223,27 @@ Customized List Group
     border-color: #3f673f; }
 
 .list-group .list-group-item-info {
-  color: #6cc0ff;
-  background-color: white; }
+  color: #0c9cff;
+  background-color: #ddf1ff; }
 
 .list-group a.list-group-item-info,
 .list-group button.list-group-item-info {
-  color: #6cc0ff; }
+  color: #0c9cff; }
   .list-group a.list-group-item-info .list-group-item-heading,
   .list-group button.list-group-item-info .list-group-item-heading {
     color: inherit; }
   .list-group a.list-group-item-info:hover, .list-group a.list-group-item-info:focus,
   .list-group button.list-group-item-info:hover,
   .list-group button.list-group-item-info:focus {
-    color: #6cc0ff;
-    background-color: #f2f2f2; }
+    color: #0c9cff;
+    background-color: #c4e7ff; }
   .list-group a.list-group-item-info.active, .list-group a.list-group-item-info.active:hover, .list-group a.list-group-item-info.active:focus,
   .list-group button.list-group-item-info.active,
   .list-group button.list-group-item-info.active:hover,
   .list-group button.list-group-item-info.active:focus {
     color: #fff;
-    background-color: #6cc0ff;
-    border-color: #6cc0ff; }
+    background-color: #0c9cff;
+    border-color: #0c9cff; }
 
 .list-group .list-group-item-warning {
   color: #eca750;
@@ -6586,16 +6586,16 @@ Notes
       border-color: #82b382;
       box-shadow: 5px 5px rgba(133, 181, 133, 0.2); }
   .note.note-info {
-    background-color: white;
-    border-color: #cccccc;
-    color: #003e6c; }
+    background-color: #f7fcff;
+    border-color: #77c8ff;
+    color: #00070c; }
     .note.note-info.note-bordered {
-      background-color: #fcfcfc;
-      border-color: #d9d9d9; }
+      background-color: #d8efff;
+      border-color: #91d2ff; }
     .note.note-info.note-shadow {
-      background-color: white;
-      border-color: #e6e6e6;
-      box-shadow: 5px 5px rgba(232, 232, 232, 0.2); }
+      background-color: #ddf1ff;
+      border-color: #aaddff;
+      box-shadow: 5px 5px rgba(175, 223, 255, 0.2); }
   .note.note-warning {
     background-color: white;
     border-color: #f4ce9e;
@@ -11925,7 +11925,7 @@ Custom tables
   border-left: 2px solid #528752; }
 
 .table-advance td.highlight div.info {
-  border-left: 2px solid #a9dbff; }
+  border-left: 2px solid #49b5ff; }
 
 .table-advance td.highlight div.warning {
   border-left: 2px solid #f1be7e; }
@@ -17744,17 +17744,17 @@ Tasks Widget
           border-left-color: #3c638a;
           border-right-color: #3c638a; }
     .mt-element-ribbon .ribbon.ribbon-color-info {
-      background-color: #a9dbff;
+      background-color: #49b5ff;
       color: #fff; }
       .mt-element-ribbon .ribbon.ribbon-color-info:after {
-        border-color: #76c5ff; }
+        border-color: #16a1ff; }
       .mt-element-ribbon .ribbon.ribbon-color-info > .ribbon-sub {
-        background-color: #a9dbff;
-        color: #0061a9; }
+        background-color: #49b5ff;
+        color: #002c49; }
         .mt-element-ribbon .ribbon.ribbon-color-info > .ribbon-sub:after {
-          border-color: #1099ff;
-          border-left-color: #a9dbff;
-          border-right-color: #a9dbff; }
+          border-color: #0068af;
+          border-left-color: #49b5ff;
+          border-right-color: #49b5ff; }
     .mt-element-ribbon .ribbon.ribbon-color-success {
       background-color: #528752;
       color: #fff; }

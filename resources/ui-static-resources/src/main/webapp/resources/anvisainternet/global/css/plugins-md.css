@@ -326,10 +326,10 @@ Bootstrap Select
   border-color: #fefdfa; }
 
 .bootstrap-select.open .btn {
-  border-color: #375a37; }
+  border-color: #3c638a; }
 
 .bootstrap-select.open.dropup .btn {
-  border-color: #375a37; }
+  border-color: #3c638a; }
 
 .bootstrap-select .btn:focus {
   outline: none !important;
@@ -386,7 +386,7 @@ Color variants
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-info,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-info {
   color: #fff;
-  background: #a9dbff; }
+  background: #49b5ff; }
 
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-success,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-success {
@@ -1833,7 +1833,7 @@ Color variants
   background: #3c638a; }
 
 .noUi-info .noUi-connect {
-  background: #a9dbff; }
+  background: #49b5ff; }
 
 .noUi-success .noUi-connect {
   background: #528752; }
