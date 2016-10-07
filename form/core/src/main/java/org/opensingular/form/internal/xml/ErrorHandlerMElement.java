@@ -16,7 +16,7 @@ import org.xml.sax.SAXParseException;
  * exceção encadeada, então é disparada a exception de modo a não mascarar o
  * erro.
  *
- * @author Daniel C. Bordin - www.miranteinfo.com
+ * @author Daniel C. Bordin
  */
 final class ErrorHandlerMElement implements ErrorHandler {
 

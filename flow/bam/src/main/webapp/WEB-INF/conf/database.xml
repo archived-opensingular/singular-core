@@ -20,7 +20,7 @@
         <property name="dataSource" ref="dataSourceSingular"/>
         <!-- Incluir o pacote quando tiver um -->
         <!--<property name="packagesToScan" value="br.com.montrealonline.persistence.entidade" />-->
-        <property name="packagesToScan" value="org.opensingular.mirante"/>
+        <property name="packagesToScan" value="org.opensingular"/>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">com.opensingular.bam.persistence.hibernate.SingularSQL2005Dialect</prop>

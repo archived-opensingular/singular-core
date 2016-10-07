@@ -70,7 +70,7 @@ public final class BpmnConstants {
    * </p>
    * @see #YFILES_BPMN_NS
    */
-  public static final String YFILES_BPMN_PREFIX = "br/net/mirante/singular/flow/core/renderer/bpmn";
+  public static final String YFILES_BPMN_PREFIX = "org/opensingular/flow/core/renderer/bpmn";
 
   static class Pens {
     public static final Pen TASK = Pen.getDarkBlue();

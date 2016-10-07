@@ -17,7 +17,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 /**
- * @author Expedito Júnior - Mirante
+ * @author Expedito Júnior
  */
 public final class ConversorToolkit {
 

@@ -100,7 +100,7 @@ class TypeBuilder {
     private PackageBuilder createPackage() {
         SDictionary dictionary = SDictionary.create();
         dictionary.loadPackage(SPackagePrototype.class);
-        return dictionary.createNewPackage("com.mirante.singular.preview");
+        return dictionary.createNewPackage("org.opensingular.form.preview");
     }
 
     public STypeComposite<? extends SIComposite> createRootType() {

@@ -40,7 +40,7 @@ import java.util.Map;
  * MElement raiz = p.parseComResolver(sXML);
  * </xmp>
  *
- * @author Daniel C. Bordin - www.miranteinfo.com
+ * @author Daniel C. Bordin
  */
 public final class MParser {
 
