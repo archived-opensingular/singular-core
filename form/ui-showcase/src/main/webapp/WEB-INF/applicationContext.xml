@@ -42,13 +42,13 @@
         <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
 	</bean>
 
-    <bean id="showcaseStudioTypeLoader" class="org.opensingular.singular.form.showcase.dao.form.studio.ShowcaseStudioTypeLoader" />
+    <!--<bean id="showcaseStudioTypeLoader" class="org.opensingular.singular.form.showcase.dao.form.studio.ShowcaseStudioTypeLoader" />-->
 
-    <bean id="collectionGallery" class="com.opensingular.studio.core.CollectionGallery" />
+    <!--<bean id="collectionGallery" class="com.opensingular.studio.core.CollectionGallery" />-->
 
-    <bean id="persistenceFactory" class="com.opensingular.studio.persistence.StudioCollectionPersistenceFactory">
-        <constructor-arg ref="showcaseDocumentFactory"/>
-    </bean>
+    <!--<bean id="persistenceFactory" class="com.opensingular.studio.persistence.StudioCollectionPersistenceFactory">-->
+        <!--<constructor-arg ref="showcaseDocumentFactory"/>-->
+    <!--</bean>-->
 
     <bean id="filePersistence" class="org.opensingular.form.persistence.service.AttachmentPersistenceService" />
 	<bean id="attachmentContentDao" class="org.opensingular.form.persistence.dao.AttachmentContentDao" />

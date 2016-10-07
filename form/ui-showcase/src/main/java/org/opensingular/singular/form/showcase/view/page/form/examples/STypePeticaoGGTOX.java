@@ -89,7 +89,7 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
     }
 
     class DadosResponsavel {
-        final String[] responsaveis = new String[]{"Daniel", "Delfino", "Fabrício", "Lucas", "Tetsuo", "Vinícius"};
+        final String[] responsaveis = new String[]{"Daniel", "Fabrício", "Lucas", "Vinícius"};
 
         final STypeComposite<SIComposite> root;
         final STypeString                 responsavelTecnico, representanteLegal, concordo;

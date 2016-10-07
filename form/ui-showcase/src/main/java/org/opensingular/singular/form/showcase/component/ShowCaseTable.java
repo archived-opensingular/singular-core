@@ -47,7 +47,7 @@ public class ShowCaseTable {
 
     public ShowCaseTable() {
 
-        Reflections reflections = new Reflections("org.opensingular.singular.showcase.component");
+        Reflections reflections = new Reflections("org.opensingular.singular.form.showcase.component");
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(CaseItem.class);
         for (Class<?> aClass : annotated) {
 
