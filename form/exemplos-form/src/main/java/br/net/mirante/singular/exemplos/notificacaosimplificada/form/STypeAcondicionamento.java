@@ -4,20 +4,11 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeEmbalagemSecundaria;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.STypeUnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.util.transformer.Value;
+import br.net.mirante.singular.form.view.SViewListByMasterDetail;
 
 import java.util.Optional;
 
@@ -25,15 +16,15 @@ import java.util.Optional;
 public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
 
-    public STypeEmbalagemPrimaria embalagemPrimaria;
-    public STypeEmbalagemSecundaria embalagemSecundaria;
-    public STypeInteger quantidade;
-    public STypeAttachmentList estudosEstabilidade;
-    public STypeAttachmentList layoutsRotulagem;
+    public STypeEmbalagemPrimaria                       embalagemPrimaria;
+    public STypeEmbalagemSecundaria                     embalagemSecundaria;
+    public STypeInteger                                 quantidade;
+    public STypeAttachmentList                          estudosEstabilidade;
+    public STypeAttachmentList                          layoutsRotulagem;
     public STypeList<STypeLocalFabricacao, SIComposite> locaisFabricacao;
-    public STypeInteger prazoValidade;
-    public STypeUnidadeMedida unidadeMedida;
-    public STypeAttachmentList laudosControle;
+    public STypeInteger                                 prazoValidade;
+    public STypeUnidadeMedida                           unidadeMedida;
+    public STypeAttachmentList                          laudosControle;
 
     static DominioService dominioService(SInstance ins) {
         return ins.getDocument().lookupService(DominioService.class);
@@ -45,37 +36,39 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
 
         embalagemPrimaria = this.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
-        embalagemPrimaria.asAtrBasic().displayString("${descricao}");
+        embalagemPrimaria.asAtr().displayString("${descricao}");
         embalagemSecundaria = this.addField("embalagemSecundaria", STypeEmbalagemSecundaria.class);
 
         quantidade = this.addFieldInteger("quantidade", true);
         quantidade
                 .asAtrBootstrap()
                 .colPreference(3)
-                .asAtrBasic()
+                .asAtr()
                 .label("Quantidade");
 
         unidadeMedida = this.addField("unidadeMedida", STypeUnidadeMedida.class);
 
 
         prazoValidade = this.addFieldInteger("prazoValidade", true);
-        prazoValidade.asAtrBasic().label("Prazo de validade (meses)");
+        prazoValidade
+            .asAtr().label("Prazo de validade (meses)")
+            .asAtrBootstrap().colPreference(3);
 
         estudosEstabilidade = this.addFieldListOfAttachment("estudosEstabilidade", "estudoEstabilidade");
 
-        estudosEstabilidade.asAtrBasic()
+        estudosEstabilidade.asAtr()
                 .label("Estudo de estabilidade")
                 .displayString("<#list _inst as c>${c.name}<#sep>, </#sep></#list>");
         {
 
             STypeAttachment f = estudosEstabilidade.getElementsType();
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
+            nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 
         laudosControle = this.addFieldListOfAttachment("laudosControle", "laudoControle");
 
-        laudosControle.asAtrBasic()
+        laudosControle.asAtr()
                 .visible(false)
                 .label("Laudo de controle dos insumos ativos e do produto acabado")
                 .displayString("<#list _inst as c>${c.name}<#sep>, </#sep></#list>");
@@ -83,16 +76,16 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
             STypeAttachment f = laudosControle.getElementsType();
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
+            nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 
         {
             layoutsRotulagem = this.addFieldListOfAttachment("layoutsRotulagem", "layoutRotulagem");
-            layoutsRotulagem.asAtrBasic().label("Layout da rotulagem");
+            layoutsRotulagem.asAtr().label("Layout da rotulagem");
 
             STypeAttachment f = layoutsRotulagem.getElementsType();
             SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
-            nomeArquivo.asAtrBasic().label("Nome do Arquivo");
+            nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 
 
@@ -107,7 +100,7 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
                             label += String.valueOf(Optional.ofNullable(Value.of(i, "empresaPropria.razaoSocial")).orElse(""));
                             return label;
                         }).col(locaisFabricacao.getElementsType().empresaTerceirizada.etapasFabricacao()))
-                .asAtrBasic().label("Local de fabricação");
+                .asAtr().label("Local de fabricação");
 
 
     }

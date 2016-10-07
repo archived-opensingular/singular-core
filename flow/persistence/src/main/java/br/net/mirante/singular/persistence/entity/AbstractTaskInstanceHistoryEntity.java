@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.MUser;
@@ -70,6 +71,7 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK
     @Column(name = "DS_COMPLEMENTO")
     private String description;
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -78,6 +80,7 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK
         this.cod = cod;
     }
 
+    @Override
     public TASK_INSTANCE getTaskInstance() {
         return taskInstance;
     }
@@ -86,22 +89,27 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK
         this.taskInstance = taskInstance;
     }
 
+    @Override
     public Date getBeginDateAllocation() {
         return beginDateAllocation;
     }
 
+    @Override
     public void setBeginDateAllocation(Date beginDateAllocation) {
         this.beginDateAllocation = beginDateAllocation;
     }
 
+    @Override
     public Date getEndDateAllocation() {
         return endDateAllocation;
     }
 
+    @Override
     public void setEndDateAllocation(Date endDateAllocation) {
         this.endDateAllocation = endDateAllocation;
     }
 
+    @Override
     public TASK_HISTORIC_TYPE getType() {
         return type;
     }
@@ -110,6 +118,7 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK
         this.type = type;
     }
 
+    @Override
     public USER getAllocatedUser() {
         return allocatedUser;
     }
@@ -118,6 +127,7 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK
         this.allocatedUser = allocatedUser;
     }
 
+    @Override
     public USER getAllocatorUser() {
         return allocatorUser;
     }
@@ -126,10 +136,12 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK
         this.allocatorUser = allocatorUser;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }

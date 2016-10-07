@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
+import br.net.mirante.singular.support.persistence.util.EnumId;
+
 public enum SituacaoAnaliseComplementar implements EnumId<SituacaoAnaliseComplementar, Character> {
     NAO_INICIADA('N', "Não iniciada"),
     INICIADA('I', "Iniciada"),
@@ -27,11 +29,7 @@ public enum SituacaoAnaliseComplementar implements EnumId<SituacaoAnaliseComplem
     }
 
     @Override
-    public SituacaoAnaliseComplementar getEnum() {
-        return this;
-    }
-
-    public static SituacaoAnaliseComplementar valueOfEnum(Character codigo) {
+    public SituacaoAnaliseComplementar valueOfEnum(Character codigo) {
         for (SituacaoAnaliseComplementar tipo : values()) {
             if (tipo.getCodigo().equals(codigo)) {
                 return tipo;

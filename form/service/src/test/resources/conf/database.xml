@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+                           http://www.springframework.org/schema/jdbc
+                           http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd">
+
+    <!-- DATA SOURCE CONFIGURATION -->
+    <bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.h2.Driver"/>
+        <property name="url" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=2048;MULTI_THREADED=1"/>
+        <property name="username" value="sa"/>
+        <property name="password" value="sa"/>
+        <property name="removeAbandoned" value="true"/>
+        <property name="initialSize" value="5" />
+        <property name="maxActive" value="10" />
+        <property name="minIdle" value="1" />
+    </bean>
+
+
+    <!-- HIBERNATE CONFIGURATION -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- Incluir o pacote quando tiver um -->
+        <property name="packagesToScan" value="br.net.mirante.singular.showcase.dao.form,br.net.mirante.singular.form.persistence"/>
+
+        <property name="hibernateProperties">
+            <props>
+                <!-- Esse dialect do sql server foi colocado para testar se o script é compatível com sql server  -->
+                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">create</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- HIBERNATE TRANSACTION CONFIGURATION -->
+    <tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager"/>
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">
+        <jdbc:script location="classpath:/db/ddl/create-tables-form.sql" />
+        <jdbc:script location="classpath:/db/ddl/create-constraints-form.sql" />
+        <jdbc:script location="classpath:/db/ddl/create-oracle.sql" />
+    </jdbc:initialize-database>
+
+</beans>

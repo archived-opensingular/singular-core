@@ -6,23 +6,20 @@
 package br.net.mirante.singular.showcase.view.page.form.crud.services;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
+import br.net.mirante.singular.form.document.SDocument;
+import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
 import br.net.mirante.singular.form.spring.SpringServiceRegistry;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static br.net.mirante.singular.form.mform.RefService.*;
-import static br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler.newTemporaryHandler;
+import static br.net.mirante.singular.form.RefService.of;
+import static br.net.mirante.singular.form.type.core.attachment.handlers.FileSystemAttachmentHandler.newTemporaryHandler;
 
 @Component("showcaseDocumentFactory")
 public class ShowcaseDocumentFactory extends SpringSDocumentFactory {

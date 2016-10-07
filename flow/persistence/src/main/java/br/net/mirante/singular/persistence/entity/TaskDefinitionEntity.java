@@ -10,8 +10,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import br.net.mirante.singular.persistence.util.Constants;
-import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import br.net.mirante.singular.support.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 /**
  * The persistent class for the TB_DEFINICAO_TAREFA database table.
@@ -19,7 +19,7 @@ import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerato
 @Entity
 @GenericGenerator(name = AbstractTaskDefinitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
-public class TaskDefinitionEntity extends AbstractTaskDefinitionEntity<ProcessDefinitionEntity, TaskVersionEntity> {
+public class TaskDefinitionEntity extends AbstractTaskDefinitionEntity<ProcessDefinitionEntity, TaskVersionEntity, RoleTaskEntity> {
     private static final long serialVersionUID = 1L;
 
 //    // bi-directional many-to-one association to TaskRight
@@ -28,7 +28,7 @@ public class TaskDefinitionEntity extends AbstractTaskDefinitionEntity<ProcessDe
 //
 //    public List<TaskRight> getPermissoesTarefas() {
 //        return permissoesTarefas;
-//    }
+//    }\
 //
 //    public void setPermissoesTarefas(List<TaskRight> permissoesTarefas) {
 //        this.permissoesTarefas = permissoesTarefas;

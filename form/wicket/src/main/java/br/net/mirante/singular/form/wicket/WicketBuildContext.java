@@ -5,153 +5,120 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.MetaDataKey;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.CssReferenceHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.string.Strings;
-
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
+import br.net.mirante.singular.commons.lambda.ISupplier;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.document.SDocument;
+import br.net.mirante.singular.form.view.SView;
+import br.net.mirante.singular.form.view.ViewResolver;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackCompactPanel;
+import br.net.mirante.singular.form.wicket.feedback.SValidationFeedbackPanel;
 import br.net.mirante.singular.form.wicket.mapper.ListBreadcrumbMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
-import br.net.mirante.singular.form.wicket.resource.FormDefaultStyles;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import org.apache.wicket.Component;
+import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import java.util.stream.Stream.Builder;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class WicketBuildContext implements Serializable {
 
     static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
 
-    public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {};
+    public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {
+    };
 
     public static final HintKey<IModel<String>> TITLE_KEY                                     = () -> null;
     public static final HintKey<Boolean>        RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
 
+    private final List<WicketBuildContext>          children = newArrayList();
+    private final HashMap<HintKey<?>, Serializable> hints    = new HashMap<>();
+
     private final WicketBuildContext parent;
-    private final List<WicketBuildContext> children = newArrayList();
-    private final BSContainer<?> container;
-    private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
-    private final boolean hintsInherited;
-    private final BSContainer externalContainer;
-    private final BSContainer rootContainer;
+    private final BSContainer<?>     container;
+    private final boolean            hintsInherited;
+    private final BSContainer<?>     externalContainer;
 
     private IModel<? extends SInstance> model;
-    private UIBuilderWicket uiBuilderWicket;
-    private ViewMode viewMode;
-    private AnnotationMode annotation = AnnotationMode.NONE;
-    private HashMap<Integer, AnnotationComponent> annotations = newHashMap();
-    private HashMap<Integer,Component> annotationsTargetBuffer = newHashMap();
+    private UIBuilderWicket             uiBuilderWicket;
+    private ViewMode                    viewMode;
+
+    private AnnotationMode                        annotation              = AnnotationMode.NONE;
+    private HashMap<Integer, AnnotationComponent> annotations             = newHashMap();
+    private HashMap<Integer, Component>           annotationsTargetBuffer = newHashMap();
     private BSContainer annotationContainer;
 
     private boolean showBreadcrumb;
-    private List<String> breadCrumbs = newArrayList();
+    private boolean                                                      nested           = false;
+    private boolean                                                      titleInBlock     = false;
+    private List<String>                                                 breadCrumbs      = newArrayList();
     private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
     private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus;
 
+    private IBSComponentFactory preFormPanelFactory;
+
     private SView view;
 
-    public AnnotationMode annotation(){ return annotation; }
-    public void annotation(AnnotationMode mode){
-        Objects.requireNonNull(mode);
-        annotation = mode;
+    public WicketBuildContext(BSCol container, BSContainer externalContainer, IModel<? extends SInstance> model) {
+        this(null, container, externalContainer, false, model);
     }
 
-    public void setAnnotationContainer(BSContainer annotationContainer) {
-        this.annotationContainer = annotationContainer;
-    }
-    public void add(AnnotationComponent c){
-        Integer id = c.referenced().getMInstancia().getId();
-        annotations.put(id, c);
-    }
-    public void updateAnnotations(Component c, SInstance target){
-        if(target != null){
-            for(WicketBuildContext ctx : contextChain()){
-                if(ctx.annotations.containsKey(target.getId())){
-                    ctx.annotations.get(target.getId()).setReferencedComponent(c);
-                    return;
-                }
-            }
+    protected WicketBuildContext(WicketBuildContext parent,
+                                 BSContainer<?> container,
+                                 BSContainer externalContainer,
+                                 boolean hintsInherited,
+                                 IModel<? extends SInstance> model) {
 
-            annotationsTargetBuffer.put(target.getId(),c);
-        }
-    }
-
-    public Optional<Component> getAnnotationTargetFor(SInstance target){
-        if (!isRootContext()) {
-            return getRootContext().getAnnotationTargetFor(target);
-        }
-        Component component = annotationsTargetBuffer.get(target.getId());
-        if(component != null) return Optional.of(component);
-        return Optional.empty();
-    }
-
-    /**
-     * @return Components that must be refreshed whent the context is changed
-     */
-    public List<Component> updateOnRefresh(){
-        return newArrayList(annotationContainer.getParent());
-    }
-
-    private List<WicketBuildContext> contextChain() {
-        List<WicketBuildContext> contextChain = newArrayList(this);
-        WicketBuildContext ctx = this;
-        while(ctx.getParent() != null){
-            ctx = ctx.getParent();
-            contextChain.add(ctx);
-        }
-        return contextChain;
-    }
-
-    public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends SInstance> model) {
-        this(null, container, bodyContainer, false, model);
-    }
-
-    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer,
-                              boolean hintsInherited, IModel<? extends SInstance> model) {
         this.parent = parent;
-        if(parent != null){
+        if (parent != null) {
             parent.children.add(this);
         }
         this.container = container;
         this.hintsInherited = hintsInherited;
         this.externalContainer = externalContainer;
-        this.rootContainer = ObjectUtils.defaultIfNull((parent == null) ? null : parent.getRootContainer(), container);
         this.model = model;
         WicketFormUtils.markAsCellContainer(container);
         container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
+        container.setMetaData(METADATA_KEY, this);
+    }
+
+    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
+        return configureNestedContext(new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model));
+    }
+
+    public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
+        return configureNestedContext(new WicketBuildContext(this, childContainer, externalContainer, hintsInherited, model));
+    }
+
+    private WicketBuildContext configureNestedContext(WicketBuildContext context){
+        context.setNested(nested);
+        return context;
     }
 
     public WicketBuildContext init(UIBuilderWicket uiBuilderWicket, ViewMode viewMode) {
@@ -173,85 +140,156 @@ public class WicketBuildContext implements Serializable {
         WicketFormUtils.setInstanceId(getContainer(), instance);
         WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
 
-        if (getContainer() != null) {
-            getContainer().add(new Behavior() {
-                @Override
-                public void renderHead(Component component, IHeaderResponse response) {
-                    super.renderHead(component, response);
-                    response.render(CssReferenceHeaderItem.forReference(FormDefaultStyles.RESOURCE_REFERENCE));
-                }
-            });
-        }
-
         return this;
+    }
+
+    public AnnotationMode getAnnotationMode() {
+        return annotation;
+    }
+
+    public void setAnnotationMode(AnnotationMode mode) {
+        Objects.requireNonNull(mode);
+        annotation = mode;
+    }
+
+    public void setAnnotationContainer(BSContainer annotationContainer) {
+        this.annotationContainer = annotationContainer;
+    }
+
+    public void add(AnnotationComponent c) {
+        Integer id = c.referenced().getMInstancia().getId();
+        annotations.put(id, c);
+    }
+
+    public void updateAnnotations(Component c, SInstance target) {
+        if (target != null) {
+            for (WicketBuildContext ctx : contextChain()) {
+                if (ctx.annotations.containsKey(target.getId())) {
+                    ctx.annotations.get(target.getId()).setReferencedComponent(c);
+                    return;
+                }
+            }
+
+            annotationsTargetBuffer.put(target.getId(), c);
+        }
+    }
+
+    public Optional<Component> getAnnotationTargetFor(SInstance target) {
+        if (!isRootContext()) {
+            return getRootContext().getAnnotationTargetFor(target);
+        }
+        Component component = annotationsTargetBuffer.get(target.getId());
+        if (component != null)
+            return Optional.of(component);
+        return Optional.empty();
+    }
+
+    /**
+     * @return Components that must be refreshed whent the context is changed
+     */
+    public List<Component> updateOnRefresh() {
+        return newArrayList(annotationContainer.getParent());
+    }
+
+    private List<WicketBuildContext> contextChain() {
+        List<WicketBuildContext> contextChain = newArrayList(this);
+        WicketBuildContext       ctx          = this;
+        contextChain.add(this);
+        while (ctx.getParent() != null) {
+            ctx = ctx.getParent();
+            contextChain.add(ctx.getParent());
+        }
+        return contextChain;
     }
 
     /**
      * Adiciona um behavior que executa o update atributes do SDocument em toda requisição.
-     *
+     * <p>
      * Normalmente este método não deve ser chamado externamente,
      * porem pode existir situações em que o container root não é atualizado
      * e novos componentes filhos são adicionados.
      *
-     * @see br.net.mirante.singular.form.mform.document.SDocument
+     * @see SDocument
      * @see br.net.mirante.singular.form.wicket.mapper.TabMapper
      */
-    public void initContainerBehavior(){
+    public void initContainerBehavior() {
         getContainer().add(new InitRootContainerBehavior(getModel()));
     }
 
     /**
      * Configura formComponentes, adicionando comportamentos de acordo com sua definição.
      *
-     * @param mapper o mapper
+     * @param mapper        o mapper
      * @param formComponent o componente que tem como model IMInstanciaAwareModel
-     *
      */
-    public void configure(IWicketComponentMapper mapper, FormComponent<?> formComponent) {
+    public <C extends FormComponent<?>> C configure(IWicketComponentMapper mapper, C formComponent) {
         final IModel defaultModel = formComponent.getDefaultModel();
-        if (defaultModel != null && IMInstanciaAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
+        if (defaultModel != null && ISInstanceAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
             WicketFormUtils.setCellContainer(formComponent, getContainer());
             formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
             if (formComponent.getLabel() == null) {
                 // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
                 formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
             }
-            final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
-            final SType<?> tipo = model.getMInstancia().getType();
-            if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
-                mapper.addAjaxUpdate(
-                        formComponent,
-                        IMInstanciaAwareModel.getInstanceModel(model),
-                        new OnFieldUpdatedListener());
-            }
+            final ISInstanceAwareModel<?> model = (ISInstanceAwareModel<?>) defaultModel;
+            // final SType<?> tipo = model.getMInstancia().getType();
+            // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
+            mapper.addAjaxUpdate(
+                    formComponent,
+                    ISInstanceAwareModel.getInstanceModel(model),
+                    new OnFieldUpdatedListener());
         }
-    }
-
-    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
-        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model);
+        return formComponent;
     }
 
     public void configureContainer(IModel<String> title) {
         setHint(TITLE_KEY, title);
     }
-    
+
     public Optional<IModel<String>> resolveContainerTitle() {
         return Optional.ofNullable(getHint(TITLE_KEY));
     }
-    
-//    public boolean resolveReceivesInvisibleInnerComponentErrors() {
-//        return Boolean.TRUE.equals(getHint(RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY));
-//    }
 
-    public static Optional<WicketBuildContext> get(Component comp) {
+    //    public boolean resolveReceivesInvisibleInnerComponentErrors() {
+    //        return Boolean.TRUE.equals(getHint(RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY));
+    //    }
+
+    public static Optional<WicketBuildContext> find(Component comp) {
         return Optional.ofNullable(comp.getMetaData(METADATA_KEY));
+    }
+
+    public static Optional<WicketBuildContext> findNearest(Component comp) {
+        do {
+            Optional<WicketBuildContext> ctx = find(comp);
+            if (ctx.isPresent())
+                return ctx;
+            comp = comp.getParent();
+        } while (comp != null);
+        return Optional.empty();
+    }
+
+    public static Stream<WicketBuildContext> streamParentContexts(Component comp) {
+        return findNearest(comp)
+                .map(ctx -> ctx.streamParentContexts())
+                .orElse(Stream.empty());
+    }
+
+    public Stream<WicketBuildContext> streamParentContexts() {
+        final Builder<WicketBuildContext> sb = Stream.builder();
+        for (WicketBuildContext ctx = this; ctx != null; ctx = ctx.getParent())
+            sb.add(ctx);
+        return sb.build();
+    }
+
+    public static Optional<WicketBuildContext> findTopLevel(Component comp) {
+        return findNearest(comp).map(it -> it.getRootContext());
     }
 
     protected static <T> String resolveSimpleLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
-        if (model instanceof IMInstanciaAwareModel<?>) {
-            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
-            return instancia.as(SPackageBasic.aspect()).getLabel();
+        if (model instanceof ISInstanceAwareModel<?>) {
+            SInstance instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
+            return instancia.asAtr().getLabel();
         }
         return "[" + formComponent.getId() + "]";
     }
@@ -263,11 +301,11 @@ public class WicketBuildContext implements Serializable {
      */
     protected static <T> String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
-        if (model instanceof IMInstanciaAwareModel<?>) {
-            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
-            List<String> labels = new ArrayList<>();
+        if (model instanceof ISInstanceAwareModel<?>) {
+            SInstance    instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
+            List<String> labels    = new ArrayList<>();
             while (instancia != null) {
-                labels.add(instancia.as(SPackageBasic.aspect()).getLabel());
+                labels.add(instancia.asAtr().getLabel());
                 instancia = instancia.getParent();
             }
             labels.removeIf(it -> Strings.defaultIfEmpty(it, "").trim().isEmpty());
@@ -293,15 +331,46 @@ public class WicketBuildContext implements Serializable {
     }
 
     public BSContainer getRootContainer() {
-        return rootContainer;
+        return getRootContext().getContainer();
     }
 
-    public WicketBuildContext getParent() { return parent;  }
+    public WicketBuildContext getParent() {
+        return parent;
+    }
 
-    public List<WicketBuildContext> getChildren() { return newArrayList(children);}
+    public List<WicketBuildContext> getChildren() {
+        return newArrayList(children);
+    }
 
     public BSContainer<?> getContainer() {
         return container;
+    }
+
+    public SValidationFeedbackPanel createFeedbackPanel(String id) {
+        return createFeedbackPanel(id, feedback -> ISValidationFeedbackHandlerListener.refresh(feedback));
+    }
+
+    public SValidationFeedbackPanel createFeedbackPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
+        return createFeedbackPanel(() -> new SValidationFeedbackPanel(id, getContainer()), listenerFunc);
+    }
+
+    public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id) {
+        return createFeedbackCompactPanel(id, feedback -> ISValidationFeedbackHandlerListener.refresh(feedback));
+    }
+
+    public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
+        return createFeedbackPanel(() -> new SValidationFeedbackCompactPanel(id, getContainer()), listenerFunc);
+    }
+
+    private <C extends Component> C createFeedbackPanel(ISupplier<C> factory, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
+        C                          feedback = factory.get();
+        SValidationFeedbackHandler handler  = SValidationFeedbackHandler.bindTo(getContainer()).addInstanceModel(getModel());
+        if (listenerFunc != null) {
+            ISValidationFeedbackHandlerListener listener = listenerFunc.apply(feedback);
+            if (listener != null)
+                handler.addListener(listener);
+        }
+        return feedback;
     }
 
     public BSContainer<?> getExternalContainer() {
@@ -327,7 +396,7 @@ public class WicketBuildContext implements Serializable {
     public void rebuild(List<String> nomesTipo) {
         IModel<? extends SInstance> originalModel = getModel();
         for (String nomeTipo : nomesTipo) {
-            SInstanceCampoModel<SInstance> subtree = new SInstanceCampoModel<>(originalModel, nomeTipo);
+            SInstanceFieldModel<SInstance> subtree = new SInstanceFieldModel<>(originalModel, nomeTipo);
             setModel(subtree);
             getUiBuilderWicket().build(this, viewMode);
         }
@@ -350,7 +419,7 @@ public class WicketBuildContext implements Serializable {
 
         @Override
         public void onConfigure(Component component) {
-            if( instanceModel.getObject() != null) {
+            if (instanceModel.getObject() != null) {
                 instanceModel.getObject().getDocument().updateAttributes(null);
             }
         }
@@ -358,24 +427,32 @@ public class WicketBuildContext implements Serializable {
 
     private static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
 
+        private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(WicketFormProcessing.class);
+
         @Override
-        public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
-            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m);
+        public void onValidate(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
+            WicketFormProcessing.onFieldValidate((FormComponent<?>) s, Optional.of(t), m);
+        }
+
+        @Override
+        public void onProcess(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
+            long ms = Calendar.getInstance().getTimeInMillis();
+            WicketFormProcessing.onFieldProcess((FormComponent<?>) s, Optional.of(t), m);
+            LOGGER.info("[SINGULAR] Tempo processando (ms): " + (Calendar.getInstance().getTimeInMillis() - ms));
         }
 
         @Override
         public void onError(Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel) {
             WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel);
         }
-
     }
 
     public UIBuilderWicket getUiBuilderWicket() {
-        return uiBuilderWicket;
+        return (uiBuilderWicket != null) ? uiBuilderWicket : getParent().getUiBuilderWicket();
     }
 
     public ViewMode getViewMode() {
-        return viewMode;
+        return (viewMode != null) ? viewMode : getParent().getViewMode();
     }
 
     public SView getView() {
@@ -384,6 +461,10 @@ public class WicketBuildContext implements Serializable {
 
     public IModel<? extends SInstance> getModel() {
         return model;
+    }
+
+    public IModel<?> getValueModel() {
+        return new SInstanceValueModel<>(getModel());
     }
 
     public void setModel(IModel<? extends SInstance> model) {
@@ -423,6 +504,30 @@ public class WicketBuildContext implements Serializable {
     @SuppressWarnings("unchecked")
     public <T extends SInstance> T getCurrentInstance() {
         return (T) getModel().getObject();
+    }
+
+    public boolean isTitleInBlock() {
+        return titleInBlock;
+    }
+
+    public void setTitleInBlock(boolean titleInBlock) {
+        this.titleInBlock = titleInBlock;
+    }
+
+    public boolean isNested() {
+        return nested;
+    }
+
+    public void setNested(boolean nested) {
+        this.nested = nested;
+    }
+
+    public <T extends Component> IBSComponentFactory<T> getPreFormPanelFactory() {
+        return preFormPanelFactory;
+    }
+
+    public <T extends Component> void setPreFormPanelFactory(IBSComponentFactory<T> preFormPanelFactory) {
+        this.preFormPanelFactory = preFormPanelFactory;
     }
 
 }

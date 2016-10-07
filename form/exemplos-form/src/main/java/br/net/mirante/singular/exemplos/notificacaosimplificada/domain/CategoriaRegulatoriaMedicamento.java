@@ -1,7 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain;
 
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 
 import javax.persistence.Entity;

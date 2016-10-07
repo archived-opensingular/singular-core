@@ -1,7 +1,22 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.NotificacaoSimplificadaGenericDAO;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.EnderecoEmpresaInternacionalDAO;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.GenericDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.CategoriaRegulatoriaMedicamento;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
@@ -13,21 +28,11 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Substancia;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.UnidadeMedida;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EmpresaInternacional;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacionalId;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,7 +42,7 @@ public class DominioService {
     private VocabularioControladoDAO vocabularioControladoDAO;
 
     @Inject
-    private GenericDAO genericDAO;
+    private NotificacaoSimplificadaGenericDAO genericDAO;
 
     @Inject
     private EnderecoEmpresaInternacionalDAO enderecoEmpresaInternacionalDAO;
@@ -136,8 +141,13 @@ public class DominioService {
         return vocabularioControladoDAO.findByDescricao(FormaFarmaceuticaBasica.class, filtro);
     }
 
-    public List<FormaFarmaceuticaBasica> formasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado, String filtro) {
-        return vocabularioControladoDAO.formasFarmaceuticasDinamizadas(configuracoesDinamizado, filtro);
+    public List<FormaFarmaceuticaBasica> formasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado,
+                                                                        String descricao, String conceito, long first, long count) {
+        return vocabularioControladoDAO.formasFarmaceuticasDinamizadas(configuracoesDinamizado, descricao, conceito, first, count);
+    }
+
+    public Long countFormasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado, String descricao, String conceito) {
+        return vocabularioControladoDAO.countformasFarmaceuticasDinamizadas(configuracoesDinamizado, descricao, conceito);
     }
 
     public List<Triple> concentracoes(Integer idSubstancia) {
@@ -278,12 +288,24 @@ public class DominioService {
         return enderecoEmpresaInternacionalDAO.buscarEnderecos(filtro, 5);
     }
 
+    public EnderecoEmpresaInternacional buscarEmpresaInternacional(Long idEmpresa, Short sequencial) {
+        final EmpresaInternacional emp = genericDAO.findByUniqueProperty(EmpresaInternacional.class, "id", idEmpresa);
+        EnderecoEmpresaInternacionalId id = new EnderecoEmpresaInternacionalId();
+        id.setEmpresaInternacional(emp);
+        id.setSequencialEndereco(sequencial);
+        return enderecoEmpresaInternacionalDAO.get(id);
+    }
     public List<PessoaJuridicaNS> empresaTerceirizada(String filtro) {
         return genericDAO.findByProperty(PessoaJuridicaNS.class, "razaoSocial", filtro, 5);
     }
 
     public List<PessoaJuridicaNS> outroLocalFabricacao(String filtro) {
         return genericDAO.findByProperty(PessoaJuridicaNS.class, "razaoSocial", filtro, 5);
+    }
+
+
+    public PessoaJuridicaNS buscarLocalFabricacao(String cod) {
+        return genericDAO.findByUniqueProperty(PessoaJuridicaNS.class, "cod", cod);
     }
 
     public List<EtapaFabricacao> etapaFabricacao(String filtro) {
@@ -298,7 +320,7 @@ public class DominioService {
         return vocabularioControladoDAO.listCategoriasRegulatoriasMedicamentoDinamizado(filtro);
     }
 
-    public List<Pair> nomenclaturaBotanica(String filtro) {
+    public List<Pair> nomenclaturaBotanica() {
         List<Pair> list = new ArrayList<>();
 
         long i = 1L;
@@ -375,4 +397,9 @@ public class DominioService {
         Integer idNomenclaturaFake = idNomenclatura % 9 + 1;
         return mapa.get(idNomenclaturaFake);
     }
+
+    public <T extends VocabularioControlado> List<VocabularioControladoDTO> buscarVocabulario(Class<T> vocabularioClass, String query){
+        return vocabularioControladoDAO.buscarVocabulario(vocabularioClass, query);
+    }
+
 }

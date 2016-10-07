@@ -16,6 +16,8 @@ import br.net.mirante.singular.showcase.view.template.Template;
 @SuppressWarnings("serial")
 public class ListPage extends Template {
 
+
+
     protected Content getContent(String id) {
         return new ListContent(id);
     }

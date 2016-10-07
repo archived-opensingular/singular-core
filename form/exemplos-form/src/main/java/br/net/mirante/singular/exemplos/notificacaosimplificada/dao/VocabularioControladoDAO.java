@@ -1,9 +1,11 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.*;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import br.net.mirante.singular.support.persistence.BaseDAO;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -18,6 +20,10 @@ import java.util.Map;
 @Repository
 public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Long> {
 
+
+    public VocabularioControladoDAO() {
+        super(VocabularioControlado.class);
+    }
 
     public <T extends VocabularioControlado> List<T> findByDescricao(Class<T> vocabularioClass, String descricao) {
         final Criteria criteria = getSession().createCriteria(vocabularioClass);
@@ -65,7 +71,40 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
         return criteria.list();
     }
 
-    public List<FormaFarmaceuticaBasica> formasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado, String filtro) {
+    public Long countformasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado,
+                                                    String descricao, String conceito) {
+
+        final StringBuilder       hql    = new StringBuilder();
+        final Map<String, Object> params = new HashMap<>();
+
+        hql.append(" SELECT count(fb.id) FROM  FormaFarmaceuticaBasica fb WHERE 1=1 ");
+
+        if (configuracoesDinamizado != null && !configuracoesDinamizado.isEmpty()) {
+            int mod = 3;
+            hql.append(" AND ( 1=1");
+            configuracoesDinamizado.forEach(i -> {
+                if (i != null) {
+                    hql.append(" OR mod(").append("fb.id,").append(mod).append(") = ").append(i % mod);
+                }
+            });
+            hql.append(" ) ");
+        }
+
+        if (descricao != null) {
+            hql.append(" AND upper(fb.descricao) like upper(:filtro)");
+            params.put("filtro", "%" + descricao + "%");
+        }
+
+        if (conceito != null) {
+            hql.append(" AND upper(fb.conceito) like upper(:conceito)");
+            params.put("conceito", "%" + conceito + "%");
+        }
+
+        return (Long) setParametersQuery(getSession().createQuery(hql.toString()), params).uniqueResult();
+    }
+
+    public List<FormaFarmaceuticaBasica> formasFarmaceuticasDinamizadas(List<Integer> configuracoesDinamizado,
+                                                                        String descricao, String conceito, long first, long count) {
 
         final StringBuilder       hql    = new StringBuilder();
         final Map<String, Object> params = new HashMap<>();
@@ -83,14 +122,22 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
             hql.append(" ) ");
         }
 
-        if (filtro != null) {
+        if (descricao != null) {
             hql.append(" AND upper(fb.descricao) like upper(:filtro)");
-            params.put("filtro", "%" + filtro + "%");
+            params.put("filtro", "%" + descricao + "%");
+        }
+
+        if (conceito != null) {
+            hql.append(" AND upper(fb.conceito) like upper(:conceito)");
+            params.put("conceito", "%" + conceito + "%");
         }
 
         hql.append(" order by fb.descricao");
 
-        return setParametersQuery(getSession().createQuery(hql.toString()), params).list();
+        return setParametersQuery(getSession().createQuery(hql.toString()), params)
+                .setFirstResult((int) first)
+                .setMaxResults((int) count)
+                .list();
     }
 
 
@@ -110,5 +157,21 @@ public class VocabularioControladoDAO extends BaseDAO<VocabularioControlado, Lon
         int maxResults = ObjectUtils.defaultIfNull(idConfig, 5) % 6;
 
         return setParametersQuery(getSession().createQuery(hql.toString()), params).setMaxResults(maxResults).list();
+    }
+
+    public <T extends VocabularioControlado> List<VocabularioControladoDTO> buscarVocabulario(Class<T> vocabularioClass, String query) {
+
+        String              hql    = "";
+        Map<String, Object> params = new HashMap<>();
+
+        hql += " select new " + VocabularioControladoDTO.class.getName() + " (v.id, v.descricao) ";
+        hql += " from " + vocabularioClass.getName() + " v ";
+
+        if (!StringUtils.isEmpty(query)) {
+            hql += " where UPPER (v.descricao) like UPPER(:descricao) ";
+            params.put("descricao", query);
+        }
+
+        return setParametersQuery(getSession().createQuery(hql), params).list();
     }
 }

@@ -1,11 +1,15 @@
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import java.util.List;
-
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.io.FormSerializationUtil;
+import br.net.mirante.singular.form.io.FormSerialized;
+import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -14,16 +18,11 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
-import br.net.mirante.singular.form.mform.io.FormSerialized;
-import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import java.util.List;
+
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class AnnotationWicketTest {
@@ -32,7 +31,6 @@ public class AnnotationWicketTest {
         @Test
         public void rendersSomethingAsATitle() {
             tester.assertContains("Comentários");
-            tester.assertContainsNot("Comentários sobre");
         }
 
         @Test public void rendersAButtonForEachAnnotatedFiedl(){
@@ -70,7 +68,7 @@ public class AnnotationWicketTest {
         @Override
         protected void buildBaseType(STypeComposite<?> mockType) {
             super.buildBaseType(mockType);
-            annotated1.asAtrBasic().label("The Group");
+            annotated1.asAtr().label("The Group");
         }
 
         @Test public void rendersTheTitleWithTheFieldLabel(){
@@ -132,7 +130,7 @@ public class AnnotationWicketTest {
             SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
 
             annotation1.setText("What's up doc?");
-
+            instance.asAtrAnnotation().clear();
             instance.asAtrAnnotation().loadAnnotations(backup);
         }
 

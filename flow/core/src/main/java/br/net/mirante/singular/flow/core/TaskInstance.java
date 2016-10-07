@@ -6,11 +6,7 @@
 package br.net.mirante.singular.flow.core;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -100,6 +96,16 @@ public class TaskInstance {
         return (X) entityTask;
     }
 
+    public final <X extends IEntityTaskInstance> X getEntityTaskInstance(Integer versionStamp) {
+        IEntityTaskInstance e = getEntityTaskInstance();
+        if(versionStamp != null){
+            if(versionStamp < e.getVersionStamp()){
+                throw new RuntimeException("Your Task Version Number is Outdated.");
+            }
+        }
+        return (X) e;
+    }
+
     private IEntityTaskVersion getTaskVersion() {
         return entityTask.getTask();
     }
@@ -176,7 +182,14 @@ public class TaskInstance {
         return new TransitionRef(this, getFlowTask().getTransicaoOrException(transitionName));
     }
 
-    public void relocateTask(MUser author, MUser user, boolean notify, String relocationCause) {
+    public void relocateTask(MUser author, MUser user,
+                             boolean notify, String relocationCause) {
+        relocateTask(author, user, notify, relocationCause, null);
+    }
+
+    public void relocateTask(MUser author, MUser user,
+                             boolean notify, String relocationCause,
+                             Integer versionStamp) {
         if (user != null && !isPeople()) {
             throw new SingularFlowException(
                     getProcessInstance().createErrorMsg("A tarefa '" + getName() + "' não pode ser realocada, pois não é do tipo pessoa"));
@@ -188,7 +201,7 @@ public class TaskInstance {
 
         endLastAllocation();
 
-        getPersistenceService().relocateTask(getEntityTaskInstance(), user);
+        getPersistenceService().relocateTask(getEntityTaskInstance(versionStamp), user);
 
         String trimmedRelocationCause = StringUtils.trimToNull(relocationCause);
 

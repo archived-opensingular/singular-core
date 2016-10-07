@@ -14,6 +14,8 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 public class BSHeadersToolbar<S> extends HeadersToolbar<S> {
 
     public <T> BSHeadersToolbar(DataTable<T, S> table, ISortStateLocator<S> stateLocator) {
@@ -32,13 +34,22 @@ public class BSHeadersToolbar<S> extends HeadersToolbar<S> {
     }
 
     private final class BSOrderByBorder extends OrderByBorder<S> {
+
         private BSOrderByBorder(String id, S property, ISortStateLocator<S> stateLocator) {
             super(id, property, stateLocator);
         }
+
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            add($b.classAppender("default-cursor"));
+        }
+
         @Override
         protected void onSortChanged() {
             getTable().setCurrentPage(0);
         }
+
         @Override
         protected OrderByLink<S> newOrderByLink(String id, S property, ISortStateLocator<S> stateLocator) {
             return new BSAjaxOrderByLink(id, property, stateLocator);

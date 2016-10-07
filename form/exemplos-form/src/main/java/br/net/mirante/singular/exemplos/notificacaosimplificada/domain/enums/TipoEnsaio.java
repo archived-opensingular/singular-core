@@ -1,5 +1,7 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums;
 
+import br.net.mirante.singular.support.persistence.util.EnumId;
+
 public enum TipoEnsaio implements EnumId<TipoEnsaio, Character> {
     /**
      * Ensaio de embalagem
@@ -23,11 +25,6 @@ public enum TipoEnsaio implements EnumId<TipoEnsaio, Character> {
     private String descricao;
 
     @Override
-    public TipoEnsaio getEnum() {
-        return this;
-    }
-
-    @Override
     public Character getCodigo() {
         return codigo;
     }
@@ -37,7 +34,8 @@ public enum TipoEnsaio implements EnumId<TipoEnsaio, Character> {
         return descricao;
     }
 
-    public static TipoEnsaio valueOfEnum(Character id) {
+    @Override
+    public TipoEnsaio valueOfEnum(Character id) {
         for (TipoEnsaio tipo : values()) {
             if (tipo.getCodigo().equals(id)) {
                 return tipo;

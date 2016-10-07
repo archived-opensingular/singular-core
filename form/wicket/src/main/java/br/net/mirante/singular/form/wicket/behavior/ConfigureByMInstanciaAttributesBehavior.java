@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.behavior;
 
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SInstanceViewState;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
@@ -13,10 +16,6 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
-
-import br.net.mirante.singular.form.mform.SInstanceViewState;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
 
@@ -36,25 +35,8 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
         handleVisibility(component);
     }
 
-    /**
-     * Configura a visualização de um componente, caso o mesmo seja marcado como invisivel, ira limpar o valor da instancia.
-     *
-     * @param comp
-     */
     private void handleVisibility(Component comp) {
-        boolean isVisible = isInstanceVisible(comp);
-        if (!isVisible) {
-            final IModel<?> model = comp.getDefaultModel();
-            if (model != null) {
-                if (IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
-                    final SInstance instancia = ((IMInstanciaAwareModel) model).getMInstancia();
-                    if (instancia != null) {
-                        instancia.clearInstance();
-                    }
-                }
-            }
-        }
-        comp.setVisible(isVisible);
+        comp.setVisible(isInstanceVisible(comp));
     }
 
 
@@ -75,6 +57,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
 
         SInstance instance = resolveInstance(component);
         if (instance != null) {
+            tag.put("snglr", "");//identifica como sendo o singular
             tag.put("data-instance-id", instance.getId());
             tag.put("data-instance-path", instance.getPathFull());
         }
@@ -108,8 +91,8 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
     private static SInstance resolveInstance(Component component) {
         if (component != null) {
             IModel<?> model = component.getDefaultModel();
-            if (model != null && IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
-                return ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            if (model != null && ISInstanceAwareModel.class.isAssignableFrom(model.getClass())) {
+                return ((ISInstanceAwareModel<?>) model).getMInstancia();
             }
         }
         return null;

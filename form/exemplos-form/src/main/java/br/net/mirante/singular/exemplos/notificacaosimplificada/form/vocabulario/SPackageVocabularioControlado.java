@@ -5,18 +5,13 @@
 
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaInternacional;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaPropria;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeEmpresaTerceirizada;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.form.STypeLocalFabricacao;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.PackageBuilder;
+import br.net.mirante.singular.form.SInfoPackage;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SPackage;
 
-@SInfoType(spackage = SPackageVocabularioControlado.class)
+@SInfoPackage(name = SPackageVocabularioControlado.PACOTE)
 public class SPackageVocabularioControlado extends SPackage {
 
     public static final String PACOTE        = "mform.peticao.anvisa.dominio";
@@ -33,7 +28,7 @@ public class SPackageVocabularioControlado extends SPackage {
 
 
     @Override
-    protected void carregarDefinicoes(PackageBuilder pb) {
+    protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeEmbalagemPrimaria.class);
         pb.createType(STypeCategoriaRegulatoria.class);
         pb.createType(STypeEmbalagemSecundaria.class);

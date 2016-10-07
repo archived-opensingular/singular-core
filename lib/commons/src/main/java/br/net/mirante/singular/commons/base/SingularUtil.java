@@ -11,8 +11,15 @@ import java.text.Normalizer;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import com.google.common.base.Throwables;
+
 public final class SingularUtil {
 
+    public static RuntimeException propagate(Throwable throwable) {
+        Throwables.propagateIfPossible(throwable, SingularException.class);
+        throw new SingularException(throwable);
+    }
+    
     public static String toSHA1(Object object) {
         return toSHA1(object.toString().getBytes());
     }

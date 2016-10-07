@@ -1,20 +1,19 @@
 package br.net.mirante.singular.form.wicket.mapper.table;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.STypeList;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewListByTable;
+import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TableListWithCompositeTypeTest extends SingularFormBaseTest {
 
@@ -29,7 +28,7 @@ public class TableListWithCompositeTypeTest extends SingularFormBaseTest {
         final STypeComposite<?> mockTypeComposite = mockList.getElementsType();
 
         mockList.withView(SViewListByTable::new);
-        mockList.asAtrBasic()
+        mockList.asAtr()
                 .label("Mock Type Composite");
 
         simpleString = mockTypeComposite.addFieldString("mockTypeComposite", true);

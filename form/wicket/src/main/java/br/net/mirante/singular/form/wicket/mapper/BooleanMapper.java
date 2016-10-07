@@ -5,26 +5,30 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
+
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
-import br.net.mirante.singular.form.wicket.model.AtributoModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.AttributeModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class BooleanMapper implements IWicketComponentMapper {
 
@@ -32,29 +36,44 @@ public class BooleanMapper implements IWicketComponentMapper {
 
         final IModel<? extends SInstance> model = ctx.getModel();
         final BSControls formGroup = ctx.getContainer().newFormGroup();
-        final AtributoModel<String> labelModel = new AtributoModel<>(model, SPackageBasic.ATR_LABEL);
+        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
 
         switch (ctx.getViewMode()) {
-            case VISUALIZATION:
+            case READ_ONLY:
                 buildForVisualization(model, formGroup, labelModel);
                 break;
-            case EDITION:
+            case EDIT:
                 buildForEdition(ctx, model, formGroup, labelModel);
                 break;
         }
     }
 
     private void buildForEdition(WicketBuildContext ctx, IModel<? extends SInstance> model, BSControls formGroup,
-                                 AtributoModel<String> labelModel) {
-        final CheckBox input = new CheckBox(model.getObject().getName(), new MInstanciaValorModel<>(model));
-        formGroup.appendCheckbox(input, buildLabel("_", labelModel));
+                                 AttributeModel<String> labelModel) {
+
+        final CheckBox input = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
+        final Label label = buildLabel("_", labelModel);
+        adjustJSEvents(label);
+        formGroup.appendCheckbox(input, label);
         input.add(DisabledClassBehavior.getInstance());
-        formGroup.appendFeedback(formGroup, new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING));
+        formGroup.appendFeedback(formGroup, new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING), IConsumer.noop());
         ctx.configure(this, input);
+
+        label.add(new ClassAttributeModifier() {
+            @Override
+            protected Set<String> update(Set<String> oldClasses) {
+                if (model.getObject().isRequired()) {
+                    oldClasses.add("singular-form-required");
+                } else {
+                    oldClasses.remove("singular-form-required");
+                }
+                return oldClasses;
+            }
+        });
     }
 
     private void buildForVisualization(IModel<? extends SInstance> model, BSControls formGroup,
-                                       AtributoModel<String> labelModel) {
+                                       AttributeModel<String> labelModel) {
         final Boolean checked;
 
         final SInstance mi = model.getObject();
@@ -74,8 +93,14 @@ public class BooleanMapper implements IWicketComponentMapper {
         tp.add(wellBorder.add(buildLabel("label", labelModel)));
     }
 
-    protected Label buildLabel(String id, AtributoModel<String> labelModel) {
+    protected Label buildLabel(String id, AttributeModel<String> labelModel) {
         return (Label) new Label(id, labelModel.getObject())
-                .setEscapeModelStrings(false);
+            .setEscapeModelStrings(false);
     }
+
+    @Override
+    public void adjustJSEvents(Component comp) {
+        comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS, ADD_MOUSEDOWN_HANDLERS));
+    }
+
 }

@@ -8,15 +8,15 @@ package br.net.mirante.singular.persistence.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.net.mirante.singular.persistence.util.Constants;
-import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
 import org.hibernate.annotations.GenericGenerator;
+
+import br.net.mirante.singular.support.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 /**
  * The persistent class for the RL_PERMISSAO_TAREFA database table.
@@ -36,6 +36,9 @@ public class TaskRight {
     @JoinColumn(name = "CO_DEFINICAO_TAREFA")
     private TaskDefinitionEntity taskDefinition;
 
+    @Column(name = "NO_PERFIL", nullable = false)
+    private String nomePerfil;
+
     public TaskRight() {
     }
 
@@ -53,5 +56,13 @@ public class TaskRight {
 
     public void setTaskDefinition(TaskDefinitionEntity taskDefinition) {
         this.taskDefinition = taskDefinition;
+    }
+
+    public String getNomePerfil() {
+        return nomePerfil;
+    }
+
+    public void setNomePerfil(String nomePerfil) {
+        this.nomePerfil = nomePerfil;
     }
 }

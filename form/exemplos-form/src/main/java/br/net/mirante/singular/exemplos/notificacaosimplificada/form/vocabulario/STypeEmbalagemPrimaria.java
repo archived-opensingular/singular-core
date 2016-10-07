@@ -1,21 +1,22 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInfoType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.converter.SInstanceConverter;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.util.transformer.Value;
 
 import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
 
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeEmbalagemPrimaria extends STypeComposite<SIComposite> {
 
-    public STypeString descricao;
+    public STypeString  descricao;
     public STypeInteger id;
 
     @Override
@@ -27,20 +28,28 @@ public class STypeEmbalagemPrimaria extends STypeComposite<SIComposite> {
             this
                     .asAtrBootstrap()
                     .colPreference(6)
-                    .asAtrBasic()
+                    .asAtr()
                     .label("Embalagem primária")
                     .required();
-            this.setView(SViewAutoComplete::new);
+            this.autocompleteOf(EmbalagemPrimariaBasica.class)
+                    .id("${id}")
+                    .display(VocabularioControlado::getDescricao)
+                    .converter(new SInstanceConverter<EmbalagemPrimariaBasica, SIComposite>() {
+                        @Override
+                        public void fillInstance(SIComposite ins, EmbalagemPrimariaBasica obj) {
+                            ins.setValue(id, obj.getId());
+                            ins.setValue(descricao, obj.getDescricao());
+                        }
 
-            this.withSelectionFromProvider(descricao, (ins, filter) -> {
-                final SIList<?> list = ins.getType().newList();
-                for (EmbalagemPrimariaBasica emb : dominioService(ins).findEmbalagensBasicas(filter)) {
-                    final SIComposite c = (SIComposite) list.addNew();
-                    c.setValue(id, emb.getId());
-                    c.setValue(descricao, emb.getDescricao());
-                }
-                return list;
-            });
+                        @Override
+                        public EmbalagemPrimariaBasica toObject(SIComposite ins) {
+                            return dominioService(ins).findEmbalagensBasicas(null)
+                                    .stream().filter(u -> Integer.valueOf(u.getId().intValue()).equals(Value.of(ins, id)))
+                                    .findFirst()
+                                    .orElse(null);
+                        }
+                    })
+                    .filteredProvider((ins, query) -> dominioService(ins).findEmbalagensBasicas(query));
         }
     }
 

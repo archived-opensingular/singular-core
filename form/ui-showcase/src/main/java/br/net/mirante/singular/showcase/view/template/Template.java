@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.showcase.view.template;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,14 +22,14 @@ import org.apache.wicket.authroles.authorization.strategies.role.annotations.Aut
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.resource.JQueryPluginResourceReference;
 
 import br.net.mirante.singular.util.wicket.template.SingularTemplate;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
 public abstract class Template extends SingularTemplate {
@@ -50,6 +53,7 @@ public abstract class Template extends SingularTemplate {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(CssHeaderItem.forReference(new PackageResourceReference(Template.class, "Template.css")));
+        response.render(JavaScriptHeaderItem.forReference(new JQueryPluginResourceReference(Template.class, "Template.js")));
         if (withSideBar()) {
             addQuickSidebar(response);
         }

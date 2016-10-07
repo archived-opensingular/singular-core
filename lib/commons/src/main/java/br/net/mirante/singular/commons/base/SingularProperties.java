@@ -5,52 +5,36 @@
 
 package br.net.mirante.singular.commons.base;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/**
+ * Carrega os arquivos de propriedades do singular e dá fácil acesso ao mesmos, mediante um singleton {@link
+ * SingularProperties#get()}. <p>Primeiro lê do arquivos de propriedades e depois tentar ler do diretório de
+ * configuração se o mesmo existir, ou seja, as variáveis no diretório de configuração têm precedência.</p>
+ *
+ * @author Daniel C. Bordin
+ * @author Vinicius Nunes
+ */
+public interface SingularProperties {
+    public static final String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
+    public static final String HIBERNATE_GENERATOR                  = "flow.persistence.hibernate.generator";
+    public static final String HIBERNATE_SEQUENCE_PROPERTY_PATTERN  = "flow.persistence.%s.sequence";
+    public static final String FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE   = "singular.fileupload.global_max_request_size";
+    public static final String FILEUPLOAD_GLOBAL_MAX_FILE_SIZE      = "singular.fileupload.global_max_file_size";
 
-import java.io.InputStream;
-import java.util.Properties;
-
-public enum SingularProperties {
-
-    INSTANCE;
-
-    public static final String HIBERNATE_GENERATOR = "flow.persistence.hibernate.generator";
-    public static final String HIBERNATE_SEQUENCE_PROPERTY_PATTERN = "flow.persistence.%s.sequence";
-    private static final Logger logger = LoggerFactory.getLogger(SingularProperties.class);
-    private Properties p = new Properties();
-
-    SingularProperties() {
-        InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("singular.properties");
-        if (is == null) {
-            is = SingularProperties.class.getClassLoader().getResourceAsStream("singular.properties");
-        }
-        if (is != null) {
-            load(is);
-        }
-    }
-
-    private void load(InputStream is) {
-        try {
-            this.p.clear();
-            p.load(is);
-        } catch (Exception e) {
-            logger.warn("Arquivo singular.properties não foi encontrado");
-        }
+    public static SingularProperties get() {
+        return SingularPropertiesImpl.get();
     }
 
     /**
-     * Copia as propriedades do @param props para as properties internas.
-     * As propriedades previamente existentes serão removidas
-     * Esse método é utilizado para testes unitários com difererentes contextos.
-     *
-     * @param propertiesStream o arquivo
+     * Verifica se a propriedade de nome informado existe.
      */
-    public void loadFrom(InputStream propertiesStream) {
-        load(propertiesStream);
-    }
+    public boolean containsKey(String key);
 
-    public String getProperty(String key) {
-        return p.getProperty(key);
+    /**
+     * Retorna o valor da propriedade solicitada. Pode retornar null.
+     */
+    public String getProperty(String key);
+
+    default String getSingularServerHome() {
+        return System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
     }
 }

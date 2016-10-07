@@ -33,18 +33,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.util.xml.MParser;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.internal.xml.MParser;
+import br.net.mirante.singular.form.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.showcase.dao.form.Prototype;
 import br.net.mirante.singular.showcase.dao.form.PrototypeDAO;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
@@ -91,7 +91,7 @@ public class PrototypeListContent extends Content
 
         super.onInitialize();
 
-        add(new Form<>("delete-form").add(deleteModal));
+        add(new SingularForm<>("delete-form").add(deleteModal));
         add(setUpInsertButton());
         add(listTable = setupDataTable());
         add(viewXmlModal);
@@ -127,7 +127,7 @@ public class PrototypeListContent extends Content
     }
 
     private MarkupContainer setUpInsertButton() {
-        return new Form<>("form").add(new AjaxButton("insert") {
+        return new SingularForm<>("form").add(new AjaxButton("insert") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 setResponsePage(PrototypePage.class);
@@ -167,7 +167,7 @@ public class PrototypeListContent extends Content
                     Icone.EYE, this::viewXml);
     }
 
-    private MInstanceRootModel<SIComposite> getMInstance(Prototype prototype) {
+    private SInstanceRootModel<SIComposite> getMInstance(Prototype prototype) {
         String xml = prototype.getXml();
         RefType refType = new RefType() {
             protected SType<?> retrieve() {
@@ -175,7 +175,7 @@ public class PrototypeListContent extends Content
             }
         };
         SIComposite instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
-        return new MInstanceRootModel<>(instance);
+        return new SInstanceRootModel<>(instance);
     }
 
     private BaseDataProvider<Prototype, String> createDataProvider() {
@@ -205,8 +205,8 @@ public class PrototypeListContent extends Content
         final String xmlTabulado = getXmlTabulado(xmlPersistencia);
 
         final BSTabPanel xmlTabs = new BSTabPanel("xmlTabs");
-        xmlTabs.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlTabulado)));
-        xmlTabs.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlPersistencia)));
+        xmlTabs.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(xmlTabulado)));
+        xmlTabs.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(xmlPersistencia)));
 
         viewXmlModal.addOrReplace(xmlTabs);
         viewXmlModal.show(target);

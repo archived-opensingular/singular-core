@@ -7,7 +7,7 @@ package br.net.mirante.singular.exemplos.notificacaosimplificada.dao;
 
 import java.util.List;
 
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.enums.SimNao;
+import br.net.mirante.singular.support.persistence.enums.SimNao;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +17,10 @@ import br.net.mirante.singular.support.persistence.BaseDAO;
 
 @Repository
 public class EnderecoEmpresaInternacionalDAO extends BaseDAO<EnderecoEmpresaInternacional, EnderecoEmpresaInternacionalId> {
+
+    public EnderecoEmpresaInternacionalDAO() {
+        super(EnderecoEmpresaInternacional.class);
+    }
 
     public List<EnderecoEmpresaInternacional> buscarEnderecos(String filtro, Integer maxResults) {
 

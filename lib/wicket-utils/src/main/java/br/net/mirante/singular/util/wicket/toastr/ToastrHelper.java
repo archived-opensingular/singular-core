@@ -44,7 +44,7 @@ public class ToastrHelper {
     }
 
     protected String getString(String messageKey, String[] args) {
-        String message = component.getString(messageKey);
+        String message = component.getString(messageKey, null, messageKey);
         return MessageFormat.format(message, args);
     }
 

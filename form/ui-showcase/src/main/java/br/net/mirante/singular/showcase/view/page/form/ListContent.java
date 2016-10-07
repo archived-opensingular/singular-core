@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.showcase.view.page.form;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,8 +21,10 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
 
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
+import br.net.mirante.singular.showcase.component.ShowCaseType;
 import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
@@ -29,10 +34,9 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 @SuppressWarnings("serial")
-class ListContent extends Content implements SingularWicketContainer<ListContent, Void> {
+public class ListContent extends Content implements SingularWicketContainer<ListContent, Void> {
 
     private List<FormVO> formTypes;
 
@@ -46,9 +50,20 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
 
     private List<FormVO> getFormTypes() {
         if (formTypes == null) {
-            formTypes = showcaseTypeLoader.getEntries().stream().map(t -> new FormVO(t)).collect(Collectors.toList());
+            formTypes = showcaseTypeLoader.getEntries().stream().filter(this::verificarTipo).map(t -> new FormVO(t)).collect(Collectors.toList());
         }
         return formTypes;
+    }
+
+    private boolean verificarTipo(ShowcaseTypeLoader.TemplateEntry templateEntry) {
+        final StringValue tipoValue = getPage().getPageParameters().get(ShowCaseType.SHOWCASE_TYPE_PARAM);
+        ShowCaseType tipo;
+        if (tipoValue.isNull() || tipoValue.toString().equals(ShowCaseType.FORM.toString())) {
+            tipo = ShowCaseType.FORM;
+        } else {
+            tipo = ShowCaseType.STUDIO;
+        }
+        return tipo.equals(templateEntry.getTipo());
     }
 
     @Override
@@ -75,16 +90,19 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
                     }
                 };
 
-        return new BSDataTableBuilder<>(provider)
+        final BSDataTable<FormVO, String> dataTable = new BSDataTableBuilder<>(provider)
                 .appendPropertyColumn(getMessage("label.table.column.form"),
                         "key", FormVO::getKey)
-                .appendColumn(new BSActionColumn<FormVO, String>(WicketUtils.$m.ofValue(""))
-                                .appendAction(getMessage("label.table.column.preview"),
-                                        Icone.ROCKET, this::goToDemo
-                                )
+                .appendColumn(new BSActionColumn<FormVO, String>($m.ofValue(""))
+                        .appendAction(getMessage("label.table.column.preview"),
+                                Icone.ROCKET, this::goToDemo
+                        )
                 )
                 .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
+                .setStripedRows(false)
+                .add($b.classAppender("worklist"))
                 .build("form-list");
+        return dataTable;
     }
 
     private void goToDemo(AjaxRequestTarget target, IModel<FormVO> model) {

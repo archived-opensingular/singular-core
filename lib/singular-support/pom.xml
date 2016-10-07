@@ -7,7 +7,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-lib</artifactId>
-        <version>0.6.3-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-support</artifactId>
@@ -38,14 +38,8 @@
 
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>wicket-utils</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>br.net.mirante</groupId>
-            <artifactId>flow-persistence</artifactId>
-            <version>0.6.3-SNAPSHOT</version>
+            <artifactId>singular-commons</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- HIBERNATE -->
@@ -163,7 +157,13 @@
             <version>1.2</version>
             <scope>provided</scope>
         </dependency>
-
+		
+		<dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
+		
     </dependencies>
 
 </project>

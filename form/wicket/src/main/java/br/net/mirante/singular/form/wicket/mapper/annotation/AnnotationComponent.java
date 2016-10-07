@@ -5,11 +5,20 @@
 
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-
-import java.io.Serializable;
-
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.type.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.type.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.component.BFModalWindow;
+import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceValueModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -29,20 +38,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import java.io.Serializable;
+
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -54,8 +53,8 @@ public class AnnotationComponent extends Panel {
     private Component referencedComponent;
     BSContainer mainGrid;
     private final WicketBuildContext context;
-    private MInstanciaValorModel textModel, approvedModel;
-    private MInstanceRootModel model;
+    private SInstanceValueModel textModel, approvedModel;
+    private SInstanceRootModel model;
     private Label comment_field, approval_field;
     private boolean keepOpened = false;
     private ActionAjaxButton openModalButton;
@@ -77,14 +76,14 @@ public class AnnotationComponent extends Panel {
     private void createModels(AbstractSInstanceModel referenced) {
         final SIAnnotation target = annotated(referenced).annotation();
         target.setTargetId(referenced.getMInstancia().getId());
-        model = new MInstanceRootModel(target);
+        model = new SInstanceRootModel(target);
         setDefaultModel(model);
         createSubModels();
     }
 
     private void createSubModels() {
-        textModel = new MInstanciaValorModel(new SInstanceCampoModel<>(model,"text"));
-        approvedModel = new MInstanciaValorModel(new SInstanceCampoModel<>(model,"isApproved"));
+        textModel = new SInstanceValueModel(new SInstanceFieldModel<>(model,"text"));
+        approvedModel = new SInstanceValueModel(new SInstanceFieldModel<>(model,"isApproved"));
     }
 
     @Override
@@ -110,7 +109,7 @@ public class AnnotationComponent extends Panel {
         });
     }
 
-    protected static Label createApprovalLabel(final MInstanciaValorModel model) {
+    protected static Label createApprovalLabel(final SInstanceValueModel model) {
         return new Label("approval_field", new Model(){
             @Override
             public Serializable getObject() {
@@ -147,7 +146,7 @@ public class AnnotationComponent extends Panel {
             protected void onInitialize() {
                 super.onInitialize();
                 Label open_icon = new Label("open_icon");
-                if(context.getRootContext().annotation().editable()){
+                if(context.getRootContext().getAnnotationMode().editable()){
                     open_icon.add(new AttributeModifier("class",  $m.ofValue("fa fa-pencil")));
                 }else{
                     open_icon.add(new AttributeModifier("class",  $m.ofValue("fa fa-expand")));
@@ -202,7 +201,7 @@ public class AnnotationComponent extends Panel {
 
             @Override
             public boolean isVisible() {
-                return context.annotation().editable();
+                return context.getAnnotationMode().editable();
             }
         };
     }
@@ -219,7 +218,7 @@ public class AnnotationComponent extends Panel {
     }
 
     private static String labelOf(AbstractSInstanceModel target) {
-        return target.getMInstancia().asAtrBasic().getLabel();
+        return target.getMInstancia().asAtr().getLabel();
     }
 
     @Override
@@ -243,7 +242,7 @@ public class AnnotationComponent extends Panel {
                     "'#"+openModalButton.getMarkupId()+"'," +
                     "`"+textModel.getObject()+"`, " +
                     " "+approvedModel.getObject()+", " +
-                    " "+!context.annotation().editable()+" "+
+                    " "+!context.getAnnotationMode().editable()+" "+
                 "); \n" ;
     }
 
@@ -302,13 +301,13 @@ public class AnnotationComponent extends Panel {
 
 class AnnotationModalWindow extends BFModalWindow{
 
-    private MInstanciaValorModel textModel, approvedModel ;
+    private SInstanceValueModel textModel, approvedModel ;
     private WicketBuildContext context;
     private AnnotationComponent parentComponent;
     private AbstractSInstanceModel referenced;
 
     public AnnotationModalWindow(String id,
-                                 MInstanceRootModel model,
+                                 SInstanceRootModel model,
                                  AbstractSInstanceModel referenced,
                                  WicketBuildContext context,
                                  AnnotationComponent parentComponent) {
@@ -323,12 +322,12 @@ class AnnotationModalWindow extends BFModalWindow{
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        textModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(getDefaultModel(),"text"));
-        approvedModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(getDefaultModel(),"isApproved"));
+        textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getDefaultModel(),"text"));
+        approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getDefaultModel(),"isApproved"));
 
         setBody(createBody());
 
-        if(context.annotation().editable()) {
+        if(context.getAnnotationMode().editable()) {
             this.addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"),
                     createOkButton(parentComponent)
             );
@@ -351,7 +350,7 @@ class AnnotationModalWindow extends BFModalWindow{
     }
 
     private void createFields(BSContainer modalBody) {
-        if(context.annotation().editable()){
+        if(context.getAnnotationMode().editable()){
             createCommentField(modalBody);
             createApprovedField(modalBody);
         }else{

@@ -5,17 +5,25 @@
 
 package br.net.mirante.singular.form.wicket.mapper.components;
 
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import br.net.mirante.singular.commons.lambda.IBiConsumer;
-import br.net.mirante.singular.commons.lambda.IFunction;
+import java.util.Set;
+
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+
+import br.net.mirante.singular.commons.lambda.IBiConsumer;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 
 public abstract class MetronicPanel extends TemplatePanel {
 
-    private Form<?> form = null;
-    private boolean withForm;
+    private SingularForm<?> form = null;
+    protected final boolean withForm;
 
     public MetronicPanel(String id) {
         this(id, true);
@@ -29,16 +37,15 @@ public abstract class MetronicPanel extends TemplatePanel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        setTemplateFunction(getTemplate(withForm));
         setRenderBodyOnly(true);
         setOutputMarkupId(false);
         setOutputMarkupPlaceholderTag(false);
-        BSContainer<?> heading = new BSContainer<>("_hd");
-        BSContainer<?> footer = new BSContainer<>("_ft");
-        BSContainer<?> content = new BSContainer<>("_co");
+        BSContainer<?>     heading   = new BSContainer<>("_hd");
+        BSContainer<?>     footer    = new BSContainer<>("_ft");
+        BSContainer<?>     content   = new BSContainer<>("_co");
         WebMarkupContainer container = this;
         if (withForm) {
-            form = new Form<>("_fo");
+            form = new SingularForm<>("_fo");
             add(form);
             container = form;
         }
@@ -66,16 +73,45 @@ public abstract class MetronicPanel extends TemplatePanel {
         form.replace(content);
     }
 
-    private IFunction<TemplatePanel, String> getTemplate(boolean withForm) {
+    protected String getPanelWrapperClass() {
+        return "panel panel-default";
+    }
+
+    protected String getPanelHeadingClass() {
+        return "panel-heading";
+    }
+
+    protected String getPanelBodyClass() {
+        return "panel-body";
+    }
+
+    protected String getPanelFooterClass() {
+        return "panel-footer";
+    }
+    
+    @Override
+    public IFunction<TemplatePanel, String> getTemplateFunction() {
         String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";
         return (tp) -> String.format(wrapper, ""
-                + "  <div class='panel panel-default'>"
-                + "    <div wicket:id='_hd' class='panel-heading'></div>"
-                + "    <div class='panel-body' wicket:id='_co' >"
-                + "    </div>"
-                + "    <div wicket:id='_ft' class='panel-footer text-right'></div>"
-                + "  </div>"
-                + "");
+            + "  <div class='" + getPanelWrapperClass() + "'>"
+            + "    <div wicket:id='_hd' class='" + getPanelHeadingClass() + "'></div>"
+            + "    <div class='" + getPanelBodyClass() + "' wicket:id='_co' >"
+            + "    </div>"
+            + "    <div wicket:id='_ft' class='" + getPanelFooterClass() + " text-right'></div>"
+            + "  </div>"
+            + "");
+    }
+    
+    public static ClassAttributeModifier dependsOnModifier(IModel<? extends SInstance> model) {
+        return new ClassAttributeModifier() {
+            @Override
+            protected Set<String> update(Set<String> oldClasses) {
+                if (model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null) {
+                    oldClasses.add("dependant-input-group");
+                }
+                return oldClasses;
+            }
+        };
     }
 
     public static final class MetronicPanelBuilder {

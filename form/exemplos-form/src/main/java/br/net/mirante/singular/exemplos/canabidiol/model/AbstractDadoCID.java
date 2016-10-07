@@ -5,7 +5,9 @@
 
 package br.net.mirante.singular.exemplos.canabidiol.model;
 
-public abstract class AbstractDadoCID {
+import java.io.Serializable;
+
+public abstract class AbstractDadoCID  implements Serializable {
 
     private String id;
 

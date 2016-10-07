@@ -13,10 +13,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import br.net.mirante.singular.persistence.util.Constants;
-import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import br.net.mirante.singular.support.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 @Entity
 @GenericGenerator(name = "GENERATED_CO_PORTLET", strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)

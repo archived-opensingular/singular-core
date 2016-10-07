@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular</artifactId>
-        <version>0.6.3-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-lib</artifactId>
@@ -16,7 +16,6 @@
     <modules>
         <module>commons</module>
         <module>wicket-utils</module>
-        <module>ws-client</module>
         <module>singular-support</module>
     </modules>
 

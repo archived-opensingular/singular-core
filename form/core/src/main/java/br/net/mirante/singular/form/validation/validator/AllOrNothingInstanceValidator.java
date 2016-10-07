@@ -5,12 +5,13 @@
 
 package br.net.mirante.singular.form.validation.validator;
 
-import java.util.Set;
-
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.STypeSimple;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
+
+import java.util.Set;
+
 import static java.util.stream.Collectors.toSet;
 
 public enum AllOrNothingInstanceValidator implements IInstanceValidator<SIComposite> {

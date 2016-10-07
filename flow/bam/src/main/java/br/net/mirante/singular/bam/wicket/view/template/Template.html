@@ -152,17 +152,19 @@ License: You must have a valid license purchased only from themeforest(the above
 
         Wicket.Event.subscribe('/ajax/call/beforeSend', function(evt, attrs, jqXHR, settings) {
             if (enableAJAXPageBlock) {
-                $('#blocking_overlay').show();
+            	var blockImmediately = $('#'+attrs.c).is('button,input[type=button],input[type=submit],a,i');
+            	if (blockImmediately) {
+                	$('#blocking_overlay').css('opacity', '0.2').show();
+            	}
                 window.blocking_overlay_timeoutId = setTimeout(function () {
-                    $('#blocking_overlay').css('opacity', '0.5');
+                    $('#blocking_overlay').css('opacity', '0.5').show();
                     App.startPageLoading({animate: true});
                 }, 1200);
             }
         });
         Wicket.Event.subscribe('/ajax/call/complete', function(evt, attrs, jqXHR, textStatus) {
             if (enableAJAXPageBlock) {
-                $('#blocking_overlay').hide();
-                $('#blocking_overlay').css('opacity', '0.0');
+                $('#blocking_overlay').css('opacity', '0.0').hide();
                 App.stopPageLoading();
                 if (window.blocking_overlay_timeoutId) {
                     clearTimeout(window.blocking_overlay_timeoutId);

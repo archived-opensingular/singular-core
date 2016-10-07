@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.flow.test.definicao;
 
-
+import br.net.mirante.singular.flow.core.DefinitionInfo;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.builder.BProcessRole;
@@ -13,10 +13,11 @@ import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.defaults.NullPageStrategy;
 
+@DefinitionInfo("DefVersoes")
 public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
     public DefinicaoProcessVersoes() {
-        super("DefVersoes",ProcessVersoes.class);
+        super(ProcessVersoes.class);
     }
 
     public static InstanceProcessVersao flow = InstanceProcessVersao.VERSAO_1;

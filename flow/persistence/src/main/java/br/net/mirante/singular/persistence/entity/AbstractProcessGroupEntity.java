@@ -11,6 +11,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessGroup;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the TB_GRUPO_PROCESSO database table.
@@ -32,6 +33,7 @@ public abstract class AbstractProcessGroupEntity extends BaseEntity<String> impl
     @Column(name = "URL_CONEXAO", length = 300, nullable = false)
     private String connectionURL;
 
+    @Override
     public String getCod() {
         return cod;
     }
@@ -40,6 +42,7 @@ public abstract class AbstractProcessGroupEntity extends BaseEntity<String> impl
         this.cod = cod;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -48,6 +51,7 @@ public abstract class AbstractProcessGroupEntity extends BaseEntity<String> impl
         this.name = name;
     }
 
+    @Override
     public String getConnectionURL() {
         return connectionURL;
     }

@@ -13,7 +13,7 @@
     <!-- DATA SOURCE CONFIGURATION -->
     <bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=2048;MULTI_THREADED=1"/>
+        <property name="url" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=2048;MULTI_THREADED=1;INIT=CREATE SCHEMA IF NOT EXISTS DBSINGULAR"/>
         <property name="username" value="sa"/>
         <property name="password" value="sa"/>
         <property name="removeAbandoned" value="true"/>
@@ -27,7 +27,7 @@
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <!-- Incluir o pacote quando tiver um -->
-        <property name="packagesToScan" value="br.net.mirante.singular.showcase.dao.form"/>
+        <property name="packagesToScan" value="br.net.mirante.singular.showcase.dao.form,br.net.mirante.singular.form.persistence"/>
 
         <property name="hibernateProperties">
             <props>

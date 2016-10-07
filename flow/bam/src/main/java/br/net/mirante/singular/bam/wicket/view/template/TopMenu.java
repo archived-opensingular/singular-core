@@ -16,10 +16,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.UrlUtils;
 
 import br.net.mirante.singular.bam.service.UIAdminFacade;
 import br.net.mirante.singular.bam.wicket.UIAdminSession;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 public class TopMenu extends Panel {
 
@@ -46,7 +48,7 @@ public class TopMenu extends Panel {
         
         WebMarkupContainer logout = new WebMarkupContainer("logout");
         Optional<String> logoutHref = Optional.ofNullable(StringUtils.trimToNull(uiAdminFacade.getLogoutUrl()));
-        logoutHref.ifPresent(href -> logout.add($b.attr("href", href)));
+        logoutHref.ifPresent(href -> logout.add($b.attr("href", WebApplication.get().getServletContext().getContextPath()+href)));
         queue(logout);
     }
 }

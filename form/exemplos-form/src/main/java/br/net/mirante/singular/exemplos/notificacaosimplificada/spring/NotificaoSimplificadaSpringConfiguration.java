@@ -23,25 +23,25 @@ import br.net.mirante.singular.support.spring.util.AutoScanDisabled;
 @AutoScanDisabled
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
-@ComponentScan("br.net.mirante.singular.exemplos.notificacaosimplificada")
+@ComponentScan("br.net.mirante.singular.exemplos")
 public class NotificaoSimplificadaSpringConfiguration {
 
-    @Value("classpath:data/notificacaosimplificada/drops.sql")
+    @Value("classpath:data/exemplos/notificacaosimplificada/drops.sql")
     private Resource drops;
 
-    @Value("classpath:data/notificacaosimplificada/create_tables.sql")
+    @Value("classpath:data/exemplos/notificacaosimplificada/create_tables.sql")
     private Resource createTables;
 
-    @Value("classpath:data/notificacaosimplificada/inserts.sql")
+    @Value("classpath:data/exemplos/notificacaosimplificada/inserts.sql")
     private Resource inserts;
 
-    @Value("classpath:data/notificacaosimplificada/insert_geral.sql")
+    @Value("classpath:data/exemplos/notificacaosimplificada/insert_geral.sql")
     private Resource insertGeral;
 
-    @Value("classpath:data/notificacaosimplificada/create-tables-anvisa.sql")
+    @Value("classpath:data/exemplos/notificacaosimplificada/create-tables-anvisa.sql")
     private Resource createTablesAnvisa;
 
-    @Value("classpath:data/notificacaosimplificada/insert-usuario.sql")
+    @Value("classpath:data/exemplos/notificacaosimplificada/insert-usuario.sql")
     private Resource insertUsuario;
 
     @Bean

@@ -5,23 +5,22 @@
 
 package br.net.mirante.singular.form.wicket.component;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MElement;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+
+import br.net.mirante.singular.form.SInstance;
 
 public abstract class SingularSaveButton extends SingularValidationButton {
 
     private boolean validate;
 
-    public SingularSaveButton(String id) {
-        this(id, true);
+    public SingularSaveButton(String id, IModel<? extends SInstance> currentInstance) {
+        this(id, currentInstance, true);
     }
 
-    public SingularSaveButton(String id, boolean validate) {
-        super(id);
+    public SingularSaveButton(String id, IModel<? extends SInstance> currentInstance, boolean validate) {
+        super(id, currentInstance);
         this.validate = validate;
     }
 
@@ -33,14 +32,6 @@ public abstract class SingularSaveButton extends SingularValidationButton {
             onValidationSuccess(target, form, getCurrentInstance());
         }
     }
-
-    @Override
-    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-        MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
-        handleSaveXML(target, rootXml);
-    }
-    
-    protected abstract void handleSaveXML(AjaxRequestTarget target, MElement xml);
 
     protected boolean isValidate() {
         return validate;

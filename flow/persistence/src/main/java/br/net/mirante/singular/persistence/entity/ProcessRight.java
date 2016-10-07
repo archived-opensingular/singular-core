@@ -11,7 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.util.Constants;
 
 /**
  * The persistent class for the RL_PERMISSAO_PROCESSO database table.

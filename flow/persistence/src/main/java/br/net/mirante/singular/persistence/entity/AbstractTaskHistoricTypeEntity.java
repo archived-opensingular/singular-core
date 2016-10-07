@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
@@ -37,6 +38,7 @@ public abstract class AbstractTaskHistoricTypeEntity extends BaseEntity<Integer>
     @Column(name = "DS_TIPO_HISTORICO_TAREFA", length = 50)
     private String description;
 
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -45,10 +47,12 @@ public abstract class AbstractTaskHistoricTypeEntity extends BaseEntity<Integer>
         this.cod = cod;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }

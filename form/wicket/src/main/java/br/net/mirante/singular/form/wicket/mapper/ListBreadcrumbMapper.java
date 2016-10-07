@@ -5,15 +5,29 @@
 
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.internal.xml.MElement;
+import br.net.mirante.singular.form.internal.xml.MParser;
+import br.net.mirante.singular.form.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.type.basic.SPackageBasic;
+import br.net.mirante.singular.form.view.SViewBreadcrumb;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
+import br.net.mirante.singular.form.wicket.model.STypeModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceFieldModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceListItemModel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
+import br.net.mirante.singular.util.wicket.resource.Icone;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import com.google.common.base.Strings;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -24,37 +38,14 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import com.google.common.base.Strings;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import br.net.mirante.singular.commons.lambda.IFunction;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SISimple;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.SViewBreadcrumb;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.util.xml.MParser;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.form.wicket.model.MTipoModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel;
-import br.net.mirante.singular.util.wicket.resource.Icone;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public class ListBreadcrumbMapper extends AbstractListaMapper {
 
@@ -97,7 +88,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
     private IModel<String> newLabelModel(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         IModel<SIList<SInstance>> listaModel = $m.get(() -> (SIList<SInstance>) model.getObject());
         SIList<?> iLista = listaModel.getObject();
-        IModel<String> labelModel = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
+        IModel<String> labelModel = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
         ctx.configureContainer(labelModel);
         return labelModel;
     }
@@ -220,7 +211,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     .newTemplateTag(t -> ""
                             + "<button"
                             + " wicket:id='_add'"
-                            + " class='btn blue btn-sm pull-right'"
+                            + " class='btn btn-sm pull-right'"
                             + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
                             + "</button>")
                     .add(new AjaxLink<Void>("_add") {
@@ -235,7 +226,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                                     adding = true;
                                     pushStatus();
                                     SInstance sInstance = sil.addNew();
-                                    IModel<? extends SInstance> itemModel = new SInstanceCampoModel<>(ctx.getRootContext().getModel(), sInstance.getPathFromRoot());
+                                    IModel<? extends SInstance> itemModel = new SInstanceFieldModel<>(ctx.getRootContext().getModel(), sInstance.getPathFromRoot());
                                     showCrud(ctx, target, itemModel);
                                 }
                             }
@@ -316,7 +307,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 @Override
                 public IModel<SInstance> model(SInstance object) {
                     IModel<SIList<SInstance>> listaModel = $m.get(() -> (SIList<SInstance>) model.getObject());
-                    return new SInstanceItemListaModel<>(listaModel, listaModel.getObject().indexOf(object));
+                    return new SInstanceListItemModel<>(listaModel, listaModel.getObject().indexOf(object));
                 }
             };
         }
@@ -364,7 +355,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     labelModel = $m.ofValue((String) columnType.getType().getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
                 }
 
-                propertyColumnAppender(builder, labelModel, new MTipoModel(columnType.getType()), columnType.getDisplayValueFunction());
+                propertyColumnAppender(builder, labelModel, new STypeModel(columnType.getType()), columnType.getDisplayValueFunction());
             }
 
             actionColumnAppender(builder, model, ctx, viewMode, view);
@@ -379,9 +370,9 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
             builder.appendActionColumn($m.ofValue(""), actionColumn -> {
                 if (viewMode.isEdition() && view.isDeleteEnabled()) {
-                    actionColumn.appendAction(new BSActionPanel.ActionConfig<>()
+                    actionColumn.appendAction(new BSActionPanel.ActionConfig()
                                     .iconeModel(Model.of(Icone.MINUS), Model.of(MapperCommons.ICON_STYLE))
-                                    .buttonModel(Model.of("red"))
+                                    .styleClasses(Model.of("red"))
                                     .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                             (target, rowModel) -> {
                                 SIList<?> sList = ((SIList<?>) model.getObject());
@@ -391,9 +382,9 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 }
                 final Icone openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
                 actionColumn.appendAction(
-                        new BSActionPanel.ActionConfig<>()
+                        new BSActionPanel.ActionConfig()
                                 .iconeModel(Model.of(openModalIcon), Model.of(MapperCommons.ICON_STYLE))
-                                .buttonModel(Model.of("blue-madison"))
+                                .styleClasses(Model.of("blue-madison"))
                                 .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                         (target, rowModel) -> {
                             currentInstance = rowModel;

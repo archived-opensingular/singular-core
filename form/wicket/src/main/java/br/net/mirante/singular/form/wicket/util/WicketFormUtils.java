@@ -5,13 +5,13 @@
 
 package br.net.mirante.singular.form.wicket.util;
 
+import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,12 +25,12 @@ import org.apache.wicket.model.IModel;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.ISInstanceAwareModel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public abstract class WicketFormUtils {
@@ -78,11 +78,17 @@ public abstract class WicketFormUtils {
             .filter(WicketFormUtils::isMarkedAsCellContainer)
             .findFirst();
     }
+    public static Component resolveRefreshingComponent(Component component) {
+        Component comp = component;
+        while (!comp.getParent().isVisibleInHierarchy())
+            comp = comp.getParent();
+        return comp;
+    }
     public static MarkupContainer getCellContainer(Component component) {
         return findCellContainer(component).orElse(null);
     }
 
-    public static Optional<Component> findChildByInstance(MarkupContainer root, SInstance instance) {
+    public static Optional<Component> findChildByInstance(Component root, SInstance instance) {
         return streamDescendants(root)
             .filter(c -> instanciaIfAware(c.getDefaultModel()).orElse(null) == instance)
             .findAny();
@@ -94,12 +100,12 @@ public abstract class WicketFormUtils {
             .findAny()
             .get();
         return streamDescendants(rootContainer)
-            .filter(c -> c.getDefaultModel() instanceof IMInstanciaAwareModel<?>)
+            .filter(c -> c.getDefaultModel() instanceof ISInstanceAwareModel<?>)
             .filter(c -> predicate.test(c, instanciaIfAware(c.getDefaultModel()).orElse(null)));
     }
     private static Optional<SInstance> instanciaIfAware(IModel<?> model) {
-        return (model instanceof IMInstanciaAwareModel<?>)
-            ? Optional.ofNullable(((IMInstanciaAwareModel<?>) model).getMInstancia())
+        return (model instanceof ISInstanceAwareModel<?>)
+            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getMInstancia())
             : Optional.empty();
     }
 
@@ -115,7 +121,7 @@ public abstract class WicketFormUtils {
 
     public static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container) {
 
-        final Map<Integer, Set<IValidationError>> instanceErrors = validationContext.getErrorsByInstanceId();
+        final Map<Integer, Collection<IValidationError>> instanceErrors = validationContext.getErrorsByInstanceId();
 
         container.visitChildren((component, visit) -> {
             final IModel<?> model = component.getDefaultModel();
@@ -124,13 +130,13 @@ public abstract class WicketFormUtils {
                 return;
             } else if (model.getObject() instanceof SInstance) {
                 instance = (SInstance) model.getObject();
-            } else if (model instanceof IMInstanciaAwareModel<?>) {
-                instance = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            } else if (model instanceof ISInstanceAwareModel<?>) {
+                instance = ((ISInstanceAwareModel<?>) model).getMInstancia();
             } else {
                 return;
             }
 
-            final Set<IValidationError> errors = instanceErrors.get(instance.getId());
+            final Collection<IValidationError> errors = instanceErrors.get(instance.getId());
             if (errors != null) {
                 for (IValidationError error : errors) {
                     switch (error.getErrorLevel()) {
@@ -155,8 +161,8 @@ public abstract class WicketFormUtils {
     }
 
     public static Optional<SInstance> resolveInstance(final IModel<?> model) {
-        return (model instanceof IMInstanciaAwareModel<?>)
-            ? Optional.ofNullable(((IMInstanciaAwareModel<?>) model).getMInstancia())
+        return (model instanceof ISInstanceAwareModel<?>)
+            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getMInstancia())
             : Optional.empty();
     }
 
@@ -176,7 +182,7 @@ public abstract class WicketFormUtils {
 
             SInstance instance = WicketFormUtils.instanciaIfAware(comp.getDefaultModel()).orElse(null);
 
-            Optional<WicketBuildContext> wbc = WicketBuildContext.get(comp);
+            Optional<WicketBuildContext> wbc = WicketBuildContext.find(comp);
             if (wbc.isPresent()) {
 
                 Optional<String> title = wbc.get().resolveContainerTitle()
@@ -194,7 +200,7 @@ public abstract class WicketFormUtils {
                         Iterator<SInstance> iter = lista.iterator();
                         for (int i = 1; iter.hasNext(); i++) {
                             SInstance itemInstance = iter.next();
-                            if (lastInstance == itemInstance || lastInstance.isDescentantOf(itemInstance)) {
+                            if (lastInstance == itemInstance || lastInstance.isDescendantOf(itemInstance)) {
                                 titles.addFirst(baseTitle + " [" + i + "]");
                                 break;
                             }

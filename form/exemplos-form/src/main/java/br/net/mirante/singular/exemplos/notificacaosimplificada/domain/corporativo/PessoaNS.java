@@ -25,14 +25,14 @@ import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.Schemas;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.corporativo.enums.TipoPessoaNS;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.Cidade;
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.geral.Pais;
-import br.net.mirante.singular.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import br.net.mirante.singular.support.persistence.util.GenericEnumUserType;
 
 @Entity
 @Table(schema = Schemas.DBCORPORATIVO, name = "TB_PESSOA")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TP_PESSOA")
-public abstract class PessoaNS extends BaseEntity {
+public abstract class PessoaNS extends BaseEntity<String> {
 
     @Id
     @Column(name = "ID_PESSOA")

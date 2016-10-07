@@ -5,37 +5,43 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.document.DefaultServiceRegistry;
-import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
-import br.net.mirante.singular.form.mform.document.TypeLoader;
+import br.net.mirante.singular.form.RefService;
+import br.net.mirante.singular.form.SDictionary;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.context.SFormConfig;
+import br.net.mirante.singular.form.document.DefaultServiceRegistry;
+import br.net.mirante.singular.form.document.RefSDocumentFactory;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.SDocument;
+import br.net.mirante.singular.form.document.SDocumentFactory;
+import br.net.mirante.singular.form.document.ServiceRegistry;
+import br.net.mirante.singular.form.document.TypeLoader;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
 import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 
 public class DummyPage extends WebPage {
 
     final public SFormConfig<String> mockFormConfig = new MockFormConfig();
-    protected ViewMode viewMode = ViewMode.EDITION;
+    protected ViewMode viewMode = ViewMode.EDIT;
     protected AnnotationMode annotationMode = AnnotationMode.NONE;
     protected SIComposite currentInstance;
     protected Consumer<STypeComposite> typeBuilder;
     protected Function<SType, SIComposite> instanceCreator;
 
-    private Form<?> form = new Form("form");
+    private SingularForm<?> form = new SingularForm<>("form");
 
     private SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
         @Override
@@ -47,7 +53,7 @@ public class DummyPage extends WebPage {
         public ViewMode getViewMode() { return viewMode;    }
 
         @Override
-        public AnnotationMode annotation() {    return annotationMode;  }
+        public AnnotationMode getAnnotationMode() {    return annotationMode;  }
     };
 
     private Optional<SType<?>> buildBaseType() {
@@ -67,14 +73,9 @@ public class DummyPage extends WebPage {
         return currentInstance ;
     }
 
-    private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn") {
+    private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getRootInstance()) {
         @Override
         protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {}
-
-        @Override
-        public IModel<? extends SInstance> getCurrentInstance() {
-            return singularFormPanel.getRootInstance();
-        }
     };
 
     public DummyPage() {
@@ -93,8 +94,8 @@ public class DummyPage extends WebPage {
         return singularValidationButton;
     }
 
-    public void setAsVisualizationView() {  viewMode = ViewMode.VISUALIZATION;  }
-    public void setAsEditView() {  viewMode = ViewMode.EDITION;  }
+    public void setAsVisualizationView() {  viewMode = ViewMode.READ_ONLY;  }
+    public void setAsEditView() {  viewMode = ViewMode.EDIT;  }
 
     public void enableAnnotation() { annotationMode = AnnotationMode.EDIT; }
 

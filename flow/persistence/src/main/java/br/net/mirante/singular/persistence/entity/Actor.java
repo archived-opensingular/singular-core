@@ -11,7 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import br.net.mirante.singular.flow.core.MUser;
-import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+import br.net.mirante.singular.support.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_ATOR database table.

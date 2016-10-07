@@ -5,25 +5,38 @@
 
 package br.net.mirante.singular.showcase.view.page;
 
-import br.net.mirante.singular.showcase.component.ShowCaseTable;
-import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
-import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.template.Content;
+import static br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import javax.inject.Inject;
+
+import br.net.mirante.singular.showcase.component.CaseBaseForm;
+import br.net.mirante.singular.showcase.component.CaseBaseStudio;
+import br.net.mirante.singular.showcase.component.ShowCaseType;
+import br.net.mirante.singular.showcase.view.page.studio.StudioItemCasePanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.string.StringValue;
 
-import static br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.showcase.component.ShowCaseTable;
+import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.showcase.view.page.form.ListPage;
+import br.net.mirante.singular.showcase.view.template.Content;
+import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
 public class ComponentContent extends Content implements SingularWicketContainer<ComponentContent, Void> {
+
+    @Inject
+    private ShowCaseTable showCaseTable;
 
     private ShowCaseItem showCaseItem;
 
     public ComponentContent(String id, IModel<String> componentName) {
         super(id, false, false);
-        showCaseItem = new ShowCaseTable().findCaseItemByComponentName(componentName.getObject());
+        showCaseItem = showCaseTable.findCaseItemByComponentName(componentName.getObject());
         add(buildItemCases());
     }
 
@@ -40,12 +53,20 @@ public class ComponentContent extends Content implements SingularWicketContainer
                 if (name == null) {
                     name = c.getComponentName();
                 }
-                bsTabPanel.addTab(name, new ItemCasePanel(BSTabPanel.getTabPanelId(), $m.ofValue(c)));
+                if (ShowCaseType.FORM.equals(showCaseItem.getShowCaseType())) {
+                    bsTabPanel.addTab(name, new FormItemCasePanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue((CaseBaseForm)c)));
+                } else {
+                    bsTabPanel.addTab(name, new StudioItemCasePanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue((CaseBaseStudio)c)));
+                }
             });
             casesContainer.add(bsTabPanel);
 
         } else if (!showCaseItem.getCases().isEmpty()) {
-            casesContainer.add(new ItemCasePanel("cases", $m.ofValue(showCaseItem.getCases().get(0))));
+            if (ShowCaseType.STUDIO.equals(showCaseItem.getShowCaseType())) {
+                casesContainer.add(new StudioItemCasePanel("cases", $m.ofValue((CaseBaseStudio)showCaseItem.getCases().get(0))));
+            } else {
+                casesContainer.add(new FormItemCasePanel("cases", $m.ofValue((CaseBaseForm)showCaseItem.getCases().get(0))));
+            }
         }
 
         return casesContainer;
@@ -69,4 +90,5 @@ public class ComponentContent extends Content implements SingularWicketContainer
     protected IModel<?> getContentSubtitleModel() {
         return $m.ofValue("");
     }
+
 }

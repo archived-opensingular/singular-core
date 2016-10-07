@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.STypeComposite;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.TextField;
 import org.fest.assertions.api.Assertions;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Enclosed.class)
 public class MoneyMapperTest {
@@ -51,7 +51,7 @@ public class MoneyMapperTest {
 
     /*@Test
     public void testVisualizationRendering() {
-        FormTester formTester = startPage(ViewMode.VISUALIZATION);
+        FormTester formTester = startPage(ViewMode.READ_ONLY);
 
         Optional<String> money = findId(formTester.getForm(), "money");
         assertTrue(money.isPresent());

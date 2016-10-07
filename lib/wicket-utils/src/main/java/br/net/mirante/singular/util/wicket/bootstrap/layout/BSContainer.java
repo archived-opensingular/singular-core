@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import br.net.mirante.singular.util.wicket.bootstrap.BootstrapSize;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -45,6 +46,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
         add(items);
         add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
             @Override
@@ -78,13 +80,13 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public BSControls newFormGroup() {
-        return newFormGroup(true);
+        return newFormGroup(BootstrapSize.SM);
     }
 
-    public BSControls newFormGroup(boolean compact) {
+    public BSControls newFormGroup(BootstrapSize bsSize) {
         return newComponent(componentId -> {
             BSControls controls = new BSControls(componentId, false)
-                    .setCssClass("form-group" + (compact ? " form-group-sm" : ""));
+                    .setCssClass("form-group" + bsSize.apply("form-group"));
             controls.add(new AttributeAppender("class", "can-have-error", " "));
             return controls;
         });
@@ -170,5 +172,9 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         if (target != null) {
             target.appendJavaScript(";bootbox.alert('" + message + "');");
         }
+    }
+
+    public String newChildId(){
+        return items.newChildId();
     }
 }

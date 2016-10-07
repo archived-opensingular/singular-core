@@ -1,25 +1,28 @@
 package br.net.mirante.singular.form.wicket.util;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.util.transformer.Value;
 
 import java.io.Serializable;
+
+import static br.net.mirante.singular.form.util.transformer.Value.dehydrate;
+import static br.net.mirante.singular.form.util.transformer.Value.hydrate;
 
 public class FormStateUtil {
 
     public static FormState keepState(SInstance instance) {
-        return new FormState(Value.dehydrate(instance));
+        return new FormState(dehydrate(instance));
     }
 
     public static void restoreState(final SInstance instance, final FormState state) {
         instance.clearInstance();
-        Value.hydrate(instance, state.value);
+        hydrate(instance, state.value);
     }
 
     public static class FormState implements Serializable {
-        final Object value;
+        final Value.Content value;
 
-        FormState(Object value) {
+        FormState(Value.Content value) {
             this.value = value;
         }
     }

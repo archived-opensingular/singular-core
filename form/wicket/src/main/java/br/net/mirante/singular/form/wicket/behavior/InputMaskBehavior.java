@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.form.wicket.behavior;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -14,6 +15,9 @@ import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * <p>Classe responsável por adicionar máscara a um {@code input}.</p>
@@ -36,6 +40,8 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
  */
 public class InputMaskBehavior extends Behavior {
 
+    public static final Logger logger = LoggerFactory.getLogger(InputMaskBehavior.class);
+
     public static final String MASK_ATTR       = "mask";
     public static final String MAX_LENGTH_ATTR = "repeat";
 
@@ -44,42 +50,42 @@ public class InputMaskBehavior extends Behavior {
     /**
      * <p>Enumerador com algumas máscaras predefinidas.</p>
      */
-    public enum Masks {
+    public static class Masks {
         /**
          * <p>Máscara que permite apenas valores numéricos: [0-9].</p>
          */
-        NUMERIC("9"),
+        public static Masks NUMERIC = new Masks("9");
 
         /**
          * <p>Máscara para datas do tipo DD/MM/AAAA.</p>
          */
-        FULL_DATE("99/99/9999"),
+        public static Masks FULL_DATE = new Masks("99/99/9999");
 
         /**
          * <p>Máscara para datas do tipo MM/AAAA.</p>
          */
-        SHORT_DATE("99/9999"),
+        public static Masks SHORT_DATE = new Masks("99/9999");
 
         /**
          * <p>Máscara para CPF.</p>
          */
-        CPF("999.999.999-99"),
+        public static Masks CPF = new Masks("999.999.999-99");
 
         /**
          * <p>Máscara para CNPJ.</p>
          */
-        CNPJ("99-999.999/9999-99"),
+        public static Masks CNPJ = new Masks("99.999.999/9999-99");
 
         /**
          * <p>Máscara para CEP.</p>
          */
-        CEP("99.999-999"),
+        public static Masks CEP = new Masks("99.999-999");
 
-        TIME("9{1,2}:99");
+        public static Masks TIME = new Masks("9{1,2}:99");
 
         private String mask;
 
-        Masks(String mask) {
+        public Masks(String mask) {
             this.mask = mask;
         }
 
@@ -90,6 +96,18 @@ public class InputMaskBehavior extends Behavior {
          */
         public String getMask() {
             return mask;
+        }
+
+        public static Masks valueOf(String s) {
+            try {
+                Field f = ReflectionUtils.findField(Masks.class, s);
+                if (f != null){
+                    return (Masks) f.get(null);
+                }
+            } catch (IllegalAccessException e) {
+                logger.error(e.getMessage(), e);
+            }
+            return new Masks(s);
         }
     }
 

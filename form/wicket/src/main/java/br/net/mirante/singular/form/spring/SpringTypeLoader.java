@@ -5,20 +5,19 @@
 
 package br.net.mirante.singular.form.spring;
 
-import java.io.Serializable;
-import java.util.Optional;
-
+import br.net.mirante.singular.form.SType;
+import br.net.mirante.singular.form.SingularFormException;
+import br.net.mirante.singular.form.document.RefType;
+import br.net.mirante.singular.form.document.RefTypeByKey;
+import br.net.mirante.singular.form.document.TypeLoader;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.RefTypeByKey;
-import br.net.mirante.singular.form.mform.document.TypeLoader;
+import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * Loader de dicionário baseado no Spring. Espera que o mesmo será um bean do
@@ -28,16 +27,16 @@ import br.net.mirante.singular.form.mform.document.TypeLoader;
  *
  * @author Daniel C. Bordin
  */
-public abstract class SpringTypeLoader<KEY extends Serializable> extends TypeLoader<KEY>
+public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends TypeLoader<TYPE_KEY>
         implements ApplicationContextAware, BeanNameAware, NamedBean {
 
     private String springBeanName;
 
     @Override
-    protected final Optional<RefType> loadRefTypeImpl(KEY typeId) {
+    protected final Optional<RefType> loadRefTypeImpl(TYPE_KEY typeId) {
         Optional<SType<?>> type = loadType(typeId);
         if (type == null) {
-            throw new SingularFormException(getClass().getName() + ".loadType(KEY) retornou null em vez de um Optional");
+            throw new SingularFormException(getClass().getName() + ".loadType(TYPE_KEY) retornou null em vez de um Optional");
         }
         return type.map(t -> new SpringRefType(SpringFormUtil.checkBeanName(this), typeId, t));
     }

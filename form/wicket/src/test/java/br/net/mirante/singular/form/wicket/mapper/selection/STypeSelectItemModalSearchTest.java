@@ -1,133 +1,120 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
-
-import java.util.List;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.converter.ValueToSICompositeConverter;
+import br.net.mirante.singular.form.provider.Config;
+import br.net.mirante.singular.form.provider.FilteredProvider;
+import br.net.mirante.singular.form.provider.ProviderContext;
+import br.net.mirante.singular.form.view.SViewSearchModal;
 import br.net.mirante.singular.form.wicket.helpers.SingularFormBaseTest;
+import br.net.mirante.singular.form.wicket.mapper.search.SearchModalPanel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.form.Button;
+import org.junit.Assert;
+import org.junit.Test;
 
-@RunWith(Enclosed.class)
-public class STypeSelectItemModalSearchTest {
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    private static class Base extends SingularFormBaseTest {
-        protected STypeComposite selectType;
-        protected SViewSelectionBySearchModal view;
-        protected STypeSimple nomeUF;
+public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
 
-        @Override
-        protected void buildBaseType(STypeComposite group) {
-            selectType = group.addFieldComposite("originUF");
-            selectType.addFieldString("id");
-            nomeUF = selectType.addFieldString("nome");
-            selectType.addFieldInteger("population").asAtrBasic().label("População");
-            selectType.addFieldInteger("areasqrkm").asAtrBasic().label("Área");
-            selectType.addFieldInteger("phonecode").asAtrBasic().label("DDD");
-            selectType.addFieldDecimal("gdp").asAtrBasic().label("PIB");
-            selectType.addFieldDecimal("hdi").asAtrBasic().label("IDH");
-            view = (SViewSelectionBySearchModal)
-                    selectType.setView(SViewSelectionBySearchModal::new);
-        }
+    private STypeComposite<SIComposite> notebook;
 
-        protected SIList<?> novoProvider(SSelectionableInstance... selects) {
-            SIList lista = selectType.newList();
-            for (SSelectionableInstance s : selects) {
-                lista.addElement(s);
+    @Override
+    protected void buildBaseType(STypeComposite<?> baseType) {
+
+        notebook = baseType.addFieldComposite("notebook");
+
+        notebook.addFieldString("marca");
+        notebook.addFieldString("memoria");
+        notebook.addFieldString("disco");
+        notebook.addFieldString("sistemaOperacional");
+
+        notebook.withView(new SViewSearchModal());
+        notebook.asAtrProvider().filteredProvider(new FilteredProvider<Notebook>() {
+            @Override
+            public void configureProvider(Config cfg) {
+                cfg.getFilter().addFieldString("marca");
+                cfg.getFilter().addFieldString("sistemaOperacional");
+                cfg.result().addColumn("marca", "Marca")
+                        .addColumn("memoria", "Memoria")
+                        .addColumn("disco", "Disco")
+                        .addColumn("sistemaOperacional", "Sistema Operacional");
             }
-            return lista;
+
+            @Override
+            public List<Notebook> load(ProviderContext<SInstance> context) {
+                return Arrays.asList(new Notebook("Apple", "4GB", "1T", "OSX"), new Notebook("Samsug", "8GB", "1TB", "ArchLinux"));
+            }
+        });
+
+        notebook.asAtrProvider().converter((ValueToSICompositeConverter<Notebook>) (ins, note) -> {
+            ins.setValue("marca", note.marca);
+            ins.setValue("memoria", note.memoria);
+            ins.setValue("disco", note.disco);
+            ins.setValue("sistemaOperacional", note.sistemaOperacional);
+        });
+    }
+
+    private static class Notebook implements Serializable {
+
+        String marca;
+        String memoria;
+        String disco;
+        String sistemaOperacional;
+
+        Notebook(String marca, String memoria, String disco, String sistemaOperacional) {
+            this.marca = marca;
+            this.memoria = memoria;
+            this.disco = disco;
+            this.sistemaOperacional = sistemaOperacional;
         }
 
-        protected SSelectionableInstance federaldistrict() {
-            SIComposite df = (SIComposite) selectType.newInstance();
-            df.setValue("id", "DF");
-            df.setValue("nome", "Distrito Federal");
-            df.setValue("population", 2852372);
-            df.setValue("areasqrkm", 5802);
-            df.setValue("phonecode", 61);
-            df.setValue("gdp", 189800000000l);
-            df.setValue("hdi", 0.824);
-            return df;
+        public String getMarca() {
+            return marca;
         }
 
-        protected SSelectionableInstance goias() {
-            SIComposite go = (SIComposite) selectType.newInstance();
-            go.setValue("id", "GO");
-            go.setValue("nome", "Goiás");
-            go.setValue("population", 6155998);
-            go.setValue("areasqrkm", 340086);
-            go.setValue("phonecode", 62);
-            go.setValue("gdp", 57091000000l);
-            go.setValue("hdi", 0.735);
-            return go;
+        public String getMemoria() {
+            return memoria;
         }
 
-        protected void clickOpenLink() {
-            List<Component> search_link1 = findTag(form.getForm(), "search_link", AjaxLink.class);
-            tester.executeAjaxEvent(search_link1.get(0), "onclick");
+        public String getDisco() {
+            return disco;
+        }
+
+        public String getSistemaOperacional() {
+            return sistemaOperacional;
         }
     }
 
-    public static class Default extends Base  {
+    @Test
+    public void testSelection() {
 
-        @Override
-        protected void buildBaseType(STypeComposite group) {
-            super.buildBaseType(group);
-            selectType.withSelectionFromProvider(nomeUF,
-                    (SOptionsProvider) (inst,f) -> novoProvider(federaldistrict(), goias()));
-        }
+        Button link = findOnForm(Button.class, form.getForm(), al -> al.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o link para abertura da modal"));
 
-        @Test public void showModalWhenClicked() {
-            tester.assertContainsNot("Buscar");
-            clickOpenLink();
+        tester.executeAjaxEvent(link, "click");
 
-            tester.assertContains("Buscar");
+        List<AjaxLink> links = findOnForm(ActionAjaxLink.class, form.getForm(),
+                al -> al.getId().equals("link"))
+                .collect(Collectors.toList());
 
-            tester.assertContains("Distrito Federal");
-            tester.assertContains("Goiás");
-        }
+        tester.executeAjaxEvent(links.get(0), "click");
+
+        final SIComposite currentInstance = page.getCurrentInstance();
+        final SIComposite notebok         = (SIComposite) currentInstance.getField(notebook.getNameSimple());
+
+        Assert.assertEquals(notebok.getField("marca").getValue(), "Apple");
+        Assert.assertEquals(notebok.getField("memoria").getValue(), "4GB");
+        Assert.assertEquals(notebok.getField("disco").getValue(), "1T");
+        Assert.assertEquals(notebok.getField("sistemaOperacional").getValue(), "OSX");
+
+
     }
-
-
-    public static class WithAditionalFields extends Base {
-
-        @Override
-        protected void buildBaseType(STypeComposite group) {
-            super.buildBaseType(group);
-            selectType.withSelectionFromProvider(nomeUF,
-                    (SOptionsProvider) (inst, f) -> novoProvider(federaldistrict(), goias()));
-            view.setAdditionalFields("population", "phonecode");
-        }
-
-        @Test
-        public void showModalWithExtrafields() {
-            tester.assertContainsNot("Buscar");
-
-            clickOpenLink();
-
-            tester.assertContains("Buscar");
-
-            tester.assertContains("População");
-            tester.assertContains("DDD");
-
-            tester.assertContains("Distrito Federal");
-            tester.assertContains("2852372");
-            tester.assertContains("61");
-            tester.assertContains("Goiás");
-            tester.assertContains("6155998");
-            tester.assertContains("62");
-        }
-    }
-
 }

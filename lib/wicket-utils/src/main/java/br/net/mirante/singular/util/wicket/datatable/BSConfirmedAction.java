@@ -24,6 +24,7 @@ public abstract class BSConfirmedAction<T> implements IBSAction<T> {
     @Override
     public final void execute(AjaxRequestTarget target, IModel<T> model) {
         component.send(component, Broadcast.BUBBLE, new ConfirmationEventPayload<T>(
+            component,
             target,
             confirmationMessage,
             model,

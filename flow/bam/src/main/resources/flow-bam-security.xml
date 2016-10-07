@@ -14,6 +14,7 @@
     <security:http auto-config="false">
         <security:csrf disabled="true"/>
         <security:intercept-url pattern="/login*" access="permitAll"/>
+        <security:intercept-url pattern="/error/*" access="permitAll"/>
         <security:intercept-url pattern="/rest/**" access="permitAll"/>
         <security:intercept-url pattern="/resources/**" access="permitAll"/>
         <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')"/>

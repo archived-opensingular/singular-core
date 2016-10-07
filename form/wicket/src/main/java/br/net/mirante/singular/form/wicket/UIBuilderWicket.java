@@ -5,45 +5,36 @@
 
 package br.net.mirante.singular.form.wicket;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.logging.Logger;
-
-import br.net.mirante.singular.form.mform.basic.view.*;
-import br.net.mirante.singular.form.mform.core.*;
-import br.net.mirante.singular.form.wicket.mapper.*;
-import org.apache.wicket.Component;
-
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeAttachmentList;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeList;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.context.UIBuilder;
-import br.net.mirante.singular.form.mform.context.UIComponentMapper;
-import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
-import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
+import br.net.mirante.singular.commons.lambda.ISupplier;
+import br.net.mirante.singular.form.*;
+import br.net.mirante.singular.form.context.UIBuilder;
+import br.net.mirante.singular.form.context.UIComponentMapper;
+import br.net.mirante.singular.form.type.core.*;
+import br.net.mirante.singular.form.type.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.type.country.brazil.STypeTelefoneNacional;
+import br.net.mirante.singular.form.type.util.STypeLatitudeLongitude;
+import br.net.mirante.singular.form.type.util.STypeYearMonth;
+import br.net.mirante.singular.form.view.*;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.mapper.*;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
-import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentListMapper;
-import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.AutocompleteMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.BooleanRadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleCheckMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectModalBuscaMapper;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.mapper.attachment.list.AttachmentListMapper;
+import br.net.mirante.singular.form.wicket.mapper.attachment.single.AttachmentMapper;
+import br.net.mirante.singular.form.wicket.mapper.composite.BlocksCompositeMapper;
+import br.net.mirante.singular.form.wicket.mapper.composite.DefaultCompositeMapper;
+import br.net.mirante.singular.form.wicket.mapper.masterdetail.ListMasterDetailMapper;
+import br.net.mirante.singular.form.wicket.mapper.search.SearchModalMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.*;
+import br.net.mirante.singular.form.wicket.model.SInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.BreadPanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import org.apache.wicket.Component;
+
+import java.util.Collection;
+import java.util.Optional;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -54,7 +45,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     }
 
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
-
+        WicketBuildContext child = ctx;
         if (ctx.getParent() == null || ctx.isShowBreadcrumb()) {
             ctx.init(this, viewMode);
             BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs()) {
@@ -66,37 +57,36 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
             BSRow row = ctx.getContainer().newGrid().newRow();
             row.newCol().appendTag("div", panel);
-            WicketBuildContext child = ctx.createChild(row.newCol(), true, ctx.getModel());
-            child.annotation(ctx.annotation());
-            ctx = child;
+            child = ctx.createChild(row.newCol(), true, ctx.getModel());
+            child.setAnnotationMode(ctx.getAnnotationMode());
         }
 
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
-        if (ctx.annotation().enabled()) {
+        if (ctx.getAnnotationMode().enabled()) {
             ctx.init(this, viewMode);
             new AnnotationBuilder(this).build(ctx, viewMode, mapper);
         } else {
-            mapper.buildView(ctx.init(this, viewMode));
+            mapper.buildView(child.init(this, viewMode));
         }
 
     }
 
     private IWicketComponentMapper resolveMapper(SInstance instancia) {
-
-        final UIComponentMapper customMapper = instancia.getType().getCustomMapper();
-        final SView view = ViewResolver.resolve(instancia);
+        final ISupplier<? extends UIComponentMapper> customMapperFactory = instancia.getType().getCustomMapperFactory();
+        final UIComponentMapper customMapper = (customMapperFactory != null) ? customMapperFactory.get() : null;
 
         if (customMapper != null) {
             if (customMapper instanceof IWicketComponentMapper) {
                 return (IWicketComponentMapper) customMapper;
             } else {
-                throw new SingularFormException("Para utilizar custom mapper com Wicket, é necessario " + customMapper.getClass().getName()
-                        + " implementar IWicketComponentMapper", instancia);
+                throw new SingularFormException("Para utilizar custom mapper com Wicket, é necessário " + customMapper.getClass().getName()
+                    + " implementar IWicketComponentMapper", instancia);
             }
         } else {
+            final SView view = ViewResolver.resolve(instancia);
             return getViewMapperRegistry().getMapper(instancia, view).orElseThrow(
-                    () -> new SingularFormException("Não há mappeamento de componente Wicket para o tipo", instancia, "view=" + view));
+                () -> new SingularFormException("Não há mappeamento de componente Wicket para o tipo", instancia, "view=" + view));
         }
     }
 
@@ -106,11 +96,13 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeSimple.class,     SViewSelectionByRadio.class,           RadioMapper::new)
                 .register(STypeSimple.class,     SViewSelectionBySelect.class,          SelectMapper::new)
                 .register(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new)
+                .register(STypeBoolean.class,     SViewSelectionBySelect.class,         BooleanSelectMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
-                .register(STypeInteger.class,                                           IntegerMapper::new)
+                .register(STypeInteger.class,                                           () -> new NumberMapper<>(Integer.class))
+                .register(STypeLong.class,                                              () -> new NumberMapper<>(Long.class))
                 .register(STypeString.class,                                            StringMapper::new)
-                .register(STypeString.class,     SViewSelectionBySearchModal.class,     SelectModalBuscaMapper::new)
+                .register(STypeString.class,     SViewSearchModal.class,                SearchModalMapper::new)
                 .register(STypeString.class,     SViewTextArea.class,                   TextAreaMapper::new)
                 .register(STypeString.class,     SViewAutoComplete.class,               AutocompleteMapper::new)
                 .register(STypeDate.class,                                              DateMapper::new)
@@ -119,11 +111,12 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeMonetary.class,                                          MoneyMapper::new)
                 .register(STypeAttachment.class,                                        AttachmentMapper::new)
                 .register(STypeLatitudeLongitude.class,                                 LatitudeLongitudeMapper::new)
-                .register(STypeComposite.class,                                         DefaultCompostoMapper::new)
+                .register(STypeComposite.class,                                         DefaultCompositeMapper::new)
                 .register(STypeComposite.class,   SViewTab.class,                       TabMapper::new)
+                .register(STypeComposite.class,   SViewByBlock.class,                   BlocksCompositeMapper::new)
                 .register(STypeComposite.class,   SViewSelectionByRadio.class,          RadioMapper::new)
                 .register(STypeComposite.class,   SViewSelectionBySelect.class,         SelectMapper::new)
-                .register(STypeComposite.class,   SViewSelectionBySearchModal.class,    SelectModalBuscaMapper::new)
+                .register(STypeComposite.class,   SViewSearchModal.class,               SearchModalMapper::new)
                 .register(STypeComposite.class,   SViewAutoComplete.class,              AutocompleteMapper::new)
                 .register(STypeComposite.class,   SViewReadOnly.class,                  ReadOnlyControlsFieldComponentMapper::new)
                 .register(STypeList.class,        SMultiSelectionBySelectView.class,    MultipleSelectBSMapper::new)
@@ -138,19 +131,20 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeDateTime.class,    SViewDateTime.class,                  DateTimeMapper::new)
                 .register(STypeTime.class,                                              TimeMapper::new)
                 .register(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new)
+                .register(STypeHTML.class,                                              RichTextMapper::new)
                 .register(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         //@formatter:on
     }
 }
 
 class AnnotationBuilder {
-    private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class.getName());
+    //private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class.getName());
 
-    private UIBuilderWicket parent;
+    private UIBuilderWicket    parent;
     private WicketBuildContext mainCtx;
-    private BSRow mainGrid;
+    private BSRow              mainGrid;
 
-    AnnotationBuilder(UIBuilderWicket parent){
+    AnnotationBuilder(UIBuilderWicket parent) {
         this.parent = parent;
     }
 
@@ -175,8 +169,7 @@ class AnnotationBuilder {
     private WicketBuildContext createMainColumn(WicketBuildContext ctx, BSRow superRow) {
         BSCol supercol = superRow.newCol(0).setCssClass("sannotation-form-col");
         final BSGrid formGrid = supercol.newGrid();
-        return new WicketBuildContext(ctx, formGrid, ctx.getExternalContainer(),
-                false, ctx.getModel());
+        return ctx.createChild(formGrid, false, ctx.getModel());
     }
 
     private BSGrid createAnnotationColumn(BSRow superRow) {
@@ -187,17 +180,17 @@ class AnnotationBuilder {
         if (instance.asAtrAnnotation().isAnnotated()) {
             addAnnotationComponent(ngrid, instance, ctx);
         }
-        if(instance instanceof SIComposite){
+        if (instance instanceof SIComposite) {
             addAnnotationsFor(ctx, ngrid, ((SIComposite) instance).getAllFields());
         }
     }
 
-    private void addAnnotationComponent(BSGrid ngrid, SInstance instance,  WicketBuildContext ctx) {
+    private void addAnnotationComponent(BSGrid ngrid, SInstance instance, WicketBuildContext ctx) {
         Optional<Component> target = ctx.getAnnotationTargetFor(instance);
         ngrid.newRow().appendTag("div", true, "",
             (id) -> {
                 AnnotationComponent component = new AnnotationComponent(id, modelFor(instance), ctx);
-                if(target.isPresent()){
+                if (target.isPresent()) {
                     component.setReferencedComponent(target.get());
                 }
                 component.setMainGrid(mainGrid);
@@ -207,14 +200,14 @@ class AnnotationBuilder {
         ;
     }
 
-    private MInstanceRootModel<SInstance> modelFor(SInstance instance) {
-        MInstanceRootModel<SInstance> model = new MInstanceRootModel<>();
+    private SInstanceRootModel<SInstance> modelFor(SInstance instance) {
+        SInstanceRootModel<SInstance> model = new SInstanceRootModel<>();
         model.setObject(instance);
         return model;
     }
 
     private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, Collection<SInstance> children) {
-        for(SInstance field: children){
+        for (SInstance field : children) {
             addAnnotationsFor(ctx, ngrid, field);
         }
     }

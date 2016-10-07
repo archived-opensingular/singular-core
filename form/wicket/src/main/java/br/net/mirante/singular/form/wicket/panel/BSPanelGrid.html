@@ -21,6 +21,16 @@
         .row.equalheights > div > .tab-content {
             width: 100%;
         }
+        
+        .nav.nav-tabs > .tab-item.has-errors > a > span {
+            border-bottom-style: dotted;
+            border-bottom-color: red;
+            border-bottom-width: 2px;
+        }
+        .nav.nav-tabs > .tab-item.has-errors > a:before {
+            -content: '* ';
+            color: red;
+        }
 
     </style>
 
@@ -29,17 +39,17 @@
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
     <form wicket:id="panel-form">
         <div class="row equalheights">
-            <div class="col-md-3 col-sm-3 col-xs-3">
+            <div wicket:id="tab-navigation">
                 <ul class="nav nav-tabs tabs-left">
-                    <li role="presentation" wicket:id="tab">
+                    <li role="presentation" wicket:id="tab" class="tab-item">
                         <a wicket:id="tabAnchor" role="tab">
-                            <span wicket:id="header-text"></span>
-                            <span wicket:id="header-icon"></span>
+                            <span wicket:id="header-text" class="tab-header-text"></span>
+                            <span wicket:id="header-icon" class="tab-header-icon"></span>
                         </a>
                     </li>
                 </ul>
             </div>
-            <div class="col-md-9 col-sm-9 col-xs-9">
+            <div wicket:id="tab-content">
                 <div class="tab-content">
                     <div class="tab-pane active in">
                         <div class="form-body" wicket:id="grid"></div>

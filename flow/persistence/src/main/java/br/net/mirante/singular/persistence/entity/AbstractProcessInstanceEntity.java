@@ -22,6 +22,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
 
@@ -119,6 +120,7 @@ public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_VERSION getProcessVersion() {
         return processVersion;
     }

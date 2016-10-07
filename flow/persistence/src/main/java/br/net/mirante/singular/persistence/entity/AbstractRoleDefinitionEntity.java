@@ -5,6 +5,9 @@
 
 package br.net.mirante.singular.persistence.entity;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,12 +15,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleTask;
 
 /**
  * The base persistent class for the TB_DEFINICAO_PAPEL database table.
@@ -31,7 +37,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
  */
 @MappedSuperclass
 @Table(name = "TB_DEFINICAO_PAPEL")
-public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition> extends BaseEntity<Integer> implements IEntityRoleDefinition {
+public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition, ROLE_TASK extends IEntityRoleTask> extends BaseEntity<Integer> implements IEntityRoleDefinition {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_DEFINICAO_PAPEL";
 
@@ -50,6 +56,10 @@ public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityPr
     @Column(name = "SG_PAPEL", length = 100, nullable = false)
     private String abbreviation;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "roleDefinition", cascade = CascadeType.REMOVE)
+    private List<ROLE_TASK> rolesTask;
+
+    @Override
     public Integer getCod() {
         return cod;
     }
@@ -58,28 +68,41 @@ public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityPr
         this.cod = cod;
     }
 
+    @Override
     public PROCESS_DEF getProcessDefinition() {
         return processDefinition;
     }
 
+    @Override
     public void setProcessDefinition(IEntityProcessDefinition processDefinition) {
         this.processDefinition = (PROCESS_DEF) processDefinition;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getAbbreviation() {
         return abbreviation;
     }
 
+    @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
 
+    public List<ROLE_TASK> getRolesTask() {
+        return rolesTask;
+    }
+
+    public void setRolesTask(List<ROLE_TASK> rolesTask) {
+        this.rolesTask = rolesTask;
+    }
 }

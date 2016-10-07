@@ -1,7 +1,5 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.domain;
 
-import br.net.mirante.singular.persistence.entity.BaseEntity;
-
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -10,10 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+
 
 @Entity
 @Table(name = "TB_TIPO_UNIDADE_MEDICAMENTO", schema = "DBMEDICAMENTO")
-public class TipoMedida extends BaseEntity implements Serializable {
+public class TipoMedida extends BaseEntity<Long> implements Serializable {
 
     private static final long serialVersionUID = 1762089876181396422L;
 
@@ -41,7 +41,7 @@ public class TipoMedida extends BaseEntity implements Serializable {
 
     @Override
     @Transient
-    public Serializable getCod() {
+    public Long getCod() {
         return id;
     }
 

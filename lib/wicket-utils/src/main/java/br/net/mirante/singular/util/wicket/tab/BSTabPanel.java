@@ -5,6 +5,12 @@
 
 package br.net.mirante.singular.util.wicket.tab;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 import org.apache.wicket.WicketRuntimeException;
@@ -14,15 +20,9 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
 public class BSTabPanel extends Panel {
 
-    private static final String TAB_PANEL_ID = "tab-panel";
+    public static final String TAB_PANEL_ID = "tab-panel";
     private Map<Pair<String, Integer>, Panel> tabMap = new LinkedHashMap<>();
 
     public BSTabPanel(String id) {
@@ -82,7 +82,4 @@ public class BSTabPanel extends Panel {
         };
     }
 
-    public static String getTabPanelId() {
-        return TAB_PANEL_ID;
-    }
 }

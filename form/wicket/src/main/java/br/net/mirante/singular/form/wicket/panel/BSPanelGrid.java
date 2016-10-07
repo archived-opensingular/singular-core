@@ -5,37 +5,46 @@
 
 package br.net.mirante.singular.form.wicket.panel;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static com.google.common.collect.Lists.newArrayList;
+
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.mform.SInstance;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static com.google.common.collect.Lists.newArrayList;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.wicket.component.SingularForm;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol;
 
 public abstract class BSPanelGrid extends Panel {
 
-    private Form<?> form = new Form<>("panel-form");
-    private BSGrid container = new BSGrid("grid");
-    private Map<String, BSTab> tabMap = new LinkedHashMap<>();
-    private BSTab activeTab = null;
+    private static final String ID_TAB    = "tab";
+    private SingularForm<?>     form      = new SingularForm<>("panel-form");
+    private BSTabCol            navigation = new BSTabCol("tab-navigation");
+    private BSTabCol            content = new BSTabCol("tab-content");
+    private BSGrid              container = new BSGrid("grid");
+    private Map<String, BSTab>  tabMap    = new LinkedHashMap<>();
+    private BSTab               activeTab = null;
 
     public BSPanelGrid(String id) {
         super(id);
@@ -54,20 +63,29 @@ public abstract class BSPanelGrid extends Panel {
     }
 
     private void rebuildForm() {
-        add(form.add(buildTabControl()));
+        add(form);
+        form.add(navigation);
+        form.add(content);
+        navigation.add(buildTabControl());
         buildTabContent();
+        
+        configureColspan();
     }
 
     private Component buildTabControl() {
-
-        return new ListView<String>("tab", tabMap.keySet().stream().collect(Collectors.toList())) {
+        return new RefreshingView<String>(ID_TAB) {
             @Override
-            protected void populateItem(ListItem<String> item) {
-
+            protected Iterator<IModel<String>> getItemModels() {
+                return tabMap.keySet().stream()
+                    .map(it -> (IModel<String>) $m.ofValue(it))
+                    .iterator();
+            }
+            @Override
+            protected void populateItem(Item<String> item) {
                 String id = item.getModelObject();
                 final BSTab tab = tabMap.get(id);
 
-                if(activeTab == null && item.getIndex() == 0 || activeTab != null && activeTab.equals(tab)){
+                if (activeTab == null && item.getIndex() == 0 || activeTab != null && activeTab.equals(tab)) {
                     item.add($b.classAppender("active"));
                 }
 
@@ -83,8 +101,8 @@ public abstract class BSPanelGrid extends Panel {
                         target.appendJavaScript("$('.nav-tabs li').removeClass('active');");
                         target.appendJavaScript("$('.nav-tabs li[data-tab-name=\"" + id + "\"]').addClass('active');");
                         target.add(form);
-                        if(toUpdadeOnTab() != null){
-                            toUpdadeOnTab().forEach((c) -> target.add(c) );
+                        if (toUpdadeOnTab() != null) {
+                            toUpdadeOnTab().forEach((c) -> target.add(c));
                         }
                     }
 
@@ -92,35 +110,59 @@ public abstract class BSPanelGrid extends Panel {
 
                 link.add(new Label("header-text", tab.getHeaderText()));
                 Label label = new Label("header-icon", "");
-                label.add(new AttributeModifier("class",tab.iconClass()));
+                label.add(new AttributeModifier("class", tab.iconClass()));
                 link.add(label);
 
                 item.add(link);
+
+                onTabCreated(tab, item);
             }
         };
     }
-
+    /**
+     * Método responsável por configurar o tamanho da coluna de navegação e de conteúdo
+     */
+    protected void configureColspan() {
+        navigation.xs(3).sm(3).md(3).lg(3);
+        content.xs(9).sm(9).md(9).lg(9);
+    }
+    
     public abstract void updateTab(BSTab tab, List<BSTab> tabs);
 
-    public Collection<Component> toUpdadeOnTab(){   return newArrayList(); }
+    protected void onTabCreated(BSTab tab, Component tabComponent) {}
+
+    public Collection<Component> toUpdadeOnTab() {
+        return newArrayList();
+    }
 
     public void buildTabContent() {
-        form.remove(container);
+        content.remove(container);
         container = new BSGrid("grid");
-        form.add(container);
-
+        content.add(container);
     }
 
     public BSGrid getContainer() {
         return container;
     }
 
+    public Map<String, BSTab> getTabs() {
+        return Collections.unmodifiableMap(tabMap);
+    }
+
+    public BSTabCol getNavigation() {
+        return navigation;
+    }
+    
+    public BSTabCol getContent() {
+        return content;
+    }
+    
     public static final class BSTab implements Serializable {
-        private String headerText;
-        private List<String> subtree;
-        private String iconClass;
-        protected IModel<SInstance> model;
-        private Function<IModel<SInstance>, String> iconProcessor;
+        private String                               headerText;
+        private List<String>                         subtree;
+        private String                               iconClass;
+        protected IModel<SInstance>                  model;
+        private IFunction<IModel<SInstance>, String> iconProcessor;
 
         public BSTab(String headerText, List<String> subtree, IModel<SInstance> model) {
             this.headerText = headerText;
@@ -137,14 +179,36 @@ public abstract class BSPanelGrid extends Panel {
         }
 
         public String iconClass() {
-            if(iconClass == null && iconProcessor != null){
+            if (iconClass == null && iconProcessor != null) {
                 return iconProcessor.apply(model);
             }
             return iconClass;
         }
-        public void iconClass(String css) { iconClass = css; }
-        public void iconClass(Function<IModel<SInstance>, String> iconProcessor) {
-            this.iconProcessor = (Function<IModel<SInstance>, String> & Serializable) iconProcessor;
+        public IModel<SInstance> getModel() {
+            return model;
+        }
+        public SInstance getModelObject() {
+            return getModel().getObject();
+        }
+        public void iconClass(String css) {
+            iconClass = css;
+        }
+        public void iconClass(IFunction<IModel<SInstance>, String> iconProcessor) {
+            this.iconProcessor = iconProcessor;
         }
     }
+    
+    protected class BSTabCol extends WebMarkupContainer implements IBSGridCol<BSTabCol> {
+
+        public BSTabCol(String id) {
+            super(id);
+            add(newBSGridColBehavior());
+        }
+
+        @Override
+        public BSTabCol add(Behavior... behaviors) {
+            return (BSTabCol) super.add(behaviors);
+        }
+    }
+    
 }

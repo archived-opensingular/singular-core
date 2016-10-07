@@ -5,7 +5,9 @@
 
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import java.util.List;
+import static br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
+
+import java.io.Serializable;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.RadioChoice;
@@ -13,31 +15,29 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
-import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.SInstance;
+import br.net.mirante.singular.form.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.mapper.SingularEventsHandlers;
+import br.net.mirante.singular.form.wicket.model.SelectSInstanceAwareModel;
+import br.net.mirante.singular.form.wicket.renderer.SingularChoiceRenderer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class RadioMapper extends SelectMapper {
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    protected RadioChoice retrieveChoices(IModel<? extends SInstance> model,
-                                          final IModel<? extends List<SelectOption>> opcoesValue, SView view) {
-
-        if (!(view instanceof SViewSelectionByRadio)) {
-            throw new SingularFormException("View não suportada", model.getObject());
-        }
-
-        final SViewSelectionByRadio radioView = (SViewSelectionByRadio) view;
-        final MSelectionInstanceModel opcoesModel = new MSelectionInstanceModel<SelectOption>(model);
+    public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final SViewSelectionByRadio radioView = (SViewSelectionByRadio) ctx.getView();
         final String id = model.getObject().getName();
 
-        return new RadioChoice<SelectOption>(id,
-                (IModel) opcoesModel, opcoesValue, rendererer()) {
+        RadioChoice<Serializable> rc = new RadioChoice<Serializable>(id,
+            new SelectSInstanceAwareModel(model),
+            new DefaultOptionsProviderLoadableDetachableModel(model),
+            new SingularChoiceRenderer(model)) {
+
             @Override
-            protected IValueMap getAdditionalAttributesForLabel(int index, SelectOption choice) {
+            protected IValueMap getAdditionalAttributesForLabel(int index, Serializable choice) {
                 IValueMap map = new ValueMap();
                 if (radioView.getLayout() == SViewSelectionByRadio.Layout.HORIZONTAL) {
                     map.put("class", "radio-inline");
@@ -49,7 +49,7 @@ public class RadioMapper extends SelectMapper {
             }
 
             @Override
-            protected IValueMap getAdditionalAttributes(int index, SelectOption choice) {
+            protected IValueMap getAdditionalAttributes(int index, Serializable choice) {
                 IValueMap map = new ValueMap();
                 map.put("style", "left:20px;");
                 return map;
@@ -57,28 +57,25 @@ public class RadioMapper extends SelectMapper {
 
             @Override
             protected void onConfigure() {
-                setVisible(!opcoesModel.getObject().toString().isEmpty());
+                setVisible(!model.getObject().isEmptyOfData());
             }
         };
+
+        if (radioView.getLayout() == SViewSelectionByRadio.Layout.HORIZONTAL) {
+            rc.setPrefix("<span style=\"display: inline-block;white-space: nowrap;\">");
+            rc.setSuffix("</span>");
+        } else if (radioView.getLayout() == SViewSelectionByRadio.Layout.VERTICAL) {
+            rc.setPrefix("<span style='display: table;padding: 4px 0;'>");
+            rc.setSuffix("</span>");
+        }
+        formGroup.appendRadioChoice(rc);
+
+        return rc;
     }
 
     @Override
-    @SuppressWarnings({ "unchecked" })
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model,
-                                          final IModel<? extends List<SelectOption>> opcoesValue, SView view) {
-        if (!(view instanceof SViewSelectionByRadio)) {
-            throw new SingularFormException("View não suportada", model.getObject());
-        }
-        final SViewSelectionByRadio radioView = (SViewSelectionByRadio) view;
-        final RadioChoice<String> choices = retrieveChoices(model, opcoesValue, view);
-        if (radioView.getLayout() == SViewSelectionByRadio.Layout.HORIZONTAL) {
-            choices.setPrefix("<span style=\"display: inline-block;white-space: nowrap;\">");
-            choices.setSuffix("</span>");
-        } else if (radioView.getLayout() == SViewSelectionByRadio.Layout.VERTICAL) {
-            choices.setPrefix("<span style='display: table;padding: 4px 0;'>");
-            choices.setSuffix("</span>");
-        }
-        formGroup.appendRadioChoice(choices);
-        return choices;
+    public void adjustJSEvents(Component comp) {
+        comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS, ADD_MOUSEDOWN_HANDLERS));
     }
+
 }

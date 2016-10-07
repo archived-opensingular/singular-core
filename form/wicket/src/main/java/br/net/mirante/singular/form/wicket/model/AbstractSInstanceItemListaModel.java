@@ -9,8 +9,8 @@ import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.SIList;
+import br.net.mirante.singular.form.SInstance;
 
 public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
     extends AbstractSInstanceModel<I>
@@ -32,7 +32,7 @@ public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
     @SuppressWarnings("unchecked")
     public I getObject() {
         SIList<I> iLista = getRootTarget();
-        if (getIndex() >= iLista.size())
+        if (iLista == null || getIndex() >= iLista.size())
             return null;
         return (I) iLista.get(getIndex());
     }

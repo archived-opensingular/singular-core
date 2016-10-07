@@ -5,6 +5,7 @@
 
 package br.net.mirante.singular.flow.test.definicao;
 
+import br.net.mirante.singular.flow.core.DefinitionInfo;
 import br.net.mirante.singular.flow.core.ExecutionContext;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
@@ -18,13 +19,14 @@ import br.net.mirante.singular.flow.core.variable.type.VarTypeString;
 
 import java.math.BigDecimal;
 
+@DefinitionInfo("DefVar")
 public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
 
     public static final BigDecimal BIGDECIMAL_USADO_NO_TESTE = new BigDecimal("1111111123242343240.00001E-3");
     public static final String STRING_USADA_NO_TESTE = "Pessoa X";
 
     public DefinicaoComVariaveis() {
-        super("DefVar",ProcessInstance.class);
+        super(ProcessInstance.class);
         getVariables().addVariable(new VarDefinitionImpl("nome", "Nome de Alguém", new VarTypeString(), false));
         getVariables().addVariable(new VarDefinitionImpl("qualquerCoisa", "Qualquer Coisa Numerica", new VarTypeDecimal(), false));
     }

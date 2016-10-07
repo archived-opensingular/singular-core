@@ -7,42 +7,27 @@ package br.net.mirante.singular.showcase.view.page.form.crud.services;
 
 import javax.inject.Inject;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.options.SOptionsProvider;
-import br.net.mirante.singular.showcase.dao.form.ExampleFile;
-import br.net.mirante.singular.showcase.dao.form.FileDao;
+import br.net.mirante.singular.form.persistence.entity.AbstractAttachmentEntity;
+import br.net.mirante.singular.form.provider.SSimpleProvider;
+import br.net.mirante.singular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.util.transformer.SCompositeListBuilder;
 
 @SuppressWarnings("serial")
 @Component("filesChoiceProvider")
-public class MFileIdsOptionsProvider implements SOptionsProvider {
+public class MFileIdsOptionsProvider implements SSimpleProvider {
+
     @Inject
-    private FileDao filePersistence;
+    private IAttachmentPersistenceHandler<AbstractAttachmentEntity> filePersistence;
 
-    /**
-     * Returns a MILista of the type of the field it will be used.
-     *
-     * @param optionsInstance : Current instance of the selection.
-     */
     @Override
-    // @destacar:bloco
-    public SIList<? extends SInstance> listOptions(SInstance optionsInstance, String filter) {
-        SIList<?> list;
-        if (optionsInstance instanceof SIList) {
-            list = ((SIList) optionsInstance).getElementsType().newList();
-        } else {
-            list = optionsInstance.getType().newList();
-        }
-        files().forEach(f -> list.addValue(f.getId()));
-        return list;
+    public void fill(SCompositeListBuilder builder) {
+        filePersistence.getAttachments().forEach(file -> {
+            builder.add()
+                    .set("id", file.getId())
+                    .set("hashSha1", file.getHashSha1());
+        });
     }
-    // @destacar:fim
 
-    private List<ExampleFile> files() {
-        return filePersistence.list();
-    }
 }

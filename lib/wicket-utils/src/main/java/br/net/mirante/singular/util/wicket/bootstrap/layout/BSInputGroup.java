@@ -47,9 +47,16 @@ public class BSInputGroup extends BSControls {
 
     public BSInputGroup appendButtonAddon(Icone icone) {
         return appendTag("span", true, "class='input-group-btn'", bid -> new BSContainer<>(bid)
-                .appendTag("button", true, "class='btn default btn-sm icon' style='height:30px' type='button'",
-                        iid -> new BSContainer<>(iid).appendTag("i", true, "class='" + icone.getCssClass() + "'",
-                                new WebMarkupContainer("i"))));
+            .appendTag("button", true, "class='btn default btn-sm icon' style='height:30px' type='button'",
+                iid -> new BSContainer<>(iid).appendTag("i", true, "class='" + icone.getCssClass() + "'",
+                    new WebMarkupContainer("i"))));
+    }
+
+    public BSContainer<?> newButtonAddon(Icone icone) {
+        BSContainer<?> div = newTagWithFactory("span", true, "class='input-group-btn'", BSContainer::new);
+        BSContainer<?> button = div.newTagWithFactory("button", true, "class='btn default btn-sm icon' style='height:30px' type='button'", BSContainer::new);
+        button.newTag("i", true, "class='" + icone.getCssClass() + "'", new WebMarkupContainer("i"));
+        return button;
     }
 
     public BSInputGroup appendTextAddon(IModel<String> text) {

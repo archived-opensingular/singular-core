@@ -1,44 +1,22 @@
 package br.net.mirante.singular.support.persistence;
 
 
-import br.net.mirante.singular.commons.util.Loggable;
-import br.net.mirante.singular.persistence.entity.BaseEntity;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-@Transactional(Transactional.TxType.MANDATORY)
-public class BaseDAO<T extends BaseEntity, ID extends Serializable> implements Loggable {
+import org.hibernate.Criteria;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 
-    @Inject
-    protected SessionFactory sessionFactory;
+import br.net.mirante.singular.support.persistence.entity.BaseEntity;
+
+
+public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends SimpleDAO {
 
     protected Class<T> tipo;
 
-
-    public BaseDAO() {
-        Type superclass = getClass().getGenericSuperclass();
-        if (superclass instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) superclass;
-            if (parameterizedType.getActualTypeArguments().length > 0) {
-                tipo = (Class<T>) parameterizedType.getActualTypeArguments()[0];
-            }
-        }
-    }
-
-    protected Session getSession() {
-        return sessionFactory.getCurrentSession();
+    public BaseDAO(Class<T> tipo) {
+        this.tipo = tipo;
     }
 
     public ID save(T novoObj) {
@@ -57,20 +35,12 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> implements L
         }
     }
 
-    public Query setParametersQuery(Query query, Map<String, Object> params) {
-        for (Map.Entry<String, Object> parameter : params.entrySet()) {
-            if (parameter.getValue() instanceof Collection<?>) {
-                query.setParameterList(parameter.getKey(),
-                        (Collection<?>) parameter.getValue());
-            } else if (parameter.getValue() instanceof Integer) {
-                query.setInteger(parameter.getKey(), (Integer) parameter.getValue());
-            } else if (parameter.getValue() instanceof Date) {
-                query.setDate(parameter.getKey(), (Date) parameter.getValue());
-            } else {
-                query.setParameter(parameter.getKey(), parameter.getValue());
-            }
+    public T find(Long id) {
+        if (id == null) {
+            return null;
+        } else {
+            return (T) getSession().createCriteria(tipo).add(Restrictions.idEq(id)).uniqueResult();
         }
-        return query;
     }
 
     public List<T> listAll() {
@@ -87,6 +57,37 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> implements L
 
     public void evict(Object o) {
         getSession().evict(o);
+    }
+
+    public <T> List<T> findByProperty(String propertyName, String value) {
+        return findByProperty(propertyName, value, null, null);
+    }
+
+    public <T> List<T> findByProperty(String propertyName, String value, Integer maxResults) {
+        return findByProperty(propertyName, value, null, maxResults);
+    }
+
+    public <T> T findByUniqueProperty(String propertyName, Object value) {
+        return (T) getSession().createCriteria(tipo).add(Restrictions.eq(propertyName, value)).setMaxResults(1).uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> findByProperty(String propertyName, String value, MatchMode matchMode, Integer maxResults) {
+        Criteria criteria = getSession().createCriteria(tipo);
+
+        if (matchMode == null) {
+            matchMode = MatchMode.EXACT;
+        }
+
+        if (value != null && !value.isEmpty()) {
+            criteria.add(Restrictions.ilike(propertyName, value, matchMode));
+        }
+
+        if (maxResults != null) {
+            criteria.setMaxResults(maxResults);
+        }
+
+        return criteria.list();
     }
 
 }

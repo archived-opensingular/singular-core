@@ -1,17 +1,15 @@
 package br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario;
 
 import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
-import br.net.mirante.singular.exemplos.notificacaosimplificada.domain.LinhaCbpf;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.SInfoType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.TypeBuilder;
-import br.net.mirante.singular.form.mform.basic.view.SViewAutoComplete;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeString;
-
-import static br.net.mirante.singular.exemplos.notificacaosimplificada.form.vocabulario.SPackageVocabularioControlado.dominioService;
+import br.net.mirante.singular.exemplos.notificacaosimplificada.service.DominioService;
+import br.net.mirante.singular.form.SIComposite;
+import br.net.mirante.singular.form.SInfoType;
+import br.net.mirante.singular.form.STypeComposite;
+import br.net.mirante.singular.form.TypeBuilder;
+import br.net.mirante.singular.form.provider.STextQueryProvider;
+import br.net.mirante.singular.form.type.core.STypeInteger;
+import br.net.mirante.singular.form.type.core.STypeString;
+import br.net.mirante.singular.form.view.SViewAutoComplete;
 
 @SInfoType(spackage = SPackageVocabularioControlado.class)
 public class STypeFormaFarmaceutica extends STypeComposite<SIComposite> {
@@ -27,22 +25,24 @@ public class STypeFormaFarmaceutica extends STypeComposite<SIComposite> {
         {
 
             this
-                    .asAtrBasic()
+                    .asAtr()
                     .required()
                     .label("Forma farmacêutica")
                     .asAtrBootstrap()
                     .colPreference(4);
             this.setView(SViewAutoComplete::new);
 
-            this.withSelectionFromProvider(descricao, (ins, filter) -> {
-                final SIList<?> list = ins.getType().newList();
-                for (FormaFarmaceuticaBasica lc : dominioService(ins).formasFarmaceuticas(filter)) {
-                    final SIComposite c = (SIComposite) list.addNew();
-                    c.setValue(id, lc.getId());
-                    c.setValue(descricao, lc.getDescricao());
-                }
-                return list;
-            });
+            this.autocomplete()
+                    .id(id)
+                    .display(descricao)
+                    .filteredProvider((STextQueryProvider) (builder, query) -> {
+                        builder
+                                .getCurrentInstance()
+                                .getDocument()
+                                .lookupService(DominioService.class)
+                                .buscarVocabulario(FormaFarmaceuticaBasica.class, query)
+                                .forEach(vc -> builder.add().set(id, vc.getId()).set(descricao, vc.getDescricao()));
+                    });
 
         }
     }

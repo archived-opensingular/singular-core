@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.behavior;
 
 import br.net.mirante.singular.commons.lambda.IBiConsumer;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.SInstance;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -38,7 +38,7 @@ public class AjaxUpdateSingularFormComponentPanel<T> extends AbstractDefaultAjax
         T value = this.getComponent().getRequest().getRequestParameters().getParameterValue(VALUE_REQUEST_PARAMETER_NAME).to(type);
         valueModelResolver.accept(value, model);
         target.add(this.getComponent());
-        listener.onUpdate(this.getComponent(), target, model);
+        listener.onProcess(this.getComponent(), target, model);
     }
 
 }
