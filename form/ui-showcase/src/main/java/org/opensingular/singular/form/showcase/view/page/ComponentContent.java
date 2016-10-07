@@ -13,7 +13,7 @@ import org.opensingular.singular.form.showcase.component.CaseBaseForm;
 import org.opensingular.singular.form.showcase.component.ShowCaseTable;
 import org.opensingular.singular.form.showcase.component.CaseBaseStudio;
 import org.opensingular.singular.form.showcase.component.ShowCaseType;
-import org.opensingular.singular.form.showcase.view.page.studio.StudioItemCasePanel;
+//import org.opensingular.singular.form.showcase.view.page.studio.StudioItemCasePanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
@@ -51,16 +51,16 @@ public class ComponentContent extends Content implements SingularWicketContainer
                 }
                 if (ShowCaseType.FORM.equals(showCaseItem.getShowCaseType())) {
                     bsTabPanel.addTab(name, new FormItemCasePanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue((CaseBaseForm) c)));
-                } else {
-                    bsTabPanel.addTab(name, new StudioItemCasePanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue((CaseBaseStudio) c)));
+//                } else {
+//                    bsTabPanel.addTab(name, new StudioItemCasePanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue((CaseBaseStudio) c)));
                 }
             });
             casesContainer.add(bsTabPanel);
 
         } else if (!showCaseItem.getCases().isEmpty()) {
             if (ShowCaseType.STUDIO.equals(showCaseItem.getShowCaseType())) {
-                casesContainer.add(new StudioItemCasePanel("cases", $m.ofValue((CaseBaseStudio) showCaseItem.getCases().get(0))));
-            } else {
+//                casesContainer.add(new StudioItemCasePanel("cases", $m.ofValue((CaseBaseStudio) showCaseItem.getCases().get(0))));
+//            } else {
                 casesContainer.add(new FormItemCasePanel("cases", $m.ofValue((CaseBaseForm) showCaseItem.getCases().get(0))));
             }
         }

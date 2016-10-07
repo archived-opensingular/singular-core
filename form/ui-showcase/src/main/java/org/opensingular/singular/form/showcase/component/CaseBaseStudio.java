@@ -6,7 +6,6 @@
 package org.opensingular.singular.form.showcase.component;
 
 import org.opensingular.form.wicket.enums.AnnotationMode;
-import com.opensingular.studio.core.CollectionDefinition;
 
 import java.util.Optional;
 
@@ -21,8 +20,8 @@ public class CaseBaseStudio extends CaseBase {
         return Optional.ofNullable(new ResourceRef(caseClass, ""));
     }
 
-    @SuppressWarnings("unchecked")
-    public Class<? extends CollectionDefinition> getCollectionDefinition() {
-        return (Class<? extends CollectionDefinition>) caseClass;
-    }
+
+//    public Class<? extends CollectionDefinition> getCollectionDefinition() {
+//        return (Class<? extends CollectionDefinition>) caseClass;
+//    }
 }

@@ -24,7 +24,6 @@ import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.SPackage;
 import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple;
 import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple2;
-import com.opensingular.studio.core.CollectionDefinition;
 import org.opensingular.lib.wicket.util.resource.Icone;
 
 @Service
@@ -86,13 +85,13 @@ public class ShowCaseTable {
         if (classes != null) {
             for (Class<?> caseClass : classes) {
                 final CaseItem caseItem = caseClass.getAnnotation(CaseItem.class);
-                final CaseBase caseBase;
+                CaseBase caseBase = null;
                 if (SPackage.class.isAssignableFrom(caseClass)) {
                     caseBase = new CaseBaseForm(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
-                } else if (CollectionDefinition.class.isAssignableFrom(caseClass)) {
-                    caseBase = new CaseBaseStudio(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
-                } else {
-                    throw new RuntimeException("Apenas classes do tipo " + SPackage.class.getName() + " e " + CollectionDefinition.class.getName() + " podem ser anotadas com @" + CaseItem.class.getName());
+//                } else if (CollectionDefinition.class.isAssignableFrom(caseClass)) {
+//                    caseBase = new CaseBaseStudio(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
+//                } else {
+//                    throw new RuntimeException("Apenas classes do tipo " + SPackage.class.getName() + " e " + CollectionDefinition.class.getName() + " podem ser anotadas com @" + CaseItem.class.getName());
                 }
 
                 if (!caseItem.customizer().isInterface()) {

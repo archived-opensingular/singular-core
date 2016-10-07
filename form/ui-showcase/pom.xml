@@ -56,13 +56,6 @@
             <artifactId>exemplos-form</artifactId>
             <version>${singular.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.opensingular</groupId>
-            <artifactId>studio-core</artifactId>
-            <version>${singular.version}</version>
-        </dependency>
-
-
 
         <!-- PERSISTENCE -->
         <dependency>
