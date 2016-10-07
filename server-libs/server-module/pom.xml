@@ -41,9 +41,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.opensingular</groupId>
-            <artifactId>flow-bam-support</artifactId>
-            <version>${singular.version}</version>
+            <groupId>com.opensingular</groupId>
+            <artifactId>bam-support</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- JAVAX -->
