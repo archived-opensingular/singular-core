@@ -71,7 +71,7 @@ public class ComponentContent extends Content implements SingularWicketContainer
         } else if (!showCaseItem.getCases().isEmpty()) {
             if (ShowCaseType.STUDIO.equals(showCaseItem.getShowCaseType())) {
 //                casesContainer.add(new StudioItemCasePanel("cases", $m.ofValue((CaseBaseStudio) showCaseItem.getCases().get(0))));
-//            } else {
+            } else {
                 casesContainer.add(new FormItemCasePanel("cases", $m.ofValue((CaseBaseForm) showCaseItem.getCases().get(0))));
             }
         }
