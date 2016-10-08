@@ -295,8 +295,9 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
         Model<Actor> model  = new Model<>();
         IModel<List<Actor>>  actorsModel = $m.get(() -> buscarUsuarios(currentModel, confirmation));
-        confirmationModal.addOrReplace(criarDropDown(actorsModel, model))
-            .setVisible(StringUtils.isNotBlank(confirmation.getSelectEndpoint()));
+        DropDownChoice dropDownChoice = criarDropDown(actorsModel, model);
+        dropDownChoice.setVisible(StringUtils.isNotBlank(confirmation.getSelectEndpoint()));
+        confirmationModal.addOrReplace(dropDownChoice);
 
         confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
