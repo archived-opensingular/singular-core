@@ -59,7 +59,7 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+    public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         final SimpleDateFormat format = new SimpleDateFormat(STypeTime.FORMAT);
         if (model.getObject().getValue() instanceof Date) {
             return format.format(model.getObject().getValue());
