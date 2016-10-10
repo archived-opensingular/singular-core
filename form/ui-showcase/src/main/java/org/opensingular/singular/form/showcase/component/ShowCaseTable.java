@@ -119,7 +119,9 @@ public class ShowCaseTable {
                         caseBase.getAditionalSources().add(resourceRef.get());
                     }
                 }
-                group.addCase(caseBase);
+                if (caseBase != null) {
+                    group.addCase(caseBase);
+                }
             }
         }
 
