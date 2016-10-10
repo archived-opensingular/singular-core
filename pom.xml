@@ -7,7 +7,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular-server</artifactId>
 
-    <version>1.5.0</version>
+    <version>1.5.1-SNAPSHOT</version>
     <name>[projeto-raiz :: singular-server]</name>
     <packaging>pom</packaging>
 
@@ -145,9 +145,9 @@
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
         <wicket.version>7.1.0</wicket.version>
-        <singular.version>1.5.0</singular.version>
-        <singular.server.version>1.5.0</singular.server.version>
-        <singular-enterprise.version>1.5.0</singular-enterprise.version>
+        <singular.version>1.5.1-SNAPSHOT</singular.version>
+        <singular.server.version>1.5.1-SNAPSHOT</singular.server.version>
+        <singular-enterprise.version>1.5.1-SNAPSHOT</singular-enterprise.version>
         <cas.version>4.0.4</cas.version>
     </properties>
 
