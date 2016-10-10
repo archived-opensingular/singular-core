@@ -50,7 +50,6 @@ public abstract class AbstractFlowConfirmModal<T extends PetitionEntity> impleme
 
     protected void addDefaultConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder modal) {
         final FlowConfirmButton<T> confirmButton = newFlowConfirmButton(tn, im, vm, modal);
-        confirmButton.add($b.on("click", (c) -> JQuery.$(modal).append(".modal('hide');")));
         modal.addButton(BSModalBorder.ButtonStyle.CONFIRM, "label.button.confirm", confirmButton);
     }
 
