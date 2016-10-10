@@ -84,12 +84,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>y.ed</groupId>
-            <artifactId>yfiles</artifactId>
-            <version>3.0.0.1</version>
-        </dependency>
-
         <!-- Quartz framework -->
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
