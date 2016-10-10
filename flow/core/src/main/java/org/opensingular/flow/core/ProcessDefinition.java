@@ -165,22 +165,18 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *
      * @return o {@link FlowMap}.
      */
-    public final FlowMap getFlowMap() {
+    public synchronized final FlowMap getFlowMap() {
         if (flowMap == null) {
-            synchronized (this) {
-                if (flowMap == null) {
-                    FlowMap novo = createFlowMap();
-                    configureActions(novo);
+            FlowMap novo = createFlowMap();
+            configureActions(novo);
 
-                    if (novo.getProcessDefinition() != this) {
-                        throw new SingularFlowException("Mapa com definiçao trocada");
-                    }
-
-                    novo.verifyConsistency();
-                    MBPMUtil.calculateTaskOrder(novo);
-                    flowMap = novo;
-                }
+            if (novo.getProcessDefinition() != this) {
+                throw new SingularFlowException("Mapa com definiçao trocada");
             }
+
+            novo.verifyConsistency();
+            MBPMUtil.calculateTaskOrder(novo);
+            flowMap = novo;
         }
         return flowMap;
     }
