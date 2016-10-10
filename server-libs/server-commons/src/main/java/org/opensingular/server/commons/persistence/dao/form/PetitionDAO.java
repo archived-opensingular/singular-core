@@ -18,6 +18,7 @@ package org.opensingular.server.commons.persistence.dao.form;
 
 
 import org.opensingular.flow.core.TaskType;
+import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
@@ -224,6 +225,14 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         return (T) getSession()
                 .createCriteria(tipo)
                 .add(Restrictions.eq("processInstanceEntity.cod", cod))
+                .setMaxResults(1)
+                .uniqueResult();
+    }
+
+    public T findByFormEntity(FormEntity formEntity) {
+        return (T) getSession()
+                .createQuery(" select p from " + tipo.getName() + " p inner join p.formPetitionEntities fpe where fpe.form = :form ")
+                .setParameter("form", formEntity)
                 .setMaxResults(1)
                 .uniqueResult();
     }
