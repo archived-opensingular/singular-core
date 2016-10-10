@@ -70,8 +70,6 @@ public class BoxPage extends ServerTemplate {
                 }
             }
 
-
-
         }
 
         final MenuGroup         menuGroup         = menuSessionConfig.getMenuPorLabel(menu);
@@ -82,7 +80,7 @@ public class BoxPage extends ServerTemplate {
              * itemBoxDTO pode ser nulo quando nenhum item está selecionado.
              */
             if (itemBoxDTO != null) {
-                return new BoxContent(id, processGroupCod, menuGroup.getLabel(), itemBoxDTO);
+                return newBoxContent(id, processGroupCod, menuGroup, itemBoxDTO);
             }
         }
 
@@ -91,6 +89,10 @@ public class BoxPage extends ServerTemplate {
          */
         LOGGER.warn("Não existe correspondencia para o label " + String.valueOf(item));
         return new AccessDeniedContent(id);
+    }
+
+    protected BoxContent newBoxContent(String id, String processGroupCod, MenuGroup menuGroup, ItemBox itemBoxDTO) {
+        return new BoxContent(id, processGroupCod, menuGroup.getLabel(), itemBoxDTO);
     }
 
     protected Map<String, String> createLinkParams() {
