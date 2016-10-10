@@ -25,7 +25,6 @@ import org.opensingular.flow.core.MTask;
 import org.opensingular.flow.core.MTransition;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.renderer.IFlowRenderer;
-import org.opensingular.flow.core.renderer.YFilesFlowRenderer;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public class YFilesFlowRemoteRenderer implements IFlowRenderer {
     }
 
     private Task from(MTask<?> task, MTask<?> startTask) {
-        Task t = new Task(task.isWait(), task.isJava(), task.isPeople(), task.isEnd(), task.getName(), task.getAbbreviation(), task.equals(startTask), new ArrayList<>(0), task.getMetaDataValue(YFilesFlowRenderer.SEND_EMAIL, false));
+        Task t = new Task(task.isWait(), task.isJava(), task.isPeople(), task.isEnd(), task.getName(), task.getAbbreviation(), task.equals(startTask), new ArrayList<>(0), task.getMetaDataValue(IFlowRenderer.SEND_EMAIL, false));
         for (MTransition mt : task.getTransitions()) {
             t.getTransitions().add(from(mt));
         }
