@@ -47,6 +47,14 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Reflections API -->
+        <dependency>
+            <groupId>net.vidageek</groupId>
+            <artifactId>mirror</artifactId>
+            <version>1.6.1</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- yEd -->
         <dependency>
             <groupId>y.ed</groupId>

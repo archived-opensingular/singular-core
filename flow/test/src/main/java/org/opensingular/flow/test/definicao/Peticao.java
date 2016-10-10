@@ -131,10 +131,10 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
 
     }
 
-    @SuppressWarnings("unchecked")
-    public static void main(String[] args) {
-        MBPMUtil.showSwingDiagram((Class<? extends ProcessDefinition<?>>) new Object() {
-            /* VAZIO */
-        }.getClass().getEnclosingClass());
-    }
+//    @SuppressWarnings("unchecked")
+//    public static void main(String[] args) {
+//        MBPMUtil.showSwingDiagram((Class<? extends ProcessDefinition<?>>) new Object() {
+//            /* VAZIO */
+//        }.getClass().getEnclosingClass());
+//    }
 }
