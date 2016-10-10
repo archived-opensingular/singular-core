@@ -766,12 +766,12 @@ class IconFactory {
     }
 
     public final boolean equals( EventTypeWithFill other ) {
-      return other.type == type && other.filled == filled;
+      return other != null && other.type == type && other.filled == filled;
     }
 
     @Override
     public boolean equals( Object obj ) {
-      if (obj.getClass() != EventTypeWithFill.class) {
+      if (obj != null && obj.getClass() != EventTypeWithFill.class) {
         return false;
       }
       return equals((EventTypeWithFill)obj);
