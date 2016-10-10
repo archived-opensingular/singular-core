@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.5.0</version>
+    <version>1.5.1-SNAPSHOT</version>
     <name>[projeto-raiz :: singular]</name>
     <packaging>pom</packaging>
 
@@ -223,7 +223,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
-        <singular.version>1.5.0</singular.version>
+        <singular.version>1.5.1-SNAPSHOT</singular.version>
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <wicket.version>7.3.0</wicket.version>
