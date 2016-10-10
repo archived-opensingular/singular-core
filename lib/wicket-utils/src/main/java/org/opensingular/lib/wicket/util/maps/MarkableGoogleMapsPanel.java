@@ -16,10 +16,6 @@
 
 package org.opensingular.lib.wicket.util.maps;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -32,10 +28,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.opensingular.lib.wicket.util.util.WicketUtils;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MarkableGoogleMapsPanel<T> extends Panel {
 
@@ -73,18 +72,14 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
     private void popularMetadados() {
 
         final Map<String, Object> properties = new HashMap<>();
-        final PackageTextTemplate metadataJSON = new PackageTextTemplate(getClass(), METADATA_JSON);
-
-        properties.put("idMap", map.getMarkupId(true));
-        properties.put("idLat", lat.getMarkupId(true));
-        properties.put("idLng", lng.getMarkupId(true));
-        properties.put("zoom", DEFAULT_ZOOM);
-        properties.put("readOnly", isReadOnly());
-
-        metadataJSON.interpolate(properties);
-        metadadosModel.setObject(metadataJSON.getString());
-
-        try {
+        try (final PackageTextTemplate metadataJSON = new PackageTextTemplate(getClass(), METADATA_JSON)){
+            properties.put("idMap", map.getMarkupId(true));
+            properties.put("idLat", lat.getMarkupId(true));
+            properties.put("idLng", lng.getMarkupId(true));
+            properties.put("zoom", DEFAULT_ZOOM);
+            properties.put("readOnly", isReadOnly());
+            metadataJSON.interpolate(properties);
+            metadadosModel.setObject(metadataJSON.getString());
             metadataJSON.close();
         } catch (IOException e) {
             LOGGER.error("Erro ao fechar stream", e);
