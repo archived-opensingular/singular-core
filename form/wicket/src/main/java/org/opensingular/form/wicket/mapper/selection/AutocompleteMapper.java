@@ -65,7 +65,7 @@ public class AutocompleteMapper extends AbstractControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+    public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
         if ((mi != null) && (mi.getValue() != null)) {
             final SInstanceConverter converter = mi.asAtrProvider().getConverter();

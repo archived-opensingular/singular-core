@@ -93,7 +93,7 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+    public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         final StringBuilder output = new StringBuilder();
         final SInstance mi = model.getObject();
         if (mi instanceof SIList) {

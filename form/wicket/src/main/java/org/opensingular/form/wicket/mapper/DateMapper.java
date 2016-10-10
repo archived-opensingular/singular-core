@@ -80,7 +80,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
                 .setSupportComponents(datepicker.getButton()));
     }
 
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+    public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         if ((model != null) && (model.getObject() != null)) {
             SInstance instancia = model.getObject();
             if (instancia.getValue() instanceof Date) {

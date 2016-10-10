@@ -49,12 +49,12 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
     protected abstract Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel);
 
-    protected abstract String getReadOnlyFormattedText(IModel<? extends SInstance> model);
+    protected abstract String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model);
 
     protected Component appendReadOnlyInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
         final SInstance mi = model.getObject();
-        final BOutputPanel comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(model)));
+        final BOutputPanel comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(ctx, model)));
         formGroup.appendTag("div", comp);
         return comp;
     }
