@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.5.1</version>
+    <version>1.5.2</version>
     <name>[projeto-raiz :: singular]</name>
     <packaging>pom</packaging>
 
@@ -221,9 +221,10 @@
         <project.scm.connection>scm:git:http://10.0.0.22/r/MIRANTE/singular.git</project.scm.connection>
         <project.scm.developerConnection>scm:git:http://10.0.0.22/r/MIRANTE/singular.git</project.scm.developerConnection>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.exclusions>**/*.js, **/*.css</sonar.exclusions>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
-        <singular.version>1.5.1</singular.version>
+        <singular.version>1.5.2</singular.version>
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <wicket.version>7.3.0</wicket.version>
