@@ -128,10 +128,10 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
         sql.append(" INNER JOIN DBSEGURANCA.TB_PERFIL p ");
         sql.append("  ON pu.CO_USERNAME = u.CO_USERNAME ");
         sql.append(" INNER JOIN DBSEGURANCA.TB_PERFIL_DETALHE pd ");
+        sql.append("  ON p.CO_PERFIL = PD.CO_PERFIL ");
         sql.append(" INNER JOIN DBSEGURANCA.TB_MODULO m ");
         sql.append("  ON pd.CO_MODULO = m.CO_MODULO ");
         sql.append("  AND pd.CO_SISTEMA = m.CO_SISTEMA ");
-        sql.append("  ON p.CO_PERFIL = PD.CO_PERFIL ");
         sql.append(" INNER JOIN " + Constants.SCHEMA + ".RL_PERMISSAO_TAREFA pt ");
         sql.append("  ON pt.CO_PERMISSAO = m.CO_SISTEMA || m.CO_MODULO ");
         sql.append(" INNER JOIN " + Constants.SCHEMA + ".TB_DEFINICAO_TAREFA dt ");
