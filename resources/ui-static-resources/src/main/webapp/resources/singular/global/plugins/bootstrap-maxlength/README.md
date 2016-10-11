@@ -139,7 +139,7 @@ $('textarea').on('autosize.resized', function() {
 
 *   Fixed #40, error on resize event.
 
-### 1.5.2
+### 1.5.3-SNAPSHOT
 
 *   Fixed #44 (pasted text in can cause it to go over the max length)
 
