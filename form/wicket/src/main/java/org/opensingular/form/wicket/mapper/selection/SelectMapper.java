@@ -71,7 +71,7 @@ public class SelectMapper extends AbstractControlsFieldComponentMapper {
         return dropDownChoice;
     }
 
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+    public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
         if (mi != null && mi.getValue() != null) {
             Serializable instanceObject = mi.getType().asAtrProvider().getConverter().toObject(mi);

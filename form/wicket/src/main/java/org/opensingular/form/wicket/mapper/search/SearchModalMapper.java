@@ -42,7 +42,7 @@ public class SearchModalMapper extends AbstractControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+    public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
         if (mi != null && mi.getValue() != null) {
             if (mi.asAtr().getDisplayString() != null) {

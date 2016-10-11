@@ -15,7 +15,6 @@ import org.opensingular.flow.test.support.TestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -24,8 +23,7 @@ import org.junit.runners.MethodSorters;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
 import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
@@ -53,13 +51,13 @@ public abstract class PeticaoTest extends TestSupport {
         ProcessDefinitionCache.invalidateAll();
     }
 
-    @Test
-    @Ignore
-    public void showSwingDiagramTest() {
-        Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Gerando diagrama...");
-        Peticao.main(null);
-        Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Pronto!");
-    }
+//    @Test
+//    @Ignore
+//    public void showSwingDiagramTest() {
+//        Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Gerando diagrama...");
+//        Peticao.main(null);
+//        Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Pronto!");
+//    }
 
     @Test
     public void testeCriarInstanciaPeticao() {

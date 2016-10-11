@@ -38,15 +38,15 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
         return flow.createFlowMap(this);
     }
 
-    public static void changeFlowToVersao1() {
+    public synchronized static void  changeFlowToVersao1() {
         flow = InstanceProcessVersao.VERSAO_1;
     }
 
-    public static void changeFlowToVersao1ComPapeis() {
+    public synchronized static void changeFlowToVersao1ComPapeis() {
         flow = InstanceProcessVersao.VERSAO_1_COM_PAPEIS;
     }
 
-    public static void changeFlowToVersao2() {
+    public synchronized static void changeFlowToVersao2() {
         flow = InstanceProcessVersao.VERSAO_2;
     }
 
