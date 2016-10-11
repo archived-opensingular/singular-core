@@ -4,7 +4,7 @@
     <parent>
         <artifactId>singular-flow</artifactId>
         <groupId>org.opensingular</groupId>
-        <version>1.5.0</version>
+        <version>1.5.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -82,12 +82,6 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.5</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>y.ed</groupId>
-            <artifactId>yfiles</artifactId>
-            <version>3.0.0.1</version>
         </dependency>
 
         <!-- Quartz framework -->

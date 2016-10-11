@@ -115,11 +115,13 @@ public class ShowCaseTable {
                     } else {
                         resourceRef = ResourceRef.forClassWithExtension(resource.value(), resource.extension());
                     }
-                    if (resourceRef.isPresent()) {
+                    if (caseBase != null && resourceRef.isPresent()) {
                         caseBase.getAditionalSources().add(resourceRef.get());
                     }
                 }
-                group.addCase(caseBase);
+                if (caseBase != null) {
+                    group.addCase(caseBase);
+                }
             }
         }
 

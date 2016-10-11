@@ -3,7 +3,9 @@ package org.opensingular.flow.test.support;
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.opensingular.flow.core.ProcessDefinitionCache;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,5 +31,10 @@ public abstract class TestSupport {
 
     @Inject
     protected SessionFactory sessionFactory;
+
+    @BeforeClass
+    public static void invalidateCache(){
+        ProcessDefinitionCache.invalidateAll();
+    }
 
 }

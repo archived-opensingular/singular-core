@@ -38,7 +38,7 @@ public class ReadOnlyControlsFieldComponentMapper extends AbstractControlsFieldC
         final FormComponent<?> field = new TextField<>(model.getObject().getName(), new Model<String>() {
             @Override
             public String getObject() {
-                return getReadOnlyFormattedText(model);
+                return getReadOnlyFormattedText(ctx, model);
             }
 
             @Override
@@ -54,7 +54,7 @@ public class ReadOnlyControlsFieldComponentMapper extends AbstractControlsFieldC
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+    public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         final String displayString = model.getObject().toStringDisplay();
         if (displayString == null) {
             LOGGER.warn("A avaliação de toStringDisplay retornou null");
