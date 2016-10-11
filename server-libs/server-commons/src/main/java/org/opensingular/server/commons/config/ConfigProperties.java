@@ -29,6 +29,7 @@ public class ConfigProperties {
 
     public static final String SINGULAR_SERVIDOR_ENDERECO           = "singular.servidor.endereco";
     public static final String SINGULAR_DEV_MODE                    = "singular.config.dev";
+    public static final String SINGULAR_SEND_EMAIL                  = "singular.send.email";
     public static final String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
 
     /**
@@ -58,6 +59,10 @@ public class ConfigProperties {
 
     public static boolean isDevelopmentMode() {
         return "true".equals(ConfigProperties.get(ConfigProperties.SINGULAR_DEV_MODE));
+    }
+
+    public static boolean isSendEmail() {
+        return "true".equals(ConfigProperties.get(ConfigProperties.SINGULAR_SEND_EMAIL));
     }
 
 }
