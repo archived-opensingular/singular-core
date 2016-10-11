@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>server-libs</artifactId>
-        <version>1.5.2-SNAPSHOT</version>
+        <version>1.5.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>server-module</artifactId>
@@ -38,12 +38,6 @@
             <groupId>org.opensingular</groupId>
             <artifactId>server-commons</artifactId>
             <version>${singular.server.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.opensingular</groupId>
-            <artifactId>bam-support</artifactId>
-            <version>${singular-enterprise.version}</version>
         </dependency>
 
         <!-- JAVAX -->
