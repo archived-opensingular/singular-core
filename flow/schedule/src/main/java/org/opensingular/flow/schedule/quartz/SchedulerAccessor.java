@@ -188,9 +188,8 @@ public abstract class SchedulerAccessor {
             }
 
             if (this.calendars != null) {
-                for (String calendarName : this.calendars.keySet()) {
-                    Calendar calendar = this.calendars.get(calendarName);
-                    getScheduler().addCalendar(calendarName, calendar, true, true);
+                for (Map.Entry<String, Calendar> calendar : this.calendars.entrySet()) {
+                    getScheduler().addCalendar(calendar.getKey(), calendar.getValue(), true, true);
                 }
             }
 

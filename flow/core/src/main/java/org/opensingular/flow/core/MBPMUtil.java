@@ -33,10 +33,10 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
-import org.opensingular.flow.core.renderer.IFlowRenderer;
+
 import org.slf4j.LoggerFactory;
 
-import org.opensingular.flow.core.renderer.FlowRendererFactory;
+
 
 public class MBPMUtil {
 
@@ -148,82 +148,5 @@ public class MBPMUtil {
         throw new SingularFlowException(task.getTaskType() + " não tratado");
     }
 
-    public static byte[] getFlowImage(ProcessDefinition<?> processDefinition) {
-        return FlowRendererFactory.generateImageFor(processDefinition);
-    }
 
-    /**
-     * <p>
-     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa por
-     * padrão a API yFiles para gerar o diagrama.
-     * </p>
-     *
-     * <p>
-     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a
-     * descrição do problema.
-     * </p>
-     *
-     * <p>
-     * Exemplo de código de uso:
-     * </p>
-     *
-     * <pre>
-     * public static void main(String[] args) {
-     *     MBPMUtil.showSwingDiagram((Class&lt;ProcessDefinition&lt;?&gt;&gt;) new Object() {
-     *     }.getClass().getEnclosingClass());
-     * }
-     * </pre>
-     *
-     * @param definitionClass
-     *            a definição do processo especificado.
-     */
-    public static void showSwingDiagram(Class<? extends ProcessDefinition<?>> definitionClass) {
-        showSwingDiagram(definitionClass, Flow.getConfigBean().getFlowRenderer());
-    }
-
-    /**
-     * <p>
-     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa o
-     * diagramador especificado para gerar a imagem.
-     * </p>
-     *
-     * <p>
-     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a
-     * descrição do problema.
-     * </p>
-     *
-     * @param definitionClass
-     *            a definição do processo especificado.
-     * @param renderer
-     *            o diagramador especificado.
-     */
-    public static void showSwingDiagram(Class<? extends ProcessDefinition<?>> definitionClass, IFlowRenderer renderer) {
-        try {
-            ProcessDefinition<?> definicao = definitionClass.cast(definitionClass.newInstance());
-            new ImageViewer("Diagrama: " + definicao.getName(), renderer.generateImage(definicao));
-        } catch (InstantiationException | IllegalAccessException e) {
-            LoggerFactory.getLogger(MBPMUtil.class).warn(e.getMessage(), e);
-        }
-    }
-
-    private static class ImageViewer extends JFrame {
-
-        public ImageViewer(String title, byte[] image) throws HeadlessException {
-            super(title);
-            getRootPane().setContentPane(getImageComponent(image));
-            pack();
-            setLocationRelativeTo(null);
-            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            setVisible(true);
-        }
-
-        private static JComponent getImageComponent(byte[] image) {
-            JPanel panel = new JPanel();
-            ImageIcon icon = new ImageIcon(image);
-            JLabel label = new JLabel();
-            label.setIcon(icon);
-            panel.add(label);
-            return panel;
-        }
-    }
 }

@@ -36,6 +36,43 @@ public class FileUploadInfo implements Serializable, Comparable<FileUploadInfo> 
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FileUploadInfo that = (FileUploadInfo) o;
+
+        if (size != that.size) {
+            return false;
+        }
+        if (timestamp != that.timestamp){
+            return false;
+        }
+        if (uploadId != null ? !uploadId.equals(that.uploadId) : that.uploadId != null){
+            return false;
+        }
+        if (fileId != null ? !fileId.equals(that.fileId) : that.fileId != null){
+            return false;
+        }
+        if (hash != null ? !hash.equals(that.hash) : that.hash != null){
+            return false;
+        }
+        return !(name != null ? !name.equals(that.name) : that.name != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = uploadId != null ? uploadId.hashCode() : 0;
+        result = 31 * result + (fileId != null ? fileId.hashCode() : 0);
+        result = 31 * result + (hash != null ? hash.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (int) (size ^ (size >>> 32));
+        result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
+        return result;
+    }
+
+    @Override
     public int compareTo(FileUploadInfo o) {
         return ComparisonChain.start()
             .compare(this.timestamp, o.timestamp)

@@ -16,9 +16,9 @@
 
 package org.opensingular.flow.core;
 
+import net.vidageek.mirror.dsl.Mirror;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
 import org.opensingular.flow.core.renderer.IFlowRenderer;
-import org.opensingular.flow.core.renderer.YFilesFlowRenderer;
 import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.core.view.IViewLocator;
@@ -31,6 +31,7 @@ import org.opensingular.flow.schedule.ScheduleDataBuilder;
 import org.opensingular.flow.schedule.ScheduledJob;
 import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.util.Loggable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +39,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public abstract class SingularFlowConfigurationBean {
+public abstract class SingularFlowConfigurationBean implements Loggable {
 
     public static final String PREFIXO = "SGL";
 
@@ -271,7 +272,13 @@ public abstract class SingularFlowConfigurationBean {
     // ------- Outros -------------------------------------------------
 
     public IFlowRenderer getFlowRenderer() {
-        return YFilesFlowRenderer.getInstance();
+        try {
+            Class<?> yfilesRendeder = Class.forName("com.opensingular.flow.extras.renderer");
+            return (IFlowRenderer) new Mirror().on(yfilesRendeder).invoke().method("getInstance").withoutArgs();
+        } catch (ClassNotFoundException e) {
+            getLogger().info(e.getMessage(), e);
+        }
+        return null;
     }
 
     protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();

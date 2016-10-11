@@ -71,7 +71,7 @@ public class FileUploadServlet extends HttpServlet {
             return;
         }
 
-        final String uploadIdParam = substringAfterLast(defaultString(req.getPathTranslated()), "/");
+        final String uploadIdParam = substringAfterLast(defaultString(req.getPathTranslated()), File.separator);
         if (isBlank(uploadIdParam)) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unidentifiable upload");
             return;

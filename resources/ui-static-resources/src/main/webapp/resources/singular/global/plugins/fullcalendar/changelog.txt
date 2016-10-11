@@ -479,7 +479,7 @@ v1.5.3 (2012-02-06)
 [1168]: https://code.google.com/p/fullcalendar/issues/detail?id=1168
 
 
-v1.5.2 (2011-08-21)
+v1.5.3-SNAPSHOT (2011-08-21)
 -------------------
 
 - correctly process UTC "Z" ISO8601 date strings ([750])
@@ -494,7 +494,7 @@ v1.5.1 (2011-04-09)
 - more flexible parsing of UNIX timestamps ([826])
 - FullCalendar now buildable from source on a Mac ([795])
 - FullCalendar QA'd in FF4 ([883])
-- upgraded to jQuery 1.5.2 (which supports IE9) and jQuery UI 1.8.11
+- upgraded to jQuery 1.5.3-SNAPSHOT (which supports IE9) and jQuery UI 1.8.11
 
 [814]: https://code.google.com/p/fullcalendar/issues/detail?id=814
 [826]: https://code.google.com/p/fullcalendar/issues/detail?id=826
