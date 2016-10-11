@@ -49,12 +49,8 @@
                     var fileElement = $('<li id="upload-box-' + fake_id + '">').addClass('upload-list-item')
                         .append(
                             $('<div>').addClass('list-item-icon')
-                                .append(
-                                    $('<a class="list-item-uploading">').attr('href', '#')
-                                        .append(
-                                            $('<i class="fa fa-file-text"></i>')
-                                        )
-                                ),
+                                .append($('<a class="list-item-uploading" href="#">')
+                                    .append($('<i class="fa fa-file-text"></i>'))),
                             $('<div>').addClass('list-item-content')
                                 .append($('<a target="_blank" href="#" class="download-link"></a>')
                                     .append($('<span>').text(name))
@@ -78,55 +74,64 @@
                     return true;
                 },
                 done: function (e, data) {
-                    $.each(data.result, function (index, file) {
+                    $.each(data.result, function (index, fileString) {
+                        var resp = JSON.parse(fileString);
                         var fake_id = data.files[index].fake_id;
-                        $.getJSON(params.add_url,
-                            {
-                                name: file.name,
-                                fileId: file.fileId,
-                                hashSHA1: file.hashSHA1,
-                                size: file.size
+                        
+                        if (resp.errorMessage) {
+                        	toastr.error(resp.name + ': ' + resp.errorMessage);
 
-                            }, function (dataSInstance, status, jqXHR) {
-                                if (status == 'success') {
-                                    $('#progress_bar_' + fake_id).hide();
-                                    var box = $('#upload-box-' + fake_id);
-                                    box.find('.fa-file-text')
-                                        .removeClass('fa-file-text')
-                                        .addClass('fa-check');
-                                    box.find('.list-item-uploading')
-                                        .removeClass('list-item-uploading')
-                                        .addClass('list-item-uploaded');
-                                    box.find('.list-item-content');
-                                    box.find('.list-action-remove')
-                                        .removeClass('hidden')
-                                        .click(function (e) {
-                                            $.getJSON(params.remove_url,
-                                                {
-                                                    fileId: dataSInstance.fileId
-                                                }, function (data, status, jqXHR) {
-                                                    if (status == 'success') {
-                                                        $('#upload-box-' + fake_id).remove();
-                                                        var fileList = $('#' + params.fileList_id).find('li');
-                                                        if (fileList.length == 0) {
-                                                            $('#' + params.component_id).find('.list-detail-empty').show();
-                                                            $('#' + params.component_id).find('.upload-list-add').hide();
-                                                        }
-                                                    }
-                                                }
-                                            );
-                                        });
-                                    DownloadSupportedBehavior.resolveUrl(params.download_url, dataSInstance.fileId, dataSInstance.name, function (url) {
-                                        box.find('.download-link').attr('href', url);
-                                    });
-                                }
-                            });
+                        } else {
+                        	$.getJSON(
+                    			params.add_url,
+                    			{
+                    				name: resp.name,
+                    				fileId: resp.fileId,
+                    				hashSHA1: resp.hashSHA1,
+                    				size: resp.size
+                    			},
+                    			function (dataSInstance, status, jqXHR) {
+                    				if (status == 'success') {
+                    					$('#progress_bar_' + fake_id).hide();
+                    					var box = $('#upload-box-' + fake_id);
+                    					box.find('.fa-file-text'        ).removeClass('fa-file-text'        ).addClass('fa-check'            );
+                    					box.find('.list-item-uploading' ).removeClass('list-item-uploading' ).addClass('list-item-uploaded' );
+                    					box.find('.list-item-content'   );
+                    					box.find('.list-action-remove'  ).removeClass('hidden')
+	                    					.click(function (e) {
+	                    						$.getJSON(params.remove_url,
+	                								{
+	                    								fileId: dataSInstance.fileId
+	                								},
+	                								function (data, status, jqXHR) {
+	                									if (status == 'success') {
+	                										$('#upload-box-' + fake_id).remove();
+	                										var fileList = $('#' + params.fileList_id).find('li');
+	                										if (fileList.length == 0) {
+	                											$('#' + params.component_id).find('.list-detail-empty').show();
+	                											$('#' + params.component_id).find('.upload-list-add').hide();
+	                										}
+	                									}
+	                								}
+	                    						);
+	                    					});
+                    					DownloadSupportedBehavior.resolveUrl(
+                    							params.download_url,
+                    							dataSInstance.fileId,
+                    							dataSInstance.name,
+                    							function (url) { box.find('.download-link').attr('href', url); }
+                    					);
+                    				}
+                    			}
+                        	);
+                        }
+                        
                     });
                 },
                 progress: function (e, data) {
                     var progress = parseInt(data.loaded / data.total * 100, 10);
 
-                    if(progress > 50) {
+                    if (progress > 50) {
                         $('#progress_bar_' + data.files[0].fake_id + ' > .slice ').addClass('slice-50');
                         $('#progress_bar_' + data.files[0].fake_id + ' > .slice > .bar ').addClass('bar-50');
                         $('#progress_bar_' + data.files[0].fake_id + ' > .slice > .fill').addClass('fill-50');
@@ -140,8 +145,8 @@
                     $('#progress_bar_' + data.files[0].fake_id + ' > .slice > .bar ').css('transform', 'rotate(' + (360 / 100 * progress) + 'deg)')
                 }
             })
-                .prop('disabled', !$.support.fileInput)
-                .parent().addClass($.support.fileInput ? undefined : 'disabled');
+            .prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled');
         };
 
         window.FileListUploadPanel.resetFormElement = function (e) {

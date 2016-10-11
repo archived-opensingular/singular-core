@@ -21,11 +21,12 @@ import static org.apache.commons.lang3.StringUtils.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,7 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.wicket.ajax.json.JSONArray;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularProperties;
 
@@ -59,7 +59,7 @@ public class FileUploadServlet extends HttpServlet {
             .findLocalFile(UUID.fromString(fileId));
     }
 
-    public final static boolean consumeFile(HttpServletRequest req, String fileId, Consumer<File> callback) {
+    public final static <R> Optional<R> consumeFile(HttpServletRequest req, String fileId, Function<File, R> callback) {
         FileUploadManager manager = FileUploadManager.get(req.getSession());
         return manager.consumeFile(UUID.fromString(fileId), callback);
     }
@@ -92,18 +92,18 @@ public class FileUploadServlet extends HttpServlet {
 
     private static class FileUploadProcessor {
 
-        private final JSONArray           filesJson;
-        private final HttpServletRequest  request;
-        private final HttpServletResponse response;
-        private final UploadInfo          uploadInfo;
-        private final FileUploadManager   manager;
-        private final FileUploadConfig    config;
+        private final List<UploadResponseInfo> filesJson;
+        private final HttpServletRequest       request;
+        private final HttpServletResponse      response;
+        private final UploadInfo               uploadInfo;
+        private final FileUploadManager        manager;
+        private final FileUploadConfig         config;
 
         private FileUploadProcessor(UploadInfo uploadInfo, HttpServletRequest request, HttpServletResponse response) {
             this.uploadInfo = uploadInfo;
             this.request = request;
             this.response = response;
-            this.filesJson = new JSONArray();
+            this.filesJson = new ArrayList<>();
             this.manager = FileUploadManager.get(request.getSession());
             this.config = new FileUploadConfig(SingularProperties.get());
         }
@@ -136,24 +136,24 @@ public class FileUploadServlet extends HttpServlet {
             } catch (Exception e) {
                 throw new SingularException(e);
             } finally {
-                DownloadUtil.writeJSONtoResponse(filesJson, response);
+                UploadResponseInfo.writeJsonArrayResponseTo(response, filesJson);
             }
         }
 
-        private void processFileItem(JSONArray fileGroup, FileItem item) throws Exception {
+        private void processFileItem(List<UploadResponseInfo> response, FileItem item) throws Exception {
             if (!item.isFormField()) {
-                final long size = item.getSize();
                 final String originalFilename = item.getName();
                 final String contentType = lowerCase(item.getContentType());
                 final String extension = lowerCase(substringAfterLast(originalFilename, "."));
 
-                if (!(uploadInfo.isMimeTypeAllowed(contentType) || uploadInfo.isExtensionAllowed(extension))) {
-                    // TODO retorn error
+                if (!(uploadInfo.isFileTypeAllowed(contentType) || uploadInfo.isFileTypeAllowed(extension))) {
+                    response.add(new UploadResponseInfo(originalFilename, "Tipo de arquivo não permitido"));
+                    return;
                 }
 
                 try (InputStream in = item.getInputStream()) {
                     final FileUploadInfo fileInfo = manager.createFile(uploadInfo.uploadId, originalFilename, in);
-                    fileGroup.put(DownloadUtil.toJSON(fileInfo.fileId.toString(), fileInfo.hash, originalFilename, size));
+                    response.add(new UploadResponseInfo(fileInfo));
                 }
             }
         }

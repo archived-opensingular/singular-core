@@ -16,11 +16,12 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -66,25 +67,22 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
     // UPLOADS
     ///////////////////////////////////////////////////////////////////////////
 
-    public UUID createUpload(long maxFileSize,
-                             int maxFileCount,
-                             Collection<String> allowedExtensions,
-                             Collection<String> allowedContentTypes) {
+    public UUID createUpload(Optional<Long> maxFileSize,
+                             Optional<Integer> maxFileCount,
+                             Optional<Collection<String>> allowedFileTypes) {
 
-        log.debug("createUpload({},{},{},{})",
-            maxFileSize,
-            maxFileCount,
-            allowedExtensions,
-            allowedContentTypes);
+        log.debug("createUpload({},{},{})",
+            maxFileSize.orElse(null),
+            maxFileCount.orElse(null),
+            allowedFileTypes.orElseGet(Collections::emptyList));
 
         final UUID uuid = UUID.randomUUID();
 
         registeredUploads.add(new UploadInfo(
             uuid,
-            maxFileSize,
-            maxFileCount,
-            allowedExtensions,
-            allowedContentTypes));
+            maxFileSize.orElse(Long.MAX_VALUE),
+            maxFileCount.orElse(1),
+            allowedFileTypes.orElseGet(Collections::emptyList)));
         return uuid;
     }
 
@@ -108,19 +106,19 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
             .findAny();
     }
 
-    public boolean consumeFile(UUID fileId, Consumer<File> callback) {
+    public <R> Optional<R> consumeFile(UUID fileId, Function<File, R> callback) {
         log.debug("consumeFile({})", fileId);
 
         final Optional<FileUploadInfo> fileInfo = findFileInfo(fileId);
         if (fileInfo.isPresent()) {
             final Optional<File> file = findLocalFile(fileInfo.get().fileId);
             if (file.isPresent()) {
-                callback.accept(file.get());
+                R result = callback.apply(file.get());
                 deleteFile(fileInfo.get());
-                return true;
+                return Optional.ofNullable(result);
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     public Optional<File> findLocalFile(UUID fileId) {
