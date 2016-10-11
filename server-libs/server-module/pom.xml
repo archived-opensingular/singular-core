@@ -40,12 +40,6 @@
             <version>${singular.server.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.opensingular</groupId>
-            <artifactId>bam-support</artifactId>
-            <version>${singular-enterprise.version}</version>
-        </dependency>
-
         <!-- JAVAX -->
         <dependency>
             <groupId>javax.servlet</groupId>
