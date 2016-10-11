@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import javax.servlet.ServletContext;
 
+import org.opensingular.flow.core.ProcessDefinitionCache;
 import org.opensingular.flow.core.SingularFlowConfigurationBean;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
@@ -56,6 +57,7 @@ public abstract class FlowInitializer {
     public abstract String processGroupCod();
 
     public void init(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
+        ProcessDefinitionCache.invalidateAll();
         applicationContext.register(singularFlowConfiguration());
         Optional
                 .ofNullable(flowMetadataProvider())
