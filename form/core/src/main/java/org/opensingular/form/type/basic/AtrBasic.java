@@ -16,21 +16,32 @@
 
 package org.opensingular.form.type.basic;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
-import org.opensingular.lib.commons.lambda.IConsumer;
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.STranslatorForAttribute;
 import org.opensingular.form.SType;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.enums.PhraseBreak;
-import org.apache.commons.lang3.ObjectUtils;
-
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
+import org.opensingular.lib.commons.lambda.IConsumer;
 
 public class AtrBasic extends STranslatorForAttribute {
+
+    private static final String ALLOWED_FILE_TYPES_SPLIT_REGEX = "[,\\s\\|]";
 
     public AtrBasic() {}
 
@@ -73,6 +84,13 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic maxFileSize(Long value) {
         setAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE, value);
+        return this;
+    }
+    public AtrBasic allowedFileTypes(String... value) {
+        setAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES,
+            Stream.of(value)
+                .flatMap(it -> Stream.of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+                .collect(joining(",")));
         return this;
     }
 
@@ -201,6 +219,12 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public Long getMaxFileSize() {
         return getAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE);
+    }
+
+    public List<String> getAllowedFileTypes() {
+        return Arrays.asList(defaultString(
+            getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
+                .split(ALLOWED_FILE_TYPES_SPLIT_REGEX));
     }
 
     @SuppressWarnings("unchecked")

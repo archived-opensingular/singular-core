@@ -165,22 +165,18 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *
      * @return o {@link FlowMap}.
      */
-    public final FlowMap getFlowMap() {
+    public synchronized final FlowMap getFlowMap() {
         if (flowMap == null) {
-            synchronized (this) {
-                if (flowMap == null) {
-                    FlowMap novo = createFlowMap();
-                    configureActions(novo);
+            FlowMap novo = createFlowMap();
+            configureActions(novo);
 
-                    if (novo.getProcessDefinition() != this) {
-                        throw new SingularFlowException("Mapa com definiçao trocada");
-                    }
-
-                    novo.verifyConsistency();
-                    MBPMUtil.calculateTaskOrder(novo);
-                    flowMap = novo;
-                }
+            if (novo.getProcessDefinition() != this) {
+                throw new SingularFlowException("Mapa com definiçao trocada");
             }
+
+            novo.verifyConsistency();
+            MBPMUtil.calculateTaskOrder(novo);
+            flowMap = novo;
         }
         return flowMap;
     }
@@ -351,30 +347,28 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *
      * @return a entidade persistente.
      */
-    public final IEntityProcessVersion getEntityProcessVersion() {
-        synchronized (this) {
-            if (entityVersionCod == null) {
-                try {
-                    IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> processEntityService = Flow.getConfigBean().getProcessEntityService();
-                    IEntityProcessVersion newVersion = processEntityService.generateEntityFor(this);
+    public synchronized final IEntityProcessVersion getEntityProcessVersion() {
+        if (entityVersionCod == null) {
+            try {
+                IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> processEntityService = Flow.getConfigBean().getProcessEntityService();
+                IEntityProcessVersion newVersion = processEntityService.generateEntityFor(this);
 
-                    IEntityProcessVersion oldVersion = newVersion.getProcessDefinition().getLastVersion();
-                    if (processEntityService.isDifferentVersion(oldVersion, newVersion)) {
+                IEntityProcessVersion oldVersion = newVersion.getProcessDefinition().getLastVersion();
+                if (processEntityService.isDifferentVersion(oldVersion, newVersion)) {
 
-                        entityVersionCod = getPersistenceService().saveProcessVersion(newVersion).getCod();
-                    } else {
-                        entityVersionCod = oldVersion.getCod();
-                    }
-                } catch (Exception e) {
-                    throw new SingularFlowException(createErrorMsg("Erro ao criar entidade para o processo"), e);
+                    entityVersionCod = getPersistenceService().saveProcessVersion(newVersion).getCod();
+                } else {
+                    entityVersionCod = oldVersion.getCod();
                 }
+            } catch (Exception e) {
+                throw new SingularFlowException(createErrorMsg("Erro ao criar entidade para o processo"), e);
             }
         }
 
         IEntityProcessVersion version = getPersistenceService().retrieveProcessVersionByCod(entityVersionCod);
         if (version == null) {
             entityVersionCod = null;
-            throw new SingularFlowException(createErrorMsg("Definicao demanda incosistente com o BD: codigo não encontrado"));
+            throw new SingularFlowException(createErrorMsg("Definicao demanda inconsistente com o BD: codigo não encontrado"));
         }
 
         return version;
