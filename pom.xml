@@ -147,7 +147,6 @@
         <wicket.version>7.1.0</wicket.version>
         <singular.version>1.5.2-SNAPSHOT</singular.version>
         <singular.server.version>1.5.2-SNAPSHOT</singular.server.version>
-        <singular-enterprise.version>1.5.2-SNAPSHOT</singular-enterprise.version>
         <cas.version>4.0.4</cas.version>
     </properties>
 
