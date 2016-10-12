@@ -38,7 +38,7 @@ public class FormEntity extends BaseEntity<Long> {
     @GeneratedValue(generator = PK_GENERATOR_NAME)
     private Long cod;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "CO_TIPO_FORMULARIO")
     private FormTypeEntity formType;
 
