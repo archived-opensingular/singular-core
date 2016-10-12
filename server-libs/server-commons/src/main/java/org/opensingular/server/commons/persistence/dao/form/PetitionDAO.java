@@ -107,12 +107,12 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
     private void buildFromClause(StringBuilder hql, QuickFilter filtro) {
         hql.append(" FROM ").append(tipo.getName()).append(" p ");
         hql.append(" LEFT JOIN p.processInstanceEntity pie ");
-        hql.append(" LEFT JOIN p.currentDraftEntity currentDraftEntity ");
         hql.append(" LEFT JOIN p.petitioner petitioner ");
-        hql.append(" LEFT JOIN currentDraftEntity.form formDraftEntity");
-        hql.append(" LEFT JOIN formDraftEntity.currentFormVersionEntity currentFormDraftVersionEntity");
         hql.append(" LEFT JOIN p.formPetitionEntities formPetitionEntity on formPetitionEntity.mainForm = :sim ");
         hql.append(" LEFT JOIN formPetitionEntity.form formEntity ");
+        hql.append(" LEFT JOIN formPetitionEntity.currentDraftEntity currentDraftEntity ");
+        hql.append(" LEFT JOIN currentDraftEntity.form formDraftEntity");
+        hql.append(" LEFT JOIN formDraftEntity.currentFormVersionEntity currentFormDraftVersionEntity");
         hql.append(" LEFT JOIN formEntity.currentFormVersionEntity currentFormVersion ");
         hql.append(" LEFT JOIN p.processDefinitionEntity processDefinitionEntity ");
         hql.append(" LEFT JOIN formEntity.formType formType  ");

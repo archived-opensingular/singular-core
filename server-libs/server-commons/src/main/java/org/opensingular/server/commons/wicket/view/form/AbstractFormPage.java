@@ -16,8 +16,19 @@
 
 package org.opensingular.server.commons.wicket.view.form;
 
-import org.opensingular.lib.commons.util.Loggable;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.opensingular.flow.core.MTransition;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
@@ -31,8 +42,10 @@ import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
+import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.server.commons.config.ConfigProperties;
 import org.opensingular.server.commons.flow.metadata.ServerContextMetaData;
 import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
@@ -43,19 +56,6 @@ import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.builder.MarkupCreator;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.template.Template;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
-import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
-import org.opensingular.lib.wicket.util.modal.BSModalBorder;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.flow.RedirectToUrlException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -111,7 +111,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             petition = petitionService.find(Long.valueOf(config.getPetitionId()));
         }
         if (petition.getCod() != null) {
-            final FormEntity formEntityDraftOrPetition = getFormEntityDraftOrPetition(petition);
+            final FormEntity formEntityDraftOrPetition = getDraftOrFormEntity(petition);
             if (formEntityDraftOrPetition != null) {
                 formModel.setObject(formService.keyFromObject(formEntityDraftOrPetition.getCod()));
             }
@@ -120,11 +120,10 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         super.onInitialize();
     }
 
-    private FormEntity getFormEntityDraftOrPetition(T petition) {
+    private FormEntity getDraftOrFormEntity(T petition) {
         return Optional
-                .ofNullable(petition.getCurrentDraftEntity())
+                .ofNullable(petition.currentEntityDraftByType(getFormType(config)))
                 .map(DraftEntity::getForm)
-                .filter(form -> petitionService.findFormType(form.getCod()).getAbbreviation().equals(getFormType(config)))
                 .orElse(getFormPetitionEntity(petition).map(FormPetitionEntity::getForm).orElse(null));
     }
 
@@ -347,7 +346,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         onBeforeSave(currentInstance);
         formModel.setObject(petitionService.saveOrUpdate(
                 getUpdatedPetitionFromInstance(currentInstance, isMainForm()),
-                currentInstance.getObject(), true, isMainForm(), t -> onSave(t, transitionName)
+                currentInstance.getObject(),
+                true,
+                isMainForm(),
+                singularFormConfig,
+                t -> onSave(t, transitionName)
         ));
     }
 
@@ -378,7 +381,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void send(IModel<? extends SInstance> currentInstance, AjaxRequestTarget target, BSModalBorder enviarModal) {
         if (onBeforeSend(currentInstance)) {
-            formModel.setObject(petitionService.send(getUpdatedPetitionFromInstance(currentInstance, isMainForm()), currentInstance.getObject(), isMainForm(), SingularSession.get().getUsername()));
+            petitionService.send(getUpdatedPetitionFromInstance(currentInstance, isMainForm()), currentInstance.getObject(), SingularSession.get().getUsername(), singularFormConfig);
             onSended(target, enviarModal);
         }
     }
@@ -400,7 +403,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void executeTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
         if (onBeforeExecuteTransition(ajaxRequestTarget, form, transitionName, currentInstance)) {
-            formModel.setObject(petitionService.saveAndExecuteTransition(transitionName, currentModel.getObject(), currentInstance.getObject(), isMainForm(), this::onTransition));
+            petitionService.executeTransition(transitionName, currentModel.getObject(), singularFormConfig, this::onTransition);
             onTransitionExecuted(ajaxRequestTarget, transitionName);
         }
     }
@@ -507,7 +510,13 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                             typeName,
                             getCurrentTaskDefinition(petitionEntity).map(TaskDefinitionEntity::getCod).orElse(null)
                     )
-                    .map(FormPetitionEntity::getForm)
+                    .map(x -> {
+                        if (x.getCurrentDraftEntity() != null) {
+                            return x.getCurrentDraftEntity().getForm();
+                        } else {
+                            return x.getForm();
+                        }
+                    })
                     .map(FormEntity::getCod)
                     .map(cod -> formService.keyFromObject(cod))
                     .orElse(null);

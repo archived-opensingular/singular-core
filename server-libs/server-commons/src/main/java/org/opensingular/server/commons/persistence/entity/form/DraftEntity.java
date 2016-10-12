@@ -22,16 +22,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -46,7 +37,7 @@ public class DraftEntity extends BaseEntity<Long> {
     @GeneratedValue(generator = PK_GENERATOR_NAME)
     private Long cod;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "CO_FORMULARIO")
     private FormEntity form;
 
