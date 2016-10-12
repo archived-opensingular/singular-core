@@ -370,7 +370,8 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
                 petition
                         .getFormPetitionEntities()
                         .stream()
-                        .map(f -> formPetitionDAO.find(f.getCod()))
+                        .map(FormPetitionEntity::getCod)
+                        .map(formPetitionDAO::find)
                         .filter(isMainFormOrIsForCurrentTaskDefinition(petition))
                         .map(f -> {
                             final FormVersionHistoryEntity formVersionHistoryEntity = new FormVersionHistoryEntity();
@@ -390,7 +391,9 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
     private Predicate<FormPetitionEntity> isMainFormOrIsForCurrentTaskDefinition(PetitionEntity petitionEntity) {
         return f ->
                 Optional.ofNullable(f)
-                        .map(FormPetitionEntity::getMainForm).map(SIM::equals).orElse(false)
+                        .map(FormPetitionEntity::getMainForm)
+                        .map(SIM::equals)
+                        .orElse(false)
                         ||
                         Optional.ofNullable(petitionEntity)
                                 .map(PetitionEntity::getProcessInstanceEntity)

@@ -113,10 +113,10 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
                         instanceModel.setObject(singularFormConfig.getDocumentFactory().createInstance(refType));
                     }
                 }
+                appendDirtyListener(instanceModel.getObject());
                 if (onCreateInstance != null) {
                     onCreateInstance.accept((SIComposite) instanceModel.getObject(), transitionName);
                 }
-                appendDirtyListener(instanceModel.getObject());
                 return instanceModel.getObject();
             }
         };
