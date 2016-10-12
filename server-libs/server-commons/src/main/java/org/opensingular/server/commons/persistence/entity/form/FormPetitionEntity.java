@@ -61,7 +61,7 @@ public class FormPetitionEntity extends BaseEntity<Long> implements Comparable<F
     @JoinColumn(name = "CO_DEFINICAO_TAREFA")
     private TaskDefinitionEntity taskDefinitionEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "CO_RASCUNHO_ATUAL")
     private DraftEntity currentDraftEntity;
 

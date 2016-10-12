@@ -89,7 +89,7 @@ public class AuthorizationService implements Loggable {
     public void filterActions(String formType, Long petitionId, List<BoxItemAction> actions, String idUsuario, List<SingularPermission> permissions) {
         PetitionEntity petitionEntity = null;
         if (petitionId != null) {
-            petitionEntity = petitionService.find(petitionId);
+            petitionEntity = petitionService.findPetitionByCod(petitionId);
         }
         for (Iterator<BoxItemAction> it = actions.iterator(); it.hasNext(); ) {
             BoxItemAction action           = it.next();
@@ -108,7 +108,7 @@ public class AuthorizationService implements Loggable {
     }
 
     public boolean hasPermission(Long petitionId, String formType, String idUsuario, String action) {
-        PetitionEntity petitionEntity = petitionService.find(petitionId);
+        PetitionEntity petitionEntity = petitionService.findPetitionByCod(petitionId);
         return hasPermission(petitionEntity, formType, idUsuario, action);
     }
 

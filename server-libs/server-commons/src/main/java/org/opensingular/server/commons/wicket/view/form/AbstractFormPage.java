@@ -51,6 +51,7 @@ import org.opensingular.server.commons.flow.metadata.ServerContextMetaData;
 import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
 import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
+import org.opensingular.server.commons.service.FormPetitionService;
 import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.builder.MarkupCreator;
@@ -75,6 +76,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     @Inject
     protected IFormService formService;
+
+    @Inject
+    protected FormPetitionService<T> formPetitionService;
 
     @Inject
     @Named("formConfigWithDatabase")
@@ -108,7 +112,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         if (StringUtils.isBlank(config.getPetitionId())) {
             petition = petitionService.createNewPetitionWithoutSave(petitionClass, config, this::onNewPetitionCreation);
         } else {
-            petition = petitionService.find(Long.valueOf(config.getPetitionId()));
+            petition = petitionService.findPetitionByCod(Long.valueOf(config.getPetitionId()));
         }
         if (petition.getCod() != null) {
             final FormEntity formEntityDraftOrPetition = getDraftOrFormEntity(petition);
@@ -129,9 +133,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     public Optional<FormPetitionEntity> getFormPetitionEntity(T petition) {
         if (isMainForm()) {
-            return petitionService.findFormPetitionEntityByTypeName(petition.getCod(), getFormType(config));
+            return formPetitionService.findFormPetitionEntityByTypeName(petition.getCod(), getFormType(config));
         } else {
-            return petitionService.findFormPetitionEntityByTypeNameAndTask(petition.getCod(), getFormType(config), getCurrentTaskDefinition(petition).map(TaskDefinitionEntity::getCod).orElse(null));
+            return formPetitionService.findFormPetitionEntityByTypeNameAndTask(petition.getCod(), getFormType(config), getCurrentTaskDefinition(petition).map(TaskDefinitionEntity::getCod).orElse(null));
         }
     }
 
@@ -500,29 +504,18 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected FormKey loadFormKeyFromTypeAndTask(String typeName) {
-
-        final T petitionEntity = currentModel.getObject();
-
-        if (petitionEntity != null) {
-            return petitionService
-                    .findFormPetitionEntityByTypeNameAndTask(
-                            petitionEntity.getCod(),
-                            typeName,
-                            getCurrentTaskDefinition(petitionEntity).map(TaskDefinitionEntity::getCod).orElse(null)
-                    )
-                    .map(x -> {
-                        if (x.getCurrentDraftEntity() != null) {
-                            return x.getCurrentDraftEntity().getForm();
-                        } else {
-                            return x.getForm();
-                        }
-                    })
-                    .map(FormEntity::getCod)
-                    .map(cod -> formService.keyFromObject(cod))
-                    .orElse(null);
-        }
-
-        return null;
+        return Optional
+                .ofNullable(formPetitionService.findFormPetitionEntity(currentModel.getObject(), typeName, isMainForm()))
+                .map(x -> {
+                    if (x.getCurrentDraftEntity() != null) {
+                        return x.getCurrentDraftEntity().getForm();
+                    } else {
+                        return x.getForm();
+                    }
+                })
+                .map(FormEntity::getCod)
+                .map(cod -> formService.keyFromObject(cod))
+                .orElse(null);
     }
 
     public String getUrlPathAcompanhamento() {
