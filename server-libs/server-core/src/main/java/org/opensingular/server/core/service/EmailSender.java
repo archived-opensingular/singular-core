@@ -89,10 +89,10 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
                 msg.setSentDate(Optional.ofNullable(e.getCreationDate()).orElseGet(Date::new));
                 msg.setFrom(new InternetAddress(Optional.ofNullable(from).orElseGet(this::getUsername)));
                 // destinatários
-                if (ConfigProperties.isDevelopmentMode()) {
-                    msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(EMAIL_DEVELOPMENT));
-                } else {
+                if (ConfigProperties.isSendEmail()) {
                     msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(addressee.getAddress()));
+                } else {
+                    msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(EMAIL_DEVELOPMENT));
                 }
                 
                 // Cria o "contêiner" das várias partes do e-mail
