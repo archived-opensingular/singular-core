@@ -75,7 +75,7 @@ public class FormPetitionService<P extends PetitionEntity> {
         }
 
         if (formPetitionEntity.getCurrentDraftEntity() != null) {
-            saveOrUpdateDraft(instance, formPetitionEntity.getCurrentDraftEntity(), config, codActor);
+            formPetitionEntity.setCurrentDraftEntity(saveOrUpdateDraft(instance, formPetitionEntity.getCurrentDraftEntity(), config, codActor));
         } else if (createNewDraftIfDoesntExists) {
             formPetitionEntity.setCurrentDraftEntity(saveOrUpdateDraft(instance, createNewDraftWithoutSave(), config, codActor));
             formPetitionDAO.saveOrUpdate(formPetitionEntity);
@@ -161,31 +161,44 @@ public class FormPetitionService<P extends PetitionEntity> {
                 .forEach(formPetitionEntity -> consolidadeDraft(formConfig, formPetitionEntity));
     }
 
+    /**
+     * Consolida o rascunho, copiando os valores do rascunho para o form principal criando versão inicial ou gerando nova versão
+     *
+     * @param formConfig         config
+     * @param formPetitionEntity etnidade
+     */
     private void consolidadeDraft(SFormConfig formConfig, FormPetitionEntity formPetitionEntity) {
 
-        final DraftEntity draft         = formPetitionEntity.getCurrentDraftEntity();
-        final String      type          = draft.getForm().getFormType().getAbbreviation();
-        final SIComposite draftInstance = loadByCodAndType(formConfig, draft.getForm().getCod(), type);
+        final DraftEntity draft;
+        final String      type;
+        final SIComposite draftInstance;
+        final SIComposite formInstance;
+        final boolean     isFirstVersion;
+        final FormKey     key;
 
-        SIComposite formInstance;
-        boolean     createNewVersion = false;
+        draft = formPetitionEntity.getCurrentDraftEntity();
 
-        if (formPetitionEntity.getForm() == null) {
+        // salva para colocar a entidade com seu form entity na session
+        draftDAO.saveOrUpdate(draft);
+
+        type = draft.getForm().getFormType().getAbbreviation();
+        draftInstance = loadByCodAndType(formConfig, draft.getForm().getCod(), type);
+
+        isFirstVersion = formPetitionEntity.getForm() == null;
+
+        if (isFirstVersion) {
             formInstance = newInstance(formConfig, type);
         } else {
             formInstance = loadByCodAndType(formConfig, formPetitionEntity.getForm().getCod(), type);
-            createNewVersion = true;
         }
 
         copyValuesAndAnnotations(draftInstance, formInstance);
 
-        final FormKey key;
-
-        if (createNewVersion) {
-            key = formPersistenceService.newVersion(formInstance, userService.getUserCodIfAvailable());
-        } else {
+        if (isFirstVersion) {
             final Integer codActor = userService.getUserCodIfAvailable();
             key = formPersistenceService.insert(formInstance, codActor);
+        } else {
+            key = formPersistenceService.newVersion(formInstance, userService.getUserCodIfAvailable());
         }
 
         formPetitionEntity.setForm(formPersistenceService.loadFormEntity(key));

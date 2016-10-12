@@ -320,6 +320,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
             }
 
             formPetitionService.consolidateDrafts(petition, cfg);
+
             savePetitionHistory(petition);
 
             final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(petition).getClass();
