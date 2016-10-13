@@ -29,6 +29,7 @@ public interface SingularProperties {
     public static final String HIBERNATE_GENERATOR                  = "flow.persistence.hibernate.generator";
     public static final String HIBERNATE_SEQUENCE_PROPERTY_PATTERN  = "flow.persistence.%s.sequence";
     public static final String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
+    public static final String SINGULAR_SEND_EMAIL                  = "singular.send.email";
 
     public static final String SINGULAR_DEV_MODE                    = "singular.development";
     public static final String SINGULAR_SERVER_ADDR                 = "singular.server.address";
