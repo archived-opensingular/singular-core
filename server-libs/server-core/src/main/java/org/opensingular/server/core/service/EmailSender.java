@@ -32,7 +32,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
-import org.opensingular.server.commons.config.ConfigProperties;
 import org.opensingular.server.commons.service.dto.Email;
 import org.opensingular.server.commons.service.dto.Email.Addressee;
 
@@ -89,7 +88,7 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
                 msg.setSentDate(Optional.ofNullable(e.getCreationDate()).orElseGet(Date::new));
                 msg.setFrom(new InternetAddress(Optional.ofNullable(from).orElseGet(this::getUsername)));
                 // destinatários
-                if (ConfigProperties.isSendEmail()) {
+                if (SingularProperties.get().isTrue(SingularProperties.SINGULAR_SEND_EMAIL)) {
                     msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(addressee.getAddress()));
                 } else {
                     msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(EMAIL_DEVELOPMENT));
