@@ -40,7 +40,6 @@ import org.opensingular.server.commons.persistence.dao.form.PetitionerDAO;
 import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
 import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
-import org.opensingular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
@@ -224,15 +223,16 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
 
         final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
         final ProcessInstance      processInstance   = processDefinition.newInstance();
-
-        savePetitionHistory(peticao);
-        processInstance.setDescription(peticao.getDescription());
-
         final ProcessInstanceEntity processEntity = processInstance.saveEntity();
 
+        processInstance.setDescription(peticao.getDescription());
         peticao.setProcessInstanceEntity(processEntity);
+
         processInstance.start();
+
         onSend(peticao, instance, processEntity, codResponsavel);
+
+        savePetitionHistory(peticao);
     }
 
     protected void onSend(P peticao, SInstance instance, ProcessInstanceEntity processEntity, String codResponsavel) {
@@ -451,8 +451,8 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
                 .orElseThrow(() -> new SingularFlowException("Não foi possivel recuperar a definição do processo"));
     }
 
-    public List<PetitionContentHistoryEntity> listPetitionContentHistoryByCodInstancePK(int instancePK) {
-        return petitionContentHistoryDAO.listPetitionContentHistoryByCodInstancePK(instancePK);
+    public List<PetitionContentHistoryEntity> listPetitionContentHistoryByPetitionCod(long petitionCod) {
+        return petitionContentHistoryDAO.listPetitionContentHistoryByPetitionCod(petitionCod);
     }
 
     public List<Actor> listAllocableUsers(Map<String, Object> selectedTask) {

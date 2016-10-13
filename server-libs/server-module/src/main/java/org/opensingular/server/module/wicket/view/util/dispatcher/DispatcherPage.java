@@ -24,11 +24,13 @@ import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
+import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.server.commons.exception.SingularServerException;
 import org.opensingular.server.commons.flow.SingularServerTaskPageStrategy;
 import org.opensingular.server.commons.flow.SingularWebRef;
 import org.opensingular.server.commons.form.FormActions;
+import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.service.FormPetitionService;
 import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
@@ -133,11 +135,33 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     private WebPage retrieveDestination(FormPageConfig config) {
-        if (config.getViewMode().isVisualization() && config.getFormVersionPK() != null) {
-            return new ReadOnlyFormPage($m.ofValue(config.getFormVersionPK()));
+        if (config.getViewMode().isVisualization() && AnnotationMode.NONE.equals(config.getAnnotationMode())) {
+            return newVisualizationPage(config);
         } else {
             return retrieveDestinationUsingSingularWebRef(config, retrieveSingularWebRef(config));
         }
+    }
+
+    private WebPage newVisualizationPage(FormPageConfig config) {
+
+        Long formVersionPK = null;
+
+        if (config.getFormVersionPK() != null)
+        {
+            formVersionPK = config.getFormVersionPK();
+        }
+        else if (config.getPetitionId() != null)
+        {
+            PetitionEntity p;
+            p = petitionService.findPetitionByCod(Long.valueOf(config.getPetitionId()));
+            formVersionPK = p.getMainForm().getCurrentFormVersionEntity().getCod();
+        }
+
+        if (formVersionPK != null) {
+            return new ReadOnlyFormPage($m.ofValue(formVersionPK));
+        }
+
+        throw new SingularServerException("Não foi possivel identificar qual é o formulario a ser exibido");
     }
 
     private WebPage retrieveDestinationUsingSingularWebRef(FormPageConfig config, SingularWebRef ref) {

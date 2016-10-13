@@ -17,19 +17,21 @@
 package org.opensingular.server.core.wicket.historico;
 
 
-import org.opensingular.server.commons.wicket.view.template.Content;
-import org.opensingular.server.core.wicket.template.ServerTemplate;
-import org.wicketstuff.annotation.mount.MountPath;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.opensingular.server.commons.wicket.historico.AbstractHistoricoContent;
 
 
-@MountPath("historico")
-public class HistoricoPage extends ServerTemplate {
+public class HistoricoContent extends AbstractHistoricoContent {
 
-    private static final long serialVersionUID = -3344810189307767761L;
+
+    public HistoricoContent(String id) {
+        super(id);
+    }
 
     @Override
-    protected Content getContent(String id) {
-        return new HistoricoContent(id);
+    protected void onCancelar(AjaxRequestTarget t) {
+        t.appendJavaScript("window.history.go(-1);");
     }
+
 
 }
