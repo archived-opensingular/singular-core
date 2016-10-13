@@ -43,6 +43,7 @@ import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 import com.google.common.base.Strings;
 import org.apache.wicket.Component;
@@ -239,6 +240,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                                 final SIList sil = (SIList) si;
                                 if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
                                     target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                                    target.appendJavaScript(Scripts.multipleModalBackDrop());
                                 } else {
                                     adding = true;
                                     pushStatus();

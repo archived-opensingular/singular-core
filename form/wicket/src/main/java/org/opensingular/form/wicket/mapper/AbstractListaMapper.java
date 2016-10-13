@@ -48,6 +48,7 @@ import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.scripts.Scripts;
 
 public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
@@ -211,6 +212,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
             final SIList<SInstance> lista = modelLista.getObject();
             if (lista.getType().getMaximumSize() != null && lista.getType().getMaximumSize() == lista.size()) {
                 target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                target.appendJavaScript(Scripts.multipleModalBackDrop());
             } else {
                 lista.addNew();
                 target.add(form);

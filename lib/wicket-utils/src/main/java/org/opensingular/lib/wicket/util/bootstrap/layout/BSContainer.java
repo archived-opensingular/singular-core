@@ -27,6 +27,8 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.wicket.util.scripts.Scripts;
+
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @SuppressWarnings({ "unchecked", "serial" })
@@ -182,6 +184,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         final AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
             target.appendJavaScript(";bootbox.alert('" + message + "');");
+            target.appendJavaScript(Scripts.multipleModalBackDrop());
         }
     }
 
